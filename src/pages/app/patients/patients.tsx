@@ -31,9 +31,9 @@ export function Patients() {
                         <TableHeader>
                             <TableRow className="bg-sky-50/60">
                                 <TableHead className="w-[64px]" />
-                                <TableHead className="w-[180px]">CPF</TableHead>
-                                <TableHead className="w-[180px]">Paciente</TableHead>
-                                <TableHead className="w-[160px]">Última Sessão</TableHead>
+                                <TableHead className="w-[140px]">CPF</TableHead>
+                                <TableHead className='w-[160px]'>Paciente</TableHead>
+                                <TableHead className="w-[160px]">Data de Nascimento</TableHead>
                                 <TableHead className="w-[140px]">Próxima Sessão</TableHead>
                                 <TableHead className="w-[140px]">Status</TableHead>
                                 <TableHead className="w-[164px]" />
@@ -51,7 +51,7 @@ export function Patients() {
                                     </TableCell>
 
                                     <TableCell className="font-medium">12332112333</TableCell>
-                                    <TableCell className="font-medium">Mariana Oliveira</TableCell>
+                                    <TableCell className="font-medium">Paulo Octavio de OliveiraStraforini</TableCell>
                                     <TableCell className="text-muted-foreground">há 3 dias</TableCell>
                                     <TableCell className="text-muted-foreground">em 2 dias</TableCell>
 
