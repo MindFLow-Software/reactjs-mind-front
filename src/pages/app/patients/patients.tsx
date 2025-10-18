@@ -1,35 +1,30 @@
-import { Search, UserPen, X } from 'lucide-react'
 import { Helmet } from 'react-helmet-async'
 
-import { Button } from '@/components/ui/button'
-import { Input } from '@/components/ui/input'
 import {
     Table,
     TableBody,
-    TableCell,
     TableHead,
     TableHeader,
     TableRow,
 } from '@/components/ui/table'
+import { PatitentsTableRow } from './patients-table-row'
+import { PatientsTableFilters } from './patients-table-filters'
 
 export function Patients() {
     return (
         <>
-            <Helmet title="Pedidos" />
+            <Helmet title="Pacientes" />
 
             <div className="flex flex-col gap-4">
                 <h1 className="text-3xl font-bold tracking-tight">Pacientes</h1>
             </div>
             <div className="space-y-2.5">
-                <form className="flex items-center gap-2">
-                    <span className="text-sm font-semibold">Filtros:</span>
-                    <Input placeholder="Nome do cliente" className="h-8 w-[320px]" />
-                </form>
+                <PatientsTableFilters />
 
                 <div className="rounded-md border">
                     <Table>
                         <TableHeader>
-                            <TableRow className="bg-sky-50/60">
+                            <TableRow>
                                 <TableHead className="w-[64px]" />
                                 <TableHead className="w-[140px]">CPF</TableHead>
                                 <TableHead className='w-[160px]'>Paciente</TableHead>
@@ -41,39 +36,9 @@ export function Patients() {
                             </TableRow>
                         </TableHeader>
                         <TableBody>
-                            {Array.from({ length: 8 }).map((_, i) => (
-                                <TableRow key={i}>
-                                    <TableCell>
-                                        <Button variant="outline" size="xs">
-                                            <Search className="h-3 w-3" />
-                                            <span className="sr-only">Detalhes do paciente</span>
-                                        </Button>
-                                    </TableCell>
-
-                                    <TableCell className="font-medium">12332112333</TableCell>
-                                    <TableCell className="font-medium">Paulo Octavio de OliveiraStraforini</TableCell>
-                                    <TableCell className="text-muted-foreground">há 3 dias</TableCell>
-                                    <TableCell className="text-muted-foreground">em 2 dias</TableCell>
-
-                                    <TableCell>
-                                        <div className="flex items-center gap-2">
-                                            <span className="font-medium text-muted-foreground">Em acompanhamento</span>
-                                        </div>
-                                    </TableCell>
-                                    <TableCell>
-                                        <Button variant="outline" size="xs">
-                                            <UserPen className="mr-2 h-3 w-3" />
-                                            Editar
-                                        </Button>
-                                    </TableCell>
-                                    <TableCell>
-                                        <Button variant="ghost" size="xs">
-                                            <X className="mr-2 h-3 w-3" />
-                                            Excluir
-                                        </Button>
-                                    </TableCell>
-                                </TableRow>
-                            ))}
+                            {Array.from({ length: 10 }).map((_, i) => {
+                                return <PatitentsTableRow key={i} />
+                            })}
                         </TableBody>
                     </Table>
                 </div>
