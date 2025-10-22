@@ -48,8 +48,8 @@ export function PatientsTableFilters() {
             </form>
 
             <Dialog>
-                <DialogTrigger asChild>
-                    <Button size="sm" className="gap-2">
+                <DialogTrigger asChild className='cursor-pointer'>
+                    <Button size="xs" className="gap-2">
                         <UserRoundPlus className="w-4 h-4" />
                         Cadastrar paciente
                     </Button>
