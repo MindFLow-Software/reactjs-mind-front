@@ -84,21 +84,7 @@ export function PatientsTableFilters() {
                     <X className="h-4 w-4" />
                     Limpar filtros
                 </Button>
-<<<<<<< HEAD
-            </form>
-
-            <Dialog>
-                <DialogTrigger asChild className='cursor-pointer'>
-                    <Button size="xs" className="gap-2">
-                        <UserRoundPlus className="w-4 h-4" />
-                        Cadastrar paciente
-                    </Button>
-                </DialogTrigger>
-                <RegisterPatients />
-            </Dialog>
-=======
             </div>
->>>>>>> 48e48e94ddc9e9b285ce9110d36c4b6bebac978f
         </div>
     )
 }
