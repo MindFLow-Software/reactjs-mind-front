@@ -9,11 +9,7 @@ import {
     Sparkles,
 } from "lucide-react"
 
-import {
-    Avatar,
-    AvatarFallback,
-    AvatarImage,
-} from "@/components/ui/avatar"
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import {
     DropdownMenu,
     DropdownMenuContent,
@@ -33,25 +29,47 @@ import { useQuery } from "@tanstack/react-query"
 import { api } from "@/lib/axios"
 import { Skeleton } from "@/components/ui/skeleton"
 
-type User = {
-    name: string
-    email: string
-    avatar?: string
+// Tipos que o GetProfileResponse precisa
+import type { Gender } from "@/types/enum-gender"
+import type { Expertise, PsychologistRole } from "@/types/expertise"
+
+// Definições da API e tipo (como você forneceu)
+interface GetProfileResponse {
+    firstName: string
+    lastName: string
+    phoneNumber: string
+    cpf: string
+    dateOfBirth: Date | string
+    role: PsychologistRole
+    gender: Gender
+    expertise: Expertise
+    isActive?: boolean
+    email?: string
+    password?: string
+    profileImageUrl?: string
+    crp?: string
 }
 
-async function GetProfile(): Promise<User> {
-    const response = await api.get("/session/profile") // ⚡ endpoint do usuário autenticado
+export async function getProfile() {
+    const response = await api.get<GetProfileResponse>("/psychologists/me")
     return response.data
 }
 
+// Componente NavUser
 export function NavUser() {
     const { isMobile } = useSidebar()
 
-    const { data: user, isLoading } = useQuery({
-        queryKey: ["profile"],
-        queryFn: GetProfile,
+    const { data: profile, isLoading } = useQuery<GetProfileResponse>({
+        queryKey: ["psychologist-profile"],
+        queryFn: getProfile,
         retry: false,
     })
+
+    const avatar = profile?.profileImageUrl || undefined
+    const name = profile
+        ? `${profile.firstName} ${profile.lastName}`
+        : "Carregando..."
+    const initials = profile?.firstName?.[0]?.toUpperCase() || "?"
 
     return (
         <SidebarMenu>
@@ -66,11 +84,11 @@ export function NavUser() {
                             <Avatar className="h-8 w-8 rounded-lg">
                                 {isLoading ? (
                                     <Skeleton className="h-8 w-8 rounded-lg" />
-                                ) : user?.avatar ? (
-                                    <AvatarImage src={user.avatar} alt={user.name} />
+                                ) : avatar ? (
+                                    <AvatarImage src={avatar} alt={name} />
                                 ) : (
                                     <AvatarFallback className="rounded-lg">
-                                        {user?.name?.[0] || "?"}
+                                        {initials}
                                     </AvatarFallback>
                                 )}
                             </Avatar>
@@ -83,8 +101,10 @@ export function NavUser() {
                                     </>
                                 ) : (
                                     <>
-                                        <span className="truncate font-medium">{user?.name}</span>
-                                        <span className="truncate text-xs">{user?.email}</span>
+                                        <span className="truncate font-medium">{name}</span>
+                                        <span className="truncate text-xs text-muted-foreground">
+                                            {profile?.email}
+                                        </span>
                                     </>
                                 )}
                             </div>
@@ -93,7 +113,7 @@ export function NavUser() {
                         </SidebarMenuButton>
                     </DropdownMenuTrigger>
 
-                    {!isLoading && (
+                    {!isLoading && profile && (
                         <DropdownMenuContent
                             className="w-(--radix-dropdown-menu-trigger-width) min-w-56 rounded-lg"
                             side={isMobile ? "bottom" : "right"}
@@ -103,22 +123,25 @@ export function NavUser() {
                             <DropdownMenuLabel className="p-0 font-normal">
                                 <div className="flex items-center gap-2 px-1 py-1.5 text-left text-sm">
                                     <Avatar className="h-8 w-8 rounded-lg">
-                                        {user?.avatar ? (
-                                            <AvatarImage src={user.avatar} alt={user.name} />
+                                        {avatar ? (
+                                            <AvatarImage src={avatar} alt={name} />
                                         ) : (
                                             <AvatarFallback className="rounded-lg">
-                                                {user?.name?.[0] || "?"}
+                                                {initials}
                                             </AvatarFallback>
                                         )}
                                     </Avatar>
                                     <div className="grid flex-1 text-left text-sm leading-tight">
-                                        <span className="truncate font-medium">{user?.name}</span>
-                                        <span className="truncate text-xs">{user?.email}</span>
+                                        <span className="truncate font-medium">{name}</span>
+                                        <span className="truncate text-xs text-muted-foreground">
+                                            {profile.email}
+                                        </span>
                                     </div>
                                 </div>
                             </DropdownMenuLabel>
 
                             <DropdownMenuSeparator />
+
                             <DropdownMenuGroup>
                                 <DropdownMenuItem>
                                     <Sparkles />
@@ -127,6 +150,7 @@ export function NavUser() {
                             </DropdownMenuGroup>
 
                             <DropdownMenuSeparator />
+
                             <DropdownMenuGroup>
                                 <DropdownMenuItem>
                                     <BadgeCheck />
