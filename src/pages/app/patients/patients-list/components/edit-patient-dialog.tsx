@@ -1,12 +1,13 @@
 "use client"
 
-import type React from "react"
 import { useState } from "react"
+import { useMutation, useQueryClient } from "@tanstack/react-query"
 import { format } from "date-fns"
 import { ptBR } from "date-fns/locale"
 import { CloudDownload } from "lucide-react"
+import { toast } from "sonner"
 
-import { DialogContent, DialogDescription, DialogHeader, DialogTitle } from "@/components/ui/dialog"
+import { DialogDescription, DialogHeader, DialogTitle } from "@/components/ui/dialog"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Button } from "@/components/ui/button"
@@ -27,69 +28,74 @@ interface EditPatientProps {
 }
 
 export function EditPatient({ patient, onClose }: EditPatientProps) {
-    const [date, setDate] = useState<Date | undefined>(patient.dateOfBirth ? new Date(patient.dateOfBirth) : undefined)
+    const queryClient = useQueryClient()
+
+    const [date, setDate] = useState<Date | undefined>(
+        patient.dateOfBirth ? new Date(patient.dateOfBirth) : undefined
+    )
     const [cpf, setCpf] = useState(patient.cpf ?? "")
     const [phone, setPhone] = useState(patient.phoneNumber ?? "")
     const [cep, setCep] = useState("")
     const [gender, setGender] = useState<Gender | "">(patient.gender ?? "")
-    const [isActive, setIsActive] = useState(patient.isActive ?? true)
-    const [loading, setLoading] = useState(false)
-    const [error, setError] = useState<string | null>(null)
 
-    const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
-        e.preventDefault()
-        setLoading(true)
-        setError(null)
+    const { mutateAsync: updatePatientFn, isPending } = useMutation({
+        mutationFn: updatePatient,
+        onSuccess: () => {
+            queryClient.invalidateQueries({ queryKey: ["patients"] })
 
-        try {
-            const form = e.currentTarget
-            const formData = new FormData(form)
-
-            const data: UpdatePatientData = {
-                id: patient.id,
-                firstName: formData.get("firstName") as string || undefined,
-                lastName: formData.get("lastName") as string || undefined,
-                email: (formData.get("email") as string) || undefined,
-                password: (formData.get("password") as string) || undefined,
-                phoneNumber: phone || undefined,
-                dateOfBirth: date,
-                cpf: cpf || undefined,
-                gender: gender || undefined,
-                isActive,
-                profileImageUrl: (formData.get("profileImageUrl") as string) || undefined,
-            }
-
-            await updatePatient(data)
-            alert("Paciente atualizado com sucesso!")
+            toast.success("Paciente atualizado com sucesso!")
             onClose?.()
-        } catch (err: any) {
-            setError(err?.response?.data?.message || "Erro ao atualizar paciente")
-        } finally {
-            setLoading(false)
+        },
+        onError: (err: any) => {
+            toast.error(err?.response?.data?.message || "Erro ao atualizar paciente")
+        },
+    })
+
+
+    async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
+        e.preventDefault()
+
+        const form = e.currentTarget
+        const formData = new FormData(form)
+
+        const data: UpdatePatientData = {
+            id: patient.id,
+            firstName: (formData.get("firstName") as string) || undefined,
+            lastName: (formData.get("lastName") as string) || undefined,
+            email: (formData.get("email") as string) || undefined,
+            password: (formData.get("password") as string) || undefined,
+            phoneNumber: phone || undefined,
+            dateOfBirth: date,
+            cpf: cpf || undefined,
+            gender: gender || undefined,
+            profileImageUrl: (formData.get("profileImageUrl") as string) || undefined,
         }
+
+        await updatePatientFn(data)
     }
 
     return (
-        <DialogContent className="max-h-[85vh] max-w-2xl overflow-y-auto">
+        <div className="overflow-y-auto">
             <DialogHeader>
                 <DialogTitle>Editar Paciente</DialogTitle>
-                <DialogDescription>Atualize as informações do paciente abaixo</DialogDescription>
+                <DialogDescription>
+                    Atualize as informações do paciente abaixo
+                </DialogDescription>
             </DialogHeader>
 
-            <form className="space-y-6" onSubmit={handleSubmit}>
+            <form className="space-y-6 mt-4" onSubmit={handleSubmit}>
                 <div className="space-y-4">
                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                        {/* Nome */}
                         <div className="space-y-2">
                             <Label htmlFor="firstName">Primeiro Nome</Label>
                             <Input id="firstName" name="firstName" defaultValue={patient.firstName} maxLength={30} />
                         </div>
+
                         <div className="space-y-2">
                             <Label htmlFor="lastName">Último Nome</Label>
                             <Input id="lastName" name="lastName" defaultValue={patient.lastName} maxLength={50} />
                         </div>
 
-                        {/* CPF */}
                         <div className="space-y-2">
                             <Label htmlFor="cpf">CPF</Label>
                             <Input
@@ -102,7 +108,6 @@ export function EditPatient({ patient, onClose }: EditPatientProps) {
                             />
                         </div>
 
-                        {/* Data de Nascimento */}
                         <div className="space-y-2">
                             <Label htmlFor="birthDate">Data de Nascimento</Label>
                             <Popover>
@@ -164,9 +169,8 @@ export function EditPatient({ patient, onClose }: EditPatientProps) {
                     </div>
                 </div>
 
-                {/* Gênero e Status */}
+                {/* Gênero */}
                 <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-                    {/* Gênero */}
                     <div className="space-y-2">
                         <Label htmlFor="gender">Gênero</Label>
                         <Select value={gender} onValueChange={(value) => setGender(value as Gender)}>
@@ -180,26 +184,17 @@ export function EditPatient({ patient, onClose }: EditPatientProps) {
                             </SelectContent>
                         </Select>
                     </div>
-
-                    {/* Ativo */}
-                    <div className="space-y-2">
-                        <Label htmlFor="isActive">Ativo?</Label>
-                        <Select value={isActive ? "true" : "false"} onValueChange={(v) => setIsActive(v === "true")}>
-                            <SelectTrigger>
-                                <SelectValue placeholder="Selecione" />
-                            </SelectTrigger>
-                            <SelectContent>
-                                <SelectItem value="true">Sim</SelectItem>
-                                <SelectItem value="false">Não</SelectItem>
-                            </SelectContent>
-                        </Select>
-                    </div>
                 </div>
 
                 {/* URL da Foto */}
                 <div className="space-y-2">
                     <Label htmlFor="profileImageUrl">URL da Foto</Label>
-                    <Input id="profileImageUrl" name="profileImageUrl" defaultValue={patient.profileImageUrl} placeholder="https://exemplo.com/foto.jpg" />
+                    <Input
+                        id="profileImageUrl"
+                        name="profileImageUrl"
+                        defaultValue={patient.profileImageUrl}
+                        placeholder="https://exemplo.com/foto.jpg"
+                    />
                 </div>
 
                 {/* Upload */}
@@ -210,7 +205,9 @@ export function EditPatient({ patient, onClose }: EditPatientProps) {
                                 <CloudDownload className="h-8 w-8" />
                             </EmptyMedia>
                             <EmptyTitle className="text-base">Sem Documentos</EmptyTitle>
-                            <EmptyDescription className="text-sm">Faça o upload dos documentos do paciente</EmptyDescription>
+                            <EmptyDescription className="text-sm">
+                                Faça o upload dos documentos do paciente
+                            </EmptyDescription>
                         </EmptyHeader>
                         <EmptyContent>
                             <Button variant="outline" size="sm" type="button">
@@ -220,15 +217,12 @@ export function EditPatient({ patient, onClose }: EditPatientProps) {
                     </Empty>
                 </div>
 
-                {/* Botão Atualizar */}
                 <div className="pt-2">
-                    <Button type="submit" className="w-full" disabled={loading}>
-                        {loading ? "Atualizando..." : "Atualizar paciente"}
+                    <Button type="submit" className="w-full" disabled={isPending}>
+                        {isPending ? "Atualizando..." : "Atualizar paciente"}
                     </Button>
                 </div>
-
-                {error && <p className="text-red-500 mt-2">{error}</p>}
             </form>
-        </DialogContent>
+        </div>
     )
 }

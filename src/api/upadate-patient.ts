@@ -2,7 +2,6 @@ import { api } from "@/lib/axios"
 import type { Gender } from "@/types/enum-gender"
 
 export interface UpdatePatientData {
-    isActive: boolean
     id: string
     firstName?: string
     lastName?: string
@@ -17,8 +16,18 @@ export interface UpdatePatientData {
 }
 
 export async function updatePatient({ id, ...data }: UpdatePatientData) {
+    const formattedData = {
+        ...data,
+        dateOfBirth:
+            data.dateOfBirth instanceof Date
+                ? data.dateOfBirth.toISOString()
+                : data.dateOfBirth,
+    }
+
     const payload = Object.fromEntries(
-        Object.entries(data).filter(([_, value]) => value !== undefined)
+        Object.entries(formattedData).filter(
+            ([_, value]) => value !== undefined && value !== null
+        )
     )
 
     const response = await api.put(`/patients/${id}`, payload)

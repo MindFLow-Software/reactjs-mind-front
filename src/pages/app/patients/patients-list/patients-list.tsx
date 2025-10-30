@@ -20,6 +20,7 @@ export function PatientsList() {
     const { data, isLoading, isError } = useQuery({
         queryKey: ["patients"],
         queryFn: getPatients,
+        staleTime: 1000,
     })
 
     if (isLoading) {
