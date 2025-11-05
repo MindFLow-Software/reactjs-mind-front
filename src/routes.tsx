@@ -7,6 +7,7 @@ import { Dashboard } from './pages/app/dashboard/dashboard'
 import { NotFound } from './pages/404'
 import { SignIn } from './pages/auth/sign-in'
 import { SignUp } from './pages/auth/sign-up'
+import { VideoRoom } from './pages/app/video-room/video-room'
 
 export const router = createBrowserRouter([
   {
@@ -21,6 +22,10 @@ export const router = createBrowserRouter([
       {
         path: '/patients-list',
         element: <PatientsList />,
+      },
+      {
+        path: '/video-room',
+        element: <VideoRoom/>,
       },
     ],
   },

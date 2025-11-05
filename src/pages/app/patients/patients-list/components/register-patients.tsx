@@ -4,7 +4,7 @@ import { useState } from "react"
 import { useMutation, useQueryClient } from "@tanstack/react-query"
 import { format } from "date-fns"
 import { ptBR } from "date-fns/locale"
-import { CloudDownload } from "lucide-react"
+import { ChevronDownIcon, CloudDownload } from "lucide-react"
 import { toast } from "sonner"
 
 import { DialogContent, DialogDescription, DialogHeader, DialogTitle } from "@/components/ui/dialog"
@@ -138,18 +138,29 @@ export function RegisterPatients() {
 
                         {/* Data de Nascimento */}
                         <div className="space-y-2">
-                            <Label htmlFor="birthDate">Data de Nascimento</Label>
+                            <Label htmlFor="birthDate" className="px-1">
+                                Data de Nascimento
+                            </Label>
+
                             <Popover>
                                 <PopoverTrigger asChild>
-                                    <Button variant="outline" className="w-full justify-start text-left font-normal bg-transparent">
+                                    <Button
+                                        variant="outline"
+                                        className="w-full justify-between font-normal bg-transparent"
+                                    >
                                         {date ? format(date, "dd/MM/yyyy", { locale: ptBR }) : "Selecione a data"}
+                                        <ChevronDownIcon className="ml-2 h-4 w-4 opacity-50" />
                                     </Button>
                                 </PopoverTrigger>
-                                <PopoverContent className="w-auto p-0" align="start">
+
+                                <PopoverContent className="w-auto overflow-hidden p-0" align="start">
                                     <Calendar
                                         mode="single"
+                                        captionLayout="dropdown"
                                         selected={date}
-                                        onSelect={setDate}
+                                        onSelect={(selectedDate) => {
+                                            setDate(selectedDate)
+                                        }}
                                         fromYear={1900}
                                         toYear={new Date().getFullYear()}
                                         locale={ptBR}

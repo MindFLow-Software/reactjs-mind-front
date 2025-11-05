@@ -1,20 +1,16 @@
 "use client"
 
+import { useEffect, useState } from "react"
 import { BarChart } from "lucide-react"
 import { Cell, Pie, PieChart, ResponsiveContainer, Tooltip } from "recharts"
 import colors from "tailwindcss/colors"
-
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
+import { api } from "@/lib/axios"
 
-// 🔹 Dados de pacientes por faixa etária
-const data = [
-    { ageRange: "0-12 anos", patients: 8 },
-    { ageRange: "13-17 anos", patients: 15 },
-    { ageRange: "18-25 anos", patients: 32 },
-    { ageRange: "26-40 anos", patients: 46 },
-    { ageRange: "41-60 anos", patients: 28 },
-    { ageRange: "60+ anos", patients: 10 },
-]
+interface AgeStats {
+    ageRange: string
+    patients: number
+}
 
 const COLORS = [
     colors.sky[400],
@@ -25,13 +21,10 @@ const COLORS = [
     colors.orange[400],
 ]
 
-const totalPatients = data.reduce((sum, item) => sum + item.patients, 0)
-
-function CustomTooltip({ active, payload }: any) {
+function CustomTooltip({ active, payload, total }: any) {
     if (active && payload && payload.length) {
         const data = payload[0]
-        const percentage = ((data.value / totalPatients) * 100).toFixed(1)
-
+        const percentage = ((data.value / total) * 100).toFixed(1)
         return (
             <div className="rounded-lg border bg-background p-3 shadow-lg">
                 <p className="font-medium text-sm mb-1">{data.name}</p>
@@ -45,6 +38,33 @@ function CustomTooltip({ active, payload }: any) {
 }
 
 export function PatientsByAgeChart() {
+    const [data, setData] = useState<AgeStats[]>([])
+    const [loading, setLoading] = useState(true)
+
+    useEffect(() => {
+        async function fetchAgeStats() {
+            try {
+                const response = await api.get<AgeStats[]>("/patients/stats/age")
+                setData(response.data)
+            } catch (error) {
+                console.error("Erro ao buscar estatísticas de idade:", error)
+            } finally {
+                setLoading(false)
+            }
+        }
+        fetchAgeStats()
+    }, [])
+
+    if (loading) {
+        return (
+            <Card className="col-span-2 flex items-center justify-center h-[300px]">
+                <p className="text-sm text-muted-foreground">Carregando dados...</p>
+            </Card>
+        )
+    }
+
+    const totalPatients = data.reduce((sum, item) => sum + item.patients, 0)
+
     return (
         <Card className="col-span-2">
             <CardHeader className="pb-8">
@@ -94,17 +114,17 @@ export function PatientsByAgeChart() {
                             {data.map((_, index) => (
                                 <Cell
                                     key={`cell-${index}`}
-                                    fill={COLORS[index]}
+                                    fill={COLORS[index % COLORS.length]}
                                     className="stroke-background hover:opacity-80 transition-opacity cursor-pointer"
                                     strokeWidth={8}
                                 />
                             ))}
                         </Pie>
-                        <Tooltip content={<CustomTooltip />} />
+                        <Tooltip content={<CustomTooltip total={totalPatients} />} />
                     </PieChart>
                 </ResponsiveContainer>
 
-                <div className="mt-6 grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-4 place-items-center">
+                <div className="mt-6 grid grid-cols-5 sm:grid-cols-3 lg:grid-cols-5 gap-4 place-items-center">
                     {data.map((item, index) => {
                         const percentage = ((item.patients / totalPatients) * 100).toFixed(1)
                         return (
@@ -114,9 +134,9 @@ export function PatientsByAgeChart() {
                             >
                                 <div
                                     className="h-3 w-3 rounded-sm"
-                                    style={{ backgroundColor: COLORS[index] }}
+                                    style={{ backgroundColor: COLORS[index % COLORS.length] }}
                                 />
-                                <p className="text-xs font-medium text-foreground truncate max-w-[80px]">
+                                <p className="text-xs font-medium text-foreground truncate">
                                     {item.ageRange}
                                 </p>
                                 <p className="text-xs text-muted-foreground">
@@ -126,7 +146,6 @@ export function PatientsByAgeChart() {
                         )
                     })}
                 </div>
-
             </CardContent>
         </Card>
     )
