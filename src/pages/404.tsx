@@ -1,11 +1,11 @@
-import { Home, ArrowLeft } from "lucide-react"
+import { Home } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Link } from "react-router-dom"
 import { Brain } from "@phosphor-icons/react";
 
 export function NotFound() {
     return (
-        <div className="flex min-h-screen flex-col items-center justify-center bg-gradient-to-b from-background to-muted/20 px-4">
+        <div className="flex min-h-screen flex-col items-center justify-center bg-linear-to-b from-background to-muted/20 px-4">
             <div className="mx-auto max-w-md text-center space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-1000">
                 <div className="flex justify-center">
                     <div className="relative">
@@ -32,12 +32,6 @@ export function NotFound() {
                         <Link to="/">
                             <Home className="h-4 w-4" />
                             Voltar ao Dashboard
-                        </Link>
-                    </Button>
-                    <Button asChild variant="outline" size="lg" className="gap-2 bg-transparent">
-                        <Link to="javascript:history.back()">
-                            <ArrowLeft className="h-4 w-4" />
-                            Página Anterior
                         </Link>
                     </Button>
                 </div>

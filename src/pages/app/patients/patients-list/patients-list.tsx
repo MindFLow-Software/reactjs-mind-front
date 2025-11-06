@@ -64,11 +64,11 @@ export function PatientsList() {
                         <Table>
                             <TableHeader>
                                 <TableRow>
-                                    <TableHead className="w-[64px]" />
+                                    <TableHead className="w-16" />
                                     <TableHead className="w-[140px]">CPF</TableHead>
-                                    <TableHead className="w-[160px]">Paciente</TableHead>
+                                    <TableHead className="w-40">Paciente</TableHead>
                                     <TableHead className="w-[140px]">Telefone</TableHead>
-                                    <TableHead className="w-[160px]">Data de Nascimento</TableHead>
+                                    <TableHead className="w-40">Data de Nascimento</TableHead>
                                     <TableHead className="w-[140px]">Email</TableHead>
                                     <TableHead className="w-[140px]">Gênero</TableHead>
                                     <TableHead className="w-[140px]">Status</TableHead>

@@ -8,6 +8,7 @@ import { NotFound } from './pages/404'
 import { SignIn } from './pages/auth/sign-in'
 import { SignUp } from './pages/auth/sign-up'
 import { VideoRoom } from './pages/app/video-room/video-room'
+import { AppointmentsPage } from './pages/app/appointment/appointment-list'
 
 export const router = createBrowserRouter([
   {
@@ -25,7 +26,11 @@ export const router = createBrowserRouter([
       },
       {
         path: '/video-room',
-        element: <VideoRoom/>,
+        element: <VideoRoom />,
+      },
+      {
+        path: '/appointment',
+        element: <AppointmentsPage />,
       },
     ],
   },

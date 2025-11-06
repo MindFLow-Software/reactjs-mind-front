@@ -71,8 +71,8 @@ const navMain = [
         url: "#",
         icon: BookOpen,
         items: [
-            { title: "Agendar Consultas", url: "#" },
-            { title: "Video Conferência", url: "/video-roo" },
+            { title: "Agendar Consultas", url: "/appointment" },
+            { title: "Video Conferência", url: "/video-room" },
             { title: "Histórico de Sessões", url: "#" },
         ],
     },
