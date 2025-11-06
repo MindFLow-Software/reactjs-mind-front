@@ -60,7 +60,7 @@ const navMain = [
         url: "#",
         icon: Users2,
         items: [
-            { title: "Lista de Pacientes", url: "/patients-list" },
+            { title: "Cadastro de Pacientes", url: "/patients-list" },
             { title: "Prontuários", url: "#" },
         ],
     },
