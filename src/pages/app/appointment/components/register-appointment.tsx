@@ -1,3 +1,5 @@
+"use client"
+
 import { useState, useEffect } from "react"
 import { useMutation, useQueryClient } from "@tanstack/react-query"
 import { format } from "date-fns"
@@ -14,7 +16,13 @@ import {
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Textarea } from "@/components/ui/textarea"
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
+import {
+    Select,
+    SelectContent,
+    SelectItem,
+    SelectTrigger,
+    SelectValue,
+} from "@/components/ui/select"
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover"
 import { Calendar } from "@/components/ui/calendar"
 
@@ -26,6 +34,7 @@ export function RegisterAppointment() {
     const [date, setDate] = useState<Date | undefined>()
     const [patients, setPatients] = useState<{ id: string; name: string }[]>([])
     const [selectedPatient, setSelectedPatient] = useState("")
+    const [notes, setNotes] = useState("")
 
     useEffect(() => {
         const fetchPatients = async () => {
@@ -57,7 +66,6 @@ export function RegisterAppointment() {
         const formData = new FormData(e.currentTarget)
         const psychologistId = formData.get("psychologistId") as string
         const diagnosis = formData.get("diagnosis") as string
-        const notes = (formData.get("notes") as string) || undefined
 
         if (!selectedPatient) {
             toast.error("Selecione um paciente.")
@@ -72,7 +80,7 @@ export function RegisterAppointment() {
             patientId: selectedPatient,
             psychologistId,
             diagnosis,
-            notes,
+            notes: notes || undefined,
             scheduledAt: date,
             status: "SCHEDULED",
         }
@@ -81,6 +89,7 @@ export function RegisterAppointment() {
         e.currentTarget.reset()
         setDate(undefined)
         setSelectedPatient("")
+        setNotes("")
     }
 
     return (
@@ -88,15 +97,17 @@ export function RegisterAppointment() {
             <DialogHeader>
                 <DialogTitle>Novo Agendamento</DialogTitle>
                 <DialogDescription>
-                    Preencha as informações para criar um novo agendamento
+                    Preencha as informações abaixo para criar um novo agendamento
                 </DialogDescription>
             </DialogHeader>
 
             <form onSubmit={handleSubmit} className="space-y-6">
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <div className="space-y-4">
                     {/* Paciente */}
                     <div className="space-y-2">
-                        <label className="text-sm font-medium">Paciente</label>
+                        <label htmlFor="patient" className="text-sm font-medium">
+                            Paciente
+                        </label>
                         <Select value={selectedPatient} onValueChange={setSelectedPatient}>
                             <SelectTrigger className="w-full">
                                 <SelectValue placeholder="Selecione o paciente" />
@@ -118,18 +129,24 @@ export function RegisterAppointment() {
                     </div>
 
                     {/* Diagnóstico */}
-                    <div className="space-y-2 sm:col-span-2">
-                        <label className="text-sm font-medium">Diagnóstico</label>
+                    <div className="space-y-2">
+                        <label htmlFor="diagnosis" className="text-sm font-medium">
+                            Diagnóstico
+                        </label>
                         <Input
+                            id="diagnosis"
                             name="diagnosis"
                             placeholder="ex: Ansiedade generalizada"
                             required
+                            maxLength={90}
                         />
                     </div>
 
-                    {/* Data da Consulta */}
-                    <div className="space-y-2 sm:col-span-2">
-                        <label className="text-sm font-medium">Data e Hora</label>
+                    {/* Data e Hora */}
+                    <div className="space-y-2">
+                        <label htmlFor="date" className="text-sm font-medium">
+                            Data e Hora
+                        </label>
                         <Popover>
                             <PopoverTrigger asChild>
                                 <Button
@@ -142,7 +159,8 @@ export function RegisterAppointment() {
                                     <ChevronDownIcon className="ml-2 h-4 w-4 opacity-50" />
                                 </Button>
                             </PopoverTrigger>
-                            <PopoverContent className="w-auto p-0" align="start">
+
+                            <PopoverContent className="w-auto overflow-hidden p-0" align="start">
                                 <Calendar
                                     mode="single"
                                     selected={date}
@@ -151,7 +169,7 @@ export function RegisterAppointment() {
                                     toYear={new Date().getFullYear() + 1}
                                     locale={ptBR}
                                 />
-                                <div className="border-t p-3">
+                                <div className="border-t p-3 bg-muted/40">
                                     <Input
                                         type="time"
                                         className="w-full"
@@ -171,15 +189,36 @@ export function RegisterAppointment() {
                     </div>
 
                     {/* Notas */}
-                    <div className="space-y-2 sm:col-span-2">
-                        <label className="text-sm font-medium">Notas (opcional)</label>
-                        <Textarea name="notes" placeholder="Adicione observações..." rows={3} />
+                    <div className="space-y-2">
+                        <label htmlFor="notes" className="text-sm font-medium">
+                            Notas (opcional)
+                        </label>
+                        <Textarea
+                            id="notes"
+                            name="notes"
+                            placeholder="Adicione observações..."
+                            value={notes}
+                            onChange={(e) => setNotes(e.target.value)}
+                            maxLength={255}
+                            rows={4}
+                            className="w-full resize-none overflow-y-auto wrap-break-word whitespace-pre-wrap"
+                            style={{
+                                wordWrap: "break-word",
+                                overflowWrap: "break-word",
+                                whiteSpace: "pre-wrap",
+                            }}
+                        />
+                        <div className="text-xs text-muted-foreground text-right">
+                            {notes.length}/255 caracteres
+                        </div>
                     </div>
                 </div>
 
-                <Button type="submit" className="w-full" disabled={isPending}>
-                    {isPending ? "Criando..." : "Criar Agendamento"}
-                </Button>
+                <div className="pt-2">
+                    <Button type="submit" className="w-full" disabled={isPending}>
+                        {isPending ? "Criando..." : "Criar Agendamento"}
+                    </Button>
+                </div>
             </form>
         </DialogContent>
     )
