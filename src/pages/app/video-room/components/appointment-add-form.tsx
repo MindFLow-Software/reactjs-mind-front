@@ -3,75 +3,125 @@
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
-import { Plus, CheckCircle2 } from "lucide-react"
-
-const availableProcedures = [
-  { id: "1", name: "Consulta Inicial" },
-  { id: "2", name: "Sessão de Acompanhamento" },
-  { id: "3", name: "Procedimento Padrão A" },
-  { id: "4", name: "Avaliação de Progresso" },
-]
+import { CheckCircle2, User, Loader2 } from "lucide-react"
+import { useQuery } from "@tanstack/react-query"
+import { useMemo } from "react"
+import { getPatients } from "@/api/get-patients"
+import { useMutation, useQueryClient } from "@tanstack/react-query"
+import { startAppointment } from "@/api/start-appointment"
 
 interface AppointmentAddFormProps {
-  selectedProcedure: string
-  onSelectProcedure: (value: string) => void
-  onAddItem: (procedure: string) => void
+  selectedPatientId: string
+  onSelectPatient: (patientId: string) => void
+
+  currentAppointmentId: string // ID do agendamento atual (necessário para iniciar)
   onFinishSession: () => void
 }
 
 export function AppointmentAddForm({
-  selectedProcedure,
-  onSelectProcedure,
-  onAddItem,
+  selectedPatientId,
+  onSelectPatient,
+  currentAppointmentId,
   onFinishSession,
 }: AppointmentAddFormProps) {
-  const handleAdd = () => {
-    const procedure = availableProcedures.find((p) => p.id === selectedProcedure)
-    if (procedure) {
-      onAddItem(procedure.name)
+
+  const queryClient = useQueryClient()
+
+  const startSessionMutation = useMutation({
+    mutationFn: startAppointment,
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['appointments'] })
+    },
+    onError: (error) => {
+      console.error("Erro ao iniciar sessão:", error);
+    },
+  })
+
+  // 🖱️ Handler para o botão INICIAR SESSÃO
+  const handleStartSession = () => {
+    if (currentAppointmentId) {
+      startSessionMutation.mutate(currentAppointmentId)
     }
   }
+
+  // Busca de Pacientes
+  const { data: responseData, isLoading: isPatientsLoading, isError: isPatientsError } = useQuery({
+    queryKey: ['all-psychologist-patients'],
+    queryFn: getPatients,
+    staleTime: 1000 * 60 * 5,
+  })
+
+  const patientOptions = useMemo(() => {
+    const patients = responseData?.patients || responseData || [];
+    if (!Array.isArray(patients)) return [];
+
+    return patients.map((patient: any) => ({
+      id: patient.id,
+      name: `${patient.firstName} ${patient.lastName}`,
+    }));
+  }, [responseData]);
+
+  const loadingOrErrorState = isPatientsLoading || isPatientsError;
+  const isMutationPending = startSessionMutation.isPending;
+
+  // Determina o estado da sessão (simulado, deve ser substituído pelo status real do agendamento)
+  const isSessionStarted = false;
+
 
   return (
     <Card className="lg:col-span-1">
       <CardHeader>
         <CardTitle className="flex items-center gap-2">
-          <Plus className="w-5 h-5" />
-          Adicionar Procedimento
+          <User className="w-5 h-5" />
+          Selecionar Paciente
         </CardTitle>
-        <CardDescription>Selecione e adicione um novo procedimento à sessão</CardDescription>
+        <CardDescription>Selecione o paciente para iniciar a sessão.</CardDescription>
       </CardHeader>
+
       <CardContent className="space-y-4">
+
+        {/* 🔑 Select de Pacientes */}
         <div className="space-y-2">
-          <label className="text-sm font-medium">Procedimento</label>
-          <Select value={selectedProcedure} onValueChange={onSelectProcedure}>
+          <label className="text-sm font-medium">Paciente</label>
+          <Select
+            value={selectedPatientId}
+            onValueChange={onSelectPatient}
+            disabled={loadingOrErrorState}
+          >
             <SelectTrigger>
-              <SelectValue placeholder="Selecione um procedimento..." />
+              {isPatientsLoading && <Loader2 className="w-4 h-4 mr-2 animate-spin" />}
+              <SelectValue placeholder={isPatientsLoading ? "Carregando pacientes..." : "Selecione um paciente..."} />
             </SelectTrigger>
             <SelectContent>
-              {availableProcedures.map((item) => (
+              {patientOptions.map((item) => (
                 <SelectItem key={item.id} value={item.id}>
                   {item.name}
                 </SelectItem>
               ))}
+              {isPatientsError && (
+                <SelectItem value="error" disabled>Erro ao carregar</SelectItem>
+              )}
             </SelectContent>
           </Select>
         </div>
 
-        <Button onClick={handleAdd} disabled={!selectedProcedure} className="w-full">
-          <Plus className="w-4 h-4 mr-2" />
-          Adicionar Procedimento
-        </Button>
-
         <div className="my-4 border-t" />
 
+        {/* 🔑 Botão INICIAR/FINALIZAR SESSÃO */}
         <Button
-          onClick={onFinishSession}
-          variant="outline"
-          className="w-full border-green-200 text-green-700 hover:bg-green-50 hover:text-green-800 bg-transparent"
+          onClick={isSessionStarted ? onFinishSession : handleStartSession}
+          // Exige que um paciente e um currentAppointmentId válido estejam selecionados
+          disabled={!selectedPatientId || isMutationPending || !currentAppointmentId}
+          size="sm"
+          className="gap-2 w-full shrink-0 cursor-pointer"
+          variant={isSessionStarted ? "outline" : "default"}
         >
-          <CheckCircle2 className="w-4 h-4 mr-2" />
-          Finalizar Sessão
+          {isMutationPending ? (
+            <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+          ) : (
+            <CheckCircle2 className="w-4 h-4 mr-2" />
+          )}
+          {isSessionStarted ? 'Finalizar Sessão' : 'Iniciar à Sessão'}
         </Button>
       </CardContent>
     </Card>

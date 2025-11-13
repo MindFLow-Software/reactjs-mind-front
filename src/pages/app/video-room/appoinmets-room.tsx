@@ -1,12 +1,14 @@
 "use client"
 
-import { useState } from "react"
+import { useState, useCallback } from "react"
 import { Helmet } from "react-helmet-async"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Textarea } from "@/components/ui/textarea"
 import { AppointmentAddForm } from "./components/appointment-add-form"
 import { VideoRoomMock } from "./components/video-room"
+import { useQuery } from "@tanstack/react-query"
+import { getScheduledAppointment } from "@/api/get-scheduled-appointment"
 
 
 export interface SessionItem {
@@ -17,38 +19,43 @@ export interface SessionItem {
 }
 
 export function AppointmentsRoom() {
-    const [selectedProcedure, setSelectedProcedure] = useState("")
+    const [selectedPatientId, setSelectedPatientId] = useState("")
     const [notes, setNotes] = useState("")
-    const [sessionItems, setSessionItems] = useState<SessionItem[]>([
-        { id: 1, procedure: "Consulta Inicial", duration: "60 min", status: "Concluído" },
-        { id: 2, procedure: "Aconselhamento Breve", duration: "20 min", status: "Em Andamento" },
-    ])
 
-    const handleAddItem = (procedure: string) => {
-        const newItem: SessionItem = {
-            id: sessionItems.length + 1,
-            procedure,
-            duration: "N/A",
-            status: "Em Andamento",
+    const { data: activeAppointmentData, isLoading: isAppointmentLoading } = useQuery({
+        queryKey: ['activeAppointment', selectedPatientId],
+        queryFn: () => getScheduledAppointment(selectedPatientId),
+        enabled: !!selectedPatientId,
+        retry: false,
+    })
+
+    const currentAppointmentId = activeAppointmentData?.appointmentId || "";
+
+
+
+    const handleFinishSession = useCallback(() => {
+        if (!currentAppointmentId) {
+            console.error("ERRO: Agendamento não ativo.");
+            return;
         }
-        setSessionItems([...sessionItems, newItem])
-        setSelectedProcedure("")
-    }
+        // 🚨 Lógica futura: Chamar a API de Finalizar Sessão (PATCH /appointments/:id/end)
+        console.log(`Sessão finalizada para o Agendamento ID: ${currentAppointmentId}.`);
 
-    const handleFinishSession = () => {
-        console.log("Sessão finalizada com anotações:", notes)
-    }
+    }, [currentAppointmentId, notes])
 
-    const MAX_LENGTH = 5000;
+    const MAX_LENGTH = 8000;
     const handleNotesChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
         let value = e.target.value;
-
         if (value.length > MAX_LENGTH) {
             value = value.substring(0, MAX_LENGTH);
         }
-
         setNotes(value);
     };
+
+    const handleSelectPatient = useCallback((patientId: string) => {
+        setSelectedPatientId(patientId);
+        // O useQuery (passo 1) é acionado automaticamente aqui.
+    }, [])
 
 
     return (
@@ -63,19 +70,17 @@ export function AppointmentsRoom() {
                 <div className="grid grid-cols-1 gap-4 lg:grid-cols-1">
                     <div className="lg:col-span-1">
                         <VideoRoomMock />
-
                     </div>
                 </div>
-
-
 
                 <div className="grid grid-cols-1 gap-4 lg:grid-cols-1">
                     <div className="lg:col-span-1">
                         <AppointmentAddForm
-                            selectedProcedure={selectedProcedure}
-                            onSelectProcedure={setSelectedProcedure}
-                            onAddItem={handleAddItem}
                             onFinishSession={handleFinishSession}
+                            selectedPatientId={selectedPatientId}
+                            onSelectPatient={handleSelectPatient}
+                            // 🔑 Passa o ID real para o componente filho
+                            currentAppointmentId={currentAppointmentId}
                         />
                     </div>
                 </div>
@@ -117,7 +122,11 @@ export function AppointmentsRoom() {
                             </div>
                         </div>
 
-                        <Button disabled={!notes.trim()} className="w-full sm:w-auto">
+                        <Button
+                            // Habilita apenas se houver notas e um ID de consulta válido
+                            disabled={!notes.trim() || !currentAppointmentId || isAppointmentLoading}
+                            className="w-full sm:w-auto"
+                        >
                             Salvar Anotações
                         </Button>
                     </CardContent>

@@ -17,8 +17,8 @@ export function ParticipantTile({ name, isLocal, isMuted, isVideoEnabled, isFocu
       className={`relative flex items-center justify-center overflow-hidden rounded-xl transition-all duration-300
         ${
           isFocus
-            ? "border-2 border-primary/60 h-full w-full bg-gradient-to-br from-slate-900 to-slate-950"
-            : "border border-slate-700 h-28 w-48 sm:h-40 sm:w-64 bg-gradient-to-br from-slate-800 to-slate-900 hover:border-slate-600"
+            ? "border-2 border-primary/60 h-full w-full bg-linear-to-br from-slate-900 to-slate-950"
+            : "border border-slate-700 h-28 w-48 sm:h-40 sm:w-64 bg-linear-to-br from-slate-800 to-slate-900 hover:border-slate-600"
         }`}
     >
       {/* Video Content Area */}
@@ -30,7 +30,7 @@ export function ParticipantTile({ name, isLocal, isMuted, isVideoEnabled, isFocu
           <p className="text-xs text-slate-400">Câmera desligada</p>
         </div>
       ) : (
-        <div className="absolute inset-0 bg-gradient-to-t from-slate-900 via-transparent to-transparent" />
+        <div className="absolute inset-0 bg-linear-to-t from-slate-900 via-transparent to-transparent" />
       )}
 
       <div className="absolute inset-0 flex flex-col justify-between p-3">
@@ -48,7 +48,7 @@ export function ParticipantTile({ name, isLocal, isMuted, isVideoEnabled, isFocu
           <span className="text-xs sm:text-sm font-semibold text-white truncate flex-1" title={name}>
             {name}
           </span>
-          <div className={`flex-shrink-0 rounded-full p-1.5 ${isMuted ? "bg-red-500/20" : "bg-green-500/20"}`}>
+          <div className={`shrink-0 rounded-full p-1.5 ${isMuted ? "bg-red-500/20" : "bg-green-500/20"}`}>
             {isMuted ? (
               <MicOff className="h-3 w-3 sm:h-4 sm:w-4 text-red-400" />
             ) : (
