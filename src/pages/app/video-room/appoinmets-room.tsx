@@ -80,8 +80,9 @@ export function AppointmentsRoom() {
                             selectedPatientId={selectedPatientId}
                             onSelectPatient={handleSelectPatient}
                             // 🔑 Passa o ID real para o componente filho
-                            currentAppointmentId={currentAppointmentId}
-                        />
+                            currentAppointmentId={currentAppointmentId} onSessionStarted={function (): void {
+                                throw new Error("Function not implemented.")
+                            } } isSessionActive={false}                        />
                     </div>
                 </div>
 

@@ -10,12 +10,17 @@ import { getPatients } from "@/api/get-patients"
 import { useMutation, useQueryClient } from "@tanstack/react-query"
 import { startAppointment } from "@/api/start-appointment"
 
+// ❌ Removido availableProcedures e props/lógica de procedimento
+
 interface AppointmentAddFormProps {
   selectedPatientId: string
   onSelectPatient: (patientId: string) => void
 
-  currentAppointmentId: string // ID do agendamento atual (necessário para iniciar)
+  currentAppointmentId: string
   onFinishSession: () => void
+  
+  onSessionStarted: () => void 
+  isSessionActive: boolean 
 }
 
 export function AppointmentAddForm({
@@ -23,6 +28,8 @@ export function AppointmentAddForm({
   onSelectPatient,
   currentAppointmentId,
   onFinishSession,
+  onSessionStarted, 
+  isSessionActive,  
 }: AppointmentAddFormProps) {
 
   const queryClient = useQueryClient()
@@ -30,7 +37,8 @@ export function AppointmentAddForm({
   const startSessionMutation = useMutation({
     mutationFn: startAppointment,
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['appointments'] })
+      queryClient.invalidateQueries({ queryKey: ['appointments'] }) 
+      onSessionStarted() 
     },
     onError: (error) => {
       console.error("Erro ao iniciar sessão:", error);
@@ -39,7 +47,7 @@ export function AppointmentAddForm({
 
   // 🖱️ Handler para o botão INICIAR SESSÃO
   const handleStartSession = () => {
-    if (currentAppointmentId) {
+    if (selectedPatientId && currentAppointmentId) { 
       startSessionMutation.mutate(currentAppointmentId)
     }
   }
@@ -63,9 +71,8 @@ export function AppointmentAddForm({
 
   const loadingOrErrorState = isPatientsLoading || isPatientsError;
   const isMutationPending = startSessionMutation.isPending;
-
-  // Determina o estado da sessão (simulado, deve ser substituído pelo status real do agendamento)
-  const isSessionStarted = false;
+  
+  const isSessionStarted = isSessionActive; 
 
 
   return (
@@ -86,7 +93,8 @@ export function AppointmentAddForm({
           <Select
             value={selectedPatientId}
             onValueChange={onSelectPatient}
-            disabled={loadingOrErrorState}
+            // Não permite trocar de paciente se a sessão já estiver ativa
+            disabled={loadingOrErrorState || isSessionStarted} 
           >
             <SelectTrigger>
               {isPatientsLoading && <Loader2 className="w-4 h-4 mr-2 animate-spin" />}
@@ -110,10 +118,14 @@ export function AppointmentAddForm({
         {/* 🔑 Botão INICIAR/FINALIZAR SESSÃO */}
         <Button
           onClick={isSessionStarted ? onFinishSession : handleStartSession}
-          // Exige que um paciente e um currentAppointmentId válido estejam selecionados
-          disabled={!selectedPatientId || isMutationPending || !currentAppointmentId}
+          // Lógica: Desabilita se estiver pendente OU se a sessão não começou E (não há paciente OU não há ID de agendamento)
+          disabled={
+            isMutationPending || 
+            (!isSessionStarted && (!selectedPatientId || !currentAppointmentId))
+          }
           size="sm"
           className="gap-2 w-full shrink-0 cursor-pointer"
+          // Muda a aparência para indicar o estado finalização
           variant={isSessionStarted ? "outline" : "default"}
         >
           {isMutationPending ? (
