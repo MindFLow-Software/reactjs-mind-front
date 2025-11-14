@@ -7,7 +7,7 @@ export function MonthPatientsAmountCard() {
         <Card>
             <CardHeader className="pb-2">
                 <CardTitle className="flex items-center justify-between text-base font-semibold">
-                    Pacientes atendidos (mês)
+                    Sessões Realizadas (mês)
                     <Users className="size-5 text-blue-500 dark:text-blue-400" />
                 </CardTitle>
             </CardHeader>

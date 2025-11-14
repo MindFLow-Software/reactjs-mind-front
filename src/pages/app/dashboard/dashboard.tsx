@@ -9,7 +9,7 @@ import { SessionsChart } from "./sessions-chart"
 import { PatientsByAgeChart } from "./patients-by-age-chart"
 import { PatientsByGenderChart } from "./patients-by-gender-chart"
 import { DateRangePicker } from "./date-range-picker"
-import { NewPatientsChart } from "./patients-amount-chart"
+import { NewPatientsBarChart } from "./patients-amount-chart"
 
 export function Dashboard() {
   return (
@@ -27,15 +27,14 @@ export function Dashboard() {
         </div>
       </div>
       <div className="grid grid-cols-1 gap-4 px-4 sm:px-6 lg:grid-cols-2">
+        <NewPatientsBarChart />
         <SessionsChart />
       </div>
       <div className="grid grid-cols-1 gap-4 px-4 sm:px-6 lg:grid-cols-2">
         <PatientsByAgeChart />
         <PatientsByGenderChart />
       </div>
-      <div className="grid grid-cols-1 gap-4 px-4 pb-4 sm:px-6 sm:pb-6 lg:grid-cols-2">
-        <NewPatientsChart />
-      </div>
+
     </>
   )
 }

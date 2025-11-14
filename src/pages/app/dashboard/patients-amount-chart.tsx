@@ -1,7 +1,7 @@
 "use client"
 
 import { useQuery } from "@tanstack/react-query"
-import { CartesianGrid, Line, LineChart, XAxis, YAxis } from "recharts" // 🔑 Importar YAxis
+import { Bar, BarChart, CartesianGrid, XAxis, YAxis } from "recharts"
 import { format, subDays } from "date-fns"
 import { ptBR } from "date-fns/locale"
 import { useMemo } from "react"
@@ -13,12 +13,14 @@ import {
     CardHeader,
     CardTitle,
 } from "@/components/ui/card"
+
 import {
+    type ChartConfig,
     ChartContainer,
     ChartTooltip,
     ChartTooltipContent,
-    type ChartConfig,
 } from "@/components/ui/chart"
+
 import { Loader2 } from "lucide-react"
 import { cn } from "@/lib/utils"
 import { getAmountPatientsChart } from "@/api/get-amount-patients-chart"
@@ -30,17 +32,17 @@ const chartConfig = {
     },
 } satisfies ChartConfig
 
-export function NewPatientsChart() {
+export function NewPatientsBarChart() {
     const { startDate, endDate } = useMemo(() => {
-        const end = new Date();
-        const start = subDays(end, 7);
-        return { startDate: start, endDate: end };
+        const end = new Date()
+        const start = subDays(end, 7)
+        return { startDate: start, endDate: end }
     }, [])
 
     const { data, isLoading, isError } = useQuery({
-        queryKey: ["new-patients", startDate.toISOString(), endDate.toISOString()],
+        queryKey: ["new-patients-bar", startDate.toISOString(), endDate.toISOString()],
         queryFn: () => getAmountPatientsChart({ startDate, endDate }),
-        retry: 1, 
+        retry: 1,
     })
 
     if (isLoading) {
@@ -58,21 +60,19 @@ export function NewPatientsChart() {
             </Card>
         )
     }
-    
-    const maxPatients = Math.max(...data.map(item => item.newPatients), 0); 
-    const yAxisDomainMax = Math.max(10, maxPatients + Math.ceil(maxPatients * 0.2)); 
+
+    const maxPatients = Math.max(...data.map(d => d.newPatients), 0)
+    const yAxisMax = Math.max(10, maxPatients + Math.ceil(maxPatients * 0.2))
 
     return (
-        <Card className={cn("col-span-6 py-4 sm:py-0")}>
-            <CardHeader className="flex-row items-center justify-between pb-8 mt-5">
-                <div className="space-y-1">
-                    <CardTitle className="text-base font-medium">
-                        Crescimento de Pacientes
-                    </CardTitle>
-                    <CardDescription>
-                        Quantidade de novos pacientes no período
-                    </CardDescription>
-                </div>
+        <Card className={cn("col-span-6 py-0")}>
+            <CardHeader className="px-6 pt-5 pb-3">
+                <CardTitle className="text-base font-medium">
+                    Novos Pacientes por Dia
+                </CardTitle>
+                <CardDescription>
+                    Quantidade diária de novos pacientes cadastrados
+                </CardDescription>
             </CardHeader>
 
             <CardContent className="px-2 sm:p-6">
@@ -80,21 +80,18 @@ export function NewPatientsChart() {
                     config={chartConfig}
                     className="aspect-auto h-[250px] w-full"
                 >
-                    <LineChart
+                    <BarChart
+                        accessibilityLayer
                         data={data}
-                        margin={{
-                            left: 12,
-                            right: 12,
-                            top: 12,
-                        }}
+                        margin={{ left: 12, right: 12 }}
                     >
                         <CartesianGrid vertical={false} />
-                        
-                        <YAxis 
-                            domain={[0, yAxisDomainMax]}
+
+                        <YAxis
+                            domain={[0, yAxisMax]}
                             tickLine={false}
                             axisLine={false}
-                            hide={true}
+                            width={30}
                         />
 
                         <XAxis
@@ -102,11 +99,12 @@ export function NewPatientsChart() {
                             tickLine={false}
                             axisLine={false}
                             tickMargin={8}
-                            minTickGap={32}
+                            minTickGap={24}
                             tickFormatter={(value) =>
                                 format(new Date(value), "dd/MM", { locale: ptBR })
                             }
                         />
+
                         <ChartTooltip
                             content={
                                 <ChartTooltipContent
@@ -120,15 +118,13 @@ export function NewPatientsChart() {
                                 />
                             }
                         />
-                        <Line
+
+                        <Bar
                             dataKey="newPatients"
-                            type="monotone"
-                            stroke="#0ea5e9"
-                            strokeWidth={2.5}
-                            dot={false}
-                            activeDot={{ r: 5 }}
+                            fill="var(--chart-1)"
+                            radius={[4, 4, 0, 0]}
                         />
-                    </LineChart>
+                    </BarChart>
                 </ChartContainer>
             </CardContent>
         </Card>

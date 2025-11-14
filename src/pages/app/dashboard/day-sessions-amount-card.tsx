@@ -7,7 +7,7 @@ export function DaySessionsAmountCard() {
     <Card>
       <CardHeader className="pb-2">
         <CardTitle className="flex items-center justify-between text-base font-semibold">
-          Sessões realizadas (dia)
+          Sessões realizadas dia)
           <HeartPulse className="size-5 text-red-500 dark:text-red-400" />
         </CardTitle>
       </CardHeader>
