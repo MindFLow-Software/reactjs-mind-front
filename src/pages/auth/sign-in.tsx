@@ -43,7 +43,7 @@ export function SignIn() {
             const response = await authenticate(data)
 
             localStorage.setItem('token', response.jwt)
-            toast.success('Login realizado com sucesso! 👋', { duration: 4000 })
+            toast.success('Login realizado com sucesso!', { duration: 4000 })
 
             navigate('/')
         } catch (error: any) {

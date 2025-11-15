@@ -1,5 +1,6 @@
 "use client"
 
+import { useMutation, useQuery } from "@tanstack/react-query"
 import {
   BadgeCheck,
   Bell,
@@ -8,6 +9,12 @@ import {
   LogOut,
   Sparkles,
 } from "lucide-react"
+import { useNavigate, Link } from "react-router-dom"
+import { toast } from "sonner" // Importação adicionada
+
+import { signOut } from "@/api/sign-out"
+import { getProfile, type GetProfileResponse } from "@/api/get-profile"
+
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import {
   DropdownMenu,
@@ -25,12 +32,10 @@ import {
   useSidebar,
 } from "@/components/ui/sidebar"
 import { Skeleton } from "@/components/ui/skeleton"
-import { useQuery } from "@tanstack/react-query"
-import { getProfile, type GetProfileResponse } from "@/api/get-profile"
-import { Link } from "react-router-dom" 
 
 export function NavUser() {
   const { isMobile } = useSidebar()
+  const navigate = useNavigate()
 
   const {
     data: profile,
@@ -40,6 +45,15 @@ export function NavUser() {
     queryKey: ["psychologist-profile"],
     queryFn: getProfile,
     retry: false,
+  })
+
+  const { mutateAsync: signOutFn, isPending: isSigningOut } = useMutation({
+    mutationFn: signOut,
+    onSuccess: () => {
+      // Notificação de sucesso adicionada
+      toast.success('Logout realizado com sucesso!', { duration: 4000 }) 
+      navigate("/sign-in", { replace: true })
+    },
   })
 
   const name = profile
@@ -124,8 +138,8 @@ export function NavUser() {
 
               <DropdownMenuGroup>
                 <DropdownMenuItem asChild>
-                  <Link to="/planos" className="cursor-pointer"> 
-                    <Sparkles />
+                  <Link to="/planos" className="cursor-pointer">
+                    <Sparkles className="mr-2 h-4 w-4" />
                     Planos
                   </Link>
                 </DropdownMenuItem>
@@ -136,28 +150,37 @@ export function NavUser() {
               <DropdownMenuGroup>
                 <DropdownMenuItem asChild>
                   <Link to="/account" className="cursor-pointer">
-                    <BadgeCheck />
+                    <BadgeCheck className="mr-2 h-4 w-4" />
                     Conta
                   </Link>
                 </DropdownMenuItem>
-                
+
                 <DropdownMenuItem asChild>
                   <Link to="/pagamentos" className="cursor-pointer">
-                    <CreditCard />
+                    <CreditCard className="mr-2 h-4 w-4" />
                     Pagamentos
                   </Link>
                 </DropdownMenuItem>
 
                 <DropdownMenuItem>
-                  <Bell />
+                  <Bell className="mr-2 h-4 w-4" />
                   Notificações
                 </DropdownMenuItem>
               </DropdownMenuGroup>
 
               <DropdownMenuSeparator />
-              <DropdownMenuItem className="text-red-500">
-                <LogOut />
-                Sair
+              <DropdownMenuItem
+                asChild
+                disabled={isSigningOut}
+                className="text-red-500 dark:text-red-400"
+              >
+                <button
+                  className="w-full text-left cursor-pointer"
+                  onClick={() => signOutFn()}
+                >
+                  <LogOut className="mr-2 h-4 w-4" />
+                  Sair
+                </button>
               </DropdownMenuItem>
             </DropdownMenuContent>
           )}
