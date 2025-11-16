@@ -1,6 +1,6 @@
-import { api } from '@/lib/axios'
+import { api } from "@/lib/axios"
 
-// 1. 🔑 A interface deve ser exportada
+// 🔹 Estrutura de um paciente
 export interface Patient {
   id: string
   firstName: string
@@ -9,14 +9,14 @@ export interface Patient {
   cpf: string
 }
 
-// 2. 🔑 A interface de resposta deve ser exportada
+// 🔹 Parâmetros que o front pode enviar
 export interface GetPatientsRequest {
   pageIndex?: number
   perPage?: number
   name?: string | null
 }
 
-// 3. 🔑 A interface de resposta final deve ser exportada
+// 🔹 Estrutura exata da resposta da API
 export interface GetPatientsResponse {
   patients: Patient[]
   meta: {
@@ -26,15 +26,16 @@ export interface GetPatientsResponse {
   }
 }
 
+// 🔹 Função chamada pelo React Query
 export async function getPatients(
-  params: GetPatientsRequest,
+  params: GetPatientsRequest
 ): Promise<GetPatientsResponse> {
-  
-  const response = await api.get<GetPatientsResponse>('/patients', {
+
+  const response = await api.get<GetPatientsResponse>("/patients", {
     params: {
-        pageIndex: params.pageIndex ?? 0, 
-        perPage: params.perPage ?? 10, 
-        ...(params.name && { name: params.name }),
+      pageIndex: params.pageIndex ?? 0,
+      perPage: params.perPage ?? 10,
+      ...(params.name ? { name: params.name } : {}),
     },
   })
 

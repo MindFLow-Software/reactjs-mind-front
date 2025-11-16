@@ -2,6 +2,7 @@
 
 import { Helmet } from "react-helmet-async"
 import { useQuery } from "@tanstack/react-query"
+import { useState } from "react"
 
 import {
     Table,
@@ -17,13 +18,22 @@ import { getAppointments } from "@/api/get-appointment"
 import { Skeleton } from "@/components/ui/skeleton"
 
 export function AppointmentsPage() {
+    const [pageIndex, setPageIndex] = useState(0)
+
     const { data, isLoading, isError } = useQuery({
         queryKey: ["appointments"],
         queryFn: getAppointments,
         staleTime: 1000,
     })
 
-    const appointments = data?.appointments ?? []
+    // data é um array, não objeto com appointments
+    const appointments = data ?? []
+
+    // Paginação básica
+    const perPage = 10
+    const start = pageIndex * perPage
+    const end = start + perPage
+    const paginatedAppointments = appointments.slice(start, end)
 
     return (
         <>
@@ -51,26 +61,18 @@ export function AppointmentsPage() {
                             <Table>
                                 <TableHeader>
                                     <TableRow>
-                                        <TableHead className="w-[140px]">
-                                            Paciente
-                                        </TableHead>
-                                        <TableHead className="w-[140px]">
-                                            Notas
-                                        </TableHead>
-                                        <TableHead className="w-[180px]">
-                                            Diagnóstico
-                                        </TableHead>
-                                        <TableHead className="w-[180px]">
-                                            Data/Hora
-                                        </TableHead>
+                                        <TableHead className="w-[140px]">Paciente</TableHead>
+                                        <TableHead className="w-[140px]">Notas</TableHead>
+                                        <TableHead className="w-[180px]">Diagnóstico</TableHead>
+                                        <TableHead className="w-[180px]">Data/Hora</TableHead>
                                         <TableHead className="w-[120px]">Status</TableHead>
                                         <TableHead className="w-[140px]">Opções</TableHead>
                                     </TableRow>
                                 </TableHeader>
 
                                 <TableBody>
-                                    {appointments.length > 0 ? (
-                                        appointments.map((appt: any) => (
+                                    {paginatedAppointments.length > 0 ? (
+                                        paginatedAppointments.map((appt: any) => (
                                             <AppointmentsTableRow
                                                 key={appt.id}
                                                 appointment={appt}
@@ -91,9 +93,10 @@ export function AppointmentsPage() {
                         </div>
 
                         <Pagination
-                            pageIndex={0}
+                            pageIndex={pageIndex}
                             totalCount={appointments.length}
-                            perPage={10}
+                            perPage={perPage}
+                            onPageChange={setPageIndex}
                         />
                     </div>
                 )}
