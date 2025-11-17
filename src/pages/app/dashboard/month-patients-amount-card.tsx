@@ -1,4 +1,4 @@
-import { Users } from 'lucide-react'
+import { Goal } from 'lucide-react'
 
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 
@@ -7,8 +7,8 @@ export function MonthPatientsAmountCard() {
         <Card>
             <CardHeader className="pb-2">
                 <CardTitle className="flex items-center justify-between text-base font-semibold">
-                    Sessões Realizadas (mês)
-                    <Users className="size-5 text-blue-500 dark:text-blue-400" />
+                    Sessões Realizadas (Mês)
+                    <Goal className="size-6 text-purple-500 dark:text-purple-400" />
                 </CardTitle>
             </CardHeader>
             <CardContent className="space-y-1">

@@ -4,7 +4,6 @@ import { Helmet } from "react-helmet-async"
 import { PatientsCountCard } from "./patients-by-day-card"
 import { MonthPatientsAmountCard } from "./month-patients-amount-card"
 import { PatientsAmountCard } from "./patients-amount-card"
-import { DaySessionsAmountCard } from "./day-sessions-amount-card"
 import { SessionsChart } from "./sessions-chart"
 import { PatientsByAgeChart } from "./patients-by-age-chart"
 import { PatientsByGenderChart } from "./patients-by-gender-chart"
@@ -44,11 +43,10 @@ export function Dashboard() {
                     onChange={handleRangeChange}
                 />
 
-                <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
+                <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
                     <PatientsCountCard startDate={startDate} endDate={endDate} />
                     <PatientsAmountCard />
                     <MonthPatientsAmountCard />
-                    <DaySessionsAmountCard />
                 </div>
             </div>
 
