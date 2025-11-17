@@ -1,7 +1,8 @@
 import { useMemo, useState, useEffect } from 'react'
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
-import { HeartHandshake } from 'lucide-react'
+import { Card } from '@/components/ui/card'
+import { HeartHandshake, } from 'lucide-react'
 import { getAmountPatientsCard } from '@/api/get-amount-patients-card'
+import { cn } from '@/lib/utils'
 
 interface PatientData {
   total: number
@@ -36,33 +37,65 @@ export const PatientsAmountCard = () => {
   }), [state.total])
 
   return (
-    <Card className="transition-all hover:shadow-md">
-      <CardHeader className="pb-2">
-        <CardTitle className="flex items-center justify-between text-base font-semibold">
-          Total Pacientes
-          <HeartHandshake className="size-6 text-red-600 dark:text-red-500" />
-        </CardTitle>
-      </CardHeader>
+    <Card className={cn(
+      "relative overflow-hidden",
+      "rounded-2xl",
+      "border border-border border-b-[3px]",
+      "shadow-sm shadow-black/8",
+    )}>
+      <div
+        className={cn(
+          "absolute -top-16 -right-16",
+          "w-48 h-48",
+          "rounded-full",
+          // MUDANÇA 1: Reduz a opacidade no light mode para ser mais sutil
+          "bg-linear-to-br from-red-400/30 to-red-800/30 dark:from-red-400/70 dark:to-red-800/70",
+          "blur-3xl opacity-60",
+          "pointer-events-none"
+        )}
+      />
 
-      <CardContent className="space-y-1">
+      <div className="relative z-1 p-5 flex flex-col">
+        <div className="flex items-start justify-between mb-3">
+          <div className="flex items-center gap-3">
+            {/* MUDANÇA 2: Aumenta a opacidade do fundo do ícone e satura o ícone */}
+            <div className="rounded-full bg-red-200 dark:bg-red-950/40 p-2.5">
+              <HeartHandshake className="size-6 text-red-700 dark:text-red-400" />
+            </div>
+          </div>
+        </div>
+
         {state.isLoading ? (
-          <div className="space-y-2">
-            <div className="h-8 w-24 rounded bg-gray-200 dark:bg-gray-700 animate-pulse" />
-            <div className="h-4 w-32 rounded bg-gray-200 dark:bg-gray-700 animate-pulse" />
+          <div className="space-y-1.5">
+            <div className="h-7 w-20 rounded-lg bg-gray-200 dark:bg-gray-700 animate-pulse" />
+            <div className="h-3 w-40 rounded bg-gray-200 dark:bg-gray-700 animate-pulse" />
           </div>
         ) : state.isError ? (
-          <span className="text-sm text-red-500">Erro ao carregar</span>
+          <div className="flex flex-col gap-1">
+            <span className="text-sm font-medium text-red-500">Erro ao carregar</span>
+            <span className="text-xs text-muted-foreground">Tente novamente</span>
+          </div>
         ) : (
-          <span className="text-2xl font-bold tracking-tight">{displayValue}</span>
+          <div className="flex flex-col gap-1">
+            <div className="flex items-baseline gap-2">
+              <span className="text-3xl font-bold tracking-tight">
+                {displayValue}
+              </span>
+            </div>
+            <div>
+              <p className="text-sm text-muted-foreground font-medium">
+                Total Pacientes
+              </p>
+              <p className="text-xs text-muted-foreground leading-relaxed">
+                <span className={cn("font-semibold", percentageColor)}>
+                  {percentageText}
+                </span>
+                {' em relação ao mês anterior'}
+              </p>
+            </div>
+          </div>
         )}
-
-        {!state.isLoading && !state.isError && (
-          <p className="text-xs text-muted-foreground">
-            <span className={percentageColor}>{percentageText}</span>{' '}
-            em relação ao mês anterior
-          </p>
-        )}
-      </CardContent>
+      </div>
     </Card>
   )
 }

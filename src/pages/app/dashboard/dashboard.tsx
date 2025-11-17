@@ -1,7 +1,7 @@
 "use client"
 
 import { Helmet } from "react-helmet-async"
-import { PatientsCountCard } from "./patients-by-day-card"
+import { PatientsCountCard } from "./patients-count-card"
 import { MonthPatientsAmountCard } from "./month-patients-amount-card"
 import { PatientsAmountCard } from "./patients-amount-card"
 import { SessionsChart } from "./sessions-chart"
