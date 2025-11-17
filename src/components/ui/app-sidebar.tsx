@@ -2,16 +2,14 @@
 
 import * as React from "react"
 import {
-    AudioWaveform,
-    BookOpen,
     BrainCircuit,
     Clock,
-    Command,
     GalleryVerticalEnd,
     Home,
     Map,
     Users2,
     Wallet,
+    CalendarCheck,
 } from "lucide-react"
 
 import { NavMain } from "./nav-main"
@@ -25,31 +23,16 @@ import {
     SidebarHeader,
     SidebarRail,
 } from "./sidebar"
-
-const teams = [
-    {
-        name: "MindFlush",
-        logo: GalleryVerticalEnd,
-        plan: "Enterprise",
-    },
-    {
-        name: "Acme Corp.",
-        logo: AudioWaveform,
-        plan: "Startup",
-    },
-    {
-        name: "Evil Corp.",
-        logo: Command,
-        plan: "Free",
-    },
-]
+import { useQuery } from "@tanstack/react-query" // 🔑 Importar useQuery
+import { getProfile, type GetProfileResponse } from "@/api/get-profile" // 🔑 Importar API de perfil
+import { Skeleton } from "@/components/ui/skeleton" // Para estado de carregamento
 
 const navMain = [
     {
         title: "Home",
         url: "#",
         icon: Home,
-        isActive: true,
+        isActive: false,
         items: [
             { title: "Dashboard", url: "/" },
         ],
@@ -59,18 +42,18 @@ const navMain = [
         url: "#",
         icon: Users2,
         items: [
-            { title: "Cadastro de Pacientes", url: "/patients-list" },
-            { title: "Prontuários", url: "#" },
+            { title: "Listagem de Pacientes", url: "/patients-list" },
+            { title: "Criar Agendamento", url: "/appointment" },
         ],
     },
     {
-        title: "Consultas",
+        title: "Agendamentos",
         url: "#",
-        icon: BookOpen,
+        icon: CalendarCheck,
         items: [
-            { title: "Agendar Consultas", url: "/appointment" },
-            { title: "Video Conferência", url: "/video-room" },
-            { title: "Histórico de Sessões", url: "#" },
+            { title: "Meus Agendamentos", url: "/" },
+            { title: "Sala de Atendimento", url: "/video-room" },
+            { title: "Histórico de Sessões", url: "/sessions/history" },
         ],
     },
     {
@@ -97,6 +80,53 @@ const projects = [
 ]
 
 export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
+    
+    // 1. 🔍 Fetch do perfil logado
+    const { data: profile, isLoading } = useQuery<GetProfileResponse | null>({
+        queryKey: ["psychologist-profile"],
+        queryFn: getProfile,
+        retry: false,
+    })
+
+    const teams = React.useMemo(() => {
+        if (!profile) {
+            return [
+                {
+                    name: isLoading ? "Carregando..." : "Sem perfil",
+                    firstName: "...",
+                    lastName: "...",
+                    plan: "Básico",
+                    logo: GalleryVerticalEnd,
+                },
+            ]
+        }
+
+        // Mapeia os dados reais do psicólogo
+        return [
+            {
+                name: "Clínica MindFlow", 
+                firstName: profile.firstName,
+                lastName: profile.lastName,
+                logo: GalleryVerticalEnd,
+                plan: "Plano Enterprise", // Idealmente, buscaria o plano do objeto 'profile'
+            },
+        ]
+    }, [profile, isLoading])
+
+    if (isLoading) {
+        return (
+            <Sidebar collapsible="icon" {...props}>
+                <SidebarHeader>
+                    <Skeleton className="w-full h-14 rounded-xl" />
+                </SidebarHeader>
+                <SidebarContent>
+                    <Skeleton className="w-full h-96 rounded-xl mt-4" />
+                </SidebarContent>
+                <SidebarRail />
+            </Sidebar>
+        )
+    }
+
     return (
         <Sidebar collapsible="icon" {...props}>
             <SidebarHeader>
