@@ -1,104 +1,16 @@
-"use client"
-
-import { Helmet } from "react-helmet-async"
-import { useForm, Controller } from "react-hook-form"
-import { toast } from "sonner"
-import { z } from "zod"
-
-import { Button } from "@/components/ui/button"
-import { Input } from "@/components/ui/input"
-import { Label } from "@/components/ui/label"
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select"
-import { Link, useNavigate } from "react-router-dom"
-import { useMutation } from "@tanstack/react-query"
-import { registerPsychologist } from "@/api/create-user"
-
-import { formatCPF } from "@/utils/formatCPF"
-import { formatPhone } from "@/utils/formatPhone"
-
-import { Calendar } from "@/components/ui/calendar"
-import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from "@/components/ui/popover"
-import { ChevronDownIcon } from "lucide-react"
-
-export const signUpForm = z.object({
-  firstName: z.string().min(1, "Primeiro nome é obrigatório"),
-  lastName: z.string().min(1, "Último nome é obrigatório"),
-  phoneNumber: z.string().min(1, "Telefone é obrigatório").max(15),
-  email: z.string().email("Email inválido").optional(),
-  password: z.string().min(6, "Senha deve ter ao menos 6 caracteres").optional(),
-  dateOfBirth: z.date(),
-  cpf: z.string().min(11, "CPF inválido").max(14),
-  role: z.enum(["PATIENT", "PSYCHOLOGIST"]),
-  gender: z.enum(["MASCULINE", "FEMININE", "OTHER"]),
-  expertise: z.enum([
-    "OTHER",
-    "SOCIAL",
-    "INFANT",
-    "CLINICAL",
-    "JURIDICAL",
-    "PSYCHOTHERAPIST",
-    "NEUROPSYCHOLOGY",
-  ]),
-  isActive: z.boolean().optional(),
-  profileImageUrl: z.string().url().optional(),
-  crp: z.string().optional(),
-})
-
-type SignUpForm = z.infer<typeof signUpForm>
+import { Helmet } from "react-helmet-async" // Importação necessária
+import { Link } from "react-router-dom"
+import { SignUpForm } from "./components/sign-up-form"
+import { Button } from "@/components/ui/button" // Importação necessária
 
 export function SignUp() {
-  const navigate = useNavigate()
-
-  const {
-    register,
-    handleSubmit,
-    control,
-    setValue,
-    watch,
-    formState: { isSubmitting },
-  } = useForm<SignUpForm>()
-
-  const { mutateAsync: registerPsychologistFn } = useMutation({
-    mutationFn: registerPsychologist,
-  })
-
-  async function handleSignUp(data: SignUpForm) {
-    try {
-      await registerPsychologistFn({
-        ...data,
-        phoneNumber: data.phoneNumber.replace(/\D/g, ""),
-        cpf: data.cpf.replace(/\D/g, ""),
-      })
-
-      toast.success("Psicólogo cadastrado com sucesso!", {
-        action: {
-          label: "Login",
-          onClick: () => navigate(`/sign-in?email=${data.email}`),
-        },
-      })
-    } catch {
-      toast.error("Erro ao cadastrar psicólogo.")
-    }
-  }
-
-  const phoneValue = watch("phoneNumber")
-  const cpfValue = watch("cpf")
-
   return (
     <>
       <Helmet title="Criar conta | MindFlush" />
 
-      <div className="p-4 sm:p-8">
+      {/* 1. Layout de página padronizado (igual ao SignIn) */}
+      <div className="flex min-h-svh justify-center p-4 sm:p-8">
+        {/* 2. Botão flutuante padronizado (agora leva para /sign-in) */}
         <Button
           variant={"link"}
           asChild
@@ -107,197 +19,19 @@ export function SignUp() {
           <Link to="/sign-in">Fazer Login</Link>
         </Button>
 
-        <div className="flex w-full max-w-[450px] mx-auto flex-col justify-center gap-6 pt-12 sm:pt-0">
+        {/* 3. Wrapper de conteúdo padronizado (max-w-[450px] e pt-16) */}
+        <div className="flex w-full max-w-[450px] flex-col justify-center gap-6 pt-16">
+          {/* 4. Cabeçalho de texto (específico do SignUp) */}
           <div className="flex flex-col gap-2 text-center">
             <h1 className="text-xl sm:text-2xl font-semibold tracking-tight">
               Crie sua conta no MindFlush
             </h1>
             <p className="text-sm text-muted-foreground leading-relaxed">
-              Cadastre seu e-mail profissional para começar a usar a plataforma
-              e oferecer uma experiência terapêutica mais conectada.
+              Cadastre seu e-mail profissional para começar a usar a plataforma.
             </p>
           </div>
 
-          <form onSubmit={handleSubmit(handleSignUp)} className="space-y-4">
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-              <div className="space-y-2">
-                <Label htmlFor="firstName">Primeiro Nome</Label>
-                <Input id="firstName" {...register("firstName")} placeholder="Jon" />
-              </div>
-
-              <div className="space-y-2">
-                <Label htmlFor="lastName">Último Nome</Label>
-                <Input id="lastName" {...register("lastName")} placeholder="Doe" />
-              </div>
-            </div>
-
-            <div className="space-y-2">
-              <Label htmlFor="email">E-mail profissional</Label>
-              <Input
-                id="email"
-                type="email"
-                {...register("email")}
-                placeholder="exemplo@mindflush.com"
-              />
-            </div>
-
-            <div className="space-y-2">
-              <Label htmlFor="password">Senha</Label>
-              <Input
-                id="password"
-                type="password"
-                {...register("password")}
-                placeholder="••••••••"
-              />
-            </div>
-
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-              <div className="space-y-2">
-                <Label htmlFor="phoneNumber">Telefone</Label>
-                <Input
-                  id="phoneNumber"
-                  value={formatPhone(phoneValue || "")}
-                  onChange={(e) => setValue("phoneNumber", e.target.value)}
-                  placeholder="(99) 99999-9999"
-                  maxLength={15}
-                />
-              </div>
-
-              <div className="space-y-2">
-                <Label htmlFor="cpf">CPF</Label>
-                <Input
-                  id="cpf"
-                  value={formatCPF(cpfValue || "")}
-                  onChange={(e) => setValue("cpf", e.target.value)}
-                  placeholder="123.456.789-00"
-                  maxLength={14}
-                />
-              </div>
-            </div>
-
-            {/* Campo atualizado com Calendar */}
-            <div className="space-y-2">
-              <Label htmlFor="dateOfBirth">Data de Nascimento</Label>
-              <Controller
-                name="dateOfBirth"
-                control={control}
-                render={({ field }) => (
-                  <Popover>
-                    <PopoverTrigger asChild>
-                      <Button
-                        variant="outline"
-                        className={`w-full justify-between font-normal ${
-                          !field.value && "text-muted-foreground"
-                        }`}
-                      >
-                        {field.value
-                          ? field.value.toLocaleDateString("pt-BR")
-                          : "Selecione a data"}
-                        <ChevronDownIcon className="ml-2 h-4 w-4 opacity-50" />
-                      </Button>
-                    </PopoverTrigger>
-                    <PopoverContent className="w-auto p-0" align="start">
-                      <Calendar
-                        mode="single"
-                        selected={field.value}
-                        onSelect={(date) => field.onChange(date)}
-                        captionLayout="dropdown"
-                      />
-                    </PopoverContent>
-                  </Popover>
-                )}
-              />
-            </div>
-
-            <div className="space-y-2">
-              <Label htmlFor="role">Função</Label>
-              <Controller
-                name="role"
-                control={control}
-                render={({ field }) => (
-                  <Select onValueChange={field.onChange} defaultValue={field.value}>
-                    <SelectTrigger>
-                      <SelectValue placeholder="Selecione sua função" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="PSYCHOLOGIST">Psicólogo</SelectItem>
-                    </SelectContent>
-                  </Select>
-                )}
-              />
-            </div>
-
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-              <div className="space-y-2">
-                <Label htmlFor="gender">Gênero</Label>
-                <Controller
-                  name="gender"
-                  control={control}
-                  render={({ field }) => (
-                    <Select onValueChange={field.onChange} defaultValue={field.value}>
-                      <SelectTrigger>
-                        <SelectValue placeholder="Selecione seu gênero" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        <SelectItem value="MASCULINE">Masculino</SelectItem>
-                        <SelectItem value="FEMININE">Feminino</SelectItem>
-                        <SelectItem value="OTHER">Outro</SelectItem>
-                      </SelectContent>
-                    </Select>
-                  )}
-                />
-              </div>
-
-              <div className="space-y-2">
-                <Label htmlFor="expertise">Especialidade</Label>
-                <Controller
-                  name="expertise"
-                  control={control}
-                  render={({ field }) => (
-                    <Select onValueChange={field.onChange} defaultValue={field.value}>
-                      <SelectTrigger>
-                        <SelectValue placeholder="Selecione sua especialidade" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        <SelectItem value="CLINICAL">Clínica</SelectItem>
-                        <SelectItem value="INFANT">Infantil</SelectItem>
-                        <SelectItem value="NEUROPSYCHOLOGY">
-                          Neuropsicologia
-                        </SelectItem>
-                        <SelectItem value="PSYCHOTHERAPIST">
-                          Psicoterapeuta
-                        </SelectItem>
-                        <SelectItem value="JURIDICAL">Jurídica</SelectItem>
-                        <SelectItem value="SOCIAL">Social</SelectItem>
-                        <SelectItem value="OTHER">Outro</SelectItem>
-                      </SelectContent>
-                    </Select>
-                  )}
-                />
-              </div>
-            </div>
-
-            <Button disabled={isSubmitting} className="w-full" type="submit">
-              {isSubmitting ? "Criando conta..." : "Criar conta"}
-            </Button>
-
-            <p className="px-2 sm:px-6 text-center text-xs sm:text-sm leading-relaxed text-muted-foreground">
-              Ao continuar, você concorda com nossos{" "}
-              <a
-                href="#"
-                className="underline underline-offset-4 hover:text-foreground transition-colors"
-              >
-                termos de serviço
-              </a>{" "}
-              e{" "}
-              <a
-                href="#"
-                className="underline underline-offset-4 hover:text-foreground transition-colors"
-              >
-                políticas de privacidade
-              </a>
-            </p>
-          </form>
+          <SignUpForm />
         </div>
       </div>
     </>
