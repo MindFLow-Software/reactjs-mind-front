@@ -1,4 +1,5 @@
 import { api } from "@/lib/axios"
+import { format } from "date-fns" // Importe o format
 import type { Expertise, PatientRole } from "@/types/expertise"
 import type { Gender } from "@/types/enum-gender"
 
@@ -29,7 +30,7 @@ export async function registerPatients(data: RegisterPatientsBody) {
         
         dateOfBirth:
             data.dateOfBirth instanceof Date
-                ? data.dateOfBirth.toISOString()
+                ? format(data.dateOfBirth, "yyyy-MM-dd")
                 : data.dateOfBirth,
     }
 

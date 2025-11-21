@@ -19,10 +19,12 @@ export function DeletePatientDialog({ fullName, onClose, onDelete, isDeleting }:
         try {
             setError(null)
             await onDelete()
-            toast.success(`Paciente ${fullName} excluído com sucesso!`) // <- feedback de sucesso
+
+            toast.success(`Paciente ${fullName} excluído com sucesso!`)
             onClose()
         } catch (err: any) {
-            const errorMessage = err?.response?.data?.message || "Erro ao excluir paciente"
+            console.error(err)
+            const errorMessage = err?.response?.data?.message || "Erro ao excluir paciente. Tente novamente."
             setError(errorMessage)
             toast.error(errorMessage)
         }
@@ -37,7 +39,11 @@ export function DeletePatientDialog({ fullName, onClose, onDelete, isDeleting }:
                 </DialogDescription>
             </DialogHeader>
 
-            {error && <p className="text-red-500 text-sm mt-1">{error}</p>}
+            {error && (
+                <div className="text-red-500 text-sm bg-red-50 p-2 rounded-md border border-red-200">
+                    {error}
+                </div>
+            )}
 
             <DialogFooter className="flex justify-end gap-3 pt-4">
                 <Button variant="outline" onClick={onClose} disabled={isDeleting}>

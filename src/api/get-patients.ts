@@ -1,24 +1,6 @@
 import { api } from "@/lib/axios"
 import { formatCPF } from "@/utils/formatCPF"
-
-// Função formatPhone que você forneceu
-export function formatPhone(raw: string): string {
-  if (!raw) return raw
-  const cleaned = String(raw).replace(/\D/g, '')
-
-  // formato esperado: 11 dígitos (2 DDD + 9 número)
-  if (/^(\d{2})(\d{5})(\d{4})$/.test(cleaned)) {
-    return cleaned.replace(/^(\d{2})(\d{5})(\d{4})$/, '($1) $2-$3')
-  }
-
-  // tenta formatar 10 dígitos (caso número com 8 dígitos sem nono)
-  if (/^(\d{2})(\d{4})(\d{4})$/.test(cleaned)) {
-    return cleaned.replace(/^(\d{2})(\d{4})(\d{4})$/, '($1) $2-$3')
-  }
-
-  // se não bater, retorna só os números (fallback)
-  return cleaned
-}
+import { formatPhone } from "@/utils/formatPhone"
 
 export interface Patient {
     id: string
@@ -26,7 +8,7 @@ export interface Patient {
     lastName: string
     email?: string
     cpf: string
-    phoneNumber: string // ⬅️ Aplicaremos a formatação aqui
+    phoneNumber: string
     profileImageUrl?: string
     dateOfBirth: string
     gender: "MASCULINE" | "FEMININE" | "OTHER"
