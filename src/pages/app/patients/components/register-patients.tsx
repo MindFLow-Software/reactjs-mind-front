@@ -4,7 +4,7 @@ import { useState } from "react"
 import { useMutation, useQueryClient } from "@tanstack/react-query"
 import { format } from "date-fns"
 import { ptBR } from "date-fns/locale"
-import { ChevronDownIcon, CloudDownload } from "lucide-react"
+import { ChevronDownIcon, CloudUpload } from "lucide-react"
 import { toast } from "sonner"
 // ⚠️ Importar cn se estiver usando
 // import { cn } from "@/lib/utils" 
@@ -22,7 +22,6 @@ import {
     FieldSet,
     FieldLabel,
     FieldLegend,
-    FieldDescription,
     FieldSeparator,
 } from "@/components/ui/field"
 
@@ -266,10 +265,7 @@ export function RegisterPatients() {
                     <FieldSeparator />
 
                     <FieldSet>
-                        <FieldLegend>Configurações do Perfil</FieldLegend>
-                        <FieldDescription>Informações internas do sistema</FieldDescription>
-
-                        <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                        <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mt-5">
 
                             <Field>
                                 <FieldLabel>Gênero</FieldLabel>
@@ -293,7 +289,7 @@ export function RegisterPatients() {
                                 </Select>
                             </Field>
 
-                            <Field>
+                            {/* <Field>
                                 <FieldLabel>Ativo?</FieldLabel>
                                 <Select value={isActive ? "true" : "false"} onValueChange={(v) => setIsActive(v === "true")}>
                                     <SelectTrigger><SelectValue placeholder="Selecione" /></SelectTrigger>
@@ -302,7 +298,7 @@ export function RegisterPatients() {
                                         <SelectItem value="false">Não</SelectItem>
                                     </SelectContent>
                                 </Select>
-                            </Field>
+                            </Field> */}
 
                         </div>
                     </FieldSet>
@@ -322,12 +318,11 @@ export function RegisterPatients() {
 
                     <FieldSet>
                         <FieldLegend>Documentos</FieldLegend>
-                        <FieldDescription>Arquivos enviados pelo paciente</FieldDescription>
 
                         <Empty className="border border-dashed py-6">
                             <EmptyHeader>
                                 <EmptyMedia variant="icon">
-                                    <CloudDownload className="h-8 w-8" />
+                                    <CloudUpload className="h-8 w-8" />
                                 </EmptyMedia>
                                 <EmptyTitle className="text-base">Sem Documentos</EmptyTitle>
                                 <EmptyDescription className="text-sm">Faça o upload dos documentos do paciente</EmptyDescription>

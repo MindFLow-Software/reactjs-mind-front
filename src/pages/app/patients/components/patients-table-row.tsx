@@ -44,7 +44,7 @@ export function PatientsTable({ patients, isLoading, perPage = 10 }: PatientsTab
             <TableHead className="w-40">Data de Nascimento</TableHead>
             <TableHead className="w-[140px]">Email</TableHead>
             <TableHead className="w-[140px]">Gênero</TableHead>
-            <TableHead className="w-[140px]">Status</TableHead>
+            {/* <TableHead className="w-[140px]">Status</TableHead> */}
             <TableHead className="w-[140px]">Opções</TableHead>
           </TableRow>
         </TableHeader>
@@ -152,12 +152,12 @@ function PatientsTableRowItem({ patient }: { patient: Patient }) {
       <TableCell className="text-muted-foreground">{email}</TableCell>
       <TableCell className="text-muted-foreground">{genderLabel}</TableCell>
 
-      <TableCell>
+      {/* <TableCell>
         <div className="flex items-center gap-2">
           <span className={`h-2 w-2 rounded-full ${status === "Ativo" ? "bg-green-500" : "bg-slate-400"}`} />
           <span className="font-medium text-muted-foreground">{status || "Inativo"}</span>
         </div>
-      </TableCell>
+      </TableCell> */}
 
       <TableCell>
         <div className="flex items-center gap-2">
