@@ -61,7 +61,7 @@ export function NavUser() {
     mutationFn: signOut,
     onSuccess: () => {
       toast.success('Logout realizado com sucesso!', { duration: 4000 })
-      navigate("/", { replace: true })
+      navigate("/sign-in", { replace: true })
     },
   })
 
