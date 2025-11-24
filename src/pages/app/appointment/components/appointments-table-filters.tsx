@@ -9,10 +9,9 @@ import { zodResolver } from "@hookform/resolvers/zod"
 
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
-import { Dialog, DialogContent, DialogTrigger } from "@/components/ui/dialog"
+import { Dialog } from "@/components/ui/dialog"
 import { RegisterAppointment } from "./register-appointment"
 
-// 1. Definição do Schema de Filtros
 const appointmentsFilterSchema = z.object({
     cpf: z.string().optional(),
     name: z.string().optional(),
@@ -25,13 +24,11 @@ export function AppointmentsTableFilters() {
     const [searchParams, setSearchParams] = useSearchParams()
     const [isRegisterOpen, setIsRegisterOpen] = useState(false)
 
-    // 2. Recupera valores iniciais da URL
     const cpf = searchParams.get("cpf")
     const name = searchParams.get("name")
     const status = searchParams.get("status")
 
-    // 3. Configura o React Hook Form
-    const { register, watch, setValue } = useForm<AppointmentsFilterSchema>({
+    const { register, watch } = useForm<AppointmentsFilterSchema>({
         resolver: zodResolver(appointmentsFilterSchema),
         defaultValues: {
             cpf: cpf ?? "",
@@ -40,12 +37,9 @@ export function AppointmentsTableFilters() {
         },
     })
 
-    // 4. Observa as mudanças nos campos
     const watchedCpf = watch("cpf")
     const watchedName = watch("name")
-    const watchedStatus = watch("status")
 
-    // 5. Função que atualiza a URL
     function applyFilters({ cpf, name, status }: AppointmentsFilterSchema) {
         setSearchParams((state) => {
             if (cpf) state.set("cpf", cpf)
@@ -57,63 +51,46 @@ export function AppointmentsTableFilters() {
             if (status && status !== "all") state.set("status", status)
             else state.delete("status")
 
-            state.set("pageIndex", "0") // Reseta para a primeira página ao filtrar
+            state.set("pageIndex", "0")
             return state
         })
     }
 
-    // 7. Efeito de Debounce (Executa a busca após o usuário parar de digitar)
     useEffect(() => {
         const timeout = setTimeout(() => {
             applyFilters({
                 cpf: watchedCpf,
                 name: watchedName,
-                status: watchedStatus,
+                status: status ?? "all",
             })
-        }, 400) // Delay de 400ms
+        }, 400)
 
         return () => clearTimeout(timeout)
-    }, [watchedCpf, watchedName, watchedStatus])
-
-    // Lógica visual para limpar campos conflitantes (se preencher CPF, limpa Nome, etc - opcional, mantido do seu exemplo original)
-    useEffect(() => {
-        if (watchedCpf && watchedName) {
-           // Se quiser manter comportamento exclusivo, descomente abaixo:
-           // if (document.activeElement?.getAttribute('name') === 'cpf') setValue('name', '')
-           // else setValue('cpf', '')
-        }
-    }, [watchedCpf, watchedName, setValue])
+    }, [watchedCpf, watchedName])
 
     return (
         <div className="flex flex-col lg:flex-row gap-3 lg:items-center lg:justify-between">
-            
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-[1fr_1fr_180px_auto] gap-2 flex-1 items-center">
 
+            <div className="flex flex-col lg:flex-row gap-2 flex-1 lg:items-center">
                 <Input
-                    placeholder="Buscar por Nome..."
-                    className="h-9"
+                    placeholder="Buscar por Nome do Paciente"
+                    className="h-8 w-full lg:w-[320px]"
                     {...register("name")}
-                />             
+                />
             </div>
 
-            {/* Botão de Novo Agendamento */}
             <div className="flex items-center">
+                <Button
+                    size="sm"
+                    className="gap-2 w-full lg:w-auto shrink-0 cursor-pointer"
+                    onClick={() => setIsRegisterOpen(true)}
+                >
+                    <CalendarPlus className="h-4 w-4" />
+                    Novo agendamento
+                </Button>
+
                 <Dialog open={isRegisterOpen} onOpenChange={setIsRegisterOpen}>
-                    <DialogTrigger asChild>
-                        <Button
-                            size="sm"
-                            className="gap-2 w-full lg:w-auto shrink-0 cursor-pointer"
-                        >
-                            <CalendarPlus className="h-4 w-4" />
-                            Novo agendamento
-                        </Button>
-                    </DialogTrigger>
-                    
-                    {isRegisterOpen && (
-                         <DialogContent>
-                            <RegisterAppointment />
-                         </DialogContent>
-                    )}
+                    {isRegisterOpen && <RegisterAppointment />}
                 </Dialog>
             </div>
         </div>

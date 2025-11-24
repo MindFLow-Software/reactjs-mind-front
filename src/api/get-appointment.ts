@@ -1,6 +1,6 @@
 import { api } from '@/lib/axios'
 
-// 1. Definição do Enum Status (Necessário para a tipagem da entidade)
+// 1. Enum de Status
 export const AppointmentStatus = {
   SCHEDULED: 'SCHEDULED',
   ATTENDING: 'ATTENDING',
@@ -10,9 +10,10 @@ export const AppointmentStatus = {
   RESCHEDULED: 'RESCHEDULED',
 } as const
 
-export type AppointmentStatus = typeof AppointmentStatus[keyof typeof AppointmentStatus]
+export type AppointmentStatus =
+  typeof AppointmentStatus[keyof typeof AppointmentStatus]
 
-// 2. CORRIGIDO: Inclui as relações aninhadas e status correto (Resolve TS2339 e TS2305)
+// 2. Interface do Appointment (com relações)
 export interface Appointment {
   patientName: string
   id: string
@@ -25,7 +26,6 @@ export interface Appointment {
   endedAt?: string | null
   status: AppointmentStatus
 
-  // RELAÇÕES ANINHADAS (Resolve erro 'patient' e 'psychologistId' no frontend)
   patient: {
     id(id: any): [any, any]
     firstName: string
@@ -37,14 +37,17 @@ export interface Appointment {
   }
 }
 
+// 3. Request atualizado (AGORA COM cpf e name)
 export interface GetAppointmentsRequest {
   pageIndex?: number
   perPage?: number
   status?: string | null
   orderBy?: 'asc' | 'desc'
+  cpf?: string
+  name?: string
 }
 
-// 3. CORRIGIDO: Tipagem da Resposta
+// 4. Response
 export interface GetAppointmentsResponse {
   appointments: Appointment[]
   meta: {
@@ -54,19 +57,21 @@ export interface GetAppointmentsResponse {
   }
 }
 
-// 4. CORRIGIDO: Lida com a tipagem de ordenação (Resolve TS2322)
+// 5. Função atualizada (cpf e name incluídos)
 export async function getAppointments(
   params: GetAppointmentsRequest,
 ): Promise<GetAppointmentsResponse> {
-  
   const finalOrderBy = (params.orderBy ?? 'desc') as 'asc' | 'desc'
 
   const response = await api.get<GetAppointmentsResponse>('/appointments', {
     params: {
-        pageIndex: params.pageIndex ?? 0, 
-        perPage: params.perPage ?? 10, 
-        orderBy: finalOrderBy, 
-        ...(params.status && { status: params.status }), 
+      pageIndex: params.pageIndex ?? 0,
+      perPage: params.perPage ?? 10,
+      orderBy: finalOrderBy,
+
+      ...(params.status && { status: params.status }),
+      ...(params.cpf && { cpf: params.cpf }),
+      ...(params.name && { name: params.name }),
     },
   })
 

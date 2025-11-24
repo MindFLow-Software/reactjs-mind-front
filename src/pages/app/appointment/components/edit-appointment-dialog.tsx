@@ -39,7 +39,7 @@ import { updateAppointment, type UpdateAppointmentRequest } from "@/api/update-a
 import { getPatients } from "@/api/get-patients"
 import type { Appointment } from "@/api/get-appointment"
 
-const MAX_NOTE_LENGTH = 300
+const MAX_NOTES_LENGTH = 30
 
 interface EditAppointmentProps {
     appointment: Appointment
@@ -49,25 +49,24 @@ interface EditAppointmentProps {
 export function EditAppointment({ appointment, onClose }: EditAppointmentProps) {
     const queryClient = useQueryClient()
 
-    // 1. Estados Iniciais
-    const initialPatientId = appointment.patient?.id ? String(appointment.patient.id) : ""
+    const initialPatientId = appointment.patientId
     const initialDate = appointment.scheduledAt ? new Date(appointment.scheduledAt) : undefined
     const initialNotes = appointment.notes || ""
+    const initialDiagnosis = appointment.diagnosis || ""
 
     const [date, setDate] = useState<Date | undefined>(initialDate)
     const [selectedPatient, setSelectedPatient] = useState<string>(initialPatientId)
     const [notes, setNotes] = useState<string>(initialNotes)
+    const [diagnosis, setDiagnosis] = useState<string>(initialDiagnosis)
 
     const [patients, setPatients] = useState<{ id: string; name: string }[]>([])
 
-    // 2. Busca de Pacientes
     useEffect(() => {
         const fetchPatients = async () => {
             try {
                 const data = await getPatients({
                     pageIndex: 0,
-                    perPage: 1000,
-                    status: null as any // Força busca sem filtro de status
+                    perPage: 100,
                 })
 
                 const formatted = data.patients.map((p) => ({
@@ -92,48 +91,37 @@ export function EditAppointment({ appointment, onClose }: EditAppointmentProps) 
             onClose()
         },
         onError: (err: any) => {
-            // Lógica de tratamento de erros igual ao exemplo de Pacientes
             let errorMessage = "Erro ao atualizar agendamento."
-
-            if (err.response) {
-                const apiMessage = err.response.data?.message || err.response.data?.error
-
-                if (err.response.status === 409) {
-                    errorMessage = apiMessage || "Conflito de horário ou dados."
-                } else if (apiMessage) {
-                    errorMessage = apiMessage
-                } else {
-                    errorMessage = `Erro (${err.response.status}): Falha na comunicação com o servidor.`
-                }
-            } else {
-                errorMessage = "Erro de rede ou desconhecido. Tente novamente."
+            if (err.response?.data?.message) {
+                errorMessage = err.response.data.message
             }
-
             toast.error(errorMessage)
         },
     })
 
     async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
         e.preventDefault()
-        const formData = new FormData(e.currentTarget)
-        const diagnosis = formData.get("diagnosis") as string
 
-        if (!selectedPatient) {
-            toast.error("Selecione um paciente.")
-            return
-        }
         if (!date) {
             toast.error("Selecione uma data e hora.")
+            return
+        }
+        if (!diagnosis.trim()) {
+            toast.error("O diagnóstico é obrigatório.")
+            return
+        }
+
+        // Validação de Data: Impede remarcar para o passado
+        if (date.getTime() < new Date().getTime()) {
+            toast.error("Não é possível agendar para o passado.")
             return
         }
 
         const payload: UpdateAppointmentRequest = {
             id: appointment.id,
-            patientId: selectedPatient,
             diagnosis,
-            notes: notes || undefined,
+            notes: notes.trim() || undefined,
             scheduledAt: date,
-            status: appointment.status,
         }
 
         await updateAppointmentFn(payload)
@@ -155,12 +143,13 @@ export function EditAppointment({ appointment, onClose }: EditAppointmentProps) 
 
                         <div className="grid grid-cols-1 gap-4">
 
-                            {/* Paciente */}
+                            {/* Paciente (Desabilitado para edição) */}
                             <Field>
                                 <FieldLabel htmlFor="patient">Paciente</FieldLabel>
                                 <Select
                                     value={selectedPatient}
                                     onValueChange={setSelectedPatient}
+                                    disabled // 🔑 Travado: Não alteramos o paciente de uma consulta existente
                                 >
                                     <SelectTrigger className="w-full">
                                         <SelectValue placeholder="Selecione o paciente" />
@@ -189,8 +178,9 @@ export function EditAppointment({ appointment, onClose }: EditAppointmentProps) 
                                     name="diagnosis"
                                     placeholder="ex: Ansiedade generalizada"
                                     required
-                                    defaultValue={appointment.diagnosis}
                                     maxLength={90}
+                                    value={diagnosis}
+                                    onChange={(e) => setDiagnosis(e.target.value)}
                                 />
                             </Field>
 
@@ -214,7 +204,27 @@ export function EditAppointment({ appointment, onClose }: EditAppointmentProps) 
                                         <Calendar
                                             mode="single"
                                             selected={date}
-                                            onSelect={setDate}
+                                            onSelect={(selectedDate) => {
+                                                if (selectedDate) {
+                                                    const currentDate = new Date();
+                                                    let newDate = new Date(selectedDate);
+
+                                                    // Lógica de buffer de segurança para "Hoje"
+                                                    if (selectedDate.toDateString() === currentDate.toDateString()) {
+                                                        const nowPlusBuffer = new Date(currentDate.getTime() + 15 * 60000);
+                                                        newDate.setHours(nowPlusBuffer.getHours());
+                                                        newDate.setMinutes(nowPlusBuffer.getMinutes());
+                                                    } else if (date) {
+                                                        // Mantém a hora anterior se mudar apenas o dia
+                                                        newDate.setHours(date.getHours());
+                                                        newDate.setMinutes(date.getMinutes());
+                                                    } else {
+                                                        newDate.setHours(8); // Hora padrão razoável
+                                                        newDate.setMinutes(0);
+                                                    }
+                                                    setDate(newDate);
+                                                }
+                                            }}
                                             fromYear={1900}
                                             toYear={new Date().getFullYear() + 2}
                                             locale={ptBR}
@@ -223,14 +233,14 @@ export function EditAppointment({ appointment, onClose }: EditAppointmentProps) 
                                             <Input
                                                 type="time"
                                                 className="w-full"
-                                                defaultValue={date ? format(date, "HH:mm") : ""}
+                                                value={date ? format(date, "HH:mm") : ""}
                                                 onChange={(e) => {
                                                     if (date && e.target.value) {
-                                                        const [h, m] = e.target.value.split(":")
-                                                        const newDate = new Date(date)
-                                                        newDate.setHours(Number(h))
-                                                        newDate.setMinutes(Number(m))
-                                                        setDate(newDate)
+                                                        const [h, m] = e.target.value.split(":");
+                                                        const newDate = new Date(date);
+                                                        newDate.setHours(Number(h));
+                                                        newDate.setMinutes(Number(m));
+                                                        setDate(newDate);
                                                     }
                                                 }}
                                             />
@@ -248,17 +258,12 @@ export function EditAppointment({ appointment, onClose }: EditAppointmentProps) 
                                     placeholder="Adicione observações..."
                                     value={notes}
                                     onChange={(e) => setNotes(e.target.value)}
-                                    maxLength={MAX_NOTE_LENGTH}
+                                    maxLength={MAX_NOTES_LENGTH}
                                     rows={4}
                                     className="w-full resize-none"
-                                    style={{
-                                        wordBreak: "break-all",
-                                        overflowWrap: "break-word",
-                                        whiteSpace: "pre-wrap",
-                                    }}
                                 />
                                 <div className="text-xs text-muted-foreground text-right">
-                                    {notes.length}/{MAX_NOTE_LENGTH} caracteres
+                                    {notes.length}/{MAX_NOTES_LENGTH} caracteres
                                 </div>
                             </Field>
                         </div>
