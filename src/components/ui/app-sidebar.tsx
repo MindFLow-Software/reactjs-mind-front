@@ -71,7 +71,7 @@ const projects = [
     { name: "Pomodoro", url: "#", icon: Clock },
     {
         name: "ChatBot MindFLush",
-        url: "https://cdn.botpress.cloud/webchat/v3.3/shareable.html?configUrl=https://files.bpcontent.cloud/2025/10/13/22/20251013223819-5VEK1PGJ.json",
+        url: "https://cdn.botpress.cloud/webchat/v3.3/shareable.html?configUrl=https://files.bpcontent.cloud/2025/11/24/22/20251124224302-TGJFOW69.json",
         icon: BrainCircuit,
     },
     { name: "Travel", url: "#", icon: Map },
