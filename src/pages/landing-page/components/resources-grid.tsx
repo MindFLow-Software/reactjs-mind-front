@@ -7,14 +7,10 @@ export function ResourcesGrid() {
             <div className="container mx-auto px-6 md:px-8 lg:px-12">
 
                 {/* Grid de 2 Colunas */}
-                <div className="grid grid-cols-1 gap-8 lg:grid-cols-2 lg:gap-12">
+                <div className="grid grid-cols-1 gap-3 lg:grid-cols-2 lg:gap-4">
 
-                    {/* === CARD 1 (Esquerda) === */}
-                    <div className="group flex flex-col overflow-hidden rounded-3xl border border-slate-200 bg-white transition-all duration-300 hover:border-blue-200 hover:shadow-xl hover:shadow-blue-900/5">
+                    <div className="group flex flex-col overflow-hidden rounded-3xl border border-slate-200 bg-white transition-all duration-300 hover:shadow-xl hover:shadow-slate-900/5">
 
-                        {/* 1. ÁREA DA IMAGEM (Placeholder) */}
-                        {/* A classe 'bg-slate-50' é só para você ver a área enquanto não põe a imagem. 
-                            Quando colocar a imagem, ela vai cobrir o fundo. */}
                         <div className="relative h-72 w-full overflow-hidden bg-slate-50 sm:h-80 lg:h-96">
 
                             {/* --- COLOQUE SUA IMAGEM AQUI --- */}
@@ -51,15 +47,13 @@ export function ResourcesGrid() {
                     </div>
 
                     {/* === CARD 2 (Direita) === */}
-                    <div className="group flex flex-col overflow-hidden rounded-3xl border border-slate-200 bg-white transition-all duration-300 hover:border-blue-200 hover:shadow-xl hover:shadow-blue-900/5">
+                    <div className="group flex flex-col overflow-hidden rounded-3xl border border-slate-200 bg-white transition-all duration-300 hover:shadow-xl hover:shadow-slate-900/5">
 
-                        {/* 1. ÁREA DA IMAGEM (Placeholder) */}
                         <div className="relative h-72 w-full overflow-hidden bg-slate-50 sm:h-80 lg:h-96">
 
                             {/* --- COLOQUE SUA IMAGEM AQUI --- */}
                             {/* <img src="/caminho-da-imagem-2.png" alt="AI" className="h-full w-full object-cover object-top transition-transform duration-500 group-hover:scale-105" /> */}
 
-                            {/* Placeholder visual (Pode apagar isso quando por a imagem) */}
                             <div className="flex h-full w-full items-center justify-center text-slate-300">
                                 <span className="text-sm font-medium uppercase tracking-widest">Imagem 2 (IA Chat)</span>
                             </div>

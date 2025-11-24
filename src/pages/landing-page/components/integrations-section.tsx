@@ -110,10 +110,9 @@ export function IntegrationsSection() {
                     <div className="mt-12 flex justify-center animate-fade-in" style={{ animationDelay: "0.4s" }}>
                         <Button
                             className="group relative h-14 rounded-full bg-linear-to-r from-blue-500 to-blue-600 px-8 text-base font-semibold text-white shadow-lg shadow-blue-500/25 transition-all hover:shadow-xl hover:shadow-blue-500/30 hover:scale-105 active:scale-100"
-                            onClick={() => console.log("Ver integrações")}
                         >
                             <span className="relative z-10 flex items-center">
-                                Ver todas as integrações
+                                Acesse agora
                                 <ArrowRight className="ml-2 h-5 w-5 transition-transform group-hover:translate-x-1" />
                             </span>
                             <div className="absolute inset-0 rounded-full bg-linear-to-r from-transparent via-white/20 to-transparent opacity-0 group-hover:opacity-100 group-hover:animate-shimmer"></div>
@@ -134,7 +133,7 @@ export function IntegrationsSection() {
 
                     {/* Esquerda Meio → Outlook */}
                     <IntegrationCard
-                        position="absolute -left-26 top-1/2 -translate-y-1/2"
+                        position="absolute -left-28 bottom-37"
                         icon={<EnvelopeSimple size={24} weight="bold" />}
                         label="Email"
                         bgColor="bg-sky-50"
@@ -164,7 +163,7 @@ export function IntegrationsSection() {
 
                     {/* Direita Meio → WhatsApp */}
                     <IntegrationCard
-                        position="absolute -right-28 top-1/2 -translate-y-1/2"
+                        position="absolute -right-26 top-38"
                         icon={<WhatsappLogo size={24} weight="fill" />}
                         label="WhatsApp"
                         bgColor="bg-green-50"

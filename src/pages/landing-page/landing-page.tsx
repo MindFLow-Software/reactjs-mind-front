@@ -3,6 +3,7 @@ import { Hero } from "./components/hero"
 import { IntegrationsSection } from "./components/integrations-section"
 import { ResourcesGrid } from "./components/resources-grid"
 import { StatsSection } from "./components/stats-section"
+import { TestimonialsSection } from "./components/testimonials"
 
 export function LandingPage() {
     return (
@@ -14,6 +15,7 @@ export function LandingPage() {
                 <StatsSection/>
                 <IntegrationsSection/>
                 <ResourcesGrid/>
+                <TestimonialsSection/>
             </main>
         </div>
     )
