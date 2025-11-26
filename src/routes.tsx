@@ -10,7 +10,7 @@ import { SignUp } from './pages/auth/sign-up'
 import { AppointmentsRoom } from './pages/app/video-room/appoinmets-room'
 import { AppointmentsList } from './pages/app/appointment/appointment-list'
 import { MockPsychologistProfilePage } from './pages/app/account/account'
-import { DashboardFinance } from './pages/app/finance/dashboard-finance'
+// import { DashboardFinance } from './pages/app/finance/dashboard-finance'
 import { LandingPage } from './pages/landing-page/landing-page'
 
 function LandingLayout() {
@@ -62,10 +62,10 @@ export const router = createBrowserRouter([
         path: '/dashboard',
         element: <Dashboard />,
       },
-      {
-        path: '/dashboard-finance',
-        element: <DashboardFinance />,
-      },
+      // {
+      //   path: '/dashboard-finance',
+      //   element: <DashboardFinance />,
+      // },
       {
         path: '/patients-list',
         element: <PatientsList />,
