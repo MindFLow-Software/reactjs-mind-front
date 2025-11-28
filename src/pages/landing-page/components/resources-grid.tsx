@@ -14,11 +14,11 @@ export function ResourcesGrid() {
                         <div className="relative h-72 w-full overflow-hidden bg-slate-50 sm:h-80 lg:h-96">
 
                             {/* --- COLOQUE SUA IMAGEM AQUI --- */}
-                            {/* <img src="/caminho-da-imagem.png" alt="Doc" className="h-full w-full object-cover object-top transition-transform duration-500 group-hover:scale-105" /> */}
+                            <img src="/mind.png" alt="Doc" className="h-full w-full object-cover object-top transition-transform duration-500 group-hover:scale-105" />
 
                             {/* Placeholder visual (Pode apagar isso quando por a imagem) */}
                             <div className="flex h-full w-full items-center justify-center text-slate-300">
-                                <span className="text-sm font-medium uppercase tracking-widest">Imagem 1 (Documentação)</span>
+                                <span className="text-sm font-medium uppercase tracking-widest">Imagem 1 (Dashboard)</span>
                             </div>
 
                         </div>
@@ -27,21 +27,11 @@ export function ResourcesGrid() {
                         <div className="flex flex-1 flex-col justify-between border-t border-slate-100 p-8">
                             <div>
                                 <h3 className="text-2xl font-bold tracking-tight text-slate-900">
-                                    Documentação
+                                    Menos Burocracia, Mais Escuta
                                 </h3>
                                 <p className="mt-3 text-base leading-relaxed text-slate-600">
-                                    Desenvolvida por psicólogos para psicólogos. Nossa plataforma foi projetada para ser intuitiva, cobrindo desde o prontuário até o financeiro.
+                                    A tecnologia não deve atrapalhar seu atendimento. Criamos uma plataforma invisível e intuitiva que cuida da gestão, agenda e financeiro, para que sua atenção fique 100% no paciente.
                                 </p>
-                            </div>
-
-                            <div className="mt-8">
-                                <Link
-                                    to="#documentacao"
-                                    className="group/link inline-flex items-center text-sm font-bold text-blue-600 transition-colors hover:text-blue-700"
-                                >
-                                    Acessar documentação
-                                    <ArrowRight className="ml-2 h-4 w-4 transition-transform group-hover/link:translate-x-1" />
-                                </Link>
                             </div>
                         </div>
                     </div>
