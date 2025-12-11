@@ -1,5 +1,6 @@
 "use client"
 
+import { useMemo } from "react"
 import { Goal } from "lucide-react"
 import { Card } from "@/components/ui/card"
 import { cn } from "@/lib/utils"
@@ -15,26 +16,36 @@ export function MonthPatientsAmountCard({
     startDate,
     endDate,
 }: MonthPatientsAmountCardProps) {
+    // 1. Estabiliza as chaves de data para evitar refetchs desnecessários se a referência do objeto mudar
+    const startKey = startDate?.toISOString()
+    const endKey = endDate?.toISOString()
+
     const { data, isLoading, isError } = useQuery({
-        queryKey: ["metrics", "month-sessions-amount", startDate, endDate],
+        queryKey: ["metrics", "month-sessions-amount", startKey, endKey],
         queryFn: () => getMonthSessionsAmount({ startDate, endDate }),
-        staleTime: 1000 * 60 * 5, // Cache de 5 minutos
-        // Mantém os dados anteriores visíveis enquanto busca os novos (evita "piscar")
-        placeholderData: (previousData) => previousData,
+        staleTime: 1000 * 60 * 30, // Aumentado para 30 minutos (cache agressivo)
+        refetchOnWindowFocus: false, // Evita recarregar ao trocar de aba/janela
+        placeholderData: (previousData) => previousData, // Mantém dados antigos enquanto carrega novos
     })
 
-    // Valores reais vindos da API (ou 0 se ainda não carregou)
-    const total = data?.total ?? 0
-    const diffFromLastMonth = data?.diffFromLastMonth ?? 0
+    // 2. Memoiza os cálculos visuais para evitar processamento no render
+    const { total, diffSign, formattedDiff, diffColorClass } = useMemo(() => {
+        const totalVal = data?.total ?? 0
+        const diffVal = data?.diffFromLastMonth ?? 0
 
-    // Assumindo que a API já retorna a porcentagem pronta (ex: 12 para 12%)
-    const formattedDiff = diffFromLastMonth
-    const diffSign = formattedDiff > 0 ? "+" : ""
+        const sign = diffVal > 0 ? "+" : ""
+        const colorClass =
+            diffVal >= 0
+                ? "text-emerald-500 dark:text-emerald-400"
+                : "text-red-500 dark:text-red-400"
 
-    const diffColorClass =
-        formattedDiff >= 0
-            ? "text-emerald-500 dark:text-emerald-400"
-            : "text-red-500 dark:text-red-400"
+        return {
+            total: totalVal,
+            formattedDiff: diffVal,
+            diffSign: sign,
+            diffColorClass: colorClass,
+        }
+    }, [data])
 
     return (
         <Card
