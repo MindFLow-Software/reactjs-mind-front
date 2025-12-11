@@ -7,7 +7,6 @@ import { subDays } from 'date-fns'
 import { useHeaderStore } from "@/hooks/use-header-store"
 
 import { PatientsCountCard } from "./components/patients-count-card"
-import { MonthPatientsAmountCard } from "./components/month-patients-amount-card"
 import { PatientsAmountCard } from "./components/patients-amount-card"
 import { SessionsChart } from "./components/sessions-chart"
 import { PatientsByAgeChart } from "./components/patients-by-age-chart"
