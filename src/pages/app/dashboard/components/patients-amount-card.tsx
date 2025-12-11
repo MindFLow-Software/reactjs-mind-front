@@ -1,4 +1,4 @@
-import { useMemo, useState, useEffect } from 'react'
+import { useState, useEffect } from 'react'
 import { Card } from '@/components/ui/card'
 import { HeartHandshake } from 'lucide-react'
 import { getAmountPatientsCard } from '@/api/get-amount-patients-card'
@@ -34,28 +34,6 @@ export const PatientsAmountCard = () => {
       )
   }, [])
 
-  const { displayValue, diffSign, formattedDiff, diffColorClass } = useMemo(() => {
-    if (state.total === null) {
-      return {
-        displayValue: '—',
-        diffSign: '',
-        formattedDiff: 0,
-        diffColorClass: 'text-blue-600 dark:text-blue-400'
-      }
-    }
-
-    const displayValue = state.total
-    const diff = 0.0
-    const formattedDiff = diff * 100
-    const diffSign = formattedDiff >= 0 ? '+' : ''
-    const diffColorClass =
-      formattedDiff >= 0
-        ? 'text-blue-600 dark:text-blue-400'
-        : 'text-blue-600 dark:text-blue-400'
-
-    return { displayValue, diffSign, formattedDiff, diffColorClass }
-  }, [state.total])
-
   return (
     <Card
       className={cn(
@@ -71,16 +49,15 @@ export const PatientsAmountCard = () => {
         )}
       />
 
-      {/* 2. IMAGEM DO CÉREBRO (NOVA ADIÇÃO) */}
       <img
         src={'/iconCountcard.svg'}
-        alt="Ícone de Cérebro/Ideia"
+        alt="Ícone decorativo"
         className={cn(
-          "absolute bottom-0 right-0", // Posição
-          "w-3xl h-auto max-w-[150px]", // Tamanho
-          "opacity-70", // <-- Novo: Valor único para Light e Dark
-          "pointer-events-none", // Garante que não interfira no clique
-          "translate-x-1/4 translate-y-1/4" // Move a imagem para fora do Card ligeiramente
+          "absolute bottom-0 right-0",
+          "w-3xl h-auto max-w-[150px]",
+          "opacity-70",
+          "pointer-events-none",
+          "translate-x-1/4 translate-y-1/4"
         )}
       />
 
@@ -92,7 +69,7 @@ export const PatientsAmountCard = () => {
         {state.isLoading ? (
           <div className="space-y-2">
             <div className="h-6 w-20 rounded bg-gray-200 dark:bg-gray-700 animate-pulse" />
-            <div className="h-3 w-36 rounded bg-gray-200 dark:bg-gray-700 animate-pulse" />
+            <div className="h-4 w-36 rounded bg-gray-200 dark:bg-gray-700 animate-pulse" />
           </div>
         ) : state.isError ? (
           <div className="flex flex-col gap-1">
@@ -100,21 +77,13 @@ export const PatientsAmountCard = () => {
             <span className="text-xs text-muted-foreground">Tente novamente</span>
           </div>
         ) : (
-          <div className="flex flex-col gap-1.5">
+          <div className="flex flex-col gap-1">
             <span className="text-2xl font-semibold tracking-tight leading-none">
-              {displayValue.toLocaleString("pt-BR")}
+              {state.total !== null ? state.total.toLocaleString("pt-BR") : '—'}
             </span>
-
-            <p className="text-[13px] text-muted-foreground font-medium leading-none">
+            
+            <p className="text-sm text-muted-foreground font-medium leading-relaxed">
               Total de Pacientes
-            </p>
-
-            <p className="text-xs text-muted-foreground leading-relaxed">
-              <span className={cn("font-semibold", diffColorClass)}>
-                {diffSign}
-                {formattedDiff.toFixed(1)}%
-              </span>{" "}
-              em relação ao mês anterior
             </p>
           </div>
         )}
