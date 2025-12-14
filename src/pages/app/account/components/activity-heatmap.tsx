@@ -24,10 +24,10 @@ export function ActivityHeatmap({ data, maxValue }: ActivityHeatmapProps) {
     const getColor = (count: number, max: number) => {
         if (count === 0) return "bg-slate-100 dark:bg-slate-900"
         const intensity = count / max
-        if (intensity < 0.25) return "bg-emerald-200 dark:bg-emerald-900"
-        if (intensity < 0.5) return "bg-emerald-400 dark:bg-emerald-700"
-        if (intensity < 0.75) return "bg-emerald-600 dark:bg-emerald-600"
-        return "bg-emerald-700 dark:bg-emerald-500"
+        if (intensity < 0.25) return "bg-blue-200 dark:bg-blue-900"
+        if (intensity < 0.5) return "bg-blue-400 dark:bg-blue-700"
+        if (intensity < 0.75) return "bg-blue-600 dark:bg-blue-600"
+        return "bg-blue-700 dark:bg-blue-500"
     }
 
     const max = maxValue || Math.max(...heatmapData.map((d) => d.count), 1)
@@ -83,10 +83,10 @@ export function ActivityHeatmap({ data, maxValue }: ActivityHeatmapProps) {
                 <span className="text-muted-foreground">Menos</span>
                 <div className="flex gap-1">
                     <div className="w-3 h-3 bg-slate-100 dark:bg-slate-900 border border-slate-300 dark:border-slate-700 rounded-sm" />
-                    <div className="w-3 h-3 bg-emerald-200 dark:bg-emerald-900 border border-slate-300 dark:border-slate-700 rounded-sm" />
-                    <div className="w-3 h-3 bg-emerald-400 dark:bg-emerald-700 border border-slate-300 dark:border-slate-700 rounded-sm" />
-                    <div className="w-3 h-3 bg-emerald-600 dark:bg-emerald-600 border border-slate-300 dark:border-slate-700 rounded-sm" />
-                    <div className="w-3 h-3 bg-emerald-700 dark:bg-emerald-500 border border-slate-300 dark:border-slate-700 rounded-sm" />
+                    <div className="w-3 h-3 bg-blue-200 dark:bg-blue-900 border border-slate-300 dark:border-slate-700 rounded-sm" />
+                    <div className="w-3 h-3 bg-blue-400 dark:bg-blue-700 border border-slate-300 dark:border-slate-700 rounded-sm" />
+                    <div className="w-3 h-3 bg-blue-600 dark:bg-blue-600 border border-slate-300 dark:border-slate-700 rounded-sm" />
+                    <div className="w-3 h-3 bg-blue-700 dark:bg-blue-500 border border-slate-300 dark:border-slate-700 rounded-sm" />
                 </div>
                 <span className="text-muted-foreground">Mais</span>
             </div>

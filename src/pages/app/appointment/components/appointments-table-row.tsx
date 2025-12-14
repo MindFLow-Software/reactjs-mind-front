@@ -1,7 +1,7 @@
 "use client"
 
 import { useState } from "react"
-import { Trash2, UserPen, Loader2, ArrowRight } from "lucide-react"
+import { Trash2, UserPen, Loader2 } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { TableCell, TableRow } from "@/components/ui/table"
 import { Dialog, DialogTrigger, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog"
@@ -16,9 +16,6 @@ import { EditAppointment } from "./edit-appointment-dialog"
 import { deleteAppointment } from "@/api/delete-appointment"
 import type { Appointment, AppointmentStatus } from "@/api/get-appointment"
 
-async function startAppointment(_id: string) {
-    await new Promise(resolve => setTimeout(resolve, 1000))
-}
 
 interface AppointmentProps {
     appointment: Appointment
@@ -57,21 +54,10 @@ export function AppointmentsTableRow({ appointment }: AppointmentProps) {
         onError: () => toast.error("Erro ao excluir agendamento.")
     })
 
-    // Mutation para Iniciar
-    const { mutateAsync: startAppointmentFn, isPending: isStarting } = useMutation({
-        mutationFn: startAppointment,
-        onSuccess: () => {
-            toast.success("Sessão iniciada!")
-            queryClient.invalidateQueries({ queryKey: ["appointments"] })
-        }
-    })
-
     async function handleDelete() {
         await deleteAppointmentFn(id)
     }
 
-    const isPast = new Date(scheduledAt).getTime() < Date.now();
-    const canBeStarted = status === "SCHEDULED" && !isPast;
     const canBeEdited = status !== "FINISHED" && status !== "CANCELED";
     const canBeDeleted = true;
 
@@ -101,25 +87,6 @@ export function AppointmentsTableRow({ appointment }: AppointmentProps) {
             <TableCell>
                 <div className="flex items-center gap-2">
                     <TooltipProvider>
-
-                        {/* Botão Iniciar */}
-                        {canBeStarted && (
-                            <Tooltip>
-                                <TooltipTrigger asChild>
-                                    <Button
-                                        variant="outline"
-                                        size="icon"
-                                        className="h-7 w-7"
-                                        onClick={() => startAppointmentFn(id)}
-                                        disabled={isStarting}
-                                    >
-                                        {isStarting ? <Loader2 className="h-3 w-3 animate-spin" /> : <ArrowRight className="h-3 w-3 text-green-600" />}
-                                    </Button>
-                                </TooltipTrigger>
-                                <TooltipContent side="top">Iniciar Sessão</TooltipContent>
-                            </Tooltip>
-                        )}
-
                         {/* Botão Editar */}
                         <Dialog open={isEditDialogOpen} onOpenChange={setIsEditDialogOpen}>
                             <Tooltip>

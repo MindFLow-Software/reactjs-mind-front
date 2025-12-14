@@ -18,7 +18,7 @@ import { toast } from "sonner"
 
 import { signOut } from "@/api/sign-out"
 import { getProfile, type GetProfileResponse } from "@/api/get-profile"
-import { useTheme } from "../theme/theme-provider" // Importe o hook do tema aqui
+import { useTheme } from "../theme/theme-provider"
 
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import {
@@ -29,10 +29,10 @@ import {
   DropdownMenuLabel,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
-  DropdownMenuSub,           // Novo
-  DropdownMenuSubTrigger,    // Novo
-  DropdownMenuSubContent,    // Novo
-  DropdownMenuPortal         // Novo (opcional, mas recomendado para evitar cortes)
+  DropdownMenuSub,
+  DropdownMenuSubTrigger,
+  DropdownMenuSubContent,
+  DropdownMenuPortal
 } from "@/components/ui/dropdown-menu"
 import {
   SidebarMenu,
@@ -45,7 +45,7 @@ import { Skeleton } from "@/components/ui/skeleton"
 export function NavUser() {
   const { isMobile } = useSidebar()
   const navigate = useNavigate()
-  const { setTheme } = useTheme() // Usando o hook diretamente
+  const { setTheme } = useTheme()
 
   const {
     data: profile,
@@ -55,6 +55,7 @@ export function NavUser() {
     queryKey: ["psychologist-profile"],
     queryFn: getProfile,
     retry: false,
+    staleTime: Infinity, // 🔑 Define que os dados nunca ficam obsoletos, evitando recarregamento
   })
 
   const { mutateAsync: signOutFn, isPending: isSigningOut } = useMutation({

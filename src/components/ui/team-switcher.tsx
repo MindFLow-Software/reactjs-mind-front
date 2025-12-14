@@ -31,33 +31,35 @@ interface TeamSwitcherTeam {
 
 interface TeamSwitcherProps {
     teams: TeamSwitcherTeam[]
-    isLoading: boolean
+    isLoading: boolean // 🔑 Adicionado para resolver o erro TS2322
 }
 
 export function TeamSwitcher({ teams, isLoading }: TeamSwitcherProps) {
     const { isMobile } = useSidebar()
-    // 1. Inicializa o estado com o primeiro item (o placeholder)
-    const [activeTeam, setActiveTeam] = React.useState(teams[0]) 
-    
-    // 2. 🔑 SINCRONIZAÇÃO: Atualiza o time ativo quando o prop 'teams' muda.
+    const [activeTeam, setActiveTeam] = React.useState(teams[0])
+
+    // 🔑 Sincronização: Atualiza o time ativo quando a lista de times muda (ex: carregou da API)
     React.useEffect(() => {
-        if (teams && teams.length > 0) {
+        if (teams.length > 0) {
             setActiveTeam(teams[0])
         }
-    }, [teams]) 
+    }, [teams])
 
-    if (!activeTeam) {
-        return null
-    }
-
+    // 🔑 Renderiza Skeleton enquanto carrega
     if (isLoading) {
         return (
             <SidebarMenu>
                 <SidebarMenuItem>
-                    <Skeleton className="w-full h-14 rounded-xl" />
+                    <div className="px-2 py-1.5">
+                        <Skeleton className="h-12 w-full rounded-lg" />
+                    </div>
                 </SidebarMenuItem>
             </SidebarMenu>
         )
+    }
+
+    if (!activeTeam) {
+        return null
     }
 
     const fullName = `${activeTeam.firstName} ${activeTeam.lastName}`
@@ -82,7 +84,7 @@ export function TeamSwitcher({ teams, isLoading }: TeamSwitcherProps) {
                         </SidebarMenuButton>
                     </DropdownMenuTrigger>
                     <DropdownMenuContent
-                        className="w-(--radix-dropdown-menu-trigger-width) min-w-56 rounded-lg"
+                        className="w-[--radix-dropdown-menu-trigger-width] min-w-56 rounded-lg"
                         align="start"
                         side={isMobile ? "bottom" : "right"}
                         sideOffset={4}

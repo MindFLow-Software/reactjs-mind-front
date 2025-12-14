@@ -34,10 +34,10 @@ export function MockPsychologistProfilePage() {
     const getColor = (count: number, max: number) => {
         if (count === 0) return "bg-slate-100 dark:bg-slate-900"
         const intensity = count / max
-        if (intensity < 0.25) return "bg-emerald-200 dark:bg-emerald-900"
-        if (intensity < 0.5) return "bg-emerald-400 dark:bg-emerald-700"
-        if (intensity < 0.75) return "bg-emerald-600 dark:bg-emerald-600"
-        return "bg-emerald-700 dark:bg-emerald-500"
+        if (intensity < 0.25) return "bg-blue-200 dark:bg-blue-900"
+        if (intensity < 0.5) return "bg-blue-400 dark:bg-blue-700"
+        if (intensity < 0.75) return "bg-blue-600 dark:bg-blue-600"
+        return "bg-blue-700 dark:bg-blue-500"
     }
 
     const max = Math.max(...stats.map((d) => d.count), 1)
@@ -59,7 +59,7 @@ export function MockPsychologistProfilePage() {
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
                 {/* Perfil */}
                 <Card className="overflow-hidden lg:col-span-1">
-                    <div className="h-24 bg-linear-to-r from-emerald-500 to-emerald-600" />
+                    <div className="h-24 bg-linear-to-r from-blue-500 to-blue-600" />
                     <CardHeader className="pb-0 -mt-12 relative z-10">
                         <div className="flex gap-6 items-end">
                             <div className="w-24 h-24 rounded-lg bg-slate-200 dark:bg-slate-800 border-4 border-background dark:border-slate-950 flex items-center justify-center overflow-hidden">
@@ -77,7 +77,7 @@ export function MockPsychologistProfilePage() {
                             </div>
                             <div className="pb-2">
                                 <h1 className="text-2xl font-bold text-foreground">{mockPsychologist.name}</h1>
-                                <p className="text-lg text-emerald-600 dark:text-emerald-400 font-semibold">
+                                <p className="text-lg text-blue-600 dark:text-blue-400 font-semibold">
                                     {mockPsychologist.specialization}
                                 </p>
                             </div>
@@ -87,19 +87,19 @@ export function MockPsychologistProfilePage() {
                         <p className="text-muted-foreground">{mockPsychologist.bio}</p>
                         <div className="pt-4 space-y-3 border-t border-border">
                             <div className="flex items-center gap-3">
-                                <Award className="w-5 h-5 text-emerald-600 dark:text-emerald-400" />
+                                <Award className="w-5 h-5 text-blue-600 dark:text-blue-400" />
                                 <div>
                                     <p className="text-sm text-muted-foreground">Registro Profissional</p>
                                     <p className="font-semibold text-foreground">{mockPsychologist.registrationNumber}</p>
                                 </div>
                             </div>
                             <div className="flex items-center gap-3">
-                                <Mail className="w-5 h-5 text-emerald-600 dark:text-emerald-400" />
+                                <Mail className="w-5 h-5 text-blue-600 dark:text-blue-400" />
                                 <div>
                                     <p className="text-sm text-muted-foreground">Email</p>
                                     <a
                                         href={`mailto:${mockPsychologist.email}`}
-                                        className="font-semibold text-emerald-600 dark:text-emerald-400 hover:underline"
+                                        className="font-semibold text-blue-600 dark:text-blue-400 hover:underline"
                                     >
                                         {mockPsychologist.email}
                                     </a>
@@ -107,12 +107,12 @@ export function MockPsychologistProfilePage() {
                             </div>
                             {mockPsychologist.phone && (
                                 <div className="flex items-center gap-3">
-                                    <Phone className="w-5 h-5 text-emerald-600 dark:text-emerald-400" />
+                                    <Phone className="w-5 h-5 text-blue-600 dark:text-blue-400" />
                                     <div>
                                         <p className="text-sm text-muted-foreground">Telefone</p>
                                         <a
                                             href={`tel:${mockPsychologist.phone}`}
-                                            className="font-semibold text-emerald-600 dark:text-emerald-400 hover:underline"
+                                            className="font-semibold text-blue-600 dark:text-blue-400 hover:underline"
                                         >
                                             {mockPsychologist.phone}
                                         </a>
@@ -162,10 +162,10 @@ export function MockPsychologistProfilePage() {
                             <span className="text-muted-foreground">Menos</span>
                             <div className="flex gap-1">
                                 <div className="w-3 h-3 bg-slate-100 dark:bg-slate-900 border border-slate-300 dark:border-slate-700 rounded-sm" />
-                                <div className="w-3 h-3 bg-emerald-200 dark:bg-emerald-900 border border-slate-300 dark:border-slate-700 rounded-sm" />
-                                <div className="w-3 h-3 bg-emerald-400 dark:bg-emerald-700 border border-slate-300 dark:border-slate-700 rounded-sm" />
-                                <div className="w-3 h-3 bg-emerald-600 dark:bg-emerald-600 border border-slate-300 dark:border-slate-700 rounded-sm" />
-                                <div className="w-3 h-3 bg-emerald-700 dark:bg-emerald-500 border border-slate-300 dark:border-slate-700 rounded-sm" />
+                                <div className="w-3 h-3 bg-blue-200 dark:bg-blue-900 border border-slate-300 dark:border-slate-700 rounded-sm" />
+                                <div className="w-3 h-3 bg-blue-400 dark:bg-blue-700 border border-slate-300 dark:border-slate-700 rounded-sm" />
+                                <div className="w-3 h-3 bg-blue-600 dark:bg-blue-600 border border-slate-300 dark:border-slate-700 rounded-sm" />
+                                <div className="w-3 h-3 bg-blue-700 dark:bg-blue-500 border border-slate-300 dark:border-slate-700 rounded-sm" />
                             </div>
                             <span className="text-muted-foreground">Mais</span>
                         </div>
