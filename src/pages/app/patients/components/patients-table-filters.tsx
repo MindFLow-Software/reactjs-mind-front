@@ -20,7 +20,13 @@ const patientsFilterSchema = z.object({
 
 type PatientsFilterSchema = z.infer<typeof patientsFilterSchema>
 
-export function PatientsTableFilters() {
+// 1. Definição da interface para aceitar a prop do pai
+interface PatientsTableFiltersProps {
+  onPatientRegistered?: () => void
+}
+
+// 2. Recebe a prop no componente
+export function PatientsTableFilters({ onPatientRegistered }: PatientsTableFiltersProps) {
   const [searchParams, setSearchParams] = useSearchParams()
   const [isRegisterOpen, setIsRegisterOpen] = useState(false)
 
@@ -98,7 +104,12 @@ export function PatientsTableFilters() {
 
         <Dialog open={isRegisterOpen} onOpenChange={setIsRegisterOpen}>
           {isRegisterOpen && (
-            <RegisterPatients  />
+            <RegisterPatients
+              onSuccess={() => {
+                setIsRegisterOpen(false)
+                if (onPatientRegistered) onPatientRegistered()
+              }}
+            />
           )}
         </Dialog>
       </div>
