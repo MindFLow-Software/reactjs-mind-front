@@ -23,7 +23,7 @@ export function usePatientFilters() {
     setSearchParams((state) => {
       state.delete("pageIndex")
       state.set("page", (pageIndex + 1).toString())
-      return state
+      return state 
     })
   }
 
