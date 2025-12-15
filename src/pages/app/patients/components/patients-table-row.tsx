@@ -76,7 +76,7 @@ export function PatientsTable({ patients, isLoading, perPage = 10 }: PatientsTab
                             <TableHead colSpan={8} className="text-center text-muted-foreground py-10">
                                 <div className="flex flex-col items-center justify-center gap-2">
                                     <Users className="h-8 w-8 text-muted-foreground/50" />
-                                    <p>Nenhum paciente encontrado.</p>
+                                    <p>Nenhum paciente cadastrado.</p>
                                 </div>
                             </TableHead>
                         </TableRow>

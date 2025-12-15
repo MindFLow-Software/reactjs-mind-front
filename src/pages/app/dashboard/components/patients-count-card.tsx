@@ -6,9 +6,6 @@ import { useMemo } from "react"
 import { getAmountPatientsChart } from "@/api/get-amount-patients-chart"
 import { cn } from "@/lib/utils"
 
-// NOTE: Se você estiver usando um framework como Next.js, 
-// é altamente recomendado importar a imagem no topo e usar o componente Image.
-
 interface PatientsCountCardProps {
     startDate?: Date
     endDate?: Date
@@ -71,7 +68,6 @@ export const PatientsCountCard = ({
                 "p-4"
             )}
         >
-            {/* 1. SEU GRADIENTE ABSOLUTO (MANTIDO) */}
             <div
                 className={cn(
                     "absolute -top-14 -right-14",
@@ -85,11 +81,11 @@ export const PatientsCountCard = ({
                 src={'/brain.png'}
                 alt="Ícone de Cérebro/Ideia"
                 className={cn(
-                    "absolute bottom-0 right-0", // Posição
-                    "w-3xl h-auto max-w-[200px]", // Tamanho
-                    "opacity-70", // <-- Novo: Valor único para Light e Dark
-                    "pointer-events-none",        // Garante que não interfira no clique
-                    "translate-x-1/4 translate-y-1/4" // Move a imagem para fora do Card ligeiramente
+                    "absolute bottom-0 right-0",
+                    "w-3xl h-auto max-w-[200px]",
+                    "opacity-70",
+                    "pointer-events-none",
+                    "translate-x-1/4 translate-y-1/4"
                 )}
             />
 
@@ -119,13 +115,19 @@ export const PatientsCountCard = ({
                             Novos pacientes
                         </p>
 
-                        <p className="text-xs text-muted-foreground leading-relaxed">
-                            <span className={cn("font-semibold", diffColorClass)}>
-                                {diffSign}
-                                {formattedDiff.toFixed(1)}%
-                            </span>{" "}
-                            em relação ao período anterior
-                        </p>
+                        {totalPatients === 0 ? (
+                            <p className="text-xs text-muted-foreground leading-relaxed">
+                                Nenhum paciente cadastrado neste período.
+                            </p>
+                        ) : (
+                            <p className="text-xs text-muted-foreground leading-relaxed">
+                                <span className={cn("font-semibold", diffColorClass)}>
+                                    {diffSign}
+                                    {formattedDiff.toFixed(1)}%
+                                </span>{" "}
+                                em relação ao período anterior
+                            </p>
+                        )}
                     </div>
                 )}
             </div>

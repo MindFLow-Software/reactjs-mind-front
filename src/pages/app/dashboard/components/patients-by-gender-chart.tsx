@@ -1,6 +1,6 @@
 "use client"
 
-import { BarChart, Loader2 } from 'lucide-react'
+import { BarChart, Loader2, Ban } from 'lucide-react'
 import { Cell, Pie, PieChart, ResponsiveContainer, Tooltip } from "recharts"
 import colors from "tailwindcss/colors"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
@@ -24,7 +24,7 @@ const COLORS = [
 ]
 
 function CustomTooltip({ active, payload, total }: any) {
-    if (active && payload && payload.length) {
+    if (active && payload && payload.length && total > 0) {
         const data = payload[0]
         const percentage = ((data.value / total) * 100).toFixed(1)
 
@@ -70,7 +70,7 @@ export function PatientsByGenderChart({ startDate, endDate }: PatientsByGenderCh
         [data]
     )
 
-    if (isLoading || !data || data.length === 0) {
+    if (isLoading || !data) {
         return (
             <Card className="col-span-1 flex items-center justify-center h-[300px]">
                 <Loader2 className="size-6 animate-spin text-muted-foreground" />
@@ -102,58 +102,69 @@ export function PatientsByGenderChart({ startDate, endDate }: PatientsByGenderCh
 
             <CardContent className="space-y-6">
 
-                <ResponsiveContainer width="100%" height={240}>
-                    <PieChart style={{ fontSize: 12 }}>
-                        <Pie
-                            data={data}
-                            nameKey="gender"
-                            dataKey="patients"
-                            cx="50%"
-                            cy="50%"
-                            outerRadius={86}
-                            innerRadius={64}
-                            strokeWidth={8}
-                            labelLine={false}
-                            animationBegin={0}
-                            animationDuration={800}
-                            animationEasing="ease-out"
-                        >
-                            {data.map((_, index) => (
-                                <Cell
-                                    key={`cell-${index}`}
-                                    fill={COLORS[index % COLORS.length]}
-                                    className="stroke-background hover:opacity-80 transition-opacity cursor-pointer"
+                {totalPatients > 0 ? (
+                    <>
+                        <ResponsiveContainer width="100%" height={240}>
+                            <PieChart style={{ fontSize: 12 }}>
+                                <Pie
+                                    data={data}
+                                    nameKey="gender"
+                                    dataKey="patients"
+                                    cx="50%"
+                                    cy="50%"
+                                    outerRadius={86}
+                                    innerRadius={64}
                                     strokeWidth={8}
-                                />
-                            ))}
-                        </Pie>
+                                    labelLine={false}
+                                    animationBegin={0}
+                                    animationDuration={800}
+                                    animationEasing="ease-out"
+                                >
+                                    {data.map((_, index) => (
+                                        <Cell
+                                            key={`cell-${index}`}
+                                            fill={COLORS[index % COLORS.length]}
+                                            className="stroke-background hover:opacity-80 transition-opacity cursor-pointer"
+                                            strokeWidth={8}
+                                        />
+                                    ))}
+                                </Pie>
 
-                        <Tooltip content={<CustomTooltip total={totalPatients} />} />
-                    </PieChart>
-                </ResponsiveContainer>
+                                <Tooltip content={<CustomTooltip total={totalPatients} />} />
+                            </PieChart>
+                        </ResponsiveContainer>
 
-                <div className="flex flex-wrap justify-center gap-x-6 gap-y-3 p-4 border-t">
-                    {data.map((item, index) => {
-                        const percentage = ((item.patients / totalPatients) * 100).toFixed(1)
-                        return (
-                            <div
-                                key={item.gender}
-                                className="flex items-center space-x-2"
-                            >
-                                <div
-                                    className="h-3 w-3 rounded-full shrink-0"
-                                    style={{ backgroundColor: COLORS[index % COLORS.length] }}
-                                />
-                                <span className="text-sm font-medium text-foreground">
-                                    {item.gender}
-                                </span>
-                                <span className="text-sm text-muted-foreground">
-                                    ({percentage}%)
-                                </span>
-                            </div>
-                        )
-                    })}
-                </div>
+                        <div className="flex flex-wrap justify-center gap-x-6 gap-y-3 p-4 border-t">
+                            {data.map((item, index) => {
+                                const percentage = ((item.patients / totalPatients) * 100).toFixed(1)
+                                return (
+                                    <div
+                                        key={item.gender}
+                                        className="flex items-center space-x-2"
+                                    >
+                                        <div
+                                            className="h-3 w-3 rounded-full shrink-0"
+                                            style={{ backgroundColor: COLORS[index % COLORS.length] }}
+                                        />
+                                        <span className="text-sm font-medium text-foreground">
+                                            {item.gender}
+                                        </span>
+                                        <span className="text-sm text-muted-foreground">
+                                            ({percentage}%)
+                                        </span>
+                                    </div>
+                                )
+                            })}
+                        </div>
+                    </>
+                ) : (
+                    <div className="flex h-[240px] flex-col items-center justify-center gap-2 text-muted-foreground">
+                        <div className="flex h-12 w-12 items-center justify-center rounded-full bg-muted">
+                            <Ban className="h-6 w-6 opacity-50" />
+                        </div>
+                        <p className="text-sm">Nenhum paciente cadastrado neste período.</p>
+                    </div>
+                )}
             </CardContent>
         </Card>
     )

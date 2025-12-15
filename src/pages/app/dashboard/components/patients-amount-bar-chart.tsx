@@ -21,7 +21,7 @@ import {
     ChartTooltipContent,
 } from "@/components/ui/chart"
 
-import { Loader2 } from "lucide-react"
+import { Loader2, Users } from "lucide-react"
 import { getAmountPatientsChart } from "@/api/get-amount-patients-chart"
 
 const chartConfig = {
@@ -61,10 +61,24 @@ export function NewPatientsBarChart({ startDate: propStartDate, endDate: propEnd
         )
     }
 
-    if (isError || chartData.length === 0) {
+    if (isError) {
         return (
-            <Card className="col-span-6 flex h-[250px] items-center justify-center text-muted-foreground">
+            <Card className="col-span-6 flex h-[250px] items-center justify-center text-red-500 font-medium">
                 Erro ao carregar dados do gráfico
+            </Card>
+        )
+    }
+
+    if (chartData.length === 0) {
+        return (
+            <Card className="col-span-6 flex h-[250px] flex-col items-center justify-center gap-2 text-muted-foreground border-dashed">
+                <div className="flex h-12 w-12 items-center justify-center rounded-full bg-muted">
+                    <Users className="h-6 w-6 opacity-50" />
+                </div>
+                <div className="text-center space-y-1">
+                    <p className="font-medium">Nenhum paciente encontrado</p>
+                    <p className="text-sm text-muted-foreground">Não houveram novos cadastros neste período.</p>
+                </div>
             </Card>
         )
     }
@@ -115,7 +129,13 @@ export function NewPatientsBarChart({ startDate: propStartDate, endDate: propEnd
                             }
                         />
 
-                        <Bar dataKey="newPatients" fill="var(--chart-1)" radius={[4, 4, 0, 0]} />
+
+                        <Bar
+                            dataKey="newPatients"
+                            fill="var(--chart-1)"
+                            radius={[4, 4, 0, 0]}
+                            name="Novos Pacientes"
+                        />
                     </BarChart>
                 </ChartContainer>
             </CardContent>
