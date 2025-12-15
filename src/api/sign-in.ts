@@ -6,13 +6,8 @@ export interface SignInBody {
 }
 
 export async function signIn({ email, password }: SignInBody) {
-  const response = await api.post('/session', { email, password })
   
-  const { jwt } = response.data
-
-  localStorage.setItem('token', jwt)
-
-  api.defaults.headers.common.Authorization = `Bearer ${jwt}`
+  const response = await api.post('/sessions', { email, password })
 
   return response.data
 }
