@@ -50,13 +50,13 @@ export function Header() {
                 {/* LADO DIREITO: Botões */}
                 <div className="flex flex-1 items-center justify-end gap-3">
                     <Link to="/sign-in">
-                        <Button variant="ghost" size="sm" className="hidden bg-transparent text-slate-700 hover:bg-slate-200 hover:text-blue-700 md:inline-flex">
+                        <Button variant="ghost" size="sm" className="cursor-pointer hidden bg-transparent text-slate-700 hover:bg-slate-200 hover:text-blue-700 md:inline-flex">
                             Login
                         </Button>
                     </Link>
 
                     <Link to="/sign-up">
-                        <Button size="sm" className="bg-blue-600 font-semibold text-white shadow-sm hover:bg-blue-700">
+                        <Button size="sm" className="cursor-pointer bg-blue-600 font-semibold text-white shadow-sm hover:bg-blue-700">
                             Cadastre-se
                         </Button>
                     </Link>
