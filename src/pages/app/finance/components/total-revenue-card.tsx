@@ -1,43 +1,40 @@
 "use client"
 
 import { useState } from "react"
-import { Eye, EyeOff, CheckCircle2 } from "lucide-react"
+import { Eye, EyeOff } from "lucide-react"
 
-interface CompletedTransactionsCardProps {
-    totalTransactions?: number
-    monthlyTransactions?: number
-    percentageChange?: number
+interface TotalRevenueCardProps {
+    totalRevenue: number
+    monthlyRevenue: number
 }
 
-export function CompletedTransactionsCard({
-    totalTransactions = 1248,
-    monthlyTransactions = 156,
-}: CompletedTransactionsCardProps) {
+export function TotalRevenueCard({ totalRevenue = 0, monthlyRevenue = 25000 }: TotalRevenueCardProps) {
     const [isBalanceVisible, setIsBalanceVisible] = useState(true)
 
-    const formatNumber = (num: number) =>
-        new Intl.NumberFormat("pt-BR").format(num)
+    const formatCurrency = (value: number) => {
+        return new Intl.NumberFormat("pt-BR", {
+            style: "currency",
+            currency: "BRL",
+        }).format(value)
+    }
 
-    const maskedValue = "••••"
+    const maskedValue = "R$ ••••••"
 
     return (
         <div className="relative w-full max-w-sm">
             {/* Main wallet container */}
             <div className="relative">
-                {/* Blue card peeking from top */}
+                {/* Green card peeking from top */}
                 <div className="relative z-10 mx-4">
                     <div
-                        className="bg-linear-to-r from-blue-500 to-blue-400 rounded-t-xl px-5 py-3 flex justify-between items-center shadow-lg"
+                        className="bg-linear-to-r from-emerald-500 to-emerald-400 rounded-t-xl px-5 py-3 flex justify-between items-center shadow-lg"
                         style={{
                             clipPath: "polygon(0 0, 100% 0, 100% 100%, 50% 85%, 0 100%)",
                         }}
                     >
-                        <div className="flex items-center gap-2 text-white">
-                            <CheckCircle2 className="w-5 h-5" />
-                            <span className="font-semibold text-lg">Transações no mês</span>
-                        </div>
+                        <span className="text-white font-semibold text-lg">Receita Mensal</span>
                         <span className="text-white font-bold text-lg">
-                            {isBalanceVisible ? formatNumber(monthlyTransactions) : "•••"}
+                            {isBalanceVisible ? formatCurrency(monthlyRevenue) : "R$ ••••••"}
                         </span>
                     </div>
                 </div>
@@ -75,26 +72,26 @@ export function CompletedTransactionsCard({
 
                     {/* Content */}
                     <div className="relative z-10 flex flex-col items-center mt-4">
-                        {/* Hide/Show toggle */}
+                        {/* Hide/Show balance toggle */}
                         <button
                             onClick={() => setIsBalanceVisible(!isBalanceVisible)}
                             className="flex items-center gap-2 text-gray-400 hover:text-white transition-colors mb-3"
                         >
-                            <span className="text-sm">{isBalanceVisible ? "Esconder" : "Mostrar"}</span>
+                            <span className="text-sm">{isBalanceVisible ? "Esconder Saldo" : "Mostrar Saldo"}</span>
                             {isBalanceVisible ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
                         </button>
 
-                        {/* Main count */}
+                        {/* Main balance */}
                         <div className="text-center">
                             <p className="text-4xl font-bold text-white mb-1">
-                                {isBalanceVisible ? formatNumber(totalTransactions) : maskedValue}
+                                {isBalanceVisible ? formatCurrency(totalRevenue) : maskedValue}
                             </p>
-                            <p className="text-blue-400 font-medium text-sm">Total de transações</p>
+                            <p className="text-emerald-400 font-medium text-sm">Receita Total</p>
                         </div>
                     </div>
 
                     {/* Bottom tab */}
-                    <div className="absolute bottom-0 left-1/2 -translate-x-1/2 w-16 h-3 bg-blue-500 rounded-t-full" />
+                    <div className="absolute bottom-0 left-1/2 -translate-x-1/2 w-16 h-3 bg-emerald-500 rounded-t-full" />
                 </div>
             </div>
         </div>

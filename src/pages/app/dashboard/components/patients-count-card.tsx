@@ -1,5 +1,6 @@
-import { TrendingUp } from 'lucide-react'
-import { Card } from "@/components/ui/card"
+"use client"
+
+import { TrendingUp } from "lucide-react"
 import { useQuery } from "@tanstack/react-query"
 import { subDays } from "date-fns"
 import { useMemo } from "react"
@@ -11,21 +12,16 @@ interface PatientsCountCardProps {
     endDate?: Date
 }
 
-export const PatientsCountCard = ({
-    startDate: propStartDate,
-    endDate: propEndDate
-}: PatientsCountCardProps) => {
-
+export const PatientsCountCard = ({ startDate: propStartDate, endDate: propEndDate }: PatientsCountCardProps) => {
     const endDate = propEndDate || new Date()
     const startDate = propStartDate || subDays(endDate, 30)
 
-    const { data: chartData, isLoading, isError } = useQuery({
-        queryKey: [
-            "dashboard",
-            "patients-count-summary",
-            startDate.toISOString(),
-            endDate.toISOString()
-        ],
+    const {
+        data: chartData,
+        isLoading,
+        isError,
+    } = useQuery({
+        queryKey: ["dashboard", "patients-count-summary", startDate.toISOString(), endDate.toISOString()],
         queryFn: () => getAmountPatientsChart({ startDate, endDate }),
     })
 
@@ -35,19 +31,16 @@ export const PatientsCountCard = ({
                 totalPatients: 0,
                 formattedDiff: 0,
                 diffSign: "",
-                diffColorClass: "text-emerald-500 dark:text-emerald-400"
+                diffColorClass: "text-emerald-600",
             }
         }
 
         const total = chartData.reduce((sum, item) => sum + item.newPatients, 0)
 
-        const diff = 0.05 // mock
+        const diff = 0.15 // mock
         const formatted = diff * 100
         const sign = formatted >= 0 ? "+" : ""
-        const colorClass =
-            formatted >= 0
-                ? "text-emerald-500 dark:text-emerald-400"
-                : "text-red-500 dark:text-red-400"
+        const colorClass = formatted >= 0 ? "text-emerald-600" : "text-red-500"
 
         return {
             totalPatients: total,
@@ -58,69 +51,56 @@ export const PatientsCountCard = ({
     }, [chartData])
 
     return (
-        <Card
+        <div
             className={cn(
                 "relative overflow-hidden",
                 "rounded-2xl",
-                "border border-border/60 border-b-[3px] border-b-green-700 dark:border-b-green-500",
-                "shadow-md shadow-black/20 dark:shadow-black/8",
-                "bg-card transition-all",
-                "p-4"
+                "border-b-4 border-b-emerald-600",
+                "shadow-lg shadow-black/10",
+                "p-5",
+                "bg-linear-to-br from-emerald-100 via-emerald-50 to-green-100",
             )}
         >
-            <div
-                className={cn(
-                    "absolute -top-14 -right-14",
-                    "w-40 h-40 rounded-full",
-                    "bg-linear-to-r from-emerald-400/50 to-emerald-700/30 dark:from-emerald-400/70 dark:to-emerald-900",
-                    "blur-3xl opacity-60 pointer-events-none"
-                )}
-            />
-
             <img
-                src={'/brain.png'}
-                alt="Ícone de Cérebro/Ideia"
+                src="/brain.png"
+                alt="Mascote cérebro"
                 className={cn(
                     "absolute bottom-0 right-0",
-                    "w-3xl h-auto max-w-[200px]",
-                    "opacity-70",
+                    "w-3xl h-auto max-w-[220px]",
+                    "opacity-90",
                     "pointer-events-none",
                     "translate-x-1/4 translate-y-1/4"
-                )}
-            />
+                )} />
 
-            <div className="relative z-10 flex flex-col gap-4">
-
-                <div className="rounded-full bg-emerald-100/80 dark:bg-emerald-950/40 p-2 w-fit">
-                    <TrendingUp className="size-5 text-emerald-700 dark:text-emerald-400" />
+            <div className="relative z-10 flex flex-col gap-3">
+                <div className="flex items-center justify-between">
+                    <div className="rounded-xl bg-emerald-200/80 p-2.5 w-fit">
+                        <TrendingUp className="size-5 text-emerald-700" />
+                    </div>
                 </div>
 
                 {isLoading ? (
                     <div className="space-y-2">
-                        <div className="h-6 w-20 rounded bg-gray-200 dark:bg-gray-700 animate-pulse" />
-                        <div className="h-3 w-36 rounded bg-gray-200 dark:bg-gray-700 animate-pulse" />
+                        <div className="h-8 w-20 rounded bg-emerald-200/50 animate-pulse" />
+                        <div className="h-4 w-36 rounded bg-emerald-200/50 animate-pulse" />
                     </div>
                 ) : isError ? (
                     <div className="flex flex-col gap-1">
                         <span className="text-sm font-medium text-red-500">Erro ao carregar</span>
-                        <span className="text-xs text-muted-foreground">Tente novamente</span>
+                        <span className="text-xs text-emerald-700/70">Tente novamente</span>
                     </div>
                 ) : (
-                    <div className="flex flex-col gap-1.5">
-                        <span className="text-2xl font-semibold tracking-tight leading-none">
+                    <div className="flex flex-col gap-1">
+                        <span className="text-4xl font-bold tracking-tight text-emerald-950">
                             {totalPatients.toLocaleString("pt-BR")}
                         </span>
 
-                        <p className="text-[13px] text-muted-foreground font-medium leading-none">
-                            Novos pacientes
-                        </p>
+                        <p className="text-sm text-emerald-900 font-medium">Novos pacientes</p>
 
                         {totalPatients === 0 ? (
-                            <p className="text-xs text-muted-foreground leading-relaxed">
-                                Nenhum paciente cadastrado neste período.
-                            </p>
+                            <p className="text-xs text-emerald-700/70">Nenhum paciente cadastrado neste período.</p>
                         ) : (
-                            <p className="text-xs text-muted-foreground leading-relaxed">
+                            <p className="text-xs text-emerald-800/80">
                                 <span className={cn("font-semibold", diffColorClass)}>
                                     {diffSign}
                                     {formattedDiff.toFixed(1)}%
@@ -131,6 +111,6 @@ export const PatientsCountCard = ({
                     </div>
                 )}
             </div>
-        </Card>
+        </div>
     )
 }

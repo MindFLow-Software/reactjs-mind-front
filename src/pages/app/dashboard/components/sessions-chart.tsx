@@ -74,8 +74,8 @@ export function SessionsChart({ }: SessionsChartProps) {
 
     return (
         <Card className="col-span-6 py-4 sm:py-0"> {/* Mantive col-span-6 do original */}
-            <CardHeader className="flex flex-col items-stretch border-b border-border/40 !p-0 sm:flex-row">
-                <div className="flex flex-1 flex-col justify-center gap-1 px-6 pt-4 pb-3 sm:!py-0">
+            <CardHeader className="flex flex-col items-stretch border-b border-border/40 p-0! sm:flex-row">
+                <div className="flex flex-1 flex-col justify-center gap-1 px-6 pt-4 pb-3 sm:py-0!">
                     <CardTitle className="text-base font-medium">
                         Sessões realizadas
                     </CardTitle>

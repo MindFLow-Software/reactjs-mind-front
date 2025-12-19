@@ -158,7 +158,7 @@ export function PatientsByGenderChart({ startDate, endDate }: PatientsByGenderCh
                         </div>
                     </>
                 ) : (
-                    <div className="flex h-[240px] flex-col items-center justify-center gap-2 text-muted-foreground">
+                    <div className="flex h-60 flex-col items-center justify-center gap-2 text-muted-foreground">
                         <div className="flex h-12 w-12 items-center justify-center rounded-full bg-muted">
                             <Ban className="h-6 w-6 opacity-50" />
                         </div>

@@ -11,6 +11,7 @@ import { AppointmentsRoom } from './pages/app/video-room/appoinmets-room'
 import { AppointmentsList } from './pages/app/appointment/appointment-list'
 import { MockPsychologistProfilePage } from './pages/app/account/account'
 import { LandingPage } from './pages/landing-page/landing-page'
+import { DashboardFinance } from './pages/app/finance/dashboard-finance'
 
 function LandingLayout() {
   return (
@@ -89,10 +90,10 @@ export const router = createBrowserRouter([
         path: '/dashboard',
         element: <Dashboard />,
       },
-      // {
-      //   path: '/dashboard-finance',
-      //   element: <DashboardFinance />,
-      // },
+      {
+        path: '/dashboard-finance',
+        element: <DashboardFinance />,
+      },
       {
         path: '/patients-list',
         element: <PatientsList />,

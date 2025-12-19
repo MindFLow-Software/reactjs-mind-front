@@ -1,43 +1,47 @@
 "use client"
 
 import { useState } from "react"
-import { Eye, EyeOff, CheckCircle2 } from "lucide-react"
+import { Eye, EyeOff, Wallet, ArrowDownToLine } from "lucide-react"
 
-interface CompletedTransactionsCardProps {
-    totalTransactions?: number
-    monthlyTransactions?: number
-    percentageChange?: number
+interface AvailableWithdrawalCardProps {
+    totalAvailable: number
+    pendingAmount: number
+    lastWithdrawal?: number
 }
 
-export function CompletedTransactionsCard({
-    totalTransactions = 1248,
-    monthlyTransactions = 156,
-}: CompletedTransactionsCardProps) {
+export function AvailableWithdrawalCard({
+    totalAvailable = 8750.0,
+    pendingAmount = 1250.0,
+    lastWithdrawal = 3500.0,
+}: AvailableWithdrawalCardProps) {
     const [isBalanceVisible, setIsBalanceVisible] = useState(true)
 
-    const formatNumber = (num: number) =>
-        new Intl.NumberFormat("pt-BR").format(num)
+    const formatCurrency = (value: number) =>
+        new Intl.NumberFormat("pt-BR", {
+            style: "currency",
+            currency: "BRL",
+        }).format(value)
 
-    const maskedValue = "••••"
+    const maskedValue = "R$ ••••••"
 
     return (
         <div className="relative w-full max-w-sm">
             {/* Main wallet container */}
             <div className="relative">
-                {/* Blue card peeking from top */}
+                {/* Green card peeking from top */}
                 <div className="relative z-10 mx-4">
                     <div
-                        className="bg-linear-to-r from-blue-500 to-blue-400 rounded-t-xl px-5 py-3 flex justify-between items-center shadow-lg"
+                        className="bg-linear-to-r from-emerald-500 to-emerald-400 rounded-t-xl px-5 py-3 flex justify-between items-center shadow-lg"
                         style={{
                             clipPath: "polygon(0 0, 100% 0, 100% 100%, 50% 85%, 0 100%)",
                         }}
                     >
                         <div className="flex items-center gap-2 text-white">
-                            <CheckCircle2 className="w-5 h-5" />
-                            <span className="font-semibold text-lg">Transações no mês</span>
+                            <Wallet className="w-4 h-4" />
+                            <span className="font-semibold text-lg">Disponível</span>
                         </div>
                         <span className="text-white font-bold text-lg">
-                            {isBalanceVisible ? formatNumber(monthlyTransactions) : "•••"}
+                            {isBalanceVisible ? formatCurrency(totalAvailable) : "R$ •••"}
                         </span>
                     </div>
                 </div>
@@ -80,21 +84,42 @@ export function CompletedTransactionsCard({
                             onClick={() => setIsBalanceVisible(!isBalanceVisible)}
                             className="flex items-center gap-2 text-gray-400 hover:text-white transition-colors mb-3"
                         >
-                            <span className="text-sm">{isBalanceVisible ? "Esconder" : "Mostrar"}</span>
+                            <span className="text-sm">{isBalanceVisible ? "Esconder Saldo" : "Mostrar Saldo"}</span>
                             {isBalanceVisible ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
                         </button>
 
-                        {/* Main count */}
+                        {/* Main balance */}
                         <div className="text-center">
                             <p className="text-4xl font-bold text-white mb-1">
-                                {isBalanceVisible ? formatNumber(totalTransactions) : maskedValue}
+                                {isBalanceVisible ? formatCurrency(totalAvailable) : maskedValue}
                             </p>
-                            <p className="text-blue-400 font-medium text-sm">Total de transações</p>
+                            <p className="text-emerald-400 font-medium text-sm">Total para saque</p>
+                        </div>
+
+                        {/* Divider */}
+                        <div className="h-px w-full bg-linear-to-r from-transparent via-white/10 to-transparent my-4" />
+
+                        {/* Footer Stats */}
+                        <div className="flex w-full justify-between px-2">
+                            <div className="text-center">
+                                <p className="text-gray-400 text-xs mb-1">Pendente</p>
+                                <p className="text-amber-400 font-bold text-sm">
+                                    {isBalanceVisible ? formatCurrency(pendingAmount) : "•••"}
+                                </p>
+                            </div>
+                            <div className="text-center">
+                                <p className="text-gray-400 text-xs mb-1">Último saque</p>
+                                <p className="text-gray-300 font-bold text-sm">
+                                    {isBalanceVisible ? formatCurrency(lastWithdrawal) : "•••"}
+                                </p>
+                            </div>
                         </div>
                     </div>
 
-                    {/* Bottom tab */}
-                    <div className="absolute bottom-0 left-1/2 -translate-x-1/2 w-16 h-3 bg-blue-500 rounded-t-full" />
+                    {/* Bottom tab with icon */}
+                    <div className="absolute bottom-0 left-1/2 -translate-x-1/2 w-16 h-4 bg-emerald-500 rounded-t-full flex items-center justify-center">
+                        <ArrowDownToLine className="w-3 h-3 text-white mb-1" />
+                    </div>
                 </div>
             </div>
         </div>
