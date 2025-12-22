@@ -1,8 +1,6 @@
 "use client"
 
-import {
-  type LucideIcon,
-} from "lucide-react"
+import { type LucideIcon } from "lucide-react"
 
 import {
   SidebarGroup,
@@ -21,7 +19,6 @@ export function NavProjects({
     icon: LucideIcon
   }[]
 }) {
-
   return (
     <SidebarGroup className="group-data-[collapsible=icon]:hidden">
       <SidebarGroupLabel>Materiais de Apoio</SidebarGroupLabel>

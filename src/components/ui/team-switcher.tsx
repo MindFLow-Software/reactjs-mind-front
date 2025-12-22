@@ -31,21 +31,19 @@ interface TeamSwitcherTeam {
 
 interface TeamSwitcherProps {
     teams: TeamSwitcherTeam[]
-    isLoading: boolean // 🔑 Adicionado para resolver o erro TS2322
+    isLoading: boolean
 }
 
 export function TeamSwitcher({ teams, isLoading }: TeamSwitcherProps) {
     const { isMobile } = useSidebar()
     const [activeTeam, setActiveTeam] = React.useState(teams[0])
 
-    // 🔑 Sincronização: Atualiza o time ativo quando a lista de times muda (ex: carregou da API)
     React.useEffect(() => {
         if (teams.length > 0) {
             setActiveTeam(teams[0])
         }
     }, [teams])
 
-    // 🔑 Renderiza Skeleton enquanto carrega
     if (isLoading) {
         return (
             <SidebarMenu>
