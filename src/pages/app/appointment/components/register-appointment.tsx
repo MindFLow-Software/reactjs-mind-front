@@ -1,7 +1,6 @@
 "use client"
 
 import type React from "react"
-
 import { useState, useEffect, useCallback } from "react"
 import { useMutation, useQueryClient } from "@tanstack/react-query"
 import { format } from "date-fns"
@@ -23,16 +22,38 @@ import { getPatients } from "@/api/get-patients"
 
 const MAX_NOTE_LENGTH = 200
 
-export function RegisterAppointment() {
+// 1. Definição da Interface das Props (Type Safety)
+interface RegisterAppointmentProps {
+    initialDate?: Date
+    onSuccess?: () => void
+}
+
+// 2. Recebendo as props no componente
+export function RegisterAppointment({ initialDate, onSuccess }: RegisterAppointmentProps) {
     const queryClient = useQueryClient()
+
     const [date, setDate] = useState<Date | undefined>()
     const [time, setTime] = useState("")
+
     const [patients, setPatients] = useState<{ id: string; name: string }[]>([])
     const [selectedPatient, setSelectedPatient] = useState("")
     const [notes, setNotes] = useState("")
     const [diagnosis, setDiagnosis] = useState("")
     const [isLoadingPatients, setIsLoadingPatients] = useState(true)
 
+    // 3. Effect: Preenche data e hora automaticamente ao abrir via calendário
+    useEffect(() => {
+        if (initialDate) {
+            setDate(initialDate)
+
+            // Formata a hora do objeto Date para string "HH:mm" (necessário para o input type="time")
+            const hours = String(initialDate.getHours()).padStart(2, '0')
+            const minutes = String(initialDate.getMinutes()).padStart(2, '0')
+            setTime(`${hours}:${minutes}`)
+        }
+    }, [initialDate])
+
+    // Busca de pacientes
     useEffect(() => {
         const fetchPatients = async () => {
             setIsLoadingPatients(true)
@@ -65,6 +86,11 @@ export function RegisterAppointment() {
         onSuccess: () => {
             toast.success("Agendamento criado com sucesso!")
             queryClient.invalidateQueries({ queryKey: ["appointments"] })
+
+            // 4. Fecha o modal chamando a prop do pai
+            if (onSuccess) {
+                onSuccess()
+            }
         },
         onError: () => toast.error("Erro ao criar agendamento."),
     })
@@ -74,6 +100,7 @@ export function RegisterAppointment() {
             const newTime = e.target.value
             setTime(newTime)
 
+            // Atualiza o objeto Date se ele já existir, para manter sincronia
             if (date && newTime) {
                 const [h, m] = newTime.split(":")
                 const newDate = new Date(date)
@@ -87,6 +114,7 @@ export function RegisterAppointment() {
 
     const handleDateSelect = useCallback(
         (selectedDate: Date | undefined) => {
+            // Se já tiver horário selecionado, mantém o horário na nova data
             if (selectedDate && time) {
                 const [h, m] = time.split(":")
                 selectedDate.setHours(Number(h))
@@ -101,42 +129,31 @@ export function RegisterAppointment() {
         async (e: React.FormEvent<HTMLFormElement>) => {
             e.preventDefault()
 
-            if (!selectedPatient) {
-                toast.error("Selecione um paciente.")
-                return
-            }
-            if (!date) {
-                toast.error("Selecione uma data.")
-                return
-            }
-            if (!time) {
-                toast.error("Selecione um horário.")
-                return
-            }
-            if (!diagnosis.trim()) {
-                toast.error("Informe o diagnóstico.")
-                return
-            }
+            if (!selectedPatient) return toast.error("Selecione um paciente.")
+            if (!date) return toast.error("Selecione uma data.")
+            if (!time) return toast.error("Selecione um horário.")
+            if (!diagnosis.trim()) return toast.error("Informe o diagnóstico.")
+
+            // Combina Data e Hora finais para envio
+            const finalDate = new Date(date)
+            const [h, m] = time.split(":")
+            finalDate.setHours(Number(h), Number(m))
 
             const payload: RegisterAppointmentRequest = {
                 patientId: selectedPatient,
-                psychologistId: "",
+                psychologistId: "", // Assumindo que o back pega do token ou contexto
                 diagnosis: diagnosis.trim(),
                 notes: notes.trim() || undefined,
-                scheduledAt: date,
+                scheduledAt: finalDate,
                 status: "SCHEDULED",
             }
 
             await registerAppointmentFn(payload)
 
-            // Reset form
-            setDate(undefined)
-            setTime("")
-            setSelectedPatient("")
-            setNotes("")
-            setDiagnosis("")
+            // Limpeza do form acontece apenas se o modal NÃO fechar (edge case),
+            // pois o onSuccess geralmente desmonta este componente.
         },
-        [selectedPatient, date, time, diagnosis, notes, registerAppointmentFn],
+        [selectedPatient, date, time, diagnosis, notes, registerAppointmentFn, onSuccess],
     )
 
     const isFormValid = selectedPatient && date && time && diagnosis.trim()
