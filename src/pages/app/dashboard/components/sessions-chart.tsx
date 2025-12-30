@@ -21,7 +21,7 @@ import {
     ChartTooltipContent,
 } from "@/components/ui/chart"
 
-import { Loader2, AlertCircle } from "lucide-react"
+import { Loader2, AlertCircle, CalendarOff } from "lucide-react"
 import { getDailySessionsMetrics } from "@/api/get-daily-sessions-metrics"
 
 const chartConfig = {
@@ -37,7 +37,6 @@ interface SessionsBarChartProps {
 }
 
 export function SessionsBarChart({ startDate: propStartDate, endDate: propEndDate }: SessionsBarChartProps) {
-    // Mantendo a lógica de estabilização de data para performance
     const dateRange = useMemo(() => {
         const end = propEndDate ? endOfDay(propEndDate) : endOfDay(new Date())
         const start = propStartDate ? startOfDay(propStartDate) : startOfDay(subDays(end, 7))
@@ -57,7 +56,11 @@ export function SessionsBarChart({ startDate: propStartDate, endDate: propEndDat
 
     const chartData = useMemo(() => data || [], [data])
 
-    // Lógica funcional para escala do eixo Y (Mínimo 10 para não achatar)
+    // Verifica se não há dados ou se todas as contagens são zero
+    const isEmpty = useMemo(() => {
+        return chartData.length === 0 || chartData.every(d => d.count === 0)
+    }, [chartData])
+
     const yAxisMax = useMemo(() => {
         const max = Math.max(...chartData.map(d => d.count), 0)
         return max < 10 ? 10 : Math.ceil(max * 1.2)
@@ -65,7 +68,7 @@ export function SessionsBarChart({ startDate: propStartDate, endDate: propEndDat
 
     if (isLoading) {
         return (
-            <Card className="col-span-6 flex h-[250px] items-center justify-center">
+            <Card className="col-span-6 flex h-[300px] items-center justify-center">
                 <Loader2 className="h-6 w-6 animate-spin text-muted-foreground" />
             </Card>
         )
@@ -73,7 +76,7 @@ export function SessionsBarChart({ startDate: propStartDate, endDate: propEndDat
 
     if (isError) {
         return (
-            <Card className="col-span-6 flex h-[250px] flex-col items-center justify-center gap-2 text-red-500 font-medium">
+            <Card className="col-span-6 flex h-[300px] flex-col items-center justify-center gap-2 text-red-500 font-medium">
                 <AlertCircle className="h-6 w-6" />
                 <span>Erro ao carregar sessões</span>
                 <button
@@ -82,6 +85,21 @@ export function SessionsBarChart({ startDate: propStartDate, endDate: propEndDat
                 >
                     Tentar novamente
                 </button>
+            </Card>
+        )
+    }
+
+    // ESTADO VAZIO (IGUAL AO SEU EXEMPLO)
+    if (isEmpty) {
+        return (
+            <Card className="col-span-6 flex h-[300px] flex-col items-center justify-center gap-2 text-muted-foreground border-dashed">
+                <div className="flex h-12 w-12 items-center justify-center rounded-full bg-muted">
+                    <CalendarOff className="h-6 w-6 opacity-50" />
+                </div>
+                <div className="text-center space-y-1">
+                    <p className="font-medium">Nenhuma sessão encontrada</p>
+                    <p className="text-sm text-muted-foreground">Não houveram atendimentos concluídos neste período.</p>
+                </div>
             </Card>
         )
     }
