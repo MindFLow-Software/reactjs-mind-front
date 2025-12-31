@@ -5,7 +5,7 @@ import { Calendar, dateFnsLocalizer, Views, type View } from "react-big-calendar
 import { format, parse, startOfWeek, getDay } from "date-fns"
 import { ptBR } from "date-fns/locale"
 import "react-big-calendar/lib/css/react-big-calendar.css"
-import { ChevronLeft, ChevronRight, Calendar as CalendarIcon } from "lucide-react"
+import { ChevronLeft, ChevronRight, } from "lucide-react"
 
 import { Button } from "@/components/ui/button"
 import {
