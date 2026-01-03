@@ -64,7 +64,7 @@ export const PatientsAmountCard = () => {
               <HeartHandshake className="size-4 text-blue-600 dark:text-blue-400" />
             </div>
             <span className="text-sm font-semibold text-muted-foreground uppercase tracking-wider">
-              Base de Clientes
+              Total de Pacientes
             </span>
           </div>
         </div>
