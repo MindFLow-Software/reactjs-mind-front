@@ -36,6 +36,26 @@ export function PatientsDetails({ patientId }: PatientsDetailsProps) {
 
     const { patient, meta } = data
 
+    const getStatusLabel = (status: string) => {
+        const s = status?.toUpperCase()
+        const statuses: Record<string, { label: string; color: string }> = {
+            SCHEDULED: { label: "Agendado", color: "text-blue-500" },
+            ATTENDING: { label: "Em andamento", color: "text-amber-500" },
+            FINISHED: { label: "Concluída", color: "text-green-500" },
+            CONCLUÍDA: { label: "Concluída", color: "text-green-500" }, // Garantia para tradução
+            CANCELED: { label: "Cancelado", color: "text-red-500" },
+            NOT_ATTEND: { label: "Não compareceu", color: "text-orange-500" },
+            RESCHEDULED: { label: "Remarcado", color: "text-purple-500" },
+        }
+        return statuses[s] || { label: status, color: "text-yellow-500" }
+    }
+
+    // 🔑 LÓGICA CORRIGIDA: Filtra por qualquer variação de "Concluída" ou "FINISHED"
+    const totalFinished = patient.sessions.filter((session: any) => {
+        const s = session.status?.toUpperCase()
+        return s === "FINISHED" || s === "CONCLUÍDA" || s === "CONCLUIDO"
+    }).length
+
     return (
         <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
             <DialogHeader>
@@ -56,21 +76,18 @@ export function PatientsDetails({ patientId }: PatientsDetailsProps) {
                                 {patient.firstName} {patient.lastName}
                             </TableCell>
                         </TableRow>
-
                         <TableRow>
                             <TableCell className="text-muted-foreground">CPF</TableCell>
                             <TableCell className="flex justify-end font-medium tabular-nums">
                                 {formatCPF(patient.cpf)}
                             </TableCell>
                         </TableRow>
-
                         <TableRow>
                             <TableCell className="text-muted-foreground">E-mail</TableCell>
                             <TableCell className="flex justify-end font-medium lowercase">
                                 {patient.email}
                             </TableCell>
                         </TableRow>
-
                         <TableRow>
                             <TableCell className="text-muted-foreground">Telefone</TableCell>
                             <TableCell className="flex justify-end font-medium tabular-nums">
@@ -87,22 +104,18 @@ export function PatientsDetails({ patientId }: PatientsDetailsProps) {
                     <ItemMedia variant="icon" className="text-sky-600 dark:text-sky-500">
                         <ClockIcon className="h-5 w-5" />
                     </ItemMedia>
-
                     <ItemContent>
                         <ItemTitle>Tempo médio de atendimento</ItemTitle>
                         <ItemDescription>
-                            Média baseada em todos os atendimentos realizados
+                            Média baseada em atendimentos concluídos
                         </ItemDescription>
                     </ItemContent>
-
                     <ItemActions>
                         <div className="text-right">
                             <span className="text-lg font-semibold text-sky-700 dark:text-sky-400">
                                 {meta.averageDuration} min
                             </span>
-                            <p className="text-xs text-muted-foreground">
-                                em sessão
-                            </p>
+                            <p className="text-xs text-muted-foreground">em sessão</p>
                         </div>
                     </ItemActions>
                 </Item>
@@ -120,30 +133,28 @@ export function PatientsDetails({ patientId }: PatientsDetailsProps) {
 
                         <TableBody>
                             {patient.sessions.length > 0 ? (
-                                patient.sessions.map((session: any) => (
-                                    <TableRow key={session.id}>
-                                        <TableCell className="whitespace-nowrap">{session.date}</TableCell>
-                                        <TableCell className="max-w-[200px] truncate italic text-muted-foreground">
-                                            {session.theme}
-                                        </TableCell>
-                                        <TableCell
-                                            className={`text-right tabular-nums ${session.duration.includes('Aguardando')
-                                                ? 'text-muted-foreground italic text-[11px]'
-                                                : 'font-medium'
-                                                }`}
-                                        >
-                                            {session.duration}
-                                        </TableCell>
-                                        <TableCell
-                                            className={`text-right font-medium ${session.status === "Concluída"
-                                                ? "text-green-500"
-                                                : "text-yellow-500"
-                                                }`}
-                                        >
-                                            {session.status}
-                                        </TableCell>
-                                    </TableRow>
-                                ))
+                                patient.sessions.map((session: any) => {
+                                    const statusInfo = getStatusLabel(session.status)
+                                    return (
+                                        <TableRow key={session.id}>
+                                            <TableCell className="whitespace-nowrap">{session.date}</TableCell>
+                                            <TableCell className="max-w-[200px] truncate italic text-muted-foreground">
+                                                {session.theme || "Sem tema definido"}
+                                            </TableCell>
+                                            <TableCell
+                                                className={`text-right tabular-nums ${session.duration.includes('Aguardando')
+                                                        ? 'text-muted-foreground italic text-[11px]'
+                                                        : 'font-medium'
+                                                    }`}
+                                            >
+                                                {session.duration}
+                                            </TableCell>
+                                            <TableCell className={`text-right font-bold ${statusInfo.color}`}>
+                                                {statusInfo.label}
+                                            </TableCell>
+                                        </TableRow>
+                                    )
+                                })
                             ) : (
                                 <TableRow>
                                     <TableCell colSpan={4} className="h-24 text-center text-muted-foreground">
@@ -156,10 +167,10 @@ export function PatientsDetails({ patientId }: PatientsDetailsProps) {
                         <TableFooter>
                             <TableRow>
                                 <TableCell colSpan={3} className="font-medium text-muted-foreground">
-                                    Total de sessões
+                                    Total de sessões realizadas
                                 </TableCell>
                                 <TableCell className="text-right font-bold text-foreground">
-                                    {meta.totalCount}
+                                    {totalFinished}
                                 </TableCell>
                             </TableRow>
                         </TableFooter>

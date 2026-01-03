@@ -8,7 +8,7 @@ import { z } from "zod"
 import { toast } from "sonner"
 import { CalendarIcon, Plus } from "lucide-react"
 
-import { Dialog, DialogContent, DialogTitle, DialogDescription } from "@/components/ui/dialog"
+import { Dialog, DialogContent } from "@/components/ui/dialog"
 import { Skeleton } from "@/components/ui/skeleton"
 import { Button } from "@/components/ui/button"
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip"
@@ -217,18 +217,14 @@ export function AppointmentsList() {
                 </Dialog>
 
                 <Dialog open={isEditOpen} onOpenChange={setIsEditOpen}>
-                    <DialogContent className="max-w-2xl p-0 overflow-hidden border-none shadow-2xl rounded-xl">
-                        <DialogTitle className="sr-only">Detalhes</DialogTitle>
-                        <DialogDescription className="sr-only">Ações da sessão</DialogDescription>
-                        {selectedAppointment && (
-                            <EditAppointment
-                                appointment={selectedAppointment}
-                                onClose={() => setIsEditOpen(false)}
-                                onCancelTrigger={() => setIsCancelOpen(true)}
-                                onRescheduleTrigger={() => setIsRescheduleOpen(true)}
-                            />
-                        )}
-                    </DialogContent>
+                    {selectedAppointment && (
+                        <EditAppointment
+                            appointment={selectedAppointment}
+                            onClose={() => setIsEditOpen(false)}
+                            onCancelTrigger={() => setIsCancelOpen(true)}
+                            onRescheduleTrigger={() => setIsRescheduleOpen(true)}
+                        />
+                    )}
                 </Dialog>
 
                 <Dialog open={isCancelOpen} onOpenChange={setIsCancelOpen}>

@@ -20,15 +20,11 @@ export interface Appointment {
   notes?: string | null
   scheduledAt: string
   status: AppointmentStatus
-
+  patientName: string
   patient: {
     firstName: string
     lastName: string
-  }
-  psychologist: {
-    firstName: string
-    lastName: string
-  }
+  } | null
 }
 
 export interface GetAppointmentsRequest {
@@ -36,7 +32,7 @@ export interface GetAppointmentsRequest {
   perPage?: number
   status?: string | null
   orderBy?: 'asc' | 'desc'
-  name?: string // Mantemos 'name' aqui para compatibilidade com o componente que chama
+  name?: string
 }
 
 export interface GetAppointmentsResponse {
@@ -58,9 +54,7 @@ export async function getAppointments(
       pageIndex: params.pageIndex ?? 0,
       perPage: params.perPage ?? 10,
       orderBy: finalOrderBy,
-
       ...(params.status && { status: params.status }),
-      
       ...(params.name && params.name.trim() !== '' && { patientName: params.name.trim() }),
     },
   })
