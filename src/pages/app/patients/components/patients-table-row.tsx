@@ -51,7 +51,6 @@ export function PatientsTable({ patients, isLoading, perPage = 10 }: PatientsTab
                         <TableHead className="text-xs uppercase tracking-wider font-semibold">Documento</TableHead>
                         <TableHead className="text-xs uppercase tracking-wider font-semibold">Telefone</TableHead>
                         <TableHead className="text-xs uppercase tracking-wider font-semibold">Email</TableHead>
-
                         <TableHead className="text-xs uppercase tracking-wider font-semibold">Idade / Nasc.</TableHead>
                         <TableHead className="text-xs uppercase tracking-wider font-semibold">Gênero</TableHead>
                         <TableHead className="text-right pr-6 text-xs uppercase tracking-wider font-semibold">Ações</TableHead>
@@ -62,7 +61,8 @@ export function PatientsTable({ patients, isLoading, perPage = 10 }: PatientsTab
                     {isLoading ? (
                         Array.from({ length: perPage }).map((_, i) => (
                             <TableRow key={`skeleton-${i}`}>
-                                <TableCell colSpan={7}>
+                                {/* CORREÇÃO: colSpan alterado de 7 para 8 */}
+                                <TableCell colSpan={8}>
                                     <div className="flex items-center gap-4">
                                         <Skeleton className="h-10 w-10 rounded-full" />
                                         <Skeleton className="h-4 w-[200px]" />
@@ -79,7 +79,8 @@ export function PatientsTable({ patients, isLoading, perPage = 10 }: PatientsTab
                         ))
                     ) : (
                         <TableRow>
-                            <TableCell colSpan={7} className="text-center text-muted-foreground py-20">
+                            {/* CORREÇÃO: colSpan alterado de 7 para 8 para preencher a largura total da imagem */}
+                            <TableCell colSpan={8} className="text-center text-muted-foreground py-20">
                                 <div className="flex flex-col items-center justify-center gap-3">
                                     <div className="p-4 rounded-full bg-muted">
                                         <Users className="h-10 w-10 text-muted-foreground/40" />
@@ -101,17 +102,9 @@ function PatientsTableRowItem({ patient }: { patient: Patient }) {
         : patient) as any
 
     const {
-        id,
-        cpf = "",
-        email = "",
-        firstName = "N/A",
-        lastName = "",
-        dateOfBirth,
-        phoneNumber = "",
-        gender = "OTHER",
-        status = "Inativo",
-        role = "PATIENT",
-        profileImageUrl = ""
+        id, cpf = "", email = "", firstName = "N/A", lastName = "",
+        dateOfBirth, phoneNumber = "", gender = "OTHER", status = "Inativo",
+        role = "PATIENT", profileImageUrl = ""
     } = p
 
     const [isDetailsOpen, setIsDetailsOpen] = useState(false)
@@ -130,41 +123,19 @@ function PatientsTableRowItem({ patient }: { patient: Patient }) {
     const isValidDate = dateOfBirth && !isNaN(new Date(dateOfBirth).getTime())
 
     const patientDataForEdit: UpdatePatientData = {
-        id,
-        firstName,
-        lastName,
-        email,
-        cpf,
-        phoneNumber,
+        id, firstName, lastName, email, cpf, phoneNumber,
         dateOfBirth: isValidDate ? new Date(dateOfBirth) : new Date(),
-        gender,
-        role: role || "PATIENT",
-        isActive: status === "Ativo",
-        profileImageUrl
+        gender, role: role || "PATIENT", isActive: status === "Ativo", profileImageUrl
     }
 
     const genderConfig = {
-        MASCULINE: {
-            label: "Masculino",
-            icon: Mars,
-            className: "bg-blue-500/10 text-blue-600 border-blue-500/20 dark:text-blue-400",
-        },
-        FEMININE: {
-            label: "Feminino",
-            icon: Venus,
-            className: "bg-rose-500/10 text-rose-600 border-rose-500/20 dark:text-rose-400",
-        },
-        OTHER: {
-            label: "Outro",
-            icon: Users,
-            className: "bg-violet-500/10 text-violet-600 border-violet-500/20 dark:text-violet-400",
-        },
+        MASCULINE: { label: "Masculino", icon: Mars, className: "bg-blue-500/10 text-blue-600 border-blue-500/20 dark:text-blue-400" },
+        FEMININE: { label: "Feminino", icon: Venus, className: "bg-rose-500/10 text-rose-600 border-rose-500/20 dark:text-rose-400" },
+        OTHER: { label: "Outro", icon: Users, className: "bg-violet-500/10 text-violet-600 border-violet-500/20 dark:text-violet-400" },
     }
 
     const currentGender = genderConfig[gender as keyof typeof genderConfig] || {
-        label: "N/A",
-        icon: CircleUser,
-        className: "bg-muted text-muted-foreground border-transparent"
+        label: "N/A", icon: CircleUser, className: "bg-muted text-muted-foreground border-transparent"
     }
 
     const GenderIcon = currentGender.icon
@@ -262,7 +233,8 @@ function PatientsTableRowItem({ patient }: { patient: Patient }) {
                                     size="icon"
                                     variant="ghost"
                                     onClick={() => setIsEditOpen(true)}
-                                    className="h-8 w-8 rounded-lg text-muted-foreground hover:text-blue-600 hover:bg-blue-50 dark:hover:bg-blue-950/30"
+                                    // CORREÇÃO: !hover:bg adicionado para garantir o funcionamento do hover
+                                    className="h-8 w-8 rounded-lg text-muted-foreground hover:text-blue-600 !hover:bg-zinc-100 dark:!hover:bg-zinc-800 transition-colors"
                                 >
                                     <UserPen className="h-4 w-4" />
                                 </Button>
@@ -276,7 +248,8 @@ function PatientsTableRowItem({ patient }: { patient: Patient }) {
                                     size="icon"
                                     variant="ghost"
                                     onClick={() => setIsDeleteOpen(true)}
-                                    className="h-8 w-8 rounded-lg text-muted-foreground hover:text-red-600 hover:bg-red-50 dark:hover:bg-red-950/30"
+                                    // CORREÇÃO: !hover:bg adicionado para garantir o funcionamento do hover
+                                    className="h-8 w-8 rounded-lg text-muted-foreground hover:text-red-600 !hover:bg-red-50 dark:!hover:bg-red-950/30 transition-colors"
                                 >
                                     <Trash2 className="h-4 w-4" />
                                 </Button>
@@ -287,14 +260,13 @@ function PatientsTableRowItem({ patient }: { patient: Patient }) {
                 </div>
             </TableCell>
 
+            {/* Diálogos permanecem inalterados conforme seu código original */}
             <Dialog open={isDetailsOpen} onOpenChange={setIsDetailsOpen}>
                 {isDetailsOpen && <PatientsDetails patientId={id} />}
             </Dialog>
-
             <Dialog open={isEditOpen} onOpenChange={setIsEditOpen}>
                 {isEditOpen && <EditPatient patient={patientDataForEdit} onClose={() => setIsEditOpen(false)} />}
             </Dialog>
-
             <Dialog open={isDeleteOpen} onOpenChange={setIsDeleteOpen}>
                 {isDeleteOpen && (
                     <DeletePatientDialog
