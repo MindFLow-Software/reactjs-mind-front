@@ -56,7 +56,7 @@ export function RegisterAppointment({ initialDate, onSuccess }: RegisterAppointm
                 const data = await getPatients({
                     pageIndex: 0,
                     perPage: 1000,
-                    status: null,
+                    status: 'active',
                 })
 
                 const formatted = data.patients.map((p) => ({
@@ -86,7 +86,6 @@ export function RegisterAppointment({ initialDate, onSuccess }: RegisterAppointm
             }
         },
         onError: (error) => {
-            // 🔹 Tratamento de erros específico
             if (error instanceof AxiosError) {
                 const status = error.response?.status
                 const message = error.response?.data?.message
@@ -98,8 +97,19 @@ export function RegisterAppointment({ initialDate, onSuccess }: RegisterAppointm
                 }
 
                 if (status === 400) {
-                    return toast.error("Data Inválida", {
-                        description: message || "Não é possível agendar sessões em datas passadas."
+                    if (message?.toLowerCase().includes("inativo")) {
+                        return toast.error("Paciente Inativo", {
+                            description: message
+                        })
+                    }
+                    return toast.error("Dados Inválidos", {
+                        description: message || "Verifique as informações ou a data selecionada."
+                    })
+                }
+
+                if (status === 404) {
+                    return toast.error("Não encontrado", {
+                        description: message || "Paciente não localizado."
                     })
                 }
             }
@@ -146,15 +156,14 @@ export function RegisterAppointment({ initialDate, onSuccess }: RegisterAppointm
 
             const finalDate = new Date(date)
             const [h, m] = time.split(":")
-            finalDate.setHours(Number(h), Number(m))
+            finalDate.setHours(Number(h), Number(m), 0, 0)
 
             const payload: RegisterAppointmentRequest = {
                 patientId: selectedPatient,
-                psychologistId: "",
                 diagnosis: diagnosis.trim(),
                 notes: notes.trim() || undefined,
                 scheduledAt: finalDate,
-                status: "SCHEDULED",
+                status: "SCHEDULED" as any,
             }
 
             try {
@@ -198,7 +207,7 @@ export function RegisterAppointment({ initialDate, onSuccess }: RegisterAppointm
                                     </SelectItem>
                                 ))
                             ) : (
-                                <div className="px-3 py-4 text-sm text-muted-foreground text-center">Nenhum paciente encontrado</div>
+                                <div className="px-3 py-4 text-sm text-muted-foreground text-center">Nenhum paciente ativo encontrado</div>
                             )}
                         </SelectContent>
                     </Select>

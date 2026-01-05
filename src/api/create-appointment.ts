@@ -1,14 +1,15 @@
 import { api } from "@/lib/axios"
 
+export type AppointmentStatus = 'SCHEDULED' | 'DONE' | 'CANCELLED' | 'PENDING'
+
 export interface RegisterAppointmentRequest {
     patientId: string
-    psychologistId: string 
     diagnosis: string
     notes?: string
     scheduledAt: Date
     startedAt?: Date
     endedAt?: Date
-    status: string
+    status: AppointmentStatus
 }
 
 export interface RegisterAppointmentResponse {
@@ -22,7 +23,7 @@ export interface RegisterAppointmentResponse {
         scheduledAt: string
         startedAt?: string
         endedAt?: string
-        status: string
+        status: AppointmentStatus
     }
 }
 
@@ -30,13 +31,11 @@ export async function registerAppointment(
     data: RegisterAppointmentRequest
 ): Promise<RegisterAppointmentResponse> {
     
-    const { psychologistId, ...rest } = data; 
-    
     const payload = {
-        ...rest, 
-        scheduledAt: rest.scheduledAt.toISOString(),
-        startedAt: rest.startedAt?.toISOString(),
-        endedAt: rest.endedAt?.toISOString(),
+        ...data,
+        scheduledAt: data.scheduledAt.toISOString(),
+        startedAt: data.startedAt?.toISOString(),
+        endedAt: data.endedAt?.toISOString(),
     }
 
     const response = await api.post<RegisterAppointmentResponse>("/appointments", payload)
