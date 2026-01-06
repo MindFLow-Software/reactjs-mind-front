@@ -15,7 +15,7 @@ import { Dialog } from "@/components/ui/dialog"
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip"
 
 import { PatientsDetails } from "./patients-details"
-import { EditPatient } from "./edit-patient-dialog"
+import { EditPatient } from "../edit-patient/edit-patient-dialog"
 import { DeletePatientDialog } from "./delete-patient-dialog"
 import { deletePatients } from "@/api/delete-patients"
 
