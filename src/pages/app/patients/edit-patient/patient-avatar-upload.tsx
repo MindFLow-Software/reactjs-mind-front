@@ -3,6 +3,7 @@
 import { useRef, useState, useEffect } from "react"
 import { Camera, Upload } from "lucide-react"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
+import { api } from "@/lib/axios"
 
 interface PatientAvatarUploadProps {
     defaultValue?: string | null
@@ -14,10 +15,21 @@ export function PatientAvatarUpload({
     onFileSelect
 }: PatientAvatarUploadProps) {
     const fileInputRef = useRef<HTMLInputElement>(null)
-    const [previewImage, setPreviewImage] = useState<string | null>(defaultValue || null)
+    const [previewImage, setPreviewImage] = useState<string | null>(null)
+
+    // Função auxiliar para montar a URL do R2 (Proxy)
+    const getFullUrl = (path: string | null | undefined) => {
+        if (!path) return null
+        // Se já for um blob (preview local), retorna ele mesmo
+        if (path.startsWith('blob:')) return path
+        // Se for o nome do arquivo vindo do banco, adiciona o caminho do proxy
+        return `${api.defaults.baseURL}/attachments/${path}`
+    }
 
     useEffect(() => {
-        if (defaultValue) setPreviewImage(defaultValue)
+        if (defaultValue) {
+            setPreviewImage(getFullUrl(defaultValue))
+        }
     }, [defaultValue])
 
     const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -26,7 +38,6 @@ export function PatientAvatarUpload({
         if (file) {
             const imageUrl = URL.createObjectURL(file)
             setPreviewImage(imageUrl)
-
             onFileSelect(file)
         }
     }
@@ -42,7 +53,10 @@ export function PatientAvatarUpload({
                 onClick={triggerFileInput}
             >
                 <Avatar className="h-24 w-24 border-2 border-dashed border-muted-foreground/30 group-hover:border-primary transition-colors">
-                    <AvatarImage src={previewImage || ""} className="object-cover" />
+                    <AvatarImage
+                        src={previewImage || ""}
+                        className="object-cover"
+                    />
                     <AvatarFallback className="bg-muted">
                         <Camera className="h-8 w-8 text-muted-foreground group-hover:text-primary transition-colors" />
                     </AvatarFallback>
@@ -54,7 +68,7 @@ export function PatientAvatarUpload({
             </div>
 
             <span className="text-xs text-muted-foreground">
-                Clique para adicionar foto
+                {previewImage ? "Clique para alterar foto" : "Clique para adicionar foto"}
             </span>
 
             <input

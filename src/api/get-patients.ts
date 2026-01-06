@@ -49,6 +49,7 @@ export async function getPatients({
   })
 
   const normalizedPatients: Patient[] = response.data.patients.map((p: any) => {
+    // Se o seu backend usa o padrão de Entidades do DDD, os dados reais costumam estar em .props
     const raw = p.props || p 
     const checkIsActive = raw.isActive === true
 
@@ -65,7 +66,7 @@ export async function getPatients({
       isActive: checkIsActive,
       createdAt: raw.createdAt,
       dateOfBirth: raw.dateOfBirth,
-      profileImageUrl: raw.profileImageUrl || null
+      profileImageUrl: raw.profileImageUrl || raw.profile_image_url || null
     }
   })
 

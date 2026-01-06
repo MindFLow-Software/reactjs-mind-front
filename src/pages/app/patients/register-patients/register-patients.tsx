@@ -47,8 +47,11 @@ export function RegisterPatients({ onSuccess }: RegisterPatientsProps) {
     const [isActive] = useState(true)
 
     const [showPassword, setShowPassword] = useState(false)
-    const [previewImage, setPreviewImage] = useState<string | null>(null)
+
+    // ESTADOS DE ARQUIVO
+    const [avatarFile, setAvatarFile] = useState<File | null>(null)
     const [selectedFiles, setSelectedFiles] = useState<File[]>([])
+
     const [errors, setErrors] = useState<FormErrors>({})
     const [isUploading, setIsUploading] = useState(false)
 
@@ -102,6 +105,14 @@ export function RegisterPatients({ onSuccess }: RegisterPatientsProps) {
         try {
             setIsUploading(true)
 
+            let profileImageUrl = undefined
+            if (avatarFile) {
+                const avatarData = new FormData()
+                avatarData.append('file', avatarFile)
+                const response = await api.post<{ url: string }>("/attachments", avatarData)
+                profileImageUrl = response.data.url
+            }
+
             let attachmentIds: string[] = []
             if (selectedFiles.length > 0) {
                 attachmentIds = await Promise.all(
@@ -126,21 +137,23 @@ export function RegisterPatients({ onSuccess }: RegisterPatientsProps) {
                 gender: gender as any,
                 isActive,
                 expertise: "OTHER" as any,
-                profileImageUrl: previewImage || undefined,
+                profileImageUrl,
                 attachmentIds,
             }
 
             await registerPatientFn(data)
 
+            // Reset de estados
             form.reset()
             setCpf("")
             setPhone("")
             setDate(undefined)
             setGender("FEMININE")
-            setPreviewImage(null)
+            setAvatarFile(null)
             setSelectedFiles([])
         } catch (error) {
             console.error("Erro no processo de cadastro:", error)
+            toast.error("Erro ao realizar upload de arquivos ou cadastrar.")
         } finally {
             setIsUploading(false)
         }
@@ -158,8 +171,7 @@ export function RegisterPatients({ onSuccess }: RegisterPatientsProps) {
             <form onSubmit={handleSubmit} className="grid gap-6 py-4">
 
                 <PatientAvatarUpload
-                    defaultValue={previewImage}
-                    onImageChange={setPreviewImage}
+                    onFileSelect={setAvatarFile}
                 />
 
                 <div className="border-t my-2" />

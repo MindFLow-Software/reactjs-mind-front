@@ -9,7 +9,6 @@ import { useMutation, useQueryClient } from "@tanstack/react-query"
 
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { TableCell, TableRow } from "@/components/ui/table"
 import { Dialog } from "@/components/ui/dialog"
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip"
@@ -25,15 +24,10 @@ import type { Patient } from "@/api/get-patients"
 import { formatCPF } from "@/utils/formatCPF"
 import { formatPhone } from "@/utils/formatPhone"
 import { formatAGE } from "@/utils/formatAGE"
+import { UserAvatar } from "../../../../components/user-avatar"
 
 interface PatientsTableRowProps {
     patient: Patient
-}
-
-const getInitials = (first = "", last = "") => {
-    const f = first.charAt(0).toUpperCase()
-    const l = last.charAt(0).toUpperCase()
-    return `${f}${l}` || "??"
 }
 
 export function PatientsTableRow({ patient }: PatientsTableRowProps) {
@@ -93,14 +87,15 @@ export function PatientsTableRow({ patient }: PatientsTableRowProps) {
 
             <TableCell>
                 <div className="flex items-center gap-3">
-                    <Avatar className="h-10 w-10 ring-2 ring-background shadow-sm border">
-                        <AvatarImage src={profileImageUrl || ""} />
-                        <AvatarFallback className="bg-gradient-to-br from-primary/20 to-primary/10 text-primary text-xs font-semibold">
-                            {getInitials(firstName, lastName)}
-                        </AvatarFallback>
-                    </Avatar>
+                    <UserAvatar
+                        src={profileImageUrl}
+                        name={`${firstName} ${lastName}`}
+                    />
+
                     <div className="flex flex-col">
-                        <span className="font-semibold text-sm leading-tight text-foreground text-nowrap">{firstName} {lastName}</span>
+                        <span className="font-semibold text-sm leading-tight text-foreground text-nowrap">
+                            {firstName} {lastName}
+                        </span>
                         <span className="text-[11px] text-muted-foreground/70">Paciente</span>
                     </div>
                 </div>
@@ -191,8 +186,8 @@ export function PatientsTableRow({ patient }: PatientsTableRowProps) {
                                     variant="ghost"
                                     onClick={() => setIsDeleteOpen(true)}
                                     className={`cursor-pointer h-8 w-8 rounded-lg transition-colors text-muted-foreground ${isActive
-                                            ? 'hover:text-red-600 hover:bg-red-50'
-                                            : 'hover:text-emerald-600 hover:bg-emerald-50'
+                                        ? 'hover:text-red-600 hover:bg-red-50'
+                                        : 'hover:text-emerald-600 hover:bg-emerald-50'
                                         }`}
                                 >
                                     {isActive ? <Trash2 className="h-4 w-4" /> : <UserCheck className="h-4 w-4" />}
