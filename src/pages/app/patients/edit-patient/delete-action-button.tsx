@@ -17,7 +17,7 @@ import {
 import { Button } from "@/components/ui/button"
 
 interface DeleteActionButtonProps {
-    onDelete: () => Promise<void> // Forçamos ser uma Promise
+    onDelete: () => Promise<void>
     itemName?: string
     isLoading?: boolean
     className?: string
@@ -29,15 +29,14 @@ export function DeleteActionButton({
     isLoading = false,
     className
 }: DeleteActionButtonProps) {
-    const [open, setOpen] = useState(false) // Controle manual do Dialog
+    const [open, setOpen] = useState(false)
 
     const handleConfirm = async (e: React.MouseEvent) => {
-        e.preventDefault() // Impede o fechamento automático imediato
+        e.preventDefault()
         try {
             await onDelete()
-            setOpen(false) // Fecha o modal apenas no sucesso
+            setOpen(false)
         } catch (error) {
-            // O erro já é tratado pelo toast no pai, mantemos o modal aberto se falhar
         }
     }
 
@@ -76,7 +75,7 @@ export function DeleteActionButton({
                     </AlertDialogCancel>
                     <AlertDialogAction
                         onClick={handleConfirm}
-                        className="rounded-xl bg-destructive hover:bg-destructive/90 text-white"
+                        className="cursor-pointer rounded-xl bg-red-400 hover:bg-red-600 text-white"
                     >
                         {isLoading ? <Loader2 className="h-4 w-4 animate-spin" /> : "Sim, Excluir"}
                     </AlertDialogAction>

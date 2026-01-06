@@ -15,7 +15,7 @@ import {
   SelectValue,
 } from "@/components/ui/select"
 
-import { RegisterPatients } from "./register-patients"
+import { RegisterPatients } from "../register-patients/register-patients"
 import { usePatientFilters } from "@/hooks/use-patient-filters"
 
 interface PatientsTableFiltersProps {

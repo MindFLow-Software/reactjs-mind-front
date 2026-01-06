@@ -62,7 +62,6 @@ export function PatientsList() {
             <Helmet title="Cadastro de Pacientes" />
 
             <div className="flex flex-col gap-5 mt-6">
-                {/* O checkAchievement apenas invalida a query global de popups */}
                 <PatientsTableFilters onPatientRegistered={checkAchievement} />
 
                 <PatientsTable

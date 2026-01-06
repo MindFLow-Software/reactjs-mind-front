@@ -1,10 +1,10 @@
 "use client"
 
-import { useState, useRef, useCallback, memo } from "react"
+import { useState } from "react"
 import { useMutation, useQueryClient } from "@tanstack/react-query"
 import { format } from "date-fns"
 import { ptBR } from "date-fns/locale"
-import { CloudUpload, Paperclip, FileText, X, Loader2, CalendarIcon, Camera, Upload, Eye, EyeOff, Venus, Mars, Users } from "lucide-react"
+import { Loader2, CalendarIcon, Eye, EyeOff, Venus, Mars, Users } from "lucide-react"
 import { toast } from "sonner"
 import { AxiosError } from "axios"
 
@@ -15,20 +15,13 @@ import { Calendar } from "@/components/ui/calendar"
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover"
 import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from "@/components/ui/select"
 import { Label } from "@/components/ui/label"
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
-
-import {
-    FieldSet,
-    FieldSeparator,
-} from "@/components/ui/field"
-
-import { Empty, EmptyHeader, EmptyTitle, EmptyMedia, EmptyContent } from "@/components/ui/empty"
-
 import { formatCPF } from "@/utils/formatCPF"
 import { formatPhone } from "@/utils/formatPhone"
 import { registerPatients, type RegisterPatientsBody } from "@/api/create-patients"
 import { cn } from "@/lib/utils"
 import { api } from "@/lib/axios"
+import { UploadZone } from "./upload-zone"
+import { PatientAvatarUpload } from "./patient-avatar-upload"
 
 interface FormErrors {
     firstName?: boolean
@@ -40,120 +33,12 @@ interface FormErrors {
     phoneNumber?: boolean
 }
 
-interface DocumentUploadSectionProps {
-    selectedFiles: File[]
-    onFilesChange: (files: File[]) => void
-}
-
-const DocumentUploadSection = memo(({ selectedFiles, onFilesChange }: DocumentUploadSectionProps) => {
-    const documentsInputRef = useRef<HTMLInputElement>(null)
-
-    const handleDocumentsSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
-        if (e.target.files && e.target.files.length > 0) {
-            const newFiles = Array.from(e.target.files)
-            onFilesChange([...selectedFiles, ...newFiles])
-        }
-        if (e.target) e.target.value = ""
-    }
-
-    const handleRemoveDocument = (indexToRemove: number) => {
-        const updatedFiles = selectedFiles.filter((_, index) => index !== indexToRemove)
-        onFilesChange(updatedFiles)
-    }
-
-    const triggerFileInput = () => {
-        documentsInputRef.current?.click()
-    }
-
-    return (
-        <div className="pt-2 border-t">
-            <div className="flex items-center justify-between mb-2">
-                <Label className="block">Documentos Iniciais (Opcional)</Label>
-                {selectedFiles.length > 0 && (
-                    <Button
-                        variant="outline"
-                        size="sm"
-                        type="button"
-                        onClick={triggerFileInput}
-                        className="h-8 text-xs"
-                    >
-                        <Paperclip className="w-3 h-3 mr-2" />
-                        Adicionar
-                    </Button>
-                )}
-            </div>
-
-            <input
-                type="file"
-                ref={documentsInputRef}
-                className="hidden"
-                multiple
-                accept=".jpg,.jpeg,.png,.pdf"
-                onChange={handleDocumentsSelect}
-            />
-
-            <FieldSet>
-                {selectedFiles.length === 0 ? (
-                    <Empty className="border border-dashed py-6 mt-1 hover:bg-muted/30 transition-colors cursor-pointer" onClick={triggerFileInput}>
-                        <EmptyHeader>
-                            <EmptyMedia variant="icon">
-                                <CloudUpload className="h-8 w-8 text-muted-foreground/60" />
-                            </EmptyMedia>
-                            <EmptyTitle className="text-base">Sem Documentos</EmptyTitle>
-                            <EmptyTitle className="text-base font-normal text-muted-foreground">Arraste ou clique para selecionar</EmptyTitle>
-                        </EmptyHeader>
-                        <EmptyContent>
-                            <Button
-                                variant="outline"
-                                size="sm"
-                                type="button"
-                                onClick={(e) => { e.stopPropagation(); triggerFileInput(); }}
-                            >
-                                Upload de Documentos
-                            </Button>
-                        </EmptyContent>
-                    </Empty>
-                ) : (
-                    <div className="space-y-2 border rounded-md p-2 mt-1 max-h-40 overflow-y-auto">
-                        {selectedFiles.map((file, index) => (
-                            <div key={`${file.name}-${index}`} className="flex items-center justify-between p-2 bg-muted/40 rounded-md border text-sm animate-in fade-in slide-in-from-bottom-1">
-                                <div className="flex items-center gap-3 overflow-hidden">
-                                    <div className="h-8 w-8 rounded bg-background flex items-center justify-center border shrink-0 text-blue-500">
-                                        <FileText className="h-4 w-4" />
-                                    </div>
-                                    <div className="flex flex-col min-w-0">
-                                        <span className="font-medium truncate">{file.name}</span>
-                                        <span className="text-xs text-muted-foreground">
-                                            {(file.size / 1024).toFixed(1)} KB
-                                        </span>
-                                    </div>
-                                </div>
-                                <Button
-                                    variant="ghost"
-                                    size="icon"
-                                    type="button"
-                                    className="h-8 w-8 text-muted-foreground hover:text-red-500 hover:bg-red-50"
-                                    onClick={() => handleRemoveDocument(index)}
-                                >
-                                    <X className="h-4 w-4" />
-                                </Button>
-                            </div>
-                        ))}
-                    </div>
-                )}
-            </FieldSet>
-        </div>
-    )
-})
-DocumentUploadSection.displayName = "DocumentUploadSection"
-
 interface RegisterPatientsProps {
     onSuccess?: () => void
 }
 
 export function RegisterPatients({ onSuccess }: RegisterPatientsProps) {
     const queryClient = useQueryClient()
-    const fileInputRef = useRef<HTMLInputElement>(null)
 
     const [date, setDate] = useState<Date | undefined>()
     const [cpf, setCpf] = useState("")
@@ -184,19 +69,6 @@ export function RegisterPatients({ onSuccess }: RegisterPatientsProps) {
             toast.error(errorMessage)
         }
     })
-
-    const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-        const file = e.target.files?.[0]
-        if (file) {
-            const reader = new FileReader()
-            reader.onloadend = () => setPreviewImage(reader.result as string)
-            reader.readAsDataURL(file)
-        }
-    }
-
-    const handleFilesChange = useCallback((files: File[]) => {
-        setSelectedFiles(files)
-    }, [])
 
     async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
         e.preventDefault()
@@ -230,22 +102,18 @@ export function RegisterPatients({ onSuccess }: RegisterPatientsProps) {
         try {
             setIsUploading(true)
 
-            // 1. Upload de Documentos para obter os IDs
             let attachmentIds: string[] = []
             if (selectedFiles.length > 0) {
                 attachmentIds = await Promise.all(
                     selectedFiles.map(async (file) => {
                         const formData = new FormData()
                         formData.append('file', file)
-                        const response = await api.post<{ attachmentId: string }>("/attachments", formData, {
-                            headers: { 'Content-Type': 'multipart/form-data' }
-                        })
+                        const response = await api.post<{ attachmentId: string }>("/attachments", formData)
                         return response.data.attachmentId
                     })
                 )
             }
 
-            // 2. Registro do Paciente com os IDs vinculados
             const data: RegisterPatientsBody = {
                 firstName,
                 lastName,
@@ -272,7 +140,7 @@ export function RegisterPatients({ onSuccess }: RegisterPatientsProps) {
             setPreviewImage(null)
             setSelectedFiles([])
         } catch (error) {
-            console.error(error)
+            console.error("Erro no processo de cadastro:", error)
         } finally {
             setIsUploading(false)
         }
@@ -288,30 +156,11 @@ export function RegisterPatients({ onSuccess }: RegisterPatientsProps) {
             </DialogHeader>
 
             <form onSubmit={handleSubmit} className="grid gap-6 py-4">
-                <div className="flex flex-col items-center justify-center gap-2">
-                    <div
-                        className="relative group cursor-pointer"
-                        onClick={() => fileInputRef.current?.click()}
-                    >
-                        <Avatar className="h-24 w-24 border-2 border-dashed border-muted-foreground/30 group-hover:border-primary transition-colors">
-                            <AvatarImage src={previewImage || ""} className="object-cover" />
-                            <AvatarFallback className="bg-muted">
-                                <Camera className="h-8 w-8 text-muted-foreground group-hover:text-primary transition-colors" />
-                            </AvatarFallback>
-                        </Avatar>
-                        <div className="absolute bottom-0 right-0 bg-primary text-primary-foreground rounded-full p-1.5 shadow-md group-hover:scale-110 transition-transform">
-                            <Upload className="h-3 w-3" />
-                        </div>
-                    </div>
-                    <span className="text-xs text-muted-foreground">Clique para adicionar foto</span>
-                    <input
-                        type="file"
-                        ref={fileInputRef}
-                        className="hidden"
-                        accept="image/*"
-                        onChange={handleFileChange}
-                    />
-                </div>
+
+                <PatientAvatarUpload
+                    defaultValue={previewImage}
+                    onImageChange={setPreviewImage}
+                />
 
                 <div className="border-t my-2" />
 
@@ -423,9 +272,7 @@ export function RegisterPatients({ onSuccess }: RegisterPatientsProps) {
                     </div>
                 </div>
 
-                <DocumentUploadSection selectedFiles={selectedFiles} onFilesChange={handleFilesChange} />
-
-                <FieldSeparator />
+                <UploadZone selectedFiles={selectedFiles} onFilesChange={setSelectedFiles} />
 
                 <div className="flex justify-end pt-2">
                     <Button type="submit" disabled={isPending || isUploading} className="cursor-pointer gap-2 w-full lg:w-auto shrink-0 bg-blue-600 hover:bg-blue-700 shadow-sm transition-all">
