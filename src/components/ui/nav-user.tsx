@@ -79,10 +79,7 @@ export function NavUser() {
       ? "Erro ao carregar"
       : "Carregando..."
 
-  // Cache buster para forçar a atualização da imagem quando alterada
-  const profileImage = profile?.profileImageUrl
-    ? `${profile.profileImageUrl}?t=${new Date().getTime()}`
-    : null
+  const profileImage = profile?.profileImageUrl || null
 
   return (
     <SidebarMenu>
@@ -92,7 +89,7 @@ export function NavUser() {
             <SidebarMenuButton
               size="lg"
               disabled={isLoading}
-              className="data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground"
+              className="cursor-pointer data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground"
             >
               {isLoading ? (
                 <Skeleton className="h-8 w-8 rounded-lg" />

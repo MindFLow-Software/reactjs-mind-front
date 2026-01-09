@@ -4,17 +4,8 @@ import { useState } from "react"
 import { useMutation, useQueryClient } from "@tanstack/react-query"
 import { format } from "date-fns"
 import { ptBR } from "date-fns/locale"
-import {
-    CalendarIcon,
-    Loader2,
-    Eye,
-    EyeOff,
-    Mars,
-    Venus,
-    Users
-} from "lucide-react"
+import { CalendarIcon, Loader2, Eye, EyeOff, Venus, Mars, Users } from "lucide-react"
 import { toast } from "sonner"
-
 import { DialogContent, DialogDescription, DialogHeader, DialogTitle } from "@/components/ui/dialog"
 import { Input } from "@/components/ui/input"
 import { Button } from "@/components/ui/button"
@@ -22,24 +13,19 @@ import { Label } from "@/components/ui/label"
 import { Calendar } from "@/components/ui/calendar"
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover"
 import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from "@/components/ui/select"
-
 import { formatCPF } from "@/utils/formatCPF"
 import { formatPhone } from "@/utils/formatPhone"
 import { updatePatient, type UpdatePatientData } from "@/api/upadate-patient"
 import { api } from "@/lib/axios"
-
-// COMPONENTES REFATORADOS
+import { cn } from "@/lib/utils"
 import { AttachmentsList } from "./attachments-list"
 import { UploadZone } from "./upload-zone"
 import { PatientAvatarUpload } from "./patient-avatar-upload"
-
-const cn = (...classes: (string | boolean | undefined)[]) => classes.filter(Boolean).join(' ');
 
 interface FormErrors {
     firstName?: boolean
     lastName?: boolean
     email?: boolean
-    password?: boolean
     dateOfBirth?: boolean
     cpf?: boolean
     phoneNumber?: boolean
@@ -52,17 +38,13 @@ interface EditPatientProps {
 
 export function EditPatient({ patient, onClose }: EditPatientProps) {
     const queryClient = useQueryClient()
-
     const [date, setDate] = useState<Date | undefined>(patient.dateOfBirth ? new Date(patient.dateOfBirth) : undefined)
     const [cpf, setCpf] = useState(patient.cpf ? formatCPF(patient.cpf) : "")
     const [phone, setPhone] = useState(patient.phoneNumber ? formatPhone(patient.phoneNumber) : "")
     const [gender, setGender] = useState(patient.gender || "FEMININE")
-
     const [showPassword, setShowPassword] = useState(false)
-
     const [avatarFile, setAvatarFile] = useState<File | null>(null)
     const [selectedFiles, setSelectedFiles] = useState<File[]>([])
-
     const [errors, setErrors] = useState<FormErrors>({})
     const [isUploading, setIsUploading] = useState(false)
 
@@ -74,50 +56,45 @@ export function EditPatient({ patient, onClose }: EditPatientProps) {
             toast.success("Dados atualizados com sucesso!")
             onClose?.()
         },
-        onError: (err: any) => {
-            toast.error(err.response?.data?.message || "Erro ao atualizar paciente.")
-        },
+        onError: (err: any) => toast.error(err.response?.data?.message || "Erro ao atualizar paciente."),
     })
 
     async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
         e.preventDefault()
-        const form = e.currentTarget
-        const fd = new FormData(form)
+        const fd = new FormData(e.currentTarget)
+        const rawCpf = cpf.replace(/\D/g, "")
+        const rawPhone = phone.replace(/\D/g, "")
 
         const newErrors: FormErrors = {}
-        if (!(fd.get("firstName"))) newErrors.firstName = true
-        if (!(fd.get("lastName"))) newErrors.lastName = true
+        if (!fd.get("firstName")) newErrors.firstName = true
+        if (!fd.get("lastName")) newErrors.lastName = true
         if (!date) newErrors.dateOfBirth = true
-        if (cpf.replace(/\D/g, "").length < 11) newErrors.cpf = true
+        if (rawCpf.length < 11) newErrors.cpf = true
+        if (rawPhone.length < 10) newErrors.phoneNumber = true
 
         if (Object.keys(newErrors).length > 0) {
             setErrors(newErrors)
-            toast.error("Verifique os campos obrigatórios.")
-            return
+            return toast.error("Verifique os campos obrigatórios.")
         }
 
         try {
             setIsUploading(true)
-
             let profileImageUrl = patient.profileImageUrl
             if (avatarFile) {
                 const avatarData = new FormData()
                 avatarData.append('file', avatarFile)
-                const response = await api.post<{ url: string }>("/attachments", avatarData)
-                profileImageUrl = response.data.url
+                const res = await api.post<{ url: string }>("/attachments", avatarData)
+                profileImageUrl = res.data.url
             }
 
-            let attachmentIds: string[] = []
-            if (selectedFiles.length > 0) {
-                attachmentIds = await Promise.all(
-                    selectedFiles.map(async (file) => {
-                        const formData = new FormData()
-                        formData.append('file', file)
-                        const response = await api.post<{ attachmentId: string }>("/attachments", formData)
-                        return response.data.attachmentId
-                    })
-                )
-            }
+            const attachmentIds = selectedFiles.length > 0 
+                ? await Promise.all(selectedFiles.map(async (file) => {
+                    const data = new FormData()
+                    data.append('file', file)
+                    const res = await api.post<{ attachmentId: string }>("/attachments", data)
+                    return res.data.attachmentId
+                }))
+                : []
 
             await updatePatientFn({
                 id: patient.id,
@@ -125,15 +102,15 @@ export function EditPatient({ patient, onClose }: EditPatientProps) {
                 lastName: fd.get("lastName") as string,
                 email: (fd.get("email") as string) || undefined,
                 password: (fd.get("password") as string) || undefined,
-                phoneNumber: phone.replace(/\D/g, ""),
+                phoneNumber: rawPhone,
                 profileImageUrl,
                 dateOfBirth: date!,
-                cpf: cpf.replace(/\D/g, ""),
+                cpf: rawCpf,
                 gender: gender as any,
                 attachmentIds,
             })
         } catch (error) {
-            console.error("Erro no update:", error)
+            console.error(error)
         } finally {
             setIsUploading(false)
         }
@@ -143,18 +120,11 @@ export function EditPatient({ patient, onClose }: EditPatientProps) {
         <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto sm:rounded-xl">
             <DialogHeader>
                 <DialogTitle>Editar Paciente</DialogTitle>
-                <DialogDescription>
-                    Atualize as informações do prontuário de {patient.firstName}.
-                </DialogDescription>
+                <DialogDescription>Atualize as informações do prontuário de {patient.firstName}.</DialogDescription>
             </DialogHeader>
 
             <form onSubmit={handleSubmit} className="grid gap-6 py-4">
-
-                <PatientAvatarUpload
-                    defaultValue={patient.profileImageUrl}
-                    onFileSelect={setAvatarFile}
-                />
-
+                <PatientAvatarUpload defaultValue={patient.profileImageUrl} onFileSelect={setAvatarFile} />
                 <div className="border-t border-muted/40 my-2" />
 
                 <div className="space-y-4">
@@ -176,7 +146,7 @@ export function EditPatient({ patient, onClose }: EditPatientProps) {
                             <Label className={cn(errors.dateOfBirth && "text-red-500")}>Data de Nascimento *</Label>
                             <Popover>
                                 <PopoverTrigger asChild>
-                                    <Button variant={"outline"} className={cn("w-full justify-start text-left font-normal", !date && "text-muted-foreground", errors.dateOfBirth && "border-red-500 text-red-500")}>
+                                    <Button variant="outline" className={cn("w-full justify-start text-left font-normal", !date && "text-muted-foreground", errors.dateOfBirth && "border-red-500")}>
                                         <CalendarIcon className="mr-2 h-4 w-4 opacity-50" />
                                         {date ? format(date, "dd 'de' MMMM, yyyy", { locale: ptBR }) : <span>Selecione</span>}
                                     </Button>
@@ -193,23 +163,23 @@ export function EditPatient({ patient, onClose }: EditPatientProps) {
                     <h3 className="text-[13px] font-bold uppercase tracking-wide text-foreground/70 px-1">Contato e Acesso</h3>
                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                         <div className="space-y-2">
-                            <Label htmlFor="phoneNumber">Telefone *</Label>
-                            <Input id="phoneNumber" name="phoneNumber" value={phone} onChange={(e) => setPhone(formatPhone(e.target.value))} />
+                            <Label htmlFor="phoneNumber" className={cn(errors.phoneNumber && "text-red-500")}>Telefone *</Label>
+                            <Input id="phoneNumber" name="phoneNumber" value={phone} maxLength={15} onChange={(e) => setPhone(formatPhone(e.target.value))} className={cn(errors.phoneNumber && "border-red-500")} />
                         </div>
                         <div className="space-y-2">
                             <Label>Gênero</Label>
                             <Select value={gender} onValueChange={(val) => setGender(val as any)}>
                                 <SelectTrigger><SelectValue /></SelectTrigger>
                                 <SelectContent>
-                                    <SelectItem value="FEMININE"><div className="flex items-center gap-2"><Venus className="h-4 w-4 text-rose-400" /> Feminino</div></SelectItem>
-                                    <SelectItem value="MASCULINE"><div className="flex items-center gap-2"><Mars className="h-4 w-4 text-blue-400" /> Masculino</div></SelectItem>
-                                    <SelectItem value="OTHER"><div className="flex items-center gap-2"><Users className="h-4 w-4 text-violet-400" /> Outro</div></SelectItem>
+                                    <SelectItem value="FEMININE"><div className="flex items-center gap-2"><Venus className="h-4 w-4 text-rose-500" /> Feminino</div></SelectItem>
+                                    <SelectItem value="MASCULINE"><div className="flex items-center gap-2"><Mars className="h-4 w-4 text-blue-500" /> Masculino</div></SelectItem>
+                                    <SelectItem value="OTHER"><div className="flex items-center gap-2"><Users className="h-4 w-4 text-violet-500" /> Outro</div></SelectItem>
                                 </SelectContent>
                             </Select>
                         </div>
                         <div className="space-y-2 sm:col-span-2">
-                            <Label htmlFor="email">Email *</Label>
-                            <Input id="email" name="email" type="email" defaultValue={patient.email} />
+                            <Label htmlFor="email" className={cn(errors.email && "text-red-500")}>Email *</Label>
+                            <Input id="email" name="email" type="email" defaultValue={patient.email} className={cn(errors.email && "border-red-500")} />
                         </div>
                         <div className="space-y-2 sm:col-span-2">
                             <Label htmlFor="password">Senha (Opcional)</Label>
@@ -223,14 +193,11 @@ export function EditPatient({ patient, onClose }: EditPatientProps) {
                     </div>
                 </div>
 
-                <div className="pt-2">
-                    <AttachmentsList patientId={patient.id} />
-                </div>
-
+                <div className="pt-2"><AttachmentsList patientId={patient.id} /></div>
                 <UploadZone selectedFiles={selectedFiles} onFilesChange={setSelectedFiles} />
 
                 <div className="flex justify-end pt-4">
-                    <Button type="submit" disabled={isPending || isUploading} className="cursor-pointer w-full sm:w-auto bg-blue-600 hover:bg-blue-700 shadow-md">
+                    <Button type="submit" disabled={isPending || isUploading} className="cursor-pointer w-full sm:w-auto bg-blue-600 hover:bg-blue-700">
                         {(isPending || isUploading) && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
                         {isPending || isUploading ? "Salvando..." : "Salvar Alterações"}
                     </Button>

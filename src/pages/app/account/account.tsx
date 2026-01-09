@@ -11,7 +11,6 @@ import { Button } from "@/components/ui/button"
 import { PsychologistProfileCard } from "./components/psychologist-profile-card"
 import { ActivityHeatmap } from "./components/activity-heatmap"
 
-// Mock de estatísticas (Pode ser movido para fora do componente para evitar recriação)
 const stats = Array.from({ length: 52 * 7 }, (_, i) => {
     const date = new Date()
     date.setDate(date.getDate() - (52 * 7 - i))
@@ -28,18 +27,11 @@ export function MockPsychologistProfilePage() {
         setTitle('Minha Conta')
     }, [setTitle])
 
-    /**
-     * ATENÇÃO: A queryKey DEVE ser a mesma utilizada no onSuccess 
-     * do componente PsychologistAvatarUpload para que a foto atualize 
-     * instantaneamente após o upload.
-     */
     const { data: psychologist, isLoading, isError, refetch } = useQuery({
-        queryKey: ["psychologist-profile-v2"], // Sincronizado com o componente de upload
+        queryKey: ["psychologist-profile-v2"],
         queryFn: getProfile,
-        staleTime: 1000 * 60 * 5, // 5 minutos (evita requests repetitivos desnecessários)
+        staleTime: 1000 * 60 * 5,
     })
-
-    console.log("Dados do Psicólogo:", psychologist?.profileImageUrl)
 
     if (isLoading) {
         return (
@@ -71,19 +63,16 @@ export function MockPsychologistProfilePage() {
     return (
         <>
             <Helmet title="Minha Conta" />
-            <div className="flex flex-col gap-6 mt-6 px-4 md:px-2">
-                <div className="max-w-7xl mx-auto w-full">
-                    <div className="grid grid-cols-1 gap-6">
-                        {psychologist && (
-                            <PsychologistProfileCard
-                                psychologist={psychologist}
-                            />
-                        )}
 
-                        <div className="bg-card rounded-xl border border-border p-6 md:p-8 shadow-sm animate-in fade-in slide-in-from-bottom-4 delay-150 duration-500">
-                            <ActivityHeatmap data={stats} />
-                        </div>
-                    </div>
+            <div className="flex flex-col gap-5 mt-6">
+                {psychologist && (
+                    <PsychologistProfileCard
+                        psychologist={psychologist}
+                    />
+                )}
+
+                <div className="bg-card rounded-xl border border-border p-6 md:p-8 shadow-sm animate-in fade-in slide-in-from-bottom-4 delay-150 duration-500">
+                    <ActivityHeatmap data={stats} />
                 </div>
             </div>
         </>

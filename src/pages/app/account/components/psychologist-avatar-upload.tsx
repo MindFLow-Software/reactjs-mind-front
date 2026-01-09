@@ -28,18 +28,14 @@ export function PsychologistAvatarUpload({ currentImage, fullName }: AvatarUploa
             const newPhotoId = response.data.attachmentId
 
             await updatePsychologist({ profileImageUrl: newPhotoId })
-
             return newPhotoId
         },
-        onSuccess: (newPhotoId) => {
-            const queryKey = ["psychologist-profile-v2"]
+        onSuccess: async (newPhotoId) => {
+            const queryKey = ["psychologist-profile"]
 
             queryClient.setQueryData<GetProfileResponse>(queryKey, (oldData) => {
                 if (!oldData) return oldData
-                return {
-                    ...oldData,
-                    profileImageUrl: newPhotoId,
-                }
+                return { ...oldData, profileImageUrl: newPhotoId }
             })
 
             const storedUser = localStorage.getItem("user")
@@ -49,13 +45,13 @@ export function PsychologistAvatarUpload({ currentImage, fullName }: AvatarUploa
                 localStorage.setItem("user", JSON.stringify(userData))
             }
 
-            queryClient.invalidateQueries({ queryKey })
+            await queryClient.invalidateQueries({ queryKey })
+
             toast.success("Foto de perfil atualizada!")
             setPreviewUrl(null)
         },
-        onError: (error) => {
-            console.error(error)
-            toast.error("Não foi possível carregar a foto.")
+        onError: () => {
+            toast.error("Erro ao atualizar a foto.")
             setPreviewUrl(null)
         },
     })
@@ -64,10 +60,8 @@ export function PsychologistAvatarUpload({ currentImage, fullName }: AvatarUploa
         const file = e.target.files?.[0]
         if (file) {
             if (previewUrl) URL.revokeObjectURL(previewUrl)
-
             const objectUrl = URL.createObjectURL(file)
             setPreviewUrl(objectUrl)
-
             try {
                 await uploadPhoto(file)
             } catch { }
@@ -85,28 +79,14 @@ export function PsychologistAvatarUpload({ currentImage, fullName }: AvatarUploa
                     name={fullName}
                     className="h-28 w-28 border-4 border-background shadow-xl group-hover:border-primary/40 transition-all rounded-full object-cover"
                 />
-
                 <div className="absolute bottom-0 right-0 bg-primary text-primary-foreground rounded-full p-2 shadow-lg group-hover:scale-110 transition-transform z-10 border-2 border-background">
-                    {isPending ? (
-                        <Loader2 className="h-4 w-4 animate-spin" />
-                    ) : (
-                        <Camera className="h-4 w-4" />
-                    )}
+                    {isPending ? <Loader2 className="h-4 w-4 animate-spin" /> : <Camera className="h-4 w-4" />}
                 </div>
-
                 <div className="absolute inset-0 flex items-center justify-center bg-black/20 rounded-full opacity-0 group-hover:opacity-100 transition-opacity">
                     {!isPending && <Upload className="h-8 w-8 text-white" />}
                 </div>
             </div>
-
-            <input
-                type="file"
-                ref={fileInputRef}
-                onChange={handleFileChange}
-                accept="image/*"
-                className="hidden"
-            />
-
+            <input type="file" ref={fileInputRef} onChange={handleFileChange} accept="image/*" className="hidden" />
             {isPending && (
                 <span className="text-[10px] font-bold text-primary animate-pulse uppercase tracking-widest">
                     Processando imagem...

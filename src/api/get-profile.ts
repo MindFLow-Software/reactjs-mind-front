@@ -15,7 +15,9 @@ export interface GetProfileResponse {
   expertise: Expertise
   isActive: boolean
   profileImageUrl: string | null
+  bannerImageUrl: string | null
   crp: string | null
+  createdAt: string
 }
 
 export async function getProfile(): Promise<GetProfileResponse> {
@@ -36,8 +38,9 @@ export async function getProfile(): Promise<GetProfileResponse> {
     expertise: raw.expertise,
     isActive: raw.isActive,
     crp: raw.crp,
-    // ✅ Pega o ID que agora vem preenchido da API
-    profileImageUrl: raw.profileImageUrl || null 
+    profileImageUrl: raw.profileImageUrl || null,
+    bannerImageUrl: raw.bannerImageUrl || null,
+    createdAt: raw.createdAt,
   }
 
   localStorage.setItem('user', JSON.stringify(psychologist))

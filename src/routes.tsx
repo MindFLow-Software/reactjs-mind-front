@@ -111,8 +111,7 @@ export const router = createBrowserRouter([
       { path: '/video-room', element: <AppointmentsRoom /> },
       { path: '/appointment', element: <AppointmentsList /> },
       { path: '/availability', element: <AvailabilityPage /> },
-      { path: '/account', element: <MockPsychologistProfilePage /> },
-      { path: '/perfil', element: <MockPsychologistProfilePage /> },
+      { path: '/account', element: <MockPsychologistProfilePage/> },
       {
         path: '/approvals',
         loader: adminLoader,

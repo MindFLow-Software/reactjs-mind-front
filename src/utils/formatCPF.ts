@@ -1,17 +1,16 @@
-// formatCPF.ts
 /**
- * Formata CPF para XXX.XXX.XXX-XX
- * Recebe qualquer string (com ou sem máscara) e retorna a string formatada.
- * Se não for um CPF válido (11 dígitos), retorna a string limpa (somente números).
+ * Formata CPF progressivamente (XXX.XXX.XXX-XX)
+ * Bloqueia em 11 dígitos numéricos.
  */
 export function formatCPF(raw: string): string {
-  if (!raw) return raw
-  const cleaned = String(raw).replace(/\D/g, '')
+  if (!raw) return ""
 
-  if (/^\d{11}$/.test(cleaned)) {
-    return cleaned.replace(/^(\d{3})(\d{3})(\d{3})(\d{2})$/, '$1.$2.$3-$4')
-  }
+  // Remove tudo que não é dígito e limita a 11 números
+  const cleaned = raw.replace(/\D/g, "").slice(0, 11)
 
-  // fallback: retorna somente os números (ou você pode retornar raw)
+  // Aplica a máscara de acordo com a quantidade de números digitados
   return cleaned
+    .replace(/(\d{3})(\d)/, "$1.$2")       // Primeiro ponto
+    .replace(/(\d{3})(\d)/, "$1.$2")       // Segundo ponto
+    .replace(/(\d{3})(\d{1,2})$/, "$1-$2") // Traço
 }

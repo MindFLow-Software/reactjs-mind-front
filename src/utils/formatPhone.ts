@@ -1,23 +1,25 @@
-// formatPhone.ts
 /**
- * Formata telefone brasileiro para (XX) XXXXX-XXXX
- * Recebe qualquer string (com ou sem máscara) e retorna a string formatada.
- * Se não for um telefone válido (11 dígitos), retorna a string limpa (somente números).
+ * Formata telefone brasileiro progressivamente (XX) XXXXX-XXXX ou (XX) XXXX-XXXX
+ * Bloqueia em 11 dígitos numéricos e ajusta a máscara dinamicamente.
  */
 export function formatPhone(raw: string): string {
-  if (!raw) return raw
-  const cleaned = String(raw).replace(/\D/g, '')
+  if (!raw) return ""
 
-  // formato esperado: 11 dígitos (2 DDD + 9 número)
-  if (/^(\d{2})(\d{5})(\d{4})$/.test(cleaned)) {
-    return cleaned.replace(/^(\d{2})(\d{5})(\d{4})$/, '($1) $2-$3')
+  // Remove tudo que não é número e limita a 11 dígitos
+  const cleaned = raw.replace(/\D/g, "").slice(0, 11)
+
+  const len = cleaned.length
+
+  // Aplica a máscara de acordo com a quantidade de números
+  if (len <= 10) {
+    // Formato Fixo: (XX) XXXX-XXXX
+    return cleaned
+      .replace(/^(\d{2})(\d)/g, "($1) $2")
+      .replace(/(\d{4})(\d)/, "$1-$2")
   }
 
-  // tenta formatar 10 dígitos (caso número com 8 dígitos sem nono)
-  if (/^(\d{2})(\d{4})(\d{4})$/.test(cleaned)) {
-    return cleaned.replace(/^(\d{2})(\d{4})(\d{4})$/, '($1) $2-$3')
-  }
-
-  // se não bater, retorna só os números (fallback)
+  // Formato Celular: (XX) XXXXX-XXXX
   return cleaned
+    .replace(/^(\d{2})(\d)/g, "($1) $2")
+    .replace(/(\d{5})(\d)/, "$1-$2")
 }

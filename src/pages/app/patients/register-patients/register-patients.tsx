@@ -17,7 +17,7 @@ import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from "@
 import { Label } from "@/components/ui/label"
 import { formatCPF } from "@/utils/formatCPF"
 import { formatPhone } from "@/utils/formatPhone"
-import { registerPatients, type RegisterPatientsBody } from "@/api/create-patients"
+import { registerPatients } from "@/api/create-patients"
 import { cn } from "@/lib/utils"
 import { api } from "@/lib/axios"
 import { UploadZone } from "./upload-zone"
@@ -44,14 +44,9 @@ export function RegisterPatients({ onSuccess }: RegisterPatientsProps) {
     const [cpf, setCpf] = useState("")
     const [phone, setPhone] = useState("")
     const [gender, setGender] = useState("FEMININE")
-    const [isActive] = useState(true)
-
     const [showPassword, setShowPassword] = useState(false)
-
-    // ESTADOS DE ARQUIVO
     const [avatarFile, setAvatarFile] = useState<File | null>(null)
     const [selectedFiles, setSelectedFiles] = useState<File[]>([])
-
     const [errors, setErrors] = useState<FormErrors>({})
     const [isUploading, setIsUploading] = useState(false)
 
@@ -62,7 +57,7 @@ export function RegisterPatients({ onSuccess }: RegisterPatientsProps) {
             queryClient.invalidateQueries({ queryKey: ["patients"] })
             queryClient.invalidateQueries({ queryKey: ["metrics"] })
             toast.success("Paciente cadastrado com sucesso!")
-            if (onSuccess) onSuccess()
+            onSuccess?.()
         },
         onError: (err) => {
             let errorMessage = "Erro ao cadastrar paciente."
@@ -125,7 +120,7 @@ export function RegisterPatients({ onSuccess }: RegisterPatientsProps) {
                 )
             }
 
-            const data: RegisterPatientsBody = {
+            await registerPatientFn({
                 firstName,
                 lastName,
                 email: email || undefined,
@@ -135,15 +130,12 @@ export function RegisterPatients({ onSuccess }: RegisterPatientsProps) {
                 cpf: rawCpf,
                 role: "PATIENT" as any,
                 gender: gender as any,
-                isActive,
+                isActive: true,
                 expertise: "OTHER" as any,
                 profileImageUrl,
                 attachmentIds,
-            }
+            })
 
-            await registerPatientFn(data)
-
-            // Reset de estados
             form.reset()
             setCpf("")
             setPhone("")
@@ -152,8 +144,7 @@ export function RegisterPatients({ onSuccess }: RegisterPatientsProps) {
             setAvatarFile(null)
             setSelectedFiles([])
         } catch (error) {
-            console.error("Erro no processo de cadastro:", error)
-            toast.error("Erro ao realizar upload de arquivos ou cadastrar.")
+            console.error(error)
         } finally {
             setIsUploading(false)
         }
@@ -169,37 +160,42 @@ export function RegisterPatients({ onSuccess }: RegisterPatientsProps) {
             </DialogHeader>
 
             <form onSubmit={handleSubmit} className="grid gap-6 py-4">
-
-                <PatientAvatarUpload
-                    onFileSelect={setAvatarFile}
-                />
+                <PatientAvatarUpload onFileSelect={setAvatarFile} />
 
                 <div className="border-t my-2" />
 
                 <div className="space-y-4">
-                    <h3 className="text-sm font-semibold text-foreground flex items-center gap-2">
+                    <h3 className="text-sm font-semibold text-foreground flex items-center gap-2 px-1">
                         Dados Pessoais
                     </h3>
                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                         <div className="space-y-2">
                             <Label htmlFor="firstName" className={cn(errors.firstName && "text-red-500")}>Nome *</Label>
                             <Input
-                                id="firstName" name="firstName" placeholder="Ex: Ana"
+                                id="firstName"
+                                name="firstName"
+                                placeholder="Ex: Ana"
                                 className={cn(errors.firstName && "border-red-500 focus-visible:ring-red-500")}
                             />
                         </div>
                         <div className="space-y-2">
                             <Label htmlFor="lastName" className={cn(errors.lastName && "text-red-500")}>Sobrenome *</Label>
                             <Input
-                                id="lastName" name="lastName" placeholder="Ex: Silva"
+                                id="lastName"
+                                name="lastName"
+                                placeholder="Ex: Silva"
                                 className={cn(errors.lastName && "border-red-500 focus-visible:ring-red-500")}
                             />
                         </div>
                         <div className="space-y-2">
                             <Label htmlFor="cpf" className={cn(errors.cpf && "text-red-500")}>CPF *</Label>
                             <Input
-                                id="cpf" name="cpf" placeholder="000.000.000-00" maxLength={14}
-                                value={cpf} onChange={(e) => setCpf(formatCPF(e.target.value))}
+                                id="cpf"
+                                name="cpf"
+                                placeholder="000.000.000-00"
+                                value={cpf}
+                                maxLength={14}
+                                onChange={(e) => setCpf(formatCPF(e.target.value))}
                                 className={cn(errors.cpf && "border-red-500 focus-visible:ring-red-500")}
                             />
                         </div>
@@ -236,15 +232,19 @@ export function RegisterPatients({ onSuccess }: RegisterPatientsProps) {
                 </div>
 
                 <div className="space-y-4">
-                    <h3 className="text-sm font-semibold text-foreground flex items-center gap-2 pt-2 border-t">
+                    <h3 className="text-sm font-semibold text-foreground flex items-center gap-2 pt-2 border-t px-1">
                         Contato e Acesso
                     </h3>
                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                         <div className="space-y-2">
                             <Label htmlFor="phoneNumber" className={cn(errors.phoneNumber && "text-red-500")}>Celular / WhatsApp *</Label>
                             <Input
-                                id="phoneNumber" name="phoneNumber" placeholder="(00) 00000-0000" maxLength={15}
-                                value={phone} onChange={(e) => setPhone(formatPhone(e.target.value))}
+                                id="phoneNumber"
+                                name="phoneNumber"
+                                placeholder="(00) 00000-0000"
+                                value={phone}
+                                maxLength={15}
+                                onChange={(e) => setPhone(formatPhone(e.target.value))}
                                 className={cn(errors.phoneNumber && "border-red-500 focus-visible:ring-red-500")}
                             />
                         </div>
@@ -261,19 +261,28 @@ export function RegisterPatients({ onSuccess }: RegisterPatientsProps) {
                         </div>
                         <div className="space-y-2 sm:col-span-2">
                             <Label htmlFor="email" className={cn(errors.email && "text-red-500")}>Email *</Label>
-                            <Input id="email" name="email" type="email" placeholder="email@exemplo.com" className={cn(errors.email && "border-red-500 focus-visible:ring-red-500")} />
+                            <Input
+                                id="email"
+                                name="email"
+                                type="email"
+                                placeholder="email@exemplo.com"
+                                className={cn(errors.email && "border-red-500 focus-visible:ring-red-500")}
+                            />
                         </div>
                         <div className="space-y-2 sm:col-span-2">
                             <Label htmlFor="password" className={cn(errors.password && "text-red-500")}>Senha de Acesso *</Label>
                             <div className="relative">
                                 <Input
-                                    id="password" name="password"
+                                    id="password"
+                                    name="password"
                                     type={showPassword ? "text" : "password"}
                                     placeholder="Mínimo 6 caracteres"
                                     className={cn("pr-10", errors.password && "border-red-500 focus-visible:ring-red-500")}
                                 />
                                 <Button
-                                    type="button" variant="ghost" size="sm"
+                                    type="button"
+                                    variant="ghost"
+                                    size="sm"
                                     className="absolute right-0 top-0 h-full px-3 py-2 hover:bg-transparent"
                                     onClick={() => setShowPassword(!showPassword)}
                                 >
