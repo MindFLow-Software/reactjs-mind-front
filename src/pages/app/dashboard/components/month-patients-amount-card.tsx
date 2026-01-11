@@ -6,6 +6,7 @@ import { useQuery } from "@tanstack/react-query"
 import { getMonthlySessionsCount } from "@/api/get-monthly-sessions-count"
 import { Skeleton } from "@/components/ui/skeleton"
 import { Card } from "@/components/ui/card"
+import { Separator } from "@/components/ui/separator"
 
 interface MonthPatientsAmountCardProps {
     startDate: Date | undefined
@@ -33,11 +34,11 @@ export function MonthPatientsAmountCard({ startDate, endDate }: MonthPatientsAmo
             className={cn(
                 "relative overflow-hidden",
                 "rounded-xl border bg-card shadow-sm",
-                "p-6 transition-all duration-300 hover:shadow-md",
+                "p-4 transition-all duration-300 hover:shadow-md",
                 "border-l-4 border-l-[#5a189a]"
             )}
         >
-            <img
+            {/* <img
                 src="/goal.svg"
                 alt="Mascote"
                 className={cn(
@@ -45,9 +46,9 @@ export function MonthPatientsAmountCard({ startDate, endDate }: MonthPatientsAmo
                     "w-32 h-auto opacity-[2] dark:opacity-[0.55]",
                     "pointer-events-none select-none"
                 )}
-            />
+            /> */}
 
-            <div className="relative z-10 flex flex-col gap-5">
+            <div className="relative z-10 flex flex-col">
                 <div className="flex items-start justify-between">
                     <div className="flex items-start gap-3">
                         <div className="rounded-lg bg-[#5a189a]/10 p-2 border border-[#5a189a]/20">
@@ -59,11 +60,12 @@ export function MonthPatientsAmountCard({ startDate, endDate }: MonthPatientsAmo
                                 Sessões do Mês
                             </span>
                             <span className="text-xs text-muted-foreground">
-                                Total de atendimentos
+                                Atendimentos no mês
                             </span>
                         </div>
                     </div>
                 </div>
+                <Separator className="my-4 bg-transparent border-t-2 border-dashed border-muted-foreground/30" />
 
                 {isLoading ? (
                     <div className="space-y-2">

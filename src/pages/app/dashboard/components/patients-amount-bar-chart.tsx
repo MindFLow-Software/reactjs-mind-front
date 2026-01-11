@@ -1,26 +1,15 @@
 "use client"
 
 import { useMemo } from "react"
-import { Bar, BarChart, CartesianGrid, XAxis, YAxis } from "recharts"
+import { Bar, BarChart, CartesianGrid, XAxis, YAxis, Cell } from "recharts"
 import { format, subDays } from "date-fns"
 import { ptBR } from "date-fns/locale"
 
-import {
-    Card,
-    CardContent,
-    CardDescription,
-    CardHeader,
-    CardTitle,
-} from "@/components/ui/card"
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 
-import {
-    type ChartConfig,
-    ChartContainer,
-    ChartTooltip,
-    ChartTooltipContent,
-} from "@/components/ui/chart"
+import { type ChartConfig, ChartContainer, ChartTooltip, ChartTooltipContent } from "@/components/ui/chart"
 
-import { Info, BarChart3, CircleX } from "lucide-react"
+import { Users } from "lucide-react"
 import { getAmountPatientsChart } from "@/api/get-amount-patients-chart"
 import { useQuery } from "@tanstack/react-query"
 import { Skeleton } from "@/components/ui/skeleton"
@@ -28,11 +17,14 @@ import { Skeleton } from "@/components/ui/skeleton"
 const chartConfig = {
     newPatients: {
         label: "Pacientes",
-        color: "var(--primary)",
+        color: "hsl(217, 91%, 60%)",
     },
 } satisfies ChartConfig
 
-export function NewPatientsBarChart({ startDate: propStartDate, endDate: propEndDate }: { startDate?: Date, endDate?: Date }) {
+export function NewPatientsBarChart({
+    startDate: propStartDate,
+    endDate: propEndDate,
+}: { startDate?: Date; endDate?: Date }) {
     const { startDate, endDate } = useMemo(() => {
         const end = propEndDate || new Date()
         const start = propStartDate || subDays(end, 7)
@@ -46,120 +38,116 @@ export function NewPatientsBarChart({ startDate: propStartDate, endDate: propEnd
     })
 
     const chartData = useMemo(() => data || [], [data])
-    const maxPatients = useMemo(() => Math.max(...chartData.map(d => d.newPatients), 0), [chartData])
+    const maxPatients = useMemo(() => Math.max(...chartData.map((d) => d.newPatients), 0), [chartData])
     const yAxisMax = useMemo(() => Math.max(5, maxPatients + 1), [maxPatients])
 
+    const totalPatients = useMemo(() => chartData.reduce((acc, d) => acc + d.newPatients, 0), [chartData])
+
     return (
-        <Card className="col-span-6 border-none shadow-[0_8px_30px_rgb(0,0,0,0.04)] bg-card rounded-xl overflow-hidden transition-all duration-500">
-            <CardHeader className="flex flex-row items-center justify-between px-7 pt-7 pb-4">
-                <div className="flex items-center gap-4">
-                    <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-primary/10 text-primary shadow-inner">
-                        <BarChart3 className="size-5" />
-                    </div>
-                    <div className="flex flex-col">
-                        <CardTitle className="text-sm font-bold tracking-tight text-foreground/90 uppercase">
+        <Card className="col-span-6 border border-slate-100 bg-white shadow-sm rounded-2xl overflow-hidden">
+            <CardHeader className="px-6 pb-2">
+                <div className="flex items-center justify-between">
+                    <div>
+                        <CardTitle className="text-sm font-semibold text-foreground uppercase tracking-wider">
                             Novos Pacientes
                         </CardTitle>
-                        <CardDescription className="text-[11px] font-medium text-muted-foreground/80">
-                            Fluxo diário de cadastros
-                        </CardDescription>
+                        <span className="text-xs text-muted-foreground">
+                            Cadastros no período selecionado
+                        </span>
                     </div>
+
+                    {!isLoading && !isError && chartData.length > 0 && (
+                        <div className="flex items-baseline gap-2">
+                            <span className="text-3xl font-bold text-slate-900">{totalPatients}</span>
+                            <span className="text-lg text-muted-foreground">Pacientes</span>
+                        </div>
+                    )}
                 </div>
             </CardHeader>
 
-            <CardContent className="px-5 pb-7">
+            <CardContent className="px-6 pb-6 pt-2">
                 {isLoading ? (
-                    <div className="flex items-end gap-3 h-[220px] w-full px-2">
+                    <div className="flex h-[200px] items-end gap-4 pt-8">
                         {[...Array(7)].map((_, i) => (
                             <Skeleton
                                 key={i}
-                                className="w-full bg-muted/40 rounded-t-lg"
-                                style={{ height: `${20 + Math.random() * 60}%` }}
+                                className="w-full rounded-lg bg-slate-100"
+                                style={{ height: `${30 + Math.random() * 50}%` }}
                             />
                         ))}
                     </div>
                 ) : isError ? (
-                    <div className="flex h-[220px] flex-col items-center justify-center rounded-xl bg-destructive/5 text-destructive gap-2 border border-destructive/10">
-                        <Info className="size-5" />
-                        <span className="text-xs font-semibold">Erro ao carregar métricas</span>
+                    <div className="flex h-[200px] flex-col items-center justify-center text-center">
+                        <div className="mb-3 flex h-12 w-12 items-center justify-center rounded-full bg-red-50">
+                            <span className="text-xl">!</span>
+                        </div>
+                        <p className="text-sm font-medium text-slate-700">Erro ao carregar dados</p>
+                        <p className="mt-1 text-xs text-slate-400">Tente novamente em instantes</p>
                     </div>
-                ) : chartData.length === 0 || chartData.every(d => d.newPatients === 0) ? (
-                    <div className="flex h-[220px] flex-col items-center justify-center gap-4">
-                        <div className="flex h-12 w-12 items-center justify-center rounded-full bg-muted">
-                            <CircleX className="h-6 w-6 opacity-50" />
+                ) : chartData.length === 0 || chartData.every((d) => d.newPatients === 0) ? (
+                    <div className="flex h-[200px] flex-col items-center justify-center text-center">
+                        <div className="mb-3 flex h-12 w-12 items-center justify-center rounded-full bg-slate-50">
+                            <Users className="h-5 w-5 text-slate-300" />
                         </div>
-                        <div className="text-center space-y-1">
-                            <p className="font-medium">Nenhuma sessão encontrada</p>
-                            <p className="text-sm text-muted-foreground">Não houveram atendimentos concluídos neste período.</p>
-                        </div>
+                        <p className="text-sm font-medium text-slate-700">Nenhum registro</p>
+                        <p className="mt-1 text-xs text-slate-400">Não há pacientes neste período</p>
                     </div>
                 ) : (
-                    <ChartContainer config={chartConfig} className="h-[220px] w-full">
-                        <BarChart data={chartData} margin={{ top: 10, left: -25, right: 10, bottom: 0 }}>
-                            <defs>
-                                <linearGradient id="newPatientsGradient" x1="0" y1="0" x2="0" y2="1">
-                                    <stop offset="0%" stopColor="var(--primary)" stopOpacity={1} />
-                                    <stop offset="100%" stopColor="var(--primary)" stopOpacity={0.6} />
-                                </linearGradient>
-                            </defs>
-
-                            <CartesianGrid vertical={false} stroke="var(--border)" strokeOpacity={0.6} />
+                    <ChartContainer config={chartConfig} className="h-[200px] w-full">
+                        <BarChart data={chartData} margin={{ top: 20, left: -25, right: 5, bottom: 0 }}>
+                            <CartesianGrid vertical={false} stroke="#e2e8f0" strokeDasharray="4 4" />
 
                             <XAxis
                                 dataKey="date"
                                 tickLine={false}
                                 axisLine={false}
-                                tickMargin={15}
-                                fontSize={10}
-                                fontWeight={700}
-                                className="fill-muted-foreground/70 uppercase"
-                                tickFormatter={(value) => format(new Date(value), "dd MMM", { locale: ptBR })}
+                                tickMargin={12}
+                                fontSize={12}
+                                fontWeight={500}
+                                stroke="#94a3b8"
+                                tickFormatter={(value) => format(new Date(value), "EEE", { locale: ptBR })}
                             />
 
                             <YAxis
                                 domain={[0, yAxisMax]}
                                 tickLine={false}
                                 axisLine={false}
-                                fontSize={10}
-                                fontWeight={700}
-                                className="fill-muted-foreground/70"
+                                fontSize={12}
+                                fontWeight={500}
+                                stroke="#cbd5e1"
                                 allowDecimals={false}
+                                tickCount={4}
                             />
 
                             <ChartTooltip
-                                cursor={{ fill: 'var(--primary)', opacity: 0.04 }}
+                                cursor={{ fill: "#f1f5f9", radius: 8 }}
                                 content={
                                     <ChartTooltipContent
-                                        className="border-none shadow-2xl bg-card/95 backdrop-blur-sm rounded-lg"
-                                        labelFormatter={(value) => format(new Date(value), "dd 'de' MMMM", { locale: ptBR })}
+                                        className="border-0 shadow-lg bg-slate-900 text-white rounded-lg px-3 py-2"
+                                        labelClassName="text-slate-300 text-xs"
+                                        labelFormatter={(value) => format(new Date(value), "dd MMM, yyyy", { locale: ptBR })}
+                                        formatter={(value) => (
+                                            <div className="flex items-center gap-1.5 font-bold text-white">
+                                                <span>{value}</span>
+                                                <span className="text-xs font-normal text-slate-400">Pacientes</span>
+                                            </div>
+                                        )}
                                     />
                                 }
                             />
 
-                            <Bar
-                                dataKey="newPatients"
-                                fill="url(#newPatientsGradient)"
-                                radius={[6, 6, 2, 2]}
-                                barSize={24}
-                            />
+                            <Bar dataKey="newPatients" fill="#3b82f6" radius={[8, 8, 0, 0]} barSize={32} animationDuration={800}>
+                                {chartData.map((entry, index) => (
+                                    <Cell
+                                        key={`cell-${index}`}
+                                        fill={entry.newPatients === maxPatients ? "#2563eb" : "#3b82f6"}
+                                        className="cursor-pointer transition-opacity duration-200 hover:opacity-80"
+                                    />
+                                ))}
+                            </Bar>
                         </BarChart>
                     </ChartContainer>
                 )}
-
-                <div className="mt-6 flex items-center justify-between border-t border-border/40 pt-5 px-2">
-                    <div className="flex items-center gap-2">
-                        <div className="h-1.5 w-1.5 rounded-full bg-primary" />
-                        <span className="text-[10px] font-bold text-muted-foreground uppercase tracking-wider">
-                            Fluxo de Entrada
-                        </span>
-                    </div>
-                    <div className="flex items-center gap-1.5 text-muted-foreground/50">
-                        <Info size={12} />
-                        <span className="text-[10px] font-bold uppercase tracking-tight">
-                            Período Selecionado
-                        </span>
-                    </div>
-                </div>
             </CardContent>
         </Card>
     )

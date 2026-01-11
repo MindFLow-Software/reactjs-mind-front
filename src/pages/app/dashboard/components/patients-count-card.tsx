@@ -7,6 +7,7 @@ import { useMemo } from "react"
 import { getAmountPatientsChart } from "@/api/get-amount-patients-chart"
 import { cn } from "@/lib/utils"
 import { Skeleton } from "@/components/ui/skeleton"
+import { Separator } from "@/components/ui/separator"
 
 interface PatientsCountCardProps {
     startDate?: Date
@@ -58,24 +59,15 @@ export const PatientsCountCard = ({ startDate: propStartDate, endDate: propEndDa
             className={cn(
                 "relative overflow-hidden",
                 "rounded-xl border bg-card shadow-sm",
-                "p-6 transition-all duration-300 hover:shadow-md",
+                "p-4 transition-all duration-300 hover:shadow-md",
                 "border-l-4 border-l-[#01DE82]"
             )}
         >
-            <img
-                src="/brain.png"
-                alt="Mascote cérebro"
-                className={cn(
-                    "absolute -bottom-10 -right-13",
-                    "w-48 h-auto opacity-[2] dark:opacity-[0.55]",
-                    "pointer-events-none select-none rotate-12"
-                )}
-            />
 
-            <div className="relative z-10 flex flex-col gap-5">
+            <div className="relative z-10 flex flex-col">
                 <div className="flex items-start justify-between">
                     <div className="flex items-start gap-3">
-                        <div className="rounded-lg bg-[#01DE82]/10 p-2 border border-[#01DE82]/20">
+                        <div className="rounded-lg bg-green-500/10 p-2 border border-[#01DE82]/20">
                             <Users className="size-4 text-[#01DE82]" />
                         </div>
 
@@ -84,11 +76,12 @@ export const PatientsCountCard = ({ startDate: propStartDate, endDate: propEndDa
                                 Pacientes
                             </span>
                             <span className="text-xs text-muted-foreground">
-                                Novos pacientes no período
+                                Cadastros recentes
                             </span>
                         </div>
                     </div>
                 </div>
+                <Separator className="my-4 bg-transparent border-t-2 border-dashed border-muted-foreground/30" />
 
                 {isLoading ? (
                     <div className="space-y-2">
