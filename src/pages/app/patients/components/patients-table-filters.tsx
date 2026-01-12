@@ -1,7 +1,7 @@
 "use client"
 
 import { useState, useEffect, useRef } from "react"
-import { CheckCircle2, Filter, Search, UserRoundPlus, Users, XCircle } from "lucide-react"
+import { CheckCircle2, Filter, QrCode, Search, UserRoundPlus, Users, XCircle } from "lucide-react"
 import { useForm } from "react-hook-form"
 
 import { Button } from "@/components/ui/button"
@@ -129,14 +129,24 @@ export function PatientsTableFilters({ onPatientRegistered }: PatientsTableFilte
       </div>
 
       <div className="flex items-center">
-        <Button
-          size="sm"
-          className="cursor-pointer gap-2 w-full lg:w-auto shrink-0 bg-blue-600 hover:bg-blue-700 shadow-sm transition-all"
-          onClick={() => setIsRegisterOpen(true)}
-        >
-          <UserRoundPlus className="h-4 w-4" />
-          Cadastrar paciente
-        </Button>
+        <div className="flex flex-col lg:flex-row gap-2 w-full lg:w-auto">
+          <Button
+            size="sm"
+            className="cursor-pointer gap-2 w-full lg:w-auto shrink-0 bg-blue-600 hover:bg-blue-700 shadow-sm transition-all"
+            onClick={() => setIsRegisterOpen(true)}
+          >
+            <UserRoundPlus className="h-4 w-4" />
+            Cadastrar paciente
+          </Button>
+
+          <Button
+            size="sm"
+            className="cursor-pointer gap-2 w-full lg:w-auto shrink-0 bg-blue-600 hover:bg-blue-700 shadow-sm transition-all"
+          >
+            <QrCode className="h-4 w-4" />
+            QrCode de Registro
+          </Button>
+        </div>
 
         <Dialog open={isRegisterOpen} onOpenChange={setIsRegisterOpen}>
           {isRegisterOpen && (
