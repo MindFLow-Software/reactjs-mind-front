@@ -34,7 +34,7 @@ function useDebounce<T>(value: T, delay: number): T {
 const COLUMN_CONFIG = [
     { title: "Sugestões", icon: Lightbulb, status: "PENDING", color: "bg-slate-50", dotColor: "bg-slate-500", iconColor: "text-slate-600" },
     { title: "Próximos Passos", icon: Rocket, status: "UNDER_REVIEW", color: "bg-emerald-50", dotColor: "bg-emerald-500", iconColor: "text-emerald-600" },
-    { title: "Estudando", icon: Microscope, status: "REJECTED", color: "bg-blue-50", dotColor: "bg-blue-500", iconColor: "text-blue-600" },
+    { title: "Estudando", icon: Microscope, status: "PLANNED", color: "bg-blue-50", dotColor: "bg-blue-500", iconColor: "text-blue-600" },
     { title: "Tudo Pronto!", icon: PartyPopper, status: "IMPLEMENTED", color: "bg-yellow-50", dotColor: "bg-yellow-500", iconColor: "text-yellow-600" },
 ] as const
 
