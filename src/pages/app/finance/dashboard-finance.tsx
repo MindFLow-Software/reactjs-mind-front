@@ -7,8 +7,8 @@ import { PendingPaymentsCard } from './components/pending-payments-card'
 import { AverageTicketCard } from './components/average-ticket-card'
 import { useEffect } from "react"
 import { MonthlyRevenueCard } from "./components/monthly-revenue-card"
-import { TransactionsValueChart } from "./components/transactions-Value-chart"
 import { TransactionStatusOverview } from "./components/transaction-status-overview"
+import { TransactionsValueChart } from "./components/transactions-value-chart"
 
 
 export function DashboardFinance() {
