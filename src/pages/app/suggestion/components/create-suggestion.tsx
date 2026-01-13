@@ -35,7 +35,7 @@ const suggestionSchema = z.object({
         .min(10, "O título deve ser descritivo (mín. 10 caracteres)")
         .max(80, "Título muito longo"),
     description: z.string()
-        .min(100, "Por favor, detalhe sua sugestão com pelo menos 100 caracteres"),
+        .min(200, "Por favor, detalhe sua sugestão com pelo menos 200 caracteres"),
     category: z.enum(["UI_UX", "SCHEDULING", "REPORTS", "PRIVACY_LGPD", "INTEGRATIONS", "OTHERS"], {
         message: "Selecione a categoria da sua sugestão",
     }),
@@ -103,7 +103,7 @@ export function CreateSuggestion({ onSuccess }: CreateSuggestionProps) {
                                 prefira dar um <strong>like</strong> na sugestão existente para fortalecer o pedido.
                             </p>
                             <p className="break-words font-medium border-t border-blue-200/50 pt-2">
-                                Requisito: Mínimo de 100 caracteres para uma descrição detalhada.
+                                Requisito: Mínimo de 200 caracteres para uma descrição detalhada.
                             </p>
                         </div>
                     </div>
@@ -156,9 +156,9 @@ export function CreateSuggestion({ onSuccess }: CreateSuggestionProps) {
                         </h3>
                         <span className={cn(
                             "text-[10px] font-bold px-2 py-0.5 rounded-full whitespace-nowrap",
-                            descriptionValue.length < 100 ? "bg-red-50 text-red-600" : "bg-emerald-50 text-emerald-600"
+                            descriptionValue.length < 200 ? "bg-red-50 text-red-600" : "bg-emerald-50 text-emerald-600"
                         )}>
-                            {descriptionValue.length} / 100
+                            {descriptionValue.length} / 200
                         </span>
                     </div>
 
