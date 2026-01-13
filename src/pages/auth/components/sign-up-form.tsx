@@ -1,11 +1,13 @@
 "use client"
 
+import { useCallback, useState } from "react"
 import { useForm, Controller } from "react-hook-form"
+import { zodResolver } from "@hookform/resolvers/zod"
 import { toast } from "sonner"
 import { z } from "zod"
 import { useNavigate } from "react-router-dom"
 import { useMutation } from "@tanstack/react-query"
-import { ChevronDownIcon } from "lucide-react"
+import { ChevronDownIcon, Eye, EyeOff } from "lucide-react"
 import { cn } from "@/lib/utils"
 
 import { Button } from "@/components/ui/button"
@@ -35,16 +37,19 @@ import { registerPsychologist } from "@/api/create-user"
 import { formatCPF } from "@/utils/formatCPF"
 import { formatPhone } from "@/utils/formatPhone"
 
-// Schema Zod (você pode querer mover isso para um arquivo 'schemas.ts' dedicado)
-export const signUpForm = z.object({
+export const signUpFormSchema = z.object({
   firstName: z.string().min(1, "Primeiro nome é obrigatório"),
   lastName: z.string().min(1, "Último nome é obrigatório"),
   phoneNumber: z.string().min(1, "Telefone é obrigatório").max(15),
-  email: z.string().email("Email inválido").optional(),
-  password: z.string().min(6, "Senha deve ter ao menos 6 caracteres").optional(),
-  dateOfBirth: z.date(),
+  email: z.string().email("Email inválido").min(1, "Email é obrigatório"),
+  password: z.string().min(6, "Senha deve ter ao menos 6 caracteres"),
+  dateOfBirth: z.date({
+    message: "Data de nascimento é obrigatória"
+  }),
   cpf: z.string().min(11, "CPF inválido").max(14),
-  gender: z.enum(["MASCULINE", "FEMININE", "OTHER"]),
+  gender: z.enum(["MASCULINE", "FEMININE", "OTHER"], {
+    message: "Selecione seu gênero",
+  }),
   expertise: z.enum([
     "OTHER",
     "SOCIAL",
@@ -53,19 +58,20 @@ export const signUpForm = z.object({
     "JURIDICAL",
     "PSYCHOTHERAPIST",
     "NEUROPSYCHOLOGY",
-  ]),
-  isActive: z.boolean().optional(),
-  profileImageUrl: z.string().url().optional(),
-  crp: z.string().optional(),
+  ], {
+    message: "Selecione sua especialidade",
+  }),
 })
 
-type SignUpForm = z.infer<typeof signUpForm>
+type SignUpFormData = z.infer<typeof signUpFormSchema>
 
 export function SignUpForm({
   className,
   ...props
 }: React.ComponentProps<"form">) {
   const navigate = useNavigate()
+  const [showPassword, setShowPassword] = useState(false)
+  const [calendarOpen, setCalendarOpen] = useState(false)
 
   const {
     register,
@@ -74,13 +80,19 @@ export function SignUpForm({
     setValue,
     watch,
     formState: { isSubmitting },
-  } = useForm<SignUpForm>()
+  } = useForm<SignUpFormData>({
+    resolver: zodResolver(signUpFormSchema),
+  })
 
   const { mutateAsync: registerPsychologistFn } = useMutation({
     mutationFn: registerPsychologist,
   })
 
-  async function handleSignUp(data: SignUpForm) {
+  const togglePasswordVisibility = useCallback(() => {
+    setShowPassword((prev) => !prev)
+  }, [])
+
+  async function handleSignUp(data: SignUpFormData) {
     try {
       await registerPsychologistFn({
         ...data,
@@ -89,12 +101,8 @@ export function SignUpForm({
         role: "PSYCHOLOGIST"
       })
 
-      toast.success("Psicólogo cadastrado com sucesso!", {
-        action: {
-          label: "Login",
-          onClick: () => navigate(`/sign-in?email=${data.email}`),
-        },
-      })
+      toast.success("Psicólogo cadastrado com sucesso!")
+      navigate("/sign-in")
     } catch {
       toast.error("Erro ao cadastrar psicólogo.")
     }
@@ -113,41 +121,38 @@ export function SignUpForm({
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
           <Field>
             <FieldLabel htmlFor="firstName">Primeiro Nome</FieldLabel>
-            <Input
-              id="firstName"
-              {...register("firstName")}
-              placeholder="Jon"
-            />
+            <Input id="firstName" {...register("firstName")} placeholder="Jon" />
           </Field>
 
           <Field>
             <FieldLabel htmlFor="lastName">Último Nome</FieldLabel>
-            <Input
-              id="lastName"
-              {...register("lastName")}
-              placeholder="Doe"
-            />
+            <Input id="lastName" {...register("lastName")} placeholder="Doe" />
           </Field>
         </div>
 
         <Field>
           <FieldLabel htmlFor="email">E-mail profissional</FieldLabel>
-          <Input
-            id="email"
-            type="email"
-            {...register("email")}
-            placeholder="exemplo@mindflush.com"
-          />
+          <Input id="email" type="email" {...register("email")} placeholder="exemplo@mindflush.com" />
         </Field>
 
-        <Field>
+        <Field className="relative">
           <FieldLabel htmlFor="password">Senha</FieldLabel>
-          <Input
-            id="password"
-            type="password"
-            {...register("password")}
-            placeholder="••••••••"
-          />
+          <div className="relative">
+            <Input
+              id="password"
+              type={showPassword ? "text" : "password"}
+              {...register("password")}
+              placeholder="••••••••"
+              className="pr-10"
+            />
+            <button
+              type="button"
+              onClick={togglePasswordVisibility}
+              className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground"
+            >
+              {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
+            </button>
+          </div>
         </Field>
 
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
@@ -173,39 +178,45 @@ export function SignUpForm({
             />
           </Field>
         </div>
-
         <Field>
           <FieldLabel>Data de Nascimento</FieldLabel>
           <Controller
             name="dateOfBirth"
             control={control}
             render={({ field }) => (
-              <Popover>
+              <Popover open={calendarOpen} onOpenChange={setCalendarOpen}>
                 <PopoverTrigger asChild>
                   <Button
                     variant="outline"
-                    className={`w-full justify-between font-normal ${
+                    className={cn(
+                      "w-full justify-between font-normal",
                       !field.value && "text-muted-foreground"
-                    }`}
+                    )}
                   >
                     {field.value
                       ? field.value.toLocaleDateString("pt-BR")
                       : "Selecione a data"}
-                    <ChevronDownIcon className="ml-2 h-4 w-4 opacity-50" />
+                    <ChevronDownIcon className="size-4 opacity-50" />
                   </Button>
                 </PopoverTrigger>
-                <PopoverContent className="w-auto p-0" align="start">
+                <PopoverContent className="w-auto overflow-hidden p-0" align="start">
                   <Calendar
                     mode="single"
                     selected={field.value}
-                    onSelect={(date) => field.onChange(date)}
                     captionLayout="dropdown"
+                    fromYear={1900}
+                    toYear={new Date().getFullYear()}
+                    onSelect={(date) => {
+                      field.onChange(date)
+                      setCalendarOpen(false)
+                    }}
                   />
                 </PopoverContent>
               </Popover>
             )}
           />
         </Field>
+
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
           <Field>
             <FieldLabel>Gênero</FieldLabel>
@@ -213,10 +224,7 @@ export function SignUpForm({
               name="gender"
               control={control}
               render={({ field }) => (
-                <Select
-                  onValueChange={field.onChange}
-                  defaultValue={field.value}
-                >
+                <Select onValueChange={field.onChange} value={field.value}>
                   <SelectTrigger>
                     <SelectValue placeholder="Selecione seu gênero" />
                   </SelectTrigger>
@@ -236,22 +244,15 @@ export function SignUpForm({
               name="expertise"
               control={control}
               render={({ field }) => (
-                <Select
-                  onValueChange={field.onChange}
-                  defaultValue={field.value}
-                >
+                <Select onValueChange={field.onChange} value={field.value}>
                   <SelectTrigger>
-                    <SelectValue placeholder="Selecione sua especialidade" />
+                    <SelectValue placeholder="Especialidade" />
                   </SelectTrigger>
                   <SelectContent>
                     <SelectItem value="CLINICAL">Clínica</SelectItem>
                     <SelectItem value="INFANT">Infantil</SelectItem>
-                    <SelectItem value="NEUROPSYCHOLOGY">
-                      Neuropsicologia
-                    </SelectItem>
-                    <SelectItem value="PSYCHOTHERAPIST">
-                      Psicoterapeuta
-                    </SelectItem>
+                    <SelectItem value="NEUROPSYCHOLOGY">Neuropsicologia</SelectItem>
+                    <SelectItem value="PSYCHOTHERAPIST">Psicoterapeuta</SelectItem>
                     <SelectItem value="JURIDICAL">Jurídica</SelectItem>
                     <SelectItem value="SOCIAL">Social</SelectItem>
                     <SelectItem value="OTHER">Outro</SelectItem>
@@ -262,34 +263,15 @@ export function SignUpForm({
           </Field>
         </div>
 
-        <Field>
-          <Button
-            disabled={isSubmitting}
-            className="w-full"
-            type="submit"
-          >
-            {isSubmitting ? "Criando conta..." : "Criar conta"}
-          </Button>
-        </Field>
+        <Button disabled={isSubmitting} className="cursor-pointer h-11 bg-blue-600 hover:bg-blue-700 active:scale-[0.98] transition-all duration-200 font-medium w-full" type="submit">
+          {isSubmitting ? "Criando conta..." : "Criar conta"}
+        </Button>
 
-        <Field>
-          <FieldDescription className="px-2 sm:px-6 text-center text-xs sm:text-sm leading-relaxed text-muted-foreground">
-            Ao continuar, você concorda com nossos{" "}
-            <a
-              href="#"
-              className="underline underline-offset-4 hover:text-foreground transition-colors"
-            >
-              termos de serviço
-            </a>{" "}
-            e{" "}
-            <a
-              href="#"
-              className="underline underline-offset-4 hover:text-foreground transition-colors"
-            >
-              políticas de privacidade
-            </a>
-          </FieldDescription>
-        </Field>
+        <FieldDescription className="px-2 text-center text-xs leading-relaxed text-muted-foreground">
+          Ao continuar, você concorda com nossos{" "}
+          <a href="#" className="underline underline-offset-4 hover:text-foreground">termos de serviço</a> e{" "}
+          <a href="#" className="underline underline-offset-4 hover:text-foreground">políticas de privacidade</a>.
+        </FieldDescription>
       </FieldGroup>
     </form>
   )
