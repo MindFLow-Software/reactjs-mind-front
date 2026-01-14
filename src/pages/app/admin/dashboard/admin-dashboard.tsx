@@ -10,6 +10,8 @@ import { TotalPatientCard } from './components/total-patient-card'
 import { TotalSuggestionsCard } from './components/total-suggestions-card'
 import { NewPsychologistsBarChart } from './components/new-psychologists-bar-chart'
 import { NewPatientsBarChart } from './components/new-patient-bar-chart'
+import { PsychologistsAgeRangeChart } from './components/psychologists-by-age-chart'
+import { PsychologistsGenderChart } from './components/psychologists-by-gender-chart'
 
 interface DateRange {
     from: Date | undefined
@@ -50,7 +52,8 @@ export function AdminDashboard() {
                 </div>
 
                 <div className="grid grid-cols-1 gap-4 lg:grid-cols-2">
-
+                    <PsychologistsAgeRangeChart />
+                    <PsychologistsGenderChart endDate={endDate} />
                 </div>
             </div>
         </>

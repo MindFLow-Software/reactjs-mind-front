@@ -41,6 +41,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
     const userRole = String(roleValue).toUpperCase()
     const isSuperAdmin = userRole === "SUPER_ADMIN"
 
+    // 1. Itens que AMBOS veem (mas com URLs diferentes no dashboard)
     const baseNav = [
       {
         title: "Home",
@@ -49,58 +50,65 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
         items: [
           {
             title: "Dashboard",
-            url: isSuperAdmin ? "admin-dashboard" : "/dashboard"
+            url: isSuperAdmin ? "/admin-dashboard" : "/dashboard"
           }
         ],
       },
-      {
-        title: "Pacientes",
-        url: "#",
-        icon: Users2,
-        items: [
-          { title: "Cadastro de Pacientes", url: "/patients-list" },
-          { title: "Docs de Pacientes", url: "/patients-list" },
-        ],
-      },
-      {
-        title: "Agendamentos",
-        url: "#",
-        icon: CalendarCheck,
-        items: [
-          { title: "Meus Agendamentos", url: "/appointment" },
-          { title: "Horários de Atendimento", url: "/availability" },
-          { title: "Histórico de Sessões", url: "#" },
-        ],
-      },
-      {
-        title: "Atendimento",
-        url: "#",
-        icon: HeartPlus,
-        items: [
-          { title: "Sala de Atendimento", url: "/video-room" },
-        ],
-      },
-      {
-        title: "Financeiro",
-        url: "#",
-        icon: Wallet,
-        items: [
-          { title: "Pagamentos", url: "/dashboard-finance" },
-          { title: "Cobrança", url: "#" },
-          { title: "Cupons", url: "#" },
-          { title: "Saques", url: "#" },
-        ],
-      },
-      {
-        title: "Sugestões e Feedback",
-        url: "#",
-        icon: Inbox,
-        items: [
-          { title: "Enviar Sugestão", url: "/suggestion" },
-        ],
-      }
     ]
 
+    // 2. Itens exclusivos do PSICÓLOGO
+    if (!isSuperAdmin) {
+      baseNav.push(
+        {
+          title: "Pacientes",
+          url: "#",
+          icon: Users2,
+          items: [
+            { title: "Cadastro de Pacientes", url: "/patients-list" },
+            { title: "Docs de Pacientes", url: "/patients-list" },
+          ],
+        },
+        {
+          title: "Agendamentos",
+          url: "#",
+          icon: CalendarCheck,
+          items: [
+            { title: "Meus Agendamentos", url: "/appointment" },
+            { title: "Horários de Atendimento", url: "/availability" },
+            { title: "Histórico de Sessões", url: "#" },
+          ],
+        },
+        {
+          title: "Atendimento",
+          url: "#",
+          icon: HeartPlus,
+          items: [
+            { title: "Sala de Atendimento", url: "/video-room" },
+          ],
+        },
+        {
+          title: "Financeiro",
+          url: "#",
+          icon: Wallet,
+          items: [
+            { title: "Pagamentos", url: "/dashboard-finance" },
+            { title: "Cobrança", url: "#" },
+            { title: "Cupons", url: "#" },
+            { title: "Saques", url: "#" },
+          ],
+        },
+        {
+          title: "Sugestões e Feedback",
+          url: "#",
+          icon: Inbox,
+          items: [
+            { title: "Enviar Sugestão", url: "/suggestion" },
+          ],
+        }
+      )
+    }
+
+    // 3. Itens exclusivos do ADMIN
     if (isSuperAdmin) {
       baseNav.push({
         title: "Administração",
@@ -108,7 +116,8 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
         icon: ShieldCheck,
         items: [
           { title: "Aprovações Pendentes", url: "/approvals" },
-          { title: "Visão Geral Admin", url: "/admin/dashboard" },
+          { title: "Visão Geral Admin", url: "/admin-dashboard" },
+          { title: "Gestão de Psicólogos", url: "/admin/psychologists" },
         ],
       })
     }
