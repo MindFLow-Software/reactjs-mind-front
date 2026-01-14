@@ -4,7 +4,6 @@ import { useEffect, useState } from "react"
 import { Helmet } from "react-helmet-async"
 import {
     LayoutGrid,
-    Lightbulb,
     Rocket,
     Microscope,
     PartyPopper,
@@ -35,10 +34,9 @@ function useDebounce<T>(value: T, delay: number): T {
 }
 
 const COLUMN_CONFIG = [
-    { title: "Sugestões", icon: Lightbulb, status: "PENDING", color: "bg-slate-200", dotColor: "bg-slate-500", iconColor: "text-slate-800" },
-    { title: "Estudando", icon: Microscope, status: "UNDER_REVIEW", color: "bg-blue-200", dotColor: "bg-blue-500", iconColor: "text-blue-800" },
-    { title: "Próximos Passos", icon: Rocket, status: "PLANNED", color: "bg-emerald-200", dotColor: "bg-emerald-500", iconColor: "text-emerald-800" },
-    { title: "Tudo Pronto!", icon: PartyPopper, status: "IMPLEMENTED", color: "bg-yellow-200", dotColor: "bg-yellow-500", iconColor: "text-yellow-800" },
+    { title: "Em Análise", icon: Microscope, status: "UNDER_REVIEW", color: "bg-blue-100", dotColor: "bg-blue-500", iconColor: "text-blue-800" },
+    { title: "Próximos Passos", icon: Rocket, status: "PLANNED", color: "bg-emerald-100", dotColor: "bg-emerald-500", iconColor: "text-emerald-800" },
+    { title: "Concluído", icon: PartyPopper, status: "IMPLEMENTED", color: "bg-yellow-100", dotColor: "bg-yellow-500", iconColor: "text-yellow-800" },
 ] as const
 
 export function SuggestionPage() {
@@ -70,7 +68,6 @@ export function SuggestionPage() {
             <Helmet title="Envios da Comunidade" />
 
             <div className="flex flex-col gap-6 mt-4 h-[calc(100vh-160px)] overflow-hidden">
-                {/* Header Section */}
                 <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4 border-l-4 pl-5 py-2" style={{ borderLeftColor: BRAND_COLOR }}>
                     <div className="space-y-1">
                         <h1 className="text-2xl font-bold tracking-tight flex items-center gap-3">
@@ -78,7 +75,7 @@ export function SuggestionPage() {
                             <span>Sugestões da Comunidade</span>
                         </h1>
                         <p className="text-sm text-muted-foreground">
-                            Pesquise ideias existentes antes de criar uma nova para evitar duplicatas.
+                            As sugestões passam por moderação antes de aparecerem para a comunidade.
                         </p>
                     </div>
 
@@ -93,12 +90,11 @@ export function SuggestionPage() {
                     </Dialog>
                 </div>
 
-                {/* Filters Section */}
                 <div className="flex flex-col lg:flex-row gap-3 items-center p-2 rounded-lg">
                     <div className="relative w-full lg:w-auto">
                         <Search className="absolute left-2.5 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground pointer-events-none" />
                         <Input
-                            placeholder="Buscar por título ou descrição..."
+                            placeholder="Buscar ideias aprovadas..."
                             className="h-8 w-full lg:w-[400px] pl-9 bg-white shadow-sm"
                             value={search}
                             onChange={(e) => setSearch(e.target.value)}
@@ -118,9 +114,8 @@ export function SuggestionPage() {
                     )}
                 </div>
 
-                {/* Board Grid Section */}
                 <div
-                    className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 md:gap-6 overflow-x-auto pb-4 h-full min-h-0 auto-cols-fr"
+                    className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6 overflow-x-auto pb-4 h-full min-h-0 auto-cols-fr"
                     role="region"
                 >
                     {COLUMN_CONFIG.map((column) => {

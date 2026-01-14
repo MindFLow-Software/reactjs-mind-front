@@ -10,6 +10,7 @@ import { useHeaderStore } from "@/hooks/use-header-store"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 
 import { MostVotedSuggestionsCard } from "./components/most-voted-suggestions-card"
+import { PendingSuggestionsModeration } from "./components/pending-suggestions-moderation"
 
 export function AdminSuggestionsPage() {
     const { setTitle } = useHeaderStore()
@@ -50,18 +51,22 @@ export function AdminSuggestionsPage() {
                 </div>
 
                 {/* 3. Grid Principal (Conteúdo vs Destaques) */}
-                <div className="grid grid-cols-12 gap-6">
+                <div className="grid grid-cols-1 gap-6">
 
-
-                    {/* Coluna da Direita: Mais Votadas (4 Colunas) */}
-                    <div className="col-span-12 lg:col-span-4 space-y-6">
-                        <MostVotedSuggestionsCard />
-
-                        {/* Card de Dica de Admin */}
-
+                    <div className="col-span-12 lg:col-span-8">
+                        <PendingSuggestionsModeration />
                     </div>
 
+
+
                 </div>
+
+                <div className="grid grid-cols-2 gap-6">
+                    <div className=" space-y-6">
+                        <MostVotedSuggestionsCard />
+                    </div>
+                </div>
+
             </div>
         </>
     )
