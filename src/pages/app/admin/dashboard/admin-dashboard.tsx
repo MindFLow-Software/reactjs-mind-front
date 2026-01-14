@@ -6,6 +6,10 @@ import { subDays } from 'date-fns'
 
 import { useHeaderStore } from "@/hooks/use-header-store"
 import { TotalPsychologistsCard } from './components/total-psychologists-card'
+import { TotalPatientCard } from './components/total-patient-card'
+import { TotalSuggestionsCard } from './components/total-suggestions-card'
+import { NewPsychologistsBarChart } from './components/new-psychologists-bar-chart'
+import { NewPatientsBarChart } from './components/new-patient-bar-chart'
 
 interface DateRange {
     from: Date | undefined
@@ -21,8 +25,9 @@ const getInitialRange = (): DateRange => {
 export function AdminDashboard() {
     const { setTitle } = useHeaderStore()
 
-    const [dateRange] = useState<DateRange>(getInitialRange)
+    const [dateRange,] = useState<DateRange>(getInitialRange)
     const { to: endDate } = dateRange
+
 
     useEffect(() => {
         setTitle('Dashboard do Admin')
@@ -35,10 +40,13 @@ export function AdminDashboard() {
             <div className="flex flex-col gap-5 mt-6 px-2 pb-8">
                 <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
                     <TotalPsychologistsCard />
+                    <TotalPatientCard />
+                    <TotalSuggestionsCard />
                 </div>
 
                 <div className="grid grid-cols-1 gap-4 lg:grid-cols-1">
-                  
+                    <NewPsychologistsBarChart endDate={endDate} />
+                    <NewPatientsBarChart endDate={endDate} />
                 </div>
 
                 <div className="grid grid-cols-1 gap-4 lg:grid-cols-2">
