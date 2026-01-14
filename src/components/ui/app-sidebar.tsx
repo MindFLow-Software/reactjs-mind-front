@@ -30,16 +30,28 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
     queryKey: ["psychologist-profile"],
     queryFn: getProfile,
     retry: false,
-    staleTime: 1000 * 60 * 5, // Cache de 5 minutos para performance
+    staleTime: 1000 * 60 * 5,
   })
 
   const filteredNavMain = React.useMemo(() => {
+    const roleValue = typeof profile?.role === 'object' && profile?.role !== null
+      ? (profile.role as { name: string }).name
+      : profile?.role
+
+    const userRole = String(roleValue).toUpperCase()
+    const isSuperAdmin = userRole === "SUPER_ADMIN"
+
     const baseNav = [
       {
         title: "Home",
         url: "#",
         icon: Home,
-        items: [{ title: "Dashboard", url: "/dashboard" }],
+        items: [
+          {
+            title: "Dashboard",
+            url: isSuperAdmin ? "admin-dashboard" : "/dashboard"
+          }
+        ],
       },
       {
         title: "Pacientes",
@@ -87,18 +99,16 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
           { title: "Enviar Sugestão", url: "/suggestion" },
         ],
       }
-
     ]
 
-    const userRole = (profile?.role as string)?.toUpperCase()
-
-    if (userRole === "SUPER_ADMIN") {
+    if (isSuperAdmin) {
       baseNav.push({
         title: "Administração",
         url: "#",
         icon: ShieldCheck,
         items: [
           { title: "Aprovações Pendentes", url: "/approvals" },
+          { title: "Visão Geral Admin", url: "/admin/dashboard" },
         ],
       })
     }
@@ -108,11 +118,16 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
 
   const teams = React.useMemo(() => {
     const baseProfile = profile || { firstName: "...", lastName: "...", email: "..." }
-    const isRoot = (profile?.role as string)?.toUpperCase() === "SUPER_ADMIN"
+
+    const roleValue = typeof profile?.role === 'object' && profile?.role !== null
+      ? (profile.role as { name: string }).name
+      : profile?.role
+
+    const isRoot = String(roleValue).toUpperCase() === "SUPER_ADMIN"
 
     return [
       {
-        name: "Clínica MindFlow",
+        name: isRoot ? "MindFlow Admin" : "Clínica MindFlow",
         firstName: baseProfile.firstName,
         lastName: baseProfile.lastName,
         logo: GalleryVerticalEnd,

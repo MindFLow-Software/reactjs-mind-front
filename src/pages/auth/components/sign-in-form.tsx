@@ -23,6 +23,12 @@ const signInSchema = z.object({
 
 type SignInSchema = z.infer<typeof signInSchema>
 
+interface UserWithRole {
+  id: string
+  email: string
+  role: string | { name: string }
+}
+
 export function SignInForm({ className, ...props }: React.ComponentProps<"form">) {
   const [searchParams] = useSearchParams()
   const navigate = useNavigate()
@@ -47,14 +53,26 @@ export function SignInForm({ className, ...props }: React.ComponentProps<"form">
   const handleSignIn = useCallback(
     async (data: SignInSchema) => {
       try {
-        await authenticate(data)
+        const response = await authenticate(data) as unknown as { user: UserWithRole }
+        const user = response.user
 
         localStorage.setItem("isAuthenticated", "true")
+        localStorage.setItem("user", JSON.stringify(user))
+
+        const roleValue = typeof user.role === 'object' && user.role !== null
+          ? (user.role as { name: string }).name
+          : user.role
+
+        const role = String(roleValue).trim().toUpperCase()
 
         toast.success("Login realizado com sucesso!", { duration: 2000 })
 
         setTimeout(() => {
-          navigate("/dashboard", { replace: true })
+          if (role === "SUPER_ADMIN") {
+            navigate("/admin-dashboard", { replace: true })
+          } else {
+            navigate("/dashboard", { replace: true })
+          }
         }, 100)
 
       } catch (error: any) {

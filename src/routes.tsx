@@ -11,9 +11,10 @@ import { AppointmentsList } from './pages/app/appointment/appointment-list'
 import { MockPsychologistProfilePage } from './pages/app/account/account'
 import { LandingPage } from './pages/landing-page/landing-page'
 import { DashboardFinance } from './pages/app/finance/dashboard-finance'
-import { AdminApprovalsPage } from './pages/app/admin/approvals'
+import { AdminApprovalsPage } from './pages/app/admin/approvals/approvals'
 import { AvailabilityPage } from './pages/app/appointment/availability-page'
 import { SuggestionPage } from './pages/app/suggestion/suggestion-page'
+import { AdminDashboard } from './pages/app/admin/dashboard/admin-dashboard'
 
 const getUser = () => {
   const userData = localStorage.getItem('user')
@@ -118,6 +119,15 @@ export const router = createBrowserRouter([
         element: (
           <ProtectedRoute allowedRole="SUPER_ADMIN">
             <AdminApprovalsPage />
+          </ProtectedRoute>
+        ),
+      },
+      {
+        path: '/admin-dashboard',
+        loader: adminLoader,
+        element: (
+          <ProtectedRoute allowedRole="SUPER_ADMIN">
+            <AdminDashboard />
           </ProtectedRoute>
         ),
       },
