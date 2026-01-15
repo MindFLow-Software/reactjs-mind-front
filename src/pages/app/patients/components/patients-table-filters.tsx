@@ -85,7 +85,7 @@ export function PatientsTableFilters({ onPatientRegistered }: PatientsTableFilte
           </SelectTrigger>
 
           <SelectContent className="min-w-[220px]">
-            <SelectItem value="all" className="py-2.5">
+            <SelectItem value="all" className="cursor-pointer py-2.5">
               <div className="flex items-center gap-2 whitespace-nowrap">
                 <Users className="h-4 w-4 text-slate-500" />
                 <span className="text-sm font-medium">
@@ -94,7 +94,7 @@ export function PatientsTableFilters({ onPatientRegistered }: PatientsTableFilte
               </div>
             </SelectItem>
 
-            <SelectItem value="active" className="py-2.5">
+            <SelectItem value="active" className="cursor-pointer py-2.5">
               <div className="flex items-center gap-2 whitespace-nowrap">
                 <CheckCircle2 className="h-4 w-4 text-emerald-500" />
                 <span className="text-sm font-medium">
@@ -103,7 +103,7 @@ export function PatientsTableFilters({ onPatientRegistered }: PatientsTableFilte
               </div>
             </SelectItem>
 
-            <SelectItem value="inactive" className="py-2.5">
+            <SelectItem value="inactive" className="cursor-pointer py-2.5">
               <div className="flex items-center gap-2 whitespace-nowrap">
                 <XCircle className="h-4 w-4 text-rose-500" />
                 <span className="text-sm font-medium">

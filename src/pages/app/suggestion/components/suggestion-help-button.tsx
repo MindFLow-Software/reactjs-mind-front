@@ -65,6 +65,7 @@ export function SuggestionHelpButton() {
                                     active:scale-95
                                     border-2 border-white
                                     focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2
+                                    cursor-pointer
                                 ">
                                     <HelpCircle className="size-6" />
                                 </button>

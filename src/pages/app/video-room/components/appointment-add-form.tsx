@@ -132,13 +132,13 @@ export function AppointmentAddForm({
             onValueChange={onSelectPatient}
             disabled={isAppointmentsLoading || isPending || isSessionActive}
           >
-            <SelectTrigger className="h-11 border-border/60 hover:border-border transition-colors">
+            <SelectTrigger className="cursor-pointer h-11 border-border/60 hover:border-border transition-colors">
               <SelectValue placeholder="Selecione o paciente..." />
             </SelectTrigger>
             <SelectContent className="max-h-[320px]">
               {Object.entries(groupedData?.grouped || {}).map(([date, appointments]) => (
                 <SelectGroup key={date}>
-                  <SelectLabel className="text-xs font-semibold text-primary uppercase tracking-wide py-2 sticky top-0 backdrop-blur bg-white/80 z-10">
+                  <SelectLabel className="cursor-pointer text-xs font-semibold text-primary uppercase tracking-wide py-2 sticky top-0 backdrop-blur bg-white/80 z-10">
                     {format(parseISO(date), "EEEE, dd/MM", { locale: ptBR })}
                     {isToday(parseISO(date)) && (
                       <span className="ml-2 text-[10px] bg-primary/10 px-1.5 py-0.5 rounded-full normal-case">
