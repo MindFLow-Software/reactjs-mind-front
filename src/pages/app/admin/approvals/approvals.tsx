@@ -15,9 +15,9 @@ export function AdminApprovalsPage() {
     }, [setTitle])
 
     const { data, isLoading } = useQuery({
-        queryKey: ["pending-approvals"],
+        queryKey: ["admin", "pending-approvals"],
         queryFn: getPendingApprovals,
-        staleTime: 1000 * 60 * 10, // 10 minutos (dados de aprovação mudam pouco)
+        staleTime: 1000 * 60 * 5,
     })
 
     const psychologists = data?.psychologists ?? []

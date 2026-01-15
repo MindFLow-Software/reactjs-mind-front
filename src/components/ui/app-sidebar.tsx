@@ -41,6 +41,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
     const userRole = String(roleValue).toUpperCase()
     const isSuperAdmin = userRole === "SUPER_ADMIN"
 
+    // 1. Itens que AMBOS veem (mas com URLs diferentes no dashboard)
     const baseNav = [
       {
         title: "Home",
@@ -49,66 +50,103 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
         items: [
           {
             title: "Dashboard",
-            url: isSuperAdmin ? "admin-dashboard" : "/dashboard"
+            url: isSuperAdmin ? "/admin-dashboard" : "/dashboard"
           }
         ],
       },
-      {
-        title: "Pacientes",
-        url: "#",
-        icon: Users2,
-        items: [
-          { title: "Cadastro de Pacientes", url: "/patients-list" },
-          { title: "Docs de Pacientes", url: "/patients-list" },
-        ],
-      },
-      {
-        title: "Agendamentos",
-        url: "#",
-        icon: CalendarCheck,
-        items: [
-          { title: "Meus Agendamentos", url: "/appointment" },
-          { title: "Horários de Atendimento", url: "/availability" },
-          { title: "Histórico de Sessões", url: "#" },
-        ],
-      },
-      {
-        title: "Atendimento",
-        url: "#",
-        icon: HeartPlus,
-        items: [
-          { title: "Sala de Atendimento", url: "/video-room" },
-        ],
-      },
-      {
-        title: "Financeiro",
-        url: "#",
-        icon: Wallet,
-        items: [
-          { title: "Pagamentos", url: "/dashboard-finance" },
-          { title: "Cobrança", url: "#" },
-          { title: "Cupons", url: "#" },
-          { title: "Saques", url: "#" },
-        ],
-      },
-      {
-        title: "Sugestões e Feedback",
-        url: "#",
-        icon: Inbox,
-        items: [
-          { title: "Enviar Sugestão", url: "/suggestion" },
-        ],
-      }
     ]
 
+    // 2. Itens exclusivos do PSICÓLOGO
+    if (!isSuperAdmin) {
+      baseNav.push(
+        {
+          title: "Pacientes",
+          url: "#",
+          icon: Users2,
+          items: [
+            { title: "Cadastro de Pacientes", url: "/patients-list" },
+            { title: "Docs de Pacientes", url: "/patients-list" },
+          ],
+        },
+        {
+          title: "Agendamentos",
+          url: "#",
+          icon: CalendarCheck,
+          items: [
+            { title: "Meus Agendamentos", url: "/appointment" },
+            { title: "Horários de Atendimento", url: "/availability" },
+            { title: "Histórico de Sessões", url: "#" },
+          ],
+        },
+        {
+          title: "Atendimento",
+          url: "#",
+          icon: HeartPlus,
+          items: [
+            { title: "Sala de Atendimento", url: "/video-room" },
+          ],
+        },
+        {
+          title: "Financeiro",
+          url: "#",
+          icon: Wallet,
+          items: [
+            { title: "Pagamentos", url: "/dashboard-finance" },
+            { title: "Cobrança", url: "#" },
+            { title: "Cupons", url: "#" },
+            { title: "Saques", url: "#" },
+          ],
+        },
+        {
+          title: "Sugestões e Feedback",
+          url: "#",
+          icon: Inbox,
+          items: [
+            { title: "Enviar Sugestão", url: "/suggestion" },
+          ],
+        }
+      )
+    }
+
+    // 3. Itens exclusivos do ADMIN
     if (isSuperAdmin) {
       baseNav.push({
         title: "Administração",
         url: "#",
         icon: ShieldCheck,
         items: [
-          { title: "Aprovações Pendentes", url: "/approvals" },
-          { title: "Visão Geral Admin", url: "/admin/dashboard" },
+          { title: "Solicitações", url: "/approvals" },
+          { title: "Visão Geral Admin", url: "/admin-dashboard" },
+        ],
+      })
+
+      baseNav.push({
+        title: "Gestão de Usuários",
+        url: "#",
+        icon: Users2,
+        items: [
+          { title: "Todos os Psicólogos", url: "/admin/psychologists" },
+          { title: "Todos os Pacientes", url: "/admin/patients" },
+        ],
+      })
+
+      baseNav.push({
+        title: "Plataforma",
+        url: "#",
+        icon: Inbox,
+        items: [
+          { title: "Sugestões Recebidas", url: "admin-suggestions" },
+          { title: "Logs do Sistema", url: "/admin/logs" },
+        ],
+      })
+
+      baseNav.push({
+        title: "Financeiro MindFlush",
+        url: "#",
+        icon: Wallet,
+        items: [
+          { title: "Assinaturas Ativas", url: "/admin/subscriptions" },
+          { title: "Relatório de Repasses", url: "/admin/payouts" },
         ],
       })
     }

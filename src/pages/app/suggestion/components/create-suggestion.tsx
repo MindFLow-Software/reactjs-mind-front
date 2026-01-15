@@ -28,6 +28,7 @@ import {
 
 import { createSuggestion } from "@/api/create-suggestion"
 import { SuggestionAttachments } from "./suggestion-attachments"
+import { SuggestionSuccess } from "./suggestion-success-dialog"
 import { cn } from "@/lib/utils"
 
 const suggestionSchema = z.object({
@@ -49,14 +50,14 @@ interface CreateSuggestionProps {
 
 export function CreateSuggestion({ onSuccess }: CreateSuggestionProps) {
     const [files, setFiles] = useState<File[]>([])
-    const [formKey, setFormKey] = useState(0)
+    const [formKey] = useState(0)
+    const [isSubmitted, setIsSubmitted] = useState(false)
     const queryClient = useQueryClient()
 
     const {
         register,
         handleSubmit,
         setValue,
-        reset,
         watch,
         formState: { isSubmitting, errors },
     } = useForm<SuggestionSchema>({
@@ -72,14 +73,14 @@ export function CreateSuggestion({ onSuccess }: CreateSuggestionProps) {
         try {
             await createSuggestion({ ...data, files })
             await queryClient.invalidateQueries({ queryKey: ["suggestions"] })
-            toast.success("Sugestão enviada com sucesso!")
-            reset()
-            setFiles([])
-            setFormKey(prev => prev + 1)
-            onSuccess()
+            setIsSubmitted(true)
         } catch (error) {
             toast.error("Erro ao enviar sugestão. Tente novamente.")
         }
+    }
+
+    if (isSubmitted) {
+        return <SuggestionSuccess onClose={onSuccess} />
     }
 
     return (
@@ -92,7 +93,6 @@ export function CreateSuggestion({ onSuccess }: CreateSuggestionProps) {
             </DialogHeader>
 
             <form onSubmit={handleSubmit(onSubmit)} className="grid grid-cols-1 gap-6 p-6 pt-2 w-full">
-                {/* Banner */}
                 <div className="bg-blue-50 border border-blue-200 p-4 rounded-xl flex gap-3 items-start w-full">
                     <AlertCircle className="size-5 text-blue-600 shrink-0 mt-0.5" />
                     <div className="space-y-1 min-w-0">
@@ -109,7 +109,6 @@ export function CreateSuggestion({ onSuccess }: CreateSuggestionProps) {
                     </div>
                 </div>
 
-                {/* Classificação */}
                 <div className="space-y-4 w-full">
                     <h3 className="text-sm font-semibold text-foreground flex items-center gap-2 px-1">
                         <Lightbulb className="size-4 text-[#27187E]" />
@@ -147,7 +146,6 @@ export function CreateSuggestion({ onSuccess }: CreateSuggestionProps) {
                     </div>
                 </div>
 
-                {/* Descrição */}
                 <div className="space-y-4 pt-2 border-t w-full">
                     <div className="flex items-center justify-between px-1 gap-2">
                         <h3 className="text-sm font-semibold text-foreground flex items-center gap-2">
@@ -176,7 +174,6 @@ export function CreateSuggestion({ onSuccess }: CreateSuggestionProps) {
                     </div>
                 </div>
 
-                {/* Anexos */}
                 <div className="space-y-4 pt-2 border-t w-full min-w-0">
                     <h3 className="text-sm font-semibold text-foreground flex items-center gap-2 px-1">
                         <Paperclip className="size-4 text-[#27187E]" />
@@ -185,7 +182,6 @@ export function CreateSuggestion({ onSuccess }: CreateSuggestionProps) {
                     <SuggestionAttachments files={files} onFileChange={setFiles} />
                 </div>
 
-                {/* Footer */}
                 <div className="flex justify-end gap-3 pt-4 border-t w-full">
                     <Button type="button" variant="ghost" onClick={onSuccess} className="cursor-pointer">
                         Cancelar
@@ -193,7 +189,7 @@ export function CreateSuggestion({ onSuccess }: CreateSuggestionProps) {
                     <Button
                         type="submit"
                         disabled={isSubmitting}
-                        className="cursor-pointer gap-2 bg-[#27187E] hover:bg-[#27187E]/90 min-w-[180px]"
+                        className="cursor-pointer gap-2 bg-[#27187E] hover:bg-[#1a105c] min-w-[180px] rounded-xl font-bold"
                     >
                         {isSubmitting ? <Loader2 className="h-4 w-4 animate-spin" /> : <>Publicar Sugestão <Send className="h-4 w-4" /></>}
                     </Button>

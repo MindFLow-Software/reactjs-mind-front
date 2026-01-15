@@ -15,6 +15,7 @@ import { AdminApprovalsPage } from './pages/app/admin/approvals/approvals'
 import { AvailabilityPage } from './pages/app/appointment/availability-page'
 import { SuggestionPage } from './pages/app/suggestion/suggestion-page'
 import { AdminDashboard } from './pages/app/admin/dashboard/admin-dashboard'
+import { AdminSuggestionsPage } from './pages/app/admin/suggestions/suggestions-page'
 
 const getUser = () => {
   const userData = localStorage.getItem('user')
@@ -128,6 +129,15 @@ export const router = createBrowserRouter([
         element: (
           <ProtectedRoute allowedRole="SUPER_ADMIN">
             <AdminDashboard />
+          </ProtectedRoute>
+        ),
+      },
+      {
+        path: '/admin-suggestions',
+        loader: adminLoader,
+        element: (
+          <ProtectedRoute allowedRole="SUPER_ADMIN">
+            <AdminSuggestionsPage />
           </ProtectedRoute>
         ),
       },
