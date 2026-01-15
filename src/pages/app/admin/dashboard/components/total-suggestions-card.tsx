@@ -35,7 +35,7 @@ export const TotalSuggestionsCard = () => {
                                 Total de Sugestões
                             </span>
                             <span className="text-xs text-muted-foreground">
-                                Feedbacks da MindFlush
+                                Feedbacks do MindFlush
                             </span>
                         </div>
                     </div>
