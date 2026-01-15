@@ -11,6 +11,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 
 import { MostVotedSuggestionsCard } from "./components/most-voted-suggestions-card"
 import { PendingSuggestionsModeration } from "./components/pending-suggestions-moderation"
+import { SuggestionRanking } from "./components/ranking-table"
 
 export function AdminSuggestionsPage() {
     const { setTitle } = useHeaderStore()
@@ -64,6 +65,9 @@ export function AdminSuggestionsPage() {
                 <div className="grid grid-cols-2 gap-6">
                     <div className=" space-y-6">
                         <MostVotedSuggestionsCard />
+                    </div>
+                    <div className=" space-y-6">
+                        <SuggestionRanking />
                     </div>
                 </div>
 
