@@ -53,7 +53,7 @@ export function SuggestionsManagement() {
     const [category, setCategory] = useState<string>("all")
 
     useEffect(() => {
-        setTitle('Gestão de Sugestões')
+        setTitle('Controle de Sugestões')
     }, [setTitle])
 
     const { register, watch, setValue } = useForm({
@@ -102,7 +102,7 @@ export function SuggestionsManagement() {
 
     return (
         <div className="flex flex-col gap-8 mt-6">
-            <Helmet title="Gestão de Sugestões" />
+            <Helmet title="Controle de Sugestões" />
 
             <div className="flex flex-col lg:flex-row gap-3 lg:items-center lg:justify-between">
                 <div className="flex flex-col lg:flex-row gap-2 flex-1 lg:items-center">

@@ -27,21 +27,29 @@ export function AdminSuggestionsPage() {
 
             <div className="flex flex-col gap-8 mt-6">
                 <div>
-                    <Card className="bg-blue-600 text-white border-none shadow-md rounded-2xl">
-                        <CardHeader>
-                            <CardTitle className="text-sm font-bold flex items-center gap-2">
-                                <LayoutGrid className="size-4" />
-                                Priorização
+                    <Card className="border border-blue-500/20 bg-gradient-to-br from-blue-600 to-blue-500 text-white shadow-lg rounded-2xl">
+                        <CardHeader className="pb-3">
+                            <CardTitle className="text-sm font-semibold flex items-center gap-3">
+                                <span className="flex items-center justify-center size-8 rounded-full bg-white/20">
+                                    <LayoutGrid className="size-4" />
+                                </span>
+                                Priorização de Sugestões
                             </CardTitle>
                         </CardHeader>
+
                         <CardContent>
-                            <p className="text-xs leading-relaxed opacity-90">
-                                As sugestões mais votadas refletem as necessidades reais dos psicólogos.
-                                Considere movê-las para "Em Análise" para notificar os autores.
+                            <p className="text-xs leading-relaxed text-white/90">
+                                As sugestões mais votadas representam demandas reais dos psicólogos.
+                                Priorize-as movendo para{" "}
+                                <span className="font-semibold text-white underline underline-offset-2">
+                                    Em Análise
+                                </span>{" "}
+                                para notificar automaticamente os autores.
                             </p>
                         </CardContent>
                     </Card>
                 </div>
+
 
                 <div className="grid grid-cols-1 gap-6">
                     <div className="col-span-12 lg:col-span-8">
