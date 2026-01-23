@@ -1,12 +1,12 @@
 "use client"
 
 import { useState, useEffect } from "react"
-import { Card } from "@/components/ui/card"
+import { Card, CardDescription, CardTitle } from "@/components/ui/card"
 import { HeartHandshake, AlertCircle } from "lucide-react"
 import { getAmountPatientsCard } from "@/api/get-amount-patients-card"
 import { cn } from "@/lib/utils"
 import { Skeleton } from "@/components/ui/skeleton"
-import { Separator } from "@/components/ui/separator"
+import { Separator } from "@radix-ui/react-separator"
 
 interface PatientData {
   total: number
@@ -44,38 +44,31 @@ export const PatientsAmountCard = () => {
         "relative overflow-hidden",
         "rounded-xl border bg-card shadow-sm",
         "p-4 transition-all duration-300 hover:shadow-md",
-        "border-l-4 border-l-[#1d56cf]"
+        "border-l-4 border-accent-blue"
       )}
     >
-      {/* <img
-        src="/iconCountcard.svg"
-        alt="Ícone decorativo"
-        className={cn(
-          "absolute -bottom-7 -right-10",
-          "w-32 h-auto opacity-[2] dark:opacity-[0.55]",
-          "pointer-events-none select-none"
-        )}
-      /> */}
-
       <div className="relative z-10 flex flex-col">
         <div className="flex items-start justify-between">
           <div className="flex items-start gap-3">
-            <div className="rounded-lg bg-[#1d56cf]/10 p-2 border border-[#1d56cf]/20">
-              <HeartHandshake className="size-4 text-[#1d56cf]" />
+            <div className="rounded-lg bg-accent-blue-light/10 p-2 border border-accent-blue-light/20">
+              <HeartHandshake className="size-4 text-accent-blue" />
             </div>
 
             <div className="flex flex-col">
-              <span className="text-sm font-semibold text-foreground uppercase tracking-wider">
+              <CardTitle className="text-sm font-semibold text-foreground uppercase tracking-wider">
                 Total de Pacientes
-              </span>
-              <span className="text-xs text-muted-foreground">
+              </CardTitle>
+              <CardDescription className="text-xs text-muted-foreground">
                 Em sua clínica
-              </span>
+              </CardDescription>
             </div>
           </div>
         </div>
-        <Separator className="my-4 bg-transparent border-t-2 border-dashed border-muted-foreground/30" />
 
+        <Separator
+          className="h-0 -mx-4 my-4 w-[calc(100%+2rem)] border-t-2 border-dashed border-muted-foreground/30"
+          aria-hidden="true"
+        />
 
         {state.isLoading ? (
           <div className="space-y-2">

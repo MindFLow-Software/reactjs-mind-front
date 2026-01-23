@@ -36,7 +36,7 @@ interface NewPatientsBarChartProps {
 const chartConfig = {
     newPatients: {
         label: "Pacientes",
-        color: "var(--chart-1)",
+        color: "var(--color-accent-blue)",
     },
 } satisfies ChartConfig
 
@@ -78,8 +78,8 @@ export function NewPatientsBarChart({ endDate }: NewPatientsBarChartProps) {
         <Card className="col-span-full lg:col-span-6 border border-slate-100 bg-white shadow-sm rounded-2xl overflow-hidden">
             <CardHeader className="flex flex-col items-stretch space-y-0 border-b p-0 sm:flex-row">
                 <div className="flex flex-1 flex-col justify-center gap-1 px-6 py-4">
-                    <CardTitle className="text-base font-semibold">Fluxo de Pacientes</CardTitle>
-                    <CardDescription className="text-sm">
+                    <CardTitle className="text-sm font-semibold text-foreground uppercase tracking-wider">Fluxo de Pacientes</CardTitle>
+                    <CardDescription className="text-xs text-muted-foreground">
                         Novos cadastros realizados no período
                     </CardDescription>
                 </div>
@@ -156,7 +156,8 @@ export function NewPatientsBarChart({ endDate }: NewPatientsBarChartProps) {
                             <Bar
                                 dataKey="newPatients"
                                 fill="var(--color-newPatients)"
-                                radius={[4, 4, 0, 0]}
+                                radius={[8, 8, 2, 0]}
+                                className="cursor-pointer"
                             />
                         </BarChart>
                     </ChartContainer>

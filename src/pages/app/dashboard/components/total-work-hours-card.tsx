@@ -1,12 +1,11 @@
 "use client"
 
 import { useState, useEffect } from "react"
-import { Card } from "@/components/ui/card"
+import { Card, CardDescription, CardTitle } from "@/components/ui/card"
 import { Clock, AlertCircle } from "lucide-react"
 import { getTotalWorkHours } from "@/api/get-total-work-hours"
 import { cn } from "@/lib/utils"
 import { Skeleton } from "@/components/ui/skeleton"
-import { Separator } from "@/components/ui/separator"
 
 interface TotalWorkHoursCardProps {
     startDate?: Date
@@ -55,36 +54,31 @@ export const TotalWorkHoursCard = ({ startDate, endDate }: TotalWorkHoursCardPro
                 "relative overflow-hidden",
                 "rounded-xl border bg-card shadow-sm",
                 "p-4 transition-all duration-300 hover:shadow-md",
-                "border-l-4 border-l-[#a40c2c]"
+                "border-l-4 border-accent-red"
             )}
         >
-            {/* <img
-                src="/timer-svgrepo-com.svg"
-                alt="Ícone decorativo"
-                className={cn(
-                    "absolute -bottom-7 -right-10",
-                    "w-32 h-auto opacity-[2] dark:opacity-[0.55]",
-                    "pointer-events-none select-none"
-                )}
-            /> */}
-
             <div className="relative z-10 flex flex-col">
                 <div className="flex items-start justify-between">
                     <div className="flex items-start gap-3">
-                        <div className="rounded-lg bg-[#a40c2c]/10 p-2 border border-[#a40c2c]/20">
-                            <Clock className="size-4 text-[#a40c2c]" />
+                        <div className="rounded-lg bg-[#751b1b]/10 p-2 border border-[#751b1b]/20">
+                            <Clock className="size-4 text-[#751b1b]" />
                         </div>
                         <div className="flex flex-col">
-                            <span className="text-sm font-semibold text-foreground uppercase tracking-wider">
+                            <CardTitle className="text-sm font-semibold text-foreground uppercase tracking-wider">
                                 Horas de Atendimento
-                            </span>
-                            <span className="text-xs text-muted-foreground">
+                            </CardTitle>
+                            <CardDescription className="text-xs text-muted-foreground">
                                 Horas realizadas
-                            </span>
+                            </CardDescription>
                         </div>
                     </div>
                 </div>
-                <Separator className="my-4 bg-transparent border-t-2 border-dashed border-muted-foreground/30" />
+
+                {/* AJUSTE: Div substitui o Separator para garantir que toque as bordas */}
+                <div
+                    className="h-0 -mx-4 my-4 w-[calc(100%+2rem)] border-t-2 border-dashed border-muted-foreground/30"
+                    aria-hidden="true"
+                />
 
                 {state.isLoading ? (
                     <div className="space-y-2">
@@ -109,7 +103,6 @@ export const TotalWorkHoursCard = ({ startDate, endDate }: TotalWorkHoursCardPro
                         </div>
                     </div>
                 )}
-
             </div>
         </Card>
     )

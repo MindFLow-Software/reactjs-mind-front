@@ -91,8 +91,10 @@ export function PatientsByGenderChart({ endDate }: PatientsByGenderChartProps) {
         <Card className="border border-slate-100 bg-white shadow-sm rounded-2xl overflow-hidden flex flex-col">
             <CardHeader className="flex flex-col items-stretch space-y-0 border-b p-0 sm:flex-row">
                 <div className="flex flex-1 flex-col justify-center gap-1 px-6 py-4">
-                    <CardTitle className="text-base font-semibold uppercase tracking-wider">Gênero</CardTitle>
-                    <CardDescription className="text-sm">
+                    <CardTitle className="text-sm font-semibold text-foreground uppercase tracking-wider">
+                        Gênero
+                    </CardTitle>
+                    <CardDescription className="text-xs text-muted-foreground">
                         Distribuição por sexo biológico
                     </CardDescription>
                 </div>

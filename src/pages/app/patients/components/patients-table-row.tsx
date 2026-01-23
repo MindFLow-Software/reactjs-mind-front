@@ -131,18 +131,21 @@ export function PatientsTableRow({ patient }: PatientsTableRowProps) {
                 <TooltipProvider delayDuration={0}>
                     <Tooltip>
                         <TooltipTrigger asChild>
-                            <div className="flex items-center gap-1.5 cursor-help">
+                            <div className="flex items-center gap-1.5 cursor-default">
                                 <AtSign className="h-3 w-3 text-muted-foreground shrink-0" />
                                 <span className="text-xs font-medium tabular-nums truncate max-w-[150px]">
                                     {email || "---"}
                                 </span>
                             </div>
                         </TooltipTrigger>
-                        {email && <TooltipContent className="text-xs font-medium">{email}</TooltipContent>}
+                        {email && (
+                            <TooltipContent className="text-xs font-medium">
+                                {email}
+                            </TooltipContent>
+                        )}
                     </Tooltip>
                 </TooltipProvider>
             </TableCell>
-
             <TableCell>
                 <div className="flex flex-col">
                     <span className="text-sm font-semibold tabular-nums tracking-tight">

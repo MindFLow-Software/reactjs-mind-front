@@ -5,8 +5,7 @@ import { cn } from "@/lib/utils"
 import { useQuery } from "@tanstack/react-query"
 import { getMonthlySessionsCount } from "@/api/get-monthly-sessions-count"
 import { Skeleton } from "@/components/ui/skeleton"
-import { Card } from "@/components/ui/card"
-import { Separator } from "@/components/ui/separator"
+import { Card, CardDescription, CardTitle } from "@/components/ui/card"
 
 interface MonthPatientsAmountCardProps {
     startDate: Date | undefined
@@ -35,37 +34,32 @@ export function MonthPatientsAmountCard({ startDate, endDate }: MonthPatientsAmo
                 "relative overflow-hidden",
                 "rounded-xl border bg-card shadow-sm",
                 "p-4 transition-all duration-300 hover:shadow-md",
-                "border-l-4 border-l-[#5a189a]"
+                "border-l-4 border-accent-primary"
             )}
         >
-            {/* <img
-                src="/goal.svg"
-                alt="Mascote"
-                className={cn(
-                    "absolute -bottom-7 -right-10",
-                    "w-32 h-auto opacity-[2] dark:opacity-[0.55]",
-                    "pointer-events-none select-none"
-                )}
-            /> */}
-
             <div className="relative z-10 flex flex-col">
                 <div className="flex items-start justify-between">
                     <div className="flex items-start gap-3">
-                        <div className="rounded-lg bg-[#5a189a]/10 p-2 border border-[#5a189a]/20">
-                            <Goal className="size-4 text-[#5a189a]" />
+                        <div className="rounded-lg bg-[#4f35e1]/10 p-2 border border-[#4f35e1]/20">
+                            <Goal className="size-4 text-[#4f35e1]" />
                         </div>
 
                         <div className="flex flex-col">
-                            <span className="text-sm font-semibold text-foreground uppercase tracking-wider">
+                            <CardTitle className="text-sm font-semibold text-foreground uppercase tracking-wider">
                                 Sessões do Mês
-                            </span>
-                            <span className="text-xs text-muted-foreground">
+                            </CardTitle>
+                            <CardDescription className="text-xs text-muted-foreground">
                                 Atendimentos no mês
-                            </span>
+                            </CardDescription>
                         </div>
                     </div>
                 </div>
-                <Separator className="my-4 bg-transparent border-t-2 border-dashed border-muted-foreground/30" />
+
+                {/* FIX AQUI: Substituído Separator por div para garantir o efeito Full-Bleed */}
+                <div
+                    className="h-0 -mx-4 my-4 w-[calc(100%+2rem)] border-t-2 border-dashed border-muted-foreground/30"
+                    aria-hidden="true"
+                />
 
                 {isLoading ? (
                     <div className="space-y-2">

@@ -4,10 +4,24 @@
 @custom-variant dark (&:is(.dark *));
 
 @theme inline {
+  /* Typography Mapping */
+  --font-title: var(--font-family-title);
+  --font-body: var(--font-family-body);
+
+  --text-title: var(--text-title-size);
+  --text-paragraph-medium: var(--text-paragraph-medium-size);
+  --text-paragraph-small: var(--text-paragraph-small-size);
+  --text-label-large: var(--text-label-large-size);
+  --text-label-medium: var(--text-label-medium-size);
+  --text-label-small: var(--text-label-small-size);
+  --text-link: var(--text-link-size);
+
+  /* Radius & System Colors */
   --radius-sm: calc(var(--radius) - 4px);
   --radius-md: calc(var(--radius) - 2px);
   --radius-lg: var(--radius);
   --radius-xl: calc(var(--radius) + 4px);
+
   --color-background: var(--background);
   --color-foreground: var(--foreground);
   --color-card: var(--card);
@@ -26,23 +40,82 @@
   --color-border: var(--border);
   --color-input: var(--input);
   --color-ring: var(--ring);
-  --color-chart-1: var(--chart-1);
-  --color-chart-2: var(--chart-2);
-  --color-chart-3: var(--chart-3);
-  --color-chart-4: var(--chart-4);
-  --color-chart-5: var(--chart-5);
-  --color-chart-6: var(--chart-6);
-  --color-sidebar: var(--sidebar);
-  --color-sidebar-foreground: var(--sidebar-foreground);
-  --color-sidebar-primary: var(--sidebar-primary);
-  --color-sidebar-primary-foreground: var(--sidebar-primary-foreground);
-  --color-sidebar-accent: var(--sidebar-accent);
-  --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
-  --color-sidebar-border: var(--sidebar-border);
-  --color-sidebar-ring: var(--sidebar-ring);
+
+  /* Accent Colors */
+  --color-accent-primary: #4f35e1;
+  --color-accent-primary-light: #7262fa;
+  --color-accent-blue: #027df0;
+  --color-accent-blue-light: #16487a;
+  --color-accent-yellow: #f0dc02;
+  --color-accent-yellow-light: #75601b;
+  --color-accent-orange: #f09102;
+  --color-accent-orange-light: #75501b;
+  --color-accent-red: #f02102;
+  --color-accent-red-light: #751b1b;
+
+  /* Border Colors */
+  --color-border-primary: #3e3c41;
+  --color-border-secondary: #86818c;
+  --color-border-brand: #9282fa;
+  --color-border-divisor: #353339;
+
+  /* Content Colors */
+  --color-content-primary: #ffffff;
+  --color-content-secondary: #98959d;
+  --color-content-tertiary: #666666;
+  --color-content-brand: #9282fa;
+
+  /* Background Colors */
+  --color-background-primary: #151515;
+  --color-background-secondary: #1e1e1e;
+  --color-background-tertiary: #23242c;
+  --color-background-brand: #9282fa;
+  --color-background-highlights: #bdb4fa;
+
+
+  /* Chart Colors */
+  --chart-1: oklch(0.488 0.243 264.376);
+  --chart-2: oklch(0.6 0.118 184.704);
+  --chart-3: oklch(0.398 0.07 227.392);
+  --chart-4: oklch(0.828 0.189 84.429);
+  --chart-5: oklch(0.769 0.188 70.08);
+  --chart-6: oklch(0.69 0.185 345.0);
 }
 
 :root {
+  /* Typography Definitions */
+  --font-family-title: 'Inter Tight', sans-serif;
+  --font-family-body: 'Inter', sans-serif;
+
+  --text-title-size: 24px;
+  --text-title-line-height: 32px;
+  --text-title-weight: 700;
+
+  --text-paragraph-medium-size: 14px;
+  --text-paragraph-medium-line-height: 24px;
+  --text-paragraph-medium-weight: 500;
+
+  --text-paragraph-small-size: 12px;
+  --text-paragraph-small-line-height: 16px;
+  --text-paragraph-small-weight: 500;
+
+  --text-label-large-size: 16px;
+  --text-label-large-line-height: 24px;
+  --text-label-large-weight: 700;
+
+  --text-label-medium-size: 14px;
+  --text-label-medium-line-height: 24px;
+  --text-label-medium-weight: 700;
+
+  --text-label-small-size: 12px;
+  --text-label-small-line-height: 16px;
+  --text-label-small-weight: 700;
+
+  --text-link-size: 12px;
+  --text-link-line-height: 16px;
+  --text-link-weight: 500;
+
+  /* Shadcn / Base Variables */
   --radius: 0.85rem;
   --background: oklch(0.96 0.002 247.84); 
   --foreground: oklch(0.21 0.006 285.885);
@@ -62,20 +135,6 @@
   --border: oklch(0.90 0.002 247.84);
   --input: oklch(0.90 0.002 247.84);
   --ring: oklch(0.623 0.214 259.815);
-  --chart-1: oklch(0.488 0.243 264.376);
-  --chart-2: oklch(0.6 0.118 184.704);
-  --chart-3: oklch(0.398 0.07 227.392);
-  --chart-4: oklch(0.828 0.189 84.429);
-  --chart-5: oklch(0.769 0.188 70.08);
-  --chart-6: oklch(0.69 0.185 345.0);
-  --sidebar: oklch(0.96 0.002 247.84);
-  --sidebar-foreground: oklch(0.21 0.006 285.885);
-  --sidebar-primary: oklch(0.623 0.214 259.815);
-  --sidebar-primary-foreground: oklch(0.985 0 0);
-  --sidebar-accent: oklch(0.93 0.002 247.84);
-  --sidebar-accent-foreground: oklch(0.21 0.006 285.885);
-  --sidebar-border: oklch(0.90 0.002 247.84);
-  --sidebar-ring: oklch(0.623 0.214 259.815);
 }
 
 .dark {
@@ -97,20 +156,6 @@
   --border: oklch(0.22 0.005 260);
   --input: oklch(0.22 0.005 260);
   --ring: oklch(0.623 0.214 259.815);
-  --chart-1: oklch(0.488 0.243 264.376);
-  --chart-2: oklch(0.696 0.17 162.48);
-  --chart-3: oklch(0.769 0.188 70.08);
-  --chart-4: oklch(0.627 0.265 303.9);
-  --chart-5: oklch(0.645 0.246 16.439);
-  --chart-6: oklch(0.72 0.19 345.0);
-  --sidebar: oklch(0.11 0.008 260);
-  --sidebar-foreground: oklch(0.985 0 0);
-  --sidebar-primary: oklch(0.546 0.245 262.881);
-  --sidebar-primary-foreground: oklch(0.985 0 0);
-  --sidebar-accent: oklch(0.18 0.006 260);
-  --sidebar-accent-foreground: oklch(0.985 0 0);
-  --sidebar-border: oklch(0.22 0.005 260);
-  --sidebar-ring: oklch(0.488 0.243 264.376);
 }
 
 @layer base {
@@ -119,6 +164,12 @@
   }
   body {
     @apply bg-background text-foreground;
-    font-family: "Inter", sans-serif;
+    font-family: var(--font-family-body);
+  }
+  
+  /* Heading standard using your variables */
+  h1, h2, h3, .title-font {
+    font-family: var(--font-family-title);
+    font-weight: var(--text-title-weight);
   }
 }

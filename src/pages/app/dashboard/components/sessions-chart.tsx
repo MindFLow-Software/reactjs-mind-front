@@ -36,7 +36,8 @@ interface SessionsBarChartProps {
 const chartConfig = {
     count: {
         label: "Sessões",
-        color: "var(--chart-1)",
+        // UNICA ALTERAÇÃO: Cor da barra definida aqui
+        color: "var(--color-accent-blue)",
     },
 } satisfies ChartConfig
 
@@ -80,8 +81,8 @@ export function SessionsBarChart({ endDate }: SessionsBarChartProps) {
         <Card className="col-span-full lg:col-span-6 border border-slate-100 bg-white shadow-sm rounded-2xl overflow-hidden">
             <CardHeader className="flex flex-col items-stretch space-y-0 border-b p-0 sm:flex-row">
                 <div className="flex flex-1 flex-col justify-center gap-1 px-6 py-4">
-                    <CardTitle className="text-base font-semibold">Atendimentos</CardTitle>
-                    <CardDescription className="text-sm">
+                    <CardTitle className="text-sm font-semibold text-foreground uppercase tracking-wider">Atendimentos</CardTitle>
+                    <CardDescription className="text-xs text-muted-foreground">
                         Volume diário de sessões concluídas
                     </CardDescription>
                 </div>
@@ -170,8 +171,9 @@ export function SessionsBarChart({ endDate }: SessionsBarChartProps) {
                             <Bar
                                 dataKey="count"
                                 fill="var(--color-count)"
-                                radius={[4, 4, 0, 0]}
-                                barSize={timeRange === "7d" ? 40 : 12}
+                                radius={[8, 8, 0, 0]}
+                                className="cursor-pointer"
+
                             />
                         </BarChart>
                     </ChartContainer>
