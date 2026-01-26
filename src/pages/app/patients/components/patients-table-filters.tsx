@@ -17,6 +17,7 @@ import {
 
 import { RegisterPatients } from "../register-patients/register-patients"
 import { usePatientFilters } from "@/hooks/use-patient-filters"
+import { GenerateInviteModal } from "./generate-Invite-modal"
 
 interface PatientsTableFiltersProps {
   onPatientRegistered?: () => void
@@ -25,6 +26,7 @@ interface PatientsTableFiltersProps {
 export function PatientsTableFilters({ onPatientRegistered }: PatientsTableFiltersProps) {
   const { filters, setFilters, clearFilters } = usePatientFilters()
   const [isRegisterOpen, setIsRegisterOpen] = useState(false)
+  const [isInviteOpen, setIsInviteOpen] = useState(false)
   const isFirstRender = useRef(true)
 
   const { register, watch, setValue } = useForm({
@@ -59,7 +61,6 @@ export function PatientsTableFilters({ onPatientRegistered }: PatientsTableFilte
   return (
     <div className="flex flex-col lg:flex-row gap-3 lg:items-center lg:justify-between">
       <div className="flex flex-col lg:flex-row gap-2 flex-1 lg:items-center">
-
         <div className="relative w-full lg:w-auto">
           <Search className="absolute left-2.5 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground pointer-events-none" />
           <Input
@@ -88,27 +89,21 @@ export function PatientsTableFilters({ onPatientRegistered }: PatientsTableFilte
             <SelectItem value="all" className="cursor-pointer py-2.5">
               <div className="flex items-center gap-2 whitespace-nowrap">
                 <Users className="h-4 w-4 text-slate-500" />
-                <span className="text-sm font-medium">
-                  Todos os Pacientes
-                </span>
+                <span className="text-sm font-medium">Todos os Pacientes</span>
               </div>
             </SelectItem>
 
             <SelectItem value="active" className="cursor-pointer py-2.5">
               <div className="flex items-center gap-2 whitespace-nowrap">
                 <CheckCircle2 className="h-4 w-4 text-emerald-500" />
-                <span className="text-sm font-medium">
-                  Pacientes Ativos
-                </span>
+                <span className="text-sm font-medium">Pacientes Ativos</span>
               </div>
             </SelectItem>
 
             <SelectItem value="inactive" className="cursor-pointer py-2.5">
               <div className="flex items-center gap-2 whitespace-nowrap">
                 <XCircle className="h-4 w-4 text-rose-500" />
-                <span className="text-sm font-medium">
-                  Pacientes Inativos
-                </span>
+                <span className="text-sm font-medium">Pacientes Inativos</span>
               </div>
             </SelectItem>
           </SelectContent>
@@ -142,6 +137,7 @@ export function PatientsTableFilters({ onPatientRegistered }: PatientsTableFilte
           <Button
             size="sm"
             className="cursor-pointer gap-2 w-full lg:w-auto shrink-0 bg-blue-600 hover:bg-blue-700 shadow-sm transition-all"
+            onClick={() => setIsInviteOpen(true)}
           >
             <QrCode className="h-4 w-4" />
             QrCode de Cadastro
@@ -155,6 +151,10 @@ export function PatientsTableFilters({ onPatientRegistered }: PatientsTableFilte
               onPatientRegistered?.()
             }} />
           )}
+        </Dialog>
+
+        <Dialog open={isInviteOpen} onOpenChange={setIsInviteOpen}>
+          <GenerateInviteModal />
         </Dialog>
       </div>
     </div>
