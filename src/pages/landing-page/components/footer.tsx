@@ -102,10 +102,9 @@ export function Footer() {
                 {/* --- PARTE INFERIOR (Copyright e Social) --- */}
                 <div className="mt-16 flex flex-col items-center justify-between border-t border-dashed border-slate-200 py-8 md:flex-row">
 
-                    <p className="text-xs text-slate-500 text-center md:text-left">
-                        Copyright © 2025 MindFlush Tecnologia Ltda - CNPJ: 00.000.000/0001-00 <br className="hidden md:block" />
-                        Todos os direitos reservados.
-                    </p>
+                    <footer className="text-sm text-center">
+                        Painel central &copy; MindFlush - {new Date().getFullYear()}
+                    </footer>
 
                     <div className="mt-4 flex gap-6 md:mt-0">
                         <a href="#" className="text-slate-400 transition-colors hover:text-blue-600">

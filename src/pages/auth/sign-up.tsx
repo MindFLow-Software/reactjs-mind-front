@@ -1,16 +1,14 @@
-import { Helmet } from "react-helmet-async" // Importação necessária
+import { Helmet } from "react-helmet-async"
 import { Link } from "react-router-dom"
 import { SignUpForm } from "./components/sign-up-form"
-import { Button } from "@/components/ui/button" // Importação necessária
+import { Button } from "@/components/ui/button"
 
 export function SignUp() {
   return (
     <>
       <Helmet title="Criar conta | MindFlush" />
 
-      {/* 1. Layout de página padronizado (igual ao SignIn) */}
       <div className="flex min-h-svh justify-center p-4 sm:p-8">
-        {/* 2. Botão flutuante padronizado (agora leva para /sign-in) */}
         <Button
           variant={"link"}
           asChild
@@ -19,9 +17,7 @@ export function SignUp() {
           <Link to="/sign-in">Fazer Login</Link>
         </Button>
 
-        {/* 3. Wrapper de conteúdo padronizado (max-w-[450px] e pt-16) */}
         <div className="flex w-full max-w-[450px] flex-col justify-center gap-6 pt-16">
-          {/* 4. Cabeçalho de texto (específico do SignUp) */}
           <div className="flex flex-col gap-2 text-center">
             <h1 className="text-xl sm:text-2xl font-semibold tracking-tight">
               Crie sua conta no MindFlush
