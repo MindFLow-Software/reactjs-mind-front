@@ -1,10 +1,13 @@
 "use client"
 
 import { useState } from "react"
+import { useForm, Controller } from "react-hook-form"
+import { zodResolver } from "@hookform/resolvers/zod"
+import { z } from "zod"
 import { useMutation, useQueryClient } from "@tanstack/react-query"
-import { format } from "date-fns"
+import { format, isValid, parse } from "date-fns"
 import { ptBR } from "date-fns/locale"
-import { Loader2, CalendarIcon, Eye, EyeOff, Venus, Mars, Users, ShieldCheck, Contact } from "lucide-react"
+import { Loader2, CalendarIcon, Venus, Mars, Users, ShieldCheck, Contact } from "lucide-react"
 import { toast } from "sonner"
 import { AxiosError } from "axios"
 import { IMaskMixin } from "react-imask"
@@ -21,36 +24,44 @@ import { cn } from "@/lib/utils"
 import { UploadZone } from "./upload-zone"
 import { PatientAvatarUpload } from "./patient-avatar-upload"
 
-interface FormErrors {
-    firstName?: boolean
-    lastName?: boolean
-    email?: boolean
-    password?: boolean
-    dateOfBirth?: boolean
-    cpf?: boolean
-    phoneNumber?: boolean
-}
+const registerPatientSchema = z.object({
+    firstName: z.string().min(1, "Obrigatório"),
+    lastName: z.string().min(1, "Obrigatório"),
+    phoneNumber: z.string().optional(),
+    dateOfBirth: z.date()
+        .nullable()
+        .optional()
+        .refine((date) => !date || date <= new Date(), {
+            message: "Data de nascimento inválida",
+        }),
+    cpf: z.string().optional(),
+    gender: z.enum(["FEMININE", "MASCULINE", "OTHER"]),
+})
 
-interface RegisterPatientsProps {
-    onSuccess?: () => void
-}
+type RegisterPatientData = z.infer<typeof registerPatientSchema>
 
 const MaskedInput = IMaskMixin(({ inputRef, ...props }: any) => (
     <Input ref={inputRef} {...props} />
 ))
 
-export function RegisterPatients({ onSuccess }: RegisterPatientsProps) {
+export function RegisterPatients({ onSuccess }: { onSuccess?: () => void }) {
     const queryClient = useQueryClient()
-
-    const [date, setDate] = useState<Date | undefined>()
-    const [cpf, setCpf] = useState("")
-    const [phone, setPhone] = useState("")
-    const [gender, setGender] = useState("FEMININE")
-    const [showPassword, setShowPassword] = useState(false)
     const [avatarFile, setAvatarFile] = useState<File | null>(null)
     const [selectedFiles, setSelectedFiles] = useState<File[]>([])
-    const [errors, setErrors] = useState<FormErrors>({})
     const [isUploading, setIsUploading] = useState(false)
+    const [calendarOpen, setCalendarOpen] = useState(false)
+
+    const { register, handleSubmit, control, reset, formState: { errors } } = useForm<RegisterPatientData>({
+        resolver: zodResolver(registerPatientSchema),
+        defaultValues: {
+            firstName: "",
+            lastName: "",
+            phoneNumber: "",
+            cpf: "",
+            gender: "FEMININE",
+            dateOfBirth: null,
+        }
+    })
 
     const { mutateAsync: registerPatientFn, isPending } = useMutation({
         mutationFn: registerPatients,
@@ -70,35 +81,7 @@ export function RegisterPatients({ onSuccess }: RegisterPatientsProps) {
         }
     })
 
-    async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
-        e.preventDefault()
-        setErrors({})
-
-        const form = e.currentTarget
-        const fd = new FormData(form)
-
-        const rawCpf = cpf.replace(/\D/g, "")
-        const rawPhone = phone.replace(/\D/g, "")
-        const firstName = fd.get("firstName") as string
-        const lastName = fd.get("lastName") as string
-        const email = fd.get("email") as string
-        const password = fd.get("password") as string
-
-        const newErrors: FormErrors = {}
-        if (!firstName) newErrors.firstName = true
-        if (!lastName) newErrors.lastName = true
-        if (!email) newErrors.email = true
-        if (!password || password.length < 6) newErrors.password = true
-        if (!date) newErrors.dateOfBirth = true
-        if (rawCpf.length < 11) newErrors.cpf = true
-        if (rawPhone.length < 10) newErrors.phoneNumber = true
-
-        if (Object.keys(newErrors).length > 0) {
-            setErrors(newErrors)
-            toast.error("Preencha corretamente os campos destacados.")
-            return
-        }
-
+    async function onSubmit(data: RegisterPatientData) {
         try {
             setIsUploading(true)
 
@@ -119,26 +102,20 @@ export function RegisterPatients({ onSuccess }: RegisterPatientsProps) {
             }
 
             await registerPatientFn({
-                firstName,
-                lastName,
-                email: email || undefined,
-                password,
-                phoneNumber: rawPhone,
-                dateOfBirth: date!,
-                cpf: rawCpf,
+                firstName: data.firstName,
+                lastName: data.lastName,
+                phoneNumber: data.phoneNumber || undefined,
+                dateOfBirth: data.dateOfBirth || undefined,
+                cpf: data.cpf || undefined,
+                gender: data.gender as any,
                 role: "PATIENT" as any,
-                gender: gender as any,
                 isActive: true,
                 expertise: "OTHER" as any,
                 profileImageUrl,
                 attachmentIds,
             })
 
-            form.reset()
-            setCpf("")
-            setPhone("")
-            setDate(undefined)
-            setGender("FEMININE")
+            reset()
             setAvatarFile(null)
             setSelectedFiles([])
         } catch (error) {
@@ -153,11 +130,11 @@ export function RegisterPatients({ onSuccess }: RegisterPatientsProps) {
             <DialogHeader>
                 <DialogTitle className="text-xl font-bold tracking-tight">Novo Prontuário</DialogTitle>
                 <DialogDescription>
-                    Cadastre as informações básicas do paciente para iniciar o acompanhamento.
+                    Crie um novo prontuário para iniciar o acompanhamento do paciente.
                 </DialogDescription>
             </DialogHeader>
 
-            <form onSubmit={handleSubmit} className="grid gap-6 py-4">
+            <form onSubmit={handleSubmit(onSubmit)} className="grid gap-6 py-4">
                 <section aria-label="Foto de perfil">
                     <PatientAvatarUpload onFileSelect={setAvatarFile} />
                 </section>
@@ -169,148 +146,159 @@ export function RegisterPatients({ onSuccess }: RegisterPatientsProps) {
                     </legend>
                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                         <div className="space-y-2">
-                            <Label htmlFor="firstName" className={cn(errors.firstName && "text-red-500")}>Nome *</Label>
+                            <Label className={cn(errors.firstName && "text-red-500")}>Nome *</Label>
                             <Input
-                                id="firstName"
-                                name="firstName"
+                                {...register("firstName")}
                                 placeholder="Ex: Ana"
-                                autoComplete="given-name"
-                                aria-invalid={errors.firstName}
                                 className={cn(errors.firstName && "border-red-500 focus-visible:ring-red-500")}
                             />
                         </div>
                         <div className="space-y-2">
-                            <Label htmlFor="lastName" className={cn(errors.lastName && "text-red-500")}>Sobrenome *</Label>
+                            <Label className={cn(errors.lastName && "text-red-500")}>Sobrenome *</Label>
                             <Input
-                                id="lastName"
-                                name="lastName"
+                                {...register("lastName")}
                                 placeholder="Ex: Silva"
-                                autoComplete="family-name"
-                                aria-invalid={errors.lastName}
                                 className={cn(errors.lastName && "border-red-500 focus-visible:ring-red-500")}
                             />
-                        </div>
-                        <div className="space-y-2">
-                            <Label htmlFor="cpf" className={cn(errors.cpf && "text-red-500")}>CPF *</Label>
-                            <MaskedInput
-                                id="cpf"
-                                name="cpf"
-                                mask="000.000.000-00"
-                                placeholder="000.000.000-00"
-                                value={cpf}
-                                onAccept={(value: string) => setCpf(value)}
-                                aria-invalid={errors.cpf}
-                                className={cn(errors.cpf && "border-red-500 focus-visible:ring-red-500")}
-                            />
-                        </div>
-                        <div className="space-y-2">
-                            <Label className={cn(errors.dateOfBirth && "text-red-500")}>Data de Nascimento *</Label>
-                            <Popover>
-                                <PopoverTrigger asChild>
-                                    <Button
-                                        variant={"outline"}
-                                        aria-label="Selecionar data de nascimento"
-                                        className={cn(
-                                            "w-full justify-start text-left font-normal cursor-pointer",
-                                            !date && "text-muted-foreground",
-                                            errors.dateOfBirth && "border-red-500 text-red-500"
-                                        )}
-                                    >
-                                        <CalendarIcon className="mr-2 h-4 w-4" />
-                                        {date ? format(date, "dd 'de' MMMM, yyyy", { locale: ptBR }) : <span>Selecione</span>}
-                                    </Button>
-                                </PopoverTrigger>
-                                <PopoverContent className="p-0 w-auto overflow-hidden" align="start">
-                                    <Calendar
-                                        mode="single"
-                                        captionLayout="dropdown"
-                                        selected={date}
-                                        onSelect={setDate}
-                                        fromYear={1900}
-                                        toYear={new Date().getFullYear()}
-                                        locale={ptBR}
-                                    />
-                                </PopoverContent>
-                            </Popover>
                         </div>
                     </div>
                 </fieldset>
 
-                <fieldset className="space-y-4">
+                <fieldset className="space-y-4 opacity-90 hover:opacity-100 transition-opacity">
                     <legend className="text-sm font-semibold text-foreground flex items-center gap-2 pt-2 border-t w-full px-1 mb-4">
                         <ShieldCheck className="size-4 text-blue-500" />
-                        Contato e Acesso
+                        Informações Complementares (Opcional)
                     </legend>
                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                         <div className="space-y-2">
-                            <Label htmlFor="phoneNumber" className={cn(errors.phoneNumber && "text-red-500")}>Celular / WhatsApp *</Label>
-                            <MaskedInput
-                                id="phoneNumber"
-                                name="phoneNumber"
-                                mask="(00) 00000-0000"
-                                type="tel"
-                                autoComplete="tel"
-                                placeholder="(00) 00000-0000"
-                                value={phone}
-                                onAccept={(value: string) => setPhone(value)}
-                                aria-invalid={errors.phoneNumber}
-                                className={cn(errors.phoneNumber && "border-red-500 focus-visible:ring-red-500")}
+                            <Label>CPF</Label>
+                            <Controller
+                                name="cpf"
+                                control={control}
+                                render={({ field: { ref, ...f } }) => (
+                                    <MaskedInput
+                                        {...f}
+                                        inputRef={ref}
+                                        mask="000.000.000-00"
+                                        placeholder="000.000.000-00"
+                                    />
+                                )}
                             />
                         </div>
                         <div className="space-y-2">
-                            <Label htmlFor="gender-select">Gênero</Label>
-                            <Select value={gender} onValueChange={setGender}>
-                                <SelectTrigger id="gender-select" className="cursor-pointer">
-                                    <SelectValue placeholder="Selecione" />
-                                </SelectTrigger>
-                                <SelectContent>
-                                    <SelectItem value="FEMININE" className="cursor-pointer">
-                                        <div className="flex items-center gap-2"><Venus className="h-4 w-4 text-rose-500" /> Feminino</div>
-                                    </SelectItem>
-                                    <SelectItem value="MASCULINE" className="cursor-pointer">
-                                        <div className="flex items-center gap-2"><Mars className="h-4 w-4 text-blue-500" /> Masculino</div>
-                                    </SelectItem>
-                                    <SelectItem value="OTHER" className="cursor-pointer">
-                                        <div className="flex items-center gap-2"><Users className="h-4 w-4 text-violet-500" /> Outro</div>
-                                    </SelectItem>
-                                </SelectContent>
-                            </Select>
-                        </div>
-                        <div className="space-y-2 sm:col-span-2">
-                            <Label htmlFor="email" className={cn(errors.email && "text-red-500")}>Email *</Label>
-                            <Input
-                                id="email"
-                                name="email"
-                                type="email"
-                                autoComplete="email"
-                                placeholder="email@exemplo.com"
-                                aria-invalid={errors.email}
-                                className={cn(errors.email && "border-red-500 focus-visible:ring-red-500")}
+                            <Label>Celular / WhatsApp</Label>
+                            <Controller
+                                name="phoneNumber"
+                                control={control}
+                                render={({ field: { ref, ...f } }) => (
+                                    <MaskedInput
+                                        {...f}
+                                        inputRef={ref}
+                                        mask="(00) 00000-0000"
+                                        placeholder="(00) 00000-0000"
+                                    />
+                                )}
                             />
                         </div>
-                        <div className="space-y-2 sm:col-span-2">
-                            <Label htmlFor="password" className={cn(errors.password && "text-red-500")}>Senha de Acesso *</Label>
-                            <div className="relative">
-                                <Input
-                                    id="password"
-                                    name="password"
-                                    type={showPassword ? "text" : "password"}
-                                    autoComplete="new-password"
-                                    placeholder="Mínimo 6 caracteres"
-                                    aria-invalid={errors.password}
-                                    className={cn("pr-10", errors.password && "border-red-500 focus-visible:ring-red-500")}
-                                />
-                                <Button
-                                    type="button"
-                                    variant="ghost"
-                                    size="sm"
-                                    className="absolute right-0 top-0 h-full px-3 py-2 hover:bg-transparent cursor-pointer"
-                                    onClick={() => setShowPassword(!showPassword)}
-                                    aria-label={showPassword ? "Esconder senha" : "Mostrar senha"}
-                                >
-                                    {showPassword ? <EyeOff className="h-4 w-4 text-muted-foreground" /> : <Eye className="h-4 w-4 text-muted-foreground" />}
-                                </Button>
-                            </div>
+                        <div className="space-y-2">
+                            <Label className={cn(errors.dateOfBirth && "text-red-500")}>Data de Nascimento</Label>
+                            <Controller
+                                name="dateOfBirth"
+                                control={control}
+                                render={({ field }) => {
+                                    const [inputValue, setInputValue] = useState(
+                                        field.value ? format(field.value, "dd/MM/yyyy") : ""
+                                    )
+
+                                    const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+                                        let val = e.target.value.replace(/\D/g, "")
+                                        if (val.length > 2) val = val.slice(0, 2) + "/" + val.slice(2)
+                                        if (val.length > 5) val = val.slice(0, 5) + "/" + val.slice(5, 10)
+                                        setInputValue(val)
+
+                                        if (val.length === 10) {
+                                            const parsedDate = parse(val, "dd/MM/yyyy", new Date())
+                                            if (isValid(parsedDate)) {
+                                                field.onChange(parsedDate)
+                                            } else {
+                                                field.onChange(null)
+                                            }
+                                        } else if (val.length === 0) {
+                                            field.onChange(null)
+                                        }
+                                    }
+
+                                    return (
+                                        <Popover open={calendarOpen} onOpenChange={setCalendarOpen}>
+                                            <div className="relative w-full">
+                                                <Input
+                                                    placeholder="DD/MM/AAAA"
+                                                    value={inputValue}
+                                                    onChange={handleInputChange}
+                                                    maxLength={10}
+                                                    className={cn("pr-10", errors.dateOfBirth && "border-red-500 focus-visible:ring-red-500")}
+                                                />
+                                                <PopoverTrigger asChild>
+                                                    <Button
+                                                        type="button"
+                                                        variant="ghost"
+                                                        size="icon"
+                                                        className="absolute right-0 top-0 h-full px-3 py-2 hover:bg-transparent cursor-pointer text-muted-foreground"
+                                                    >
+                                                        <CalendarIcon className="size-4" />
+                                                    </Button>
+                                                </PopoverTrigger>
+                                            </div>
+                                            <PopoverContent className="w-auto overflow-hidden p-0" align="center" sideOffset={8}>
+                                                <Calendar
+                                                    mode="single"
+                                                    selected={field.value ?? undefined}
+                                                    captionLayout="dropdown"
+                                                    fromYear={1900}
+                                                    toYear={new Date().getFullYear()}
+                                                    disabled={(date) => date > new Date()}
+                                                    onSelect={(date) => {
+                                                        field.onChange(date)
+                                                        if (date) setInputValue(format(date, "dd/MM/yyyy"))
+                                                        setCalendarOpen(false)
+                                                    }}
+                                                    locale={ptBR}
+                                                />
+                                            </PopoverContent>
+                                        </Popover>
+                                    )
+                                }}
+                            />
+                            {errors.dateOfBirth && (
+                                <p className="text-[10px] text-red-500 font-bold uppercase mt-1">
+                                    {errors.dateOfBirth.message}
+                                </p>
+                            )}
+                        </div>
+                        <div className="space-y-2">
+                            <Label>Gênero</Label>
+                            <Controller
+                                name="gender"
+                                control={control}
+                                render={({ field }) => (
+                                    <Select value={field.value} onValueChange={field.onChange}>
+                                        <SelectTrigger className="w-full cursor-pointer">
+                                            <SelectValue placeholder="Selecione" />
+                                        </SelectTrigger>
+                                        <SelectContent>
+                                            <SelectItem value="FEMININE" className="cursor-pointer">
+                                                <div className="flex items-center gap-2"><Venus className="h-4 w-4 text-rose-500" /> Feminino</div>
+                                            </SelectItem>
+                                            <SelectItem value="MASCULINE" className="cursor-pointer">
+                                                <div className="flex items-center gap-2"><Mars className="h-4 w-4 text-blue-500" /> Masculino</div>
+                                            </SelectItem>
+                                            <SelectItem value="OTHER" className="cursor-pointer">
+                                                <div className="flex items-center gap-2"><Users className="h-4 w-4 text-violet-500" /> Outro</div>
+                                            </SelectItem>
+                                        </SelectContent>
+                                    </Select>
+                                )}
+                            />
                         </div>
                     </div>
                 </fieldset>
@@ -330,6 +318,6 @@ export function RegisterPatients({ onSuccess }: RegisterPatientsProps) {
                     </Button>
                 </div>
             </form>
-        </DialogContent>
+        </DialogContent >
     )
 }
