@@ -92,7 +92,7 @@ export function PatientsByAgeChart({ endDate }: PatientsByAgeChartProps) {
                         Faixa Etária
                     </CardTitle>
                     <CardDescription className="text-xs text-muted-foreground">
-                        Distribuição demográfica no período
+                        Distribuição por idade
                     </CardDescription>
                 </div>
                 <div className="flex border-t sm:border-t-0 sm:border-l">
@@ -127,7 +127,7 @@ export function PatientsByAgeChart({ endDate }: PatientsByAgeChartProps) {
                         <div className="mb-3 flex h-12 w-12 items-center justify-center rounded-full bg-slate-50">
                             <Users className="h-5 w-5 text-slate-300" />
                         </div>
-                        <p className="text-sm font-medium text-slate-700">Sem dados demográficos</p>
+                        <p className="text-sm font-medium text-slate-700">Sem dados de distribuição por idade</p>
                         <p className="mt-1 text-xs text-slate-400">Não há pacientes neste período</p>
                     </div>
                 ) : (

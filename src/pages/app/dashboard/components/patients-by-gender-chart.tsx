@@ -95,7 +95,7 @@ export function PatientsByGenderChart({ endDate }: PatientsByGenderChartProps) {
                         Gênero
                     </CardTitle>
                     <CardDescription className="text-xs text-muted-foreground">
-                        Distribuição por sexo biológico
+                        Distribuição por Gênero
                     </CardDescription>
                 </div>
                 <div className="flex border-t sm:border-t-0 sm:border-l">
