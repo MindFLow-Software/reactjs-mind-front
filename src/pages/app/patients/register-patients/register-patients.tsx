@@ -7,7 +7,7 @@ import { z } from "zod"
 import { useMutation, useQueryClient } from "@tanstack/react-query"
 import { format, isValid, parse } from "date-fns"
 import { ptBR } from "date-fns/locale"
-import { Loader2, CalendarIcon, Venus, Mars, Users, ShieldCheck, Contact, FileText } from "lucide-react"
+import { Loader2, CalendarIcon, Venus, Mars, Users, ShieldCheck, Contact } from "lucide-react"
 import { toast } from "sonner"
 import { AxiosError } from "axios"
 import { IMaskMixin } from "react-imask"
@@ -159,7 +159,7 @@ export function RegisterPatients({ patient, onSuccess }: RegisterPatientsProps) 
     }
 
     return (
-        <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto sm:rounded-xl">
+        <DialogContent className="max-w-4xl max-h-[95vh] overflow-y-auto sm:rounded-xl">
             <DialogHeader>
                 <DialogTitle className="text-xl font-bold tracking-tight">
                     {isEditMode ? "Editar Prontuário" : "Novo Prontuário"}
@@ -172,45 +172,47 @@ export function RegisterPatients({ patient, onSuccess }: RegisterPatientsProps) 
                 </DialogDescription>
             </DialogHeader>
 
-            <form onSubmit={handleSubmit(onSubmit)} className="grid gap-6 py-4">
-                <section aria-label="Foto de perfil">
-                    <PatientAvatarUpload
-                        onFileSelect={setAvatarFile}
-                        defaultValue={patient?.profileImageUrl}
-                    />
-                </section>
+            <form onSubmit={handleSubmit(onSubmit)} className="space-y-6 py-4">
+                <div className="flex flex-col lg:flex-row gap-6 items-start lg:items-end">
+                    <section aria-label="Foto de perfil" className="shrink-0">
+                        <PatientAvatarUpload
+                            onFileSelect={setAvatarFile}
+                            defaultValue={patient?.profileImageUrl}
+                        />
+                    </section>
+
+                    <fieldset className="flex-1 w-full space-y-4">
+                        <legend className="text-sm font-semibold text-foreground flex items-center gap-2 px-1 mb-2">
+                            <Contact className="size-4 text-blue-500" />
+                            Dados Principais
+                        </legend>
+                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                            <div className="space-y-2">
+                                <Label className={cn(errors.firstName && "text-red-500")}>Nome *</Label>
+                                <Input
+                                    {...register("firstName")}
+                                    placeholder="Ex: Ana"
+                                    className={cn(errors.firstName && "border-red-500 focus-visible:ring-red-500")}
+                                />
+                            </div>
+                            <div className="space-y-2">
+                                <Label className={cn(errors.lastName && "text-red-500")}>Sobrenome *</Label>
+                                <Input
+                                    {...register("lastName")}
+                                    placeholder="Ex: Silva"
+                                    className={cn(errors.lastName && "border-red-500 focus-visible:ring-red-500")}
+                                />
+                            </div>
+                        </div>
+                    </fieldset>
+                </div>
 
                 <fieldset className="space-y-4">
-                    <legend className="text-sm font-semibold text-foreground flex items-center gap-2 px-1 mb-4">
-                        <Contact className="size-4 text-blue-500" />
-                        Dados Pessoais
-                    </legend>
-                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                        <div className="space-y-2">
-                            <Label className={cn(errors.firstName && "text-red-500")}>Nome *</Label>
-                            <Input
-                                {...register("firstName")}
-                                placeholder="Ex: Ana"
-                                className={cn(errors.firstName && "border-red-500 focus-visible:ring-red-500")}
-                            />
-                        </div>
-                        <div className="space-y-2">
-                            <Label className={cn(errors.lastName && "text-red-500")}>Sobrenome *</Label>
-                            <Input
-                                {...register("lastName")}
-                                placeholder="Ex: Silva"
-                                className={cn(errors.lastName && "border-red-500 focus-visible:ring-red-500")}
-                            />
-                        </div>
-                    </div>
-                </fieldset>
-
-                <fieldset className="space-y-4 opacity-90 hover:opacity-100 transition-opacity">
-                    <legend className="text-sm font-semibold text-foreground flex items-center gap-2 pt-2 border-t w-full px-1 mb-4">
+                    <legend className="text-sm font-semibold text-foreground flex items-center gap-2 pt-2 border-t w-full">
                         <ShieldCheck className="size-4 text-blue-500" />
-                        Informações Complementares (Opcional)
+                        Informações Complementares
                     </legend>
-                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mt-4">
                         <div className="space-y-2">
                             <Label className={cn(errors.cpf && "text-red-500")}>CPF</Label>
                             <Controller
@@ -228,8 +230,9 @@ export function RegisterPatients({ patient, onSuccess }: RegisterPatientsProps) 
                             />
                             {errors.cpf && <p className="text-[10px] text-red-500 font-bold uppercase mt-1">{errors.cpf.message}</p>}
                         </div>
+
                         <div className="space-y-2">
-                            <Label>Celular / WhatsApp</Label>
+                            <Label>Celular</Label>
                             <Controller
                                 name="phoneNumber"
                                 control={control}
@@ -243,8 +246,9 @@ export function RegisterPatients({ patient, onSuccess }: RegisterPatientsProps) 
                                 )}
                             />
                         </div>
+
                         <div className="space-y-2">
-                            <Label className={cn(errors.dateOfBirth && "text-red-500")}>Data de Nascimento</Label>
+                            <Label className={cn(errors.dateOfBirth && "text-red-500")}>Nascimento</Label>
                             <Controller
                                 name="dateOfBirth"
                                 control={control}
@@ -273,15 +277,19 @@ export function RegisterPatients({ patient, onSuccess }: RegisterPatientsProps) 
                                                     className={cn("pr-10", errors.dateOfBirth && "border-red-500 focus-visible:ring-red-500")}
                                                 />
                                                 <PopoverTrigger asChild>
-                                                    <Button type="button" variant="ghost" size="icon" className="absolute right-0 top-0 h-full px-3 py-2 text-muted-foreground cursor-pointer">
+                                                    <button
+                                                        type="button"
+                                                        className="absolute right-0 top-0 h-full px-3 py-2 hover:bg-transparent cursor-pointer text-muted-foreground flex items-center justify-center"
+                                                    >
                                                         <CalendarIcon className="size-4" />
-                                                    </Button>
+                                                    </button>
                                                 </PopoverTrigger>
                                             </div>
                                             <PopoverContent className="w-auto overflow-hidden p-0" align="center" sideOffset={8}>
                                                 <Calendar
                                                     mode="single"
                                                     selected={field.value ?? undefined}
+                                                    captionLayout="dropdown"
                                                     fromYear={1900}
                                                     toYear={new Date().getFullYear()}
                                                     disabled={(date) => date > new Date()}
@@ -299,6 +307,7 @@ export function RegisterPatients({ patient, onSuccess }: RegisterPatientsProps) 
                             />
                             {errors.dateOfBirth && <p className="text-[10px] text-red-500 font-bold uppercase mt-1">{errors.dateOfBirth.message}</p>}
                         </div>
+
                         <div className="space-y-2">
                             <Label>Gênero</Label>
                             <Controller
@@ -310,9 +319,15 @@ export function RegisterPatients({ patient, onSuccess }: RegisterPatientsProps) 
                                             <SelectValue placeholder="Selecione" />
                                         </SelectTrigger>
                                         <SelectContent>
-                                            <SelectItem value="FEMININE" className="cursor-pointer"><div className="flex items-center gap-2"><Venus className="h-4 w-4 text-rose-500" /> Feminino</div></SelectItem>
-                                            <SelectItem value="MASCULINE" className="cursor-pointer"><div className="flex items-center gap-2"><Mars className="h-4 w-4 text-blue-500" /> Masculino</div></SelectItem>
-                                            <SelectItem value="OTHER" className="cursor-pointer"><div className="flex items-center gap-2"><Users className="h-4 w-4 text-violet-500" /> Outro</div></SelectItem>
+                                            <SelectItem value="FEMININE" className="cursor-pointer">
+                                                <div className="flex items-center gap-2"><Venus className="h-4 w-4 text-rose-500" /> Feminino</div>
+                                            </SelectItem>
+                                            <SelectItem value="MASCULINE" className="cursor-pointer">
+                                                <div className="flex items-center gap-2"><Mars className="h-4 w-4 text-blue-500" /> Masculino</div>
+                                            </SelectItem>
+                                            <SelectItem value="OTHER" className="cursor-pointer">
+                                                <div className="flex items-center gap-2"><Users className="h-4 w-4 text-violet-500" /> Outro</div>
+                                            </SelectItem>
                                         </SelectContent>
                                     </Select>
                                 )}
@@ -322,28 +337,26 @@ export function RegisterPatients({ patient, onSuccess }: RegisterPatientsProps) 
                 </fieldset>
 
                 <fieldset className="space-y-4">
-                    <legend className="text-sm font-semibold text-foreground flex items-center gap-2 pt-2 border-t w-full px-1 mb-4">
-                        <FileText className="size-4 text-blue-500" />
-                        Documentos e Anexos
-                    </legend>
-
-                    {isEditMode && (
-                        <div className="mb-4 bg-muted/30 rounded-lg p-2 border border-dashed">
-                            <AttachmentsList patientId={patient.id} />
+                    <div className="grid grid-cols-1 lg:grid-cols-1 gap-4">
+                        {isEditMode && (
+                            <div className="bg-muted/30 rounded-lg p-2 border border-dashed h-full">
+                                <AttachmentsList patientId={patient.id} />
+                            </div>
+                        )}
+                        <div className={cn(!isEditMode && "lg:col-span-2")}>
+                            <UploadZone
+                                selectedFiles={selectedFiles}
+                                onFilesChange={setSelectedFiles}
+                            />
                         </div>
-                    )}
-
-                    <UploadZone
-                        selectedFiles={selectedFiles}
-                        onFilesChange={setSelectedFiles}
-                    />
+                    </div>
                 </fieldset>
 
-                <div className="flex justify-end pt-2">
+                <div className="flex justify-end pt-4 border-t">
                     <Button
                         type="submit"
                         disabled={isPending || isUploading}
-                        className="gap-2 w-full lg:w-auto shrink-0 bg-blue-600 hover:bg-blue-700 shadow-sm transition-all active:scale-95 cursor-pointer"
+                        className="gap-2 w-full lg:w-64 bg-blue-600 hover:bg-blue-700 shadow-sm transition-all active:scale-95 cursor-pointer"
                     >
                         {(isPending || isUploading) && <Loader2 className="h-4 w-4 animate-spin" />}
                         {isPending || isUploading ? "Salvando..." : (isEditMode ? "Salvar Alterações" : "Cadastrar Paciente")}

@@ -3,7 +3,6 @@
 import { useRef, memo } from "react"
 import { CloudUpload, FileText, Paperclip, X } from "lucide-react"
 import { Button } from "@/components/ui/button"
-import { Label } from "@/components/ui/label"
 import { FieldSet } from "@/components/ui/field"
 import {
     Empty,
@@ -39,7 +38,10 @@ export const UploadZone = memo(({ selectedFiles, onFilesChange }: UploadZoneProp
     return (
         <div className="pt-2 border-t mt-4">
             <div className="flex items-center justify-between mb-2">
-                <Label className="block font-medium">Novos Documentos (Opcional)</Label>
+                <legend className="text-sm font-semibold text-foreground flex items-center gap-2 pt-2 w-full ">
+                    <FileText className="size-4 text-blue-500" />
+                    Novos Documentos (Opcional)
+                </legend>
                 {selectedFiles.length > 0 && (
                     <Button
                         variant="outline"
