@@ -10,7 +10,7 @@ export interface RegisterPsychologistBody {
   dateOfBirth: Date | string
   role: PsychologistRole
   gender: Gender
-  expertise: Expertise
+  expertise?: Expertise
   isActive?: boolean
   email?: string
   password?: string

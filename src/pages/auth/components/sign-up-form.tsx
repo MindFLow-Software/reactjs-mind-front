@@ -71,17 +71,6 @@ export const signUpFormSchema = z.object({
   gender: z.enum(["MASCULINE", "FEMININE", "OTHER"], {
     message: "Obrigatório",
   }),
-  expertise: z.enum([
-    "OTHER",
-    "SOCIAL",
-    "INFANT",
-    "CLINICAL",
-    "JURIDICAL",
-    "PSYCHOTHERAPIST",
-    "NEUROPSYCHOLOGY",
-  ], {
-    message: "Obrigatório",
-  }),
 })
 
 type SignUpFormData = z.infer<typeof signUpFormSchema>
@@ -136,7 +125,7 @@ export function SignUpForm({
         ...data,
         phoneNumber: data.phoneNumber.replace(/\D/g, ""),
         cpf: data.cpf.replace(/\D/g, ""),
-        role: "PSYCHOLOGIST"
+        role: "PSYCHOLOGIST",
       })
 
       toast.success("Psicólogo cadastrado com sucesso!")
@@ -231,7 +220,7 @@ export function SignUpForm({
             </button>
           </div>
 
-          <div className="space-y-1.5 px-1">
+          <div className="mt-3 space-y-1.5 px-1">
             {passwordChecks.map((check, i) => (
               <div key={i} className="flex items-center gap-2 transition-all">
                 {check.met ? (
@@ -357,7 +346,7 @@ export function SignUpForm({
           />
         </Field>
 
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+        <div className="grid grid-cols-1 gap-4">
           <Field>
             <FieldLabel className={cn(errors.gender && "text-red-500")}>Gênero</FieldLabel>
             <Controller
@@ -371,31 +360,7 @@ export function SignUpForm({
                   <SelectContent>
                     <SelectItem value="MASCULINE" className="cursor-pointer">Masculino</SelectItem>
                     <SelectItem value="FEMININE" className="cursor-pointer">Feminino</SelectItem>
-                    <SelectItem value="OTHER" className="cursor-pointer">Outro</SelectItem>
-                  </SelectContent>
-                </Select>
-              )}
-            />
-          </Field>
-
-          <Field>
-            <FieldLabel className={cn(errors.expertise && "text-red-500")}>Especialidade</FieldLabel>
-            <Controller
-              name="expertise"
-              control={control}
-              render={({ field }) => (
-                <Select onValueChange={field.onChange} value={field.value}>
-                  <SelectTrigger className={cn("cursor-pointer", errors.expertise && "border-red-500 ring-red-500")}>
-                    <SelectValue placeholder="Especialidade" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="CLINICAL" className="cursor-pointer">Clínica</SelectItem>
-                    <SelectItem value="INFANT" className="cursor-pointer">Infantil</SelectItem>
-                    <SelectItem value="NEUROPSYCHOLOGY" className="cursor-pointer">Neuropsicologia</SelectItem>
-                    <SelectItem value="PSYCHOTHERAPIST" className="cursor-pointer">Psicoterapeuta</SelectItem>
-                    <SelectItem value="JURIDICAL" className="cursor-pointer">Jurídica</SelectItem>
-                    <SelectItem value="SOCIAL" className="cursor-pointer">Social</SelectItem>
-                    <SelectItem value="OTHER" className="cursor-pointer">Outro</SelectItem>
+                    <SelectItem value="OTHER" className="cursor-pointer">Prefiro não informar</SelectItem>
                   </SelectContent>
                 </Select>
               )}
