@@ -7,7 +7,7 @@ import { toast } from "sonner"
 import { z } from "zod"
 import { useNavigate } from "react-router-dom"
 import { useMutation } from "@tanstack/react-query"
-import { Eye, EyeOff, CalendarIcon, Loader2 } from "lucide-react"
+import { Eye, EyeOff, CalendarIcon, Loader2, CheckCircle2, Circle } from "lucide-react"
 import { IMaskMixin } from "react-imask"
 import { cn } from "@/lib/utils"
 import { Button } from "@/components/ui/button"
@@ -33,20 +33,41 @@ import {
 } from "@/components/ui/field"
 import { registerPsychologist } from "@/api/create-user"
 
-const MaskedInput = IMaskMixin(({ inputRef, ...props }: any) => (
-  <Input ref={inputRef} {...props} />
-))
+function isValidCPF(cpf: string): boolean {
+  const cleanCPF = cpf.replace(/\D/g, "")
+  if (cleanCPF.length !== 11 || /^(\d)\1{10}$/.test(cleanCPF)) return false
+  let sum = 0, remainder
+  for (let i = 1; i <= 9; i++) sum += parseInt(cleanCPF.substring(i - 1, i)) * (11 - i)
+  remainder = (sum * 10) % 11
+  if (remainder === 10 || remainder === 11) remainder = 0
+  if (remainder !== parseInt(cleanCPF.substring(9, 10))) return false
+  sum = 0
+  for (let i = 1; i <= 10; i++) sum += parseInt(cleanCPF.substring(i - 1, i)) * (12 - i)
+  remainder = (sum * 10) % 11
+  if (remainder === 10 || remainder === 11) remainder = 0
+  if (remainder !== parseInt(cleanCPF.substring(10, 11))) return false
+  return true
+}
+
+const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*])[A-Za-z\d!@#$%^&*]{8,30}$/
 
 export const signUpFormSchema = z.object({
   firstName: z.string().min(1, "Obrigatório"),
   lastName: z.string().min(1, "Obrigatório"),
   phoneNumber: z.string().min(1, "Obrigatório").max(15),
   email: z.string().email("Email inválido").min(1, "Obrigatório"),
-  password: z.string().min(6, "Mínimo 6 caracteres"),
+  password: z.string()
+    .min(8, "Mínimo 8 caracteres")
+    .max(30, "Máximo 30 caracteres")
+    .regex(passwordRegex, "Senha muito fraca"),
   dateOfBirth: z.date({
     message: "Obrigatório",
+  }).refine((date) => date <= new Date(), {
+    message: "Data inválida",
   }),
-  cpf: z.string().min(11, "CPF inválido").max(14),
+  cpf: z.string().refine((val) => isValidCPF(val), {
+    message: "CPF inválido",
+  }),
   gender: z.enum(["MASCULINE", "FEMININE", "OTHER"], {
     message: "Obrigatório",
   }),
@@ -65,6 +86,10 @@ export const signUpFormSchema = z.object({
 
 type SignUpFormData = z.infer<typeof signUpFormSchema>
 
+const MaskedInput = IMaskMixin(({ inputRef, ...props }: any) => (
+  <Input ref={inputRef} {...props} />
+))
+
 export function SignUpForm({
   className,
   ...props
@@ -78,10 +103,24 @@ export function SignUpForm({
     handleSubmit,
     control,
     setError,
+    watch,
     formState: { isSubmitting, errors },
   } = useForm<SignUpFormData>({
     resolver: zodResolver(signUpFormSchema),
+    defaultValues: {
+      password: ""
+    }
   })
+
+  const passwordValue = watch("password", "")
+
+  const passwordChecks = [
+    { label: "8 a 30 caracteres", met: passwordValue.length >= 8 && passwordValue.length <= 30 },
+    { label: "Uma letra maiúscula", met: /[A-Z]/.test(passwordValue) },
+    { label: "Uma letra minúscula", met: /[a-z]/.test(passwordValue) },
+    { label: "Um número", met: /\d/.test(passwordValue) },
+    { label: "Um caractere especial (!@#$%^&*)", met: /[!@#$%^&*]/.test(passwordValue) },
+  ]
 
   const { mutateAsync: registerPsychologistFn } = useMutation({
     mutationFn: registerPsychologist,
@@ -114,24 +153,18 @@ export function SignUpForm({
       if (status === 409) {
         if (message === 'EMAIL_ALREADY_EXISTS') {
           setError("email", { type: "manual", message: "E-mail já cadastrado" });
-          toast.error("E-mail já cadastrado", {
-            description: "Este e-mail já está vinculado a uma conta. Tente fazer login.",
-          });
+          toast.error("E-mail já cadastrado");
           return;
         }
 
         if (message === 'CPF_ALREADY_EXISTS') {
           setError("cpf", { type: "manual", message: "CPF já cadastrado" });
-          toast.error("CPF já cadastrado", {
-            description: "Este CPF já possui um cadastro ativo no sistema.",
-          });
+          toast.error("CPF já cadastrado");
           return;
         }
       }
 
-      toast.error("Erro ao realizar cadastro", {
-        description: "Verifique sua conexão ou tente novamente em instantes."
-      });
+      toast.error("Erro ao realizar cadastro")
     }
   }
 
@@ -186,7 +219,7 @@ export function SignUpForm({
               id="password"
               type={showPassword ? "text" : "password"}
               {...register("password")}
-              placeholder="Minimo 6 Dígitos"
+              placeholder="Crie uma senha forte"
               className={cn("pr-10", errors.password && "border-red-500 focus-visible:ring-red-500")}
             />
             <button
@@ -197,9 +230,27 @@ export function SignUpForm({
               {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
             </button>
           </div>
+
+          <div className="space-y-1.5 px-1">
+            {passwordChecks.map((check, i) => (
+              <div key={i} className="flex items-center gap-2 transition-all">
+                {check.met ? (
+                  <CheckCircle2 className="size-3 text-emerald-500" />
+                ) : (
+                  <Circle className="size-3 text-muted-foreground/30" />
+                )}
+                <span className={cn(
+                  "text-[10px] font-bold uppercase tracking-tight transition-colors",
+                  check.met ? "text-emerald-600" : "text-muted-foreground/60"
+                )}>
+                  {check.label}
+                </span>
+              </div>
+            ))}
+          </div>
         </Field>
 
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+        <div className="mt-2 grid grid-cols-1 sm:grid-cols-2 gap-4">
           <Field>
             <FieldLabel htmlFor="phoneNumber" className={cn(errors.phoneNumber && "text-red-500")}>Telefone</FieldLabel>
             <Controller
@@ -279,21 +330,15 @@ export function SignUpForm({
                       className={cn("pr-10", errors.dateOfBirth && "border-red-500 focus-visible:ring-red-500")}
                     />
                     <PopoverTrigger asChild>
-                      <Button
+                      <button
                         type="button"
-                        variant="ghost"
-                        size="icon"
-                        className="absolute right-0 top-0 h-full px-3 py-2 hover:bg-transparent cursor-pointer text-muted-foreground"
+                        className="absolute right-0 top-0 h-full px-3 py-2 hover:bg-transparent cursor-pointer text-muted-foreground flex items-center justify-center"
                       >
                         <CalendarIcon className="size-4" />
-                      </Button>
+                      </button>
                     </PopoverTrigger>
                   </div>
-                  <PopoverContent
-                    className="w-auto overflow-hidden p-0"
-                    align="center"
-                    sideOffset={8}
-                  >
+                  <PopoverContent className="w-auto overflow-hidden p-0" align="center" sideOffset={8}>
                     <Calendar
                       mode="single"
                       selected={field.value}
