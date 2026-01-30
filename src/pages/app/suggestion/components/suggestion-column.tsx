@@ -70,25 +70,27 @@ export function SuggestionColumn({ title, icon, color, dotColor, suggestions = [
     })
 
     return (
-        <div className="flex flex-col w-full bg-gradient-to-b from-slate-50 to-white rounded-xl border border-slate-200/80 h-full overflow-hidden shadow-md">
-            <header className={cn("p-4 flex items-center gap-2.5 font-semibold text-sm text-slate-700 shrink-0 border-b border-slate-100", color)}>
+        <div className="flex flex-col w-full bg-card rounded-xl border border-border h-full overflow-hidden shadow-sm transition-colors">
+            <header className={cn("p-4 flex items-center gap-2.5 font-semibold text-sm text-foreground shrink-0 border-b border-border", color)}>
                 <div className={cn("size-2 rounded-full animate-pulse", dotColor)} />
                 <span className="text-base">{icon}</span>
-                <span className="truncate flex-1">{title}</span>
-                <span className="text-xs bg-white/60 backdrop-blur-sm px-2 py-1 rounded-full font-bold text-slate-600">
+                <span className="truncate flex-1 uppercase tracking-wider text-[11px] font-bold">{title}</span>
+                <span className="text-[10px] bg-background/50 backdrop-blur-md px-2 py-0.5 rounded-full font-bold text-muted-foreground border border-border">
                     {suggestions.length}
                 </span>
             </header>
 
-            <div className="flex-1 overflow-y-auto p-3 space-y-3 min-h-0 scroll-smooth scrollbar-thin scrollbar-thumb-slate-200">
+            <div className="flex-1 overflow-y-auto p-3 space-y-3 min-h-0 scroll-smooth scrollbar-thin scrollbar-thumb-border hover:scrollbar-thumb-muted-foreground/20">
                 {isLoading ? (
                     <div className="space-y-3">
                         {[1, 2, 3].map((i) => (
-                            <div key={i} className="h-24 bg-slate-100 animate-pulse rounded-xl" />
+                            <div key={i} className="h-24 bg-muted/50 animate-pulse rounded-xl" />
                         ))}
                     </div>
                 ) : sortedSuggestions.length === 0 ? (
-                    <p className="text-center p-6 text-slate-400 text-sm italic">Nenhuma sugestão por aqui ainda...</p>
+                    <div className="flex flex-col items-center justify-center h-32 opacity-50">
+                        <p className="text-center p-6 text-muted-foreground text-xs italic font-medium">Nenhuma sugestão por aqui...</p>
+                    </div>
                 ) : (
                     sortedSuggestions.map((item) => (
                         <SuggestionCard

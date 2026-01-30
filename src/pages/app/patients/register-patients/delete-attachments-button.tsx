@@ -1,6 +1,6 @@
 "use client"
 
-import { useState } from "react" // Adicionado
+import { useState } from "react"
 import { Trash2, Loader2, AlertTriangle } from "lucide-react"
 import { cn } from "@/lib/utils"
 import {
@@ -37,6 +37,7 @@ export function DeleteActionButton({
             await onDelete()
             setOpen(false)
         } catch (error) {
+            // Error handling remains silent as per current implementation
         }
     }
 
@@ -56,26 +57,31 @@ export function DeleteActionButton({
                 </Button>
             </AlertDialogTrigger>
 
-            <AlertDialogContent className="max-w-[400px] rounded-2xl">
+            <AlertDialogContent className="max-w-[400px] rounded-2xl bg-card border-border text-foreground">
                 <AlertDialogHeader>
                     <div className="flex items-center gap-3 mb-2">
                         <div className="flex h-10 w-10 items-center justify-center rounded-full bg-destructive/10">
                             <AlertTriangle className="h-5 w-5 text-destructive" />
                         </div>
-                        <AlertDialogTitle className="text-xl font-semibold tracking-tight">Excluir arquivo?</AlertDialogTitle>
+                        <AlertDialogTitle className="text-xl font-semibold tracking-tight text-foreground">
+                            Excluir arquivo?
+                        </AlertDialogTitle>
                     </div>
                     <AlertDialogDescription className="text-sm text-muted-foreground leading-relaxed">
-                        A exclusão de <span className="font-semibold text-foreground break-all">{itemName}</span> é permanente.
+                        A exclusão de <span className="font-semibold text-foreground break-all">{itemName}</span> é permanente e não poderá ser desfeita.
                     </AlertDialogDescription>
                 </AlertDialogHeader>
 
-                <AlertDialogFooter className="mt-4">
-                    <AlertDialogCancel disabled={isLoading} className="cursor-pointer rounded-xl border-none hover:bg-muted/50">
+                <AlertDialogFooter className="mt-4 gap-2 sm:gap-0">
+                    <AlertDialogCancel
+                        disabled={isLoading}
+                        className="cursor-pointer rounded-xl border-none bg-muted/50 hover:bg-muted text-muted-foreground transition-colors"
+                    >
                         Cancelar
                     </AlertDialogCancel>
                     <AlertDialogAction
                         onClick={handleConfirm}
-                        className="cursor-pointer rounded-xl bg-red-400 hover:bg-red-600 text-white"
+                        className="cursor-pointer rounded-xl bg-destructive hover:bg-destructive/90 text-destructive-foreground font-bold transition-all"
                     >
                         {isLoading ? <Loader2 className="h-4 w-4 animate-spin" /> : "Sim, Excluir"}
                     </AlertDialogAction>

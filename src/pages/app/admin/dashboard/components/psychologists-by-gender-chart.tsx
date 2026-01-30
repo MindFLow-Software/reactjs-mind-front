@@ -46,7 +46,6 @@ interface PsychologistsGenderChartProps {
 export function PsychologistsGenderChart({ endDate }: PsychologistsGenderChartProps) {
     const [timeRange] = React.useState("30d")
 
-    // Cálculo interno do período baseado no endDate (mesma lógica do de pacientes)
     const { startDateToFetch, endDateToFetch } = React.useMemo(() => {
         const referenceDate = endDate ? new Date(endDate) : new Date()
         let daysToSubtract = 30
@@ -85,48 +84,53 @@ export function PsychologistsGenderChart({ endDate }: PsychologistsGenderChartPr
     }, [rawData])
 
     return (
-        <Card className="border border-slate-100 bg-white shadow-sm rounded-2xl overflow-hidden flex flex-col">
-            <CardHeader className="flex flex-col items-stretch space-y-0 border-b p-0 sm:flex-row">
+        <Card className="border-border bg-card shadow-sm rounded-2xl overflow-hidden flex flex-col">
+            <CardHeader className="flex flex-col items-stretch space-y-0 border-b border-border p-0 sm:flex-row">
                 <div className="flex flex-1 flex-col justify-center gap-1 px-6 py-4">
-                    <CardTitle className="text-base font-semibold uppercase tracking-wider">Gênero Profissional</CardTitle>
-                    <CardDescription className="text-sm">
+                    <CardTitle className="text-base font-semibold uppercase tracking-wider text-foreground">
+                        Gênero Profissional
+                    </CardTitle>
+                    <CardDescription className="text-sm text-muted-foreground">
                         Distribuição dos psicólogos ativos
                     </CardDescription>
                 </div>
-                <div className="flex border-t sm:border-t-0 sm:border-l">
+                <div className="flex border-t border-border sm:border-t-0 sm:border-l">
                     <div className="relative z-30 flex flex-1 flex-col justify-center gap-1 px-6 py-4 text-left sm:px-8">
                         <span className="text-[10px] uppercase tracking-wider text-muted-foreground font-medium">
                             Total Geral
                         </span>
-                        <span className="text-xl font-bold leading-none sm:text-2xl">
+                        <span className="text-xl font-bold leading-none sm:text-2xl text-foreground">
                             {totalPsychologists.toLocaleString()}
                         </span>
                     </div>
                 </div>
             </CardHeader>
 
-            <CardContent className="px-6 pt-6 pb-6 flex-1 flex flex-col">
+            <CardContent className="px-6 pt-6 pb-6 flex-1 flex flex-col bg-card">
                 {isLoading ? (
                     <div className="flex h-[300px] w-full items-center justify-center">
                         <Loader2 className="h-8 w-8 animate-spin text-muted-foreground" />
                     </div>
                 ) : isError ? (
                     <div className="flex h-[300px] flex-col items-center justify-center text-center">
-                        <div className="mb-3 flex h-12 w-12 items-center justify-center rounded-full bg-red-50 text-red-500">
+                        <div className="mb-3 flex h-12 w-12 items-center justify-center rounded-full bg-red-500/10 text-red-500">
                             <AlertCircle className="size-6" />
                         </div>
-                        <p className="text-sm font-medium text-slate-700">Erro ao carregar dados</p>
-                        <button onClick={() => refetch()} className="mt-2 text-xs font-bold text-blue-600 flex items-center gap-1 hover:underline">
+                        <p className="text-sm font-medium text-foreground">Erro ao carregar dados</p>
+                        <button
+                            onClick={() => refetch()}
+                            className="mt-2 text-xs font-bold text-blue-500 flex items-center gap-1 hover:underline cursor-pointer"
+                        >
                             <RefreshCcw size={12} /> Tentar novamente
                         </button>
                     </div>
                 ) : isEmpty ? (
                     <div className="flex h-[300px] flex-col items-center justify-center text-center">
-                        <div className="mb-3 flex h-12 w-12 items-center justify-center rounded-full bg-slate-50">
-                            <Users2 className="h-5 w-5 text-slate-300" />
+                        <div className="mb-3 flex h-12 w-12 items-center justify-center rounded-full bg-muted/30">
+                            <Users2 className="h-5 w-5 text-muted-foreground/50" />
                         </div>
-                        <p className="text-sm font-medium text-slate-700">Sem dados de gênero</p>
-                        <p className="mt-1 text-xs text-slate-400">Nenhum psicólogo identificado</p>
+                        <p className="text-sm font-medium text-foreground">Sem dados de gênero</p>
+                        <p className="mt-1 text-xs text-muted-foreground">Nenhum psicólogo identificado</p>
                     </div>
                 ) : (
                     <>
@@ -141,7 +145,7 @@ export function PsychologistsGenderChart({ endDate }: PsychologistsGenderChartPr
                                         innerRadius={70}
                                         outerRadius={90}
                                         strokeWidth={5}
-                                        stroke="hsl(var(--background))"
+                                        stroke="var(--card)"
                                         paddingAngle={4}
                                     >
                                         {chartData.map((_, index) => (
@@ -156,7 +160,7 @@ export function PsychologistsGenderChart({ endDate }: PsychologistsGenderChartPr
                             </ChartContainer>
                         </div>
 
-                        <div className="grid grid-cols-2 gap-x-4 gap-y-3 pt-6 border-t border-slate-100 mt-6">
+                        <div className="grid grid-cols-2 gap-x-4 gap-y-3 pt-6 border-t border-border mt-6">
                             {chartData.map((item, index) => {
                                 const percentage = ((item.count / totalPsychologists) * 100).toFixed(1)
                                 return (
@@ -170,7 +174,7 @@ export function PsychologistsGenderChart({ endDate }: PsychologistsGenderChartPr
                                                 {item.gender}
                                             </span>
                                         </div>
-                                        <span className="text-[11px] font-bold tabular-nums">
+                                        <span className="text-[11px] font-bold tabular-nums text-foreground">
                                             {percentage}%
                                         </span>
                                     </div>

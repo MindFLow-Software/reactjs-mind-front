@@ -7,7 +7,7 @@ import { toast } from "sonner"
 import { z } from "zod"
 import { useNavigate } from "react-router-dom"
 import { useMutation } from "@tanstack/react-query"
-import { Eye, EyeOff, CalendarIcon, Loader2, CheckCircle2, Circle } from "lucide-react"
+import { Eye, EyeOff, CalendarIcon, Loader2, CheckCircle2, Circle, Mars, Users, Venus } from "lucide-react"
 import { IMaskMixin } from "react-imask"
 import { cn } from "@/lib/utils"
 import { Button } from "@/components/ui/button"
@@ -372,14 +372,20 @@ export function SignUpForm({
               name="gender"
               control={control}
               render={({ field }) => (
-                <Select onValueChange={field.onChange} value={field.value}>
-                  <SelectTrigger className={cn("cursor-pointer focus-visible:ring-2 focus-visible:ring-blue-500", errors.gender && "border-red-500 ring-red-500")}>
-                    <SelectValue placeholder="Selecione seu gênero…" />
+                <Select value={field.value} onValueChange={field.onChange}>
+                  <SelectTrigger className="w-full cursor-pointer focus-visible:ring-2 focus-visible:ring-blue-500">
+                    <SelectValue placeholder="Selecione" />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="MASCULINE" className="cursor-pointer">Masculino</SelectItem>
-                    <SelectItem value="FEMININE" className="cursor-pointer">Feminino</SelectItem>
-                    <SelectItem value="OTHER" className="cursor-pointer">Prefiro não informar</SelectItem>
+                    <SelectItem value="FEMININE" className="cursor-pointer">
+                      <div className="flex items-center gap-2"><Venus className="h-4 w-4 text-rose-500" aria-hidden="true" /> Feminino</div>
+                    </SelectItem>
+                    <SelectItem value="MASCULINE" className="cursor-pointer">
+                      <div className="flex items-center gap-2"><Mars className="h-4 w-4 text-blue-500" aria-hidden="true" /> Masculino</div>
+                    </SelectItem>
+                    <SelectItem value="OTHER" className="cursor-pointer">
+                      <div className="flex items-center gap-2"><Users className="h-4 w-4 text-violet-500" aria-hidden="true" /> Prefiro não informar</div>
+                    </SelectItem>
                   </SelectContent>
                 </Select>
               )}

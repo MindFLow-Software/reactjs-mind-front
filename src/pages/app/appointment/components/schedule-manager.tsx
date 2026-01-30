@@ -1,9 +1,10 @@
+"use client"
+
 import { useState, useEffect } from 'react'
 import { AvailabilityDayRow } from './availability-day-row'
 import { api } from '@/lib/axios'
 import { toast } from 'sonner'
 
-// 1. Definição da interface para as props
 interface ScheduleManagerProps {
     defaultData: {
         dayOfWeek: number
@@ -23,12 +24,10 @@ const DAYS_OF_WEEK = [
 ]
 
 export function ScheduleManager({ defaultData }: ScheduleManagerProps) {
-    // Estado que guarda um array de horários para cada dia
     const [schedule, setSchedule] = useState<Record<number, { startTime: string, endTime: string }[]>>({
         1: [], 2: [], 3: [], 4: [], 5: [], 6: [], 0: []
     })
 
-    // 2. useEffect para carregar os dados iniciais quando o componente montar ou os dados mudarem
     useEffect(() => {
         if (defaultData && defaultData.length > 0) {
             const formatted: Record<number, { startTime: string, endTime: string }[]> = {
@@ -84,7 +83,6 @@ export function ScheduleManager({ defaultData }: ScheduleManagerProps) {
         }
 
         try {
-            // 3. Chamada real para o seu backend
             await api.post('/availabilities', { slots: allSlots })
             toast.success("Agenda salva com sucesso!")
         } catch (err) {
@@ -93,18 +91,21 @@ export function ScheduleManager({ defaultData }: ScheduleManagerProps) {
     }
 
     return (
-        <div className="bg-white rounded-lg shadow border overflow-hidden">
-            <div className="p-4 border-b bg-gray-50 flex justify-between items-center">
-                <h2 className="text-lg font-bold">Definir Disponibilidade Recorrente</h2>
+        <div className="bg-card rounded-xl shadow-md border border-border overflow-hidden transition-colors">
+            <div className="p-4 border-b border-border bg-muted/30 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+                <div>
+                    <h2 className="text-base font-bold text-foreground uppercase tracking-wider">Definir Disponibilidade Recorrente</h2>
+                    <p className="text-xs text-muted-foreground">Configure os horários padrão para seus atendimentos semanais</p>
+                </div>
                 <button
                     onClick={handleSave}
-                    className="bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700 transition"
+                    className="w-full sm:w-auto bg-emerald-600 hover:bg-emerald-700 text-white px-6 py-2.5 rounded-xl font-bold text-xs uppercase tracking-widest shadow-lg shadow-emerald-900/20 transition-all active:scale-95 cursor-pointer"
                 >
                     Salvar Agenda
                 </button>
             </div>
 
-            <div className="divide-y">
+            <div className="divide-y divide-border bg-card">
                 {DAYS_OF_WEEK.map(day => (
                     <AvailabilityDayRow
                         key={day.id}

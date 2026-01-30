@@ -11,7 +11,7 @@ import { Empty, EmptyHeader, EmptyMedia, EmptyTitle } from "@/components/ui/empt
 import { getPatientAttachments, deleteAttachment } from "@/api/attachments"
 import { handleFileDownload } from "@/utils/handle-file-download"
 import { Label } from "@/components/ui/label"
-import { DeleteActionButton } from "./delete-action-button"
+import { DeleteActionButton } from "./delete-attachments-button"
 
 interface AttachmentsListProps {
     patientId: string

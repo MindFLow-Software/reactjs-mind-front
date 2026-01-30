@@ -7,7 +7,7 @@ import { z } from "zod"
 import { useMutation, useQueryClient } from "@tanstack/react-query"
 import { format, isValid, parse } from "date-fns"
 import { ptBR } from "date-fns/locale"
-import { Loader2, CalendarIcon, Venus, Mars, Users, ShieldCheck, Contact } from "lucide-react"
+import { Loader2, CalendarIcon, Venus, Mars, Users, ShieldCheck, Contact, UserRoundCheck } from "lucide-react"
 import { toast } from "sonner"
 import { AxiosError } from "axios"
 import { IMaskMixin } from "react-imask"
@@ -378,10 +378,12 @@ export function RegisterPatients({ patient, onSuccess }: RegisterPatientsProps) 
 
                 <div className="flex justify-end pt-4 border-t">
                     <Button
+
                         type="submit"
                         disabled={isPending || isUploading}
-                        className="gap-2 w-full lg:w-64 bg-blue-600 hover:bg-blue-700 shadow-sm transition-[transform,background-color,opacity] active:scale-95 cursor-pointer focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2"
+                        className="cursor-pointer gap-2 w-full lg:w-auto shrink-0 bg-blue-600 hover:bg-blue-700 shadow-sm transition-all"
                     >
+                        <UserRoundCheck className="h-4 w-4" />
                         {(isPending || isUploading) && <Loader2 className="h-4 w-4 animate-spin" aria-hidden="true" />}
                         <span aria-live="polite">
                             {isPending || isUploading ? "Salvando…" : (isEditMode ? "Salvar Alterações" : "Cadastrar Paciente")}

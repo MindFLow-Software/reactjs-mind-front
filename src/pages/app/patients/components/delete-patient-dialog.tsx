@@ -31,21 +31,25 @@ export function DeletePatientDialog({ fullName, isActive, onClose, onInactivate,
     }
 
     return (
-        <DialogContent className="sm:max-w-[480px] p-0 gap-0 overflow-hidden border-0 shadow-xl">
+        <DialogContent className="sm:max-w-[480px] p-0 gap-0 overflow-hidden border border-border bg-card shadow-xl">
             <div className="flex flex-col items-center justify-center p-8 pb-6 pt-10 text-center">
-                <div className={`mb-6 flex h-20 w-20 items-center justify-center rounded-full ${isActive ? 'bg-red-50' : 'bg-emerald-50'}`}>
-                    <div className={`flex h-12 w-12 items-center justify-center rounded-full shadow-sm ${isActive ? 'bg-red-100' : 'bg-emerald-100'}`}>
-                        {isActive ? <TriangleAlert className="h-6 w-6 text-red-600" /> : <UserCheck className="h-6 w-6 text-emerald-600" />}
+                <div className={`mb-6 flex h-20 w-20 items-center justify-center rounded-full ${isActive ? 'bg-destructive/10' : 'bg-emerald-500/10'}`}>
+                    <div className={`flex h-12 w-12 items-center justify-center rounded-full shadow-sm ${isActive ? 'bg-destructive/20' : 'bg-emerald-500/20'}`}>
+                        {isActive ? (
+                            <TriangleAlert className="h-6 w-6 text-destructive" />
+                        ) : (
+                            <UserCheck className="h-6 w-6 text-emerald-500" />
+                        )}
                     </div>
                 </div>
 
                 <DialogHeader className="mb-2">
-                    <DialogTitle className="text-2xl font-bold text-zinc-900">
+                    <DialogTitle className="text-2xl font-bold text-foreground">
                         {isActive ? 'Inativar registro?' : 'Reativar registro?'}
                     </DialogTitle>
                 </DialogHeader>
 
-                <DialogDescription className="max-w-[85%] text-base text-zinc-500 mx-auto leading-relaxed">
+                <DialogDescription className="max-w-[85%] text-base text-muted-foreground mx-auto leading-relaxed">
                     {isActive
                         ? <>Você está prestes a inativar <strong>{fullName}</strong>. Ele deixará de aparecer nas buscas ativas.</>
                         : <>Você está reativando <strong>{fullName}</strong>. Ele voltará a aparecer normalmente no sistema.</>
@@ -53,12 +57,12 @@ export function DeletePatientDialog({ fullName, isActive, onClose, onInactivate,
                 </DialogDescription>
             </div>
 
-            <DialogFooter className="grid grid-cols-2 gap-0 border-t bg-zinc-50/50 p-0">
+            <DialogFooter className="grid grid-cols-2 gap-0 border-t border-border bg-muted/30 p-0">
                 <Button
                     variant="ghost"
                     onClick={onClose}
                     disabled={isPending}
-                    className="cursor-pointer h-14 w-full rounded-none border-r text-base font-medium text-zinc-600"
+                    className="cursor-pointer h-14 w-full rounded-none border-r border-border text-base font-medium text-muted-foreground hover:bg-muted"
                 >
                     Cancelar
                 </Button>
@@ -67,7 +71,10 @@ export function DeletePatientDialog({ fullName, isActive, onClose, onInactivate,
                     variant="ghost"
                     onClick={handleAction}
                     disabled={isPending}
-                    className={`cursor-pointer h-14 w-full rounded-none text-base font-bold ${isActive ? 'text-red-700 hover:bg-red-400' : 'text-emerald-700 hover:bg-emerald-400'}`}
+                    className={`cursor-pointer h-14 w-full rounded-none text-base font-bold transition-colors ${isActive
+                            ? 'text-destructive hover:text-destructive-foreground'
+                            : 'text-emerald-400 hover:text-emerald-600'
+                        }`}
                 >
                     {isPending ? (
                         <Loader2 className="h-4 w-4 animate-spin" />

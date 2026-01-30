@@ -20,7 +20,6 @@ import {
 } from "@/components/ui/chart"
 import { api } from "@/lib/axios"
 
-// 🟢 Tipagem baseada no Use Case de psicólogos
 interface AgeStats {
     ageRange: string
     count: number
@@ -49,7 +48,7 @@ export function PsychologistsAgeRangeChart() {
     const { data, isLoading, isError, refetch } = useQuery<AgeStats[]>({
         queryKey: ['admin', 'psychologists-age-stats'],
         queryFn: getPsychologistsAgeStats,
-        staleTime: 1000 * 60 * 5, // 5 minutos
+        staleTime: 1000 * 60 * 5,
     })
 
     const { totalPsychologists, isEmpty } = React.useMemo(() => {
@@ -61,48 +60,53 @@ export function PsychologistsAgeRangeChart() {
     }, [data])
 
     return (
-        <Card className="border border-slate-100 bg-white shadow-sm rounded-2xl overflow-hidden flex flex-col">
-            <CardHeader className="flex flex-col items-stretch space-y-0 border-b p-0 sm:flex-row">
+        <Card className="border-border bg-card shadow-sm rounded-2xl overflow-hidden flex flex-col">
+            <CardHeader className="flex flex-col items-stretch space-y-0 border-b border-border p-0 sm:flex-row">
                 <div className="flex flex-1 flex-col justify-center gap-1 px-6 py-4">
-                    <CardTitle className="text-base font-semibold uppercase tracking-wider">Perfil Etário</CardTitle>
-                    <CardDescription className="text-sm">
+                    <CardTitle className="text-base font-semibold uppercase tracking-wider text-foreground">
+                        Perfil Etário
+                    </CardTitle>
+                    <CardDescription className="text-sm text-muted-foreground">
                         Distribuição dos psicólogos ativos
                     </CardDescription>
                 </div>
-                <div className="flex border-t sm:border-t-0 sm:border-l">
+                <div className="flex border-t border-border sm:border-t-0 sm:border-l">
                     <div className="relative z-30 flex flex-1 flex-col justify-center gap-1 px-6 py-4 text-left sm:px-8">
                         <span className="text-[10px] uppercase tracking-wider text-muted-foreground font-medium">
                             Total Geral
                         </span>
-                        <span className="text-xl font-bold leading-none sm:text-2xl">
+                        <span className="text-xl font-bold leading-none sm:text-2xl text-foreground">
                             {totalPsychologists.toLocaleString()}
                         </span>
                     </div>
                 </div>
             </CardHeader>
 
-            <CardContent className="px-6 pt-6 pb-6 flex-1 flex flex-col">
+            <CardContent className="px-6 pt-6 pb-6 flex-1 flex flex-col bg-card">
                 {isLoading ? (
                     <div className="flex h-[300px] w-full items-center justify-center">
                         <Loader2 className="h-8 w-8 animate-spin text-muted-foreground" />
                     </div>
                 ) : isError ? (
                     <div className="flex h-[300px] flex-col items-center justify-center text-center">
-                        <div className="mb-3 flex h-12 w-12 items-center justify-center rounded-full bg-red-50 text-red-500">
+                        <div className="mb-3 flex h-12 w-12 items-center justify-center rounded-full bg-red-500/10 text-red-500">
                             <AlertCircle className="size-6" />
                         </div>
-                        <p className="text-sm font-medium text-slate-700">Erro ao carregar dados</p>
-                        <button onClick={() => refetch()} className="mt-2 text-xs font-bold text-blue-600 flex items-center gap-1 hover:underline">
+                        <p className="text-sm font-medium text-foreground">Erro ao carregar dados</p>
+                        <button
+                            onClick={() => refetch()}
+                            className="mt-2 text-xs font-bold text-blue-500 flex items-center gap-1 hover:underline cursor-pointer"
+                        >
                             <RefreshCcw size={12} /> Tentar novamente
                         </button>
                     </div>
                 ) : isEmpty ? (
                     <div className="flex h-[300px] flex-col items-center justify-center text-center">
-                        <div className="mb-3 flex h-12 w-12 items-center justify-center rounded-full bg-slate-50">
-                            <Users2 className="h-5 w-5 text-slate-300" />
+                        <div className="mb-3 flex h-12 w-12 items-center justify-center rounded-full bg-muted/30">
+                            <Users2 className="h-5 w-5 text-muted-foreground/50" />
                         </div>
-                        <p className="text-sm font-medium text-slate-700">Sem dados demográficos</p>
-                        <p className="mt-1 text-xs text-slate-400">Nenhum psicólogo cadastrado no sistema</p>
+                        <p className="text-sm font-medium text-foreground">Sem dados demográficos</p>
+                        <p className="mt-1 text-xs text-muted-foreground">Nenhum psicólogo cadastrado no sistema</p>
                     </div>
                 ) : (
                     <>
@@ -117,7 +121,7 @@ export function PsychologistsAgeRangeChart() {
                                         innerRadius={70}
                                         outerRadius={90}
                                         strokeWidth={5}
-                                        stroke="hsl(var(--background))"
+                                        stroke="var(--card)"
                                         paddingAngle={2}
                                     >
                                         {data?.map((_, index) => (
@@ -132,7 +136,7 @@ export function PsychologistsAgeRangeChart() {
                             </ChartContainer>
                         </div>
 
-                        <div className="grid grid-cols-2 gap-x-4 gap-y-3 pt-6 border-t border-slate-100 mt-6">
+                        <div className="grid grid-cols-2 gap-x-4 gap-y-3 pt-6 border-t border-border mt-6">
                             {data?.map((item, index) => {
                                 const percentage = ((item.count / totalPsychologists) * 100).toFixed(1)
                                 return (
@@ -146,7 +150,7 @@ export function PsychologistsAgeRangeChart() {
                                                 {item.ageRange}
                                             </span>
                                         </div>
-                                        <span className="text-[11px] font-bold tabular-nums">
+                                        <span className="text-[11px] font-bold tabular-nums text-foreground">
                                             {percentage}%
                                         </span>
                                     </div>

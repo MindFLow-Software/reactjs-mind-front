@@ -30,23 +30,23 @@ export function MostVotedSuggestionsCard() {
     })
 
     return (
-        <Card className="col-span-full lg:col-span-4 border-slate-200/80 bg-gradient-to-b from-slate-50 to-white shadow-md rounded-2xl overflow-hidden flex flex-col">
-            <CardHeader className="border-b border-slate-100 bg-white/50 space-y-1 p-4">
+        <Card className="col-span-full lg:col-span-4 border-border bg-card shadow-md rounded-2xl overflow-hidden flex flex-col">
+            <CardHeader className="border-b border-border bg-muted/30 space-y-1 p-4">
                 <div className="flex items-center justify-between">
                     <div className="flex items-center gap-2">
-                        <TrendingUp className="size-4 text-[#27187E]" />
-                        <CardTitle className="text-base font-bold text-slate-800">Sugestões em Alta</CardTitle>
+                        <TrendingUp className="size-4 text-primary" />
+                        <CardTitle className="text-base font-bold text-foreground">Sugestões em Alta</CardTitle>
                     </div>
                 </div>
-                <CardDescription className="text-xs font-medium text-slate-500">
+                <CardDescription className="text-xs font-medium text-muted-foreground">
                     Ideias mais apoiadas pela comunidade
                 </CardDescription>
             </CardHeader>
 
-            <CardContent className="p-3 flex-1 overflow-y-auto min-h-0 scrollbar-thin scrollbar-thumb-slate-200">
+            <CardContent className="p-3 flex-1 overflow-y-auto min-h-0 scrollbar-thin scrollbar-thumb-border hover:scrollbar-thumb-muted-foreground/20 bg-card">
                 {isLoading ? (
                     <div className="flex h-[300px] items-center justify-center">
-                        <Loader2 className="h-8 w-8 animate-spin text-slate-300" />
+                        <Loader2 className="h-8 w-8 animate-spin text-muted-foreground" />
                     </div>
                 ) : (
                     <div className="space-y-3">
@@ -60,7 +60,7 @@ export function MostVotedSuggestionsCard() {
                         ))}
 
                         {suggestions?.length === 0 && (
-                            <p className="text-center py-10 text-slate-400 text-sm italic">
+                            <p className="text-center py-10 text-muted-foreground text-sm italic">
                                 Nenhuma sugestão votada ainda.
                             </p>
                         )}
