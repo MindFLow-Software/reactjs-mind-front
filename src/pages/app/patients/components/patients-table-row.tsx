@@ -15,7 +15,6 @@ import { Dialog } from "@/components/ui/dialog"
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip"
 
 import { PatientsDetails } from "./patients-details"
-// 🟢 Importamos o novo componente unificado (ajuste o caminho se necessário)
 import { RegisterPatients } from "../register-patients/register-patients"
 import { DeletePatientDialog } from "./delete-patient-dialog"
 import { deletePatients } from "@/api/delete-patients"
@@ -61,7 +60,7 @@ export function PatientsTableRow({ patient }: PatientsTableRowProps) {
 
     return (
         <TableRow
-            className={`group hover:bg-muted/50 transition-all border-l-2 border-l-transparent hover:border-l-primary/50 
+            className={`group hover:bg-muted/50 transition-[background-color,border-color] border-l-2 border-l-transparent hover:border-l-primary/50 
       ${!isActive ? 'opacity-60 bg-muted/20' : ''}`}
         >
             <TableCell className="w-[50px]">
@@ -71,10 +70,11 @@ export function PatientsTableRow({ patient }: PatientsTableRowProps) {
                             <Button
                                 variant="ghost"
                                 size="icon"
-                                className="cursor-pointer h-8 w-8 rounded-lg opacity-60 group-hover:opacity-100 group-hover:bg-primary/10 transition-all"
+                                aria-label="Ver detalhes do prontuário"
+                                className="cursor-pointer h-8 w-8 rounded-lg opacity-60 group-hover:opacity-100 group-hover:bg-primary/10 transition-[opacity,background-color] focus-visible:ring-2 focus-visible:ring-blue-500"
                                 onClick={() => setIsDetailsOpen(true)}
                             >
-                                <Search className="h-4 w-4" />
+                                <Search className="h-4 w-4" aria-hidden="true" />
                             </Button>
                         </TooltipTrigger>
                         <TooltipContent side="right" className="text-xs">Ver prontuário</TooltipContent>
@@ -101,26 +101,26 @@ export function PatientsTableRow({ patient }: PatientsTableRowProps) {
             <TableCell>
                 {isActive ? (
                     <Badge className="bg-emerald-500/10 text-emerald-600 border-emerald-500/20 hover:bg-emerald-500/20 gap-1.5 h-[22px] px-2 text-[10px] font-bold uppercase tracking-tight">
-                        <CheckCircle2 className="h-3 w-3" /> Ativo
+                        <CheckCircle2 className="h-3 w-3" aria-hidden="true" /> Ativo
                     </Badge>
                 ) : (
                     <Badge variant="secondary" className="bg-zinc-500/10 text-zinc-600 border-zinc-500/20 gap-1.5 h-[22px] px-2 text-[10px] font-bold uppercase tracking-tight">
-                        <XCircle className="h-3 w-3" /> Inativo
+                        <XCircle className="h-3 w-3" aria-hidden="true" /> Inativo
                     </Badge>
                 )}
             </TableCell>
 
             <TableCell>
                 <div className="inline-flex items-center gap-1.5 px-2 py-1 rounded-md bg-muted/50 border border-transparent font-mono text-xs font-medium tabular-nums">
-                    <Fingerprint className="h-3.5 w-3.5 text-muted-foreground" />
-                    {cpf ? formatCPF(cpf) : "---"}
+                    <Fingerprint className="h-3.5 w-3.5 text-muted-foreground" aria-hidden="true" />
+                    {cpf ? formatCPF(cpf) : "—"}
                 </div>
             </TableCell>
 
             <TableCell>
-                <div className="flex items-center gap-1.5">
-                    <Phone className="h-3 w-3 text-muted-foreground" />
-                    <span className="text-xs font-medium tabular-nums">{phoneNumber ? formatPhone(phoneNumber) : "---"}</span>
+                <div className="flex items-center gap-1.5 tabular-nums">
+                    <Phone className="h-3 w-3 text-muted-foreground" aria-hidden="true" />
+                    <span className="text-xs font-medium">{phoneNumber ? formatPhone(phoneNumber) : "—"}</span>
                 </div>
             </TableCell>
 
@@ -129,9 +129,9 @@ export function PatientsTableRow({ patient }: PatientsTableRowProps) {
                     <Tooltip>
                         <TooltipTrigger asChild>
                             <div className="flex items-center gap-1.5 cursor-default">
-                                <AtSign className="h-3 w-3 text-muted-foreground shrink-0" />
-                                <span className="text-xs font-medium tabular-nums truncate max-w-[150px]">
-                                    {email || "---"}
+                                <AtSign className="h-3 w-3 text-muted-foreground shrink-0" aria-hidden="true" />
+                                <span className="text-xs font-medium truncate max-w-[150px]">
+                                    {email || "—"}
                                 </span>
                             </div>
                         </TooltipTrigger>
@@ -145,20 +145,20 @@ export function PatientsTableRow({ patient }: PatientsTableRowProps) {
             </TableCell>
 
             <TableCell>
-                <div className="flex flex-col">
-                    <span className="text-sm font-semibold tabular-nums tracking-tight">
+                <div className="flex flex-col tabular-nums">
+                    <span className="text-sm font-semibold tracking-tight">
                         {ageDisplay}
                     </span>
                     <span className="text-[10px] text-muted-foreground/70 flex items-center gap-1 uppercase font-medium">
-                        <CalendarDays className="h-2.5 w-2.5" />
-                        {isValidDate ? format(new Date(dateOfBirth), "dd/MM/yyyy") : "---"}
+                        <CalendarDays className="h-2.5 w-2.5" aria-hidden="true" />
+                        {isValidDate ? format(new Date(dateOfBirth), "dd/MM/yyyy") : "—"}
                     </span>
                 </div>
             </TableCell>
 
             <TableCell>
                 <Badge variant="outline" className={`h-[20px] px-2 text-[10px] font-bold uppercase tracking-tight gap-1.5 ${currentGender.className}`}>
-                    <currentGender.icon className="h-3 w-3" />
+                    <currentGender.icon className="h-3 w-3" aria-hidden="true" />
                     {currentGender.label}
                 </Badge>
             </TableCell>
@@ -171,10 +171,11 @@ export function PatientsTableRow({ patient }: PatientsTableRowProps) {
                                 <Button
                                     size="icon"
                                     variant="ghost"
+                                    aria-label="Editar informações do paciente"
                                     onClick={() => setIsEditOpen(true)}
-                                    className="cursor-pointer h-8 w-8 rounded-lg transition-colors text-muted-foreground hover:text-blue-600 hover:bg-blue-50"
+                                    className="cursor-pointer h-8 w-8 rounded-lg transition-[color,background-color] text-muted-foreground hover:text-blue-600 hover:bg-blue-50 focus-visible:ring-2 focus-visible:ring-blue-500"
                                 >
-                                    <UserPen className="h-4 w-4" />
+                                    <UserPen className="h-4 w-4" aria-hidden="true" />
                                 </Button>
                             </TooltipTrigger>
                             <TooltipContent className="text-xs">Editar</TooltipContent>
@@ -185,13 +186,14 @@ export function PatientsTableRow({ patient }: PatientsTableRowProps) {
                                 <Button
                                     size="icon"
                                     variant="ghost"
+                                    aria-label={isActive ? "Inativar paciente" : "Reativar paciente"}
                                     onClick={() => setIsDeleteOpen(true)}
-                                    className={`cursor-pointer h-8 w-8 rounded-lg transition-colors text-muted-foreground ${isActive
+                                    className={`cursor-pointer h-8 w-8 rounded-lg transition-[color,background-color] text-muted-foreground ${isActive
                                         ? 'hover:text-red-600 hover:bg-red-50'
                                         : 'hover:text-emerald-600 hover:bg-emerald-50'
-                                        }`}
+                                        } focus-visible:ring-2 focus-visible:ring-blue-500`}
                                 >
-                                    {isActive ? <Trash2 className="h-4 w-4" /> : <UserCheck className="h-4 w-4" />}
+                                    {isActive ? <Trash2 className="h-4 w-4" aria-hidden="true" /> : <UserCheck className="h-4 w-4" aria-hidden="true" />}
                                 </Button>
                             </TooltipTrigger>
                             <TooltipContent className="text-xs">{isActive ? 'Inativar' : 'Reativar'}</TooltipContent>

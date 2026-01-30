@@ -167,7 +167,7 @@ export function RegisterPatients({ patient, onSuccess }: RegisterPatientsProps) 
                 <DialogDescription>
                     {isEditMode
                         ? `Atualize as informações do prontuário de ${patient.firstName}.`
-                        : "Inicie o acompanhamento apenas com o nome. Você pode completar os demais dados depois."
+                        : "Inicie o acompanhamento apenas com o nome. Você pode completar os demais dados depois…"
                     }
                 </DialogDescription>
             </DialogHeader>
@@ -183,23 +183,27 @@ export function RegisterPatients({ patient, onSuccess }: RegisterPatientsProps) 
 
                     <fieldset className="flex-1 w-full space-y-4">
                         <legend className="text-sm font-semibold text-foreground flex items-center gap-2 px-1 mb-2">
-                            <Contact className="size-4 text-blue-500" />
+                            <Contact className="size-4 text-blue-500" aria-hidden="true" />
                             Dados Principais
                         </legend>
                         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                             <div className="space-y-2">
-                                <Label className={cn(errors.firstName && "text-red-500")}>Nome *</Label>
+                                <Label htmlFor="firstName" className={cn(errors.firstName && "text-red-500")}>Nome *</Label>
                                 <Input
+                                    id="firstName"
                                     {...register("firstName")}
-                                    placeholder="Ex: Ana"
+                                    placeholder="Ex: Ana…"
+                                    autoComplete="given-name"
                                     className={cn(errors.firstName && "border-red-500 focus-visible:ring-red-500")}
                                 />
                             </div>
                             <div className="space-y-2">
-                                <Label className={cn(errors.lastName && "text-red-500")}>Sobrenome *</Label>
+                                <Label htmlFor="lastName" className={cn(errors.lastName && "text-red-500")}>Sobrenome *</Label>
                                 <Input
+                                    id="lastName"
                                     {...register("lastName")}
-                                    placeholder="Ex: Silva"
+                                    placeholder="Ex: Silva…"
+                                    autoComplete="family-name"
                                     className={cn(errors.lastName && "border-red-500 focus-visible:ring-red-500")}
                                 />
                             </div>
@@ -209,46 +213,52 @@ export function RegisterPatients({ patient, onSuccess }: RegisterPatientsProps) 
 
                 <fieldset className="space-y-4">
                     <legend className="text-sm font-semibold text-foreground flex items-center gap-2 pt-2 border-t w-full">
-                        <ShieldCheck className="size-4 text-blue-500" />
+                        <ShieldCheck className="size-4 text-blue-500" aria-hidden="true" />
                         Informações Complementares
                     </legend>
                     <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mt-4">
                         <div className="space-y-2">
-                            <Label className={cn(errors.cpf && "text-red-500")}>CPF</Label>
+                            <Label htmlFor="cpf" className={cn(errors.cpf && "text-red-500")}>CPF</Label>
                             <Controller
                                 name="cpf"
                                 control={control}
                                 render={({ field: { ref, ...f } }) => (
                                     <MaskedInput
                                         {...f}
+                                        id="cpf"
                                         inputRef={ref}
                                         mask="000.000.000-00"
                                         placeholder="000.000.000-00"
-                                        className={cn(errors.cpf && "border-red-500 focus-visible:ring-red-500")}
+                                        spellCheck={false}
+                                        className={cn("font-variant-numeric: tabular-nums", errors.cpf && "border-red-500 focus-visible:ring-red-500")}
                                     />
                                 )}
                             />
-                            {errors.cpf && <p className="text-[10px] text-red-500 font-bold uppercase mt-1">{errors.cpf.message}</p>}
+                            {errors.cpf && <p role="alert" className="text-[10px] text-red-500 font-bold uppercase mt-1">{errors.cpf.message}</p>}
                         </div>
 
                         <div className="space-y-2">
-                            <Label>Celular</Label>
+                            <Label htmlFor="phoneNumber">Celular</Label>
                             <Controller
                                 name="phoneNumber"
                                 control={control}
                                 render={({ field: { ref, ...f } }) => (
                                     <MaskedInput
                                         {...f}
+                                        id="phoneNumber"
                                         inputRef={ref}
                                         mask="(00) 00000-0000"
                                         placeholder="(00) 00000-0000"
+                                        type="tel"
+                                        autocomplete="tel"
+                                        className="font-variant-numeric: tabular-nums"
                                     />
                                 )}
                             />
                         </div>
 
                         <div className="space-y-2">
-                            <Label className={cn(errors.dateOfBirth && "text-red-500")}>Nascimento</Label>
+                            <Label htmlFor="dateOfBirth" className={cn(errors.dateOfBirth && "text-red-500")}>Nascimento</Label>
                             <Controller
                                 name="dateOfBirth"
                                 control={control}
@@ -270,18 +280,22 @@ export function RegisterPatients({ patient, onSuccess }: RegisterPatientsProps) 
                                         <Popover open={calendarOpen} onOpenChange={setCalendarOpen}>
                                             <div className="relative w-full">
                                                 <Input
+                                                    id="dateOfBirth"
                                                     placeholder="DD/MM/AAAA"
                                                     value={inputValue}
                                                     onChange={handleInputChange}
                                                     maxLength={10}
-                                                    className={cn("pr-10", errors.dateOfBirth && "border-red-500 focus-visible:ring-red-500")}
+                                                    autoComplete="off"
+                                                    spellCheck={false}
+                                                    className={cn("pr-10 font-variant-numeric: tabular-nums", errors.dateOfBirth && "border-red-500 focus-visible:ring-red-500")}
                                                 />
                                                 <PopoverTrigger asChild>
                                                     <button
                                                         type="button"
-                                                        className="absolute right-0 top-0 h-full px-3 py-2 hover:bg-transparent cursor-pointer text-muted-foreground flex items-center justify-center"
+                                                        aria-label="Abrir calendário"
+                                                        className="absolute right-0 top-0 h-full px-3 py-2 hover:bg-transparent cursor-pointer text-muted-foreground flex items-center justify-center focus-visible:ring-2 focus-visible:ring-blue-500 outline-none rounded-r-md"
                                                     >
-                                                        <CalendarIcon className="size-4" />
+                                                        <CalendarIcon className="size-4" aria-hidden="true" />
                                                     </button>
                                                 </PopoverTrigger>
                                             </div>
@@ -305,7 +319,7 @@ export function RegisterPatients({ patient, onSuccess }: RegisterPatientsProps) 
                                     )
                                 }}
                             />
-                            {errors.dateOfBirth && <p className="text-[10px] text-red-500 font-bold uppercase mt-1">{errors.dateOfBirth.message}</p>}
+                            {errors.dateOfBirth && <p role="alert" className="text-[10px] text-red-500 font-bold uppercase mt-1">{errors.dateOfBirth.message}</p>}
                         </div>
 
                         <div className="space-y-2">
@@ -315,18 +329,18 @@ export function RegisterPatients({ patient, onSuccess }: RegisterPatientsProps) 
                                 control={control}
                                 render={({ field }) => (
                                     <Select value={field.value} onValueChange={field.onChange}>
-                                        <SelectTrigger className="w-full cursor-pointer">
+                                        <SelectTrigger className="w-full cursor-pointer focus-visible:ring-2 focus-visible:ring-blue-500">
                                             <SelectValue placeholder="Selecione" />
                                         </SelectTrigger>
                                         <SelectContent>
                                             <SelectItem value="FEMININE" className="cursor-pointer">
-                                                <div className="flex items-center gap-2"><Venus className="h-4 w-4 text-rose-500" /> Feminino</div>
+                                                <div className="flex items-center gap-2"><Venus className="h-4 w-4 text-rose-500" aria-hidden="true" /> Feminino</div>
                                             </SelectItem>
                                             <SelectItem value="MASCULINE" className="cursor-pointer">
-                                                <div className="flex items-center gap-2"><Mars className="h-4 w-4 text-blue-500" /> Masculino</div>
+                                                <div className="flex items-center gap-2"><Mars className="h-4 w-4 text-blue-500" aria-hidden="true" /> Masculino</div>
                                             </SelectItem>
                                             <SelectItem value="OTHER" className="cursor-pointer">
-                                                <div className="flex items-center gap-2"><Users className="h-4 w-4 text-violet-500" /> Outro</div>
+                                                <div className="flex items-center gap-2"><Users className="h-4 w-4 text-violet-500" aria-hidden="true" /> Outro</div>
                                             </SelectItem>
                                         </SelectContent>
                                     </Select>
@@ -337,13 +351,13 @@ export function RegisterPatients({ patient, onSuccess }: RegisterPatientsProps) 
                 </fieldset>
 
                 <fieldset className="space-y-4">
-                    <div className="grid grid-cols-1 lg:grid-cols-1 gap-4">
+                    <div className="grid grid-cols-1 gap-4">
                         {isEditMode && (
                             <div className="bg-muted/30 rounded-lg p-2 border border-dashed h-full">
                                 <AttachmentsList patientId={patient.id} />
                             </div>
                         )}
-                        <div className={cn(!isEditMode && "lg:col-span-2")}>
+                        <div>
                             <UploadZone
                                 selectedFiles={selectedFiles}
                                 onFilesChange={setSelectedFiles}
@@ -356,10 +370,12 @@ export function RegisterPatients({ patient, onSuccess }: RegisterPatientsProps) 
                     <Button
                         type="submit"
                         disabled={isPending || isUploading}
-                        className="gap-2 w-full lg:w-64 bg-blue-600 hover:bg-blue-700 shadow-sm transition-all active:scale-95 cursor-pointer"
+                        className="gap-2 w-full lg:w-64 bg-blue-600 hover:bg-blue-700 shadow-sm transition-[transform,background-color,opacity] active:scale-95 cursor-pointer focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2"
                     >
-                        {(isPending || isUploading) && <Loader2 className="h-4 w-4 animate-spin" />}
-                        {isPending || isUploading ? "Salvando..." : (isEditMode ? "Salvar Alterações" : "Cadastrar Paciente")}
+                        {(isPending || isUploading) && <Loader2 className="h-4 w-4 animate-spin" aria-hidden="true" />}
+                        <span aria-live="polite">
+                            {isPending || isUploading ? "Salvando…" : (isEditMode ? "Salvar Alterações" : "Cadastrar Paciente")}
+                        </span>
                     </Button>
                 </div>
             </form>

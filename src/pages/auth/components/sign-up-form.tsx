@@ -174,7 +174,9 @@ export function SignUpForm({
             <Input
               id="firstName"
               {...register("firstName")}
-              placeholder="Jon"
+              placeholder="Jon…"
+              autoComplete="given-name"
+              aria-invalid={!!errors.firstName}
               className={cn(errors.firstName && "border-red-500 focus-visible:ring-red-500")}
             />
           </Field>
@@ -184,7 +186,9 @@ export function SignUpForm({
             <Input
               id="lastName"
               {...register("lastName")}
-              placeholder="Doe"
+              placeholder="Doe…"
+              autoComplete="family-name"
+              aria-invalid={!!errors.lastName}
               className={cn(errors.lastName && "border-red-500 focus-visible:ring-red-500")}
             />
           </Field>
@@ -196,7 +200,10 @@ export function SignUpForm({
             id="email"
             type="email"
             {...register("email")}
-            placeholder="exemplo@mindflush.com"
+            placeholder="exemplo@mindflush.com…"
+            autoComplete="email"
+            spellCheck={false}
+            aria-invalid={!!errors.email}
             className={cn(errors.email && "border-red-500 focus-visible:ring-red-500")}
           />
         </Field>
@@ -208,28 +215,31 @@ export function SignUpForm({
               id="password"
               type={showPassword ? "text" : "password"}
               {...register("password")}
-              placeholder="Crie uma senha forte"
+              placeholder="Crie uma senha forte…"
+              autoComplete="new-password"
+              aria-invalid={!!errors.password}
               className={cn("pr-10", errors.password && "border-red-500 focus-visible:ring-red-500")}
             />
             <button
               type="button"
               onClick={togglePasswordVisibility}
-              className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground cursor-pointer"
+              aria-label={showPassword ? "Esconder senha" : "Mostrar senha"}
+              className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground cursor-pointer transition-colors focus-visible:ring-2 focus-visible:ring-blue-500 outline-none rounded-sm"
             >
-              {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
+              {showPassword ? <EyeOff size={18} aria-hidden="true" /> : <Eye size={18} aria-hidden="true" />}
             </button>
           </div>
 
           <div className="mt-3 space-y-1.5 px-1">
             {passwordChecks.map((check, i) => (
-              <div key={i} className="flex items-center gap-2 transition-all">
+              <div key={i} className="flex items-center gap-2 transition-opacity">
                 {check.met ? (
-                  <CheckCircle2 className="size-3 text-emerald-500" />
+                  <CheckCircle2 className="size-3 text-emerald-500" aria-hidden="true" />
                 ) : (
-                  <Circle className="size-3 text-muted-foreground/30" />
+                  <Circle className="size-3 text-muted-foreground/30" aria-hidden="true" />
                 )}
                 <span className={cn(
-                  "text-[10px] font-bold uppercase tracking-tight transition-colors",
+                  "text-[10px] font-bold uppercase tracking-tight transition-colors tabular-nums",
                   check.met ? "text-emerald-600" : "text-muted-foreground/60"
                 )}>
                   {check.label}
@@ -252,7 +262,10 @@ export function SignUpForm({
                   mask="(00) 00000-0000"
                   placeholder="(99) 99999-9999"
                   id="phoneNumber"
-                  className={cn(errors.phoneNumber && "border-red-500 focus-visible:ring-red-500")}
+                  type="tel"
+                  autocomplete="tel"
+                  aria-invalid={!!errors.phoneNumber}
+                  className={cn("tabular-nums", errors.phoneNumber && "border-red-500 focus-visible:ring-red-500")}
                 />
               )}
             />
@@ -270,7 +283,9 @@ export function SignUpForm({
                   mask="000.000.000-00"
                   placeholder="123.456.789-00"
                   id="cpf"
-                  className={cn(errors.cpf && "border-red-500 focus-visible:ring-red-500")}
+                  autocomplete="off"
+                  aria-invalid={!!errors.cpf}
+                  className={cn("tabular-nums", errors.cpf && "border-red-500 focus-visible:ring-red-500")}
                 />
               )}
             />
@@ -278,7 +293,7 @@ export function SignUpForm({
         </div>
 
         <Field>
-          <FieldLabel className={cn(errors.dateOfBirth && "text-red-500")}>Data de Nascimento</FieldLabel>
+          <FieldLabel htmlFor="dateOfBirth" className={cn(errors.dateOfBirth && "text-red-500")}>Data de Nascimento</FieldLabel>
           <Controller
             name="dateOfBirth"
             control={control}
@@ -312,18 +327,22 @@ export function SignUpForm({
                 <Popover open={calendarOpen} onOpenChange={setCalendarOpen}>
                   <div className="relative w-full">
                     <Input
+                      id="dateOfBirth"
                       placeholder="DD/MM/AAAA"
                       value={inputValue}
                       onChange={handleInputChange}
                       maxLength={10}
-                      className={cn("pr-10", errors.dateOfBirth && "border-red-500 focus-visible:ring-red-500")}
+                      autoComplete="bday"
+                      aria-invalid={!!errors.dateOfBirth}
+                      className={cn("pr-10 tabular-nums", errors.dateOfBirth && "border-red-500 focus-visible:ring-red-500")}
                     />
                     <PopoverTrigger asChild>
                       <button
                         type="button"
-                        className="absolute right-0 top-0 h-full px-3 py-2 hover:bg-transparent cursor-pointer text-muted-foreground flex items-center justify-center"
+                        aria-label="Abrir seletor de data"
+                        className="absolute right-0 top-0 h-full px-3 py-2 hover:bg-transparent cursor-pointer text-muted-foreground flex items-center justify-center focus-visible:ring-2 focus-visible:ring-blue-500 outline-none rounded-r-md"
                       >
-                        <CalendarIcon className="size-4" />
+                        <CalendarIcon className="size-4" aria-hidden="true" />
                       </button>
                     </PopoverTrigger>
                   </div>
@@ -354,8 +373,8 @@ export function SignUpForm({
               control={control}
               render={({ field }) => (
                 <Select onValueChange={field.onChange} value={field.value}>
-                  <SelectTrigger className={cn("cursor-pointer", errors.gender && "border-red-500 ring-red-500")}>
-                    <SelectValue placeholder="Selecione seu gênero" />
+                  <SelectTrigger className={cn("cursor-pointer focus-visible:ring-2 focus-visible:ring-blue-500", errors.gender && "border-red-500 ring-red-500")}>
+                    <SelectValue placeholder="Selecione seu gênero…" />
                   </SelectTrigger>
                   <SelectContent>
                     <SelectItem value="MASCULINE" className="cursor-pointer">Masculino</SelectItem>
@@ -368,15 +387,21 @@ export function SignUpForm({
           </Field>
         </div>
 
-        <Button disabled={isSubmitting} className="cursor-pointer h-11 bg-blue-600 hover:bg-blue-700 active:scale-[0.98] transition-all duration-200 font-medium w-full" type="submit">
-          {isSubmitting ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : null}
-          {isSubmitting ? "Criando conta..." : "Criar conta"}
+        <Button
+          disabled={isSubmitting}
+          className="cursor-pointer h-11 bg-blue-600 hover:bg-blue-700 active:scale-[0.98] transition-[transform,background-color] duration-200 font-medium w-full focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2 outline-none"
+          type="submit"
+        >
+          {isSubmitting ? <Loader2 className="mr-2 h-4 w-4 animate-spin" aria-hidden="true" /> : null}
+          <span aria-live="polite">
+            {isSubmitting ? "Criando conta…" : "Criar conta"}
+          </span>
         </Button>
 
         <FieldDescription className="px-2 text-center text-xs leading-relaxed text-muted-foreground">
           Ao continuar, você concorda com nossos{" "}
-          <a href="#" className="underline underline-offset-4 hover:text-foreground cursor-pointer">termos de serviço</a> e{" "}
-          <a href="#" className="underline underline-offset-4 hover:text-foreground cursor-pointer">políticas de privacidade</a>.
+          <a href="#" className="underline underline-offset-4 hover:text-foreground cursor-pointer focus-visible:ring-1 focus-visible:ring-blue-500 rounded-sm outline-none">termos de serviço</a> e{" "}
+          <a href="#" className="underline underline-offset-4 hover:text-foreground cursor-pointer focus-visible:ring-1 focus-visible:ring-blue-500 rounded-sm outline-none">políticas de privacidade</a>.
         </FieldDescription>
       </FieldGroup>
     </form>
