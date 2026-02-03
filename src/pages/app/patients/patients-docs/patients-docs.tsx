@@ -11,8 +11,8 @@ import { PaginationDocsPatients } from "@/components/pagination-docs-patients"
 
 import { useHeaderStore } from "@/hooks/use-header-store"
 import { getAllAttachments, deleteAttachment } from "@/api/attachments"
-import { AttachmentsTableFilters } from "./patients-docs/attachments-table-filters"
-import { AttachmentsTable } from "./patients-docs/attachments-table"
+import { AttachmentsTableFilters } from "./components/attachments-table-filters"
+import { AttachmentsTable } from "./components/attachments-table"
 
 export function PatientDocuments() {
     const { setTitle } = useHeaderStore()
@@ -84,7 +84,7 @@ export function PatientDocuments() {
         <>
             <Helmet title="Documentos - MindFlush" />
 
-            <div className="flex flex-col gap-6 mt-6">
+            <div className="flex flex-col gap-4">
                 <section className="grid grid-cols-1 gap-6">
                     <Card className="bg-card border-border flex flex-col justify-between shadow-sm">
                         <CardHeader className="pb-2">

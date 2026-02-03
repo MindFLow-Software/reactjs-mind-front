@@ -1,6 +1,6 @@
 "use client"
 
-import { FileText, Trash2, ExternalLink, User, CalendarDays, HardDrive } from "lucide-react"
+import { FileText, Trash2, Download, User, CalendarDays, PackageOpen } from "lucide-react"
 import { format } from "date-fns"
 import { ptBR } from "date-fns/locale"
 
@@ -19,6 +19,27 @@ interface AttachmentsTableRowProps {
 export function AttachmentsTableRow({ attachment, onDelete }: AttachmentsTableRowProps) {
     const { id, filename, fileUrl, contentType, SizeInBytes, uploadedAt, patient } = attachment
 
+    const handleDownload = async () => {
+        if (!fileUrl) return
+
+        try {
+            const response = await fetch(fileUrl)
+            const blob = await response.blob()
+            const url = window.URL.createObjectURL(blob)
+
+            const link = document.createElement('a')
+            link.href = url
+            link.setAttribute('download', filename)
+            document.body.appendChild(link)
+            link.click()
+
+            link.parentNode?.removeChild(link)
+            window.URL.revokeObjectURL(url)
+        } catch (error) {
+            console.error("Erro ao realizar download:", error)
+        }
+    }
+
     const formatBytes = (bytes: number | undefined | null) => {
         const value = Number(bytes)
         if (isNaN(value) || value <= 0) return '0 Bytes'
@@ -35,24 +56,7 @@ export function AttachmentsTableRow({ attachment, onDelete }: AttachmentsTableRo
         <TableRow
             className="group hover:bg-muted/50 transition-[background-color,border-color] border-l-2 border-l-transparent hover:border-l-primary/50"
         >
-            {/* Ação de Visualização Rápida (Estilo Search do Patients) */}
-            <TableCell className="w-[50px]">
-                <TooltipProvider delayDuration={100}>
-                    <Tooltip>
-                        <TooltipTrigger asChild>
-                            <Button
-                                variant="ghost"
-                                size="icon"
-                                className="cursor-pointer h-8 w-8 rounded-lg opacity-60 group-hover:opacity-100 group-hover:bg-primary/10 transition-[opacity,background-color]"
-                                onClick={() => fileUrl && window.open(fileUrl, '_blank')}
-                            >
-                                <ExternalLink className="h-4 w-4" aria-hidden="true" />
-                            </Button>
-                        </TooltipTrigger>
-                        <TooltipContent side="right" className="text-xs">Abrir arquivo</TooltipContent>
-                    </Tooltip>
-                </TooltipProvider>
-            </TableCell>
+            <TableCell className="w-[10px]"></TableCell>
 
             {/* Informações do Arquivo */}
             <TableCell>
@@ -61,9 +65,18 @@ export function AttachmentsTableRow({ attachment, onDelete }: AttachmentsTableRo
                         <FileText className="h-4 w-4 text-primary" aria-hidden="true" />
                     </div>
                     <div className="flex flex-col">
-                        <span className="font-semibold text-sm leading-tight text-foreground truncate max-w-[180px]">
-                            {filename}
-                        </span>
+                        <TooltipProvider delayDuration={100}>
+                            <Tooltip>
+                                <TooltipTrigger asChild>
+                                    <span className="font-semibold text-sm leading-tight text-foreground truncate max-w-[180px] cursor-default">
+                                        {filename}
+                                    </span>
+                                </TooltipTrigger>
+                                <TooltipContent side="top" className="text-xs font-medium">
+                                    {filename}
+                                </TooltipContent>
+                            </Tooltip>
+                        </TooltipProvider>
                         <span className="text-[11px] text-muted-foreground/70 uppercase font-medium tracking-tighter">
                             {fileType}
                         </span>
@@ -92,7 +105,7 @@ export function AttachmentsTableRow({ attachment, onDelete }: AttachmentsTableRo
             {/* Tamanho do Arquivo */}
             <TableCell>
                 <div className="inline-flex items-center gap-1.5 px-2 py-1 rounded-md bg-muted/50 border border-transparent font-mono text-xs font-medium tabular-nums">
-                    <HardDrive className="h-3.5 w-3.5 text-muted-foreground" aria-hidden="true" />
+                    <PackageOpen className="h-3.5 w-3.5 text-muted-foreground" aria-hidden="true" />
                     {formatBytes(SizeInBytes)}
                 </div>
             </TableCell>
@@ -110,7 +123,7 @@ export function AttachmentsTableRow({ attachment, onDelete }: AttachmentsTableRo
                 </div>
             </TableCell>
 
-            {/* Ações (Estilo Trash/Edit do Patients) */}
+            {/* Ações */}
             <TableCell className="text-right">
                 <div className="flex justify-end gap-2 pr-2">
                     <TooltipProvider delayDuration={100}>
@@ -125,7 +138,23 @@ export function AttachmentsTableRow({ attachment, onDelete }: AttachmentsTableRo
                                     <Trash2 className="h-4 w-4" aria-hidden="true" />
                                 </Button>
                             </TooltipTrigger>
-                            <TooltipContent className="text-xs">Excluir documento</TooltipContent>
+                            <TooltipContent className="text-xs font-medium">Excluir</TooltipContent>
+                        </Tooltip>
+                    </TooltipProvider>
+
+                    <TooltipProvider delayDuration={100}>
+                        <Tooltip>
+                            <TooltipTrigger asChild>
+                                <Button
+                                    variant="ghost"
+                                    size="icon"
+                                    className="cursor-pointer h-8 w-8 rounded-lg transition-[color,background-color] text-muted-foreground hover:text-blue-600 hover:bg-blue-50 focus-visible:ring-2 focus-visible:ring-blue-500"
+                                    onClick={handleDownload}
+                                >
+                                    <Download className="h-4 w-4" aria-hidden="true" />
+                                </Button>
+                            </TooltipTrigger>
+                            <TooltipContent side="top" className="text-xs font-medium">Download</TooltipContent>
                         </Tooltip>
                     </TooltipProvider>
                 </div>

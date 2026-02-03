@@ -15,7 +15,6 @@ import { Dialog } from "@/components/ui/dialog"
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip"
 
 import { PatientsDetails } from "./patients-details"
-import { RegisterPatients } from "../register-patients/register-patients"
 import { DeletePatientDialog } from "./delete-patient-dialog"
 import { deletePatients } from "@/api/delete-patients"
 
@@ -24,7 +23,8 @@ import type { Patient } from "@/api/get-patients"
 import { formatCPF } from "@/utils/formatCPF"
 import { formatPhone } from "@/utils/formatPhone"
 import { formatAGE } from "@/utils/formatAGE"
-import { UserAvatar } from "../../../../components/user-avatar"
+import { UserAvatar } from "@/components/user-avatar"
+import { RegisterPatients } from "../register-patients/register-patients"
 
 interface PatientsTableRowProps {
     patient: Patient

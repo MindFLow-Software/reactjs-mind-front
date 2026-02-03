@@ -57,7 +57,7 @@ export function PatientsList() {
         <>
             <Helmet title="Cadastro de Pacientes" />
 
-            <div className="flex flex-col gap-5 mt-6">
+            <div className="flex flex-col gap-4">
                 <PatientsTableFilters />
 
                 <PatientsTable

@@ -27,7 +27,7 @@ const getInitialRange = (): DateRange => {
 export function Dashboard() {
     const { setTitle } = useHeaderStore()
 
-    const [dateRange, ] = useState<DateRange>(getInitialRange)
+    const [dateRange,] = useState<DateRange>(getInitialRange)
     const { from: startDate, to: endDate } = dateRange
 
     useEffect(() => {
@@ -39,7 +39,7 @@ export function Dashboard() {
         <>
             <Helmet title="Dashboard" />
 
-            <div className="flex flex-col gap-5 mt-6 px-2 pb-8">
+            <div className="flex flex-col gap-4">
 
                 {/* Grid de Cards de Métricas */}
                 <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">

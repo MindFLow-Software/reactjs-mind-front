@@ -1,7 +1,7 @@
 import { createBrowserRouter, Outlet, redirect, Navigate, useLocation } from 'react-router-dom'
 import { AppLayout } from './pages/_layouts/app'
 import { AuthLayout } from './pages/_layouts/auth'
-import { PatientsList } from './pages/app/patients/patients-list'
+import { PatientsList } from './pages/app/patients/patients-list/patients-list'
 import { Dashboard } from './pages/app/dashboard/dashboard'
 import { NotFound } from './pages/404'
 import { SignIn } from './pages/auth/sign-in'
@@ -17,7 +17,7 @@ import { SuggestionPage } from './pages/app/suggestion/suggestion-page'
 import { AdminDashboard } from './pages/app/admin/dashboard/admin-dashboard'
 import { AdminSuggestionsPage } from './pages/app/admin/suggestions/suggestions-page'
 import { SuggestionsManagement } from './pages/app/admin/suggestions/suggestions-management'
-import { PatientDocuments } from './pages/app/patients/patients-docs'
+import { PatientDocuments } from './pages/app/patients/patients-docs/patients-docs'
 
 const getUser = () => {
   const userData = localStorage.getItem('user')

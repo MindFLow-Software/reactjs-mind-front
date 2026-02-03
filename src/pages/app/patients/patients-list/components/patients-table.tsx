@@ -35,7 +35,7 @@ export function PatientsTable({ patients, isLoading, perPage = 10 }: PatientsTab
                         <TableHead className="text-xs uppercase tracking-wider font-semibold">Email</TableHead>
                         <TableHead className="text-xs uppercase tracking-wider font-semibold">Idade / Nasc.</TableHead>
                         <TableHead className="text-xs uppercase tracking-wider font-semibold">Gênero</TableHead>
-                        <TableHead className="text-right pr-6 text-xs uppercase tracking-wider font-semibold">Ações</TableHead>
+                        <TableHead className="text-right pr-7 text-xs uppercase tracking-wider font-semibold">Ações</TableHead>
                     </TableRow>
                 </TableHeader>
 
