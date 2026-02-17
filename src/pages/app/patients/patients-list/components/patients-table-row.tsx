@@ -26,6 +26,7 @@ import { formatAGE } from "@/utils/formatAGE"
 import { UserAvatar } from "@/components/user-avatar"
 import { RegisterPatients } from "../register-patients/register-patients"
 import { useNavigate } from "react-router-dom"
+import { cn } from "@/lib/utils"
 
 interface PatientsTableRowProps {
     patient: Patient
@@ -43,8 +44,11 @@ export function PatientsTableRow({ patient }: PatientsTableRowProps) {
 
     const { mutateAsync: toggleStatusFn, isPending: isUpdating } = useMutation({
         mutationFn: () => deletePatients(id, !isActive),
-        onSuccess: () => {
-            queryClient.invalidateQueries({ queryKey: ["patients"] })
+        onSuccess: async () => {
+            await Promise.all([
+                queryClient.invalidateQueries({ queryKey: ["patients"] }),
+                queryClient.invalidateQueries({ queryKey: ["patient-details", id] })
+            ])
         }
     })
 
@@ -62,8 +66,10 @@ export function PatientsTableRow({ patient }: PatientsTableRowProps) {
 
     return (
         <TableRow
-            className={`group hover:bg-muted/50 transition-[background-color,border-color] border-l-2 border-l-transparent hover:border-l-primary/50 
-      ${!isActive ? 'opacity-60 bg-muted/20' : ''}`}
+            className={cn(
+                "group hover:bg-muted/50 transition-[background-color,border-color] border-l-2 border-l-transparent hover:border-l-primary/50",
+                !isActive && "opacity-60 bg-muted/20"
+            )}
         >
             <TableCell className="w-[50px]">
                 <TooltipProvider delayDuration={100}>
@@ -159,7 +165,7 @@ export function PatientsTableRow({ patient }: PatientsTableRowProps) {
             </TableCell>
 
             <TableCell>
-                <Badge variant="outline" className={`h-[20px] px-2 text-[10px] font-bold uppercase tracking-tight gap-1.5 ${currentGender.className}`}>
+                <Badge variant="outline" className={cn("h-[20px] px-2 text-[10px] font-bold uppercase tracking-tight gap-1.5", currentGender.className)}>
                     <currentGender.icon className="h-3 w-3" aria-hidden="true" />
                     {currentGender.label}
                 </Badge>
@@ -204,17 +210,16 @@ export function PatientsTableRow({ patient }: PatientsTableRowProps) {
                                     variant="ghost"
                                     aria-label={isActive ? "Inativar paciente" : "Reativar paciente"}
                                     onClick={() => setIsDeleteOpen(true)}
-                                    className={`cursor-pointer h-8 w-8 rounded-lg transition-[color,background-color] text-muted-foreground ${isActive
-                                        ? 'hover:text-red-600 hover:bg-red-50'
-                                        : 'hover:text-emerald-600 hover:bg-emerald-50'
-                                        } focus-visible:ring-2 focus-visible:ring-blue-500`}
+                                    className={cn(
+                                        "cursor-pointer h-8 w-8 rounded-lg transition-[color,background-color] text-muted-foreground focus-visible:ring-2 focus-visible:ring-blue-500",
+                                        isActive ? "hover:text-red-600 hover:bg-red-50" : "hover:text-emerald-600 hover:bg-emerald-50"
+                                    )}
                                 >
                                     {isActive ? <Trash2 className="h-4 w-4" aria-hidden="true" /> : <UserCheck className="h-4 w-4" aria-hidden="true" />}
                                 </Button>
                             </TooltipTrigger>
                             <TooltipContent className="text-xs">{isActive ? 'Inativar' : 'Reativar'}</TooltipContent>
                         </Tooltip>
-
                     </TooltipProvider>
                 </div>
             </TableCell>
@@ -239,7 +244,10 @@ export function PatientsTableRow({ patient }: PatientsTableRowProps) {
                         isActive={isActive}
                         isPending={isUpdating}
                         onClose={() => setIsDeleteOpen(false)}
-                        onInactivate={async () => await toggleStatusFn()}
+                        onInactivate={async () => {
+                            await toggleStatusFn()
+                            setIsDeleteOpen(false)
+                        }}
                     />
                 )}
             </Dialog>

@@ -28,7 +28,10 @@ export function PatientsList() {
             filter: filters.filter,
             status: filters.status,
         }),
-        staleTime: 1000 * 60 * 5,
+        staleTime: 1000 * 10,
+
+        refetchOnWindowFocus: true,
+
         placeholderData: (previousData) => previousData,
     })
 

@@ -35,7 +35,6 @@ export default function PatientDetails() {
     const [pageIndex, setPageIndex] = useState(0)
     const [currentTab, setCurrentTab] = useState("clinical")
 
-    // 1. Hook de Query com staleTime padronizado
     const { data: result, isLoading, isError } = useQuery({
         queryKey: ["patient-details", id, pageIndex],
         queryFn: () => getPatientDetails(id!, pageIndex),
@@ -43,14 +42,11 @@ export default function PatientDetails() {
         staleTime: 1000 * 60 * 5,
     })
 
-    // 2. Extração de dados via useMemo (Padrão de Consistência)
     const patientData = useMemo(() => result?.patient, [result])
     const meta = useMemo(() => result?.meta, [result])
 
-    // 3. Lógica de Status e Nome (Fontes da verdade)
     const isPatientActive = useMemo(() => {
         if (!patientData) return false
-        // Aceita 'active' da API ou o booleano isActive se mapeado
         const s = String(patientData.status).toLowerCase()
         return patientData.isActive === true || s === 'active' || s === 'ativo'
     }, [patientData])
@@ -59,7 +55,6 @@ export default function PatientDetails() {
         patientData ? `${patientData.firstName} ${patientData.lastName}` : ""
         , [patientData])
 
-    // 4. Sincronização do Header (Title/Subtitle)
     useEffect(() => {
         setTitle("Cadastro de Pacientes")
         if (patientFullName) {
@@ -68,7 +63,6 @@ export default function PatientDetails() {
         return () => setSubtitle(undefined)
     }, [patientFullName, setTitle, setSubtitle])
 
-    // 5. Tratamento de Erro Padronizado
     if (isError) {
         return (
             <div className="flex flex-col items-center justify-center h-[400px] gap-4">
@@ -84,7 +78,6 @@ export default function PatientDetails() {
         )
     }
 
-    // 6. Estado de Loading Padronizado
     if (isLoading || !patientData || !meta) {
         return (
             <div className="flex h-[60vh] items-center justify-center">
@@ -95,7 +88,6 @@ export default function PatientDetails() {
 
     return (
         <div className="flex flex-col gap-6">
-            {/* Top bar: Breadcrumb + Actions */}
             <div className="flex flex-col gap-3">
                 <div className="flex items-center justify-between">
                     <button
@@ -147,7 +139,6 @@ export default function PatientDetails() {
                 <Separator />
             </div>
 
-            {/* Header do Paciente */}
             <PatientDetailsHeader
                 patient={{
                     ...patientData,
@@ -155,7 +146,6 @@ export default function PatientDetails() {
                 }}
             />
 
-            {/* Grid de Métricas */}
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
                 <MetricCard
                     title="Sessões Totais"
@@ -199,7 +189,6 @@ export default function PatientDetails() {
                 </Card>
             </div>
 
-            {/* Conteúdo em Abas */}
             <Tabs value={currentTab} onValueChange={setCurrentTab} className="w-full">
                 <TabsList className="bg-muted/60 p-1 rounded-lg w-full sm:w-auto">
                     <TabsTrigger value="clinical" className="cursor-pointer rounded-md px-6 text-sm">Prontuário</TabsTrigger>
