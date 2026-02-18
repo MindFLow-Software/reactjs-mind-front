@@ -23,11 +23,21 @@ interface GetAttachmentsResponse {
   }
 }
 
-export async function getAllAttachments(pageIndex: number, search?: string): Promise<GetAttachmentsResponse> {
+/**
+ * Busca todos os anexos com filtros de paginação, busca textual e ID de paciente.
+ */
+export async function getAllAttachments(
+  pageIndex: number, 
+  search?: string, 
+  patientId?: string // 🟢 Recebe o ID do componente
+): Promise<GetAttachmentsResponse> {
   const response = await api.get<GetAttachmentsResponse>("/attachments", {
     params: { 
       page: pageIndex,
-      filter: search
+      filter: search,
+      // 🟢 O SEGREDO: Se for 'all', enviamos undefined para o back não filtrar.
+      // Caso contrário, enviamos o UUID do paciente selecionado.
+      patientId: patientId === 'all' ? undefined : patientId 
     }
   })
   return response.data

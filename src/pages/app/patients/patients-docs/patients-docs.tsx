@@ -22,6 +22,9 @@ export function PatientDocuments() {
     const [search, setSearch] = useState("")
     const [debouncedSearch, setDebouncedSearch] = useState("")
 
+    // 🟢 1. Estado central do filtro de paciente
+    const [patientId, setPatientId] = useState("all")
+
     useEffect(() => {
         setTitle('Gestão de Documentos')
     }, [setTitle])
@@ -35,9 +38,10 @@ export function PatientDocuments() {
         return () => clearTimeout(handler)
     }, [search])
 
+    // 🟢 2. A MÁGICA: Sempre que patientId mudar, o React Query percebe e refaz a busca
     const { data: result, isLoading, isError } = useQuery({
-        queryKey: ["all-attachments", pageIndex, debouncedSearch],
-        queryFn: () => getAllAttachments(pageIndex, debouncedSearch),
+        queryKey: ["all-attachments", pageIndex, debouncedSearch, patientId],
+        queryFn: () => getAllAttachments(pageIndex, debouncedSearch, patientId),
         staleTime: 1000 * 60 * 5,
         placeholderData: (previousData) => previousData,
     })
@@ -46,6 +50,7 @@ export function PatientDocuments() {
         mutationFn: deleteAttachment,
         onSuccess: () => {
             queryClient.invalidateQueries({ queryKey: ["all-attachments"] })
+            queryClient.invalidateQueries({ queryKey: ["patients-with-attachments"] })
             toast.success("Registro removido do sistema.")
         }
     })
@@ -68,6 +73,12 @@ export function PatientDocuments() {
         totalCount: 0,
         totalStorageSize: 0
     }, [result, pageIndex])
+
+    const handleClearFilters = () => {
+        setSearch("")
+        setPatientId("all")
+        setPageIndex(0)
+    }
 
     if (isError) {
         return (
@@ -111,8 +122,13 @@ export function PatientDocuments() {
                 <div className="space-y-4">
                     <AttachmentsTableFilters
                         search={search}
-                        onSearchChange={(val) => setSearch(val)}
-                        onClearFilters={() => { setSearch(""); setPageIndex(0); }}
+                        onSearchChange={setSearch}
+                        patientId={patientId}
+                        onPatientChange={(val) => {
+                            setPatientId(val)
+                            setPageIndex(0) // Reseta a página ao trocar o filtro
+                        }}
+                        onClearFilters={handleClearFilters}
                     />
 
                     <AttachmentsTable
