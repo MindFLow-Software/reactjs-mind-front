@@ -12,12 +12,16 @@ import {
     SelectValue,
 } from "@/components/ui/select"
 import { getPatientsWithAttachments } from "@/api/patient-with-attachment"
+import { DatePickerWithRange } from "./date-picker-with-range"
+import type { DateRange } from "react-big-calendar"
 
 interface AttachmentsTableFiltersProps {
     search: string
     onSearchChange: (value: string) => void
     patientId: string
     onPatientChange: (value: string) => void
+    date: DateRange | undefined
+    onDateChange: (date: DateRange | undefined) => void
     onClearFilters: () => void
 }
 
@@ -26,6 +30,8 @@ export function AttachmentsTableFilters({
     onSearchChange,
     patientId,
     onPatientChange,
+    date,
+    onDateChange,
     onClearFilters
 }: AttachmentsTableFiltersProps) {
 
@@ -49,7 +55,6 @@ export function AttachmentsTableFilters({
                 </div>
 
                 <Select value={patientId} onValueChange={onPatientChange}>
-                    {/* 🟢 Adicionado 'max-w' e 'text-left' para conter nomes gigantes no botão do Select */}
                     <SelectTrigger className="h-8 w-full lg:w-[250px] cursor-pointer text-left overflow-hidden">
                         <SelectValue placeholder={isLoading ? "Carregando..." : "Filtrar por paciente"} />
                     </SelectTrigger>
@@ -66,7 +71,6 @@ export function AttachmentsTableFilters({
                             <SelectItem key={patient.id} value={patient.id} className="cursor-pointer py-2.5 max-w-[400px]">
                                 <div className="flex items-center gap-2 overflow-hidden">
                                     <User className="h-4 w-4 text-blue-500 shrink-0" />
-                                    {/* 🟢 'truncate' garante os pontinhos se o nome for longo demais */}
                                     <span className="text-sm font-medium truncate">
                                         {patient.name}
                                     </span>
@@ -76,7 +80,9 @@ export function AttachmentsTableFilters({
                     </SelectContent>
                 </Select>
 
-                {(search || (patientId && patientId !== "all")) && (
+                <DatePickerWithRange date={date} onDateChange={onDateChange} />
+
+                {(search || (patientId && patientId !== "all") || date?.from) && (
                     <Button
                         variant="ghost"
                         size="sm"

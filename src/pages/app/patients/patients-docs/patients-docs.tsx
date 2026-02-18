@@ -13,6 +13,7 @@ import { useHeaderStore } from "@/hooks/use-header-store"
 import { getAllAttachments, deleteAttachment } from "@/api/attachments"
 import { AttachmentsTableFilters } from "./components/attachments-table-filters"
 import { AttachmentsTable } from "./components/attachments-table"
+import type { DateRange } from "react-day-picker"
 
 export function PatientDocuments() {
     const { setTitle } = useHeaderStore()
@@ -21,9 +22,8 @@ export function PatientDocuments() {
     const [pageIndex, setPageIndex] = useState(0)
     const [search, setSearch] = useState("")
     const [debouncedSearch, setDebouncedSearch] = useState("")
-
-    // 🟢 1. Estado central do filtro de paciente
     const [patientId, setPatientId] = useState("all")
+    const [date, setDate] = useState<DateRange | undefined>()
 
     useEffect(() => {
         setTitle('Gestão de Documentos')
@@ -38,10 +38,15 @@ export function PatientDocuments() {
         return () => clearTimeout(handler)
     }, [search])
 
-    // 🟢 2. A MÁGICA: Sempre que patientId mudar, o React Query percebe e refaz a busca
     const { data: result, isLoading, isError } = useQuery({
-        queryKey: ["all-attachments", pageIndex, debouncedSearch, patientId],
-        queryFn: () => getAllAttachments(pageIndex, debouncedSearch, patientId),
+        queryKey: ["all-attachments", pageIndex, debouncedSearch, patientId, date],
+        queryFn: () => getAllAttachments(
+            pageIndex,
+            debouncedSearch,
+            patientId,
+            date?.from,
+            date?.to
+        ),
         staleTime: 1000 * 60 * 5,
         placeholderData: (previousData) => previousData,
     })
@@ -77,6 +82,7 @@ export function PatientDocuments() {
     const handleClearFilters = () => {
         setSearch("")
         setPatientId("all")
+        setDate(undefined)
         setPageIndex(0)
     }
 
@@ -126,7 +132,12 @@ export function PatientDocuments() {
                         patientId={patientId}
                         onPatientChange={(val) => {
                             setPatientId(val)
-                            setPageIndex(0) // Reseta a página ao trocar o filtro
+                            setPageIndex(0)
+                        }}
+                        date={date}
+                        onDateChange={(val) => {
+                            setDate(val)
+                            setPageIndex(0)
                         }}
                         onClearFilters={handleClearFilters}
                     />

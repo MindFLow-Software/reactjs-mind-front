@@ -23,21 +23,20 @@ interface GetAttachmentsResponse {
   }
 }
 
-/**
- * Busca todos os anexos com filtros de paginação, busca textual e ID de paciente.
- */
 export async function getAllAttachments(
-  pageIndex: number, 
-  search?: string, 
-  patientId?: string // 🟢 Recebe o ID do componente
+  pageIndex: number,
+  search?: string,
+  patientId?: string,
+  from?: Date,
+  to?: Date
 ): Promise<GetAttachmentsResponse> {
   const response = await api.get<GetAttachmentsResponse>("/attachments", {
-    params: { 
+    params: {
       page: pageIndex,
       filter: search,
-      // 🟢 O SEGREDO: Se for 'all', enviamos undefined para o back não filtrar.
-      // Caso contrário, enviamos o UUID do paciente selecionado.
-      patientId: patientId === 'all' ? undefined : patientId 
+      patientId: patientId === 'all' ? undefined : patientId,
+      from: from?.toISOString(),
+      to: to?.toISOString(),
     }
   })
   return response.data
@@ -54,13 +53,13 @@ export async function deleteAttachment(id: string) {
 
 async function uploadFile(file: File, patientId: string, type: 'DOCUMENT' | 'AVATAR') {
   const formData = new FormData()
-  
+
   formData.append('patientId', patientId)
   formData.append('type', type)
   formData.append('file', file)
 
   const response = await api.post("/attachments", formData)
-  
+
   return response.data
 }
 
