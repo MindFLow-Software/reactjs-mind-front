@@ -26,6 +26,7 @@ import { useHeaderStore } from "@/hooks/use-header-store"
 import { MetricCard } from "./components/metric-card"
 import { PatientInfo } from "./components/patient-Info"
 import { PatientSessionsTimeline } from "./components/patient-sessions-timeline"
+import { AnamnesisTab } from "@/pages/app/patients/patients-hub/components/anamnesis-form";
 
 export default function PatientDetails() {
     const { id } = useParams<{ id: string }>()
@@ -192,6 +193,7 @@ export default function PatientDetails() {
             <Tabs value={currentTab} onValueChange={setCurrentTab} className="w-full">
                 <TabsList className="bg-muted/60 p-1 rounded-lg w-full sm:w-auto">
                     <TabsTrigger value="clinical" className="cursor-pointer rounded-md px-6 text-sm">Prontuário</TabsTrigger>
+                    <TabsTrigger value="anamnesis" className="cursor-pointer rounded-md px-6 text-sm">Anamnese</TabsTrigger>
                     <TabsTrigger value="timeline" className="cursor-pointer rounded-md px-6 text-sm">Histórico</TabsTrigger>
                     <TabsTrigger value="docs" className="cursor-pointer rounded-md px-6 text-sm">Arquivos</TabsTrigger>
                 </TabsList>
@@ -212,6 +214,10 @@ export default function PatientDetails() {
                             totalAppointments: meta.totalCount
                         }}
                     />
+                </TabsContent>
+
+                <TabsContent value="anamnesis" className="mt-6">
+                    <AnamnesisTab patientId={id!} />
                 </TabsContent>
 
                 <TabsContent value="timeline" className="mt-6">
