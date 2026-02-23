@@ -16,8 +16,8 @@ export interface Patient {
   cpf: string
   phoneNumber: string 
   gender: 'MASCULINE' | 'FEMININE' | 'OTHER'
-  status: 'Ativo' | 'Inativo' // Normalizado para exibição
-  isActive: boolean           // Fonte da verdade para lógica
+  status: 'Ativo' | 'Inativo'
+  isActive: boolean
   createdAt: string
   dateOfBirth: string 
   profileImageUrl: string | null
@@ -48,29 +48,21 @@ export async function getPatients({
     },
   })
 
-  // 🟢 Normalização idêntica ao PatientPresenter do Backend
   const normalizedPatients: Patient[] = response.data.patients.map((p: any) => {
-    // Lida com estruturas DDD (.props) ou objetos planos
     const raw = p.props || p 
-    
-    // Define o booleano de atividade (prioriza isActive da API)
     const checkIsActive = raw.isActive === true || raw.status === 'active'
 
     return {
       id: raw.id || p.id,
       firstName: raw.firstName || "",
       lastName: raw.lastName || "",
-      // Garante que o nome concatenado sempre exista
       name: raw.name || `${raw.firstName} ${raw.lastName}`.trim() || "Paciente sem nome",
       cpf: raw.cpf || "",
       email: raw.email || "",
       phoneNumber: raw.phoneNumber || "",
       gender: raw.gender || 'OTHER',
-      
-      // 🟢 SINCRONIA TOTAL:
       isActive: checkIsActive,
       status: checkIsActive ? 'Ativo' : 'Inativo',
-      
       createdAt: raw.createdAt,
       dateOfBirth: raw.dateOfBirth,
       profileImageUrl: raw.profileImageUrl || raw.profile_image_url || null
