@@ -4,11 +4,9 @@ import { useNavigate, useParams } from "react-router-dom"
 import { useQuery } from "@tanstack/react-query"
 import { useState, useEffect, useMemo } from "react"
 import {
-    Activity, DollarSign, ShieldCheck, Lock, FileSearch,
-    AlertCircle, Loader2, Plus, Download, MoreVertical, Printer, Trash2, MoveLeft
+    FileSearch, AlertCircle, Loader2, Plus, Download, MoreVertical, Printer, Trash2, MoveLeft
 } from "lucide-react"
 
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { Button } from "@/components/ui/button"
 import { Separator } from "@/components/ui/separator"
@@ -23,10 +21,10 @@ import {
 import { getPatientDetails } from "@/api/get-patient-details"
 import { PatientDetailsHeader } from "./components/patient-details-header"
 import { useHeaderStore } from "@/hooks/use-header-store"
-import { MetricCard } from "./components/metric-card"
 import { PatientInfo } from "./components/patient-Info"
 import { PatientSessionsTimeline } from "./components/patient-sessions-timeline"
 import { AnamnesisTab } from "@/pages/app/patients/patients-hub/components/anamnesis-form";
+import { PatientResumeTab } from "./components/patient-resume-tab";
 
 export default function PatientDetails() {
     const { id } = useParams<{ id: string }>()
@@ -88,33 +86,24 @@ export default function PatientDetails() {
     }
 
     return (
-        <div className="flex flex-col gap-6">
-            <div className="flex flex-col gap-3">
+        <div className="flex flex-col gap-4">
+            <div className="flex flex-col gap-2">
                 <div className="flex items-center justify-between">
                     <button
                         onClick={() => navigate(-1)}
                         className="flex items-center gap-2 text-muted-foreground hover:text-foreground transition-colors cursor-pointer group"
                     >
                         <MoveLeft className="size-4 group-hover:-translate-x-1 transition-transform" />
-                        <span className="text-xs font-medium uppercase tracking-wider">Voltar para listagem</span>
+                        <span className="text-[10px] font-bold uppercase tracking-widest">Voltar para listagem</span>
                     </button>
 
                     <div className="flex items-center gap-2">
-                        <div className="hidden sm:flex items-center gap-2">
-                            <Button
-                                variant="outline"
-                                size="sm"
-                                className="gap-1.5 text-muted-foreground bg-transparent cursor-pointer"
-                            >
-                                <Download className="size-3.5" />
-                                <span className="hidden md:inline">Exportar</span>
-                            </Button>
-                        </div>
+                        <Button variant="outline" size="sm" className="h-8 gap-1.5 text-muted-foreground bg-transparent cursor-pointer">
+                            <Download className="size-3.5" />
+                            <span className="hidden md:inline">Exportar</span>
+                        </Button>
 
-                        <Button
-                            size="sm"
-                            className="gap-1.5 bg-blue-600 hover:bg-blue-700 text-white cursor-pointer"
-                        >
+                        <Button size="sm" className="h-8 gap-1.5 bg-blue-600 hover:bg-blue-700 text-white cursor-pointer">
                             <Plus className="size-3.5" />
                             <span>Nova Sessão</span>
                         </Button>
@@ -147,58 +136,17 @@ export default function PatientDetails() {
                 }}
             />
 
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-                <MetricCard
-                    title="Sessões Totais"
-                    value={meta.totalCount}
-                    subLabel="Duração média"
-                    subValue={meta.averageDuration}
-                    icon={Activity}
-                />
-
-                <Card className="shadow-sm border-border">
-                    <CardHeader className="pb-2">
-                        <CardTitle className="text-[11px] uppercase text-muted-foreground flex items-center gap-2 font-semibold tracking-wide">
-                            <div className="flex items-center justify-center size-5 rounded bg-emerald-100 text-emerald-600">
-                                <DollarSign className="size-3" />
-                            </div>
-                            Financeiro
-                        </CardTitle>
-                    </CardHeader>
-                    <CardContent>
-                        <p className="text-2xl font-bold text-foreground tabular-nums">R$ --</p>
-                        <p className="text-xs text-emerald-600 font-medium mt-1">Regularizado</p>
-                    </CardContent>
-                </Card>
-
-                <Card className="shadow-sm border-border sm:col-span-2 lg:col-span-1">
-                    <CardHeader className="pb-2">
-                        <CardTitle className="text-[11px] uppercase text-muted-foreground flex items-center gap-2 font-semibold tracking-wide">
-                            <div className="flex items-center justify-center size-5 rounded bg-amber-100 text-amber-600">
-                                <ShieldCheck className="size-3" />
-                            </div>
-                            Segurança
-                        </CardTitle>
-                    </CardHeader>
-                    <CardContent className="flex justify-between items-end">
-                        <div>
-                            <p className="text-sm font-semibold text-foreground">Dados Criptografados</p>
-                            <p className="text-xs text-muted-foreground mt-0.5">Conformidade LGPD ativa</p>
-                        </div>
-                        <Lock className="size-5 text-amber-400/40" />
-                    </CardContent>
-                </Card>
-            </div>
-
             <Tabs value={currentTab} onValueChange={setCurrentTab} className="w-full">
                 <TabsList className="bg-muted/60 p-1 rounded-lg w-full sm:w-auto">
-                    <TabsTrigger value="clinical" className="cursor-pointer rounded-md px-6 text-sm">Prontuário</TabsTrigger>
-                    <TabsTrigger value="anamnesis" className="cursor-pointer rounded-md px-6 text-sm">Anamnese</TabsTrigger>
-                    <TabsTrigger value="timeline" className="cursor-pointer rounded-md px-6 text-sm">Histórico</TabsTrigger>
-                    <TabsTrigger value="docs" className="cursor-pointer rounded-md px-6 text-sm">Arquivos</TabsTrigger>
+                    {/* Nome alterado de "Prontuário" para "Dados Cadastrais" */}
+                    <TabsTrigger value="clinical" className="cursor-pointer rounded-md px-4 py-1.5 text-xs">Dados Cadastrais</TabsTrigger>
+                    <TabsTrigger value="anamnesis" className="cursor-pointer rounded-md px-4 py-1.5 text-xs">Anamnese</TabsTrigger>
+                    <TabsTrigger value="timeline" className="cursor-pointer rounded-md px-4 py-1.5 text-xs">Histórico</TabsTrigger>
+                    <TabsTrigger value="docs" className="cursor-pointer rounded-md px-4 py-1.5 text-xs">Arquivos</TabsTrigger>
+                    <TabsTrigger value="resume" className="cursor-pointer rounded-md px-4 py-1.5 text-xs">Resumo</TabsTrigger>
                 </TabsList>
 
-                <TabsContent value="clinical" className="mt-6">
+                <TabsContent value="clinical" className="mt-4">
                     <PatientInfo
                         patient={{
                             ...patientData,
@@ -216,11 +164,11 @@ export default function PatientDetails() {
                     />
                 </TabsContent>
 
-                <TabsContent value="anamnesis" className="mt-6">
+                <TabsContent value="anamnesis" className="mt-4">
                     <AnamnesisTab patientId={id!} />
                 </TabsContent>
 
-                <TabsContent value="timeline" className="mt-6">
+                <TabsContent value="timeline" className="mt-4">
                     <PatientSessionsTimeline
                         sessions={patientData.sessions}
                         meta={meta}
@@ -230,16 +178,15 @@ export default function PatientDetails() {
                     />
                 </TabsContent>
 
-                <TabsContent value="docs" className="mt-6">
-                    <div className="flex flex-col items-center py-20 text-center border border-dashed rounded-xl bg-muted/5">
-                        <div className="flex items-center justify-center size-12 rounded-full bg-muted mb-4">
-                            <FileSearch className="size-5 text-muted-foreground" />
-                        </div>
+                <TabsContent value="docs" className="mt-4">
+                    <div className="flex flex-col items-center py-10 text-center border border-dashed rounded-xl bg-muted/5">
+                        <FileSearch className="size-8 text-muted-foreground/50 mb-3" />
                         <p className="text-sm font-semibold text-foreground">Repositório de Documentos</p>
-                        <p className="text-xs text-muted-foreground mt-1 max-w-xs">
-                            Upload de exames, laudos e outros documentos em breve.
-                        </p>
+                        <p className="text-xs text-muted-foreground mt-1">Upload de exames e laudos em breve.</p>
                     </div>
+                </TabsContent>
+                <TabsContent value="resume" className="mt-4">
+                    <PatientResumeTab meta={meta} />
                 </TabsContent>
             </Tabs>
         </div>

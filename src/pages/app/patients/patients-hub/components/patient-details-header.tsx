@@ -10,7 +10,7 @@ import {
 } from "@/components/ui/tooltip"
 import { cn } from "@/lib/utils"
 import { UserAvatar } from "@/components/user-avatar"
-import { Copy, CheckCircle2, XCircle } from "lucide-react" // 🟢 Adicionado ícones padrão
+import { Copy, CheckCircle2, XCircle } from "lucide-react"
 
 interface PatientDetailsHeaderProps {
     patient: {
@@ -26,7 +26,6 @@ export function PatientDetailsHeader({ patient }: PatientDetailsHeaderProps) {
     const shortId = useMemo(() => patient.id.substring(0, 10).toUpperCase(), [patient.id])
     const fullName = `${patient.firstName} ${patient.lastName}`
 
-    // 🟢 Determina o estado baseado no status vindo da API normalizada
     const isPatientActive = patient.status === "active"
 
     const handleCopyId = () => {
@@ -91,8 +90,6 @@ export function PatientDetailsHeader({ patient }: PatientDetailsHeaderProps) {
                         </div>
                     </div>
                 </div>
-
-                <div className="h-px w-full bg-border" role="separator" />
             </header>
         </TooltipProvider>
     )
