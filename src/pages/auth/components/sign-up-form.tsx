@@ -36,7 +36,8 @@ import { registerPsychologist } from "@/api/create-user"
 function isValidCPF(cpf: string): boolean {
   const cleanCPF = cpf.replace(/\D/g, "")
   if (cleanCPF.length !== 11 || /^(\d)\1{10}$/.test(cleanCPF)) return false
-  let sum = 0, remainder
+  let sum = 0
+  let remainder
   for (let i = 1; i <= 9; i++) sum += parseInt(cleanCPF.substring(i - 1, i)) * (11 - i)
   remainder = (sum * 10) % 11
   if (remainder === 10 || remainder === 11) remainder = 0
@@ -65,9 +66,9 @@ export const signUpFormSchema = z.object({
   }).refine((date) => date <= new Date(), {
     message: "Data inválida",
   }),
-  cpf: z.string().refine((val) => isValidCPF(val), {
-    message: "CPF inválido",
-  }),
+  cpf: z.string()
+    .min(11, "CPF incompleto")
+    .refine((value) => isValidCPF(value), "CPF inválido"),
   gender: z.enum(["MASCULINE", "FEMININE", "OTHER"], {
     message: "Obrigatório",
   }),
@@ -131,25 +132,25 @@ export function SignUpForm({
       toast.success("Psicólogo cadastrado com sucesso!")
       navigate("/sign-in")
     } catch (err: any) {
-      const response = err.response;
-      const status = response?.status;
-      const responseData = response?.data;
+      const response = err.response
+      const status = response?.status
+      const responseData = response?.data
 
       const message = Array.isArray(responseData?.message)
         ? responseData.message[0]
-        : responseData?.message;
+        : responseData?.message
 
       if (status === 409) {
         if (message === 'EMAIL_ALREADY_EXISTS') {
-          setError("email", { type: "manual", message: "E-mail já cadastrado" });
-          toast.error("E-mail já cadastrado");
-          return;
+          setError("email", { type: "manual", message: "E-mail já cadastrado" })
+          toast.error("E-mail já cadastrado")
+          return
         }
 
         if (message === 'CPF_ALREADY_EXISTS') {
-          setError("cpf", { type: "manual", message: "CPF já cadastrado" });
-          toast.error("CPF já cadastrado");
-          return;
+          setError("cpf", { type: "manual", message: "CPF já cadastrado" })
+          toast.error("CPF já cadastrado")
+          return
         }
       }
 
@@ -263,7 +264,7 @@ export function SignUpForm({
                   placeholder="(99) 99999-9999"
                   id="phoneNumber"
                   type="tel"
-                  autocomplete="tel"
+                  autoComplete="tel"
                   aria-invalid={!!errors.phoneNumber}
                   className={cn("tabular-nums", errors.phoneNumber && "border-red-500 focus-visible:ring-red-500")}
                 />
@@ -283,7 +284,7 @@ export function SignUpForm({
                   mask="000.000.000-00"
                   placeholder="123.456.789-00"
                   id="cpf"
-                  autocomplete="off"
+                  autoComplete="off"
                   aria-invalid={!!errors.cpf}
                   className={cn("tabular-nums", errors.cpf && "border-red-500 focus-visible:ring-red-500")}
                 />
