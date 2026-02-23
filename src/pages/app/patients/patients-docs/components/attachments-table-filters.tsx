@@ -13,7 +13,7 @@ import {
 } from "@/components/ui/select"
 import { getPatientsWithAttachments } from "@/api/patient-with-attachment"
 import { DatePickerWithRange } from "./date-picker-with-range"
-import type { DateRange } from "react-big-calendar"
+import { type DateRange } from "react-day-picker"
 
 interface AttachmentsTableFiltersProps {
     search: string
