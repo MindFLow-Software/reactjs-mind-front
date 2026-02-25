@@ -3,16 +3,20 @@
 import { format } from "date-fns"
 import { ptBR } from "date-fns/locale"
 import { cn } from "@/lib/utils"
-import type { Patient } from "@/api/get-patients"
 
+// 🟢 Interface enxuta: apenas o que o card exibe
 interface PatientInfoProps {
-    patient: Patient & { totalAppointments?: number }
+    patient: {
+        dateOfBirth?: string | Date | null
+        cpf?: string | null
+        email?: string | null
+        phoneNumber?: string | null
+    }
 }
 
 const formatCPF = (value: string | null | undefined) => {
     if (!value) return "—"
-    const cleanValue = value.replace(/\D/g, "")
-    return cleanValue
+    return value.replace(/\D/g, "")
         .replace(/(\d{3})(\d)/, "$1.$2")
         .replace(/(\d{3})(\d)/, "$1.$2")
         .replace(/(\d{3})(\d{1,2})/, "$1-$2")
@@ -26,36 +30,24 @@ const formatPhoneNumber = (value: string | null | undefined) => {
         .replace(/(\d{5})(\d)/, "$1-$2")
 }
 
-const calculateAge = (dob: string | null | undefined) => {
+const calculateAge = (dob: string | Date | null | undefined) => {
     if (!dob) return "—"
     const birthDate = new Date(dob)
     if (isNaN(birthDate.getTime())) return "—"
-
     const today = new Date()
     let age = today.getFullYear() - birthDate.getFullYear()
     const m = today.getMonth() - birthDate.getMonth()
-    if (m < 0 || (m === 0 && today.getDate() < birthDate.getDate())) {
-        age--
-    }
+    if (m < 0 || (m === 0 && today.getDate() < birthDate.getDate())) age--
     return `${age} anos`
 }
 
-interface InfoFieldProps {
-    label: string
-    value: React.ReactNode
-    isMono?: boolean
-}
-
-function InfoField({ label, value, isMono }: InfoFieldProps) {
+function InfoField({ label, value, isMono }: { label: string; value: React.ReactNode; isMono?: boolean }) {
     return (
         <div className="space-y-1.5">
             <span className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest leading-none">
                 {label}
             </span>
-            <div className={cn(
-                "text-sm font-medium flex items-center min-h-[22px]",
-                isMono && "font-mono tabular-nums"
-            )}>
+            <div className={cn("text-sm font-medium flex items-center min-h-[22px]", isMono && "font-mono tabular-nums")}>
                 {value}
             </div>
         </div>
@@ -70,8 +62,8 @@ export function PatientInfo({ patient }: PatientInfoProps) {
 
     return (
         <div className="border rounded-xl px-4 bg-card shadow-sm">
-            <div className="text-sm font-bold py-4 border-b mb-2 flex justify-between items-center">
-                <span>Informações de Cadastro</span>
+            <div className="text-sm font-bold py-4 border-b mb-2">
+                Informações de Cadastro
             </div>
 
             <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-y-6 gap-x-8 py-4">

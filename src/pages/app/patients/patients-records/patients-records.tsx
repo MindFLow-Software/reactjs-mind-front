@@ -5,12 +5,15 @@ import { useNavigate } from "react-router-dom"
 import { useQuery } from "@tanstack/react-query"
 import { Clock, ChevronRight, ClipboardList, FilterX } from "lucide-react"
 import { Helmet } from "react-helmet-async"
+import { formatDistanceToNow, parseISO } from "date-fns"
+import { ptBR } from "date-fns/locale"
 
 import { Card, CardContent } from "@/components/ui/card"
 import { Skeleton } from "@/components/ui/skeleton"
 import { getPatients } from "@/api/get-patients"
 import { useHeaderStore } from "@/hooks/use-header-store"
 import { PatientsRecordsTableFilters } from "./components/patients-records-table-filters"
+import { UserAvatar } from "@/components/user-avatar"
 
 export default function PatientsRecords() {
     const navigate = useNavigate()
@@ -90,16 +93,26 @@ export default function PatientsRecords() {
                             >
                                 <CardContent className="p-4 flex items-center justify-between">
                                     <div className="flex items-center gap-3">
-                                        <div className="size-10 rounded-full bg-blue-100 flex items-center justify-center text-blue-700 font-bold text-sm">
-                                            {patient.firstName[0]}{patient.lastName[0]}
-                                        </div>
+                                        <UserAvatar
+                                            src={patient.profileImageUrl}
+                                            name={patient.name}
+                                            className="size-10 border-blue-100 shadow-sm"
+                                        />
+
                                         <div className="flex flex-col">
-                                            <span className="font-semibold text-sm group-hover:text-blue-600 transition-colors">
-                                                {patient.firstName} {patient.lastName}
+                                            <span className="font-semibold text-sm group-hover:text-blue-600 transition-colors line-clamp-1">
+                                                {patient.name}
                                             </span>
                                             <div className="flex items-center gap-2 text-[10px] text-muted-foreground uppercase font-bold">
-                                                <Clock className="size-3" />
-                                                Última sessão: 2 dias atrás
+                                                <Clock className="size-3 text-blue-500/70" />
+                                                {patient.lastSessionAt ? (
+                                                    `Última sessão: ${formatDistanceToNow(parseISO(patient.lastSessionAt), {
+                                                        addSuffix: true,
+                                                        locale: ptBR,
+                                                    })}`
+                                                ) : (
+                                                    "Sem sessões registradas"
+                                                )}
                                             </div>
                                         </div>
                                     </div>

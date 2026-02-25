@@ -149,17 +149,10 @@ export default function PatientDetails() {
                 <TabsContent value="clinical" className="mt-4">
                     <PatientInfo
                         patient={{
-                            ...patientData,
-                            name: patientFullName,
-                            isActive: isPatientActive,
-                            status: isPatientActive ? 'Ativo' : 'Inativo',
-                            createdAt: (patientData as any).createdAt ?? new Date().toISOString(),
-                            cpf: patientData.cpf ?? "",
-                            email: patientData.email ?? "",
-                            phoneNumber: patientData.phoneNumber ?? "",
-                            dateOfBirth: patientData.dateOfBirth ?? "",
-                            gender: (patientData.gender as any) ?? "OTHER",
-                            totalAppointments: meta.totalCount
+                            dateOfBirth: patientData.dateOfBirth,
+                            cpf: patientData.cpf,
+                            email: patientData.email,
+                            phoneNumber: patientData.phoneNumber,
                         }}
                     />
                 </TabsContent>

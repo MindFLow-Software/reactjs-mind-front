@@ -21,6 +21,7 @@ export interface Patient {
   createdAt: string
   dateOfBirth: string 
   profileImageUrl: string | null
+  lastSessionAt: string | null
 }
 
 export interface GetPatientsResponse {
@@ -65,7 +66,8 @@ export async function getPatients({
       status: checkIsActive ? 'Ativo' : 'Inativo',
       createdAt: raw.createdAt,
       dateOfBirth: raw.dateOfBirth,
-      profileImageUrl: raw.profileImageUrl || raw.profile_image_url || null
+      profileImageUrl: raw.profileImageUrl || raw.profile_image_url || null,
+      lastSessionAt: raw.lastSessionAt || null
     }
   })
 

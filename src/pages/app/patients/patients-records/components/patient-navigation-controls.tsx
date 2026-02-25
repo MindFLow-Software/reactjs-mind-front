@@ -1,4 +1,3 @@
-// src/pages/app/patients/patients-records/components/patient-navigation-controls.tsx
 import { ChevronLeft, ChevronRight } from "lucide-react"
 import { useNavigate } from "react-router-dom"
 import { Button } from "@/components/ui/button"
