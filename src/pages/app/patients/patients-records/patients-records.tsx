@@ -21,7 +21,13 @@ export default function PatientsRecords() {
     const [debouncedSearch, setDebouncedSearch] = useState("")
     const [status, setStatus] = useState("all")
     const [gender, setGender] = useState("all")
+
+    // 🟢 Agora inicializamos com 'all' para bater com a opção "Data Cadastro"
     const [order, setOrder] = useState("all")
+
+    // 🟢 Novo estado para Volume de Sessões
+    const [sessionVolume, setSessionVolume] = useState("all")
+
     const { setTitle } = useHeaderStore()
 
     useEffect(() => {
@@ -32,14 +38,16 @@ export default function PatientsRecords() {
     }, [search])
 
     const { data: result, isLoading, isFetching } = useQuery({
-        queryKey: ["patients-records-list", debouncedSearch, status, gender, order],
+        // 🟢 Incluído sessionVolume na queryKey
+        queryKey: ["patients-records-list", debouncedSearch, status, gender, order, sessionVolume],
         queryFn: () => getPatients({
             pageIndex: 0,
             perPage: 100,
             filter: debouncedSearch,
             status: status,
             gender: gender,
-            order: order
+            order: order,
+            sessionVolume: sessionVolume // 🟢 Passando para a API
         }),
         placeholderData: (previousData) => previousData,
     })
@@ -61,6 +69,7 @@ export default function PatientsRecords() {
         setStatus("all")
         setGender("all")
         setOrder("all")
+        setSessionVolume("all") // 🟢 Resetando o novo filtro
     }
 
     return (
@@ -87,6 +96,8 @@ export default function PatientsRecords() {
                     onGenderChange={setGender}
                     order={order}
                     onOrderChange={setOrder}
+                    sessionVolume={sessionVolume} // 🟢 Passando prop
+                    onSessionVolumeChange={setSessionVolume} // 🟢 Passando prop
                     onClearFilters={handleClearFilters}
                     isFetching={isFetching}
                 />
