@@ -195,7 +195,7 @@ export default function PatientDetails() {
             </div>
 
             <PatientsPageShell
-                title="Hub do Paciente"
+                title="Prontuário completo do Paciente"
                 description="Acompanhamento clinico, historico de sessoes e documentos em um unico lugar."
                 icon={<FileSearch className="size-5 text-blue-600" />}
                 headerRight={<HubActions />}
@@ -236,7 +236,7 @@ export default function PatientDetails() {
                     </TabsContent>
 
                     <TabsContent value="anamnesis" className="mt-4">
-                        <AnamnesisTab patientId={id!} />
+                        <AnamnesisTab patientId={id!} patientName={patientFullName} />
                     </TabsContent>
 
                     <TabsContent value="timeline" className="mt-4">
