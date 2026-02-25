@@ -25,7 +25,6 @@ interface PatientDetailsHeaderProps {
 export function PatientDetailsHeader({ patient }: PatientDetailsHeaderProps) {
     const shortId = useMemo(() => patient.id.substring(0, 10).toUpperCase(), [patient.id])
     const fullName = `${patient.firstName} ${patient.lastName}`
-
     const isPatientActive = patient.status === "active"
 
     const handleCopyId = () => {
@@ -34,9 +33,8 @@ export function PatientDetailsHeader({ patient }: PatientDetailsHeaderProps) {
 
     return (
         <TooltipProvider delayDuration={200}>
-            <header className="flex flex-col gap-5 pb-6">
+            <header className="flex flex-col gap-5 pb-1">
                 <div className="flex items-center gap-4">
-
                     <div className="relative shrink-0">
                         <UserAvatar
                             src={patient.profileImageUrl}
@@ -44,11 +42,12 @@ export function PatientDetailsHeader({ patient }: PatientDetailsHeaderProps) {
                             className="h-16 w-16 border-2 border-background shadow-md ring-1 ring-border"
                         />
 
-                        {/* Status indicador no Avatar (Cores sincronizadas) */}
-                        <span className={cn(
-                            "absolute -bottom-0.5 -right-0.5 flex h-4.5 w-4.5 items-center justify-center rounded-full border-2 border-background",
-                            isPatientActive ? "bg-emerald-500" : "bg-zinc-500"
-                        )}>
+                        <span
+                            className={cn(
+                                "absolute -bottom-0.5 -right-0.5 flex h-4.5 w-4.5 items-center justify-center rounded-full border-2 border-background",
+                                isPatientActive ? "bg-emerald-500" : "bg-zinc-500"
+                            )}
+                        >
                             {isPatientActive && <span className="h-1.5 w-1.5 rounded-full bg-emerald-200 animate-pulse" />}
                         </span>
                     </div>
@@ -59,7 +58,6 @@ export function PatientDetailsHeader({ patient }: PatientDetailsHeaderProps) {
                                 {fullName}
                             </h1>
 
-                            {/* 🟢 Badge de Status (Padrão idêntico à Tabela e Info) */}
                             {isPatientActive ? (
                                 <Badge className="bg-emerald-500/10 text-emerald-600 border-emerald-500/20 hover:bg-emerald-500/20 gap-1.5 h-[22px] px-2 text-[10px] font-bold uppercase tracking-tight">
                                     <CheckCircle2 className="h-3 w-3" /> Ativo

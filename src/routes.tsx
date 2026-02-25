@@ -19,6 +19,7 @@ import { AdminSuggestionsPage } from './pages/app/admin/suggestions/suggestions-
 import { SuggestionsManagement } from './pages/app/admin/suggestions/suggestions-management'
 import { PatientDocuments } from './pages/app/patients/patients-docs/patients-docs'
 import PatientDetails from './pages/app/patients/patients-hub/patients-details'
+import PatientsRecords from './pages/app/patients/patients-records/patients-records'
 
 const getUser = () => {
   const userData = localStorage.getItem('user')
@@ -113,6 +114,7 @@ export const router = createBrowserRouter([
       { path: '/dashboard', element: <Dashboard /> },
       { path: '/dashboard-finance', element: <DashboardFinance /> },
       { path: '/patients-list', element: <PatientsList /> },
+      { path: '/patients-records', element: <PatientsRecords /> },
       { path: '/patients-docs', element: <PatientDocuments /> },
       { path: '/patients/:id/details', element: <PatientDetails /> },
       { path: '/video-room', element: <AppointmentsRoom /> },

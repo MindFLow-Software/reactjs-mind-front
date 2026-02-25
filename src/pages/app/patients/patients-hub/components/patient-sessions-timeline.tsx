@@ -122,7 +122,6 @@ export function PatientSessionsTimeline({
                 </div>
             </div>
 
-            {/* 2. Estado: Filtro ativo mas sem resultados na lista */}
             {filterDate && filteredSessions.length === 0 ? (
                 <div className="flex flex-col items-center py-16 text-muted-foreground border border-dashed rounded-2xl bg-muted/5">
                     <History className="h-10 w-10 opacity-20 mb-3" />
@@ -137,7 +136,7 @@ export function PatientSessionsTimeline({
 
                             <div
                                 onClick={() => setSelectedSession(session)}
-                                className="flex flex-col gap-1 bg-card p-5 rounded-2xl border hover:border-blue-200 hover:shadow-md transition-all cursor-pointer relative group/card"
+                                className="flex flex-col gap-1 bg-card p-5 rounded-2xl border hover:border-blue-200 hover:shadow-md transition-all cursor-pointer relative group/card min-w-0 overflow-hidden"
                             >
                                 <div className="flex items-center justify-between mb-1">
                                     <span className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest flex items-center gap-1.5">
@@ -152,11 +151,11 @@ export function PatientSessionsTimeline({
                                     </div>
                                 </div>
 
-                                <p className="text-sm font-bold text-foreground">
+                                <p className="text-sm font-bold text-foreground truncate">
                                     {session.theme || 'Sessão de Acompanhamento'}
                                 </p>
 
-                                <p className="text-xs text-muted-foreground leading-relaxed italic line-clamp-3 break-words">
+                                <p className="text-xs text-muted-foreground leading-relaxed italic line-clamp-3 break-all whitespace-pre-wrap">
                                     {session.content || 'Nenhuma nota clínica detalhada para esta sessão.'}
                                 </p>
 
@@ -183,7 +182,7 @@ export function PatientSessionsTimeline({
             </div>
 
             <Dialog open={!!selectedSession} onOpenChange={() => setSelectedSession(null)}>
-                <DialogContent className="max-w-2xl max-h-[85vh] overflow-y-auto overflow-x-hidden">
+                <DialogContent className="max-w-2xl max-h-[85vh] overflow-y-auto overflow-x-hidden min-w-0">
                     <DialogHeader className="space-y-4">
                         <div className="flex items-center justify-between">
                             <div className="flex items-center gap-2">
@@ -196,7 +195,7 @@ export function PatientSessionsTimeline({
                             </div>
                         </div>
 
-                        <DialogTitle className="text-xl font-bold leading-tight break-words">
+                        <DialogTitle className="text-xl font-bold leading-tight break-all">
                             {selectedSession?.theme || 'Sessão de Acompanhamento'}
                         </DialogTitle>
                         <DialogDescription className="flex items-center gap-2 text-xs font-medium uppercase tracking-wider">

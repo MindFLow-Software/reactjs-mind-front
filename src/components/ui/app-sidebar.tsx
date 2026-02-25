@@ -66,6 +66,8 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
           items: [
             { title: "Cadastro de Pacientes", url: "/patients-list" },
             { title: "Gestão de Documentos", url: "/patients-docs" },
+            { title: "Prontuários de Pacientes", url: "/patients-records" },
+
           ],
         },
         {

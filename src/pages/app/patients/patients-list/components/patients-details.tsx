@@ -88,7 +88,7 @@ export function PatientsDetails({ patientId }: PatientsDetailsProps) {
     return (
         <DialogContent
             onOpenAutoFocus={(e) => e.preventDefault()}
-            className="max-w-2xl max-h-[90vh] overflow-y-auto"
+            className="max-w-2xl max-h-[90vh] overflow-y-auto overflow-x-hidden"
         >
             <DialogHeader className={selectedSession ? "sr-only" : ""}>
                 <DialogTitle className="flex items-center gap-2">

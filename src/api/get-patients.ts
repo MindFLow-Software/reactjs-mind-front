@@ -5,6 +5,9 @@ export interface GetPatientsFilters {
   perPage: number
   filter?: string | null | undefined
   status?: string | null | undefined
+  gender?: string | null | undefined
+  order?: string | null | undefined
+  sessionVolume?: string | null | undefined
 }
 
 export interface Patient {
@@ -16,11 +19,12 @@ export interface Patient {
   cpf: string
   phoneNumber: string 
   gender: 'MASCULINE' | 'FEMININE' | 'OTHER'
-  status: 'Ativo' | 'Inativo' // Normalizado para exibição
-  isActive: boolean           // Fonte da verdade para lógica
+  status: 'Ativo' | 'Inativo'
+  isActive: boolean
   createdAt: string
   dateOfBirth: string 
   profileImageUrl: string | null
+  lastSessionAt: string | null
 }
 
 export interface GetPatientsResponse {
@@ -37,6 +41,9 @@ export async function getPatients({
   perPage,
   filter,
   status,
+  gender,
+  order,
+  sessionVolume,
 }: GetPatientsFilters): Promise<GetPatientsResponse> {
   
   const response = await api.get("/patients", { 
@@ -44,36 +51,32 @@ export async function getPatients({
       pageIndex,
       perPage,
       filter: filter || undefined,
-      status: status === 'all' ? null : status, 
+      status: status === 'all' ? null : status,
+      gender: gender === 'all' ? null : gender,
+      order: order === 'all' ? null : order,
+      sessionVolume: sessionVolume === 'all' ? null : sessionVolume,
     },
   })
 
-  // 🟢 Normalização idêntica ao PatientPresenter do Backend
   const normalizedPatients: Patient[] = response.data.patients.map((p: any) => {
-    // Lida com estruturas DDD (.props) ou objetos planos
     const raw = p.props || p 
-    
-    // Define o booleano de atividade (prioriza isActive da API)
     const checkIsActive = raw.isActive === true || raw.status === 'active'
 
     return {
       id: raw.id || p.id,
       firstName: raw.firstName || "",
       lastName: raw.lastName || "",
-      // Garante que o nome concatenado sempre exista
       name: raw.name || `${raw.firstName} ${raw.lastName}`.trim() || "Paciente sem nome",
       cpf: raw.cpf || "",
       email: raw.email || "",
       phoneNumber: raw.phoneNumber || "",
       gender: raw.gender || 'OTHER',
-      
-      // 🟢 SINCRONIA TOTAL:
       isActive: checkIsActive,
       status: checkIsActive ? 'Ativo' : 'Inativo',
-      
       createdAt: raw.createdAt,
       dateOfBirth: raw.dateOfBirth,
-      profileImageUrl: raw.profileImageUrl || raw.profile_image_url || null
+      profileImageUrl: raw.profileImageUrl || raw.profile_image_url || null,
+      lastSessionAt: raw.lastSessionAt || null
     }
   })
 

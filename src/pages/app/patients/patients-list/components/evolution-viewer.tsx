@@ -10,7 +10,6 @@ import { Separator } from "@/components/ui/separator"
 import { toast } from "sonner"
 import { SessionPDFTemplate } from "@/utils/session-pdf-template"
 
-
 interface EvolutionViewerProps {
     patientName: string
     content: string
@@ -26,7 +25,7 @@ export function EvolutionViewer({
     date,
     diagnosis,
     psychologist,
-    onBack
+    onBack,
 }: EvolutionViewerProps) {
     const [isGenerating, setIsGenerating] = useState(false)
 
@@ -42,17 +41,17 @@ export function EvolutionViewer({
                     psychologist={psychologist}
                     patientName={patientName}
                     date={isDateValid ? format(parsedDate, "dd/MM/yyyy") : "--/--/----"}
-                    content={content || "Nenhuma evolução registrada."}
-                    diagnosis={diagnosis || "Não informado"}
+                    content={content || "Nenhuma evolucao registrada."}
+                    diagnosis={diagnosis || "Nao informado"}
                 />
             ).toBlob()
 
             const url = URL.createObjectURL(blob)
-            const link = document.createElement('a')
+            const link = document.createElement("a")
             link.href = url
 
             const dateSuffix = isDateValid ? format(parsedDate, "dd-MM-yyyy") : "data-indisponivel"
-            link.download = `Evolucao-${patientName.replace(/\s+/g, '-')}-${dateSuffix}.pdf`
+            link.download = `Evolucao-${patientName.replace(/\s+/g, "-")}-${dateSuffix}.pdf`
 
             link.click()
 
@@ -67,7 +66,7 @@ export function EvolutionViewer({
     }
 
     return (
-        <div className="w-full mx-auto space-y-6 py-2">
+        <div className="w-full min-w-0 max-w-full mx-auto space-y-6 py-2 overflow-x-hidden">
             <div className="flex items-center justify-between">
                 <Button
                     variant="ghost"
@@ -76,36 +75,33 @@ export function EvolutionViewer({
                     className="cursor-pointer h-8 px-2 -ml-2 text-muted-foreground hover:text-slate-900 gap-1.5 transition-colors"
                 >
                     <ArrowLeft size={14} />
-                    <span className="text-xs font-medium">Voltar ao histórico</span>
+                    <span className="text-xs font-medium">Voltar ao historico</span>
                 </Button>
             </div>
 
-            <div className="flex flex-col gap-1">
+            <div className="flex flex-col gap-1 min-w-0">
                 <div className="flex items-center gap-2 text-slate-900">
                     <FileText className="h-5 w-5 text-slate-400" />
-                    <h2 className="text-xl font-semibold tracking-tight">
-                        Evolução Psicológica
-                    </h2>
+                    <h2 className="text-xl font-semibold tracking-tight">Evolucao Psicologica</h2>
                 </div>
 
-                <div className="flex items-center justify-between mt-3 text-sm">
-                    <p className="text-muted-foreground">
-                        Paciente: <span className="font-medium text-slate-700">{patientName}</span>
+                <div className="flex items-center justify-between gap-3 mt-3 text-sm min-w-0">
+                    <p className="text-muted-foreground min-w-0">
+                        Paciente: <span className="font-medium text-slate-700 [overflow-wrap:anywhere]">{patientName}</span>
                     </p>
-                    <p className="text-muted-foreground tabular-nums">
+                    <p className="text-muted-foreground tabular-nums shrink-0">
                         {isDateValid
                             ? format(parsedDate, "dd 'de' MMMM, yyyy", { locale: ptBR })
-                            : "Data não disponível"}
+                            : "Data nao disponivel"}
                     </p>
                 </div>
             </div>
 
             <Separator className="bg-slate-100" />
 
-            {/* Ajuste realizado nesta div e no parágrafo abaixo */}
-            <div className="min-h-[180px] px-1 overflow-hidden">
-                <p className="whitespace-pre-wrap break-words font-serif text-lg leading-relaxed text-slate-700">
-                    {content || "Nenhuma anotação registrada para esta sessão."}
+            <div className="min-h-[180px] max-w-full rounded-lg bg-muted/20 px-3 py-4 sm:px-4 overflow-x-hidden">
+                <p className="whitespace-pre-wrap [overflow-wrap:anywhere] break-words font-serif text-lg leading-relaxed text-slate-700">
+                    {content || "Nenhuma anotacao registrada para esta sessao."}
                 </p>
             </div>
 
@@ -113,7 +109,7 @@ export function EvolutionViewer({
 
             <div className="flex flex-col sm:flex-row items-center justify-between gap-6 pt-2">
                 <p className="text-[11px] leading-relaxed text-slate-400 italic max-w-sm">
-                    Este documento é sigiloso e de uso restrito, gerado a partir de registro eletrônico de prontuário.
+                    Este documento e sigiloso e de uso restrito, gerado a partir de registro eletronico de prontuario.
                 </p>
 
                 <Button

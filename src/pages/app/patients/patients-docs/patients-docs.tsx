@@ -11,6 +11,7 @@ import { PaginationDocsPatients } from "@/components/pagination-docs-patients"
 
 import { useHeaderStore } from "@/hooks/use-header-store"
 import { getAllAttachments, deleteAttachment } from "@/api/attachments"
+import { PatientsDataBlock } from "../components/patients-data-block"
 import { AttachmentsTableFilters } from "./components/attachments-table-filters"
 import { AttachmentsTable } from "./components/attachments-table"
 import type { DateRange } from "react-day-picker"
@@ -102,6 +103,16 @@ export function PatientDocuments() {
             <Helmet title="Documentos - MindFlush" />
 
             <div className="flex flex-col gap-4">
+                <header className="rounded-xl border border-border/70 bg-gradient-to-r from-card to-muted/30 p-4 md:p-5 shadow-sm">
+                    <h1 className="text-xl md:text-2xl font-bold tracking-tight flex items-center gap-2">
+                        <Info className="size-5 text-blue-600" />
+                        <span>Gestao de Documentos</span>
+                    </h1>
+                    <p className="text-sm text-muted-foreground">
+                        Gerencie anexos clinicos com busca, filtros e controle de armazenamento.
+                    </p>
+                </header>
+
                 <section className="grid grid-cols-1 gap-6">
                     <Card className="bg-card border-border flex flex-col justify-between shadow-sm">
                         <CardHeader className="pb-2">
@@ -125,38 +136,42 @@ export function PatientDocuments() {
                     </Card>
                 </section>
 
-                <div className="space-y-4">
-                    <AttachmentsTableFilters
-                        search={search}
-                        onSearchChange={setSearch}
-                        patientId={patientId}
-                        onPatientChange={(val) => {
-                            setPatientId(val)
-                            setPageIndex(0)
-                        }}
-                        date={date}
-                        onDateChange={(val) => {
-                            setDate(val)
-                            setPageIndex(0)
-                        }}
-                        onClearFilters={handleClearFilters}
-                    />
-
-                    <AttachmentsTable
-                        attachments={attachments}
-                        isLoading={isLoading}
-                        onDelete={deleteFn}
-                    />
-
-                    {meta.totalCount > 0 && (
+                <PatientsDataBlock
+                    title="Documentos anexados"
+                    description="Filtre por arquivo, paciente e periodo para administrar os registros."
+                    className="rounded-xl border border-border/70 bg-card p-4 shadow-sm"
+                    toolbar={
+                        <AttachmentsTableFilters
+                            search={search}
+                            onSearchChange={setSearch}
+                            patientId={patientId}
+                            onPatientChange={(val) => {
+                                setPatientId(val)
+                                setPageIndex(0)
+                            }}
+                            date={date}
+                            onDateChange={(val) => {
+                                setDate(val)
+                                setPageIndex(0)
+                            }}
+                            onClearFilters={handleClearFilters}
+                        />
+                    }
+                    footer={meta.totalCount > 0 ? (
                         <PaginationDocsPatients
                             pageIndex={meta.pageIndex}
                             totalCount={meta.totalCount}
                             perPage={meta.perPage}
                             onPageChange={setPageIndex}
                         />
-                    )}
-                </div>
+                    ) : null}
+                >
+                    <AttachmentsTable
+                        attachments={attachments}
+                        isLoading={isLoading}
+                        onDelete={deleteFn}
+                    />
+                </PatientsDataBlock>
             </div>
         </>
     )
