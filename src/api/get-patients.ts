@@ -5,6 +5,8 @@ export interface GetPatientsFilters {
   perPage: number
   filter?: string | null | undefined
   status?: string | null | undefined
+  gender?: string | null | undefined
+  order?: string | null | undefined
 }
 
 export interface Patient {
@@ -38,6 +40,8 @@ export async function getPatients({
   perPage,
   filter,
   status,
+  gender,
+  order,
 }: GetPatientsFilters): Promise<GetPatientsResponse> {
   
   const response = await api.get("/patients", { 
@@ -45,7 +49,9 @@ export async function getPatients({
       pageIndex,
       perPage,
       filter: filter || undefined,
-      status: status === 'all' ? null : status, 
+      status: status === 'all' ? null : status,
+      gender: gender === 'all' ? null : gender,
+      order: order === 'all' ? null : order,
     },
   })
 

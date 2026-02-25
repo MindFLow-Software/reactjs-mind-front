@@ -20,6 +20,8 @@ export default function PatientsRecords() {
     const [search, setSearch] = useState("")
     const [debouncedSearch, setDebouncedSearch] = useState("")
     const [status, setStatus] = useState("all")
+    const [gender, setGender] = useState("all")
+    const [order, setOrder] = useState("all")
     const { setTitle } = useHeaderStore()
 
     useEffect(() => {
@@ -30,12 +32,14 @@ export default function PatientsRecords() {
     }, [search])
 
     const { data: result, isLoading, isFetching } = useQuery({
-        queryKey: ["patients-records-list", debouncedSearch, status],
+        queryKey: ["patients-records-list", debouncedSearch, status, gender, order],
         queryFn: () => getPatients({
             pageIndex: 0,
             perPage: 100,
             filter: debouncedSearch,
-            status: status
+            status: status,
+            gender: gender,
+            order: order
         }),
         placeholderData: (previousData) => previousData,
     })
@@ -55,6 +59,8 @@ export default function PatientsRecords() {
     const handleClearFilters = () => {
         setSearch("")
         setStatus("all")
+        setGender("all")
+        setOrder("all")
     }
 
     return (
@@ -77,6 +83,10 @@ export default function PatientsRecords() {
                     onSearchChange={setSearch}
                     status={status}
                     onStatusChange={setStatus}
+                    gender={gender}
+                    onGenderChange={setGender}
+                    order={order}
+                    onOrderChange={setOrder}
                     onClearFilters={handleClearFilters}
                     isFetching={isFetching}
                 />
@@ -88,7 +98,7 @@ export default function PatientsRecords() {
                         patients.map((patient) => (
                             <Card
                                 key={patient.id}
-                                className="group hover:border-blue-500/50 transition-all cursor-pointer bg-card shadow-sm"
+                                className="group hover:border-blue-500/50 transition-all cursor-pointer bg-card shadow-sm min-w-0 overflow-hidden"
                                 onClick={() => handleOpenRecord(patient.id)}
                             >
                                 <CardContent className="p-4 flex items-center justify-between">
