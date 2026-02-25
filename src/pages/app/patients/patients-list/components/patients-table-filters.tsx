@@ -1,11 +1,10 @@
 "use client"
 
 import { useState, useEffect, useRef } from "react"
-import { CheckCircle2, Filter, QrCode, Search, UserRoundPlus, Users, XCircle } from "lucide-react"
+import { CheckCircle2, Filter, QrCode, UserRoundPlus, Users, XCircle } from "lucide-react"
 import { useForm } from "react-hook-form"
 
 import { Button } from "@/components/ui/button"
-import { Input } from "@/components/ui/input"
 import { Dialog } from "@/components/ui/dialog"
 import {
   Select,
@@ -18,6 +17,7 @@ import {
 import { usePatientFilters } from "@/hooks/use-patient-filters"
 import { GenerateInviteModal } from "./generate-Invite-modal"
 import { RegisterPatients } from "../register-patients/register-patients"
+import { PatientsSearchInput } from "../../components/patients-search-input"
 
 interface PatientsTableFiltersProps {
   onPatientRegistered?: () => void
@@ -61,14 +61,10 @@ export function PatientsTableFilters({ onPatientRegistered }: PatientsTableFilte
   return (
     <div className="flex flex-col lg:flex-row gap-3 lg:items-center lg:justify-between">
       <div className="flex flex-col lg:flex-row gap-2 flex-1 lg:items-center">
-        <div className="relative w-full lg:w-auto">
-          <Search className="absolute left-2.5 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground pointer-events-none" />
-          <Input
-            {...register("filter")}
-            placeholder="Buscar por CPF, Nome e Email"
-            className="h-8 w-full lg:w-[320px] pl-9"
-          />
-        </div>
+        <PatientsSearchInput
+          {...register("filter")}
+          placeholder="Buscar por CPF, Nome e Email"
+        />
 
         <Select
           value={filters.status}

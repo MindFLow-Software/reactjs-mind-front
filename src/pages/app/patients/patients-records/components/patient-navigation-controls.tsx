@@ -18,29 +18,31 @@ export function PatientNavigationControls({
     const navigate = useNavigate()
 
     return (
-        <div className="flex items-center gap-4 bg-muted/40 px-3 py-1.5 rounded-full border border-border/50">
+        <div className="flex items-center gap-3 rounded-lg border border-border/60 bg-card px-3 py-1.5">
             <Button
-                variant="ghost"
+                variant="outline"
                 size="icon"
-                className="size-7 cursor-pointer disabled:opacity-30"
+                className="size-8 cursor-pointer rounded-md border-border/70 bg-background text-muted-foreground hover:bg-muted hover:text-foreground disabled:opacity-35 disabled:text-muted-foreground"
                 disabled={!prevId}
                 onClick={() => navigate(`/patients/${prevId}/details`)}
+                aria-label="Paciente anterior"
             >
-                <ChevronLeft className="size-4" />
+                <ChevronLeft className="size-4.5" />
             </Button>
 
-            <span className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest tabular-nums">
+            <span className="text-[11px] font-semibold text-muted-foreground uppercase tracking-wider tabular-nums whitespace-nowrap">
                 Paciente {current} de {total}
             </span>
 
             <Button
-                variant="ghost"
+                variant="outline"
                 size="icon"
-                className="size-7 cursor-pointer disabled:opacity-30"
+                className="size-8 cursor-pointer rounded-md border-border/70 bg-background text-muted-foreground hover:bg-muted hover:text-foreground disabled:opacity-35 disabled:text-muted-foreground"
                 disabled={!nextId}
                 onClick={() => navigate(`/patients/${nextId}/details`)}
+                aria-label="Próximo paciente"
             >
-                <ChevronRight className="size-4" />
+                <ChevronRight className="size-4.5" />
             </Button>
         </div>
     )

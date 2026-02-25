@@ -1,7 +1,6 @@
 "use client"
 
-import { Search, Users, CheckCircle2, XCircle, VenusAndMars, Mars, Venus, History, ArrowDownWideNarrow, ArrowUpNarrowWide, CalendarDays, ClockArrowUp, ClockArrowDown } from "lucide-react"
-import { Input } from "@/components/ui/input"
+import { Users, CheckCircle2, XCircle, VenusAndMars, Mars, Venus, History, ArrowDownWideNarrow, ArrowUpNarrowWide, CalendarDays, ClockArrowUp, ClockArrowDown } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import {
     Select,
@@ -10,6 +9,7 @@ import {
     SelectTrigger,
     SelectValue,
 } from "@/components/ui/select"
+import { PatientsSearchInput } from "../../components/patients-search-input"
 
 interface PatientsRecordsTableFiltersProps {
     search: string
@@ -46,15 +46,12 @@ export function PatientsRecordsTableFilters({
         <div className="flex flex-col lg:flex-row gap-2 lg:items-center w-full overflow-x-auto lg:overflow-visible pb-2 lg:pb-0">
             <div className="flex flex-col lg:flex-row gap-2 items-start lg:items-center min-w-max lg:min-w-0">
 
-                <div className="relative w-full lg:w-[300px] shrink-0">
-                    <Search className="absolute left-2.5 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground pointer-events-none" />
-                    <Input
-                        placeholder="Buscar por Nome"
-                        className="h-8 w-full pl-9 bg-background focus-visible:ring-1"
-                        value={search}
-                        onChange={(e) => onSearchChange(e.target.value)}
-                    />
-                </div>
+                <PatientsSearchInput
+                    placeholder="Buscar por Nome"
+                    value={search}
+                    onChange={(e) => onSearchChange(e.target.value)}
+                    wrapperClassName="w-full lg:w-[300px]"
+                />
 
                 <div className="flex flex-row gap-2 items-center">
                     {/* Status */}

@@ -1,8 +1,7 @@
 "use client"
 
-import { Search, XCircle, Users, User } from "lucide-react"
+import { XCircle, Users, User } from "lucide-react"
 import { useQuery } from "@tanstack/react-query"
-import { Input } from "@/components/ui/input"
 import { Button } from "@/components/ui/button"
 import {
     Select,
@@ -14,6 +13,7 @@ import {
 import { getPatientsWithAttachments } from "@/api/patient-with-attachment"
 import { DatePickerWithRange } from "./date-picker-with-range"
 import { type DateRange } from "react-day-picker"
+import { PatientsSearchInput } from "../../components/patients-search-input"
 
 interface AttachmentsTableFiltersProps {
     search: string
@@ -44,15 +44,11 @@ export function AttachmentsTableFilters({
     return (
         <div className="flex flex-col lg:flex-row gap-3 lg:items-center">
             <div className="flex flex-col lg:flex-row gap-2 flex-1 lg:items-center">
-                <div className="relative w-full lg:w-auto">
-                    <Search className="absolute left-2.5 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground pointer-events-none" />
-                    <Input
-                        placeholder="Buscar arquivo..."
-                        className="h-8 w-full lg:w-[320px] pl-9"
-                        value={search}
-                        onChange={(e) => onSearchChange(e.target.value)}
-                    />
-                </div>
+                <PatientsSearchInput
+                    placeholder="Buscar arquivo..."
+                    value={search}
+                    onChange={(e) => onSearchChange(e.target.value)}
+                />
 
                 <Select value={patientId} onValueChange={onPatientChange}>
                     <SelectTrigger className="h-8 w-full lg:w-[250px] cursor-pointer text-left overflow-hidden">

@@ -179,7 +179,11 @@ export function PatientsTableRow({ patient }: PatientsTableRowProps) {
                                 <Button
                                     size="icon"
                                     variant="ghost"
-                                    onClick={() => navigate(`/patients/${patient.id}/details`)}
+                                    onClick={() => {
+                                        sessionStorage.removeItem("active_patient_queue")
+                                        sessionStorage.removeItem("active_patient_queue_source")
+                                        navigate(`/patients/${patient.id}/details`, { state: { from: "patients-list" } })
+                                    }}
                                     className="cursor-pointer h-8 w-8 rounded-lg transition-all text-muted-foreground hover:text-emerald-600 hover:bg-emerald-50"
                                 >
                                     <LinkIcon className="h-4 w-4" aria-hidden="true" />
