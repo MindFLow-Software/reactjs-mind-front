@@ -220,7 +220,7 @@ export function AnamnesisForm({ patientId, patientName }: { patientId: string; p
 
                     <div className="flex items-center justify-between">
                         <Label className="text-xs font-medium uppercase text-muted-foreground tracking-wider">Registro Clínico</Label>
-                        <Button size="sm" onClick={handleAddBlock} className="bg-emerald-600 hover:bg-emerald-700 h-8">
+                        <Button size="sm" onClick={handleAddBlock} className="cursor-pointer bg-emerald-600 hover:bg-emerald-700 h-8">
                             <Plus className="mr-1 h-4 w-4" /> Novo bloco
                         </Button>
                     </div>

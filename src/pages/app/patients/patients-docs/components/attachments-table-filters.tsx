@@ -1,6 +1,6 @@
 "use client"
 
-import { XCircle, Users, User } from "lucide-react"
+import { XCircle, Users, User, Filter } from "lucide-react" // Adicionei Filter para seguir o padrão
 import { useQuery } from "@tanstack/react-query"
 import { Button } from "@/components/ui/button"
 import {
@@ -14,6 +14,7 @@ import { getPatientsWithAttachments } from "@/api/patient-with-attachment"
 import { DatePickerWithRange } from "./date-picker-with-range"
 import { type DateRange } from "react-day-picker"
 import { PatientsSearchInput } from "../../components/patients-search-input"
+import { cn } from "@/lib/utils"
 
 interface AttachmentsTableFiltersProps {
     search: string
@@ -41,6 +42,8 @@ export function AttachmentsTableFilters({
         staleTime: 1000 * 60 * 5,
     })
 
+    const isPatientSelected = patientId && patientId !== "all"
+
     return (
         <div className="flex flex-col lg:flex-row gap-3 lg:items-center">
             <div className="flex flex-col lg:flex-row gap-2 flex-1 lg:items-center">
@@ -51,20 +54,32 @@ export function AttachmentsTableFilters({
                 />
 
                 <Select value={patientId} onValueChange={onPatientChange}>
-                    <SelectTrigger className="h-8 w-full lg:w-[250px] cursor-pointer text-left overflow-hidden">
-                        <SelectValue placeholder={isLoading ? "Carregando..." : "Filtrar por paciente"} />
+                    <SelectTrigger
+                        className={cn(
+                            "cursor-pointer h-9 w-full lg:w-[260px] bg-background border-muted-foreground/20 hover:border-primary/30 transition-all shadow-sm px-3 text-left font-normal",
+                            !isPatientSelected && "text-muted-foreground"
+                        )}
+                    >
+                        <div className="flex items-center gap-2 whitespace-nowrap overflow-hidden">
+                            <Filter className="h-3.5 w-3.5 text-muted-foreground shrink-0" />
+                            <SelectValue placeholder={isLoading ? "Carregando..." : "Filtrar por paciente"} />
+                        </div>
                     </SelectTrigger>
 
-                    <SelectContent>
+                    <SelectContent className="min-w-[220px]">
                         <SelectItem value="all" className="cursor-pointer py-2.5">
-                            <div className="flex items-center gap-2">
+                            <div className="flex items-center gap-2 whitespace-nowrap">
                                 <Users className="h-4 w-4 text-slate-500" />
                                 <span className="text-sm font-medium">Todos os Pacientes</span>
                             </div>
                         </SelectItem>
 
                         {patients?.map((patient) => (
-                            <SelectItem key={patient.id} value={patient.id} className="cursor-pointer py-2.5 max-w-[400px]">
+                            <SelectItem
+                                key={patient.id}
+                                value={patient.id}
+                                className="cursor-pointer py-2.5"
+                            >
                                 <div className="flex items-center gap-2 overflow-hidden">
                                     <User className="h-4 w-4 text-blue-500 shrink-0" />
                                     <span className="text-sm font-medium truncate">
@@ -76,18 +91,25 @@ export function AttachmentsTableFilters({
                     </SelectContent>
                 </Select>
 
-                <DatePickerWithRange date={date} onDateChange={onDateChange} />
+                <DatePickerWithRange
+                    date={date}
+                    onDateChange={onDateChange}
+                    className={cn(
+                        "h-9 w-full lg:w-[260px] bg-background border-muted-foreground/20 hover:border-primary/30 transition-all shadow-sm px-3 justify-start text-left font-normal",
+                        !date && "text-muted-foreground"
+                    )}
+                />
 
-                {(search || (patientId && patientId !== "all") || date?.from) && (
+                {(search || isPatientSelected || date?.from) && (
                     <Button
                         variant="ghost"
                         size="sm"
                         type="button"
                         onClick={onClearFilters}
-                        className="cursor-pointer h-8 px-2 lg:px-3 text-muted-foreground hover:text-destructive gap-2 transition-colors"
+                        className="cursor-pointer h-9 px-2 lg:px-3 text-muted-foreground hover:text-destructive gap-2 transition-colors"
                     >
                         <XCircle className="h-4 w-4" />
-                        Limpar filtros
+                        <span className="text-sm">Limpar filtros</span>
                     </Button>
                 )}
             </div>

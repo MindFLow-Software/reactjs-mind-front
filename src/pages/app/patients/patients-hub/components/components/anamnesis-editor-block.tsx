@@ -48,8 +48,8 @@ export function AnamnesisEditorBlock({
                     className="h-8 flex-1 bg-background"
                 />
                 <Button
-                    variant="ghost" size="sm"
-                    className="text-destructive hover:bg-destructive/10"
+                    size="sm"
+                    className="cursor-pointer text-white bg-red-500 hover:bg-red-600"
                     onClick={() => onRemove(block.id)}
                     disabled={isRemoveDisabled}
                 >
