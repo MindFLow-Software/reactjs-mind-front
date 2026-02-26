@@ -29,7 +29,7 @@ import { PatientDetailsHeader } from "./components/patient-details-header"
 import { useHeaderStore } from "@/hooks/use-header-store"
 import { PatientInfo } from "./components/patient-Info"
 import { PatientSessionsTimeline } from "./components/patient-sessions-timeline"
-import { AnamnesisTab } from "./components/anamnesis-form"
+import { AnamnesisForm } from "./components/anamnesis-form"
 import { PatientResumeTab } from "./components/patient-resume-tab"
 import { PatientsDetailsLoading } from "./components/loading"
 import { PatientsDataBlock } from "../components/patients-data-block"
@@ -174,7 +174,7 @@ export default function PatientDetails() {
     }
 
     return (
-        <div className="flex flex-col gap-5">
+        <div className="flex min-w-0 flex-col gap-5 overflow-x-hidden">
             <div className="flex flex-wrap items-center justify-between gap-3">
                 <button
                     onClick={() => navigate(-1)}
@@ -195,16 +195,16 @@ export default function PatientDetails() {
             </div>
 
             <PatientsPageShell
-                title="Hub do Paciente"
+                title="Prontuário completo do Paciente"
                 description="Acompanhamento clinico, historico de sessoes e documentos em um unico lugar."
                 icon={<FileSearch className="size-5 text-blue-600" />}
                 headerRight={<HubActions />}
-                contentClassName="border-0 bg-transparent shadow-none p-0 md:p-0 overflow-visible"
+                contentClassName="min-w-0 border-0 bg-transparent p-0 shadow-none md:p-0 overflow-hidden"
             >
                 <PatientsDataBlock
                     title="Prontuario e acompanhamento"
                     description="Navegue entre dados cadastrais, anamnese, historico, arquivos e resumo clinico."
-                    className="w-full rounded-2xl bg-card px-5 py-5 md:px-6 md:py-6 shadow-sm space-y-6"
+                    className="min-w-0 w-full space-y-6 overflow-hidden rounded-2xl bg-card px-5 py-5 shadow-sm md:px-6 md:py-6"
                 >
                 <div className="pb-5 border-b border-border/60">
                     <PatientDetailsHeader
@@ -215,7 +215,7 @@ export default function PatientDetails() {
                     />
                 </div>
 
-                <Tabs value={currentTab} onValueChange={setCurrentTab} className="w-full">
+                <Tabs value={currentTab} onValueChange={setCurrentTab} className="min-w-0 w-full">
                     <TabsList className="bg-muted/40 p-1 rounded-xl w-full lg:w-auto flex flex-wrap h-auto gap-1">
                         {HUB_TABS.map((tab) => (
                             <TabsTrigger key={tab.value} value={tab.value} className="cursor-pointer rounded-md px-4 py-1.5 text-xs">
@@ -236,7 +236,7 @@ export default function PatientDetails() {
                     </TabsContent>
 
                     <TabsContent value="anamnesis" className="mt-4">
-                        <AnamnesisTab patientId={id!} />
+                        <AnamnesisForm patientId={id!} patientName={patientFullName} />
                     </TabsContent>
 
                     <TabsContent value="timeline" className="mt-4">
