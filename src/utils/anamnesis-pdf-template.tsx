@@ -1,6 +1,6 @@
 "use client"
 
-import { Document, Page, StyleSheet, Text, View } from "@react-pdf/renderer"
+import { Document, Font, Page, StyleSheet, Text, View } from "@react-pdf/renderer"
 
 interface AnamnesisPDFTemplateProps {
     patientName: string
@@ -70,6 +70,12 @@ const styles = StyleSheet.create({
     },
 })
 
+Font.registerHyphenationCallback((word) => {
+    if (word.length <= 24) return [word]
+    const chunks = word.match(/.{1,12}/g)
+    return chunks ?? [word]
+})
+
 function getLineType(line: string): "heading" | "bullet" | "numbered" | "paragraph" | "spacer" {
     const trimmed = line.trim()
     if (!trimmed) return "spacer"
@@ -77,6 +83,13 @@ function getLineType(line: string): "heading" | "bullet" | "numbered" | "paragra
     if (trimmed.startsWith("- ")) return "bullet"
     if (/^\d+\.\s/.test(trimmed)) return "numbered"
     return "paragraph"
+}
+
+function forceWrapLongTokens(text: string, chunkSize = 28): string {
+    return text.replace(/\S{30,}/g, (token) => {
+        const chunks = token.match(new RegExp(`.{1,${chunkSize}}`, "g"))
+        return chunks ? chunks.join("\n") : token
+    })
 }
 
 export function AnamnesisPDFTemplate({ patientName, content, generatedAt }: AnamnesisPDFTemplateProps) {
@@ -98,27 +111,27 @@ export function AnamnesisPDFTemplate({ patientName, content, generatedAt }: Anam
                         if (lineType === "heading") {
                             return (
                                 <Text key={`line-${index}`} style={styles.heading}>
-                                    {line.replace(/^##\s*/, "")}
+                                    {forceWrapLongTokens(line.replace(/^##\s*/, ""))}
                                 </Text>
                             )
                         }
                         if (lineType === "bullet") {
                             return (
                                 <Text key={`line-${index}`} style={styles.bullet}>
-                                    • {line.replace(/^-+\s*/, "")}
+                                    • {forceWrapLongTokens(line.replace(/^-+\s*/, ""))}
                                 </Text>
                             )
                         }
                         if (lineType === "numbered") {
                             return (
                                 <Text key={`line-${index}`} style={styles.numbered}>
-                                    {line.trim()}
+                                    {forceWrapLongTokens(line.trim())}
                                 </Text>
                             )
                         }
                         return (
                             <Text key={`line-${index}`} style={styles.paragraph}>
-                                {line}
+                                {forceWrapLongTokens(line)}
                             </Text>
                         )
                     })}

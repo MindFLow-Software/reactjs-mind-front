@@ -100,7 +100,7 @@ export function EvolutionViewer({
             <Separator className="bg-slate-100" />
 
             <div className="min-h-[180px] max-w-full rounded-lg bg-muted/20 px-3 py-4 sm:px-4 overflow-x-hidden">
-                <p className="whitespace-pre-wrap [overflow-wrap:anywhere] break-words font-serif text-lg leading-relaxed text-slate-700">
+                <p className="whitespace-pre-wrap [overflow-wrap:anywhere] font-serif text-lg leading-relaxed text-slate-700">
                     {content || "Nenhuma anotacao registrada para esta sessao."}
                 </p>
             </div>
