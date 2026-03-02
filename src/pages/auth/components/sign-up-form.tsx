@@ -33,6 +33,11 @@ import {
 } from "@/components/ui/field"
 import { registerPsychologist } from "@/api/create-user"
 
+// Utilitários de data para validação
+const today = new Date()
+const minDate = new Date(today.getFullYear() - 120, today.getMonth(), today.getDate())
+const maxDateForPro = new Date(today.getFullYear() - 18, today.getMonth(), today.getDate())
+
 function isValidCPF(cpf: string): boolean {
   const cleanCPF = cpf.replace(/\D/g, "")
   if (cleanCPF.length !== 11 || /^(\d)\1{10}$/.test(cleanCPF)) return false
@@ -63,9 +68,15 @@ export const signUpFormSchema = z.object({
     .regex(passwordRegex, "Senha muito fraca"),
   dateOfBirth: z.date({
     message: "Obrigatório",
-  }).refine((date) => date <= new Date(), {
-    message: "Data inválida",
-  }),
+  })
+    // 🟢 Validação de Limite Superior (120 anos)
+    .refine((date) => date >= minDate, {
+      message: "Data de nascimento inválida. Verifique o ano.",
+    })
+    // 🟢 Validação de Limite Inferior (18 anos para Profissionais)
+    .refine((date) => date <= maxDateForPro, {
+      message: "É necessário ser maior de 18 anos para criar uma conta profissional.",
+    }),
   cpf: z.string()
     .min(11, "CPF incompleto")
     .refine((value) => isValidCPF(value), "CPF inválido"),
@@ -169,6 +180,7 @@ export function SignUpForm({
       {...props}
     >
       <FieldGroup className="flex flex-col gap-4">
+        {/* ... (campos de nome, email e senha permanecem iguais) */}
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
           <Field>
             <FieldLabel htmlFor="firstName" className={cn(errors.firstName && "text-red-500")}>Primeiro Nome</FieldLabel>
@@ -224,13 +236,12 @@ export function SignUpForm({
             <button
               type="button"
               onClick={togglePasswordVisibility}
-              aria-label={showPassword ? "Esconder senha" : "Mostrar senha"}
               className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground cursor-pointer transition-colors focus-visible:ring-2 focus-visible:ring-blue-500 outline-none rounded-sm"
             >
-              {showPassword ? <EyeOff size={18} aria-hidden="true" /> : <Eye size={18} aria-hidden="true" />}
+              {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
             </button>
           </div>
-
+          {/* ... (password checks permanecem iguais) */}
           <div className="mt-3 space-y-1.5 px-1">
             {passwordChecks.map((check, i) => (
               <div key={i} className="flex items-center gap-2 transition-opacity">
@@ -265,7 +276,6 @@ export function SignUpForm({
                   id="phoneNumber"
                   type="tel"
                   autoComplete="tel"
-                  aria-invalid={!!errors.phoneNumber}
                   className={cn("tabular-nums", errors.phoneNumber && "border-red-500 focus-visible:ring-red-500")}
                 />
               )}
@@ -285,7 +295,6 @@ export function SignUpForm({
                   placeholder="123.456.789-00"
                   id="cpf"
                   autoComplete="off"
-                  aria-invalid={!!errors.cpf}
                   className={cn("tabular-nums", errors.cpf && "border-red-500 focus-visible:ring-red-500")}
                 />
               )}
@@ -318,7 +327,8 @@ export function SignUpForm({
                 if (val.length === 10) {
                   const [day, month, year] = val.split("/").map(Number)
                   const date = new Date(year, month - 1, day)
-                  if (!isNaN(date.getTime()) && date.getFullYear() === year && year > 1900) {
+                  // 🟢 Verificação manual de limite no input digitado
+                  if (!isNaN(date.getTime()) && date.getFullYear() === year && year >= minDate.getFullYear()) {
                     field.onChange(date)
                   }
                 }
@@ -340,10 +350,9 @@ export function SignUpForm({
                     <PopoverTrigger asChild>
                       <button
                         type="button"
-                        aria-label="Abrir seletor de data"
-                        className="absolute right-0 top-0 h-full px-3 py-2 hover:bg-transparent cursor-pointer text-muted-foreground flex items-center justify-center focus-visible:ring-2 focus-visible:ring-blue-500 outline-none rounded-r-md"
+                        className="absolute right-0 top-0 h-full px-3 py-2 text-muted-foreground hover:text-blue-600 cursor-pointer flex items-center justify-center outline-none rounded-r-md transition-colors"
                       >
-                        <CalendarIcon className="size-4" aria-hidden="true" />
+                        <CalendarIcon className="size-4" />
                       </button>
                     </PopoverTrigger>
                   </div>
@@ -352,8 +361,9 @@ export function SignUpForm({
                       mode="single"
                       selected={field.value}
                       captionLayout="dropdown"
-                      fromYear={1900}
-                      toYear={new Date().getFullYear()}
+                      // 🟢 Restrição visual no Calendário
+                      fromYear={minDate.getFullYear()}
+                      toYear={maxDateForPro.getFullYear()}
                       onSelect={(date) => {
                         field.onChange(date)
                         setCalendarOpen(false)
@@ -364,51 +374,52 @@ export function SignUpForm({
               )
             }}
           />
+          {errors.dateOfBirth && (
+            <span className="text-[10px] text-red-500 font-bold mt-1 uppercase tracking-tight">
+              {errors.dateOfBirth.message}
+            </span>
+          )}
         </Field>
 
-        <div className="grid grid-cols-1 gap-4">
-          <Field>
-            <FieldLabel className={cn(errors.gender && "text-red-500")}>Gênero</FieldLabel>
-            <Controller
-              name="gender"
-              control={control}
-              render={({ field }) => (
-                <Select value={field.value} onValueChange={field.onChange}>
-                  <SelectTrigger className="w-full cursor-pointer focus-visible:ring-2 focus-visible:ring-blue-500">
-                    <SelectValue placeholder="Selecione" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="FEMININE" className="cursor-pointer">
-                      <div className="flex items-center gap-2"><Venus className="h-4 w-4 text-rose-500" aria-hidden="true" /> Feminino</div>
-                    </SelectItem>
-                    <SelectItem value="MASCULINE" className="cursor-pointer">
-                      <div className="flex items-center gap-2"><Mars className="h-4 w-4 text-blue-500" aria-hidden="true" /> Masculino</div>
-                    </SelectItem>
-                    <SelectItem value="OTHER" className="cursor-pointer">
-                      <div className="flex items-center gap-2"><Users className="h-4 w-4 text-violet-500" aria-hidden="true" /> Prefiro não informar</div>
-                    </SelectItem>
-                  </SelectContent>
-                </Select>
-              )}
-            />
-          </Field>
-        </div>
+        <Field>
+          <FieldLabel className={cn(errors.gender && "text-red-500")}>Gênero</FieldLabel>
+          <Controller
+            name="gender"
+            control={control}
+            render={({ field }) => (
+              <Select value={field.value} onValueChange={field.onChange}>
+                <SelectTrigger className="w-full cursor-pointer focus-visible:ring-2 focus-visible:ring-blue-500">
+                  <SelectValue placeholder="Selecione" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="FEMININE" className="cursor-pointer">
+                    <div className="flex items-center gap-2"><Venus className="h-4 w-4 text-rose-500" /> Feminino</div>
+                  </SelectItem>
+                  <SelectItem value="MASCULINE" className="cursor-pointer">
+                    <div className="flex items-center gap-2"><Mars className="h-4 w-4 text-blue-500" /> Masculino</div>
+                  </SelectItem>
+                  <SelectItem value="OTHER" className="cursor-pointer">
+                    <div className="flex items-center gap-2"><Users className="h-4 w-4 text-violet-500" /> Outro</div>
+                  </SelectItem>
+                </SelectContent>
+              </Select>
+            )}
+          />
+        </Field>
 
         <Button
           disabled={isSubmitting}
-          className="cursor-pointer h-11 bg-blue-600 hover:bg-blue-700 active:scale-[0.98] transition-[transform,background-color] duration-200 font-medium w-full focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2 outline-none"
+          className="cursor-pointer h-11 bg-blue-600 hover:bg-blue-700 active:scale-[0.98] transition-[transform,background-color] duration-200 font-medium w-full outline-none"
           type="submit"
         >
-          {isSubmitting ? <Loader2 className="mr-2 h-4 w-4 animate-spin" aria-hidden="true" /> : null}
-          <span aria-live="polite">
-            {isSubmitting ? "Criando conta…" : "Criar conta"}
-          </span>
+          {isSubmitting ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : null}
+          <span>{isSubmitting ? "Criando conta…" : "Criar conta"}</span>
         </Button>
 
         <FieldDescription className="px-2 text-center text-xs leading-relaxed text-muted-foreground">
           Ao continuar, você concorda com nossos{" "}
-          <a href="#" className="underline underline-offset-4 hover:text-foreground cursor-pointer focus-visible:ring-1 focus-visible:ring-blue-500 rounded-sm outline-none">termos de serviço</a> e{" "}
-          <a href="#" className="underline underline-offset-4 hover:text-foreground cursor-pointer focus-visible:ring-1 focus-visible:ring-blue-500 rounded-sm outline-none">políticas de privacidade</a>.
+          <a href="#" className="underline underline-offset-4 hover:text-foreground">termos de serviço</a> e{" "}
+          <a href="#" className="underline underline-offset-4 hover:text-foreground">políticas de privacidade</a>.
         </FieldDescription>
       </FieldGroup>
     </form>
