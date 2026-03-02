@@ -2,8 +2,10 @@
 
 import {
     FileText,
-    ExternalLink,
-    Loader2
+    ArrowDownToLine,
+    Loader2,
+    ImageIcon,
+    X,
 } from "lucide-react"
 
 import { Button } from "@/components/ui/button"
@@ -12,8 +14,10 @@ import {
     DialogContent,
     DialogHeader,
     DialogTitle,
-    DialogDescription
+    DialogDescription,
+    DialogFooter
 } from "@/components/ui/dialog"
+import { handleFileDownload } from "@/utils/handle-file-download"
 
 interface SimplePreviewModalProps {
     file: any | null
@@ -23,63 +27,102 @@ interface SimplePreviewModalProps {
 export function SimplePreviewModal({ file, onClose }: SimplePreviewModalProps) {
     if (!file) return null
 
-    // Configuração do Backend - Sincronizado com sua porta atual
     const backendUrl = "http://localhost:8080"
-    const rawUrl = file?.fileUrl || ""
+    const fileUrl = `${backendUrl}/attachments/${file.id}`
 
-    // Normalização da URL: garante que aponte para o backend se for um caminho relativo
-    const fileUrl = rawUrl.startsWith('http')
-        ? rawUrl
-        : `${backendUrl}${rawUrl.startsWith('/') ? '' : '/'}${rawUrl}`
+    const fileMime = file.contentType ?? file.fileType ?? ""
+    const fileName = file.filename ?? file.fileName ?? "Arquivo"
 
-    const isImage = file?.contentType?.toLowerCase().includes("image") || /\.(jpg|jpeg|png|webp|gif)$/i.test(file?.filename || "")
-    const isPDF = file?.contentType?.toLowerCase().includes("pdf") || file?.filename?.toLowerCase().endsWith(".pdf")
+    const isImage = fileMime.toLowerCase().includes("image") || /\.(jpg|jpeg|png|webp|gif)$/i.test(fileName)
+    const isPDF = fileMime.toLowerCase().includes("pdf") || fileName.toLowerCase().endsWith(".pdf")
+
+    const formatLabel = fileMime ? fileMime.split('/')[1].toUpperCase() : isPDF ? 'PDF' : 'IMG'
 
     return (
         <Dialog open={!!file} onOpenChange={onClose}>
-            <DialogContent className="max-w-5xl h-[90vh] p-0 flex flex-col overflow-hidden bg-background">
-                <DialogHeader className="p-4 border-b flex flex-row items-center justify-between space-y-0 shrink-0">
-                    <div className="flex flex-col gap-0.5 pr-10">
-                        <DialogTitle className="text-sm font-bold truncate">
-                            {file?.filename || "Visualização de Arquivo"}
+            <DialogContent className="max-w-5xl h-[92vh] p-0 flex flex-col overflow-hidden bg-slate-950 border-none shadow-2xl">
+
+                {/* 1. CABEÇALHO */}
+                <DialogHeader className="p-4 border-b border-white/5 bg-slate-900 flex flex-row items-center justify-between shrink-0 space-y-0">
+                    <div className="flex flex-col gap-0.5">
+                        <DialogTitle className="text-sm font-bold text-white flex items-center gap-2">
+                            <span className="p-1 bg-blue-600 rounded text-white">
+                                {isImage ? <ImageIcon className="size-3" /> : <FileText className="size-3" />}
+                            </span>
+                            {fileName}
                         </DialogTitle>
-                        <DialogDescription className="text-[10px] uppercase tracking-wider font-semibold text-muted-foreground">
-                            Visualizador de Documentos Clínicos
+                        <DialogDescription className="text-[10px] text-blue-400 font-bold uppercase tracking-widest">
+                            MindFlush • Visualizador de Alta Precisão
                         </DialogDescription>
+                    </div>
+                    <div className="flex items-center gap-2 pr-6">
+                        <Button
+                            variant="ghost"
+                            size="icon"
+                            className="cursor-pointer size-8 rounded-full text-slate-400 hover:bg-red-500/20 hover:text-red-400"
+                            onClick={onClose}
+                        >
+                            <X className="size-4" />
+                        </Button>
                     </div>
                 </DialogHeader>
 
-                <div className="flex-1 bg-slate-50 flex items-center justify-center overflow-hidden">
-                    {!rawUrl ? (
-                        <div className="text-center">
-                            <Loader2 className="size-6 animate-spin mb-2 text-blue-500 mx-auto" />
-                            <p className="text-xs text-muted-foreground">Carregando endereço do arquivo...</p>
-                        </div>
-                    ) : isImage ? (
+                <div className="flex-1 bg-slate-900 relative flex items-center justify-center overflow-hidden">
+                    <div className="absolute inset-0 flex flex-col items-center justify-center z-0">
+                        <Loader2 className="size-8 animate-spin text-blue-600/20 mb-2" />
+                    </div>
+
+                    {isImage ? (
                         <img
                             src={fileUrl}
-                            alt="Preview"
-                            className="max-w-full max-h-full object-contain p-4 drop-shadow-md"
+                            alt="Documento"
+                            className="relative z-10 w-full h-full object-contain"
+                            onError={(e) => {
+                                e.currentTarget.style.display = 'none'
+                            }}
                         />
                     ) : isPDF ? (
                         <iframe
-                            src={`${fileUrl}#toolbar=0&navpanes=0`}
-                            className="w-full h-full border-none bg-white shadow-inner"
-                            title="PDF Preview"
+                            src={`${fileUrl}#toolbar=0&navpanes=0&scrollbar=0`}
+                            className="relative z-10 w-full h-full border-none bg-white"
+                            title="PDF"
                         />
                     ) : (
-                        <div className="text-center p-8 bg-white rounded-2xl border shadow-sm">
-                            <FileText className="size-12 mx-auto mb-4 text-muted-foreground/20" />
-                            <p className="text-sm font-medium">Visualização direta indisponível.</p>
-                            <Button className="mt-4 gap-2" asChild>
-                                <a href={fileUrl} target="_blank" rel="noreferrer">
-                                    <ExternalLink className="size-4" />
-                                    Abrir em nova aba
-                                </a>
-                            </Button>
+                        <div className="relative z-10 py-20 text-center flex flex-col items-center justify-center">
+                            <FileText className="size-16 mb-4 text-slate-700" />
+                            <p className="text-sm text-slate-400 font-medium">Formato não visualizável</p>
                         </div>
                     )}
                 </div>
+
+                <DialogFooter className="p-3 bg-slate-900 border-t border-white/5 flex items-center justify-between sm:justify-between shrink-0">
+                    <div className="hidden sm:flex items-center gap-3 pl-2">
+                        <div className="flex flex-col">
+                            <span className="text-[10px] text-slate-500 uppercase font-black leading-none">Formato</span>
+                            <span className="text-xs text-slate-300 font-mono uppercase">
+                                {formatLabel}
+                            </span>
+                        </div>
+                    </div>
+
+                    <div className="flex items-center gap-3 w-full sm:w-auto">
+                        <Button
+                            variant="ghost"
+                            size="sm"
+                            className="cursor-pointer text-slate-400 hover:text-white hover:bg-white/5 text-xs font-bold uppercase tracking-tighter"
+                            onClick={onClose}
+                        >
+                            Fechar
+                        </Button>
+                        <Button
+                            className="cursor-pointer bg-blue-600 hover:bg-blue-500 text-white gap-2 shadow-xl shadow-blue-900/20 h-9 px-8 rounded-full transition-all active:scale-[0.98] font-bold text-xs uppercase tracking-wider"
+                            onClick={() => handleFileDownload(file.id, fileName)}
+                        >
+                            <ArrowDownToLine className="size-4" />
+                            Baixar {isImage ? "Imagem" : isPDF ? "PDF" : "Arquivo"}
+                        </Button>
+                    </div>
+                </DialogFooter>
             </DialogContent>
         </Dialog>
     )
