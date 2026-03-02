@@ -35,6 +35,7 @@ import { PatientsDetailsLoading } from "./components/loading"
 import { PatientsDataBlock } from "../components/patients-data-block"
 import { PatientsPageShell } from "../components/patients-page-shell"
 import { PatientNavigationControls } from "../patients-records/components/patient-navigation-controls"
+import { PatientFilesTab } from "./components/patient-files-tab"
 
 const HUB_TABS = [
     { value: "clinical", label: "Dados Cadastrais" },
@@ -175,7 +176,7 @@ export default function PatientDetails() {
 
     return (
         <div className="flex min-w-0 flex-col gap-5 overflow-x-hidden">
-            <div className="flex flex-wrap items-center justify-between gap-3">
+            <div className="ml-1 flex flex-wrap items-center justify-between gap-3">
                 <button
                     onClick={() => navigate(-1)}
                     className="inline-flex w-fit items-center gap-2 text-muted-foreground hover:text-foreground transition-colors cursor-pointer group"
@@ -206,61 +207,57 @@ export default function PatientDetails() {
                     description="Navegue entre dados cadastrais, anamnese, historico, arquivos e resumo clinico."
                     className="min-w-0 w-full space-y-6 overflow-hidden rounded-2xl bg-card px-5 py-5 shadow-sm md:px-6 md:py-6"
                 >
-                <div className="pb-5 border-b border-border/60">
-                    <PatientDetailsHeader
-                        patient={{
-                            ...patientData,
-                            status: isPatientActive ? "active" : "inactive",
-                        }}
-                    />
-                </div>
-
-                <Tabs value={currentTab} onValueChange={setCurrentTab} className="min-w-0 w-full">
-                    <TabsList className="bg-muted/40 p-1 rounded-xl w-full lg:w-auto flex flex-wrap h-auto gap-1">
-                        {HUB_TABS.map((tab) => (
-                            <TabsTrigger key={tab.value} value={tab.value} className="cursor-pointer rounded-md px-4 py-1.5 text-xs">
-                                {tab.label}
-                            </TabsTrigger>
-                        ))}
-                    </TabsList>
-
-                    <TabsContent value="clinical" className="mt-4">
-                        <PatientInfo
+                    <div className="pb-5 border-b border-border/60">
+                        <PatientDetailsHeader
                             patient={{
-                                dateOfBirth: patientData.dateOfBirth,
-                                cpf: patientData.cpf,
-                                email: patientData.email,
-                                phoneNumber: patientData.phoneNumber,
+                                ...patientData,
+                                status: isPatientActive ? "active" : "inactive",
                             }}
                         />
-                    </TabsContent>
+                    </div>
 
-                    <TabsContent value="anamnesis" className="mt-4">
-                        <AnamnesisForm patientId={id!} patientName={patientFullName} />
-                    </TabsContent>
+                    <Tabs value={currentTab} onValueChange={setCurrentTab} className="min-w-0 w-full">
+                        <TabsList className="bg-muted/40 p-1 rounded-xl w-full lg:w-auto flex flex-wrap h-auto gap-1">
+                            {HUB_TABS.map((tab) => (
+                                <TabsTrigger key={tab.value} value={tab.value} className="cursor-pointer rounded-md px-4 py-1.5 text-xs">
+                                    {tab.label}
+                                </TabsTrigger>
+                            ))}
+                        </TabsList>
 
-                    <TabsContent value="timeline" className="mt-4">
-                        <PatientSessionsTimeline
-                            sessions={patientData.sessions}
-                            meta={meta}
-                            pageIndex={pageIndex}
-                            onPageChange={setPageIndex}
-                            patientName={patientFullName}
-                        />
-                    </TabsContent>
+                        <TabsContent value="clinical" className="mt-4">
+                            <PatientInfo
+                                patient={{
+                                    dateOfBirth: patientData.dateOfBirth,
+                                    cpf: patientData.cpf,
+                                    email: patientData.email,
+                                    phoneNumber: patientData.phoneNumber,
+                                }}
+                            />
+                        </TabsContent>
 
-                    <TabsContent value="docs" className="mt-4">
-                        <div className="flex flex-col items-center py-10 text-center border border-dashed rounded-xl bg-muted/5">
-                            <FileSearch className="size-8 text-muted-foreground/50 mb-3" />
-                            <p className="text-sm font-semibold text-foreground">Repositorio de Documentos</p>
-                            <p className="text-xs text-muted-foreground mt-1">Upload de exames e laudos em breve.</p>
-                        </div>
-                    </TabsContent>
+                        <TabsContent value="anamnesis" className="mt-4">
+                            <AnamnesisForm patientId={id!} patientName={patientFullName} />
+                        </TabsContent>
 
-                    <TabsContent value="resume" className="mt-4">
-                        <PatientResumeTab meta={meta} />
-                    </TabsContent>
-                </Tabs>
+                        <TabsContent value="timeline" className="mt-4">
+                            <PatientSessionsTimeline
+                                sessions={patientData.sessions}
+                                meta={meta}
+                                pageIndex={pageIndex}
+                                onPageChange={setPageIndex}
+                                patientName={patientFullName}
+                            />
+                        </TabsContent>
+
+                        <TabsContent value="docs">
+                            <PatientFilesTab patientId={id!} />
+                        </TabsContent>
+
+                        <TabsContent value="resume" className="mt-4">
+                            <PatientResumeTab meta={meta} />
+                        </TabsContent>
+                    </Tabs>
                 </PatientsDataBlock>
             </PatientsPageShell>
         </div>
