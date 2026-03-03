@@ -1,5 +1,6 @@
 "use client"
 
+import { useMemo } from "react"
 import {
     FileText,
     ArrowDownToLine,
@@ -19,44 +20,62 @@ import {
 } from "@/components/ui/dialog"
 import { handleFileDownload } from "@/utils/handle-file-download"
 
+const BACKEND_FALLBACK_URL = "http://localhost:8080"
+const IMAGE_EXTENSIONS = /\.(jpg|jpeg|png|webp|gif)$/i
+
+type PreviewFile = {
+    id: string
+    filename?: string
+    fileName?: string
+    contentType?: string
+    fileType?: string
+}
+
 interface SimplePreviewModalProps {
-    file: any | null
+    file: PreviewFile | null
     onClose: () => void
 }
+
+const buildAttachmentUrl = (id: string) =>
+    `${import.meta.env.VITE_API_URL?.trim() ?? BACKEND_FALLBACK_URL}/attachments/${id}`
+
+const normalizeFileName = (file: PreviewFile) => file.filename ?? file.fileName ?? "Arquivo"
+const normalizeFileMime = (file: PreviewFile) =>
+    (file.contentType ?? file.fileType ?? "application/octet-stream").toLowerCase()
+
+const isImageMime = (mime: string, name: string) =>
+    mime.includes("image") || IMAGE_EXTENSIONS.test(name)
+
+const isPdfMime = (mime: string, name: string) =>
+    mime.includes("pdf") || name.endsWith(".pdf")
+
+const getDownloadLabel = (isImage: boolean, isPDF: boolean) =>
+    isImage ? "Imagem" : isPDF ? "PDF" : "Arquivo"
 
 export function SimplePreviewModal({ file, onClose }: SimplePreviewModalProps) {
     if (!file) return null
 
-    // 🟢 CORREÇÃO 1: URL dinâmica (Vite usa import.meta.env)
-    // Se não houver variável de ambiente, ele cai para o localhost
-    const backendUrl = import.meta.env.VITE_API_URL || "http://localhost:8080"
-    const fileUrl = `${backendUrl}/attachments/${file.id}`
-
-    // 🟢 CORREÇÃO 2: Normalização de propriedades (Prevenção de NaN e N/A)
-    const fileName = file.filename ?? file.fileName ?? "Arquivo"
-    const fileMime = file.contentType ?? file.fileType ?? "application/octet-stream"
-    const fileSize = file.SizeInBytes ?? file.sizeInBytes ?? 0
-
-    const isImage = fileMime.toLowerCase().includes("image") || /\.(jpg|jpeg|png|webp|gif)$/i.test(fileName)
-    const isPDF = fileMime.toLowerCase().includes("pdf") || fileName.toLowerCase().endsWith(".pdf")
-
-    // 🟢 CORREÇÃO 3: Rótulo de formato resiliente
-    const formatLabel = fileMime.includes('/')
-        ? fileMime.split('/')[1].toUpperCase()
-        : (isPDF ? 'PDF' : 'DOC')
+    const { id } = file
+    const fileUrl = useMemo(() => buildAttachmentUrl(id), [id])
+    const fileName = normalizeFileName(file)
+    const fileMime = normalizeFileMime(file)
+    const lowerFileName = fileName.toLowerCase()
+    const isImage = isImageMime(fileMime, lowerFileName)
+    const isPDF = !isImage && isPdfMime(fileMime, lowerFileName)
+    const downloadLabel = getDownloadLabel(isImage, isPDF)
 
     return (
-        <Dialog open={!!file} onOpenChange={onClose}>
+        <Dialog open={Boolean(file)} onOpenChange={onClose}>
             <DialogContent className="max-w-5xl h-[92vh] p-0 flex flex-col overflow-hidden bg-slate-950 border-none shadow-2xl">
-
-                {/* 1. CABEÇALHO */}
                 <DialogHeader className="p-4 border-b border-white/5 bg-slate-900 flex flex-row items-center justify-between shrink-0 space-y-0">
                     <div className="flex flex-col gap-0.5">
                         <DialogTitle className="text-sm font-bold text-white flex items-center gap-2">
                             <span className="p-1 bg-blue-600 rounded text-white shrink-0">
                                 {isImage ? <ImageIcon className="size-3" /> : <FileText className="size-3" />}
                             </span>
-                            <span className="truncate max-w-[300px]" title={fileName}>{fileName}</span>
+                            <span className="truncate max-w-[300px]" title={fileName}>
+                                {fileName}
+                            </span>
                         </DialogTitle>
                         <DialogDescription className="text-[10px] text-blue-400 font-bold uppercase tracking-widest">
                             MindFlush • Visualizador de Alta Precisão
@@ -74,10 +93,7 @@ export function SimplePreviewModal({ file, onClose }: SimplePreviewModalProps) {
                     </div>
                 </DialogHeader>
 
-                {/* 2. ÁREA DE CONTEÚDO (Enquadramento Perfeito) */}
                 <div className="flex-1 bg-slate-900 relative flex items-center justify-center overflow-hidden">
-
-                    {/* Loader de fundo (visível enquanto o arquivo carrega) */}
                     <div className="absolute inset-0 flex flex-col items-center justify-center z-0">
                         <Loader2 className="size-8 animate-spin text-blue-600/20 mb-2" />
                     </div>
@@ -88,8 +104,8 @@ export function SimplePreviewModal({ file, onClose }: SimplePreviewModalProps) {
                             alt={fileName}
                             className="relative z-10 w-full h-full object-contain"
                             loading="lazy"
-                            onError={(e) => {
-                                e.currentTarget.style.display = 'none'
+                            onError={(event) => {
+                                event.currentTarget.style.display = "none"
                             }}
                         />
                     ) : isPDF ? (
@@ -108,24 +124,7 @@ export function SimplePreviewModal({ file, onClose }: SimplePreviewModalProps) {
                     )}
                 </div>
 
-                {/* 3. FOOTER (Dados Dinâmicos) */}
                 <DialogFooter className="p-3 bg-slate-900 border-t border-white/5 flex items-center justify-between sm:justify-between shrink-0 gap-4">
-                    <div className="hidden sm:flex items-center gap-4 pl-2">
-                        <div className="flex flex-col">
-                            <span className="text-[10px] text-slate-500 uppercase font-black leading-none">Tamanho</span>
-                            <span className="text-xs text-slate-300 font-mono">
-                                {(fileSize / 1024).toFixed(1)} KB
-                            </span>
-                        </div>
-                        <div className="h-4 w-px bg-white/10" />
-                        <div className="flex flex-col">
-                            <span className="text-[10px] text-slate-500 uppercase font-black leading-none">Formato</span>
-                            <span className="text-xs text-slate-300 font-mono uppercase">
-                                {formatLabel}
-                            </span>
-                        </div>
-                    </div>
-
                     <div className="flex items-center gap-3 w-full sm:w-auto">
                         <Button
                             variant="ghost"
@@ -137,10 +136,10 @@ export function SimplePreviewModal({ file, onClose }: SimplePreviewModalProps) {
                         </Button>
                         <Button
                             className="cursor-pointer bg-blue-600 hover:bg-blue-500 text-white gap-2 shadow-xl shadow-blue-900/20 h-9 px-8 rounded-full transition-all active:scale-[0.98] font-bold text-xs uppercase tracking-wider"
-                            onClick={() => handleFileDownload(file.id, fileName)}
+                            onClick={() => handleFileDownload(id, fileName)}
                         >
                             <ArrowDownToLine className="size-4" />
-                            Baixar {isImage ? "Imagem" : isPDF ? "PDF" : "Arquivo"}
+                            Baixar {downloadLabel}
                         </Button>
                     </div>
                 </DialogFooter>
