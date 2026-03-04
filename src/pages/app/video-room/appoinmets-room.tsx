@@ -7,9 +7,13 @@ import { AppointmentAddForm } from "./components/appointment-add-form"
 import { SessionTimer } from "./components/SessionTimer"
 import { useHeaderStore } from "@/hooks/use-header-store"
 import { SessionNotesEditor } from "./components/session-notes-editor"
+import { useLocation, useNavigate } from "react-router-dom"
 
 export function AppointmentsRoom() {
     const { setTitle } = useHeaderStore()
+
+    const location = useLocation()
+    const navigate = useNavigate()
 
     const [selectedAppointmentId, setSelectedAppointmentId] = useState("")
     const [content, setNotes] = useState("")
@@ -19,6 +23,15 @@ export function AppointmentsRoom() {
     useEffect(() => {
         setTitle("Sala de Atendimento")
     }, [setTitle])
+
+    useEffect(() => {
+        const state = location.state as { appointmentId?: string } | null
+        const appointmentId = state?.appointmentId
+        if (appointmentId) {
+            setSelectedAppointmentId(appointmentId)
+            navigate(location.pathname, { replace: true, state: undefined })
+        }
+    }, [location.pathname, location.state, navigate])
 
     const handleSessionStarted = useCallback((sessionId: string) => {
         setCurrentSessionId(sessionId)

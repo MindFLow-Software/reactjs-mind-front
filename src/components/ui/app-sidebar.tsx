@@ -10,6 +10,7 @@ import {
   ShieldCheck,
   HeartPlus,
   Inbox,
+  BarChart3,
 } from "lucide-react"
 import { useQuery } from "@tanstack/react-query"
 
@@ -55,6 +56,15 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
         ],
       },
     ]
+
+    baseNav.push({
+      title: "Relatórios",
+      url: "#",
+      icon: BarChart3,
+      items: [
+        { title: "Relatórios de Pacientes", url: "/reports" },
+      ],
+    })
 
     // 2. Itens exclusivos do PSICÓLOGO
     if (!isSuperAdmin) {
