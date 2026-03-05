@@ -26,15 +26,16 @@ export function DatePickerWithRange({
     onDateChange,
 }: DatePickerWithRangeProps) {
     return (
-        <div className={cn("grid gap-2", className)}>
+        <div className="grid gap-2">
             <Popover>
                 <PopoverTrigger asChild>
                     <Button
                         id="date"
                         variant={"outline"}
                         className={cn(
-                            "cursor-pointer h-8 w-full lg:w-[260px] justify-start text-left font-normal",
-                            !date && "text-muted-foreground"
+                            "cursor-pointer h-9 w-full lg:w-[260px] bg-background border border-muted-foreground/20 hover:border-primary/30 transition-all shadow-sm px-3 justify-start text-left font-normal",
+                            !date && "text-muted-foreground",
+                            className,
                         )}
                     >
                         <CalendarIcon className="mr-2 h-4 w-4" />

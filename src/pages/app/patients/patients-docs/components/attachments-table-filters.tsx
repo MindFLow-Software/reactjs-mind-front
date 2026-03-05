@@ -95,8 +95,7 @@ export function AttachmentsTableFilters({
                     date={date}
                     onDateChange={onDateChange}
                     className={cn(
-                        "h-9 w-full lg:w-[260px] bg-background border-muted-foreground/20 hover:border-primary/30 transition-all shadow-sm px-3 justify-start text-left font-normal",
-                        !date && "text-muted-foreground"
+                        "min-w-[220px]"
                     )}
                 />
 
