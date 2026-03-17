@@ -16,6 +16,8 @@ import { AttachmentsTableFilters } from "./components/attachments-table-filters"
 import { AttachmentsTable } from "./components/attachments-table"
 import type { DateRange } from "react-day-picker"
 
+const BRAND_COLOR = "#2563eb"
+
 export function PatientDocuments() {
     const { setTitle } = useHeaderStore()
     const queryClient = useQueryClient()
@@ -103,14 +105,19 @@ export function PatientDocuments() {
             <Helmet title="Documentos - MindFlush" />
 
             <div className="flex flex-col gap-4">
-                <header className="rounded-xl border border-border/70 bg-gradient-to-r from-card to-muted/30 p-4 md:p-5 shadow-sm">
-                    <h1 className="text-xl md:text-2xl font-bold tracking-tight flex items-center gap-2">
-                        <Info className="size-5 text-blue-600" />
-                        <span>Gestao de Documentos</span>
-                    </h1>
-                    <p className="text-sm text-muted-foreground">
-                        Gerencie anexos clinicos com busca, filtros e controle de armazenamento.
-                    </p>
+                <header
+                    className="flex flex-col lg:flex-row lg:items-center justify-between gap-4 border-l-4 pl-5 py-2"
+                    style={{ borderLeftColor: BRAND_COLOR }}
+                >
+                    <div className="space-y-1">
+                        <h1 className="text-2xl font-bold tracking-tight flex items-center gap-3">
+                            <Info className="size-6" style={{ color: BRAND_COLOR }} />
+                            <span>Gestao de Documentos</span>
+                        </h1>
+                        <p className="text-sm text-muted-foreground">
+                            Gerencie anexos clinicos com busca, filtros e controle de armazenamento.
+                        </p>
+                    </div>
                 </header>
 
                 <section className="grid grid-cols-1 gap-6">

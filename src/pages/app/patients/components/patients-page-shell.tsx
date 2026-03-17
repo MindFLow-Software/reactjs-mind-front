@@ -20,6 +20,9 @@ interface PatientsSurfaceProps {
     className?: string
 }
 
+const BRAND_COLOR = "#2563eb"
+
+
 export function PatientsSurface({ children, className }: PatientsSurfaceProps) {
     return (
         <section
@@ -47,21 +50,19 @@ export function PatientsPageShell({
     return (
         <div className={cn("flex flex-col gap-4", className)}>
             {(title || description || headerRight) && (
-                <header className="rounded-xl border border-border/70 bg-gradient-to-r from-card to-muted/30 p-4 md:p-5 shadow-sm">
-                    <div className="flex items-start justify-between gap-4">
-                        <div className="space-y-1">
-                            {title && (
-                                <h1 className="text-xl md:text-2xl font-bold tracking-tight flex items-center gap-2">
-                                    {icon}
-                                    <span>{title}</span>
-                                </h1>
-                            )}
-                            {description && (
-                                <p className="text-sm text-muted-foreground">{description}</p>
-                            )}
-                        </div>
-                        {headerRight && <div className="shrink-0">{headerRight}</div>}
+                <header className="flex flex-col lg:flex-row lg:items-center justify-between gap-4 border-l-4 pl-5 py-2" style={{ borderLeftColor: BRAND_COLOR }} >
+                    <div className="space-y-1">
+                        {title && (
+                            <h1 className="text-2xl font-bold tracking-tight flex items-center gap-3">
+                                {icon}
+                                <span>{title}</span>
+                            </h1>
+                        )}
+                        {description && (
+                            <p className="text-sm text-muted-foreground">{description}</p>
+                        )}
                     </div>
+                    {headerRight && <div className="shrink-0">{headerRight}</div>}
                 </header>
             )}
 

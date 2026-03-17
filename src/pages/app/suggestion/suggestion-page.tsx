@@ -23,7 +23,7 @@ import { Dialog, DialogTrigger } from "@/components/ui/dialog"
 import { CreateSuggestion } from "./components/create-suggestion"
 import { SuggestionHelpButton } from "./components/suggestion-help-button"
 
-const BRAND_COLOR = "#27187E"
+const BRAND_COLOR = "#2563eb"
 
 function useDebounce<T>(value: T, delay: number): T {
     const [debouncedValue, setDebouncedValue] = useState<T>(value)
