@@ -1,9 +1,7 @@
 "use client"
 
 import type React from "react"
-
-import { ArrowRight, CreditCard, Mail, Calendar, Video, MessageCircle, Zap, Users } from "lucide-react"
-import { Button } from "@/components/ui/button"
+import { ArrowRight, CreditCard, Mail, Calendar, Video, Zap, Users } from "lucide-react"
 import { motion } from "framer-motion"
 import { Link } from "react-router-dom"
 import { WhatsappLogoIcon } from "@phosphor-icons/react"
@@ -11,295 +9,187 @@ import { WhatsappLogoIcon } from "@phosphor-icons/react"
 interface IntegrationCardProps {
     icon: React.ReactNode
     label: string
-    color: string
+    iconBg: string
+    iconColor: string
     delay?: number
-    x: string | number
-    y: string | number
+    x: string
+    y: string
     orbitDuration?: number
+    side?: "left" | "right"
 }
 
-const FloatingCard = ({ icon, label, color, delay = 0, x, y, orbitDuration = 4 }: IntegrationCardProps) => {
-    return (
+const FloatingCard = ({ icon, label, iconBg, delay = 0, x, y, orbitDuration = 4, side }: IntegrationCardProps) => (
+    <motion.div
+        initial={{ opacity: 0, scale: 0.85 }}
+        whileInView={{ opacity: 1, scale: 1 }}
+        viewport={{ once: true }}
+        transition={{ duration: 0.5, delay: delay * 0.12 }}
+        className="absolute hidden lg:flex items-center gap-2.5 bg-white border border-blue-600/10 rounded-2xl px-4 py-2.5 shadow-md z-20"
+        style={{ left: side === "left" ? x : undefined, right: side === "right" ? x : undefined, top: y }}
+    >
         <motion.div
-            initial={{ opacity: 0, scale: 0.8 }}
-            whileInView={{ opacity: 1, scale: 1 }}
-            viewport={{ once: true }}
-            transition={{
-                opacity: { duration: 0.5, delay: delay * 0.1 },
-                scale: { duration: 0.5, delay: delay * 0.1 },
-            }}
-            className="absolute hidden lg:flex items-center gap-3 p-3 pr-5 bg-white backdrop-blur-md border border-slate-200/80 shadow-lg rounded-2xl z-20 group cursor-default"
-            style={{
-                left: typeof x === "number" ? `${x}%` : x,
-                top: typeof y === "number" ? `${y}%` : y,
-            }}
+            animate={{ y: [0, -5, 0] }}
+            transition={{ duration: orbitDuration, repeat: Infinity, ease: "easeInOut", delay: delay * 0.2 }}
+            className={`w-9 h-9 rounded-xl flex items-center justify-center flex-shrink-0 ${iconBg}`}
         >
-            <div className="absolute inset-0 rounded-2xl bg-linear-to-r from-blue-500/0 via-blue-500/10 to-blue-500/0 opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
-
-            <motion.div
-                animate={{ y: [0, -4, 0] }}
-                transition={{
-                    duration: orbitDuration,
-                    repeat: Number.POSITIVE_INFINITY,
-                    ease: "easeInOut",
-                    delay: delay * 0.2,
-                }}
-                className={`relative flex items-center justify-center w-11 h-11 rounded-xl ${color} text-white shadow-md`}
-            >
-                {icon}
-                <div className="absolute inset-0 rounded-xl bg-linear-to-tr from-white/20 to-transparent" />
-            </motion.div>
-            <div className="flex flex-col">
-                <span className="font-semibold text-slate-800 text-sm">{label}</span>
-                <span className="text-[10px] text-emerald-600 font-medium flex items-center gap-1">
-                    <span className="w-1.5 h-1.5 rounded-full bg-emerald-500" />
-                    Conectado
-                </span>
-            </div>
+            {icon}
         </motion.div>
-    )
+        <div>
+            <p className="text-[13px] font-medium text-slate-800 leading-none mb-1">{label}</p>
+            <p className="text-[10px] font-medium text-emerald-600 flex items-center gap-1">
+                <span className="w-1.5 h-1.5 rounded-full bg-emerald-500" />
+                Conectado
+            </p>
+        </div>
+    </motion.div>
+)
+
+const cards = {
+    left: [
+        { icon: <CreditCard className="w-4 h-4 text-purple-600" />, label: "Pagamentos", iconBg: "bg-purple-100", y: "8%", delay: 0, orbitDuration: 5 },
+        { icon: <Mail className="w-4 h-4 text-emerald-600" />, label: "E-mail", iconBg: "bg-emerald-100", y: "43%", delay: 2, orbitDuration: 4.5 },
+        { icon: <Calendar className="w-4 h-4 text-blue-600" />, label: "Agenda", iconBg: "bg-blue-100", y: "77%", delay: 4, orbitDuration: 5.5 },
+    ],
+    right: [
+        { icon: <Users className="w-4 h-4 text-sky-600" />, label: "Pacientes", iconBg: "bg-sky-100", y: "8%", delay: 1, orbitDuration: 4 },
+        { icon: <WhatsappLogoIcon className="w-4 h-4 text-green-600" />, label: "WhatsApp", iconBg: "bg-green-100", y: "43%", delay: 3, orbitDuration: 5 },
+        { icon: <Video className="w-4 h-4 text-violet-600" />, label: "Videochamada", iconBg: "bg-violet-100", y: "77%", delay: 5, orbitDuration: 4.2 },
+    ],
 }
 
-const OrbitingDots = () => {
-    return (
-        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[300px] h-[300px]">
-            {[...Array(8)].map((_, i) => (
-                <motion.div
-                    key={i}
-                    className="absolute w-2 h-2 rounded-full bg-blue-500/30"
-                    style={{
-                        top: "50%",
-                        left: "50%",
-                    }}
-                    animate={{
-                        x: [
-                            Math.cos((i * Math.PI * 2) / 8) * 140,
-                            Math.cos((i * Math.PI * 2) / 8 + Math.PI) * 140,
-                            Math.cos((i * Math.PI * 2) / 8) * 140,
-                        ],
-                        y: [
-                            Math.sin((i * Math.PI * 2) / 8) * 140,
-                            Math.sin((i * Math.PI * 2) / 8 + Math.PI) * 140,
-                            Math.sin((i * Math.PI * 2) / 8) * 140,
-                        ],
-                        opacity: [0.3, 0.6, 0.3],
-                    }}
-                    transition={{
-                        duration: 20,
-                        repeat: Number.POSITIVE_INFINITY,
-                        ease: "linear",
-                        delay: i * 0.5,
-                    }}
-                />
-            ))}
-        </div>
-    )
-}
+const mobileCards = [
+    { icon: CreditCard, label: "Pagamentos", iconBg: "bg-purple-100", iconColor: "text-purple-600" },
+    { icon: Users, label: "Pacientes", iconBg: "bg-sky-100", iconColor: "text-sky-600" },
+    { icon: Mail, label: "E-mail", iconBg: "bg-emerald-100", iconColor: "text-emerald-600" },
+    { icon: WhatsappLogoIcon, label: "WhatsApp", iconBg: "bg-green-100", iconColor: "text-green-600" },
+    { icon: Calendar, label: "Agenda", iconBg: "bg-blue-100", iconColor: "text-blue-600" },
+    { icon: Video, label: "Videochamada", iconBg: "bg-violet-100", iconColor: "text-violet-600" },
+]
 
 export function IntegrationsSection() {
     return (
-        <section className="relative py-24 lg:py-32 overflow-hidden bg-linear-to-b from-slate-50 to-white">
-            {/* Background Elements */}
-            <div className="absolute inset-0 overflow-hidden pointer-events-none">
-                <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[1000px] h-[600px] bg-blue-400/8 blur-[120px] rounded-full" />
-                <div className="absolute bottom-0 right-0 w-[600px] h-[400px] bg-indigo-400/8 blur-[100px] rounded-full" />
+        <section className="relative py-24 lg:py-32 overflow-hidden bg-[#F8FAFF]">
+            {/* Grid */}
+            <div className="absolute inset-0 bg-[linear-gradient(to_right,rgba(80,100,200,0.05)_1px,transparent_1px),linear-gradient(to_bottom,rgba(80,100,200,0.05)_1px,transparent_1px)] bg-[size:48px_48px] [mask-image:radial-gradient(ellipse_80%_60%_at_50%_50%,#000_40%,transparent_100%)] pointer-events-none" />
 
-                <div className="absolute inset-0 bg-[linear-gradient(to_right,#8080800a_1px,transparent_1px),linear-gradient(to_bottom,#8080800a_1px,transparent_1px)] bg-size-[32px_32px] mask-[radial-gradient(ellipse_80%_50%_at_50%_50%,#000_40%,transparent_100%)]" />
-            </div>
+            <div className="container relative z-10 mx-auto px-4 text-center">
+                {/* Badge */}
+                <motion.div
+                    initial={{ opacity: 0, y: 16 }}
+                    whileInView={{ opacity: 1, y: 0 }}
+                    viewport={{ once: true }}
+                    className="inline-flex items-center gap-2 bg-white border border-blue-600/15 rounded-full py-1.5 pl-2.5 pr-4 mb-8 shadow-sm"
+                >
+                    <span className="relative flex h-2 w-2">
+                        <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-blue-400 opacity-75" />
+                        <span className="relative inline-flex rounded-full h-2 w-2 bg-blue-500" />
+                    </span>
+                    <span className="text-[11px] font-medium text-[#4B6080] uppercase tracking-widest">Ecossistema Integrado</span>
+                </motion.div>
 
-            <div className="container relative z-10 mx-auto px-4 md:px-6">
-                <div className="flex flex-col items-center text-center mb-16 lg:mb-20">
-                    {/* Badge */}
-                    <motion.div
-                        initial={{ opacity: 0, y: 20 }}
-                        whileInView={{ opacity: 1, y: 0 }}
-                        viewport={{ once: true }}
-                        className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-white border border-slate-200 shadow-sm mb-6"
-                    >
-                        <span className="relative flex h-2 w-2">
-                            <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-blue-400 opacity-75"></span>
-                            <span className="relative inline-flex rounded-full h-2 w-2 bg-blue-500"></span>
-                        </span>
-                        <span className="text-xs font-semibold text-slate-600 tracking-wide uppercase">Ecossistema Integrado</span>
-                    </motion.div>
+                {/* Heading */}
+                <motion.h2
+                    initial={{ opacity: 0, y: 16 }}
+                    whileInView={{ opacity: 1, y: 0 }}
+                    viewport={{ once: true }}
+                    transition={{ delay: 0.1 }}
+                    className="text-[clamp(36px,5vw,60px)] font-medium tracking-tight text-slate-900 leading-[1.15] mb-6"
+                    style={{ fontFamily: "'Lora', serif" }}
+                >
+                    Suas ferramentas favoritas,
+                    <br />
+                    <em className="italic text-blue-600">todas</em>{" "}
+                    <span className="relative inline-block">
+                        <span className="relative z-10">conectadas</span>
+                        <motion.span
+                            initial={{ scaleX: 0 }}
+                            whileInView={{ scaleX: 1 }}
+                            viewport={{ once: true }}
+                            transition={{ delay: 0.75, duration: 0.9, ease: [0.16, 1, 0.3, 1] }}
+                            className="absolute bottom-[2px] -left-1 -right-1 h-[34%] bg-blue-200/40 rounded-sm -rotate-[0.4deg] origin-left -z-10"
+                        />
+                    </span>
+                </motion.h2>
 
-                    {/* Heading */}
-                    <motion.h2
-                        initial={{ opacity: 0, y: 20 }}
-                        whileInView={{ opacity: 1, y: 0 }}
-                        viewport={{ once: true }}
-                        transition={{ delay: 0.1 }}
-                        className="text-4xl md:text-5xl lg:text-6xl font-bold tracking-tight text-slate-900 max-w-4xl mb-6"
-                    >
-                        Suas ferramentas favoritas,{" "}
-                        <span className="relative inline-block">
-                            <span className="text-transparent bg-clip-text bg-linear-to-r from-blue-600 via-indigo-600 to-blue-600">
-                                conectadas
-                            </span>
-                            <svg
-                                className="absolute -bottom-1 left-0 w-full h-2 text-blue-500/40"
-                                viewBox="0 0 100 8"
-                                preserveAspectRatio="none"
-                            >
-                                <path
-                                    d="M0 6 Q 25 0 50 6 T 100 6"
-                                    stroke="currentColor"
-                                    strokeWidth="2"
-                                    fill="none"
-                                    strokeLinecap="round"
-                                />
-                            </svg>
-                        </span>
-                    </motion.h2>
+                {/* Subtitle */}
+                <motion.p
+                    initial={{ opacity: 0, y: 16 }}
+                    whileInView={{ opacity: 1, y: 0 }}
+                    viewport={{ once: true }}
+                    transition={{ delay: 0.2 }}
+                    className="text-lg font-light text-[#4B6080] max-w-[540px] mx-auto leading-relaxed mb-11"
+                >
+                    Sincronize agenda, videochamadas e pagamentos em um só lugar.{" "}
+                    <span className="font-medium text-[#1E3A5F]">Zero fricção, máxima produtividade.</span>
+                </motion.p>
 
-                    {/* Subheading */}
-                    <motion.p
-                        initial={{ opacity: 0, y: 20 }}
-                        whileInView={{ opacity: 1, y: 0 }}
-                        viewport={{ once: true }}
-                        transition={{ delay: 0.2 }}
-                        className="text-lg md:text-xl text-slate-600 max-w-2xl leading-relaxed mb-10"
-                    >
-                        Sincronize agenda, videochamadas e pagamentos em um só lugar.{" "}
-                        <span className="text-slate-800 font-medium">Zero fricção, máxima produtividade.</span>
-                    </motion.p>
+                {/* CTA */}
+                <motion.div
+                    initial={{ opacity: 0, y: 16 }}
+                    whileInView={{ opacity: 1, y: 0 }}
+                    viewport={{ once: true }}
+                    transition={{ delay: 0.3 }}
+                >
+                    <Link to="/sign-in">
+                        <button className="group inline-flex items-center gap-2 bg-blue-600 hover:bg-blue-700 text-white text-[15px] font-medium px-8 py-3.5 rounded-full transition-all duration-200 hover:-translate-y-px shadow-lg shadow-blue-600/25 border-none cursor-pointer">
+                            Conectar agora
+                            <ArrowRight className="h-4 w-4 transition-transform duration-200 group-hover:translate-x-1" />
+                        </button>
+                    </Link>
+                </motion.div>
 
-                    {/* CTA Button */}
-                    <motion.div
-                        initial={{ opacity: 0, y: 20 }}
-                        whileInView={{ opacity: 1, y: 0 }}
-                        viewport={{ once: true }}
-                        transition={{ delay: 0.3 }}
-                    >
-                        <Link to="/sign-in">
-                            <Button
-                                size="lg"
-                                className="cursor-pointer h-14 px-8 rounded-full text-base bg-linear-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 shadow-lg shadow-blue-600/25 group"
-                            >
-                                Conectar agora
-                                <ArrowRight className="ml-2 h-5 w-5 group-hover:translate-x-1 transition-transform" />
-                            </Button>
-                        </Link>
-                    </motion.div>
-                </div>
+                {/* Hub desktop */}
+                <div className="relative h-[420px] w-full max-w-[720px] mx-auto mt-16 hidden lg:block">
+                    {/* Orbit rings */}
+                    <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[220px] h-[220px] rounded-full border border-dashed border-blue-600/12" />
+                    <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[340px] h-[340px] rounded-full border border-dashed border-blue-600/08" />
 
-                {/* Integrations Visualization */}
-                <div className="relative h-[450px] w-full max-w-5xl mx-auto hidden md:block">
-                    {/* Orbiting Dots */}
-                    <OrbitingDots />
-
-                    <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[280px] h-[280px] border border-dashed border-slate-200 rounded-full" />
-                    <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[400px] h-[400px] border border-dashed border-slate-200/50 rounded-full" />
-
-                    {/* Center Hub */}
+                    {/* Center */}
                     <motion.div
                         initial={{ opacity: 0, scale: 0.5 }}
                         whileInView={{ opacity: 1, scale: 1 }}
                         viewport={{ once: true }}
-                        transition={{ duration: 0.5, type: "spring" }}
+                        transition={{ type: "spring", duration: 0.6 }}
                         className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 z-10"
                     >
-                        <div className="relative">
-                            <div className="absolute inset-0 w-28 h-28 bg-blue-500/20 blur-2xl rounded-full" />
-
-                            <div className="relative w-28 h-28 bg-linear-to-br from-white to-slate-50 rounded-3xl shadow-2xl flex items-center justify-center border border-slate-100">
-                                <div className="w-16 h-16 rounded-2xl bg-linear-to-br from-blue-500 to-indigo-600 flex items-center justify-center shadow-lg shadow-blue-500/30">
-                                    <Zap className="w-8 h-8 text-white" />
-                                </div>
+                        <div className="relative w-[88px] h-[88px] bg-white rounded-3xl border border-blue-600/15 shadow-xl flex items-center justify-center">
+                            <div className="w-[52px] h-[52px] bg-blue-600 rounded-2xl flex items-center justify-center shadow-lg shadow-blue-600/30">
+                                <Zap className="w-7 h-7 text-white" />
                             </div>
-
-                            <div className="absolute inset-0 rounded-3xl border-2 border-blue-500/20 animate-ping animation-duration-[2s]" />
-                            <div className="absolute -inset-3 rounded-4xl border border-blue-500/10" />
                         </div>
+                        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[88px] h-[88px] rounded-3xl border-2 border-blue-500/20 animate-ping" style={{ animationDuration: "2s" }} />
                     </motion.div>
 
-                    {/* Left Side Cards */}
-                    <FloatingCard
-                        icon={<CreditCard className="w-5 h-5" />}
-                        label="Pagamentos"
-                        color="bg-gradient-to-br from-purple-500 to-purple-600"
-                        x="8%"
-                        y="10%"
-                        delay={0}
-                        orbitDuration={5}
-                    />
-                    <FloatingCard
-                        icon={<Mail className="w-5 h-5" />}
-                        label="E-mail"
-                        color="bg-gradient-to-br from-emerald-500 to-emerald-600"
-                        x="5%"
-                        y="45%"
-                        delay={2}
-                        orbitDuration={4.5}
-                    />
-                    <FloatingCard
-                        icon={<Calendar className="w-5 h-5" />}
-                        label="Agenda"
-                        color="bg-gradient-to-br from-blue-500 to-blue-600"
-                        x="12%"
-                        y="78%"
-                        delay={4}
-                        orbitDuration={5.5}
-                    />
-
-                    {/* Right Side Cards */}
-                    <FloatingCard
-                        icon={<Users className="w-5 h-5" />}
-                        label="Pacientes"
-                        color="bg-gradient-to-br from-sky-500 to-sky-600"
-                        x="72%"
-                        y="10%"
-                        delay={1}
-                        orbitDuration={4}
-                    />
-                    <FloatingCard
-                        icon={<WhatsappLogoIcon className="w-5 h-5" />}
-                        label="WhatsApp"
-                        color="bg-gradient-to-br from-green-500 to-green-600"
-                        x="75%"
-                        y="45%"
-                        delay={3}
-                        orbitDuration={5}
-                    />
-                    <FloatingCard
-                        icon={<Video className="w-5 h-5" />}
-                        label="Videochamada"
-                        color="bg-gradient-to-br from-violet-500 to-violet-600"
-                        x="68%"
-                        y="78%"
-                        delay={5}
-                        orbitDuration={4.2}
-                    />
+                    {/* Left cards */}
+                    {cards.left.map((c, i) => (
+                        <FloatingCard key={i} {...c} x="4%" side="left" iconColor="" />
+                    ))}
+                    {/* Right cards */}
+                    {cards.right.map((c, i) => (
+                        <FloatingCard key={i} {...c} x="4%" side="right" iconColor="" />
+                    ))}
                 </div>
 
-                <div className="md:hidden grid grid-cols-2 gap-3 mt-8">
-                    {[
-                        { icon: CreditCard, label: "Pagamentos", color: "from-purple-500 to-purple-600" },
-                        { icon: Users, label: "Pacientes", color: "from-sky-500 to-sky-600" },
-                        { icon: Mail, label: "E-mail", color: "from-emerald-500 to-emerald-600" },
-                        { icon: MessageCircle, label: "WhatsApp", color: "from-green-500 to-green-600" },
-                        { icon: Calendar, label: "Agenda", color: "from-blue-500 to-blue-600" },
-                        { icon: Video, label: "Videochamada", color: "from-violet-500 to-violet-600" },
-                    ].map((item, i) => (
+                {/* Mobile grid */}
+                <div className="lg:hidden grid grid-cols-2 gap-3 mt-12">
+                    {mobileCards.map((item, i) => (
                         <motion.div
                             key={i}
-                            initial={{ opacity: 0, y: 20 }}
+                            initial={{ opacity: 0, y: 16 }}
                             whileInView={{ opacity: 1, y: 0 }}
                             viewport={{ once: true }}
-                            transition={{ delay: i * 0.1 }}
-                            className="flex items-center gap-3 p-4 bg-white rounded-xl border border-slate-200 shadow-sm"
+                            transition={{ delay: i * 0.08 }}
+                            className="flex items-center gap-3 bg-white rounded-xl border border-blue-600/10 p-3.5 shadow-sm"
                         >
-                            <div
-                                className={`w-10 h-10 rounded-xl bg-linear-to-br ${item.color} flex items-center justify-center text-white shadow-sm`}
-                            >
-                                <item.icon className="w-5 h-5" />
+                            <div className={`w-9 h-9 rounded-xl flex items-center justify-center flex-shrink-0 ${item.iconBg}`}>
+                                <item.icon className={`w-4 h-4 ${item.iconColor}`} />
                             </div>
-                            <div className="flex flex-col">
-                                <span className="text-sm font-semibold text-slate-800">{item.label}</span>
-                                <span className="text-[10px] text-emerald-600 font-medium flex items-center gap-1">
+                            <div>
+                                <p className="text-[13px] font-medium text-slate-800 leading-none mb-1">{item.label}</p>
+                                <p className="text-[10px] font-medium text-emerald-600 flex items-center gap-1">
                                     <span className="w-1 h-1 rounded-full bg-emerald-500" />
                                     Conectado
-                                </span>
+                                </p>
                             </div>
                         </motion.div>
                     ))}

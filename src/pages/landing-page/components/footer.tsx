@@ -1,126 +1,136 @@
-import { Link } from "react-router-dom";
-import {
-    Brain,
-    InstagramLogo,
-    LinkedinLogoIcon,
-    TwitterLogo,
-    YoutubeLogo
-} from "@phosphor-icons/react";
+import { Link } from "react-router-dom"
+import { Brain, InstagramLogo, LinkedinLogo, YoutubeLogo } from "@phosphor-icons/react"
+
+const XIcon = () => (
+    <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+        <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-4.714-6.231-5.401 6.231H2.744l7.73-8.835L1.254 2.25H8.08l4.253 5.622L18.244 2.25zM17.083 20.026h1.833L7.084 4.126H5.117z" />
+    </svg>
+)
+
+const linkGroups = [
+    {
+        title: "Conta",
+        links: [
+            { label: "Cadastre-se", to: "/sign-up" },
+            { label: "Login", to: "/sign-in" },
+        ],
+    },
+    {
+        title: "Suporte",
+        links: [
+            { label: "ajuda@mindflush.com", href: "mailto:ajuda@mindflush.com" },
+            { label: "Falar no WhatsApp", href: "#" },
+            { label: "Central de Ajuda", href: "#" },
+        ],
+    },
+    {
+        title: "Website",
+        links: [
+            { label: "Funcionalidades", href: "#funcionalidades" },
+            { label: "Integrações", href: "#integracoes" },
+            { label: "Planos e Preços", href: "#taxas" },
+            { label: "Documentação", href: "#documentacao" },
+        ],
+    },
+    {
+        title: "Legal",
+        links: [
+            { label: "Termos de uso", to: "/termos" },
+            { label: "Privacidade", to: "/privacidade" },
+            { label: "Status do sistema", href: "#" },
+        ],
+    },
+]
+
+const linkClass =
+    "group relative w-fit text-[13px] font-light text-[#4B6080] no-underline transition-colors hover:text-blue-600"
+
+const LinkItem = ({ link }: { link: { label: string; to?: string; href?: string } }) => {
+    const inner = (
+        <>
+            {link.label}
+            <span className="absolute -bottom-px left-0 right-0 h-px origin-left scale-x-0 rounded-full bg-blue-600 transition-transform duration-300 group-hover:scale-x-100" />
+        </>
+    )
+
+    if (link.to) {
+        return (
+            <Link to={link.to} className={linkClass}>
+                {inner}
+            </Link>
+        )
+    }
+
+    return (
+        <a href={link.href} className={linkClass}>
+            {inner}
+        </a>
+    )
+}
 
 export function Footer() {
     return (
-        <footer className="w-full bg-white pt-16 md:pt-20">
+        <footer className="w-full bg-white border-t border-blue-600/10 pt-16 md:pt-20">
             <div className="container mx-auto px-6 md:px-8 lg:px-12">
 
-                {/* --- PARTE SUPERIOR (Links e Logo) --- */}
-                <div className="flex flex-col lg:flex-row lg:gap-8">
+                {/* Top */}
+                <div className="flex flex-col gap-12 lg:flex-row lg:gap-12 pb-14">
 
-                    {/* COLUNA 1: Logo e Marca (Com borda lateral em telas grandes) */}
-                    <div className="mb-12 flex flex-col items-start lg:mb-0 lg:w-1/4 lg:border-r lg:border-slate-100 lg:pr-8">
-                        <Link to="/" className="flex items-center gap-2 transition-opacity hover:opacity-80">
-                            <div className="text-blue-600">
-                                <Brain size={32} />
-                            </div>
-                            <span className="text-xl font-bold tracking-tight text-slate-900">
+                    {/* Brand */}
+                    <div className="flex flex-col lg:w-[220px] lg:flex-shrink-0 lg:border-r lg:border-blue-600/[0.08] lg:pr-12">
+                        <Link to="/" className="flex items-center gap-2 transition-opacity hover:opacity-80 mb-4">
+                            <Brain size={28} weight="bold" className="text-blue-600" />
+                            <span
+                                className="text-[18px] font-medium tracking-tight text-slate-900"
+                                style={{ fontFamily: "'Lora', serif" }}
+                            >
                                 MindFlush
                             </span>
                         </Link>
-                        <p className="mt-4 text-sm leading-relaxed text-slate-500">
+                        <p className="text-[13px] font-light leading-relaxed text-[#4B6080]">
                             Simplificando a gestão de clínicas de psicologia em todo o Brasil.
                         </p>
                     </div>
 
-                    {/* GRIDS DE LINKS (4 Colunas) */}
-                    <div className="grid flex-1 grid-cols-2 gap-8 md:grid-cols-4 lg:pl-8">
-
-                        {/* Grupo: Conta */}
-                        <div className="flex flex-col gap-4">
-                            <h4 className="text-sm font-semibold text-blue-600">Conta</h4>
-                            <nav className="flex flex-col gap-3">
-                                <Link to="/sign-up" className="text-sm font-medium text-slate-600 transition-colors hover:text-blue-600">
-                                    Cadastre-se
-                                </Link>
-                                <Link to="/sign-in" className="text-sm font-medium text-slate-600 transition-colors hover:text-blue-600">
-                                    Login
-                                </Link>
-                            </nav>
-                        </div>
-
-                        {/* Grupo: Suporte */}
-                        <div className="flex flex-col gap-4">
-                            <h4 className="text-sm font-semibold text-blue-600">Suporte</h4>
-                            <nav className="flex flex-col gap-3">
-                                <a href="mailto:ajuda@mindflush.com" className="text-sm font-medium text-slate-600 transition-colors hover:text-blue-600">
-                                    ajuda@mindflush.com
-                                </a>
-                                <a href="#" className="text-sm font-medium text-slate-600 transition-colors hover:text-blue-600">
-                                    Falar no WhatsApp
-                                </a>
-                                <a href="#" className="text-sm font-medium text-slate-600 transition-colors hover:text-blue-600">
-                                    Central de Ajuda
-                                </a>
-                            </nav>
-                        </div>
-
-                        {/* Grupo: Website */}
-                        <div className="flex flex-col gap-4">
-                            <h4 className="text-sm font-semibold text-blue-600">Website</h4>
-                            <nav className="flex flex-col gap-3">
-                                <a href="#produtos" className="text-sm font-medium text-slate-600 transition-colors hover:text-blue-600">
-                                    Funcionalidades
-                                </a>
-                                <a href="#integracoes" className="text-sm font-medium text-slate-600 transition-colors hover:text-blue-600">
-                                    Integrações
-                                </a>
-                                <a href="#taxas" className="text-sm font-medium text-slate-600 transition-colors hover:text-blue-600">
-                                    Planos e Preços
-                                </a>
-                                <a href="#documentacao" className="text-sm font-medium text-slate-600 transition-colors hover:text-blue-600">
-                                    Documentação
-                                </a>
-                            </nav>
-                        </div>
-
-                        {/* Grupo: Legal */}
-                        <div className="flex flex-col gap-4">
-                            <h4 className="text-sm font-semibold text-blue-600">Legal</h4>
-                            <nav className="flex flex-col gap-3">
-                                <Link to="/termos" className="text-sm font-medium text-slate-600 transition-colors hover:text-blue-600">
-                                    Termos de uso
-                                </Link>
-                                <Link to="/privacidade" className="text-sm font-medium text-slate-600 transition-colors hover:text-blue-600">
-                                    Privacidade
-                                </Link>
-                                <a href="#" className="text-sm font-medium text-slate-600 transition-colors hover:text-blue-600">
-                                    Status do sistema
-                                </a>
-                            </nav>
-                        </div>
+                    {/* Links */}
+                    <div className="grid flex-1 grid-cols-2 gap-8 md:grid-cols-4">
+                        {linkGroups.map((group) => (
+                            <div key={group.title} className="flex flex-col gap-3.5">
+                                <span className="text-[11px] font-medium uppercase tracking-widest text-blue-600">
+                                    {group.title}
+                                </span>
+                                <nav className="flex flex-col gap-2.5">
+                                    {group.links.map((link) => (
+                                        <LinkItem key={link.label} link={link} />
+                                    ))}
+                                </nav>
+                            </div>
+                        ))}
                     </div>
                 </div>
 
-                {/* --- PARTE INFERIOR (Copyright e Social) --- */}
-                <div className="mt-16 flex flex-col items-center justify-between border-t border-dashed border-slate-200 py-8 md:flex-row">
+                {/* Bottom */}
+                <div className="flex flex-col items-center justify-between gap-4 border-t border-dashed border-blue-600/10 py-6 md:flex-row">
+                    <span className="text-[13px] font-light text-slate-400">
+                        Painel central &copy; MindFlush — {new Date().getFullYear()}
+                    </span>
 
-                    <footer className="text-sm text-center">
-                        Painel central &copy; MindFlush - {new Date().getFullYear()}
-                    </footer>
-
-                    <div className="mt-4 flex gap-6 md:mt-0">
-                        <a href="#" className="text-slate-400 transition-colors hover:text-blue-600">
-                            <LinkedinLogoIcon size={24} />
+                    <div className="flex items-center gap-5">
+                        <a href="#" className="text-slate-300 transition-all duration-200 hover:-translate-y-0.5 hover:text-[#0A66C2]">
+                            <LinkedinLogo size={20} />
                         </a>
-                        <a href="#" className="text-slate-400 transition-colors hover:text-pink-600">
-                            <InstagramLogo size={24} />
+                        <a href="#" className="text-slate-300 transition-all duration-200 hover:-translate-y-0.5 hover:text-[#E1306C]">
+                            <InstagramLogo size={20} />
                         </a>
-                        <a href="#" className="text-slate-400 transition-colors hover:text-sky-500">
-                            <TwitterLogo size={24} />
+                        <a href="#" className="text-slate-300 transition-all duration-200 hover:-translate-y-0.5 hover:text-slate-900">
+                            <XIcon />
                         </a>
-                        <a href="#" className="text-slate-400 transition-colors hover:text-red-600">
-                            <YoutubeLogo size={24} />
+                        <a href="#" className="text-slate-300 transition-all duration-200 hover:-translate-y-0.5 hover:text-[#FF0000]">
+                            <YoutubeLogo size={20} />
                         </a>
                     </div>
                 </div>
+
             </div>
         </footer>
     )

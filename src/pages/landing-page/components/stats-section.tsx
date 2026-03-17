@@ -1,118 +1,109 @@
-import {
-    CalendarCheck,
-    CreditCard,
-    FileText,
-    MessageCircle,
-} from "lucide-react";
+import { CalendarCheck, CreditCard, FileText, MessageCircle } from "lucide-react"
+import { motion } from "framer-motion"
+
+const features = [
+    {
+        icon: CalendarCheck,
+        title: "Agendamento Fácil",
+        description: "Você terá sua própria agenda para marcar sessões nos horários que melhor se encaixam na sua rotina.",
+    },
+    {
+        icon: FileText,
+        title: "Prontuário Digital",
+        description: "Registre evoluções com total segurança, tudo fica criptografado, organizado por histórico e com opção de enviar arquivos do paciente.",
+    },
+    {
+        icon: CreditCard,
+        title: "Gestão Financeira",
+        description: "Controle pagamentos, emita recibos e saiba exatamente quanto sua clínica faturou no mês.",
+    },
+    {
+        icon: MessageCircle,
+        title: "Lembretes via Zap",
+        description: "Reduza faltas enviando lembretes automáticos e links da sala de vídeo direto no WhatsApp.",
+    },
+]
 
 export function StatsSection() {
     return (
-        // 2. Adicione o ID aqui para receber o clique do Header
         <section id="funcionalidades" className="relative overflow-hidden border-t border-slate-100 bg-white py-24 scroll-mt-20">
-
-            <div className="absolute inset-0 z-0 opacity-[0.03]"
-                style={{ backgroundImage: 'radial-gradient(#1d4ed8 1px, transparent 1px)', backgroundSize: '24px 24px' }}>
-            </div>
+            {/* Dot background */}
+            <div
+                className="absolute inset-0 z-0 pointer-events-none"
+                style={{ backgroundImage: "radial-gradient(rgba(37,99,235,0.055) 1px, transparent 1px)", backgroundSize: "24px 24px" }}
+            />
 
             <div className="container relative z-10 mx-auto px-6 md:px-8 lg:px-12">
-                {/* O resto do código continua igual... */}
-                <div className="grid gap-12 lg:grid-cols-2 lg:items-center">
+                {/* Top row */}
+                <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-8 mb-16">
+                    <motion.h2
+                        initial={{ opacity: 0, y: 16 }}
+                        whileInView={{ opacity: 1, y: 0 }}
+                        viewport={{ once: true }}
+                        className="max-w-[480px] text-[clamp(28px,3.5vw,44px)] font-medium tracking-tight text-slate-900 leading-[1.2]"
+                        style={{ fontFamily: "'Lora', serif" }}
+                    >
+                        Gerenciando e otimizando
+                        <br />
+                        a rotina dos{" "}
+                        <span className="relative inline-block">
+                            <em className="italic text-blue-600">especialistas.</em>
+                            <motion.span
+                                initial={{ scaleX: 0 }}
+                                whileInView={{ scaleX: 1 }}
+                                viewport={{ once: true }}
+                                transition={{ delay: 0.5, duration: 0.9, ease: [0.16, 1, 0.3, 1] }}
+                                className="absolute bottom-[2px] -left-1 -right-1 h-[34%] bg-blue-200/40 rounded-sm -rotate-[0.3deg] origin-left -z-10"
+                            />
+                        </span>
+                    </motion.h2>
 
-                    <div className="relative max-w-lg">
-                        <h2 className="text-4xl font-bold tracking-tight text-slate-900 sm:text-5xl">
-                            Gerenciando e otimizando a rotina dos
-                            <span className="relative ml-2 inline-block">
-                                especialistas.
-                                <svg
-                                    className="absolute -bottom-2 left-0 h-3 w-full text-blue-200"
-                                    viewBox="0 0 100 10"
-                                    preserveAspectRatio="none"
-                                >
-                                    <line
-                                        x1="0"
-                                        y1="5"
-                                        x2="100"
-                                        y2="5"
-                                        stroke="currentColor"
-                                        strokeWidth="8"
-                                    />
-                                </svg>
-                            </span>
-                        </h2>
-                    </div>
-
-                    <div className="flex flex-col gap-10 sm:flex-row sm:gap-16 lg:justify-end">
-                        <div>
-                            <div className="flex items-center gap-2">
-                                <span className="text-blue-500 font-bold text-3xl">+</span>
-                                <span className="text-5xl font-bold tracking-tight text-slate-900">1k</span>
+                    <motion.div
+                        initial={{ opacity: 0, y: 16 }}
+                        whileInView={{ opacity: 1, y: 0 }}
+                        viewport={{ once: true }}
+                        transition={{ delay: 0.15 }}
+                        className="flex gap-14 flex-shrink-0"
+                    >
+                        {[{ num: "1k", label: "Sessões realizadas" }, { num: "50", label: "Clínicas ativas" }].map((s, i) => (
+                            <div key={i}>
+                                <div className="flex items-baseline gap-1">
+                                    <span className="text-2xl font-medium text-blue-600">+</span>
+                                    <span className="text-[52px] font-medium text-slate-900 leading-none tracking-tight" style={{ fontFamily: "'Lora', serif" }}>
+                                        {s.num}
+                                    </span>
+                                </div>
+                                <p className="mt-1.5 text-[13px] text-[#4B6080]">{s.label}</p>
                             </div>
-                            <p className="mt-2 text-sm font-medium text-slate-600">Sessões realizadas</p>
-                        </div>
-                        <div>
-                            <div className="flex items-center gap-2">
-                                <span className="text-blue-500 font-bold text-3xl">+</span>
-                                <span className="text-5xl font-bold tracking-tight text-slate-900">50</span>
-                            </div>
-                            <p className="mt-2 text-sm font-medium text-slate-600">Clínicas ativas</p>
-                        </div>
-                    </div>
+                        ))}
+                    </motion.div>
                 </div>
 
-                <div className="my-20 h-px w-full bg-slate-100 hidden lg:block" />
+                <div className="hidden lg:block w-full h-px bg-slate-100 mb-16" />
 
-                <div className="grid grid-cols-1 gap-12 lg:grid-cols-4 lg:gap-0">
-
-                    {/* Item 1 - Pix / Agenda */}
-                    <div className="relative flex flex-col px-0 lg:px-6 lg:border-r lg:border-dashed lg:border-slate-300 first:pl-0">
-                        <div className="mb-4 flex items-center gap-3">
-                            <div className="h-6 w-1 rounded-full bg-blue-600"></div>
-                            <CalendarCheck className="h-6 w-6 text-slate-700" />
-                        </div>
-                        <h3 className="text-lg font-bold text-slate-900">Agendamento Fácil</h3>
-                        <p className="mt-2 text-sm leading-relaxed text-slate-600">
-                            Você terá sua própria agenda para marcar sessões nos horários que melhor se encaixam na sua rotina.
-                        </p>
-                    </div>
-
-                    {/* Item 2 - Cartão / Prontuário */}
-                    <div className="relative flex flex-col px-0 lg:px-6 lg:border-r lg:border-dashed lg:border-slate-300">
-                        <div className="mb-4 flex items-center gap-3">
-                            <div className="h-6 w-1 rounded-full bg-blue-600"></div>
-                            <FileText className="h-6 w-6 text-slate-700" />
-                        </div>
-                        <h3 className="text-lg font-bold text-slate-900">Prontuário Digital</h3>
-                        <p className="mt-2 text-sm leading-relaxed text-slate-600">
-                            Registre evoluções com total segurança, tudo fica criptografado, organizado por histórico e com opção de enviar arquivos do paciente.
-                        </p>
-                    </div>
-
-                    {/* Item 3 - Boleto / Financeiro */}
-                    <div className="relative flex flex-col px-0 lg:px-6 lg:border-r lg:border-dashed lg:border-slate-300">
-                        <div className="mb-4 flex items-center gap-3">
-                            <div className="h-6 w-1 rounded-full bg-blue-600"></div>
-                            <CreditCard className="h-6 w-6 text-slate-700" />
-                        </div>
-                        <h3 className="text-lg font-bold text-slate-900">Gestão Financeira</h3>
-                        <p className="mt-2 text-sm leading-relaxed text-slate-600">
-                            Controle pagamentos, emita recibos e saiba exatamente quanto sua clínica faturou no mês.
-                        </p>
-                    </div>
-
-                    {/* Item 4 - Link / Lembretes */}
-                    <div className="relative flex flex-col px-0 lg:px-6 last:pr-0">
-                        <div className="mb-4 flex items-center gap-3">
-                            <div className="h-6 w-1 rounded-full bg-blue-600"></div>
-                            <MessageCircle className="h-6 w-6 text-slate-700" />
-                        </div>
-                        <h3 className="text-lg font-bold text-slate-900">Lembretes via Zap</h3>
-                        <p className="mt-2 text-sm leading-relaxed text-slate-600">
-                            Reduza faltas enviando lembretes automáticos e links da sala de vídeo direto no WhatsApp.
-                        </p>
-                    </div>
-
+                {/* Features */}
+                <div className="grid grid-cols-1 gap-10 sm:grid-cols-2 lg:grid-cols-4 lg:gap-0">
+                    {features.map((f, i) => (
+                        <motion.div
+                            key={i}
+                            initial={{ opacity: 0, y: 16 }}
+                            whileInView={{ opacity: 1, y: 0 }}
+                            viewport={{ once: true }}
+                            transition={{ delay: i * 0.08, duration: 0.5 }}
+                            className={`flex flex-col px-0 lg:px-7 ${i < features.length - 1 ? "lg:border-r lg:border-dashed lg:border-blue-600/12" : ""} ${i === 0 ? "lg:pl-0" : ""} ${i === features.length - 1 ? "lg:pr-0" : ""}`}
+                        >
+                            <div className="mb-3.5 flex items-center gap-2.5">
+                                <div className="w-[3px] h-[22px] rounded-full bg-blue-600 flex-shrink-0" />
+                                <f.icon className="h-[22px] w-[22px] text-slate-700" strokeWidth={1.8} />
+                            </div>
+                            <h3 className="mb-2 text-[16px] font-medium text-slate-900" style={{ fontFamily: "'Lora', serif" }}>
+                                {f.title}
+                            </h3>
+                            <p className="text-sm font-light leading-relaxed text-[#4B6080]">{f.description}</p>
+                        </motion.div>
+                    ))}
                 </div>
             </div>
         </section>
-    );
+    )
 }

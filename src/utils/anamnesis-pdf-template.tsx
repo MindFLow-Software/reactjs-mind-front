@@ -1,6 +1,6 @@
 "use client"
 
-import { Document, Font, Page, StyleSheet, Text, View } from "@react-pdf/renderer"
+import { Document, Font, Page, StyleSheet, Text, View, type TextProps } from "@react-pdf/renderer"
 
 interface AnamnesisPDFTemplateProps {
     patientName: string
@@ -92,9 +92,10 @@ function forceWrapLongTokens(text: string, chunkSize = 28): string {
     })
 }
 
-type InlineSegment = { text: string; style?: { [key: string]: string | number } }
+type InlineStyle = { [key: string]: string | number }
+type InlineSegment = { text: string; style?: TextProps["style"] }
 
-const INLINE_RULES = [
+const INLINE_RULES: { marker: string; style: InlineStyle }[] = [
     { marker: "**", style: { fontWeight: 700 } },
     { marker: "__", style: { textDecoration: "underline" } },
     { marker: "==", style: { backgroundColor: "#fef9c3" } },
@@ -151,12 +152,12 @@ function normalizeInlineText(text: string): string {
 
 function parseInline(rawText: string): InlineSegment[] {
     const segments: InlineSegment[] = []
-    const stack: { marker: string; style: InlineSegment["style"] }[] = []
+    const stack: { marker: string; style: InlineStyle }[] = []
     const text = normalizeInlineText(rawText)
     let cursor = 0
 
     const currentStyle = () =>
-        stack.reduce<InlineSegment["style"]>((acc, item) => ({ ...acc, ...item.style }), {}) || undefined
+        (stack.reduce<InlineStyle>((acc, item) => ({ ...acc, ...item.style }), {}) as TextProps["style"]) || undefined
 
     while (cursor < text.length) {
         let nextIndex = -1
