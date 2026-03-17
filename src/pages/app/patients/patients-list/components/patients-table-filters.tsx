@@ -18,6 +18,7 @@ import { usePatientFilters } from "@/hooks/use-patient-filters"
 import { GenerateInviteModal } from "./generate-Invite-modal"
 import { RegisterPatients } from "../register-patients/register-patients"
 import { PatientsSearchInput } from "../../components/patients-search-input"
+import { cn } from "@/lib/utils"
 
 interface PatientsTableFiltersProps {
   onPatientRegistered?: () => void
@@ -119,40 +120,51 @@ export function PatientsTableFilters({ onPatientRegistered }: PatientsTableFilte
         )}
       </div>
 
-      <div className="flex items-center">
-        <div className="flex flex-col lg:flex-row gap-2 w-full lg:w-auto">
-          <Button
-            size="sm"
-            className="cursor-pointer gap-2 w-full lg:w-auto shrink-0 bg-blue-600 hover:bg-blue-700 shadow-sm transition-all"
-            onClick={() => setIsRegisterOpen(true)}
-          >
-            <UserRoundPlus className="h-4 w-4" />
-            Cadastrar paciente
-          </Button>
+      <div className="flex flex-col gap-2 lg:flex-row lg:items-center">
+        <button
+          type="button"
+          onClick={() => setIsRegisterOpen(true)}
+          className={cn(
+            "flex h-9 cursor-pointer items-center justify-center gap-2 rounded-xl px-4",
+            "bg-blue-600 text-[13px] font-medium text-white",
+            "shadow-[0_2px_8px_rgba(37,99,235,0.25)] transition-all",
+            "hover:bg-blue-700 hover:-translate-y-px active:scale-[0.98] border-none outline-none",
+          )}
+        >
+          <UserRoundPlus className="h-4 w-4" />
+          Cadastrar paciente
+        </button>
 
-          <Button
-            size="sm"
-            className="cursor-pointer gap-2 w-full lg:w-auto shrink-0 bg-blue-600 hover:bg-blue-700 shadow-sm transition-all"
-            onClick={() => setIsInviteOpen(true)}
-          >
-            <QrCode className="h-4 w-4" />
-            QrCode de Cadastro
-          </Button>
-        </div>
+        <button
+          type="button"
+          onClick={() => setIsInviteOpen(true)}
+          className={cn(
+            "flex h-9 cursor-pointer items-center justify-center gap-2 rounded-xl px-4",
+            "border border-blue-600/20 bg-white text-[13px] font-medium text-blue-600",
+            "shadow-[0_1px_4px_rgba(37,99,235,0.08)] transition-all",
+            "hover:border-blue-600/40 hover:bg-blue-50 hover:-translate-y-px active:scale-[0.98] outline-none",
+          )}
+        >
+          <QrCode className="h-4 w-4" />
+          QR Code de cadastro
+        </button>
+      </div>
 
-        <Dialog open={isRegisterOpen} onOpenChange={setIsRegisterOpen}>
-          {isRegisterOpen && (
-            <RegisterPatients onSuccess={() => {
+      {/* Dialogs */}
+      <Dialog open={isRegisterOpen} onOpenChange={setIsRegisterOpen}>
+        {isRegisterOpen && (
+          <RegisterPatients
+            onSuccess={() => {
               setIsRegisterOpen(false)
               onPatientRegistered?.()
-            }} />
-          )}
-        </Dialog>
+            }}
+          />
+        )}
+      </Dialog>
 
-        <Dialog open={isInviteOpen} onOpenChange={setIsInviteOpen}>
-          <GenerateInviteModal />
-        </Dialog>
-      </div>
+      <Dialog open={isInviteOpen} onOpenChange={setIsInviteOpen}>
+        <GenerateInviteModal />
+      </Dialog>
     </div>
   )
 }
