@@ -1,11 +1,8 @@
 import { Footer } from "./components/footer"
 import { Header } from "./components/hearder"
 import { HeroSection } from "./components/hero"
-import { IntegrationsSection } from "./components/integrations-section"
 import { ResourcesGrid } from "./components/resources-grid"
 import { SolutionsGrid } from "./components/solutions-grid"
-import { StatsSection } from "./components/stats-section"
-import { TestimonialsSection } from "./components/testimonials"
 
 export function LandingPage() {
     return (
@@ -14,11 +11,11 @@ export function LandingPage() {
 
             <main className="flex-1">
                 <HeroSection />
-                <StatsSection/>
-                <IntegrationsSection/>
+                {/* <StatsSection/> */}
+                {/* <IntegrationsSection/> */}
                 <ResourcesGrid/>
                 <SolutionsGrid/>
-                <TestimonialsSection/>
+                {/* <TestimonialsSection/> */}
             </main>
             <Footer/>
         </div>
