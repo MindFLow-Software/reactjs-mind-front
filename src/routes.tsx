@@ -1,4 +1,5 @@
 import { createBrowserRouter, Outlet, redirect, Navigate, useLocation } from 'react-router-dom'
+import { api } from './lib/axios'
 import { AppLayout } from './pages/_layouts/app'
 import { AuthLayout } from './pages/_layouts/auth'
 import { PatientsList } from './pages/app/patients/patients-list/patients-list'
@@ -6,8 +7,7 @@ import { Dashboard } from './pages/app/dashboard/dashboard'
 import { NotFound } from './pages/404'
 import { SignIn } from './pages/auth/sign-in'
 import { SignUp } from './pages/auth/sign-up'
-import { GoogleOAuthSuccess } from './pages/auth/google-oauth-success'
-import { GoogleOAuthComplete } from './pages/auth/google-oauth-complete'
+import { CompleteRegistration } from './pages/auth/complete-registration'
 import { AppointmentsRoom } from './pages/app/video-room/appoinmets-room'
 import { AppointmentsList } from './pages/app/appointment/appointment-list/appointment-list'
 import { MockPsychologistProfilePage } from './pages/app/account/account'
@@ -42,12 +42,20 @@ const getUser = () => {
   }
 }
 
-const authLoader = () => {
+const authLoader = async () => {
   const isAuthenticated = localStorage.getItem('isAuthenticated') === 'true'
-  if (!isAuthenticated) {
+  if (isAuthenticated) return null
+
+  // Sem flag local — pode ser login via Google OAuth (cookie já setado pelo backend)
+  try {
+    const response = await api.get<{ psychologist: any }>('/psychologist/me')
+    const psychologist = response.data.psychologist
+    localStorage.setItem('isAuthenticated', 'true')
+    localStorage.setItem('user', JSON.stringify(psychologist))
+    return null
+  } catch {
     return redirect('/sign-in')
   }
-  return null
 }
 
 const adminLoader = () => {
@@ -105,8 +113,7 @@ export const router = createBrowserRouter([
       { path: '/sign-up', element: <SignUp /> },
     ],
   },
-  { path: '/auth/google/success', element: <GoogleOAuthSuccess /> },
-  { path: '/auth/google/complete', element: <GoogleOAuthComplete /> },
+  { path: '/complete-registration', element: <CompleteRegistration /> },
   {
     element: (
       <ProtectedRoute>
