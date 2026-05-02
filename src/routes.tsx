@@ -103,10 +103,10 @@ export const router = createBrowserRouter([
     children: [
       { path: '/sign-in', element: <SignIn /> },
       { path: '/sign-up', element: <SignUp /> },
-      { path: '/auth/google/success', element: <GoogleOAuthSuccess /> },
-      { path: '/auth/google/complete', element: <GoogleOAuthComplete /> },
     ],
   },
+  { path: '/auth/google/success', element: <GoogleOAuthSuccess /> },
+  { path: '/auth/google/complete', element: <GoogleOAuthComplete /> },
   {
     element: (
       <ProtectedRoute>
