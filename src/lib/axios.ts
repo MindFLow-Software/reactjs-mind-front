@@ -5,6 +5,14 @@ export const api = axios.create({
   withCredentials: true,
 })
 
+const SKIP_REDIRECT_PATHS = [
+  '/sign-in',
+  '/auth/google/success',
+  '/auth/google/complete',
+  '/google-oauth-success',
+  '/google-oauth-complete',
+]
+
 api.interceptors.response.use(
   (response) => response,
   (error) => {
@@ -12,7 +20,9 @@ api.interceptors.response.use(
       localStorage.removeItem('isAuthenticated')
       localStorage.removeItem('user')
 
-      if (window.location.pathname !== '/sign-in') {
+      const currentPath = window.location.pathname
+      const shouldRedirect = !SKIP_REDIRECT_PATHS.some((p) => currentPath.startsWith(p))
+      if (shouldRedirect) {
         window.location.href = '/sign-in'
       }
     }
