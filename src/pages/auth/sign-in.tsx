@@ -14,22 +14,21 @@ export function SignIn() {
     let isMounted = true
 
     async function checkAuthentication() {
-      const isAuthenticatedFlag = localStorage.getItem('isAuthenticated') === 'true'
-
-      if (!isAuthenticatedFlag) {
-        if (isMounted) setIsChecking(false)
-        return
-      }
-
       try {
-        await api.get('/psychologist/me')
+        const response = await api.get('/psychologist/me')
+        const psychologist = response.data?.psychologist
 
         if (isMounted) {
+          if (psychologist) {
+            localStorage.setItem('isAuthenticated', 'true')
+            localStorage.setItem('user', JSON.stringify(psychologist))
+          }
           navigate('/dashboard', { replace: true })
         }
       } catch (error) {
         if (isMounted) {
           localStorage.removeItem('isAuthenticated')
+          localStorage.removeItem('user')
           setIsChecking(false)
         }
       }

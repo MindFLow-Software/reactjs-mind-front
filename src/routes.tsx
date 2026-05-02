@@ -8,6 +8,8 @@ import { NotFound } from './pages/404'
 import { SignIn } from './pages/auth/sign-in'
 import { SignUp } from './pages/auth/sign-up'
 import { CompleteRegistration } from './pages/auth/complete-registration'
+import { GoogleOAuthSuccess } from './pages/auth/google-oauth-success'
+import { GoogleOAuthComplete } from './pages/auth/google-oauth-complete'
 import { AppointmentsRoom } from './pages/app/video-room/appoinmets-room'
 import { AppointmentsList } from './pages/app/appointment/appointment-list/appointment-list'
 import { MockPsychologistProfilePage } from './pages/app/account/account'
@@ -111,6 +113,10 @@ export const router = createBrowserRouter([
     children: [
       { path: '/sign-in', element: <SignIn /> },
       { path: '/sign-up', element: <SignUp /> },
+      { path: '/auth/google/success', element: <GoogleOAuthSuccess /> },
+      { path: '/auth/google/complete', element: <GoogleOAuthComplete /> },
+      { path: '/google-oauth-success', element: <GoogleOAuthSuccess /> },
+      { path: '/google-oauth-complete', element: <GoogleOAuthComplete /> },
     ],
   },
   { path: '/complete-registration', element: <CompleteRegistration /> },

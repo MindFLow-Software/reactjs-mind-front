@@ -5,7 +5,13 @@ export const api = axios.create({
   withCredentials: true,
 })
 
-const SKIP_REDIRECT_PATHS = ['/sign-in', '/auth/google/success', '/auth/google/complete']
+const SKIP_REDIRECT_PATHS = [
+  '/sign-in',
+  '/auth/google/success',
+  '/auth/google/complete',
+  '/google-oauth-success',
+  '/google-oauth-complete',
+]
 
 api.interceptors.response.use(
   (response) => response,

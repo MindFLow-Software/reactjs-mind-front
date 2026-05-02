@@ -205,7 +205,7 @@ export function SignInForm({ className, ...props }: React.ComponentProps<"form">
         <Button
           type="button"
           variant="outline"
-          className="w-full h-11 gap-2 font-medium"
+          className="w-full h-11 gap-2 font-medium cursor-pointer"
           onClick={() => { window.location.href = `${env.VITE_API_URL}/auth/google` }}
         >
           <svg viewBox="0 0 24 24" className="h-4 w-4" aria-hidden="true">
