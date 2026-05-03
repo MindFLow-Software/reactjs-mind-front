@@ -6,36 +6,6 @@ const BRAND = "#2563eb"
 const BRAND_LIGHT = "#3b82f6"
 const BRAND_MUTED = "#EFF6FF"
 
-const STAT_CARDS = [
-  {
-    id: "featured",
-    icon: CalendarX,
-    label: "Redução de faltas com lembretes automáticos",
-    value: "89%",
-    iconColor: BRAND,
-    iconBg: BRAND_MUTED,
-    featured: true,
-  },
-  {
-    id: "conversions",
-    icon: Clock,
-    label: "Horas administrativas recuperadas por semana",
-    value: "3h",
-    iconColor: "#0284c7",
-    iconBg: "#E0F2FE",
-    featured: false,
-  },
-  {
-    id: "efficiency",
-    icon: TrendingUp,
-    label: "Aumento médio no faturamento mensal",
-    value: "2×",
-    iconColor: "#16a34a",
-    iconBg: "#DCFCE7",
-    featured: false,
-  },
-]
-
 const AVATARS = [
   "https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=64&h=64",
   "https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?auto=format&fit=crop&w=64&h=64",
@@ -44,43 +14,6 @@ const AVATARS = [
   "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=64&h=64",
 ]
 
-function StatCard({
-  card,
-  index,
-}: {
-  card: (typeof STAT_CARDS)[number]
-  index: number
-}) {
-  const Icon = card.icon
-
-  return (
-    <motion.div
-      initial={{ opacity: 0, y: 20 }}
-      whileInView={{ opacity: 1, y: 0 }}
-      viewport={{ once: true }}
-      transition={{ delay: 0.2 + index * 0.1, duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
-      className={`relative flex flex-col rounded-2xl border border-slate-100 bg-white p-6 shadow-sm transition-shadow duration-300 hover:shadow-md ${
-        card.featured ? "row-span-1" : ""
-      }`}
-    >
-      <div
-        className="mb-4 w-9 h-9 rounded-xl flex items-center justify-center shrink-0"
-        style={{ background: card.iconBg }}
-      >
-        <Icon className="w-4.5 h-4.5" style={{ color: card.iconColor }} strokeWidth={2} />
-      </div>
-
-      <p
-        className="text-[clamp(52px,5vw,68px)] font-semibold leading-none tracking-tight text-slate-900 mb-3"
-        style={{ fontFamily: "'Lora', serif" }}
-      >
-        {card.value}
-      </p>
-
-      <p className="text-[13.5px] font-light leading-relaxed text-slate-500">{card.label}</p>
-    </motion.div>
-  )
-}
 
 export function StatsSection() {
   return (
