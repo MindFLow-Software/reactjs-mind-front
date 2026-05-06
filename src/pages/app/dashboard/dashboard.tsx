@@ -1,64 +1,83 @@
 "use client"
 
-import { useState, useEffect } from 'react'
+import { useState, useEffect, lazy, Suspense } from 'react'
 import { Helmet } from "react-helmet-async"
 import { subDays } from 'date-fns'
 
 import { useHeaderStore } from "@/hooks/use-header-store"
+import { Skeleton } from "@/components/ui/skeleton"
+import { DashboardHeader } from "./components/dashboard-header"
+import type { DashboardPeriod } from "./components/dashboard-header"
 import { MonthPatientsAmountCard } from "./components/month-patients-amount-card"
 import { PatientsAmountCard } from "./components/patients-amount-card"
-import { PatientsByAgeChart } from "./components/patients-by-age-chart"
-import { PatientsByGenderChart } from "./components/patients-by-gender-chart"
-import { NewPatientsBarChart } from "./components/patients-amount-bar-chart"
-import { SessionsBarChart } from './components/sessions-chart'
-import { TotalWorkHoursCard } from './components/total-work-hours-card'
+import { TotalWorkHoursCard } from "./components/total-work-hours-card"
+import { TodayAgenda } from "./components/today-agenda"
+import { QuickActions } from "./components/quick-actions"
 
-interface DateRange {
-    from: Date | undefined
-    to: Date | undefined
+const SessionsBarChart = lazy(() =>
+    import('./components/sessions-chart').then(m => ({ default: m.SessionsBarChart }))
+)
+const PatientsByAgeChart = lazy(() =>
+    import('./components/patients-by-age-chart').then(m => ({ default: m.PatientsByAgeChart }))
+)
+const PatientsByGenderChart = lazy(() =>
+    import('./components/patients-by-gender-chart').then(m => ({ default: m.PatientsByGenderChart }))
+)
+
+const PERIOD_DAYS: Record<DashboardPeriod, number> = {
+    '7d': 7,
+    '30d': 30,
+    '90d': 90,
+    'year': 365,
 }
 
-const getInitialRange = (): DateRange => {
-    const today = new Date()
-    const thirtyDaysAgo = subDays(today, 30)
-    return { from: thirtyDaysAgo, to: today }
+function ChartSkeleton({ height = 300 }: { height?: number }) {
+    return <Skeleton className="w-full rounded-2xl" style={{ height }} />
 }
 
 export function Dashboard() {
     const { setTitle } = useHeaderStore()
-
-    const [dateRange,] = useState<DateRange>(getInitialRange)
-    const { from: startDate, to: endDate } = dateRange
+    const [period, setPeriod] = useState<DashboardPeriod>('30d')
 
     useEffect(() => {
         setTitle('Dashboard')
     }, [setTitle])
 
+    const endDate = new Date()
+    const startDate = subDays(endDate, PERIOD_DAYS[period])
 
     return (
         <>
             <Helmet title="Dashboard" />
 
-            <div className="flex flex-col gap-4">
+            <div className="flex flex-col gap-5">
+                {/* Header com saudação e seletor de período */}
+                <DashboardHeader period={period} onPeriodChange={setPeriod} />
 
-                {/* Grid de Cards de Métricas */}
-                <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
-                    {/* <PatientsCountCard startDate={startDate} endDate={endDate} /> */}
+                {/* Cards de métricas */}
+                <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
                     <PatientsAmountCard />
                     <MonthPatientsAmountCard startDate={startDate} endDate={endDate} />
                     <TotalWorkHoursCard startDate={startDate} endDate={endDate} />
                 </div>
 
-                {/* Grid de Gráficos de Barra */}
-                <div className="grid grid-cols-1 gap-4 lg:grid-cols-1">
-                    <NewPatientsBarChart endDate={endDate} />
-                    <SessionsBarChart endDate={endDate} />
+                {/* Volume de sessões + Agenda de hoje */}
+                <div className="grid grid-cols-1 gap-4 lg:grid-cols-[1fr_340px]">
+                    <Suspense fallback={<ChartSkeleton height={360} />}>
+                        <SessionsBarChart period={period} />
+                    </Suspense>
+                    <TodayAgenda />
                 </div>
 
-                {/* Grid de Gráficos Demográficos */}
-                <div className="grid grid-cols-1 gap-4 lg:grid-cols-2">
-                    <PatientsByAgeChart endDate={endDate} />
-                    <PatientsByGenderChart endDate={endDate} />
+                {/* Faixa etária + Perfil gênero + Ações rápidas */}
+                <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
+                    <Suspense fallback={<ChartSkeleton height={280} />}>
+                        <PatientsByAgeChart period={period} />
+                    </Suspense>
+                    <Suspense fallback={<ChartSkeleton height={280} />}>
+                        <PatientsByGenderChart period={period} />
+                    </Suspense>
+                    <QuickActions />
                 </div>
             </div>
         </>

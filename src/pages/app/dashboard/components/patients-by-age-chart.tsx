@@ -1,25 +1,13 @@
 "use client"
 
 import * as React from "react"
-import { Cell, Pie, PieChart } from "recharts"
 import { useQuery } from "@tanstack/react-query"
 import { subDays, startOfDay, endOfDay } from "date-fns"
-import { Loader2, Users, AlertCircle, RefreshCcw } from "lucide-react"
-
-import {
-    Card,
-    CardContent,
-    CardDescription,
-    CardHeader,
-    CardTitle,
-} from "@/components/ui/card"
-import {
-    ChartContainer,
-    ChartTooltip,
-    ChartTooltipContent,
-    type ChartConfig,
-} from "@/components/ui/chart"
+import { Users, AlertCircle, RefreshCcw } from "lucide-react"
+import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card"
+import { Skeleton } from "@/components/ui/skeleton"
 import { api } from "@/lib/axios"
+import type { DashboardPeriod } from "./dashboard-header"
 
 interface AgeStats {
     ageRange: string
@@ -31,39 +19,26 @@ async function getPatientsByAgeStats(params: { startDate?: string; endDate?: str
     return response.data
 }
 
-const chartConfig = {
-    patients: {
-        label: "Pacientes",
-    },
-} satisfies ChartConfig
-
-const CHART_COLORS = [
-    "var(--chart-1)",
-    "var(--chart-2)",
-    "var(--chart-3)",
-    "var(--chart-4)",
-    "var(--chart-5)",
-]
-
-interface PatientsByAgeChartProps {
-    endDate: Date | undefined
+const PERIOD_DAYS: Record<DashboardPeriod, number> = {
+    '7d': 7,
+    '30d': 30,
+    '90d': 90,
+    'year': 365,
 }
 
-export function PatientsByAgeChart({ endDate }: PatientsByAgeChartProps) {
-    const [timeRange] = React.useState("90d")
+interface PatientsByAgeChartProps {
+    period: DashboardPeriod
+}
 
+export const PatientsByAgeChart = React.memo(function PatientsByAgeChart({ period }: PatientsByAgeChartProps) {
     const { startDateToFetch, endDateToFetch } = React.useMemo(() => {
-        const referenceDate = endDate ? new Date(endDate) : new Date()
-        let daysToSubtract = 90
-
-        if (timeRange === "30d") daysToSubtract = 30
-        if (timeRange === "7d") daysToSubtract = 7
-
+        const ref = new Date()
+        const days = PERIOD_DAYS[period]
         return {
-            startDateToFetch: startOfDay(subDays(referenceDate, daysToSubtract)),
-            endDateToFetch: endOfDay(referenceDate),
+            startDateToFetch: startOfDay(subDays(ref, days)),
+            endDateToFetch: endOfDay(ref),
         }
-    }, [timeRange, endDate])
+    }, [period])
 
     const { data, isLoading, isError, refetch } = useQuery<AgeStats[]>({
         queryKey: ['dashboard', 'age-stats', startDateToFetch, endDateToFetch],
@@ -71,116 +46,78 @@ export function PatientsByAgeChart({ endDate }: PatientsByAgeChartProps) {
             startDate: startDateToFetch.toISOString(),
             endDate: endDateToFetch.toISOString()
         }),
-        enabled: !!startDateToFetch && !!endDateToFetch,
-        staleTime: 1000 * 60 * 5,
+        staleTime: 5 * 60 * 1000,
+        gcTime: 10 * 60 * 1000,
     })
 
-    const { totalPatients, isEmpty } = React.useMemo(() => {
-        const total = data?.reduce((sum, item) => sum + item.patients, 0) ?? 0
-        return {
-            totalPatients: total,
-            isEmpty: !data || data.length === 0 || total === 0
-        }
-    }, [data])
+    const maxValue = React.useMemo(
+        () => Math.max(...(data?.map(d => d.patients) ?? [1])),
+        [data]
+    )
+
+    const isEmpty = !data || data.length === 0 || data.every(d => d.patients === 0)
 
     return (
-        <Card className="border-border bg-card shadow-sm rounded-2xl overflow-hidden flex flex-col">
-            <CardHeader className="flex flex-col items-stretch space-y-0 border-b border-border p-0 sm:flex-row">
-                <div className="flex flex-1 flex-col justify-center gap-1 px-6 py-4">
-                    <CardTitle className="text-sm font-semibold text-foreground uppercase tracking-wider">
-                        Faixa Etária
-                    </CardTitle>
-                    <CardDescription className="text-xs text-muted-foreground">
-                        Distribuição por idade
-                    </CardDescription>
-                </div>
-                <div className="flex border-t border-border sm:border-t-0 sm:border-l">
-                    <div className="relative z-30 flex flex-1 flex-col justify-center gap-1 px-6 py-4 text-left sm:px-8">
-                        <span className="text-[10px] uppercase tracking-wider text-muted-foreground font-medium">
-                            Total Geral
-                        </span>
-                        <span className="text-xl font-bold leading-none sm:text-2xl text-foreground">
-                            {totalPatients.toLocaleString()}
-                        </span>
-                    </div>
-                </div>
+        <Card className="border-border bg-card shadow-sm rounded-2xl flex flex-col">
+            <CardHeader className="px-6 pt-5 pb-4">
+                <CardTitle className="text-base font-semibold text-foreground">Pacientes por faixa etária</CardTitle>
+                <CardDescription className="text-xs text-blue-500 font-medium">Distribuição atual</CardDescription>
             </CardHeader>
 
-            <CardContent className="px-6 pt-6 pb-6 flex-1 flex flex-col bg-card">
+            <CardContent className="flex-1 px-6 pb-6">
                 {isLoading ? (
-                    <div className="flex h-[300px] w-full items-center justify-center">
-                        <Loader2 className="h-8 w-8 animate-spin text-muted-foreground" />
+                    <div className="space-y-4">
+                        {[...Array(5)].map((_, i) => (
+                            <div key={i} className="flex items-center gap-4">
+                                <Skeleton className="h-3 w-14 shrink-0" />
+                                <Skeleton className="h-2.5 flex-1" />
+                                <Skeleton className="h-3 w-8 shrink-0" />
+                            </div>
+                        ))}
                     </div>
                 ) : isError ? (
-                    <div className="flex h-[300px] flex-col items-center justify-center text-center">
-                        <div className="mb-3 flex h-12 w-12 items-center justify-center rounded-full bg-red-500/10 text-red-500">
-                            <AlertCircle className="size-6" />
-                        </div>
-                        <p className="text-sm font-medium text-foreground">Erro ao carregar dados</p>
-                        <button onClick={() => refetch()} className="mt-2 text-xs font-bold text-blue-500 flex items-center gap-1 hover:underline">
+                    <div className="flex flex-col items-center justify-center gap-2 py-6 text-center">
+                        <AlertCircle className="size-5 text-red-500" />
+                        <p className="text-sm text-red-500">Erro ao carregar</p>
+                        <button
+                            onClick={() => refetch()}
+                            className="flex items-center gap-1 text-xs font-semibold text-blue-500 hover:underline"
+                        >
                             <RefreshCcw size={12} /> Tentar novamente
                         </button>
                     </div>
                 ) : isEmpty ? (
-                    <div className="flex h-[300px] flex-col items-center justify-center text-center">
-                        <div className="mb-3 flex h-12 w-12 items-center justify-center rounded-full bg-muted/30">
+                    <div className="flex flex-col items-center justify-center gap-2 py-6 text-center">
+                        <div className="flex h-10 w-10 items-center justify-center rounded-full bg-muted/30">
                             <Users className="h-5 w-5 text-muted-foreground/50" />
                         </div>
-                        <p className="text-sm font-medium text-foreground">Sem dados de distribuição por idade</p>
-                        <p className="mt-1 text-xs text-muted-foreground">Não há pacientes neste período</p>
+                        <p className="text-sm font-medium text-foreground">Sem dados</p>
+                        <p className="text-xs text-muted-foreground">Nenhum paciente neste período</p>
                     </div>
                 ) : (
-                    <>
-                        <div className="flex-1 min-h-[250px] flex items-center justify-center">
-                            <ChartContainer config={chartConfig} className="mx-auto aspect-square h-[250px] w-full">
-                                <PieChart>
-                                    <ChartTooltip cursor={false} content={<ChartTooltipContent hideLabel />} />
-                                    <Pie
-                                        data={data}
-                                        dataKey="patients"
-                                        nameKey="ageRange"
-                                        innerRadius={70}
-                                        outerRadius={90}
-                                        strokeWidth={5}
-                                        stroke="var(--card)"
-                                        paddingAngle={2}
-                                    >
-                                        {data?.map((_, index) => (
-                                            <Cell
-                                                key={`cell-${index}`}
-                                                fill={CHART_COLORS[index % CHART_COLORS.length]}
-                                                className="hover:opacity-80 transition-opacity cursor-pointer outline-none"
-                                            />
-                                        ))}
-                                    </Pie>
-                                </PieChart>
-                            </ChartContainer>
-                        </div>
-
-                        <div className="grid grid-cols-2 gap-x-4 gap-y-3 pt-6 border-t border-border mt-6">
-                            {data?.map((item, index) => {
-                                const percentage = ((item.patients / totalPatients) * 100).toFixed(1)
-                                return (
-                                    <div key={item.ageRange} className="flex items-center justify-between group">
-                                        <div className="flex items-center space-x-2.5">
-                                            <div
-                                                className="h-2 w-2 rounded-full shrink-0 shadow-sm"
-                                                style={{ backgroundColor: CHART_COLORS[index % CHART_COLORS.length] }}
-                                            />
-                                            <span className="text-[11px] font-bold uppercase tracking-tight text-muted-foreground group-hover:text-foreground transition-colors">
-                                                {item.ageRange}
-                                            </span>
-                                        </div>
-                                        <span className="text-[11px] font-bold tabular-nums text-foreground">
-                                            {percentage}%
-                                        </span>
+                    <div className="space-y-4">
+                        {data.map((item) => {
+                            const pct = maxValue > 0 ? (item.patients / maxValue) * 100 : 0
+                            return (
+                                <div key={item.ageRange} className="flex items-center gap-4">
+                                    <span className="w-14 shrink-0 text-sm font-medium text-muted-foreground tabular-nums whitespace-nowrap">
+                                        {item.ageRange}
+                                    </span>
+                                    <div className="flex-1 overflow-hidden rounded-full bg-muted h-2.5">
+                                        <div
+                                            className="h-2.5 rounded-full bg-blue-500 transition-all duration-500"
+                                            style={{ width: `${Math.max(pct, pct > 0 ? 2 : 0)}%` }}
+                                        />
                                     </div>
-                                )
-                            })}
-                        </div>
-                    </>
+                                    <span className="w-8 shrink-0 text-right text-sm font-semibold text-foreground tabular-nums">
+                                        {item.patients}
+                                    </span>
+                                </div>
+                            )
+                        })}
+                    </div>
                 )}
             </CardContent>
         </Card>
     )
-}
+})
