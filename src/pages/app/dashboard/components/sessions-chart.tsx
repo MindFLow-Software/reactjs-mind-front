@@ -20,41 +20,44 @@ import {
     ChartTooltipContent,
     type ChartConfig,
 } from "@/components/ui/chart"
-import {
-    Select,
-    SelectContent,
-    SelectItem,
-    SelectTrigger,
-    SelectValue,
-} from "@/components/ui/select"
 import { getDailySessionsMetrics } from "@/api/get-daily-sessions-metrics"
+import type { DashboardPeriod } from "./dashboard-header"
 
 interface SessionsBarChartProps {
-    endDate: Date | undefined
+    period: DashboardPeriod
 }
 
 const chartConfig = {
     count: {
-        label: "Sessões",
-        color: "var(--color-accent-blue)",
+        label: "Concluídas",
+        color: "#22c55e",
     },
 } satisfies ChartConfig
 
-export function SessionsBarChart({ endDate }: SessionsBarChartProps) {
-    const [timeRange, setTimeRange] = React.useState("30d")
+const PERIOD_DAYS: Record<DashboardPeriod, number> = {
+    '7d': 7,
+    '30d': 30,
+    '90d': 90,
+    'year': 365,
+}
 
-    const { startDateToFetch, endDateToFetch } = React.useMemo(() => {
-        const referenceDate = endDate ? new Date(endDate) : new Date()
-        let daysToSubtract = 30
+const LEGEND = [
+    { key: 'concluidas', label: 'Concluídas', color: 'bg-green-500' },
+    { key: 'remarcadas', label: 'Remarcadas', color: 'bg-yellow-400' },
+    { key: 'canceladas', label: 'Canceladas', color: 'bg-red-500' },
+]
 
-        if (timeRange === "90d") daysToSubtract = 90
-        if (timeRange === "7d") daysToSubtract = 7
-
+export const SessionsBarChart = React.memo(function SessionsBarChart({ period }: SessionsBarChartProps) {
+    const { startDateToFetch, endDateToFetch, subtitleLabel } = React.useMemo(() => {
+        const ref = new Date()
+        const days = PERIOD_DAYS[period]
+        const label = period === 'year' ? 'Último ano' : `Últimos ${days} dias`
         return {
-            startDateToFetch: startOfDay(subDays(referenceDate, daysToSubtract)),
-            endDateToFetch: endOfDay(referenceDate)
+            startDateToFetch: startOfDay(subDays(ref, days)),
+            endDateToFetch: endOfDay(ref),
+            subtitleLabel: label,
         }
-    }, [timeRange, endDate])
+    }, [period])
 
     const { data, isLoading, isError, refetch } = useQuery({
         queryKey: ["daily-sessions-bar", startDateToFetch.toISOString(), endDateToFetch.toISOString()],
@@ -62,52 +65,37 @@ export function SessionsBarChart({ endDate }: SessionsBarChartProps) {
             startDateToFetch.toISOString(),
             endDateToFetch.toISOString()
         ),
-        enabled: !!startDateToFetch && !!endDateToFetch,
-        staleTime: 1000 * 60 * 5,
+        enabled: true,
+        staleTime: 5 * 60 * 1000,
+        gcTime: 10 * 60 * 1000,
     })
 
-    const { chartData, totalSessions, isEmpty } = React.useMemo(() => {
+    const { chartData, isEmpty } = React.useMemo(() => {
         const sessions = data || []
         const total = sessions.reduce((acc, d) => acc + d.count, 0)
         return {
             chartData: sessions,
-            totalSessions: total,
             isEmpty: sessions.length === 0 || total === 0
         }
     }, [data])
 
     return (
-        <Card className="col-span-full lg:col-span-6 border-border bg-card shadow-sm rounded-2xl overflow-hidden">
-            <CardHeader className="flex flex-col items-stretch space-y-0 border-b border-border p-0 sm:flex-row">
-                <div className="flex flex-1 flex-col justify-center gap-1 px-6 py-4">
-                    <CardTitle className="text-sm font-semibold text-foreground uppercase tracking-wider">Atendimentos</CardTitle>
-                    <CardDescription className="text-xs text-muted-foreground">
-                        Volume diário de sessões concluídas
-                    </CardDescription>
-                </div>
-                <div className="flex border-t border-border sm:border-t-0 sm:border-l">
-                    <div className="relative z-30 flex flex-1 flex-col justify-center gap-1 px-6 py-4 text-left sm:px-8 border-r border-border sm:border-r-0">
-                        <span className="text-[10px] uppercase tracking-wider text-muted-foreground font-medium">
-                            Total Geral
-                        </span>
-                        <span className="text-xl font-bold leading-none sm:text-2xl text-foreground">
-                            {totalSessions.toLocaleString()}
-                        </span>
+        <Card className="border-border bg-card shadow-sm rounded-2xl overflow-hidden">
+            <CardHeader className="px-6 pt-5 pb-4 border-b border-border">
+                <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
+                    <div>
+                        <CardTitle className="text-base font-semibold text-foreground">Volume de sessões</CardTitle>
+                        <CardDescription className="mt-0.5 text-xs text-muted-foreground">
+                            {subtitleLabel} · sessões concluídas, canceladas e remarcadas
+                        </CardDescription>
                     </div>
-                    <div className="flex items-center px-4">
-                        <Select value={timeRange} onValueChange={setTimeRange}>
-                            <SelectTrigger
-                                className="w-[140px] cursor-pointer rounded-lg bg-muted/50 border-none focus:ring-0 text-foreground"
-                                aria-label="Selecionar período"
-                            >
-                                <SelectValue placeholder="Últimos 30 dias" />
-                            </SelectTrigger>
-                            <SelectContent className="rounded-xl bg-popover text-popover-foreground border-border">
-                                <SelectItem value="90d" className="cursor-pointer rounded-lg">90 dias</SelectItem>
-                                <SelectItem value="30d" className="cursor-pointer rounded-lg">30 dias</SelectItem>
-                                <SelectItem value="7d" className="cursor-pointer rounded-lg">7 dias</SelectItem>
-                            </SelectContent>
-                        </Select>
+                    <div className="flex items-center gap-3 self-start">
+                        {LEGEND.map(({ key, label, color }) => (
+                            <div key={key} className="flex items-center gap-1.5">
+                                <span className={`inline-block h-2 w-2 rounded-full ${color}`} />
+                                <span className="text-xs text-muted-foreground">{label}</span>
+                            </div>
+                        ))}
                     </div>
                 </div>
             </CardHeader>
@@ -156,10 +144,7 @@ export function SessionsBarChart({ endDate }: SessionsBarChartProps) {
                                 fontSize={12}
                                 tickFormatter={(value) => format(new Date(value), "dd MMM", { locale: ptBR })}
                             />
-                            <YAxis
-                                hide
-                                domain={[0, 'auto']}
-                            />
+                            <YAxis hide domain={[0, 'auto']} />
                             <ChartTooltip
                                 cursor={{ fill: "var(--muted)", opacity: 0.2, radius: 8 }}
                                 content={
@@ -171,7 +156,7 @@ export function SessionsBarChart({ endDate }: SessionsBarChartProps) {
                             />
                             <Bar
                                 dataKey="count"
-                                fill="var(--color-count)"
+                                fill="#22c55e"
                                 radius={[8, 8, 0, 0]}
                                 className="cursor-pointer"
                             />
@@ -181,4 +166,4 @@ export function SessionsBarChart({ endDate }: SessionsBarChartProps) {
             </CardContent>
         </Card>
     )
-}
+})

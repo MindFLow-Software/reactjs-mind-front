@@ -1,109 +1,82 @@
 "use client"
 
-import { useState, useEffect } from "react"
-import { Card, CardDescription, CardTitle } from "@/components/ui/card"
-import { Clock, AlertCircle } from "lucide-react"
+import { memo } from "react"
+import { useQuery } from "@tanstack/react-query"
+import { Clock, Minus, AlertCircle } from "lucide-react"
+import { Card } from "@/components/ui/card"
+import { Skeleton } from "@/components/ui/skeleton"
 import { getTotalWorkHours } from "@/api/get-total-work-hours"
 import { cn } from "@/lib/utils"
-import { Skeleton } from "@/components/ui/skeleton"
+
+const MONTHLY_GOAL_HOURS = 80
 
 interface TotalWorkHoursCardProps {
     startDate?: Date
     endDate?: Date
 }
 
-const formatTime = (totalMinutes: number) => {
+function formatTime(totalMinutes: number) {
     const hours = Math.floor(totalMinutes / 60)
     const minutes = totalMinutes % 60
-
     if (hours === 0) return `${minutes}m`
     if (minutes === 0) return `${hours}h`
     return `${hours}h ${minutes}m`
 }
 
-export const TotalWorkHoursCard = ({ startDate, endDate }: TotalWorkHoursCardProps) => {
-    const [state, setState] = useState({
-        totalMinutes: null as number | null,
-        isLoading: true,
-        isError: false,
+export const TotalWorkHoursCard = memo(function TotalWorkHoursCard({
+    startDate,
+    endDate,
+}: TotalWorkHoursCardProps) {
+    const { data, isLoading, isError } = useQuery({
+        queryKey: ['dashboard', 'work-hours', startDate?.toISOString(), endDate?.toISOString()],
+        queryFn: () => getTotalWorkHours(startDate, endDate),
+        staleTime: 5 * 60 * 1000,
+        gcTime: 10 * 60 * 1000,
     })
 
-    useEffect(() => {
-        setState(prev => ({ ...prev, isLoading: true }))
-
-        getTotalWorkHours(startDate, endDate)
-            .then((data) =>
-                setState({
-                    totalMinutes: data.totalMinutes,
-                    isLoading: false,
-                    isError: false,
-                })
-            )
-            .catch(() =>
-                setState((prev) => ({
-                    ...prev,
-                    isLoading: false,
-                    isError: true,
-                }))
-            )
-    }, [startDate, endDate])
+    const hoursWorked = data ? data.totalMinutes / 60 : 0
+    const progressPct = Math.min((hoursWorked / MONTHLY_GOAL_HOURS) * 100, 100)
+    const atGoal = hoursWorked >= MONTHLY_GOAL_HOURS
 
     return (
-        <Card
-            className={cn(
-                "relative overflow-hidden",
-                "rounded-xl border bg-card shadow-sm",
-                "p-4 transition-all duration-300 hover:shadow-md",
-                "border-l-4 border-accent-red"
-            )}
-        >
-            <div className="relative z-10 flex flex-col">
-                <div className="flex items-start justify-between">
-                    <div className="flex items-start gap-3">
-                        <div className="rounded-lg bg-[#751b1b]/10 p-2 border border-[#751b1b]/20">
-                            <Clock className="size-4 text-[#751b1b]" />
-                        </div>
-                        <div className="flex flex-col">
-                            <CardTitle className="text-sm font-semibold text-foreground uppercase tracking-wider">
-                                Horas de Atendimento
-                            </CardTitle>
-                            <CardDescription className="text-xs text-muted-foreground">
-                                Horas realizadas
-                            </CardDescription>
-                        </div>
-                    </div>
+        <Card className="relative overflow-hidden rounded-xl border border-border bg-card p-5 shadow-sm transition-shadow hover:shadow-md">
+            <div className="absolute inset-x-0 top-0 h-1 rounded-t-xl bg-gradient-to-r from-emerald-400 to-emerald-600" />
+            <div className="flex items-start justify-between">
+                <p className="text-sm text-muted-foreground">Horas atendidas</p>
+                <div className="rounded-lg bg-emerald-500/10 p-2 ring-1 ring-emerald-500/20">
+                    <Clock className="size-4 text-emerald-500" />
                 </div>
+            </div>
 
-                {/* AJUSTE: Div substitui o Separator para garantir que toque as bordas */}
-                <div
-                    className="h-0 -mx-4 my-4 w-[calc(100%+2rem)] border-t-2 border-dashed border-muted-foreground/30"
-                    aria-hidden="true"
-                />
-
-                {state.isLoading ? (
-                    <div className="space-y-2">
-                        <Skeleton className="h-10 w-28" />
-                        <Skeleton className="h-4 w-48" />
-                    </div>
-                ) : state.isError ? (
-                    <div className="flex items-center gap-2 text-red-500 py-2">
-                        <AlertCircle className="size-4" />
-                        <span className="text-sm font-medium">
-                            Erro ao carregar dados
+            {isLoading ? (
+                <div className="mt-3 space-y-2">
+                    <Skeleton className="h-9 w-28" />
+                    <Skeleton className="h-5 w-44" />
+                </div>
+            ) : isError ? (
+                <div className="mt-3 flex items-center gap-2 text-red-500">
+                    <AlertCircle className="size-4" />
+                    <span className="text-sm">Erro ao carregar</span>
+                </div>
+            ) : (
+                <div className="mt-3">
+                    <p className="text-4xl font-bold tabular-nums text-foreground">
+                        {data ? formatTime(data.totalMinutes) : '0h'}
+                    </p>
+                    <div className="mt-2 flex items-center gap-1.5">
+                        <Minus className={cn("size-3", atGoal ? "text-green-500" : "text-muted-foreground")} />
+                        <span className="text-xs text-muted-foreground">
+                            meta mensal: {MONTHLY_GOAL_HOURS}h
                         </span>
                     </div>
-                ) : (
-                    <div className="flex flex-col">
-                        <div className="flex items-baseline gap-2">
-                            <span className="text-4xl font-bold tracking-tight tabular-nums">
-                                {state.totalMinutes !== null
-                                    ? formatTime(state.totalMinutes)
-                                    : "0m"}
-                            </span>
-                        </div>
+                    <div className="mt-2 h-1.5 w-full overflow-hidden rounded-full bg-muted">
+                        <div
+                            className={cn("h-full rounded-full transition-all", atGoal ? "bg-emerald-500" : "bg-emerald-400")}
+                            style={{ width: `${progressPct}%` }}
+                        />
                     </div>
-                )}
-            </div>
+                </div>
+            )}
         </Card>
     )
-}
+})

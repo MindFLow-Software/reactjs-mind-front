@@ -1,95 +1,81 @@
 "use client"
 
-import { useState, useEffect } from "react"
-import { Card, CardDescription, CardTitle } from "@/components/ui/card"
-import { HeartHandshake, AlertCircle } from "lucide-react"
-import { getAmountPatientsCard } from "@/api/get-amount-patients-card"
-import { cn } from "@/lib/utils"
+import { memo, useMemo } from "react"
+import { useQuery } from "@tanstack/react-query"
+import { subDays, startOfDay, endOfDay } from "date-fns"
+import { Users, TrendingUp, AlertCircle } from "lucide-react"
+import { Card } from "@/components/ui/card"
 import { Skeleton } from "@/components/ui/skeleton"
-import { Separator } from "@radix-ui/react-separator"
+import { getAmountPatientsCard } from "@/api/get-amount-patients-card"
+import { getAmountPatientsChart } from "@/api/get-amount-patients-chart"
+import { cn } from "@/lib/utils"
 
-interface PatientData {
-  total: number
-}
+export const PatientsAmountCard = memo(function PatientsAmountCard() {
+    const { data: cardData, isLoading: loadingTotal, isError } = useQuery({
+        queryKey: ['dashboard', 'patients-total'],
+        queryFn: getAmountPatientsCard,
+        staleTime: 5 * 60 * 1000,
+        gcTime: 10 * 60 * 1000,
+    })
 
-const fetchPatientTotal = async (): Promise<PatientData> => {
-  try {
-    return await getAmountPatientsCard()
-  } catch (error) {
-    console.error("Erro ao buscar total de pacientes:", error)
-    throw error
-  }
-}
+    const now = useMemo(() => new Date(), [])
+    const { data: recentData, isLoading: loadingRecent } = useQuery({
+        queryKey: ['dashboard', 'patients-recent-30d'],
+        queryFn: () => getAmountPatientsChart({
+            startDate: startOfDay(subDays(now, 30)),
+            endDate: endOfDay(now),
+        }),
+        staleTime: 5 * 60 * 1000,
+        gcTime: 10 * 60 * 1000,
+    })
 
-export const PatientsAmountCard = () => {
-  const [state, setState] = useState({
-    total: null as number | null,
-    isLoading: true,
-    isError: false,
-  })
+    const delta = useMemo(() => {
+        if (!recentData) return null
+        return recentData.reduce((acc, d) => acc + d.newPatients, 0)
+    }, [recentData])
 
-  useEffect(() => {
-    fetchPatientTotal()
-      .then((data) =>
-        setState({ total: data.total, isLoading: false, isError: false })
-      )
-      .catch(() =>
-        setState((prev) => ({ ...prev, isLoading: false, isError: true }))
-      )
-  }, [])
+    const isLoading = loadingTotal || loadingRecent
 
-  return (
-    <Card
-      className={cn(
-        "relative overflow-hidden",
-        "rounded-xl border bg-card shadow-sm",
-        "p-4 transition-all duration-300 hover:shadow-md",
-        "border-l-4 border-accent-blue"
-      )}
-    >
-      <div className="relative z-10 flex flex-col">
-        <div className="flex items-start justify-between">
-          <div className="flex items-start gap-3">
-            <div className="rounded-lg bg-accent-blue-light/10 p-2 border border-accent-blue-light/20">
-              <HeartHandshake className="size-4 text-accent-blue" />
+    return (
+        <Card className="relative overflow-hidden rounded-xl border border-border bg-card p-5 shadow-sm transition-shadow hover:shadow-md">
+            {/* faixa de cor no topo */}
+            <div className="absolute inset-x-0 top-0 h-1 rounded-t-xl bg-gradient-to-r from-blue-400 to-blue-600" />
+            <div className="flex items-start justify-between">
+                <p className="text-sm text-muted-foreground">Pacientes ativos</p>
+                <div className="rounded-lg bg-blue-500/10 p-2 ring-1 ring-blue-500/20">
+                    <Users className="size-4 text-blue-500" />
+                </div>
             </div>
 
-            <div className="flex flex-col">
-              <CardTitle className="text-sm font-semibold text-foreground uppercase tracking-wider">
-                Total de Pacientes
-              </CardTitle>
-              <CardDescription className="text-xs text-muted-foreground">
-                Em sua clínica
-              </CardDescription>
-            </div>
-          </div>
-        </div>
-
-        <Separator
-          className="h-0 -mx-4 my-4 w-[calc(100%+2rem)] border-t-2 border-dashed border-muted-foreground/30"
-          aria-hidden="true"
-        />
-
-        {state.isLoading ? (
-          <div className="space-y-2">
-            <Skeleton className="h-10 w-28" />
-            <Skeleton className="h-4 w-48" />
-          </div>
-        ) : state.isError ? (
-          <div className="flex items-center gap-2 text-red-500 py-2">
-            <AlertCircle className="size-4" />
-            <span className="text-sm font-medium">Erro ao carregar dados</span>
-          </div>
-        ) : (
-          <div className="flex flex-col">
-            <div className="flex items-baseline gap-2">
-              <span className="text-4xl font-bold tracking-tight tabular-nums text-foreground">
-                {state.total !== null ? state.total.toLocaleString("pt-BR") : "0"}
-              </span>
-            </div>
-          </div>
-        )}
-      </div>
-    </Card>
-  )
-}
+            {isLoading ? (
+                <div className="mt-3 space-y-2">
+                    <Skeleton className="h-9 w-24" />
+                    <Skeleton className="h-5 w-36" />
+                </div>
+            ) : isError ? (
+                <div className="mt-3 flex items-center gap-2 text-red-500">
+                    <AlertCircle className="size-4" />
+                    <span className="text-sm">Erro ao carregar</span>
+                </div>
+            ) : (
+                <div className="mt-3">
+                    <p className="text-4xl font-bold tabular-nums text-foreground">
+                        {(cardData?.total ?? 0).toLocaleString('pt-BR')}
+                    </p>
+                    {delta !== null && delta > 0 && (
+                        <div className="mt-2 flex items-center gap-1.5">
+                            <span className={cn(
+                                "inline-flex items-center gap-1 rounded-md px-1.5 py-0.5 text-xs font-semibold",
+                                "bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-400"
+                            )}>
+                                <TrendingUp className="size-3" />
+                                +{delta}
+                            </span>
+                            <span className="text-xs text-muted-foreground">vs. 30 dias anteriores</span>
+                        </div>
+                    )}
+                </div>
+            )}
+        </Card>
+    )
+})

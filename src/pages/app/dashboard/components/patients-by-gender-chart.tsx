@@ -1,7 +1,7 @@
 "use client"
 
 import * as React from "react"
-import { Cell, Pie, PieChart } from "recharts"
+import { Cell, Label, Pie, PieChart } from "recharts"
 import { useQuery } from "@tanstack/react-query"
 import { subDays, startOfDay, endOfDay } from "date-fns"
 import { Loader2, Users, AlertCircle, RefreshCcw } from "lucide-react"
@@ -20,6 +20,7 @@ import {
     type ChartConfig,
 } from "@/components/ui/chart"
 import { getPatientsByGender } from "@/api/get-patients-by-gender"
+import type { DashboardPeriod } from "./dashboard-header"
 
 const GENDER_TRANSLATIONS: Record<string, string> = {
     FEMININE: "Feminino",
@@ -27,37 +28,38 @@ const GENDER_TRANSLATIONS: Record<string, string> = {
     OTHER: "Outros",
 }
 
-const CHART_COLORS = [
-    "var(--chart-2)",
-    "var(--chart-6)",
-    "var(--chart-1)",
-]
+// Feminino → rosa, Masculino → azul, Outros → roxo
+const GENDER_COLORS: Record<string, string> = {
+    Feminino: "#ec4899",
+    Masculino: "#3b82f6",
+    Outros: "#a855f7",
+}
+const CHART_COLORS = ["#ec4899", "#3b82f6", "#a855f7"]
 
 const chartConfig = {
-    patients: {
-        label: "Pacientes",
-    },
+    patients: { label: "Pacientes" },
 } satisfies ChartConfig
 
-interface PatientsByGenderChartProps {
-    endDate: Date | undefined
+const PERIOD_DAYS: Record<DashboardPeriod, number> = {
+    '7d': 7,
+    '30d': 30,
+    '90d': 90,
+    'year': 365,
 }
 
-export function PatientsByGenderChart({ endDate }: PatientsByGenderChartProps) {
-    const [timeRange] = React.useState("30d")
+interface PatientsByGenderChartProps {
+    period: DashboardPeriod
+}
 
+export const PatientsByGenderChart = React.memo(function PatientsByGenderChart({ period }: PatientsByGenderChartProps) {
     const { startDateToFetch, endDateToFetch } = React.useMemo(() => {
-        const referenceDate = endDate ? new Date(endDate) : new Date()
-        let daysToSubtract = 30
-
-        if (timeRange === "90d") daysToSubtract = 90
-        if (timeRange === "7d") daysToSubtract = 7
-
+        const ref = new Date()
+        const days = PERIOD_DAYS[period]
         return {
-            startDateToFetch: startOfDay(subDays(referenceDate, daysToSubtract)),
-            endDateToFetch: endOfDay(referenceDate),
+            startDateToFetch: startOfDay(subDays(ref, days)),
+            endDateToFetch: endOfDay(ref),
         }
-    }, [timeRange, endDate])
+    }, [period])
 
     const { data: rawData, isLoading, isError, refetch } = useQuery({
         queryKey: ['dashboard', 'gender-stats', startDateToFetch, endDateToFetch],
@@ -65,125 +67,128 @@ export function PatientsByGenderChart({ endDate }: PatientsByGenderChartProps) {
             startDate: startDateToFetch.toISOString(),
             endDate: endDateToFetch.toISOString()
         }),
-        enabled: !!startDateToFetch && !!endDateToFetch,
-        staleTime: 1000 * 60 * 5,
+        staleTime: 5 * 60 * 1000,
+        gcTime: 10 * 60 * 1000,
     })
 
     const { chartData, totalPatients, isEmpty } = React.useMemo(() => {
         if (!rawData) return { chartData: [], totalPatients: 0, isEmpty: true }
-
-        const translatedData = rawData.map(item => ({
+        const translated = rawData.map(item => ({
             ...item,
             gender: GENDER_TRANSLATIONS[item.gender] || item.gender,
         }))
-
-        const total = translatedData.reduce((sum, item) => sum + item.patients, 0)
-
+        const total = translated.reduce((sum, item) => sum + item.patients, 0)
         return {
-            chartData: translatedData,
+            chartData: translated,
             totalPatients: total,
-            isEmpty: translatedData.length === 0 || total === 0
+            isEmpty: translated.length === 0 || total === 0
         }
     }, [rawData])
 
     return (
-        <Card className="border-border bg-card shadow-sm rounded-2xl overflow-hidden flex flex-col">
-            <CardHeader className="flex flex-col items-stretch space-y-0 border-b border-border p-0 sm:flex-row">
-                <div className="flex flex-1 flex-col justify-center gap-1 px-6 py-4">
-                    <CardTitle className="text-sm font-semibold text-foreground uppercase tracking-wider">
-                        Gênero
-                    </CardTitle>
-                    <CardDescription className="text-xs text-muted-foreground">
-                        Distribuição por Gênero
-                    </CardDescription>
-                </div>
-                <div className="flex border-t border-border sm:border-t-0 sm:border-l">
-                    <div className="relative z-30 flex flex-1 flex-col justify-center gap-1 px-6 py-4 text-left sm:px-8">
-                        <span className="text-[10px] uppercase tracking-wider text-muted-foreground font-medium">
-                            Total Geral
-                        </span>
-                        <span className="text-xl font-bold leading-none sm:text-2xl text-foreground">
-                            {totalPatients.toLocaleString()}
-                        </span>
-                    </div>
-                </div>
+        <Card className="border-border bg-card shadow-sm rounded-2xl flex flex-col">
+            <CardHeader className="px-6 pt-5 pb-4">
+                <CardTitle className="text-base font-semibold text-foreground">Perfil dos pacientes</CardTitle>
+                <CardDescription className="text-xs text-muted-foreground">Por gênero</CardDescription>
             </CardHeader>
 
-            <CardContent className="px-6 pt-6 pb-6 flex-1 flex flex-col bg-card">
+            <CardContent className="flex-1 px-6 pb-6">
                 {isLoading ? (
-                    <div className="flex h-[300px] w-full items-center justify-center">
+                    <div className="flex h-[180px] items-center justify-center">
                         <Loader2 className="h-8 w-8 animate-spin text-muted-foreground" />
                     </div>
                 ) : isError ? (
-                    <div className="flex h-[300px] flex-col items-center justify-center text-center">
-                        <div className="mb-3 flex h-12 w-12 items-center justify-center rounded-full bg-red-500/10 text-red-500">
-                            <AlertCircle className="size-6" />
-                        </div>
-                        <p className="text-sm font-medium text-foreground">Erro ao carregar dados</p>
-                        <button onClick={() => refetch()} className="mt-2 text-xs font-bold text-blue-500 flex items-center gap-1 hover:underline">
+                    <div className="flex h-[180px] flex-col items-center justify-center gap-2 text-center">
+                        <AlertCircle className="size-5 text-red-500" />
+                        <p className="text-sm text-red-500">Erro ao carregar</p>
+                        <button onClick={() => refetch()} className="flex items-center gap-1 text-xs font-semibold text-blue-500 hover:underline">
                             <RefreshCcw size={12} /> Tentar novamente
                         </button>
                     </div>
                 ) : isEmpty ? (
-                    <div className="flex h-[300px] flex-col items-center justify-center text-center">
-                        <div className="mb-3 flex h-12 w-12 items-center justify-center rounded-full bg-muted/30">
+                    <div className="flex h-[180px] flex-col items-center justify-center gap-2 text-center">
+                        <div className="flex h-10 w-10 items-center justify-center rounded-full bg-muted/30">
                             <Users className="h-5 w-5 text-muted-foreground/50" />
                         </div>
                         <p className="text-sm font-medium text-foreground">Sem dados de gênero</p>
-                        <p className="mt-1 text-xs text-muted-foreground">Nenhum paciente identificado neste período</p>
                     </div>
                 ) : (
-                    <>
-                        <div className="flex-1 min-h-[250px] flex items-center justify-center">
-                            <ChartContainer config={chartConfig} className="mx-auto aspect-square h-[250px] w-full">
-                                <PieChart>
-                                    <ChartTooltip cursor={false} content={<ChartTooltipContent hideLabel />} />
-                                    <Pie
-                                        data={chartData}
-                                        dataKey="patients"
-                                        nameKey="gender"
-                                        innerRadius={70}
-                                        outerRadius={90}
-                                        strokeWidth={5}
-                                        stroke="var(--card)"
-                                        paddingAngle={4}
-                                    >
-                                        {chartData.map((_, index) => (
-                                            <Cell
-                                                key={`cell-${index}`}
-                                                fill={CHART_COLORS[index % CHART_COLORS.length]}
-                                                className="hover:opacity-80 transition-opacity cursor-pointer outline-none"
-                                            />
-                                        ))}
-                                    </Pie>
-                                </PieChart>
-                            </ChartContainer>
-                        </div>
+                    <div className="flex items-center gap-4">
+                        <ChartContainer config={chartConfig} className="h-[160px] w-[160px] shrink-0">
+                            <PieChart>
+                                <ChartTooltip cursor={false} content={<ChartTooltipContent hideLabel />} />
+                                <Pie
+                                    data={chartData}
+                                    dataKey="patients"
+                                    nameKey="gender"
+                                    innerRadius={52}
+                                    outerRadius={72}
+                                    strokeWidth={4}
+                                    stroke="var(--card)"
+                                    paddingAngle={3}
+                                >
+                                    {chartData.map((item, index) => (
+                                        <Cell
+                                            key={`cell-${index}`}
+                                            fill={GENDER_COLORS[item.gender] ?? CHART_COLORS[index % CHART_COLORS.length]}
+                                            className="hover:opacity-80 transition-opacity cursor-pointer outline-none"
+                                        />
+                                    ))}
+                                    <Label
+                                        content={({ viewBox }) => {
+                                            if (viewBox && "cx" in viewBox && "cy" in viewBox) {
+                                                return (
+                                                    <text
+                                                        x={viewBox.cx}
+                                                        y={viewBox.cy}
+                                                        textAnchor="middle"
+                                                        dominantBaseline="middle"
+                                                    >
+                                                        <tspan
+                                                            x={viewBox.cx}
+                                                            y={(viewBox.cy || 0) - 8}
+                                                            fontSize={22}
+                                                            fontWeight={700}
+                                                            fill="currentColor"
+                                                        >
+                                                            {totalPatients}
+                                                        </tspan>
+                                                        <tspan
+                                                            x={viewBox.cx}
+                                                            y={(viewBox.cy || 0) + 12}
+                                                            fontSize={11}
+                                                            fill="currentColor"
+                                                            opacity={0.6}
+                                                        >
+                                                            pacientes
+                                                        </tspan>
+                                                    </text>
+                                                )
+                                            }
+                                        }}
+                                    />
+                                </Pie>
+                            </PieChart>
+                        </ChartContainer>
 
-                        <div className="grid grid-cols-2 gap-x-4 gap-y-3 pt-6 border-t border-border mt-6">
+                        <div className="flex flex-col gap-3 flex-1">
                             {chartData.map((item, index) => {
-                                const percentage = ((item.patients / totalPatients) * 100).toFixed(1)
+                                const percentage = ((item.patients / totalPatients) * 100).toFixed(0)
                                 return (
-                                    <div key={item.gender} className="flex items-center justify-between group">
-                                        <div className="flex items-center space-x-2.5">
-                                            <div
-                                                className="h-2 w-2 rounded-full shrink-0 shadow-sm"
-                                                style={{ backgroundColor: CHART_COLORS[index % CHART_COLORS.length] }}
-                                            />
-                                            <span className="text-[11px] font-bold uppercase tracking-tight text-muted-foreground group-hover:text-foreground transition-colors">
-                                                {item.gender}
-                                            </span>
-                                        </div>
-                                        <span className="text-[11px] font-bold tabular-nums text-foreground">
-                                            {percentage}%
-                                        </span>
+                                    <div key={item.gender} className="flex items-center gap-2.5">
+                                        <div
+                                            className="h-2.5 w-2.5 shrink-0 rounded-full"
+                                            style={{ backgroundColor: GENDER_COLORS[item.gender] ?? CHART_COLORS[index % CHART_COLORS.length] }}
+                                        />
+                                        <span className="text-sm text-muted-foreground flex-1">{item.gender}</span>
+                                        <span className="text-sm font-semibold text-foreground tabular-nums">{percentage}%</span>
                                     </div>
                                 )
                             })}
                         </div>
-                    </>
+                    </div>
                 )}
             </CardContent>
         </Card>
     )
-}
+})
