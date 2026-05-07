@@ -97,7 +97,8 @@ export function NavUser() {
                 <UserAvatar
                   src={profileImage}
                   name={name}
-                  className="h-8 w-8 rounded-lg"
+                  size="md"
+                  className="rounded-lg"
                 />
               )}
 
@@ -133,7 +134,8 @@ export function NavUser() {
                   <UserAvatar
                     src={profileImage}
                     name={name}
-                    className="h-8 w-8 rounded-lg"
+                    size="md"
+                    className="rounded-lg"
                   />
                   <div className="grid flex-1 text-left text-sm leading-tight">
                     <span className="truncate font-medium">{name}</span>

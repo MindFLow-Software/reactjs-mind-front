@@ -115,7 +115,8 @@ export default function PatientsRecords() {
                                             <UserAvatar
                                                 src={patient.profileImageUrl}
                                                 name={patient.name}
-                                                className="size-10 border-blue-100 shadow-sm"
+                                                size="lg"
+                                                className="border-blue-100 shadow-sm"
                                             />
 
                                             <div className="flex flex-col">

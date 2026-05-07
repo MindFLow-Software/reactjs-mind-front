@@ -95,6 +95,7 @@ export function PatientsTableRow({ patient }: PatientsTableRowProps) {
                     <UserAvatar
                         src={profileImageUrl}
                         name={`${firstName} ${lastName}`}
+                        size="md"
                     />
 
                     <div className="flex flex-col">
