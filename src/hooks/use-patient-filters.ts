@@ -1,7 +1,7 @@
-"use client"
-
 import { useSearchParams } from "react-router-dom"
 import { z } from "zod"
+
+export type PatientSortOrder = "asc" | "desc"
 
 export function usePatientFilters() {
   const [searchParams, setSearchParams] = useSearchParams()
@@ -15,12 +15,14 @@ export function usePatientFilters() {
 
   const filter = searchParams.get("filter") ?? ""
   const status = searchParams.get("status") ?? "all"
+  const order  = (searchParams.get("order") ?? "asc") as PatientSortOrder
 
   const filters = {
     pageIndex: Math.max(0, pageIndex),
     perPage: 10,
     filter,
     status,
+    order,
   }
 
   function setPage(pageIndex: number) {
@@ -53,6 +55,14 @@ export function usePatientFilters() {
     })
   }
 
+  function setOrder(next: PatientSortOrder) {
+    setSearchParams((state) => {
+      state.set("order", next)
+      state.set("page", "1")
+      return state
+    })
+  }
+
   function clearFilters() {
     setSearchParams((state) => {
       state.delete("filter")
@@ -62,5 +72,5 @@ export function usePatientFilters() {
     })
   }
 
-  return { filters, setPage, setFilters, clearFilters }
+  return { filters, setPage, setFilters, setOrder, clearFilters }
 }

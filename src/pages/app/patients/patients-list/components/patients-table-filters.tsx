@@ -1,170 +1,144 @@
-"use client"
-
-import { useState, useEffect, useRef } from "react"
-import { CheckCircle2, Filter, QrCode, UserRoundPlus, Users, XCircle } from "lucide-react"
+import { useEffect, useRef } from "react"
+import { Search, X, SlidersHorizontal, Loader2 } from "lucide-react"
 import { useForm } from "react-hook-form"
 
 import { Button } from "@/components/ui/button"
-import { Dialog } from "@/components/ui/dialog"
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select"
-
-import { usePatientFilters } from "@/hooks/use-patient-filters"
-import { GenerateInviteModal } from "./generate-Invite-modal"
-import { RegisterPatients } from "../register-patients/register-patients"
-import { PatientsSearchInput } from "../../components/patients-search-input"
+import { Input } from "@/components/ui/input"
 import { cn } from "@/lib/utils"
+import { usePatientFilters } from "@/hooks/use-patient-filters"
 
 interface PatientsTableFiltersProps {
-  onPatientRegistered?: () => void
+    totalCount: number
+    activeCount: number
+    inactiveCount: number
+    isFetching?: boolean
 }
 
-export function PatientsTableFilters({ onPatientRegistered }: PatientsTableFiltersProps) {
-  const { filters, setFilters, clearFilters } = usePatientFilters()
-  const [isRegisterOpen, setIsRegisterOpen] = useState(false)
-  const [isInviteOpen, setIsInviteOpen] = useState(false)
-  const isFirstRender = useRef(true)
+type StatusTab = "all" | "active" | "inactive"
 
-  const { register, watch, setValue } = useForm({
-    values: {
-      filter: filters.filter,
-    },
-  })
+const TABS: { value: StatusTab; label: string; dotClass: string }[] = [
+    { value: "all",      label: "Todos",    dotClass: "" },
+    { value: "active",   label: "Ativos",   dotClass: "bg-emerald-500" },
+    { value: "inactive", label: "Inativos", dotClass: "bg-zinc-400" },
+]
 
-  const watchedFilter = watch("filter")
+export function PatientsTableFilters({
+    totalCount,
+    activeCount,
+    inactiveCount,
+    isFetching,
+}: PatientsTableFiltersProps) {
+    const { filters, setFilters, clearFilters } = usePatientFilters()
+    const isFirstRender = useRef(true)
 
-  useEffect(() => {
-    if (isFirstRender.current) {
-      isFirstRender.current = false
-      return
+    const { register, watch, setValue } = useForm({
+        values: { filter: filters.filter },
+    })
+
+    const watchedFilter = watch("filter")
+
+    useEffect(() => {
+        if (isFirstRender.current) { isFirstRender.current = false; return }
+        if (watchedFilter === filters.filter) return
+
+        const timeout = setTimeout(() => {
+            setFilters({ filter: watchedFilter })
+        }, 400)
+
+        return () => clearTimeout(timeout)
+    }, [watchedFilter, filters.filter, setFilters])
+
+    function handleClearSearch() {
+        setValue("filter", "")
+        setFilters({ filter: "" })
     }
-    if (watchedFilter === filters.filter) {
-      return
+
+    function handleClearAll() {
+        clearFilters()
+        setValue("filter", "")
     }
 
-    const timeout = setTimeout(() => {
-      setFilters({ filter: watchedFilter })
-    }, 400)
+    const tabCount = (tab: StatusTab) => {
+        if (tab === "all")      return totalCount
+        if (tab === "active")   return activeCount
+        return inactiveCount
+    }
 
-    return () => clearTimeout(timeout)
-  }, [watchedFilter, filters.filter, setFilters])
+    const hasFilters = !!filters.filter || filters.status !== "all"
 
-  function handleClearFilters() {
-    clearFilters()
-    setValue("filter", "")
-  }
+    return (
+        <div className="flex flex-col gap-3">
+            <div className="flex flex-col sm:flex-row gap-2 sm:items-center">
+                {/* Search */}
+                <div className="relative flex-1 max-w-sm">
+                    <span className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground pointer-events-none">
+                        {isFetching
+                            ? <Loader2 className="h-4 w-4 animate-spin" />
+                            : <Search className="h-4 w-4" />
+                        }
+                    </span>
+                    <Input
+                        {...register("filter")}
+                        placeholder="Buscar por nome, CPF, e-mail ou telefone..."
+                        className="pl-9 pr-8 h-9 text-sm"
+                    />
+                    {watchedFilter && (
+                        <button
+                            type="button"
+                            onClick={handleClearSearch}
+                            className="absolute right-2.5 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground transition-colors"
+                            aria-label="Limpar busca"
+                        >
+                            <X className="h-3.5 w-3.5" />
+                        </button>
+                    )}
+                </div>
 
-  return (
-    <div className="flex flex-col lg:flex-row gap-3 lg:items-center lg:justify-between">
-      <div className="flex flex-col lg:flex-row gap-2 flex-1 lg:items-center">
-        <PatientsSearchInput
-          {...register("filter")}
-          placeholder="Buscar por CPF, Nome e Email"
-        />
+                {/* Status tabs */}
+                <div className="flex items-center gap-1 bg-muted/50 rounded-lg p-1">
+                    {TABS.map((tab) => (
+                        <button
+                            key={tab.value}
+                            type="button"
+                            onClick={() => setFilters({ status: tab.value })}
+                            className={cn(
+                                "flex items-center gap-1.5 h-7 px-3 rounded-md text-xs font-medium transition-all cursor-pointer",
+                                filters.status === tab.value
+                                    ? "bg-background text-foreground shadow-sm"
+                                    : "text-muted-foreground hover:text-foreground"
+                            )}
+                        >
+                            {tab.dotClass && (
+                                <span className={cn("h-1.5 w-1.5 rounded-full shrink-0", tab.dotClass)} />
+                            )}
+                            {tab.label}
+                            <span className={cn(
+                                "text-[10px] font-semibold tabular-nums",
+                                filters.status === tab.value ? "text-muted-foreground" : "text-muted-foreground/60"
+                            )}>
+                                {tabCount(tab.value)}
+                            </span>
+                        </button>
+                    ))}
+                </div>
 
-        <Select
-          value={filters.status}
-          onValueChange={(value) => setFilters({ status: value })}
-        >
-          <SelectTrigger
-            className="cursor-pointer h-9 min-w-[180px] w-auto bg-background
-            border-muted-foreground/20 hover:border-primary/30 transition-all
-            shadow-sm px-3"
-          >
-            <div className="flex items-center gap-2 whitespace-nowrap">
-              <Filter className="h-3.5 w-3.5 text-muted-foreground" />
-              <SelectValue placeholder="Status" />
+                <div className="flex items-center gap-2 sm:ml-auto">
+                    {hasFilters && (
+                        <Button
+                            variant="ghost" size="sm"
+                            onClick={handleClearAll}
+                            className="h-8 gap-1.5 text-muted-foreground hover:text-destructive text-xs"
+                        >
+                            <X className="h-3.5 w-3.5" />
+                            Limpar filtros
+                        </Button>
+                    )}
+                    <Button variant="outline" size="sm" className="h-8 gap-1.5 text-xs cursor-pointer">
+                        <SlidersHorizontal className="h-3.5 w-3.5" />
+                        Filtros avançados
+                    </Button>
+                </div>
             </div>
-          </SelectTrigger>
-
-          <SelectContent className="min-w-[220px]">
-            <SelectItem value="all" className="cursor-pointer py-2.5">
-              <div className="flex items-center gap-2 whitespace-nowrap">
-                <Users className="h-4 w-4 text-slate-500" />
-                <span className="text-sm font-medium">Todos os Pacientes</span>
-              </div>
-            </SelectItem>
-
-            <SelectItem value="active" className="cursor-pointer py-2.5">
-              <div className="flex items-center gap-2 whitespace-nowrap">
-                <CheckCircle2 className="h-4 w-4 text-emerald-500" />
-                <span className="text-sm font-medium">Pacientes Ativos</span>
-              </div>
-            </SelectItem>
-
-            <SelectItem value="inactive" className="cursor-pointer py-2.5">
-              <div className="flex items-center gap-2 whitespace-nowrap">
-                <XCircle className="h-4 w-4 text-rose-500" />
-                <span className="text-sm font-medium">Pacientes Inativos</span>
-              </div>
-            </SelectItem>
-          </SelectContent>
-        </Select>
-
-        {(filters.filter || filters.status !== "all") && (
-          <Button
-            variant="ghost"
-            size="sm"
-            type="button"
-            onClick={handleClearFilters}
-            className="cursor-pointer h-8 px-2 lg:px-3 text-muted-foreground hover:text-destructive gap-2 transition-colors"
-          >
-            <XCircle className="h-4 w-4" />
-            Limpar filtros
-          </Button>
-        )}
-      </div>
-
-      <div className="flex flex-col gap-2 lg:flex-row lg:items-center">
-        <button
-          type="button"
-          onClick={() => setIsRegisterOpen(true)}
-          className={cn(
-            "flex h-9 cursor-pointer items-center justify-center gap-2 rounded-xl px-4",
-            "bg-blue-600 text-[13px] font-medium text-white",
-            "shadow-[0_2px_8px_rgba(37,99,235,0.25)] transition-all",
-            "hover:bg-blue-700 hover:-translate-y-px active:scale-[0.98] border-none outline-none",
-          )}
-        >
-          <UserRoundPlus className="h-4 w-4" />
-          Cadastrar paciente
-        </button>
-
-        <button
-          type="button"
-          onClick={() => setIsInviteOpen(true)}
-          className={cn(
-            "flex h-9 cursor-pointer items-center justify-center gap-2 rounded-xl px-4",
-            "border border-blue-600/20 bg-white text-[13px] font-medium text-blue-600",
-            "shadow-[0_1px_4px_rgba(37,99,235,0.08)] transition-all",
-            "hover:border-blue-600/40 hover:bg-blue-50 hover:-translate-y-px active:scale-[0.98] outline-none",
-          )}
-        >
-          <QrCode className="h-4 w-4" />
-          QR Code de cadastro
-        </button>
-      </div>
-
-      {/* Dialogs */}
-      <Dialog open={isRegisterOpen} onOpenChange={setIsRegisterOpen}>
-        {isRegisterOpen && (
-          <RegisterPatients
-            onSuccess={() => {
-              setIsRegisterOpen(false)
-              onPatientRegistered?.()
-            }}
-          />
-        )}
-      </Dialog>
-
-      <Dialog open={isInviteOpen} onOpenChange={setIsInviteOpen}>
-        <GenerateInviteModal />
-      </Dialog>
-    </div>
-  )
+        </div>
+    )
 }

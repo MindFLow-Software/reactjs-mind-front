@@ -4,6 +4,24 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { cn } from "@/lib/utils"
 import { api } from "@/lib/axios"
 
+const AVATAR_PALETTE = [
+  { bg: "bg-blue-500",    text: "text-white" },
+  { bg: "bg-violet-500",  text: "text-white" },
+  { bg: "bg-emerald-500", text: "text-white" },
+  { bg: "bg-amber-500",   text: "text-white" },
+  { bg: "bg-rose-500",    text: "text-white" },
+  { bg: "bg-sky-500",     text: "text-white" },
+  { bg: "bg-indigo-500",  text: "text-white" },
+  { bg: "bg-teal-500",    text: "text-white" },
+  { bg: "bg-orange-500",  text: "text-white" },
+  { bg: "bg-pink-500",    text: "text-white" },
+]
+
+function seedToColor(seed: string) {
+  const hash = seed.split("").reduce((acc, c) => acc + c.charCodeAt(0), 0)
+  return AVATAR_PALETTE[hash % AVATAR_PALETTE.length]
+}
+
 const avatarVariants = cva("border shrink-0 bg-muted", {
   variants: {
     size: {
@@ -17,7 +35,7 @@ const avatarVariants = cva("border shrink-0 bg-muted", {
   },
 })
 
-const fallbackVariants = cva("font-semibold text-muted-foreground", {
+const fallbackVariants = cva("font-semibold", {
   variants: {
     size: {
       sm: "text-[10px]",
@@ -36,6 +54,7 @@ interface UserAvatarProps extends VariantProps<typeof avatarVariants> {
   className?: string
   showStatusRing?: boolean
   isActive?: boolean
+  colorSeed?: string
 }
 
 export function UserAvatar({
@@ -45,6 +64,7 @@ export function UserAvatar({
   size,
   showStatusRing,
   isActive,
+  colorSeed,
 }: UserAvatarProps) {
   const [imgUrl, setImgUrl] = useState<string | undefined>(undefined)
 
@@ -53,6 +73,11 @@ export function UserAvatar({
     const parts = name.trim().split(/\s+/)
     return (parts[0][0] + (parts.length > 1 ? parts[parts.length - 1][0] : "")).toUpperCase()
   }, [name])
+
+  const color = useMemo(
+    () => (colorSeed ? seedToColor(colorSeed) : null),
+    [colorSeed]
+  )
 
   useEffect(() => {
     let objectUrl: string | undefined
@@ -83,7 +108,14 @@ export function UserAvatar({
   return (
     <Avatar className={cn(avatarVariants({ size }), ringClass, className)}>
       <AvatarImage src={imgUrl} className="object-cover" />
-      <AvatarFallback className={fallbackVariants({ size })}>{initials}</AvatarFallback>
+      <AvatarFallback
+        className={cn(
+          fallbackVariants({ size }),
+          color ? `${color.bg} ${color.text} border-0` : "text-muted-foreground"
+        )}
+      >
+        {initials}
+      </AvatarFallback>
     </Avatar>
   )
 }

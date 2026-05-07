@@ -55,6 +55,26 @@
 
 ---
 
+---
+
+## M4 — Patients Management
+
+**Goal:** Redesign completo da tela `/patients-list`: tabela compacta, ações em dropdown, filtros com UX completa, modal de cadastro em seções e performance otimizada para hardware modesto.
+**Target:** Sprint seguinte
+
+### Features
+
+**[F13] Patients List: Redesign Completo** - SPECIFIED
+- Tabela com 6 colunas compactas (Avatar+Nome, Status, Telefone, E-mail, Última Sessão, Ações)
+- DropdownMenu de ações por linha (Ver / Editar / Inativar)
+- Filtros: search com X + spinner, chips de filtros ativos, contador de resultados
+- Modal de cadastro em 4 seções (Identificação, Contato, Dados Pessoais, Mídia)
+- Performance: lazy loading de 5 modais, React Query 30s staleTime, virtualização >50 itens
+- Componentes reutilizáveis padronizados: `UserAvatar` (variantes), `Item` (orientações), `PatientsDataBlock` (isLoading)
+- Spec: `.specs/features/patients-list-redesign/`
+
+---
+
 ## Future Considerations
 
 - Dark/light mode polishing nos novos componentes

@@ -10,6 +10,9 @@
 - **D6 (2026-05-06):** CTA primário nas auth pages usa verde `#0d5c40` (não azul) — alinha com o design de referência teal/green da tela de cadastro
 - **D7 (2026-05-06):** `useAuthRedirect` extrai o auth-check inline do sign-in.tsx — preparação para reuso em outras páginas e facilita testes
 - **D8 (2026-05-06):** `dateOfBirth` state/effect movido para o escopo de `SignUpForm` (fora do render prop do Controller) — correção de bug de Rules of Hooks em React Strict Mode
+- **D9 (2026-05-06):** Tabela de pacientes reduzida de 9 para 6 colunas (CPF/Gênero/Idade movidos para modal de detalhes) — densidade visual excessiva e scroll horizontal em viewports < 1280px
+- **D10 (2026-05-06):** Ações da tabela de pacientes agrupadas em DropdownMenu (3 pontos) em vez de 3 botões soltos — padrão mais limpo, escalável e consistente com padrões modernos de tabela
+- **D11 (2026-05-06):** Virtualização condicional ativada apenas quando `meta.total > 50` — evita overhead de `@tanstack/react-virtual` para listas pequenas sem perder o benefício para listas grandes
 
 ## Blockers
 
@@ -21,6 +24,7 @@ _(nenhum)_
 - [x] Confirmar endpoint today: não existe — usar `getActiveAppointmentsGrouped` ou filtrar client-side via `fetchAppointments`
 - [ ] Multi-série no SessionsBarChart requer backend retornar count por status — implementado com serie única + legenda visual por ora
 - [ ] F10 Auth Redesign: implementar T1–T8 (spec em .specs/features/auth-redesign/)
+- [ ] F13 Patients List Redesign: implementar T1–T10 (spec em .specs/features/patients-list-redesign/)
 
 ## Deferred Ideas
 
