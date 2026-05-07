@@ -6,6 +6,7 @@ export interface GetPatientsFilters {
   filter?: string | null | undefined
   status?: string | null | undefined
   gender?: string | null | undefined
+  sortBy?: string | null | undefined
   order?: string | null | undefined
   sessionVolume?: string | null | undefined
 }
@@ -42,17 +43,19 @@ export async function getPatients({
   filter,
   status,
   gender,
+  sortBy,
   order,
   sessionVolume,
 }: GetPatientsFilters): Promise<GetPatientsResponse> {
-  
-  const response = await api.get("/patients", { 
+
+  const response = await api.get("/patients", {
     params: {
       pageIndex,
       perPage,
       filter: filter || undefined,
       status: status === 'all' ? null : status,
       gender: gender === 'all' ? null : gender,
+      sortBy: sortBy || undefined,
       order: order === 'all' ? null : order,
       sessionVolume: sessionVolume === 'all' ? null : sessionVolume,
     },
