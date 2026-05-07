@@ -2,7 +2,7 @@ import { useSearchParams } from "react-router-dom"
 import { z } from "zod"
 
 export type PatientSortOrder = "asc" | "desc"
-export type PatientSortBy = "name" | "status" | "contact" | "lastSession" | "age"
+export type PatientSortBy = "name" | "status" | "contact" | "lastSession" | "age" | "gender"
 
 export function usePatientFilters() {
   const [searchParams, setSearchParams] = useSearchParams()

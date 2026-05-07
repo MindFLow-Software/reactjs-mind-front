@@ -128,9 +128,14 @@ export function PatientsTable({
                             className="w-[110px] hidden xl:table-cell"
                         />
 
-                        <TableHead className={cn(COL_HEAD, "w-[110px] hidden xl:table-cell")}>
-                            Gênero
-                        </TableHead>
+                        <SortableHead
+                            column="gender"
+                            label="Gênero"
+                            sortBy={sortBy}
+                            sortOrder={sortOrder}
+                            onSort={onSort}
+                            className="w-[110px] hidden xl:table-cell"
+                        />
 
                         <TableHead className={cn(COL_HEAD, "w-[110px] text-right pr-3")}>
                             Ações
