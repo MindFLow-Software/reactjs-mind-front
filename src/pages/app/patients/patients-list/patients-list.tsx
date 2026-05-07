@@ -80,23 +80,23 @@ export function PatientsList() {
         placeholderData: (prev) => prev,
     })
 
-    // Lightweight count queries for metric cards
+    // Lightweight count queries — keys under ["patients"] so any patients mutation invalidates them too
     const { data: totalData, isLoading: loadingTotal } = useQuery({
-        queryKey: ["patients-count", "all"],
+        queryKey: ["patients", "count", "all"],
         queryFn: () => getPatients({ pageIndex: 0, perPage: 1 }),
-        staleTime: 60_000,
+        staleTime: 30_000,
         gcTime: 300_000,
     })
     const { data: activeData } = useQuery({
-        queryKey: ["patients-count", "active"],
+        queryKey: ["patients", "count", "active"],
         queryFn: () => getPatients({ pageIndex: 0, perPage: 1, status: "active" }),
-        staleTime: 60_000,
+        staleTime: 30_000,
         gcTime: 300_000,
     })
     const { data: inactiveData } = useQuery({
-        queryKey: ["patients-count", "inactive"],
+        queryKey: ["patients", "count", "inactive"],
         queryFn: () => getPatients({ pageIndex: 0, perPage: 1, status: "inactive" }),
-        staleTime: 60_000,
+        staleTime: 30_000,
         gcTime: 300_000,
     })
 
