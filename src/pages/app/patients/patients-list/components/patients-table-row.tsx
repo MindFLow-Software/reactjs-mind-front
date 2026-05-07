@@ -1,30 +1,33 @@
-"use client"
-
-import { useState } from "react"
+import { memo, useState, useCallback } from "react"
 import {
-    Search, Trash2, UserCheck, UserPen, Mars, Venus, Users,
-    CalendarDays, Phone, Fingerprint, AtSign, CheckCircle2, XCircle, LinkIcon
+    MoreHorizontal, Search, ExternalLink, Pencil,
+    UserX, UserCheck, Phone, AtSign, CheckCircle2, XCircle,
 } from "lucide-react"
 import { useMutation, useQueryClient } from "@tanstack/react-query"
-import { format } from "date-fns"
+import { format, formatDistanceToNow } from "date-fns"
+import { ptBR } from "date-fns/locale"
 
-import { Button } from "@/components/ui/button"
-import { Badge } from "@/components/ui/badge"
 import { TableCell, TableRow } from "@/components/ui/table"
 import { Dialog } from "@/components/ui/dialog"
+import { Badge } from "@/components/ui/badge"
+import { Button } from "@/components/ui/button"
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip"
+import {
+    DropdownMenu,
+    DropdownMenuContent,
+    DropdownMenuItem,
+    DropdownMenuSeparator,
+    DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu"
 
 import { PatientsDetails } from "./patients-details"
 import { DeletePatientDialog } from "./delete-patient-dialog"
+import { RegisterPatients } from "../register-patients/register-patients"
 import { deletePatients } from "@/api/delete-patients"
+import { UserAvatar } from "@/components/user-avatar"
+import { formatPhone } from "@/utils/formatPhone"
 
 import type { Patient } from "@/api/get-patients"
-
-import { formatCPF } from "@/utils/formatCPF"
-import { formatPhone } from "@/utils/formatPhone"
-import { formatAGE } from "@/utils/formatAGE"
-import { UserAvatar } from "@/components/user-avatar"
-import { RegisterPatients } from "../register-patients/register-patients"
 import { useNavigate } from "react-router-dom"
 import { cn } from "@/lib/utils"
 
@@ -32,7 +35,7 @@ interface PatientsTableRowProps {
     patient: Patient
 }
 
-export function PatientsTableRow({ patient }: PatientsTableRowProps) {
+export const PatientsTableRow = memo(function PatientsTableRow({ patient }: PatientsTableRowProps) {
     const navigate = useNavigate()
     const [isDetailsOpen, setIsDetailsOpen] = useState(false)
     const [isEditOpen, setIsEditOpen] = useState(false)
@@ -40,29 +43,34 @@ export function PatientsTableRow({ patient }: PatientsTableRowProps) {
 
     const queryClient = useQueryClient()
 
-    const { id, firstName, lastName, email, cpf, phoneNumber, dateOfBirth, gender, profileImageUrl, isActive } = patient
+    const { id, firstName, lastName, email, phoneNumber, profileImageUrl, isActive, lastSessionAt } = patient
 
     const { mutateAsync: toggleStatusFn, isPending: isUpdating } = useMutation({
         mutationFn: () => deletePatients(id, !isActive),
         onSuccess: async () => {
             await Promise.all([
                 queryClient.invalidateQueries({ queryKey: ["patients"] }),
-                queryClient.invalidateQueries({ queryKey: ["patient-details", id] })
+                queryClient.invalidateQueries({ queryKey: ["patient-details", id] }),
             ])
-        }
+        },
     })
 
-    const isValidDate = dateOfBirth && !isNaN(new Date(dateOfBirth).getTime())
-    const age = isValidDate ? formatAGE(dateOfBirth) : null
-    const ageDisplay = age !== null ? `${age} ${age === 1 ? 'ano' : 'anos'}` : "N/A"
+    const handleOpenDetails  = useCallback(() => setIsDetailsOpen(true), [])
+    const handleOpenEdit     = useCallback(() => setIsEditOpen(true), [])
+    const handleOpenDelete   = useCallback(() => setIsDeleteOpen(true), [])
+    const handleNavigate     = useCallback(() => {
+        sessionStorage.removeItem("active_patient_queue")
+        sessionStorage.removeItem("active_patient_queue_source")
+        navigate(`/patients/${id}/details`, { state: { from: "patients-list" } })
+    }, [navigate, id])
 
-    const genderConfig = {
-        MASCULINE: { label: "Masculino", icon: Mars, className: "bg-blue-500/10 text-blue-600 border-blue-500/20" },
-        FEMININE: { label: "Feminino", icon: Venus, className: "bg-rose-500/10 text-rose-600 border-rose-500/20" },
-        OTHER: { label: "Outro", icon: Users, className: "bg-zinc-500/10 text-zinc-600 border-zinc-500/20" },
-    }
+    const lastSessionRelative = lastSessionAt
+        ? formatDistanceToNow(new Date(lastSessionAt), { addSuffix: true, locale: ptBR })
+        : null
 
-    const currentGender = genderConfig[gender as keyof typeof genderConfig] || genderConfig.OTHER
+    const lastSessionExact = lastSessionAt
+        ? format(new Date(lastSessionAt), "dd/MM/yyyy 'às' HH:mm", { locale: ptBR })
+        : null
 
     return (
         <TableRow
@@ -71,25 +79,7 @@ export function PatientsTableRow({ patient }: PatientsTableRowProps) {
                 !isActive && "opacity-60 bg-muted/20"
             )}
         >
-            <TableCell className="w-[50px]">
-                <TooltipProvider delayDuration={100}>
-                    <Tooltip>
-                        <TooltipTrigger asChild>
-                            <Button
-                                variant="ghost"
-                                size="icon"
-                                aria-label="Ver detalhes do prontuário"
-                                className="cursor-pointer h-8 w-8 rounded-lg opacity-60 group-hover:opacity-100 group-hover:bg-primary/10 transition-[opacity,background-color] focus-visible:ring-2 focus-visible:ring-blue-500"
-                                onClick={() => setIsDetailsOpen(true)}
-                            >
-                                <Search className="h-4 w-4" aria-hidden="true" />
-                            </Button>
-                        </TooltipTrigger>
-                        <TooltipContent side="right" className="text-xs">Ver Resumo</TooltipContent>
-                    </Tooltip>
-                </TooltipProvider>
-            </TableCell>
-
+            {/* Avatar + Nome */}
             <TableCell>
                 <div className="flex items-center gap-3">
                     <UserAvatar
@@ -97,138 +87,109 @@ export function PatientsTableRow({ patient }: PatientsTableRowProps) {
                         name={`${firstName} ${lastName}`}
                         size="md"
                     />
-
-                    <div className="flex flex-col">
-                        <span className="font-semibold text-sm leading-tight text-foreground text-nowrap">
-                            {firstName} {lastName}
-                        </span>
-                        <span className="text-[11px] text-muted-foreground/70">Paciente</span>
-                    </div>
+                    <span className="font-semibold text-sm leading-tight text-nowrap">
+                        {firstName} {lastName}
+                    </span>
                 </div>
             </TableCell>
 
+            {/* Status */}
             <TableCell>
                 {isActive ? (
-                    <Badge className="bg-emerald-500/10 text-emerald-600 border-emerald-500/20 hover:bg-emerald-500/20 gap-1.5 h-[22px] px-2 text-[10px] font-bold uppercase tracking-tight">
+                    <Badge className="bg-emerald-500/15 text-emerald-600 border-emerald-500/20 hover:bg-emerald-500/20 gap-1.5 h-[22px] px-2 text-[10px] font-bold uppercase tracking-tight">
                         <CheckCircle2 className="h-3 w-3" aria-hidden="true" /> Ativo
                     </Badge>
                 ) : (
-                    <Badge variant="secondary" className="bg-zinc-500/10 text-zinc-600 border-zinc-500/20 gap-1.5 h-[22px] px-2 text-[10px] font-bold uppercase tracking-tight">
+                    <Badge variant="secondary" className="bg-muted text-muted-foreground gap-1.5 h-[22px] px-2 text-[10px] font-bold uppercase tracking-tight">
                         <XCircle className="h-3 w-3" aria-hidden="true" /> Inativo
                     </Badge>
                 )}
             </TableCell>
 
-            <TableCell>
-                <div className="inline-flex items-center gap-1.5 px-2 py-1 rounded-md bg-muted/50 border border-transparent font-mono text-xs font-medium tabular-nums">
-                    <Fingerprint className="h-3.5 w-3.5 text-muted-foreground" aria-hidden="true" />
-                    {cpf ? formatCPF(cpf) : "—"}
-                </div>
-            </TableCell>
-
+            {/* Telefone */}
             <TableCell>
                 <div className="flex items-center gap-1.5 tabular-nums">
-                    <Phone className="h-3 w-3 text-muted-foreground" aria-hidden="true" />
+                    <Phone className="h-3 w-3 text-muted-foreground shrink-0" aria-hidden="true" />
                     <span className="text-xs font-medium">{phoneNumber ? formatPhone(phoneNumber) : "—"}</span>
                 </div>
             </TableCell>
 
-            <TableCell>
+            {/* E-mail */}
+            <TableCell className="hidden md:table-cell">
                 <TooltipProvider delayDuration={0}>
                     <Tooltip>
                         <TooltipTrigger asChild>
                             <div className="flex items-center gap-1.5 cursor-default">
                                 <AtSign className="h-3 w-3 text-muted-foreground shrink-0" aria-hidden="true" />
-                                <span className="text-xs font-medium truncate max-w-[150px]">
+                                <span className="text-xs font-medium truncate max-w-[160px]">
                                     {email || "—"}
                                 </span>
                             </div>
                         </TooltipTrigger>
                         {email && (
-                            <TooltipContent className="text-xs font-medium">
-                                {email}
-                            </TooltipContent>
+                            <TooltipContent className="text-xs font-medium">{email}</TooltipContent>
                         )}
                     </Tooltip>
                 </TooltipProvider>
             </TableCell>
 
-            <TableCell>
-                <div className="flex flex-col tabular-nums">
-                    <span className="text-sm font-semibold tracking-tight">
-                        {ageDisplay}
-                    </span>
-                    <span className="text-[10px] text-muted-foreground/70 flex items-center gap-1 uppercase font-medium">
-                        <CalendarDays className="h-2.5 w-2.5" aria-hidden="true" />
-                        {isValidDate ? format(new Date(dateOfBirth), "dd/MM/yyyy") : "—"}
-                    </span>
-                </div>
-            </TableCell>
-
-            <TableCell>
-                <Badge variant="outline" className={cn("h-[20px] px-2 text-[10px] font-bold uppercase tracking-tight gap-1.5", currentGender.className)}>
-                    <currentGender.icon className="h-3 w-3" aria-hidden="true" />
-                    {currentGender.label}
-                </Badge>
-            </TableCell>
-
-            <TableCell className="text-right">
-                <div className="flex justify-end gap-2 pr-2">
-                    <TooltipProvider delayDuration={100}>
+            {/* Última Sessão */}
+            <TableCell className="hidden md:table-cell">
+                {lastSessionRelative ? (
+                    <TooltipProvider delayDuration={0}>
                         <Tooltip>
                             <TooltipTrigger asChild>
-                                <Button
-                                    size="icon"
-                                    variant="ghost"
-                                    onClick={() => {
-                                        sessionStorage.removeItem("active_patient_queue")
-                                        sessionStorage.removeItem("active_patient_queue_source")
-                                        navigate(`/patients/${patient.id}/details`, { state: { from: "patients-list" } })
-                                    }}
-                                    className="cursor-pointer h-8 w-8 rounded-lg transition-all text-muted-foreground hover:text-emerald-600 hover:bg-emerald-50"
-                                >
-                                    <LinkIcon className="h-4 w-4" aria-hidden="true" />
-                                </Button>
+                                <span className="text-xs font-medium cursor-default">{lastSessionRelative}</span>
                             </TooltipTrigger>
-                            <TooltipContent className="text-xs">Prontuário completo</TooltipContent>
-                        </Tooltip>
-
-                        <Tooltip>
-                            <TooltipTrigger asChild>
-                                <Button
-                                    size="icon"
-                                    variant="ghost"
-                                    aria-label="Editar informações do paciente"
-                                    onClick={() => setIsEditOpen(true)}
-                                    className="cursor-pointer h-8 w-8 rounded-lg transition-[color,background-color] text-muted-foreground hover:text-blue-600 hover:bg-blue-50 focus-visible:ring-2 focus-visible:ring-blue-500"
-                                >
-                                    <UserPen className="h-4 w-4" aria-hidden="true" />
-                                </Button>
-                            </TooltipTrigger>
-                            <TooltipContent className="text-xs">Editar</TooltipContent>
-                        </Tooltip>
-
-                        <Tooltip>
-                            <TooltipTrigger asChild>
-                                <Button
-                                    size="icon"
-                                    variant="ghost"
-                                    aria-label={isActive ? "Inativar paciente" : "Reativar paciente"}
-                                    onClick={() => setIsDeleteOpen(true)}
-                                    className={cn(
-                                        "cursor-pointer h-8 w-8 rounded-lg transition-[color,background-color] text-muted-foreground focus-visible:ring-2 focus-visible:ring-blue-500",
-                                        isActive ? "hover:text-red-600 hover:bg-red-50" : "hover:text-emerald-600 hover:bg-emerald-50"
-                                    )}
-                                >
-                                    {isActive ? <Trash2 className="h-4 w-4" aria-hidden="true" /> : <UserCheck className="h-4 w-4" aria-hidden="true" />}
-                                </Button>
-                            </TooltipTrigger>
-                            <TooltipContent className="text-xs">{isActive ? 'Inativar' : 'Reativar'}</TooltipContent>
+                            <TooltipContent className="text-xs">{lastSessionExact}</TooltipContent>
                         </Tooltip>
                     </TooltipProvider>
-                </div>
+                ) : (
+                    <span className="text-xs text-muted-foreground">Sem sessões</span>
+                )}
             </TableCell>
 
+            {/* Ações */}
+            <TableCell className="text-right">
+                <DropdownMenu>
+                    <DropdownMenuTrigger asChild>
+                        <Button
+                            variant="ghost"
+                            size="icon"
+                            className="h-8 w-8 cursor-pointer opacity-60 group-hover:opacity-100 transition-opacity"
+                            aria-label={`Ações do paciente ${firstName} ${lastName}`}
+                        >
+                            <MoreHorizontal className="h-4 w-4" />
+                        </Button>
+                    </DropdownMenuTrigger>
+                    <DropdownMenuContent align="end" className="w-48">
+                        <DropdownMenuItem onSelect={handleOpenDetails}>
+                            <Search className="mr-2 h-4 w-4" />
+                            Ver detalhes
+                        </DropdownMenuItem>
+                        <DropdownMenuItem onSelect={handleNavigate}>
+                            <ExternalLink className="mr-2 h-4 w-4" />
+                            Prontuário completo
+                        </DropdownMenuItem>
+                        <DropdownMenuItem onSelect={handleOpenEdit}>
+                            <Pencil className="mr-2 h-4 w-4" />
+                            Editar
+                        </DropdownMenuItem>
+                        <DropdownMenuSeparator />
+                        <DropdownMenuItem
+                            onSelect={handleOpenDelete}
+                            className="text-destructive focus:text-destructive"
+                        >
+                            {isActive
+                                ? <><UserX className="mr-2 h-4 w-4" /> Inativar</>
+                                : <><UserCheck className="mr-2 h-4 w-4" /> Reativar</>
+                            }
+                        </DropdownMenuItem>
+                    </DropdownMenuContent>
+                </DropdownMenu>
+            </TableCell>
+
+            {/* Modais */}
             <Dialog open={isDetailsOpen} onOpenChange={setIsDetailsOpen}>
                 {isDetailsOpen && <PatientsDetails patientId={id} />}
             </Dialog>
@@ -258,4 +219,4 @@ export function PatientsTableRow({ patient }: PatientsTableRowProps) {
             </Dialog>
         </TableRow>
     )
-}
+})
