@@ -1,5 +1,3 @@
-"use client"
-
 import type { ReactNode } from "react"
 import { cn } from "@/lib/utils"
 
@@ -20,14 +18,11 @@ interface PatientsSurfaceProps {
     className?: string
 }
 
-const BRAND_COLOR = "#2563eb"
-
-
 export function PatientsSurface({ children, className }: PatientsSurfaceProps) {
     return (
         <section
             className={cn(
-                "rounded-xl border border-border/70 bg-card/70 backdrop-blur-sm shadow-sm p-3 md:p-4",
+                "rounded-xl border border-border/70 bg-card/70 backdrop-blur-sm shadow-sm p-4 md:p-6",
                 className
             )}
         >
@@ -50,7 +45,7 @@ export function PatientsPageShell({
     return (
         <div className={cn("flex flex-col gap-4", className)}>
             {(title || description || headerRight) && (
-                <header className="flex flex-col lg:flex-row lg:items-center justify-between gap-4 border-l-4 pl-5 py-2" style={{ borderLeftColor: BRAND_COLOR }} >
+                <header className="flex flex-col lg:flex-row lg:items-center justify-between gap-4 border-l-4 border-primary pl-5 py-2">
                     <div className="space-y-1">
                         {title && (
                             <h1 className="text-2xl font-bold tracking-tight flex items-center gap-3">

@@ -5,6 +5,39 @@ import { cva, type VariantProps } from "class-variance-authority"
 import { cn } from "@/lib/utils"
 import { Separator } from "@/components/ui/separator"
 
+// ─── ItemField ────────────────────────────────────────────────────────────────
+// Pair display (label + value) used in detail views and info cards.
+// orientation="vertical"  → label above value (default)
+// orientation="horizontal" → label and value side by side
+
+interface ItemFieldProps {
+  label: React.ReactNode
+  value?: React.ReactNode
+  orientation?: "vertical" | "horizontal"
+  className?: string
+}
+
+function ItemField({ label, value, orientation = "vertical", className }: ItemFieldProps) {
+  return (
+    <div
+      className={cn(
+        orientation === "horizontal"
+          ? "flex flex-row items-center gap-2"
+          : "flex flex-col gap-0.5",
+        className
+      )}
+    >
+      <span className="text-xs text-muted-foreground">{label}</span>
+      {value != null && value !== "" ? (
+        <span className="text-sm font-medium">{value}</span>
+      ) : (
+        <span className="text-sm italic text-muted-foreground/60">Não informado</span>
+      )}
+    </div>
+  )
+}
+// ─────────────────────────────────────────────────────────────────────────────
+
 function ItemGroup({ className, ...props }: React.ComponentProps<"div">) {
   return (
     <div
@@ -190,4 +223,5 @@ export {
   ItemDescription,
   ItemHeader,
   ItemFooter,
+  ItemField,
 }

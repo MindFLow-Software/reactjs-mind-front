@@ -1,7 +1,6 @@
-"use client"
-
 import type { ReactNode } from "react"
 import { cn } from "@/lib/utils"
+import { Skeleton } from "@/components/ui/skeleton"
 
 interface PatientsDataBlockProps {
     title?: ReactNode
@@ -11,6 +10,7 @@ interface PatientsDataBlockProps {
     footer?: ReactNode
     className?: string
     contentClassName?: string
+    isLoading?: boolean
 }
 
 export function PatientsDataBlock({
@@ -21,13 +21,20 @@ export function PatientsDataBlock({
     footer,
     className,
     contentClassName,
+    isLoading,
 }: PatientsDataBlockProps) {
     return (
         <section className={cn("space-y-4", className)}>
-            {(title || description) && (
+            {(title || description || isLoading) && (
                 <header className="space-y-1">
-                    {title && <h2 className="text-base font-semibold tracking-tight">{title}</h2>}
-                    {description && <p className="text-sm text-muted-foreground">{description}</p>}
+                    {isLoading ? (
+                        <Skeleton className="h-5 w-32" />
+                    ) : (
+                        title && <h2 className="text-base font-semibold tracking-tight">{title}</h2>
+                    )}
+                    {description && !isLoading && (
+                        <p className="text-sm text-muted-foreground">{description}</p>
+                    )}
                 </header>
             )}
 
