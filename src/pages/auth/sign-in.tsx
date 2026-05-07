@@ -1,74 +1,36 @@
-"use client"
-
-import { useEffect, useState } from "react"
-import { useNavigate } from "react-router-dom"
 import { Helmet } from "react-helmet-async"
+import { BrainIcon } from "@phosphor-icons/react"
+import { useAuthRedirect } from "@/hooks/use-auth-redirect"
 import { SignInForm } from "./components/sign-in-form"
-import { api } from "@/lib/axios"
+
+function BrandedLoader() {
+  return (
+    <div className="flex min-h-svh flex-col items-center justify-center gap-4 bg-gray-50">
+      <BrainIcon className="h-10 w-10 text-blue-600" weight="duotone" />
+      <div className="h-8 w-8 animate-spin rounded-full border-4 border-blue-600 border-t-transparent" />
+      <p className="text-sm text-gray-400">Verificando acesso...</p>
+    </div>
+  )
+}
 
 export function SignIn() {
-  const navigate = useNavigate()
-  const [isChecking, setIsChecking] = useState(true)
+  const { isChecking } = useAuthRedirect()
 
-  useEffect(() => {
-    let isMounted = true
-
-    async function checkAuthentication() {
-      try {
-        const response = await api.get('/psychologist/me')
-        const psychologist = response.data?.psychologist
-
-        if (isMounted) {
-          if (psychologist) {
-            localStorage.setItem('isAuthenticated', 'true')
-            localStorage.setItem('user', JSON.stringify(psychologist))
-          }
-          navigate('/dashboard', { replace: true })
-        }
-      } catch (error) {
-        if (isMounted) {
-          localStorage.removeItem('isAuthenticated')
-          localStorage.removeItem('user')
-          setIsChecking(false)
-        }
-      }
-    }
-
-    checkAuthentication()
-
-    return () => {
-      isMounted = false
-    }
-  }, [navigate])
-
-  if (isChecking) {
-    return (
-      <div className="flex min-h-svh items-center justify-center">
-        <div className="flex flex-col items-center gap-2">
-          <div className="h-8 w-8 animate-spin rounded-full border-4 border-blue-700 border-t-transparent" />
-          <p className="text-sm text-muted-foreground">Verificando acesso...</p>
-        </div>
-      </div>
-    )
-  }
+  if (isChecking) return <BrandedLoader />
 
   return (
     <>
       <Helmet title="Entrar no MindFlush" />
-      <div className="flex min-h-svh justify-center p-4 sm:p-8">
-        <div className="flex w-full max-w-[450px] flex-col justify-center gap-6 pt-16">
-          <div className="flex flex-col gap-2 text-center">
-            <h1 className="text-2xl font-semibold tracking-tight">
-              Bem-vindo(a) ao <span className="text-blue-700">MindFlush</span>
-            </h1>
-            <p className="text-sm text-muted-foreground">
-              Faça login para acessar seu painel e acompanhar seus pacientes com
-              mais clareza e conexão.
-            </p>
-          </div>
-
-          <SignInForm />
+      <div className="w-full max-w-[420px]">
+        <div className="mb-8 flex flex-col gap-2 text-center">
+          <h1 className="text-2xl font-bold tracking-tight text-gray-900">
+            Entrar na MindFlush
+          </h1>
+          <p className="text-sm text-gray-500">
+            Acesse seu painel de psicólogo
+          </p>
         </div>
+        <SignInForm />
       </div>
     </>
   )

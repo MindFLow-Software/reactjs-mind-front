@@ -1,6 +1,5 @@
-"use client"
-
 import type React from "react"
+import { memo, useState, useCallback } from "react"
 import { useForm } from "react-hook-form"
 import { toast } from "sonner"
 import { z } from "zod"
@@ -8,7 +7,7 @@ import { zodResolver } from "@hookform/resolvers/zod"
 import { Link, useSearchParams, useNavigate } from "react-router-dom"
 import { useMutation } from "@tanstack/react-query"
 import { Eye, EyeOff, Loader2, Mail, Lock } from "lucide-react"
-import { useState, useCallback } from "react"
+import { motion, useReducedMotion } from "framer-motion"
 
 import { cn } from "@/lib/utils"
 import { Button } from "@/components/ui/button"
@@ -30,10 +29,23 @@ interface UserWithRole {
   role: string | { name: string }
 }
 
-export function SignInForm({ className, ...props }: React.ComponentProps<"form">) {
+const containerVariants = {
+  hidden: {},
+  visible: { transition: { staggerChildren: 0.05 } },
+}
+const itemVariants = {
+  hidden: { opacity: 0, y: 8 },
+  visible: { opacity: 1, y: 0, transition: { duration: 0.22, ease: "easeOut" } },
+}
+
+export const SignInForm = memo(function SignInForm({
+  className,
+  ...props
+}: React.ComponentProps<"form">) {
   const [searchParams] = useSearchParams()
   const navigate = useNavigate()
   const [showPassword, setShowPassword] = useState(false)
+  const prefersReduced = useReducedMotion()
 
   const {
     register,
@@ -47,9 +59,7 @@ export function SignInForm({ className, ...props }: React.ComponentProps<"form">
     },
   })
 
-  const { mutateAsync: authenticate } = useMutation({
-    mutationFn: signIn,
-  })
+  const { mutateAsync: authenticate } = useMutation({ mutationFn: signIn })
 
   const handleSignIn = useCallback(
     async (data: SignInSchema) => {
@@ -60,148 +70,42 @@ export function SignInForm({ className, ...props }: React.ComponentProps<"form">
         localStorage.setItem("isAuthenticated", "true")
         localStorage.setItem("user", JSON.stringify(user))
 
-        const roleValue = typeof user.role === 'object' && user.role !== null
+        const roleValue = typeof user.role === "object" && user.role !== null
           ? (user.role as { name: string }).name
           : user.role
-
         const role = String(roleValue).trim().toUpperCase()
 
         toast.success("Login realizado com sucesso!", { duration: 2000 })
 
         setTimeout(() => {
-          if (role === "SUPER_ADMIN") {
-            navigate("/admin-dashboard", { replace: true })
-          } else {
-            navigate("/dashboard", { replace: true })
-          }
+          navigate(role === "SUPER_ADMIN" ? "/admin-dashboard" : "/dashboard", { replace: true })
         }, 100)
-
       } catch (error: any) {
-        console.error(error)
         if (error?.response?.status === 401) {
           toast.error("Credenciais inválidas. Verifique seu e-mail e senha.")
         } else {
-          const errorMessage = error?.response?.data?.message || "Ocorreu um erro inesperado."
-          toast.error(errorMessage)
+          toast.error(error?.response?.data?.message || "Ocorreu um erro inesperado.")
         }
       }
     },
     [authenticate, navigate],
   )
 
-  const togglePasswordVisibility = useCallback(() => {
-    setShowPassword((prev) => !prev)
-  }, [])
+  const togglePasswordVisibility = useCallback(() => setShowPassword((p) => !p), [])
+
+  const animItem = prefersReduced ? {} : { variants: itemVariants }
 
   return (
-    <form onSubmit={handleSubmit(handleSignIn)} className={cn("flex flex-col gap-5", className)} {...props}>
-      <div className="flex flex-col gap-5">
-        <div className="space-y-2">
-          <Label htmlFor="email" className="text-sm font-medium">
-            E-mail profissional
-          </Label>
-          <div className="relative">
-            <Mail
-              className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground pointer-events-none"
-              size={18}
-              aria-hidden="true"
-            />
-            <Input
-              id="email"
-              type="email"
-              placeholder="exemplo@mindflush.com"
-              autoComplete="email"
-              className={cn(
-                "pl-10 h-11 transition-all duration-200",
-                "focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500",
-                errors.email && "border-red-500 focus:ring-red-500/20 focus:border-red-500",
-              )}
-              {...register("email")}
-            />
-          </div>
-          {errors.email && (
-            <p className="text-red-500 text-xs mt-1 flex items-center gap-1">
-              <span className="inline-block w-1 h-1 bg-red-500 rounded-full" />
-              {errors.email.message}
-            </p>
-          )}
-        </div>
-
-        <div className="space-y-2">
-          <div className="flex items-center justify-between">
-            <Label htmlFor="password" className="text-sm font-medium">
-              Senha
-            </Label>
-            <Link
-              to="/forgot-password"
-              className="text-xs text-muted-foreground hover:text-blue-600 transition-colors underline-offset-4 hover:underline"
-            >
-              Esqueceu a senha?
-            </Link>
-          </div>
-          <div className="relative">
-            <Lock
-              className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground pointer-events-none"
-              size={18}
-              aria-hidden="true"
-            />
-            <Input
-              id="password"
-              type={showPassword ? "text" : "password"}
-              placeholder="••••••••"
-              autoComplete="current-password"
-              className={cn(
-                "pl-10 pr-10 h-11 transition-all duration-200",
-                "focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500",
-                errors.password && "border-red-500 focus:ring-red-500/20 focus:border-red-500",
-              )}
-              {...register("password")}
-            />
-            <button
-              type="button"
-              onClick={togglePasswordVisibility}
-              className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground transition-colors"
-              aria-label={showPassword ? "Ocultar senha" : "Mostrar senha"}
-            >
-              {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
-            </button>
-          </div>
-          {errors.password && (
-            <p className="text-red-500 text-xs mt-1 flex items-center gap-1">
-              <span className="inline-block w-1 h-1 bg-red-500 rounded-full" />
-              {errors.password.message}
-            </p>
-          )}
-        </div>
-
-        <div className="pt-2">
-          <Button
-            disabled={isSubmitting}
-            type="submit"
-            className="cursor-pointer w-full h-11 bg-blue-600 hover:bg-blue-700 active:scale-[0.98] transition-all duration-200 font-medium text-white"
-          >
-            {isSubmitting ? (
-              <span className="flex items-center gap-2">
-                <Loader2 className="animate-spin" size={18} />
-                Entrando...
-              </span>
-            ) : (
-              "Entrar"
-            )}
-          </Button>
-        </div>
-
-        <div className="relative">
-          <div className="absolute inset-0 flex items-center">
-            <span className="w-full border-t" />
-          </div>
-          <div className="relative flex justify-center text-xs uppercase">
-            <span className="bg-background px-2 text-muted-foreground">
-              Ou
-            </span>
-          </div>
-        </div>
-
+    <motion.form
+      onSubmit={handleSubmit(handleSignIn)}
+      className={cn("flex flex-col gap-4", className)}
+      variants={prefersReduced ? undefined : containerVariants}
+      initial={prefersReduced ? undefined : "hidden"}
+      animate={prefersReduced ? undefined : "visible"}
+      {...(props as any)}
+    >
+      {/* Google */}
+      <motion.div {...animItem}>
         <Button
           type="button"
           variant="outline"
@@ -216,19 +120,102 @@ export function SignInForm({ className, ...props }: React.ComponentProps<"form">
           </svg>
           Entrar com Google
         </Button>
+      </motion.div>
 
-        <div>
-          <p className="text-center text-sm text-muted-foreground">
-            Não tem uma conta?{" "}
-            <Link
-              to="/sign-up"
-              className="font-semibold text-blue-600 hover:text-blue-700 underline-offset-4 hover:underline transition-colors"
-            >
-              Criar conta
-            </Link>
-          </p>
+      {/* Divider */}
+      <motion.div {...animItem} className="relative">
+        <div className="absolute inset-0 flex items-center">
+          <span className="w-full border-t" />
         </div>
-      </div>
-    </form>
+        <div className="relative flex justify-center text-xs uppercase">
+          <span className="bg-gray-50 px-2 text-muted-foreground">Ou</span>
+        </div>
+      </motion.div>
+
+      {/* Email */}
+      <motion.div {...animItem} className="space-y-2">
+        <Label htmlFor="email">E-mail profissional</Label>
+        <div className="relative">
+          <Mail className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground pointer-events-none" size={16} aria-hidden="true" />
+          <Input
+            id="email"
+            type="email"
+            placeholder="exemplo@mindflush.com"
+            autoComplete="email"
+            className={cn("pl-9 h-11", errors.email && "border-red-500 focus-visible:ring-red-500/20")}
+            {...register("email")}
+          />
+        </div>
+        {errors.email && (
+          <p className="text-red-500 text-xs">{errors.email.message}</p>
+        )}
+      </motion.div>
+
+      {/* Password */}
+      <motion.div {...animItem} className="space-y-2">
+        <div className="flex items-center justify-between">
+          <Label htmlFor="password">Senha</Label>
+          <Link
+            to="/forgot-password"
+            className="text-xs text-muted-foreground hover:text-blue-600 transition-colors underline-offset-4 hover:underline"
+          >
+            Esqueceu a senha?
+          </Link>
+        </div>
+        <div className="relative">
+          <Lock className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground pointer-events-none" size={16} aria-hidden="true" />
+          <Input
+            id="password"
+            type={showPassword ? "text" : "password"}
+            placeholder="••••••••"
+            autoComplete="current-password"
+            className={cn("pl-9 pr-10 h-11", errors.password && "border-red-500 focus-visible:ring-red-500/20")}
+            {...register("password")}
+          />
+          <button
+            type="button"
+            onClick={togglePasswordVisibility}
+            className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground transition-colors"
+            aria-label={showPassword ? "Ocultar senha" : "Mostrar senha"}
+          >
+            {showPassword ? <EyeOff size={16} /> : <Eye size={16} />}
+          </button>
+        </div>
+        {errors.password && (
+          <p className="text-red-500 text-xs">{errors.password.message}</p>
+        )}
+      </motion.div>
+
+      {/* Submit */}
+      <motion.div {...animItem}>
+        <Button
+          disabled={isSubmitting}
+          type="submit"
+          className="cursor-pointer w-full h-11 bg-blue-600 hover:bg-blue-700 active:scale-[0.98] transition-all duration-200 font-medium text-white"
+        >
+          {isSubmitting ? (
+            <span className="flex items-center gap-2">
+              <Loader2 className="animate-spin" size={16} />
+              Entrando...
+            </span>
+          ) : (
+            "Entrar"
+          )}
+        </Button>
+      </motion.div>
+
+      {/* Sign-up link */}
+      <motion.div {...animItem}>
+        <p className="text-center text-sm text-muted-foreground">
+          Não tem uma conta?{" "}
+          <Link
+            to="/sign-up"
+            className="font-semibold text-blue-600 hover:text-blue-700 underline-offset-4 hover:underline transition-colors"
+          >
+            Criar conta
+          </Link>
+        </p>
+      </motion.div>
+    </motion.form>
   )
-}
+})
