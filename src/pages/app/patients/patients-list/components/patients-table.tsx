@@ -30,7 +30,7 @@ function SortIcon({ active, order }: { active: boolean; order?: PatientSortOrder
         : <ArrowDown className="ml-1.5 h-3 w-3 shrink-0 text-primary" />
 }
 
-const COL_HEAD = "text-xs font-medium text-muted-foreground whitespace-nowrap"
+const COL_HEAD = "text-[11px] font-semibold uppercase tracking-wider text-muted-foreground whitespace-nowrap"
 
 interface SortableHeadProps {
     column: PatientSortBy
