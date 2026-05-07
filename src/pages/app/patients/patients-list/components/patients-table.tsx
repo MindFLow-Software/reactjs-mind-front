@@ -49,7 +49,7 @@ function SortableHead({ column, label, sortBy, sortOrder, onSort, className }: S
                 type="button"
                 onClick={() => onSort?.(column)}
                 className={cn(
-                    "flex items-center gap-0 transition-colors cursor-pointer",
+                    "flex items-center gap-0 uppercase tracking-wider transition-colors cursor-pointer",
                     active ? "text-foreground" : "hover:text-foreground/70"
                 )}
                 aria-label={`Ordenar por ${label} ${active && sortOrder === "asc" ? "Z-A" : "A-Z"}`}
