@@ -1,7 +1,7 @@
 import { memo, useState, useCallback } from "react"
 import {
     MoreVertical, Search, ClipboardList, Video,
-    Pencil, UserX, UserCheck, Phone, Mail,
+    Pencil, Archive, ArchiveRestore, Phone, Mail,
     CalendarDays, CalendarPlus, Mars, Venus, Users,
 } from "lucide-react"
 import { useMutation, useQueryClient } from "@tanstack/react-query"
@@ -260,8 +260,8 @@ export const PatientsTableRow = memo(function PatientsTableRow({ patient }: Pati
                                     className="cursor-pointer text-destructive focus:text-destructive"
                                 >
                                     {isActive
-                                        ? <><UserX className="mr-2 h-4 w-4" /> Arquivar</>
-                                        : <><UserCheck className="mr-2 h-4 w-4" /> Desarquivar</>
+                                        ? <><Archive className="mr-2 h-4 w-4" /> Arquivar</>
+                                        : <><ArchiveRestore className="mr-2 h-4 w-4" /> Desarquivar</>
                                     }
                                 </DropdownMenuItem>
                             </DropdownMenuContent>
