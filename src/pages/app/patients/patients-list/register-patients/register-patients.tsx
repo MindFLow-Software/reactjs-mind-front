@@ -351,7 +351,7 @@ export function RegisterPatients({ patient, onSuccess }: RegisterPatientsProps) 
     const isLastStep = step === 4
 
     return (
-        <DialogContent className="max-w-2xl max-h-[95vh] overflow-y-auto sm:rounded-2xl gap-0 p-0">
+        <DialogContent className="w-full max-w-3xl max-h-[95vh] overflow-y-auto sm:rounded-2xl gap-0 p-0">
             {/* Header */}
             <DialogHeader className="px-6 pt-6 pb-4 border-b">
                 <div className="flex items-center gap-3">
