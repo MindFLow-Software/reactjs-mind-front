@@ -178,8 +178,8 @@ export function PatientsList() {
                         sub="em breve"
                     />
                     <MetricCard
-                        icon={<Clock className="h-5 w-5 text-zinc-500" />}
-                        iconBg="bg-zinc-500/10"
+                        icon={<Clock className="h-5 w-5 text-red-500" />}
+                        iconBg="bg-red-500/10"
                         value={inactiveCount}
                         label="Inativos"
                     />

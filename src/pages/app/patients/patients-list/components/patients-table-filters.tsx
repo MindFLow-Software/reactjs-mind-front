@@ -127,7 +127,7 @@ export function PatientsTableFilters({
                         <Button
                             variant="ghost" size="sm"
                             onClick={handleClearAll}
-                            className="h-8 gap-1.5 text-muted-foreground hover:text-destructive text-xs"
+                            className="h-8 gap-1.5 text-muted-foreground hover:text-destructive text-xs cursor-pointer"
                         >
                             <X className="h-3.5 w-3.5" />
                             Limpar filtros
