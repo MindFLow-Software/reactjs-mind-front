@@ -241,16 +241,16 @@ export const PatientsTableRow = memo(function PatientsTableRow({ patient }: Pati
                                 </Button>
                             </DropdownMenuTrigger>
                             <DropdownMenuContent align="end" className="w-44">
-                                <DropdownMenuItem onSelect={handleOpenDetails}>
+                                <DropdownMenuItem className="cursor-pointer" onSelect={handleOpenDetails}>
                                     <Search className="mr-2 h-4 w-4" /> Ver detalhes
                                 </DropdownMenuItem>
-                                <DropdownMenuItem onSelect={handleOpenEdit}>
+                                <DropdownMenuItem className="cursor-pointer" onSelect={handleOpenEdit}>
                                     <Pencil className="mr-2 h-4 w-4" /> Editar
                                 </DropdownMenuItem>
                                 <DropdownMenuSeparator />
                                 <DropdownMenuItem
                                     onSelect={handleOpenDelete}
-                                    className="text-destructive focus:text-destructive"
+                                    className="cursor-pointer text-destructive focus:text-destructive"
                                 >
                                     {isActive
                                         ? <><UserX className="mr-2 h-4 w-4" /> Inativar</>
