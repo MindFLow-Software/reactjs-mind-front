@@ -785,18 +785,17 @@ export function RegisterPatients({ patient, onSuccess }: RegisterPatientsProps) 
                         {step > 1 && (
                             <Button
                                 type="button"
-                                variant="ghost"
-                                size="sm"
+                                variant="outline"
                                 onClick={handleBack}
-                                className="cursor-pointer"
+                                className="cursor-pointer gap-1"
                             >
+                                <span aria-hidden="true">‹</span>
                                 Voltar
                             </Button>
                         )}
                         <Button
                             type="button"
                             variant="outline"
-                            size="sm"
                             onClick={() => onSuccess?.()}
                             className="cursor-pointer"
                         >
@@ -806,17 +805,16 @@ export function RegisterPatients({ patient, onSuccess }: RegisterPatientsProps) 
                         {isLastStep ? (
                             <Button
                                 type="submit"
-                                size="sm"
                                 disabled={isBusy}
                                 className="cursor-pointer gap-2 bg-blue-600 hover:bg-blue-700 text-white"
                             >
-                                {isBusy && <Loader2 className="h-3.5 w-3.5 animate-spin" />}
+                                {isBusy && <Loader2 className="h-4 w-4 animate-spin" />}
                                 {isBusy ? "Salvando…" : (isEditMode ? "Salvar alterações" : "Cadastrar paciente")}
+                                {!isBusy && <span aria-hidden="true">›</span>}
                             </Button>
                         ) : (
                             <Button
                                 type="button"
-                                size="sm"
                                 onClick={handleNext}
                                 className="cursor-pointer gap-1 bg-blue-600 hover:bg-blue-700 text-white"
                             >
