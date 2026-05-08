@@ -2,7 +2,7 @@ import { memo, useState, useCallback } from "react"
 import {
     MoreVertical, Search, ClipboardList, Video,
     Pencil, UserX, UserCheck, Phone, Mail,
-    CalendarDays, Mars, Venus, Users,
+    CalendarDays, CalendarPlus, Mars, Venus, Users,
 } from "lucide-react"
 import { useMutation, useQueryClient } from "@tanstack/react-query"
 import { format, formatDistanceToNow } from "date-fns"
@@ -74,10 +74,14 @@ export const PatientsTableRow = memo(function PatientsTableRow({ patient }: Pati
     const handleOpenDetails = useCallback(() => setIsDetailsOpen(true), [])
     const handleOpenEdit    = useCallback(() => setIsEditOpen(true), [])
     const handleOpenDelete  = useCallback(() => setIsDeleteOpen(true), [])
-    const handleNavigate    = useCallback(() => {
+    const handleNavigate         = useCallback(() => {
         sessionStorage.removeItem("active_patient_queue")
         sessionStorage.removeItem("active_patient_queue_source")
         navigate(`/patients/${id}/details`, { state: { from: "patients-list" } })
+    }, [navigate, id])
+
+    const handleScheduleSession  = useCallback(() => {
+        navigate(`/appointment?patientId=${id}`)
     }, [navigate, id])
 
     const isValidDate = dateOfBirth && !isNaN(new Date(dateOfBirth).getTime())
@@ -243,6 +247,9 @@ export const PatientsTableRow = memo(function PatientsTableRow({ patient }: Pati
                             <DropdownMenuContent align="end" className="w-44">
                                 <DropdownMenuItem className="cursor-pointer" onSelect={handleOpenDetails}>
                                     <Search className="mr-2 h-4 w-4" /> Ver detalhes
+                                </DropdownMenuItem>
+                                <DropdownMenuItem className="cursor-pointer" onSelect={handleScheduleSession}>
+                                    <CalendarPlus className="mr-2 h-4 w-4" /> Agendar sessão
                                 </DropdownMenuItem>
                                 <DropdownMenuItem className="cursor-pointer" onSelect={handleOpenEdit}>
                                     <Pencil className="mr-2 h-4 w-4" /> Editar
