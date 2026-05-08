@@ -8,7 +8,8 @@ import { ptBR } from "date-fns/locale"
 import {
     Loader2, CalendarIcon, Venus, Mars, Users,
     UserRound, Camera, FileText, Stethoscope, MapPin,
-    Phone, Mail,
+    Phone, Mail, Activity, Video, Home, Blend,
+    Bold, Italic, Heading, List, ListOrdered, Quote, Link, Code,
 } from "lucide-react"
 import { toast } from "sonner"
 import { AxiosError } from "axios"
@@ -666,16 +667,96 @@ export function RegisterPatients({ patient, onSuccess }: RegisterPatientsProps) 
                         </div>
                     )}
 
-                    {/* ── Step 3: Clínico ── */}
+                    {/* ── Step 3: Clínico — visual only (API pending) ── */}
                     {step === 3 && (
-                        <div className="flex flex-col items-center justify-center py-12 gap-3 text-center">
-                            <div className="flex h-12 w-12 items-center justify-center rounded-full bg-muted">
-                                <Stethoscope className="h-6 w-6 text-muted-foreground/50" />
+                        <div className="space-y-6">
+                            <div className="opacity-60 pointer-events-none select-none space-y-6" aria-hidden="true">
+                                {/* ATENDIMENTO */}
+                                <div>
+                                    <SectionLabel icon={Activity} label="Atendimento" />
+                                    <div className="space-y-4">
+                                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                                            <div className="space-y-1.5">
+                                                <Label className="text-xs">Modalidade</Label>
+                                                <div className="flex flex-wrap gap-2">
+                                                    {[
+                                                        { label: "Online",     icon: Video },
+                                                        { label: "Presencial", icon: Home },
+                                                        { label: "Híbrido",    icon: Blend },
+                                                    ].map(({ label, icon: Icon }) => (
+                                                        <button key={label} type="button"
+                                                            className={cn(
+                                                                "flex items-center gap-1.5 rounded-lg border px-3 py-1.5 text-xs font-medium",
+                                                                label === "Online"
+                                                                    ? "border-blue-500 bg-blue-50 text-blue-700 dark:bg-blue-900/30 dark:text-blue-400"
+                                                                    : "border-border bg-background text-muted-foreground"
+                                                            )}
+                                                        >
+                                                            <Icon className="h-3.5 w-3.5" />
+                                                            {label}
+                                                        </button>
+                                                    ))}
+                                                </div>
+                                            </div>
+                                            <div className="space-y-1.5">
+                                                <Label className="text-xs">Frequência</Label>
+                                                <div className="flex h-9 w-full items-center justify-between rounded-md border bg-background px-3 text-sm text-muted-foreground">
+                                                    <span>Semanal</span>
+                                                    <span className="text-xs">▾</span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                                            <div className="space-y-1.5">
+                                                <Label className="text-xs">Valor da sessão</Label>
+                                                <div className="flex h-9 items-center rounded-md border bg-background px-3 gap-1.5">
+                                                    <span className="text-xs text-muted-foreground font-medium">R$</span>
+                                                    <span className="text-sm text-muted-foreground">180,00</span>
+                                                </div>
+                                            </div>
+                                            <div className="space-y-1.5">
+                                                <Label className="text-xs">Indicação</Label>
+                                                <Input placeholder="Como conheceu? (opcional)" disabled />
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                {/* QUEIXA PRINCIPAL */}
+                                <div>
+                                    <SectionLabel icon={FileText} label="Queixa principal & observações" />
+                                    <div className="rounded-lg border overflow-hidden">
+                                        {/* Tabs */}
+                                        <div className="flex items-center border-b bg-background">
+                                            <div className="flex">
+                                                <button type="button" className="flex items-center gap-1.5 border-b-2 border-blue-500 px-4 py-2 text-xs font-medium text-blue-600">
+                                                    <FileText className="h-3.5 w-3.5" /> Escrever
+                                                </button>
+                                                <button type="button" className="flex items-center gap-1.5 border-b-2 border-transparent px-4 py-2 text-xs font-medium text-muted-foreground">
+                                                    <Stethoscope className="h-3.5 w-3.5" /> Visualizar
+                                                </button>
+                                            </div>
+                                            <div className="ml-auto flex items-center gap-1 px-2">
+                                                {[Heading, Bold, Italic, List, ListOrdered, Quote, Link, Code].map((Icon, i) => (
+                                                    <button key={i} type="button" className="flex h-6 w-6 items-center justify-center rounded text-muted-foreground/60 hover:bg-muted">
+                                                        <Icon className="h-3.5 w-3.5" />
+                                                    </button>
+                                                ))}
+                                            </div>
+                                        </div>
+                                        {/* Editor area */}
+                                        <div className="min-h-[160px] p-3 text-xs text-muted-foreground/60 font-mono leading-relaxed bg-background">
+                                            <p>Ex:</p>
+                                            <p>## Queixa principal</p>
+                                            <p>Ansiedade generalizada com episódios noturnos.</p>
+                                            <p className="mt-2">**Encaminhamento:** psiquiatra (Dra. Lima)</p>
+                                            <p className="mt-2">- Insônia há 3 meses</p>
+                                            <p>- Pico após mudança de emprego</p>
+                                        </div>
+                                    </div>
+                                </div>
                             </div>
-                            <p className="text-sm font-medium">Informações clínicas</p>
-                            <p className="text-xs text-muted-foreground max-w-xs">
-                                Campos clínicos como diagnóstico, CID e plano terapêutico estarão disponíveis em breve.
-                            </p>
+                            <p className="text-[10px] text-muted-foreground/60">Informações clínicas disponíveis em breve</p>
                         </div>
                     )}
 
