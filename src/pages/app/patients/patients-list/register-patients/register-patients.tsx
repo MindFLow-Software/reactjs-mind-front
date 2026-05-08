@@ -779,18 +779,7 @@ export function RegisterPatients({ patient, onSuccess }: RegisterPatientsProps) 
 
                 {/* Footer */}
                 <div className="flex items-center justify-between gap-4 border-t px-6 py-4">
-                    <div className="hidden sm:flex items-center gap-1.5 text-[10px] text-muted-foreground/60">
-                        <kbd className="rounded border border-border bg-muted px-1.5 py-0.5 font-mono text-[10px]">Tab</kbd>
-                        <span>próximo</span>
-                        <span className="mx-1">·</span>
-                        <kbd className="rounded border border-border bg-muted px-1.5 py-0.5 font-mono text-[10px]">Ctrl</kbd>
-                        <span>+</span>
-                        <kbd className="rounded border border-border bg-muted px-1.5 py-0.5 font-mono text-[10px]">Enter</kbd>
-                        <span>salvar</span>
-                        <span className="mx-1">·</span>
-                        <kbd className="rounded border border-border bg-muted px-1.5 py-0.5 font-mono text-[10px]">Esc</kbd>
-                        <span>cancelar</span>
-                    </div>
+                    <div />
 
                     <div className="flex items-center gap-2 ml-auto">
                         {step > 1 && (
