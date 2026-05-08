@@ -99,9 +99,27 @@ function SectionLabel({ letter, label }: { letter: string; label: string }) {
 
 // ── Gender button group ────────────────────────────────────────────────────
 const GENDER_OPTIONS = [
-    { value: "FEMININE",  label: "Feminino",             icon: Venus },
-    { value: "MASCULINE", label: "Masculino",             icon: Mars },
-    { value: "OTHER",     label: "Outro / Prefiro não dizer", icon: Users },
+    {
+        value: "FEMININE",
+        label: "Feminino",
+        icon: Venus,
+        active: "border-pink-400 bg-pink-50 text-pink-700 dark:bg-pink-900/30 dark:text-pink-400 dark:border-pink-500",
+        hover:  "hover:border-pink-300 hover:text-pink-600",
+    },
+    {
+        value: "MASCULINE",
+        label: "Masculino",
+        icon: Mars,
+        active: "border-blue-500 bg-blue-50 text-blue-700 dark:bg-blue-900/30 dark:text-blue-400 dark:border-blue-500",
+        hover:  "hover:border-blue-300 hover:text-blue-600",
+    },
+    {
+        value: "OTHER",
+        label: "Outro / Prefiro não dizer",
+        icon: Users,
+        active: "border-zinc-400 bg-zinc-100 text-zinc-600 dark:bg-zinc-800/50 dark:text-zinc-400 dark:border-zinc-500",
+        hover:  "hover:border-zinc-300 hover:text-zinc-600",
+    },
 ] as const
 
 function GenderButtonGroup({
@@ -124,8 +142,8 @@ function GenderButtonGroup({
                         className={cn(
                             "flex items-center gap-1.5 rounded-full border px-3 py-1.5 text-xs font-medium transition-all cursor-pointer",
                             active
-                                ? "border-blue-500 bg-blue-50 text-blue-700 dark:bg-blue-900/30 dark:text-blue-300 dark:border-blue-500"
-                                : "border-border bg-background text-muted-foreground hover:border-blue-300 hover:text-foreground"
+                                ? opt.active
+                                : cn("border-border bg-background text-muted-foreground", opt.hover)
                         )}
                     >
                         <Icon className="h-3.5 w-3.5" aria-hidden="true" />
