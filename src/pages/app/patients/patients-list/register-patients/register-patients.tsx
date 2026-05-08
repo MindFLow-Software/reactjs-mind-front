@@ -10,6 +10,7 @@ import {
     UserRound, Camera, FileText, Stethoscope, MapPin,
     Phone, Mail, Activity, Video, Home, Blend,
     Bold, Italic, Heading, List, ListOrdered, Quote, Link, Code,
+    ChevronLeft, ChevronRight,
 } from "lucide-react"
 import { toast } from "sonner"
 import { AxiosError } from "axios"
@@ -789,7 +790,7 @@ export function RegisterPatients({ patient, onSuccess }: RegisterPatientsProps) 
                                 onClick={handleBack}
                                 className="cursor-pointer gap-1"
                             >
-                                <span aria-hidden="true">‹</span>
+                                <ChevronLeft className="h-4 w-4" />
                                 Voltar
                             </Button>
                         )}
@@ -810,7 +811,7 @@ export function RegisterPatients({ patient, onSuccess }: RegisterPatientsProps) 
                             >
                                 {isBusy && <Loader2 className="h-4 w-4 animate-spin" />}
                                 {isBusy ? "Salvando…" : (isEditMode ? "Salvar alterações" : "Cadastrar paciente")}
-                                {!isBusy && <span aria-hidden="true">›</span>}
+                                {!isBusy && <ChevronRight className="h-4 w-4" />}
                             </Button>
                         ) : (
                             <Button
@@ -819,7 +820,7 @@ export function RegisterPatients({ patient, onSuccess }: RegisterPatientsProps) 
                                 className="cursor-pointer gap-1 bg-blue-600 hover:bg-blue-700 text-white"
                             >
                                 Continuar
-                                <span aria-hidden="true">›</span>
+                                <ChevronRight className="h-4 w-4" />
                             </Button>
                         )}
                     </div>
