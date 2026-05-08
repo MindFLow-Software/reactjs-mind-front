@@ -8,6 +8,7 @@ import { ptBR } from "date-fns/locale"
 import {
     Loader2, CalendarIcon, Venus, Mars, Users,
     UserRound, Camera, FileText, Stethoscope, MapPin,
+    Phone, Mail,
 } from "lucide-react"
 import { toast } from "sonner"
 import { AxiosError } from "axios"
@@ -52,6 +53,7 @@ const patientSchema = z.object({
         .min(1, "Sobrenome é obrigatório")
         .regex(/^[A-Za-zÀ-ÖØ-öø-ÿ\s'-]+$/, "Apenas letras são permitidas"),
     phoneNumber: z.string().optional(),
+    email: z.string().email("E-mail inválido").optional().or(z.literal("")),
     dateOfBirth: z.date().nullable().optional()
         .refine((d) => !d || d <= new Date(), { message: "Data de nascimento inválida" }),
     cpf: z.string().optional().or(z.literal("")).refine(
@@ -78,17 +80,25 @@ type StepId = 1 | 2 | 3 | 4
 
 const STEP_FIELDS: Record<StepId, (keyof PatientFormData)[]> = {
     1: ["firstName", "lastName", "cpf", "dateOfBirth", "gender"],
-    2: ["phoneNumber"],
+    2: ["phoneNumber", "email"],
     3: [],
     4: [],
 }
 
 // ── Section header ─────────────────────────────────────────────────────────
-function SectionLabel({ letter, label }: { letter: string; label: string }) {
+function SectionLabel({
+    label,
+    letter,
+    icon: Icon,
+}: {
+    label: string
+    letter?: string
+    icon?: React.ElementType
+}) {
     return (
         <div className="flex items-center gap-2 mb-3">
             <div className="flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-blue-100 text-[10px] font-bold text-blue-600 dark:bg-blue-900/40 dark:text-blue-400">
-                {letter}
+                {Icon ? <Icon className="h-3 w-3" /> : letter}
             </div>
             <span className="text-[10px] font-semibold uppercase tracking-wider text-muted-foreground">
                 {label}
@@ -251,14 +261,16 @@ function StepIndicator({ current }: { current: StepId }) {
                             <div className={cn(
                                 "flex h-6 w-6 shrink-0 items-center justify-center rounded-full text-[11px] font-bold transition-colors",
                                 active ? "bg-blue-600 text-white"
-                                    : done ? "bg-blue-100 text-blue-600 dark:bg-blue-900/40 dark:text-blue-400"
+                                    : done ? "bg-emerald-500 text-white"
                                     : "bg-muted text-muted-foreground"
                             )}>
                                 {step.id}
                             </div>
                             <span className={cn(
                                 "hidden sm:block text-xs font-medium whitespace-nowrap",
-                                active ? "text-foreground" : "text-muted-foreground"
+                                active ? "text-blue-600 font-semibold"
+                                    : done ? "text-muted-foreground"
+                                    : "text-muted-foreground"
                             )}>
                                 {step.label}
                             </span>
@@ -266,7 +278,7 @@ function StepIndicator({ current }: { current: StepId }) {
                         {idx < STEPS.length - 1 && (
                             <div className={cn(
                                 "mx-2 h-px w-8 sm:w-12 shrink-0",
-                                done ? "bg-blue-300 dark:bg-blue-700" : "bg-border"
+                                done ? "bg-emerald-300 dark:bg-emerald-700" : "bg-border"
                             )} />
                         )}
                     </div>
@@ -301,6 +313,7 @@ export function RegisterPatients({ patient, onSuccess }: RegisterPatientsProps) 
             firstName:   patient?.firstName   ?? "",
             lastName:    patient?.lastName    ?? "",
             phoneNumber: patient?.phoneNumber ?? "",
+            email:       patient?.email       ?? "",
             cpf:         patient?.cpf         ?? "",
             gender:      patient?.gender      ?? "FEMININE",
             dateOfBirth: patient?.dateOfBirth ? new Date(patient.dateOfBirth) : null,
@@ -329,6 +342,7 @@ export function RegisterPatients({ patient, onSuccess }: RegisterPatientsProps) 
                 ...data,
                 id:          patient?.id,
                 phoneNumber: data.phoneNumber ? data.phoneNumber.replace(/\D/g, "") : undefined,
+                email:       data.email || undefined,
                 dateOfBirth: data.dateOfBirth || undefined,
                 cpf:         data.cpf ? data.cpf.replace(/\D/g, "") : undefined,
                 gender:      data.gender as any,
@@ -563,30 +577,91 @@ export function RegisterPatients({ patient, onSuccess }: RegisterPatientsProps) 
 
                     {/* ── Step 2: Contato & endereço ── */}
                     {step === 2 && (
-                        <div className="space-y-4">
-                            <SectionLabel letter="A" label="Contato" />
-                            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                                <div className="space-y-1.5">
-                                    <Label htmlFor="phoneNumber" className="text-xs">Celular</Label>
-                                    <Controller
-                                        name="phoneNumber"
-                                        control={control}
-                                        render={({ field: { ref, onChange, value, ...f } }) => (
-                                            <MaskedInput
-                                                {...f}
-                                                id="phoneNumber"
-                                                inputRef={ref}
-                                                value={value}
-                                                onAccept={(v: string) => onChange(v)}
-                                                mask="(00) 00000-0000"
-                                                placeholder="(00) 00000-0000"
-                                                type="tel"
-                                                autoComplete="tel"
-                                                className="tabular-nums"
+                        <div className="space-y-6">
+                            {/* CONTATO — functional (API consumes phoneNumber + email) */}
+                            <div>
+                                <SectionLabel icon={Phone} label="Contato" />
+                                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                                    <div className="space-y-1.5">
+                                        <Label htmlFor="phoneNumber" className="text-xs">Celular</Label>
+                                        <div className="relative">
+                                            <Phone className="absolute left-3 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-muted-foreground pointer-events-none" />
+                                            <Controller
+                                                name="phoneNumber"
+                                                control={control}
+                                                render={({ field: { ref, onChange, value, ...f } }) => (
+                                                    <MaskedInput
+                                                        {...f}
+                                                        id="phoneNumber"
+                                                        inputRef={ref}
+                                                        value={value}
+                                                        onAccept={(v: string) => onChange(v)}
+                                                        mask="(00) 00000-0000"
+                                                        placeholder="(00) 00000-0000"
+                                                        type="tel"
+                                                        autoComplete="tel"
+                                                        className="pl-9 tabular-nums"
+                                                    />
+                                                )}
                                             />
+                                        </div>
+                                    </div>
+
+                                    <div className="space-y-1.5">
+                                        <Label htmlFor="email" className={cn("text-xs", errors.email && "text-red-500")}>
+                                            E-mail
+                                        </Label>
+                                        <div className="relative">
+                                            <Mail className="absolute left-3 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-muted-foreground pointer-events-none" />
+                                            <Input
+                                                id="email"
+                                                {...register("email")}
+                                                type="email"
+                                                placeholder="paciente@email.com"
+                                                autoComplete="email"
+                                                className={cn("pl-9", errors.email && "border-red-500 focus-visible:ring-red-500")}
+                                            />
+                                        </div>
+                                        {errors.email && (
+                                            <p role="alert" className="text-[11px] text-red-500">{errors.email.message}</p>
                                         )}
-                                    />
+                                    </div>
                                 </div>
+                            </div>
+
+                            {/* ENDEREÇO — visual only, API does not consume these yet */}
+                            <div>
+                                <SectionLabel icon={MapPin} label="Endereço" />
+                                <div className="space-y-3 opacity-60 pointer-events-none select-none" aria-hidden="true">
+                                    <div className="grid grid-cols-2 gap-4">
+                                        <div className="space-y-1.5">
+                                            <div className="flex items-center justify-between">
+                                                <Label className="text-xs">CEP</Label>
+                                                <span className="text-[10px] text-muted-foreground">preenche automático</span>
+                                            </div>
+                                            <Input placeholder="00000-000" className="tabular-nums" disabled />
+                                        </div>
+                                        <div className="space-y-1.5">
+                                            <Label className="text-xs">Logradouro</Label>
+                                            <Input placeholder="Rua, número" disabled />
+                                        </div>
+                                    </div>
+                                    <div className="grid grid-cols-3 gap-4">
+                                        <div className="space-y-1.5">
+                                            <Label className="text-xs">Bairro</Label>
+                                            <Input placeholder="Bairro" disabled />
+                                        </div>
+                                        <div className="space-y-1.5">
+                                            <Label className="text-xs">Cidade</Label>
+                                            <Input placeholder="Cidade" disabled />
+                                        </div>
+                                        <div className="space-y-1.5">
+                                            <Label className="text-xs">UF</Label>
+                                            <Input placeholder="—" disabled />
+                                        </div>
+                                    </div>
+                                </div>
+                                <p className="mt-2 text-[10px] text-muted-foreground/60">Endereço disponível em breve</p>
                             </div>
                         </div>
                     )}
@@ -623,9 +698,18 @@ export function RegisterPatients({ patient, onSuccess }: RegisterPatientsProps) 
 
                 {/* Footer */}
                 <div className="flex items-center justify-between gap-4 border-t px-6 py-4">
-                    <p className="hidden sm:block text-[10px] text-muted-foreground/60 leading-relaxed">
-                        Tab: próximo&nbsp;&nbsp;·&nbsp;&nbsp;Esc: cancelar
-                    </p>
+                    <div className="hidden sm:flex items-center gap-1.5 text-[10px] text-muted-foreground/60">
+                        <kbd className="rounded border border-border bg-muted px-1.5 py-0.5 font-mono text-[10px]">Tab</kbd>
+                        <span>próximo</span>
+                        <span className="mx-1">·</span>
+                        <kbd className="rounded border border-border bg-muted px-1.5 py-0.5 font-mono text-[10px]">Ctrl</kbd>
+                        <span>+</span>
+                        <kbd className="rounded border border-border bg-muted px-1.5 py-0.5 font-mono text-[10px]">Enter</kbd>
+                        <span>salvar</span>
+                        <span className="mx-1">·</span>
+                        <kbd className="rounded border border-border bg-muted px-1.5 py-0.5 font-mono text-[10px]">Esc</kbd>
+                        <span>cancelar</span>
+                    </div>
 
                     <div className="flex items-center gap-2 ml-auto">
                         {step > 1 && (
