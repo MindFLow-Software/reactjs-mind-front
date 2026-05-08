@@ -253,8 +253,8 @@ export const PatientsTableRow = memo(function PatientsTableRow({ patient }: Pati
                                     className="cursor-pointer text-destructive focus:text-destructive"
                                 >
                                     {isActive
-                                        ? <><UserX className="mr-2 h-4 w-4" /> Inativar</>
-                                        : <><UserCheck className="mr-2 h-4 w-4" /> Reativar</>
+                                        ? <><UserX className="mr-2 h-4 w-4" /> Arquivar</>
+                                        : <><UserCheck className="mr-2 h-4 w-4" /> Desarquivar</>
                                     }
                                 </DropdownMenuItem>
                             </DropdownMenuContent>
