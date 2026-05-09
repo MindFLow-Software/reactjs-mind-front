@@ -12,7 +12,7 @@ const STATUS_CONFIG: Record<
     bg: string
     fg: string
     ico: string
-    Icon: React.ComponentType<{ className?: string }>
+    Icon: React.ComponentType<{ className?: string; strokeWidth?: number }>
   }
 > = {
   active: {
