@@ -58,7 +58,7 @@ function MetricCard({ icon, iconBg, value, label, sub, subTrend, isLoading }: Me
 
 export function PatientsList() {
     const { setTitle } = useHeaderStore()
-    const { filters, setPage, setOrder, clearFilters } = usePatientFilters()
+    const { filters, setPage, setSort, clearFilters } = usePatientFilters()
     const [isRegisterOpen, setIsRegisterOpen] = useState(false)
     const [isInviteOpen,   setIsInviteOpen]   = useState(false)
 
@@ -66,12 +66,13 @@ export function PatientsList() {
 
     // Main query
     const { data: result, isLoading, isFetching } = useQuery({
-        queryKey: ["patients", filters.pageIndex, filters.filter, filters.status, filters.order],
+        queryKey: ["patients", filters.pageIndex, filters.filter, filters.status, filters.sortBy, filters.order],
         queryFn: () => getPatients({
             pageIndex: filters.pageIndex,
             perPage:   filters.perPage,
             filter:    filters.filter,
             status:    filters.status,
+            sortBy:    filters.sortBy,
             order:     filters.order,
         }),
         staleTime: 30_000,
@@ -112,10 +113,6 @@ export function PatientsList() {
     const inactiveCount = inactiveData?.meta.totalCount ?? 0
 
     const hasActiveFilters = !!filters.filter || filters.status !== "all"
-
-    function handleSortByName() {
-        setOrder(filters.order === "asc" ? "desc" : "asc")
-    }
 
     const headerRight = (
         <div className="flex items-center gap-2">
@@ -181,8 +178,8 @@ export function PatientsList() {
                         sub="em breve"
                     />
                     <MetricCard
-                        icon={<Clock className="h-5 w-5 text-zinc-500" />}
-                        iconBg="bg-zinc-500/10"
+                        icon={<Clock className="h-5 w-5 text-red-500" />}
+                        iconBg="bg-red-500/10"
                         value={inactiveCount}
                         label="Inativos"
                     />
@@ -217,8 +214,9 @@ export function PatientsList() {
                             isLoading={isLoading}
                             perPage={filters.perPage}
                             hasActiveFilters={hasActiveFilters}
+                            sortBy={filters.sortBy}
                             sortOrder={filters.order}
-                            onSortByName={handleSortByName}
+                            onSort={setSort}
                             onClearFilters={clearFilters}
                             onRegister={() => setIsRegisterOpen(true)}
                         />

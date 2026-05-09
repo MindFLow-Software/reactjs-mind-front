@@ -2,7 +2,9 @@
   "permissions": {
     "allow": [
       "Bash(Start-Process \"http://localhost:5174\")",
-      "WebFetch(domain:br.pinterest.com)"
+      "WebFetch(domain:br.pinterest.com)",
+      "Bash(Get-ChildItem -Path \"c:\\\\Projetos\\\\MindFLush_FrontEnd\" -Force)",
+      "Bash(Select-Object Name)"
     ]
   }
 }

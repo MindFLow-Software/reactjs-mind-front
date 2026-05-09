@@ -8,7 +8,7 @@ import { Checkbox } from "@/components/ui/checkbox"
 import { PatientsTableRow } from "./patients-table-row"
 import { PatientsTableLoading } from "./loading"
 import type { Patient } from "@/api/get-patients"
-import type { PatientSortOrder } from "@/hooks/use-patient-filters"
+import type { PatientSortBy, PatientSortOrder } from "@/hooks/use-patient-filters"
 import { cn } from "@/lib/utils"
 
 interface PatientsTableProps {
@@ -16,28 +16,59 @@ interface PatientsTableProps {
     isLoading: boolean
     perPage?: number
     hasActiveFilters?: boolean
+    sortBy?: PatientSortBy
     sortOrder?: PatientSortOrder
-    onSortByName?: () => void
+    onSort?: (column: PatientSortBy) => void
     onClearFilters?: () => void
     onRegister?: () => void
 }
 
-function SortIcon({ column, sortOrder }: { column: "name" | "other"; sortOrder?: PatientSortOrder }) {
-    if (column !== "name") return <ArrowUpDown className="ml-1.5 h-3 w-3 text-muted-foreground/60" />
-    return sortOrder === "asc"
-        ? <ArrowUp className="ml-1.5 h-3 w-3 text-primary" />
-        : <ArrowDown className="ml-1.5 h-3 w-3 text-primary" />
+function SortIcon({ active, order }: { active: boolean; order?: PatientSortOrder }) {
+    if (!active) return <ArrowUpDown className="ml-1.5 h-3 w-3 shrink-0 text-muted-foreground/50" />
+    return order === "asc"
+        ? <ArrowUp  className="ml-1.5 h-3 w-3 shrink-0 text-primary" />
+        : <ArrowDown className="ml-1.5 h-3 w-3 shrink-0 text-primary" />
 }
 
-const COL_HEAD = "text-[11px] uppercase tracking-wider font-semibold text-muted-foreground whitespace-nowrap"
+const COL_HEAD = "text-[11px] font-semibold uppercase tracking-wider text-muted-foreground whitespace-nowrap"
+
+interface SortableHeadProps {
+    column: PatientSortBy
+    label: string
+    sortBy?: PatientSortBy
+    sortOrder?: PatientSortOrder
+    onSort?: (column: PatientSortBy) => void
+    className?: string
+}
+
+function SortableHead({ column, label, sortBy, sortOrder, onSort, className }: SortableHeadProps) {
+    const active = sortBy === column
+    return (
+        <TableHead className={cn(COL_HEAD, className)}>
+            <button
+                type="button"
+                onClick={() => onSort?.(column)}
+                className={cn(
+                    "flex items-center gap-0 uppercase tracking-wider transition-colors cursor-pointer",
+                    active ? "text-foreground" : "hover:text-foreground/70"
+                )}
+                aria-label={`Ordenar por ${label} ${active && sortOrder === "asc" ? "Z-A" : "A-Z"}`}
+            >
+                {label}
+                <SortIcon active={active} order={sortOrder} />
+            </button>
+        </TableHead>
+    )
+}
 
 export function PatientsTable({
     patients,
     isLoading,
     perPage = 10,
     hasActiveFilters,
+    sortBy = "name",
     sortOrder = "asc",
-    onSortByName,
+    onSort,
     onClearFilters,
     onRegister,
 }: PatientsTableProps) {
@@ -48,43 +79,63 @@ export function PatientsTable({
             <Table>
                 <TableHeader>
                     <TableRow className="bg-muted/30 hover:bg-muted/30">
-                        {/* Checkbox */}
                         <TableHead className="w-[44px] pl-4">
                             <Checkbox aria-label="Selecionar todos" />
                         </TableHead>
 
-                        {/* Paciente — sortable */}
-                        <TableHead className={cn(COL_HEAD, "min-w-[180px]")}>
-                            <button
-                                type="button"
-                                onClick={onSortByName}
-                                className="flex items-center hover:text-foreground transition-colors cursor-pointer"
-                                aria-label={`Ordenar por nome ${sortOrder === "asc" ? "Z-A" : "A-Z"}`}
-                            >
-                                Paciente
-                                <SortIcon column="name" sortOrder={sortOrder} />
-                            </button>
-                        </TableHead>
+                        <SortableHead
+                            column="name"
+                            label="Paciente"
+                            sortBy={sortBy}
+                            sortOrder={sortOrder}
+                            onSort={onSort}
+                            className="min-w-[180px]"
+                        />
 
-                        <TableHead className={cn(COL_HEAD, "w-[110px]")}>
-                            <span className="flex items-center">Status <ArrowUpDown className="ml-1.5 h-3 w-3 text-muted-foreground/60" /></span>
-                        </TableHead>
+                        <SortableHead
+                            column="status"
+                            label="Status"
+                            sortBy={sortBy}
+                            sortOrder={sortOrder}
+                            onSort={onSort}
+                            className="w-[110px]"
+                        />
 
-                        <TableHead className={cn(COL_HEAD, "min-w-[200px]")}>
-                            <span className="flex items-center">Contato <ArrowUpDown className="ml-1.5 h-3 w-3 text-muted-foreground/60" /></span>
-                        </TableHead>
+                        <SortableHead
+                            column="contact"
+                            label="Contato"
+                            sortBy={sortBy}
+                            sortOrder={sortOrder}
+                            onSort={onSort}
+                            className="min-w-[200px]"
+                        />
 
-                        <TableHead className={cn(COL_HEAD, "w-[140px] hidden lg:table-cell")}>
-                            <span className="flex items-center">Última Sessão <ArrowUpDown className="ml-1.5 h-3 w-3 text-muted-foreground/60" /></span>
-                        </TableHead>
+                        <SortableHead
+                            column="lastSession"
+                            label="Última Sessão"
+                            sortBy={sortBy}
+                            sortOrder={sortOrder}
+                            onSort={onSort}
+                            className="w-[140px] hidden lg:table-cell"
+                        />
 
-                        <TableHead className={cn(COL_HEAD, "w-[110px] hidden xl:table-cell")}>
-                            <span className="flex items-center">Idade <ArrowUpDown className="ml-1.5 h-3 w-3 text-muted-foreground/60" /></span>
-                        </TableHead>
+                        <SortableHead
+                            column="age"
+                            label="Idade"
+                            sortBy={sortBy}
+                            sortOrder={sortOrder}
+                            onSort={onSort}
+                            className="w-[110px] hidden xl:table-cell"
+                        />
 
-                        <TableHead className={cn(COL_HEAD, "w-[110px] hidden xl:table-cell")}>
-                            <span className="flex items-center">Gênero <ArrowUpDown className="ml-1.5 h-3 w-3 text-muted-foreground/60" /></span>
-                        </TableHead>
+                        <SortableHead
+                            column="gender"
+                            label="Gênero"
+                            sortBy={sortBy}
+                            sortOrder={sortOrder}
+                            onSort={onSort}
+                            className="w-[110px] hidden xl:table-cell"
+                        />
 
                         <TableHead className={cn(COL_HEAD, "w-[110px] text-right pr-3")}>
                             Ações

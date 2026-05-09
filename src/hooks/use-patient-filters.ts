@@ -2,6 +2,7 @@ import { useSearchParams } from "react-router-dom"
 import { z } from "zod"
 
 export type PatientSortOrder = "asc" | "desc"
+export type PatientSortBy = "name" | "status" | "contact" | "lastSession" | "age" | "gender"
 
 export function usePatientFilters() {
   const [searchParams, setSearchParams] = useSearchParams()
@@ -13,15 +14,17 @@ export function usePatientFilters() {
     .catch(0)
     .parse(page)
 
-  const filter = searchParams.get("filter") ?? ""
-  const status = searchParams.get("status") ?? "all"
-  const order  = (searchParams.get("order") ?? "asc") as PatientSortOrder
+  const filter  = searchParams.get("filter")  ?? ""
+  const status  = searchParams.get("status")  ?? "all"
+  const sortBy  = (searchParams.get("sortBy") ?? "name") as PatientSortBy
+  const order   = (searchParams.get("order")  ?? "asc")  as PatientSortOrder
 
   const filters = {
     pageIndex: Math.max(0, pageIndex),
     perPage: 10,
     filter,
     status,
+    sortBy,
     order,
   }
 
@@ -55,6 +58,24 @@ export function usePatientFilters() {
     })
   }
 
+  function setSort(column: PatientSortBy) {
+    setSearchParams((state) => {
+      const currentColumn = (state.get("sortBy") ?? "name") as PatientSortBy
+      const currentOrder  = (state.get("order")  ?? "asc")  as PatientSortOrder
+
+      if (column === currentColumn) {
+        state.set("order", currentOrder === "asc" ? "desc" : "asc")
+      } else {
+        state.set("sortBy", column)
+        state.set("order", "asc")
+      }
+
+      state.set("page", "1")
+      return state
+    })
+  }
+
+  // Keep backward-compat alias used in patients-list.tsx
   function setOrder(next: PatientSortOrder) {
     setSearchParams((state) => {
       state.set("order", next)
@@ -72,5 +93,5 @@ export function usePatientFilters() {
     })
   }
 
-  return { filters, setPage, setFilters, setOrder, clearFilters }
+  return { filters, setPage, setFilters, setSort, setOrder, clearFilters }
 }
