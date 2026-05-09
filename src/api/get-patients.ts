@@ -1,4 +1,5 @@
-import { api } from "@/lib/axios"
+import { api } from '@/lib/axios'
+import type { PatientStatus } from '@/types/patient'
 
 export interface GetPatientsFilters {
   pageIndex: number
@@ -18,12 +19,12 @@ export interface Patient {
   name: string
   email: string
   cpf: string
-  phoneNumber: string 
+  phoneNumber: string
   gender: 'MASCULINE' | 'FEMININE' | 'OTHER'
-  status: 'Ativo' | 'Inativo'
+  status: PatientStatus
   isActive: boolean
   createdAt: string
-  dateOfBirth: string 
+  dateOfBirth: string
   profileImageUrl: string | null
   lastSessionAt: string | null
 }
@@ -47,8 +48,7 @@ export async function getPatients({
   order,
   sessionVolume,
 }: GetPatientsFilters): Promise<GetPatientsResponse> {
-
-  const response = await api.get("/patients", {
+  const response = await api.get('/patients', {
     params: {
       pageIndex,
       perPage,
@@ -61,30 +61,34 @@ export async function getPatients({
     },
   })
 
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const normalizedPatients: Patient[] = response.data.patients.map((p: any) => {
-    const raw = p.props || p 
+    const raw: Record<string, unknown> = p.props || p
     const checkIsActive = raw.isActive === true || raw.status === 'active'
 
     return {
       id: raw.id || p.id,
-      firstName: raw.firstName || "",
-      lastName: raw.lastName || "",
-      name: raw.name || `${raw.firstName} ${raw.lastName}`.trim() || "Paciente sem nome",
-      cpf: raw.cpf || "",
-      email: raw.email || "",
-      phoneNumber: raw.phoneNumber || "",
+      firstName: raw.firstName || '',
+      lastName: raw.lastName || '',
+      name:
+        raw.name ||
+        `${raw.firstName} ${raw.lastName}`.trim() ||
+        'Paciente sem nome',
+      cpf: raw.cpf || '',
+      email: raw.email || '',
+      phoneNumber: raw.phoneNumber || '',
       gender: raw.gender || 'OTHER',
       isActive: checkIsActive,
-      status: checkIsActive ? 'Ativo' : 'Inativo',
+      status: (checkIsActive ? 'active' : 'inactive') as PatientStatus,
       createdAt: raw.createdAt,
       dateOfBirth: raw.dateOfBirth,
       profileImageUrl: raw.profileImageUrl || raw.profile_image_url || null,
-      lastSessionAt: raw.lastSessionAt || null
+      lastSessionAt: raw.lastSessionAt || null,
     }
   })
 
   return {
     patients: normalizedPatients,
-    meta: response.data.meta
+    meta: response.data.meta,
   }
 }

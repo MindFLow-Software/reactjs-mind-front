@@ -411,7 +411,10 @@ export function RegisterPatients({ patient, onSuccess }: RegisterPatientsProps) 
             </DialogHeader>
 
             {/* Form body */}
-            <form onSubmit={handleSubmit(onSubmit)}>
+            <form
+                onSubmit={(e) => e.preventDefault()}
+                onKeyDown={(e) => { if (e.key === "Enter" && e.target instanceof HTMLInputElement) e.preventDefault() }}
+            >
                 <div className="px-6 py-5 space-y-6 min-h-[320px]">
 
                     {/* ── Step 1: Dados básicos ── */}
@@ -805,8 +808,9 @@ export function RegisterPatients({ patient, onSuccess }: RegisterPatientsProps) 
 
                         {isLastStep ? (
                             <Button
-                                type="submit"
+                                type="button"
                                 disabled={isBusy}
+                                onClick={() => handleSubmit(onSubmit)()}
                                 className="cursor-pointer gap-2 bg-blue-600 hover:bg-blue-700 text-white"
                             >
                                 {isBusy && <Loader2 className="h-4 w-4 animate-spin" />}
