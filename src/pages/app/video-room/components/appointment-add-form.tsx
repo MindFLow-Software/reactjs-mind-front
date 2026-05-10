@@ -75,7 +75,7 @@ export function AppointmentAddForm({
       onSessionStarted(data.sessionId)
       toast.success("Atendimento iniciado")
     },
-    onError: (err: any) => toast.error(err.response?.data?.message || "Erro ao iniciar")
+    onError: (err: any) => toast.error(err.message || "Erro ao iniciar")
   })
 
   // Mutação: Finalizar Atendimento (Com o campo content corrigido)

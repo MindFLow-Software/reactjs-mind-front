@@ -348,9 +348,6 @@ export function RegisterPatients({ patient, onSuccess }: RegisterPatientsProps) 
                 dateOfBirth: data.dateOfBirth || undefined,
                 cpf:         data.cpf ? data.cpf.replace(/\D/g, "") : undefined,
                 gender:      data.gender as any,
-                role:        "PATIENT" as any,
-                isActive:    true,
-                expertise:   "OTHER" as any,
             })
 
             const targetId = isEditMode ? patient.id : (patientResponse?.id || patientResponse?.patientId)
@@ -374,7 +371,7 @@ export function RegisterPatients({ patient, onSuccess }: RegisterPatientsProps) 
         } catch (error) {
             console.error(error)
             let msg = "Erro ao salvar. Verifique a conexão e os arquivos."
-            if (error instanceof AxiosError) msg = error.response?.data?.message || msg
+            if (error instanceof AxiosError) msg = error.message || msg
             toast.error(msg)
         } finally {
             setIsUploading(false)

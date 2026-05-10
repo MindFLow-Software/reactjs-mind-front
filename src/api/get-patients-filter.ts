@@ -39,19 +39,20 @@ export async function fetchPatients({
     pageIndex = 0,
     perPage = 10,
     search,
-    status,
 }: FetchPatientsQuery): Promise<FetchPatientsResponse> {
-    const isCpf = search && /\d/.test(search)
-
     const response = await api.get<FetchPatientsResponse>('/patients', {
         params: {
-            pageIndex,
+            pageIndex: pageIndex + 1,
             perPage,
-            status,
-            cpf: isCpf ? search : undefined,
-            name: !isCpf ? search : undefined,
+            filter: search || undefined,
         },
     })
 
-    return response.data
+    return {
+        ...response.data,
+        meta: {
+            ...response.data.meta,
+            pageIndex: response.data.meta.pageIndex - 1,
+        },
+    }
 }

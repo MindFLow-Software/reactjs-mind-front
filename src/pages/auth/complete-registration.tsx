@@ -82,7 +82,7 @@ export function CompleteRegistration() {
 
       navigate("/dashboard", { replace: true })
     } catch (error: any) {
-      toast.error(error?.response?.data?.message ?? "Ocorreu um erro. Tente novamente.")
+      toast.error(error?.message ?? "Ocorreu um erro. Tente novamente.")
     }
   }
 

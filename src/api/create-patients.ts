@@ -1,19 +1,16 @@
 import { api } from "@/lib/axios"
 import { format } from "date-fns"
-import type { Expertise, PatientRole } from "@/types/expertise"
 import type { Gender } from "@/types/enum-gender"
 
 export interface RegisterPatientsBody {
   firstName: string
   lastName: string
+  email?: string
   phoneNumber?: string
   profileImageUrl?: string
   dateOfBirth?: Date | string | null
   cpf?: string
-  role?: PatientRole
   gender?: Gender
-  expertise?: Expertise
-  isActive?: boolean
   attachmentIds?: string[]
 }
 
@@ -29,6 +26,6 @@ export async function registerPatients(data: RegisterPatientsBody) {
         : data.dateOfBirth || undefined,
   }
 
-  const response = await api.post("/patient", formattedData)
+  const response = await api.post("/patients", formattedData)
   return response.data
 }

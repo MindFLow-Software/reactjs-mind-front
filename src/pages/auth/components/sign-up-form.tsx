@@ -7,6 +7,7 @@ import { useNavigate, Link } from "react-router-dom"
 import { useMutation } from "@tanstack/react-query"
 import { Eye, EyeOff, CalendarIcon, Loader2, Mars, Users, Venus } from "lucide-react"
 import { IMaskMixin } from "react-imask"
+import axios from 'axios'
 import { cn } from "@/lib/utils"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
@@ -204,25 +205,21 @@ export function SignUpForm({ className, ...props }: React.ComponentProps<"form">
       })
       toast.success("Psicólogo cadastrado com sucesso!")
       navigate("/sign-in")
-    } catch (err: any) {
-      const status = err.response?.status
-      const message = Array.isArray(err.response?.data?.message)
-        ? err.response.data.message[0]
-        : err.response?.data?.message
-
-      if (status === 409) {
-        if (message === "EMAIL_ALREADY_EXISTS") {
-          setError("email", { type: "manual", message: "E-mail já cadastrado" })
-          toast.error("E-mail já cadastrado")
-          return
-        }
-        if (message === "CPF_ALREADY_EXISTS") {
-          setError("cpf", { type: "manual", message: "CPF já cadastrado" })
-          toast.error("CPF já cadastrado")
-          return
-        }
+    } catch (err: unknown) {
+      if (!axios.isAxiosError(err)) {
+        toast.error("Erro ao realizar cadastro")
+        return
       }
-      toast.error("Erro ao realizar cadastro")
+
+      if (err.apiCode === 'EMAIL_ALREADY_IN_USE') {
+        setError("email", { type: "manual", message: "E-mail já cadastrado" })
+        toast.error("E-mail já cadastrado")
+        return
+      }
+
+      // CPF: ApiErrorCode não inclui código específico para CPF (OQ-1 aberto no spec.md).
+      // O fallback exibe a mensagem humanizada do envelope.
+      toast.error(err.message || "Erro ao realizar cadastro")
     }
   }
 

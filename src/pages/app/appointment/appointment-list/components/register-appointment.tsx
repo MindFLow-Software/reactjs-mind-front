@@ -56,7 +56,6 @@ export function RegisterAppointment({ initialDate, onSuccess }: RegisterAppointm
                 const data = await getPatients({
                     pageIndex: 0,
                     perPage: 1000,
-                    status: 'active',
                 })
 
                 const formatted = data.patients.map((p) => ({
@@ -88,7 +87,7 @@ export function RegisterAppointment({ initialDate, onSuccess }: RegisterAppointm
         onError: (error) => {
             if (error instanceof AxiosError) {
                 const status = error.response?.status
-                const message = error.response?.data?.message
+                const message = error.message
 
                 if (status === 409) {
                     return toast.error("Conflito de Horário", {

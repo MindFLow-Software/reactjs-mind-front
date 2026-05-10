@@ -21,10 +21,8 @@ export default function PatientsRecords() {
     const navigate = useNavigate()
     const [search, setSearch] = useState("")
     const [debouncedSearch, setDebouncedSearch] = useState("")
-    const [status, setStatus] = useState("all")
     const [gender, setGender] = useState("all")
-    const [order, setOrder] = useState("all")
-    const [sessionVolume, setSessionVolume] = useState("all")
+    const [sessionOrder, setSessionOrder] = useState<"high" | "low" | "all">("all")
 
     const { setTitle } = useHeaderStore()
 
@@ -36,15 +34,13 @@ export default function PatientsRecords() {
     }, [search])
 
     const { data: result, isLoading, isFetching } = useQuery({
-        queryKey: ["patients-records-list", debouncedSearch, status, gender, order, sessionVolume],
+        queryKey: ["patients-records-list", debouncedSearch, gender, sessionOrder],
         queryFn: () => getPatients({
             pageIndex: 0,
             perPage: 100,
-            filter: debouncedSearch,
-            status,
-            gender,
-            order,
-            sessionVolume,
+            filter: debouncedSearch || undefined,
+            gender: gender !== "all" ? gender as "OTHER" | "FEMININE" | "MASCULINE" : undefined,
+            order: sessionOrder !== "all" ? sessionOrder : undefined,
         }),
         placeholderData: (previousData) => previousData,
     })
@@ -64,10 +60,8 @@ export default function PatientsRecords() {
 
     const handleClearFilters = () => {
         setSearch("")
-        setStatus("all")
         setGender("all")
-        setOrder("all")
-        setSessionVolume("all")
+        setSessionOrder("all")
     }
 
     return (
@@ -87,14 +81,10 @@ export default function PatientsRecords() {
                         <PatientsRecordsTableFilters
                             search={search}
                             onSearchChange={setSearch}
-                            status={status}
-                            onStatusChange={setStatus}
                             gender={gender}
                             onGenderChange={setGender}
-                            order={order}
-                            onOrderChange={setOrder}
-                            sessionVolume={sessionVolume}
-                            onSessionVolumeChange={setSessionVolume}
+                            sessionOrder={sessionOrder}
+                            onSessionOrderChange={setSessionOrder}
                             onClearFilters={handleClearFilters}
                             isFetching={isFetching}
                         />

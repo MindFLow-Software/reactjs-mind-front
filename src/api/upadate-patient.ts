@@ -6,12 +6,12 @@ export interface UpdatePatientData {
     id: string
     firstName?: string
     lastName?: string
+    email?: string
     phoneNumber?: string
     profileImageUrl?: string
     dateOfBirth?: Date | string | null
     cpf?: string
     gender?: Gender
-    isActive?: boolean
     attachmentIds?: string[]
 }
 
@@ -32,6 +32,6 @@ export async function updatePatients({ id, ...data }: UpdatePatientData) {
         )
     )
 
-    const response = await api.put(`/patient/${id}`, payload)
+    const response = await api.put(`/patients/${id}`, payload)
     return response.data
 }

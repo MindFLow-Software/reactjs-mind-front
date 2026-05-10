@@ -39,7 +39,7 @@ export function EditPsychologistProfile({ psychologist, onClose }: EditPsycholog
             toast.success("Perfil atualizado!")
             onClose?.()
         },
-        onError: (err: any) => toast.error(err.response?.data?.message || "Erro ao atualizar perfil."),
+        onError: (err: any) => toast.error(err.message || "Erro ao atualizar perfil."),
     })
 
     async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {

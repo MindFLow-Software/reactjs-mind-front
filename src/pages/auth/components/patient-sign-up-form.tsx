@@ -58,7 +58,7 @@ export function PatientSignUpForm({ className, ...props }: React.ComponentProps<
                 toast.success("Cadastro realizado! Agora você pode fazer login.")
                 navigate("/sign-in")
             } catch (error: any) {
-                const errorMessage = error?.response?.data?.message || "Erro ao criar conta."
+                const errorMessage = error?.message || "Erro ao criar conta."
                 toast.error(errorMessage)
             }
         },
