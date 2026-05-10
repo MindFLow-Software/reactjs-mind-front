@@ -53,7 +53,7 @@ export function NavUser() {
     isLoading,
     isError,
   } = useQuery<GetProfileResponse | null>({
-    queryKey: ["psychologist-profile"],
+    queryKey: ["user-profile"],
     queryFn: getProfile,
     retry: false,
     staleTime: Infinity,

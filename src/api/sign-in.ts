@@ -19,5 +19,7 @@ export async function signIn({ email, password }: SignInBody) {
     password 
   })
 
+  console.log('response: ', response)
+
   return response.data
 }
