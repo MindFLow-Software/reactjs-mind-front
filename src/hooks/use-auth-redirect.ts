@@ -12,7 +12,7 @@ export function useAuthRedirect(): { isChecking: boolean } {
     async function checkAuthentication() {
       try {
         const response = await api.get('/me')
-        const user = response.data?.user
+        const user = response.data?.authenticatedUser
 
         if (!isMounted) return
 

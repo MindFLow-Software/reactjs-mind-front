@@ -63,11 +63,11 @@ export function NavUser() {
     mutationFn: signOut,
     onSuccess: () => {
       queryClient.clear()
-      toast.success('Logout realizado com sucesso!', { duration: 4000 })
+      toast.success('Sessão encerrada com segurança!', { duration: 4000 })
       navigate("/sign-in", { replace: true })
     },
     onError: (error) => {
-      console.error("Erro ao fazer logout:", error)
+      console.error("Erro ao sair:", error)
       localStorage.removeItem('isAuthenticated')
       navigate("/sign-in", { replace: true })
     }
