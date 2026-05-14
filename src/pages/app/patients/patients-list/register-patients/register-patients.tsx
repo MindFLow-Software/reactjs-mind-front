@@ -23,7 +23,7 @@ import { Calendar } from "@/components/ui/calendar"
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover"
 import { Label } from "@/components/ui/label"
 
-import { registerPatients } from "@/api/create-patients"
+import { createPatients } from "@/api/create-patients"
 import { updatePatients } from "@/api/upadate-patient"
 import { cn } from "@/lib/utils"
 
@@ -323,7 +323,7 @@ export function RegisterPatients({ patient, onSuccess }: RegisterPatientsProps) 
     })
 
     const { mutateAsync: savePatientFn, isPending } = useMutation({
-        mutationFn: (data: any) => isEditMode ? updatePatients(data) : registerPatients(data),
+        mutationFn: (data: any) => isEditMode ? updatePatients(data) : createPatients(data),
     })
 
     async function handleNext() {

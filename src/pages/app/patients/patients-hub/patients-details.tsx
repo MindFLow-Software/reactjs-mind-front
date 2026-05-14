@@ -98,11 +98,7 @@ export default function PatientDetails() {
     const patientData = useMemo(() => result?.patient, [result])
     const meta = useMemo(() => result?.meta, [result])
 
-    const isPatientActive = useMemo(() => {
-        if (!patientData) return false
-        const status = String(patientData.status).toLowerCase()
-        return patientData.isActive === true || status === "active" || status === "ativo"
-    }, [patientData])
+    const isPatientActive = false
 
     const patientFullName = useMemo(
         () => (patientData ? `${patientData.firstName} ${patientData.lastName}` : ""),
