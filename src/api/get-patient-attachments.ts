@@ -1,10 +1,10 @@
 import { api } from '@/lib/axios'
-import type { AttachmentItem } from '@/contracts/types'
+import type { AttachmentPatientItem } from '@/contracts/types'
 
-export type { AttachmentItem } from '@/contracts/types'
+export type { AttachmentPatientItem } from '@/contracts/types'
 
-export async function getPatientAttachments(patientId: string): Promise<AttachmentItem[]> {
-  const response = await api.get<{ attachments: AttachmentItem[] }>(
+export async function getPatientAttachments(patientId: string): Promise<AttachmentPatientItem[]> {
+  const response = await api.get<{ attachments: AttachmentPatientItem[] }>(
     `/attachments/patient/${patientId}`,
   )
   return response.data.attachments

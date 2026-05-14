@@ -1,6 +1,6 @@
 import { api } from '@/lib/axios'
 import type {
-  AttachmentItem,
+  AttachmentPatientItem,
   AttachmentListItem,
   AttachmentListMeta,
   UploadAttachmentResponse,
@@ -8,7 +8,7 @@ import type {
 } from '@/contracts/types'
 
 export type {
-  AttachmentItem,
+  AttachmentPatientItem,
   AttachmentListItem,
   AttachmentListMeta,
   UploadAttachmentResponse,
@@ -63,8 +63,8 @@ export async function uploadAvatar(
 // Response shape: { url, type, size } — diferente do endpoint paginado
 // ---------------------------------------------------------------------------
 
-export async function getPatientAttachments(patientId: string): Promise<AttachmentItem[]> {
-  const { data } = await api.get<{ attachments: AttachmentItem[] }>(
+export async function getPatientAttachments(patientId: string): Promise<AttachmentPatientItem[]> {
+  const { data } = await api.get<{ attachments: AttachmentPatientItem[] }>(
     `/attachments/patient/${patientId}`,
   )
   return data.attachments
