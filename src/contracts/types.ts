@@ -1,7 +1,7 @@
 /**
  * Frontend Contract — Types & Enums
  * Fonte: nestjs-mind-back (feat/patient-qrcode-registration)
- * Atualizado: 2026-05-13
+ * Atualizado: 2026-05-14
  *
  * Estes tipos correspondem EXATAMENTE ao que o backend envia/recebe via HTTP.
  * Não modifique sem atualizar o backend também.
@@ -32,6 +32,18 @@ export enum AccountStatus {
   BLOCKED  = 'BLOCKED',
 }
 
+export enum Expertise {
+  OTHER           = 'OTHER',
+  SOCIAL          = 'SOCIAL',
+  INFANT          = 'INFANT',
+  CLINICAL        = 'CLINICAL',
+  JURIDICAL       = 'JURIDICAL',
+  EDUCATIONAL     = 'EDUCATIONAL',
+  ORGANIZATIONAL  = 'ORGANIZATIONAL',
+  PSYCHOTHERAPIST = 'PSYCHOTHERAPIST',
+  NEUROPSYCHOLOGY = 'NEUROPSYCHOLOGY',
+}
+
 export enum AppointmentStatus {
   SCHEDULED   = 'SCHEDULED',
   ATTENDING   = 'ATTENDING',
@@ -39,6 +51,44 @@ export enum AppointmentStatus {
   CANCELED    = 'CANCELED',
   NOT_ATTEND  = 'NOT_ATTEND',
   RESCHEDULED = 'RESCHEDULED',
+  DONE        = 'DONE',
+}
+
+export enum PlanInterval {
+  MONTHLY = 'MONTHLY',
+  YEARLY  = 'YEARLY',
+}
+
+export enum SuggestionCategory {
+  UI_UX        = 'UI_UX',
+  SCHEDULING   = 'SCHEDULING',
+  REPORTS      = 'REPORTS',
+  PRIVACY_LGPD = 'PRIVACY_LGPD',
+  INTEGRATIONS = 'INTEGRATIONS',
+  OTHERS       = 'OTHERS',
+}
+
+export enum SuggestionStatus {
+  PENDING      = 'PENDING',
+  OPEN         = 'OPEN',
+  UNDER_REVIEW = 'UNDER_REVIEW',
+  PLANNED      = 'PLANNED',
+  IMPLEMENTED  = 'IMPLEMENTED',
+  REJECTED     = 'REJECTED',
+}
+
+export enum PopupType {
+  MODAL    = 'MODAL',
+  SLIDE_IN = 'SLIDE_IN',
+  BAR      = 'BAR',
+  TOAST    = 'TOAST',
+}
+
+export enum PopupStatus {
+  DRAFT    = 'DRAFT',
+  ACTIVE   = 'ACTIVE',
+  PAUSED   = 'PAUSED',
+  ARCHIVED = 'ARCHIVED',
 }
 
 // ---------------------------------------------------------------------------
@@ -52,7 +102,7 @@ export interface PaginationMeta {
 }
 
 // ---------------------------------------------------------------------------
-// Patient — shape de PatientPresenter.toHTTP()
+// Patient — PatientPresenter.toHTTP()
 // Usada em: GET /patients, GET /patients/:id, GET /patients/filter/with-attachments
 // ---------------------------------------------------------------------------
 
@@ -107,6 +157,61 @@ export interface PatientDetailsMeta {
 }
 
 // ---------------------------------------------------------------------------
+// Attachments
+// ---------------------------------------------------------------------------
+
+// GET /attachments/patient/:patientId
+export interface AttachmentPatientItem {
+  id:         string
+  filename:   string
+  url:        string  // storage key — acesse via GET /attachments/:id
+  type:       string  // MIME type
+  size:       number  // bytes
+  uploadedAt: string  // ISO 8601
+}
+
+// GET /attachments (paginado)
+// ⚠️ SizeInBytes com S maiúsculo — bug de nomenclatura no backend
+export interface AttachmentListItem {
+  id:          string
+  filename:    string
+  fileUrl:     string        // storage key — acesse via GET /attachments/:id
+  contentType: string        // MIME type
+  SizeInBytes: number        // ⚠️ S maiúsculo (wire exato)
+  uploadedAt:  string        // ISO 8601
+  patient:     { firstName: string; lastName: string } | null
+}
+
+export interface AttachmentListMeta {
+  pageIndex:        number
+  totalCount:       number
+  perPage:          number  // fixo: 10
+  totalStorageSize: number
+}
+
+// POST /attachments
+export interface UploadAttachmentResponse {
+  attachmentId: string
+  url:          string  // storage key (igual ao attachmentId)
+}
+
+// ---------------------------------------------------------------------------
+// Appointments
+// ---------------------------------------------------------------------------
+
+export interface AppointmentItem {
+  id:             string
+  patientId:      string | null
+  psychologistId: string | null
+  diagnosis:      string
+  content:        string | null
+  scheduledAt:    string
+  durationInMin:  number | null
+  status:         AppointmentStatus
+  createdAt:      string
+}
+
+// ---------------------------------------------------------------------------
 // Stats
 // ---------------------------------------------------------------------------
 
@@ -131,74 +236,12 @@ export interface NewPatientsItem {
 // Dashboard — GET /dashboard
 // ---------------------------------------------------------------------------
 
-export interface AppointmentItem {
-  id:             string
-  patientId:      string | null
-  psychologistId: string | null
-  diagnosis:      string
-  content:        string | null
-  scheduledAt:    string
-  durationInMin:  number | null
-  status:         AppointmentStatus
-  createdAt:      string
-}
-
 export interface DashboardResponse {
   totalPatients:        number
   patientsByGender:     GenderItem[]
   patientsByAge:        AgeRangeItem[]
   upcomingAppointments: AppointmentItem[]
   newPatientsLast7Days: NewPatientsItem[]
-}
-
-// ---------------------------------------------------------------------------
-// Attachments
-// ---------------------------------------------------------------------------
-
-// POST /attachments — response
-export interface UploadAttachmentResponse {
-  attachmentId: string
-  url:          string  // mesmo valor que attachmentId (storage key)
-}
-
-// GET /attachments/patient/:patientId — items
-// ⚠️ Shape DIFERENTE de AttachmentListItem (GET /attachments paginado)
-export interface AttachmentItem {
-  id:         string
-  filename:   string
-  url:        string  // storage key — acesse via GET /attachments/:id
-  type:       string  // MIME type
-  size:       number  // bytes
-  uploadedAt: string  // ISO 8601
-}
-
-// GET /attachments (paginado) — items
-// ⚠️ Campos com nomes diferentes de AttachmentItem — inconsistência no backend
-export interface AttachmentListItem {
-  id:          string
-  filename:    string
-  fileUrl:     string        // storage key — acesse via GET /attachments/:id
-  contentType: string        // MIME type
-  SizeInBytes: number        // ⚠️ S maiúsculo — bug de nomenclatura no backend
-  uploadedAt:  string        // ISO 8601
-  patient:     { firstName: string; lastName: string } | null
-}
-
-// GET /attachments (paginado) — meta
-export interface AttachmentListMeta {
-  pageIndex:        number
-  totalCount:       number
-  perPage:          number  // fixo: 10
-  totalStorageSize: number
-}
-
-// GET /attachments — query params
-export type FetchAllAttachmentsParams = {
-  page?:      number
-  filter?:    string
-  patientId?: string
-  from?:      string  // ISO date
-  to?:        string  // ISO date
 }
 
 // ---------------------------------------------------------------------------
@@ -223,7 +266,74 @@ export interface ScheduledAppointmentResponse {
 }
 
 // ---------------------------------------------------------------------------
-// Query params — GET endpoints
+// Subscription Plan
+// ---------------------------------------------------------------------------
+
+export interface SubscriptionPlanHTTP {
+  id:           string
+  name:         string
+  description:  string[]
+  priceInCents: number
+  interval:     PlanInterval
+  createdAt:    string
+  updatedAt:    string
+}
+
+// ---------------------------------------------------------------------------
+// Suggestion
+// ---------------------------------------------------------------------------
+
+export interface SuggestionHTTP {
+  id:               string
+  psychologistId:   string
+  psychologistName: string | null
+  title:            string
+  description:      string
+  category:         SuggestionCategory
+  status:           SuggestionStatus
+  likes:            string[]
+  attachments:      string[]
+  createdAt:        string
+  updatedAt:        string
+}
+
+// ---------------------------------------------------------------------------
+// Popup
+// ---------------------------------------------------------------------------
+
+export interface PopupHTTP {
+  id:             string
+  internalName:   string
+  title:          string | null
+  body:           string | null
+  imageUrl:       string | null
+  ctaText:        string | null
+  ctaUrl:         string | null
+  type:           PopupType
+  status:         PopupStatus
+  styleConfig:    Record<string, unknown> | null
+  triggerConfig:  Record<string, unknown> | null
+  displayRules:   Record<string, unknown> | null
+  startsAt:       string | null
+  endsAt:         string | null
+  psychologistId: string | null
+}
+
+// ---------------------------------------------------------------------------
+// Availability
+// ---------------------------------------------------------------------------
+
+export interface AvailabilityHTTP {
+  id:             string
+  psychologistId: string
+  dayOfWeek:      number  // 0=Dom, 1=Seg, ..., 6=Sáb
+  startTime:      string  // 'HH:mm'
+  endTime:        string  // 'HH:mm'
+  isActive:       boolean
+}
+
+// ---------------------------------------------------------------------------
+// Query params
 // ---------------------------------------------------------------------------
 
 export type FetchPatientsParams = {
@@ -234,6 +344,14 @@ export type FetchPatientsParams = {
   gender?:        Gender
   order?:         'asc' | 'desc'
   sessionVolume?: 'high' | 'low'
+}
+
+export type FetchAllAttachmentsParams = {
+  page?:      number
+  filter?:    string
+  patientId?: string
+  from?:      string
+  to?:        string
 }
 
 export type GetAmountPatientsParams = {
@@ -247,11 +365,9 @@ export type GetDashboardParams = {
 }
 
 // ---------------------------------------------------------------------------
-// Mutation bodies — PUT/POST/DELETE/PATCH
+// Mutation bodies
 // ---------------------------------------------------------------------------
 
-// PUT /patients/:id — campos omitidos não são alterados
-// ⚠️ Resposta retorna entidade de domínio — invalide cache e releia pelo GET
 export interface UpdatePatientBody {
   firstName?:       string
   lastName?:        string
@@ -263,7 +379,6 @@ export interface UpdatePatientBody {
   attachmentIds?:   string[]
 }
 
-// POST /patient (singular) — criado pelo psicólogo autenticado
 export interface CreatePatientBody {
   firstName:        string
   lastName:         string
@@ -274,14 +389,8 @@ export interface CreatePatientBody {
   gender?:          Gender
 }
 
-export interface CreatePatientResponse {
-  message:   string
-  patientId: string
-}
-
-// POST /invites/:hash/register — cadastro público pelo paciente
-// Senha: mín. 8 chars, maiúscula, minúscula, número, especial
-export interface RegisterPatientViaInviteBody {
+// POST /invites/:hash/register — senha: mín. 8 chars, maiúscula, minúscula, número, especial
+export interface RegisterPatientBody {
   firstName:    string
   lastName:     string
   email:        string
@@ -290,12 +399,4 @@ export interface RegisterPatientViaInviteBody {
   phoneNumber?: string
   dateOfBirth?: string
   cpf?:         string
-}
-
-export interface RegisterPatientViaInviteResponse {
-  patientId:      string
-  firstName:      string
-  lastName:       string
-  email:          string | null
-  psychologistId: string
 }
