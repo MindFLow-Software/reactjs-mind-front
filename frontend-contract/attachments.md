@@ -1,371 +1,446 @@
 # Attachments — Guia de Implementação para o Frontend
 
-> **Para o Claude do frontend**: Este documento cobre todos os endpoints de attachments (upload, listagem, download, delete). Inclui a causa raiz do erro 500 no upload, as duas shapes de resposta distintas que o backend retorna, e todas as armadilhas conhecidas.
+> **Para o Claude do frontend**: Este documento cobre todos os endpoints de attachment. Use `types.ts` deste mesmo diretório para os tipos. Leia as seções de ⚠️ com atenção — há inconsistências no backend que já estão documentadas aqui para que você não precise adivinhar.
 
 ---
 
-## Causa raiz do erro 500 em POST /attachments
+## Visão geral dos endpoints
 
-O controller `UploadAttachmentController` está **sem `@UseGuards(JwtAuthGuard)`** no método POST. O decorator `@CurrentUser()` tenta ler `request.user`, que é `undefined` sem o guard. A leitura de `user.sub` lança `TypeError: Cannot read property 'sub' of undefined`, que cai no filtro global como 500.
-
-**Fix no backend**: adicionar `@UseGuards(JwtAuthGuard)` ao método `@Post()` do controller.
-
-**Consequência para o frontend**: enquanto o backend não corrigir, qualquer upload retorna 500. O frontend não tem como contornar isso — é um bug no servidor.
+| Método | Rota | Auth | Descrição |
+|--------|------|------|-----------|
+| `POST` | `/attachments` | 🔒 JWT | Upload de arquivo (foto ou PDF) |
+| `GET` | `/attachments` | 🔒 JWT | Lista todos os attachments do psicólogo (paginado) |
+| `GET` | `/attachments/patient/:patientId` | 🔒 JWT | Lista attachments de um paciente |
+| `GET` | `/attachments/:id` | 🌐 Público | Serve o arquivo binário (stream) |
+| `DELETE` | `/attachments/:id` | 🔒 JWT | Remove um attachment |
 
 ---
 
-## Modelo de dados (Prisma)
+## 1. `POST /attachments` — Upload de arquivo
 
-```prisma
-model Attachment {
-  id          String    @id @default(uuid())
-  patientId   String?   @map("patient_id")
-  uploaderId  String    @map("uploader_id")
-  filename    String
-  SizeInBytes Int       @map("size_in_bytes")   // ⚠️ S maiúsculo no JSON
-  contentType String    @map("content_type")
-  sessionDate DateTime? @map("session_date")
-  fileUrl     String    @map("file_url")         // armazena só o UUID (key do R2)
-  uploadedAt  DateTime  @default(now()) @map("uploaded_at")
-  updatedAt   DateTime  @updatedAt @map("updated_at")
-  deletedAt   DateTime?                          // soft delete
+**Auth**: 🔒 JWT obrigatório  
+**Controller**: `upload-attachment.controller.ts`  
+**Content-Type**: `multipart/form-data` (obrigatório — não envie JSON)  
+**Quando usar**: Upload de foto do paciente ou de documento PDF.
+
+### Campos do form-data
+
+```ts
+// Todos os campos são enviados como form-data, não como JSON body
+interface UploadAttachmentForm {
+  file:       File      // obrigatório — max 3MB, tipos aceitos: JPEG, JPG, PNG, PDF
+  patientId?: string    // UUID do paciente — omitir se não quiser vincular
+  type?:      string    // 'AVATAR' para atualizar profileImageUrl do paciente
 }
 ```
 
-> **`fileUrl` não é uma URL completa** — é o UUID do attachment (key do Cloudflare R2). O arquivo é acessado via `GET /attachments/:id`, não por URL direta.
+> **Como enviar com fetch/axios**:
+> ```ts
+> const formData = new FormData()
+> formData.append('file', file)
+> formData.append('patientId', patientId)
+> formData.append('type', 'AVATAR')  // opcional
+>
+> await api.post('/attachments', formData)
+> // NÃO setar Content-Type manualmente — o browser define o boundary automaticamente
+> ```
 
----
+### Comportamento especial: `type = 'AVATAR'`
 
-## Tipos de arquivo aceitos
+Se `patientId` for enviado **e** `type === 'AVATAR'`, o backend:
+1. Faz upload do arquivo no R2
+2. Salva o attachment no banco
+3. Atualiza `profileImageUrl` do usuário com o ID do attachment
+
+Após sucesso, para exibir a foto use `GET /attachments/:attachmentId` (que serve o binário).
+
+### Validações no backend
+
+| Campo | Regra |
+|-------|-------|
+| `file` | Obrigatório |
+| Tamanho | Máximo 3MB |
+| Tipo | Apenas `image/jpeg`, `image/jpg`, `image/png`, `application/pdf` |
+
+Erros de validação retornam `400` com mensagem descritiva.
+
+### Response `200 OK`
 
 ```ts
-type AllowedMimeType = 'image/jpeg' | 'image/jpg' | 'image/png' | 'application/pdf'
-```
+// Importar de types.ts:
+// import type { UploadAttachmentResponse } from './types'
 
-Limite de tamanho: **3 MB** (3.145.728 bytes).
-
----
-
-## Endpoints
-
----
-
-### 1. `POST /attachments` — Upload de arquivo
-
-**Auth**: 🔒 JWT obrigatório (**⚠️ bug: guard ausente no backend — retorna 500**)
-**Content-Type**: `multipart/form-data`
-
-#### Body (form-data)
-
-| Campo      | Tipo   | Obrigatório | Descrição |
-|---|---|---|---|
-| `file`     | File   | ✓ | Binário do arquivo (JPG, PNG ou PDF) |
-| `patientId`| string | ✓ | UUID do paciente |
-| `type`     | string | ✗ | Se `'AVATAR'`, atualiza `user.profileImageUrl` com o `attachmentId` |
-
-#### Response `200 OK`
-
-```ts
 interface UploadAttachmentResponse {
-  attachmentId: string  // UUID do attachment criado
-  url:          string  // mesmo valor que attachmentId (key do R2)
+  attachmentId: string  // UUID — use para GET /attachments/:id
+  url:          string  // storage key interno (mesmo valor que attachmentId)
 }
 ```
 
-> ⚠️ `url` **não é uma URL navegável** — é o UUID/key do R2. Para exibir o arquivo, use `GET /attachments/:id` ou construa a URL do R2 conforme o ambiente.
+### Erros
 
-#### Como implementar
+| Status | Quando |
+|--------|--------|
+| `400` | Arquivo ausente, tipo inválido, ou tamanho acima de 3MB |
+| `401` | Token ausente ou inválido |
+| `500` | Falha no upload para o storage (R2) |
+
+### Como implementar
 
 ```ts
-export async function uploadAttachment(file: File, patientId: string) {
+// services/attachment.service.ts
+export async function uploadAttachment(
+  file: File,
+  options?: { patientId?: string; type?: 'AVATAR' }
+): Promise<UploadAttachmentResponse> {
   const formData = new FormData()
   formData.append('file', file)
-  formData.append('patientId', patientId)
+  if (options?.patientId) formData.append('patientId', options.patientId)
+  if (options?.type)      formData.append('type', options.type)
 
   const { data } = await api.post<UploadAttachmentResponse>('/attachments', formData)
   return data
 }
 
-export async function uploadAvatar(file: File, patientId: string) {
-  const formData = new FormData()
-  formData.append('file', file)
-  formData.append('patientId', patientId)
-  formData.append('type', 'AVATAR')
+// hooks/use-upload-attachment.ts
+export function useUploadAttachment() {
+  const queryClient = useQueryClient()
 
-  const { data } = await api.post<UploadAttachmentResponse>('/attachments', formData)
-  return data
+  return useMutation({
+    mutationFn: ({ file, patientId, type }: {
+      file: File
+      patientId?: string
+      type?: 'AVATAR'
+    }) => uploadAttachment(file, { patientId, type }),
+    onSuccess: (_, { patientId }) => {
+      if (patientId) {
+        queryClient.invalidateQueries({ queryKey: ['attachments', 'patient', patientId] })
+        queryClient.invalidateQueries({ queryKey: ['patient', patientId] })
+      }
+      queryClient.invalidateQueries({ queryKey: ['attachments'] })
+    },
+  })
 }
 ```
 
-#### Erros
-
-| Status | Quando |
-|---|---|
-| `500` | Guard ausente no backend (bug) — `request.user` é `undefined` |
-| `413` | Arquivo maior que 3 MB |
-| `415` | MIME type não permitido |
-| `401` | Token ausente ou inválido (após o fix do guard) |
-
 ---
 
-### 2. `GET /attachments/:id` — Servir arquivo (download/visualização)
+## 2. `GET /attachments` — Listar todos os attachments (paginado)
 
-**Auth**: 🌐 Público — sem JWT
-**Response**: stream binário do arquivo
+**Auth**: 🔒 JWT obrigatório  
+**Controller**: `fetch-all-attachments.controller.ts`  
+**Quando usar**: Tela de gerenciamento de arquivos — lista arquivos de todos os pacientes do psicólogo.
 
-#### Path params
+### Query params
 
 ```ts
-id: string  // UUID do attachment
+// Importar de types.ts:
+// import type { FetchAllAttachmentsParams } from './types'
+
+type FetchAllAttachmentsParams = {
+  page?:      number    // default: 0 (zero-indexed)
+  filter?:    string    // busca em filename OU nome do paciente
+  patientId?: string    // UUID — filtra por paciente específico
+  from?:      string    // ISO date string — início do intervalo (uploadedAt)
+  to?:        string    // ISO date string — fim do intervalo (uploadedAt)
+}
 ```
 
-#### Response `200 OK`
-
-Headers:
-```
-Content-Type:        <MIME type original>
-Content-Disposition: inline; filename="<filename>"
-Content-Length:      <bytes>
-Cache-Control:       public, max-age=31536000, immutable
-```
-
-Body: stream binário do arquivo.
-
-> Para exibir uma imagem: `<img src="/attachments/{attachmentId}" />`
-> Para exibir um PDF: `<iframe src="/attachments/{attachmentId}" />`
-
-#### Erros
-
-| Status | Quando |
-|---|---|
-| `404` | Attachment não encontrado ou deletado (soft delete) |
-
----
-
-### 3. `DELETE /attachments/:id` — Deletar attachment
-
-**Auth**: 🔒 JWT obrigatório
-
-#### Path params
+### Response `200 OK`
 
 ```ts
-id: string  // UUID do attachment
+// Importar de types.ts:
+// import type { AttachmentListItem, AttachmentListMeta } from './types'
+
+interface Response {
+  attachments: AttachmentListItem[]
+  meta: AttachmentListMeta
+}
+
+// AttachmentListItem (wire exato):
+interface AttachmentListItem {
+  id:          string
+  filename:    string
+  fileUrl:     string        // storage key — use GET /attachments/:id para exibir
+  contentType: string        // MIME type: 'image/jpeg' | 'image/png' | 'application/pdf'
+  SizeInBytes: number        // ⚠️ S maiúsculo — inconsistência no backend, use assim no frontend
+  uploadedAt:  string        // ISO 8601
+  patient:     { firstName: string; lastName: string } | null
+}
+
+// AttachmentListMeta:
+interface AttachmentListMeta {
+  pageIndex:        number   // zero-indexed
+  totalCount:       number   // total de registros (com filtros aplicados)
+  perPage:          number   // sempre 10 (hardcoded no backend)
+  totalStorageSize: number   // soma de bytes de todos os itens filtrados
+}
 ```
 
-#### Response `204 No Content`
+> ⚠️ **`SizeInBytes` com S maiúsculo**: É um bug de nomenclatura no backend. O campo chega com `S` maiúsculo no JSON. Mapeie assim no frontend para não quebrar.
 
-#### Erros
+> ⚠️ **`patientId` não está na resposta**: O `AttachmentListItem` não inclui `patientId`. Use `patient.firstName + patient.lastName` para exibir o nome. Se precisar navegar para o paciente, use o endpoint de busca por nome.
 
-| Status | Quando |
-|---|---|
-| `404` | Attachment não encontrado |
-| `403` | Usuário não é o uploader do attachment |
+### Como implementar
 
-> Soft delete — apenas seta `deletedAt`. O arquivo no R2 não é removido imediatamente.
+```ts
+export async function fetchAllAttachments(params: FetchAllAttachmentsParams) {
+  const { data } = await api.get<{
+    attachments: AttachmentListItem[]
+    meta: AttachmentListMeta
+  }>('/attachments', { params })
+  return data
+}
+
+export function useAllAttachments(params: FetchAllAttachmentsParams) {
+  return useQuery({
+    queryKey: ['attachments', params],
+    queryFn: () => fetchAllAttachments(params),
+  })
+}
+```
 
 ---
 
-### 4. `GET /attachments/patient/:patientId` — Attachments de um paciente específico
+## 3. `GET /attachments/patient/:patientId` — Attachments de um paciente
 
-**Auth**: 🔒 JWT obrigatório
+**Auth**: 🔒 JWT obrigatório  
+**Controller**: `fetch-patient-attachments.controller.ts`  
+**Quando usar**: Aba de arquivos na ficha do paciente.
 
-#### Path params
+### Path params
 
 ```ts
 patientId: string  // UUID do paciente
 ```
 
-#### Response `200 OK`
+### Response `200 OK`
 
 ```ts
-// ⚠️ Shape diferente da GET /attachments paginada — campos mapeados pelo presenter
-interface PatientAttachmentItem {
+// Importar de types.ts:
+// import type { AttachmentPatientItem } from './types'
+
+interface Response {
+  attachments: AttachmentPatientItem[]
+}
+
+// AttachmentPatientItem (wire exato):
+interface AttachmentPatientItem {
   id:         string
   filename:   string
-  url:        string  // ← fileUrl mapeado para 'url'
-  type:       string  // ← contentType mapeado para 'type'
-  size:       number  // ← SizeInBytes mapeado para 'size'
-  uploadedAt: string  // ISO 8601
-}
-
-interface GetPatientAttachmentsResponse {
-  attachments: PatientAttachmentItem[]
+  url:        string    // storage key — use GET /attachments/:id para exibir
+  type:       string    // MIME type
+  size:       number    // bytes
+  uploadedAt: string    // ISO 8601
 }
 ```
 
-> **`url` aqui é o `fileUrl` do banco (UUID/key do R2)** — não uma URL navegável. Para visualizar, use `GET /attachments/{url}`.
+> **Diferença de nomenclatura entre endpoints**:
+>
+> | Campo | GET /attachments/patient/:id | GET /attachments |
+> |-------|-------------------------------|-----------------|
+> | URL do arquivo | `url` | `fileUrl` |
+> | Tamanho | `size` | `SizeInBytes` |
+> | Tipo MIME | `type` | `contentType` |
+>
+> Os dois endpoints retornam o mesmo dado mas com nomes diferentes. Mapeie para um tipo interno único no frontend.
+
+### Como implementar
+
+```ts
+export async function fetchPatientAttachments(patientId: string) {
+  const { data } = await api.get<{ attachments: AttachmentPatientItem[] }>(
+    `/attachments/patient/${patientId}`
+  )
+  return data.attachments
+}
+
+export function usePatientAttachments(patientId: string) {
+  return useQuery({
+    queryKey: ['attachments', 'patient', patientId],
+    queryFn:  () => fetchPatientAttachments(patientId),
+    enabled:  !!patientId,
+  })
+}
+```
 
 ---
 
-### 5. `GET /attachments` — Listagem paginada de attachments do psicólogo
+## 4. `GET /attachments/:id` — Servir arquivo binário
 
-**Auth**: 🔒 JWT obrigatório
+**Auth**: 🌐 Público (sem JWT)  
+**Controller**: `get-attachment.controller.ts`  
+**Quando usar**: Exibir imagem ou PDF diretamente na UI.
 
-#### Query params
+### Comportamento
 
-```ts
-type GetAllAttachmentsParams = {
-  page?:      number  // 0-indexed, default: 0
-  filter?:    string  // busca em filename e patient firstName/lastName
-  patientId?: string  // UUID — filtro por paciente específico
-  from?:      string  // ISO 8601 — data de início (gte)
-  to?:        string  // ISO 8601 — data de fim (lte)
-}
+Este endpoint não retorna JSON. Retorna o **arquivo binário** com headers adequados:
+
+```
+Content-Type: <mime-type-original>
+Content-Disposition: inline; filename="<nome-original>"
+Cache-Control: public, max-age=31536000, immutable
 ```
 
-> Não envie `patientId: 'all'` — omita o campo quando não houver filtro.
+O navegador pode exibir diretamente. Use como `src` de `<img>` ou `href` de link para PDF.
 
-#### Response `200 OK`
+### Como usar
 
-```ts
-// ⚠️ Shape DIFERENTE de GET /attachments/patient/:patientId
-// Campos em snake_case/camelCase inconsistentes com o outro endpoint
-interface PaginatedAttachmentItem {
-  id:          string
-  filename:    string
-  fileUrl:     string  // ← campo 'fileUrl' (não 'url')
-  contentType: string  // ← campo 'contentType' (não 'type')
-  SizeInBytes: number  // ← 'S' MAIÚSCULO — reflete o campo Prisma
-  uploadedAt:  string  // ISO 8601
-  patient:     { firstName: string; lastName: string } | null
-}
+```tsx
+// Para imagem de perfil do paciente:
+// profileImageUrl contém o UUID do attachment
+<img src={`${API_BASE_URL}/attachments/${patient.profileImageUrl}`} />
 
-interface GetAllAttachmentsResponse {
-  attachments: PaginatedAttachmentItem[]
-  meta: {
-    pageIndex:        number
-    totalCount:       number
-    perPage:          number  // fixo: 10
-    totalStorageSize: number  // total em bytes de todos os attachments
-  }
-}
+// Para link de download de PDF:
+<a href={`${API_BASE_URL}/attachments/${attachment.id}`} target="_blank">
+  Baixar {attachment.filename}
+</a>
 ```
 
-> **Filtro só retorna attachments do psicólogo autenticado** (via `uploaderId === user.sub`).
+> ⚠️ **`profileImageUrl` é o ID do attachment**, não uma URL completa. Monte a URL completa concatenando com a base do backend.
+
+### Erros
+
+| Status | Quando |
+|--------|--------|
+| `404` | Attachment não existe no banco ou não foi encontrado no storage |
 
 ---
 
-## As duas shapes de attachment
+## 5. `DELETE /attachments/:id` — Remover attachment
 
-O backend tem **dois presenters diferentes** para attachments. Nunca misture os tipos:
+**Auth**: 🔒 JWT obrigatório  
+**Controller**: `delete-attachment.controller.ts`
 
-| Endpoint | `url`/`fileUrl` | `type`/`contentType` | `size`/`SizeInBytes` | `patient` |
-|---|---|---|---|---|
-| `GET /attachments/patient/:id` | `url` | `type` | `size` | não inclui |
-| `GET /attachments` (paginado) | `fileUrl` | `contentType` | `SizeInBytes` (S maiúsculo) | inclui `{firstName, lastName}` |
+### Path params
+
+```ts
+id: string  // UUID do attachment — validado como UUID pelo backend
+```
+
+### Response `204 No Content`
+
+Sem body na resposta.
+
+### Erros
+
+| Status | Quando |
+|--------|--------|
+| `400` | `id` não é UUID válido |
+| `401` | Token ausente ou inválido |
+| `404` | Attachment não encontrado ou não pertence ao psicólogo |
+
+### Como implementar
+
+```ts
+export async function deleteAttachment(id: string) {
+  await api.delete(`/attachments/${id}`)
+}
+
+export function useDeleteAttachment() {
+  const queryClient = useQueryClient()
+
+  return useMutation({
+    mutationFn: deleteAttachment,
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['attachments'] })
+    },
+  })
+}
+```
 
 ---
 
-## Armadilhas comuns
+## Fluxo completo: upload de foto de perfil do paciente
 
-### ❌ Esperar uma URL navegável em `url` / `fileUrl`
 ```ts
-// Errado — fileUrl é o UUID/key do R2, não uma URL
-<img src={attachment.url} />
+// 1. Upload do arquivo
+const { attachmentId } = await uploadAttachment(file, {
+  patientId: patient.id,
+  type: 'AVATAR',
+})
 
-// Correto — use o endpoint de serving
-<img src={`${import.meta.env.VITE_API_URL}/attachments/${attachment.url}`} />
+// 2. O backend já atualizou profileImageUrl do paciente com o attachmentId
+// Invalide as queries para refletir o novo estado
+queryClient.invalidateQueries({ queryKey: ['patient', patient.id] })
+
+// 3. Para exibir a imagem:
+// patient.profileImageUrl === attachmentId (string UUID)
+<img src={`${API_BASE_URL}/attachments/${patient.profileImageUrl}`} />
 ```
 
-### ❌ Usar `size` no attachment da listagem paginada
+---
+
+## Armadilhas
+
+### ❌ Enviar JSON em vez de form-data
+
 ```ts
-// Errado — campo errado para GET /attachments
-attachment.size       // undefined
+// Errado — o backend usa FileInterceptor, espera multipart/form-data
+await api.post('/attachments', { file, patientId })
 
 // Correto
-attachment.SizeInBytes  // ← S maiúsculo
+const form = new FormData()
+form.append('file', file)
+form.append('patientId', patientId)
+await api.post('/attachments', form)
 ```
 
-### ❌ Enviar `patientId: 'all'` como filtro
-```ts
-// Errado
-params.patientId = 'all'
+### ❌ Setar Content-Type manualmente
 
-// Correto — omita quando não houver filtro
-const params: GetAllAttachmentsParams = {
-  page: 0,
-  // patientId: omitido = sem filtro
-}
+```ts
+// Errado — quebra o boundary do multipart
+await api.post('/attachments', form, {
+  headers: { 'Content-Type': 'multipart/form-data' }
+})
+
+// Correto — deixe o browser/node definir com o boundary correto
+await api.post('/attachments', form)
 ```
 
-### ❌ Esperar `Content-Type: application/json` no GET /:id
-```ts
-// Errado — retorna stream binário
-const { data } = await api.get(`/attachments/${id}`)
-JSON.parse(data)  // quebra
+### ❌ Usar `fileUrl` como URL absoluta
 
-// Correto — use direto como src em img/iframe ou baixe como blob
-const response = await api.get(`/attachments/${id}`, { responseType: 'blob' })
-const objectUrl = URL.createObjectURL(response.data)
+```ts
+// Errado — fileUrl é um storage key interno, não URL pública
+<img src={attachment.fileUrl} />
+
+// Correto — passe pelo endpoint de serving
+<img src={`${API_BASE_URL}/attachments/${attachment.id}`} />
 ```
 
----
-
-## Tipos para adicionar ao contracts/types.ts
+### ❌ Confundir os campos dos dois endpoints de listagem
 
 ```ts
-// Attachment retornado por GET /attachments/patient/:patientId
-export interface PatientAttachmentItem {
-  id:         string
-  filename:   string
-  url:        string        // fileUrl do R2 (UUID) — não URL navegável
-  type:       string        // MIME type
-  size:       number        // bytes
-  uploadedAt: string        // ISO 8601
-}
+// GET /attachments/patient/:id retorna:
+attachment.url        // storage key
+attachment.size       // bytes
+attachment.type       // MIME type
 
-// Attachment retornado por GET /attachments (listagem paginada)
-export interface PaginatedAttachmentItem {
+// GET /attachments retorna:
+attachment.fileUrl    // storage key
+attachment.SizeInBytes // bytes (S maiúsculo!)
+attachment.contentType // MIME type
+
+// Normalize para um tipo interno único:
+interface NormalizedAttachment {
   id:          string
   filename:    string
-  fileUrl:     string        // fileUrl do R2 (UUID) — não URL navegável
-  contentType: string        // MIME type
-  SizeInBytes: number        // ⚠️ S maiúsculo
-  uploadedAt:  string        // ISO 8601
-  patient:     { firstName: string; lastName: string } | null
-}
-
-export interface AttachmentsMeta {
-  pageIndex:        number
-  totalCount:       number
-  perPage:          number  // fixo: 10
-  totalStorageSize: number  // bytes
-}
-
-// Resposta do POST /attachments
-export interface UploadAttachmentResponse {
-  attachmentId: string
-  url:          string  // mesmo que attachmentId
-}
-
-// Params de GET /attachments
-export type GetAllAttachmentsParams = {
-  page?:      number
-  filter?:    string
-  patientId?: string
-  from?:      string  // ISO 8601
-  to?:        string  // ISO 8601
+  storageKey:  string   // attachment.url ou attachment.fileUrl
+  mimeType:    string   // attachment.type ou attachment.contentType
+  sizeInBytes: number   // attachment.size ou attachment.SizeInBytes
+  uploadedAt:  Date
 }
 ```
 
 ---
 
-## Resumo dos endpoints
+## Fonte da verdade
 
-| Rota | Método | Auth | Resposta |
-|---|---|---|---|
-| `/attachments` | POST | 🔒 JWT (**⚠️ bug: guard ausente**) | `{ attachmentId, url }` |
-| `/attachments/:id` | GET | 🌐 Público | Stream binário |
-| `/attachments/:id` | DELETE | 🔒 JWT | `204 No Content` |
-| `/attachments/patient/:patientId` | GET | 🔒 JWT | `{ attachments: PatientAttachmentItem[] }` |
-| `/attachments` | GET | 🔒 JWT | `{ attachments: PaginatedAttachmentItem[], meta }` |
+Gerado de: `nestjs-mind-back` — branch `feat/patient-qrcode-registration`  
+Atualizado em: 2026-05-14
 
----
-
-## Status do backend
-
-| Problema | Impacto | Fix |
-|---|---|---|
-| `POST /attachments` sem `@UseGuards(JwtAuthGuard)` | **500 em qualquer upload** | Adicionar guard no controller |
-| `GET /attachments/:id` público | Qualquer pessoa pode baixar qualquer arquivo com o UUID | Adicionar guard se necessário |
-| `profileImageUrl` recebe `attachmentId` (não URL) no flow de AVATAR | Preview de avatar depende do `GET /attachments/:id` | Construir URL na exibição |
+Controllers de referência:
+- `src/infra/http/controllers/upload-attachment.controller.ts`
+- `src/infra/http/controllers/fetch-all-attachments.controller.ts`
+- `src/infra/http/controllers/fetch-patient-attachments.controller.ts`
+- `src/infra/http/controllers/get-attachment.controller.ts`
+- `src/infra/http/controllers/delete-attachment.controller.ts`
