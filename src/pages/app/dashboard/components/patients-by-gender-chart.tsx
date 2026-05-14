@@ -3,7 +3,6 @@
 import * as React from "react"
 import { Cell, Label, Pie, PieChart } from "recharts"
 import { useQuery } from "@tanstack/react-query"
-import { subDays, startOfDay, endOfDay } from "date-fns"
 import { Loader2, Users, AlertCircle, RefreshCcw } from "lucide-react"
 
 import {
@@ -40,33 +39,14 @@ const chartConfig = {
     patients: { label: "Pacientes" },
 } satisfies ChartConfig
 
-const PERIOD_DAYS: Record<DashboardPeriod, number> = {
-    '7d': 7,
-    '30d': 30,
-    '90d': 90,
-    'year': 365,
-}
-
 interface PatientsByGenderChartProps {
     period: DashboardPeriod
 }
 
-export const PatientsByGenderChart = React.memo(function PatientsByGenderChart({ period }: PatientsByGenderChartProps) {
-    const { startDateToFetch, endDateToFetch } = React.useMemo(() => {
-        const ref = new Date()
-        const days = PERIOD_DAYS[period]
-        return {
-            startDateToFetch: startOfDay(subDays(ref, days)),
-            endDateToFetch: endOfDay(ref),
-        }
-    }, [period])
-
+export const PatientsByGenderChart = React.memo(function PatientsByGenderChart({ period: _period }: PatientsByGenderChartProps) {
     const { data: rawData, isLoading, isError, refetch } = useQuery({
-        queryKey: ['dashboard', 'gender-stats', startDateToFetch, endDateToFetch],
-        queryFn: () => getPatientsByGender({
-            startDate: startDateToFetch.toISOString(),
-            endDate: endDateToFetch.toISOString()
-        }),
+        queryKey: ['dashboard', 'gender-stats'],
+        queryFn: () => getPatientsByGender(),
         staleTime: 5 * 60 * 1000,
         gcTime: 10 * 60 * 1000,
     })
