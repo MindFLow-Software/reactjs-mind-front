@@ -15,13 +15,19 @@ import type { PatientHTTP, Gender, AppointmentStatus } from '@/contracts/types'
 ```
 
 ### 2. `patient-get.md`
-Referência completa de todos os 14 endpoints GET relacionados a pacientes. Para cada endpoint há:
+Referência completa dos endpoints GET relacionados a pacientes. Para cada endpoint há:
 - Rota exata e método HTTP
 - Se exige JWT ou é público
 - Params (query, path) com tipos e defaults
 - Response shape tipada
 - Exemplo de implementação (service + React Query hook)
 - Erros esperados por status code
+
+### 3. `patient-mutations.md`
+Endpoints POST/PUT/PATCH/DELETE de pacientes (criar, editar, deletar, status, registro via link).
+
+### 4. `attachments.md`
+Todos os 5 endpoints de attachments: upload, listagem geral, listagem por paciente, serving do arquivo binário, e delete. Inclui armadilhas de `multipart/form-data`, inconsistências de nomenclatura entre endpoints e o fluxo completo de foto de perfil.
 
 ---
 
