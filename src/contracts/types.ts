@@ -152,16 +152,53 @@ export interface DashboardResponse {
 }
 
 // ---------------------------------------------------------------------------
-// Attachments — GET /attachments/patient/:patientId
+// Attachments
 // ---------------------------------------------------------------------------
 
+// POST /attachments — response
+export interface UploadAttachmentResponse {
+  attachmentId: string
+  url:          string  // mesmo valor que attachmentId (storage key)
+}
+
+// GET /attachments/patient/:patientId — items
+// ⚠️ Shape DIFERENTE de AttachmentListItem (GET /attachments paginado)
 export interface AttachmentItem {
   id:         string
   filename:   string
-  url:        string
-  type:       string
-  size:       number
-  uploadedAt: string
+  url:        string  // storage key — acesse via GET /attachments/:id
+  type:       string  // MIME type
+  size:       number  // bytes
+  uploadedAt: string  // ISO 8601
+}
+
+// GET /attachments (paginado) — items
+// ⚠️ Campos com nomes diferentes de AttachmentItem — inconsistência no backend
+export interface AttachmentListItem {
+  id:          string
+  filename:    string
+  fileUrl:     string        // storage key — acesse via GET /attachments/:id
+  contentType: string        // MIME type
+  SizeInBytes: number        // ⚠️ S maiúsculo — bug de nomenclatura no backend
+  uploadedAt:  string        // ISO 8601
+  patient:     { firstName: string; lastName: string } | null
+}
+
+// GET /attachments (paginado) — meta
+export interface AttachmentListMeta {
+  pageIndex:        number
+  totalCount:       number
+  perPage:          number  // fixo: 10
+  totalStorageSize: number
+}
+
+// GET /attachments — query params
+export type FetchAllAttachmentsParams = {
+  page?:      number
+  filter?:    string
+  patientId?: string
+  from?:      string  // ISO date
+  to?:        string  // ISO date
 }
 
 // ---------------------------------------------------------------------------
