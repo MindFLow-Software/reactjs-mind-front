@@ -1,13 +1,9 @@
-import { api } from "@/lib/axios"
+import { api } from '@/lib/axios'
+import type { RegistrationLinkInfo } from '@/contracts/types'
 
-interface GetInviteDetailsResponse {
-  psychologistName: string
-  psychologistId: string
-  // Você pode retornar mais dados aqui, como a foto do psicólogo
-}
+export type { RegistrationLinkInfo } from '@/contracts/types'
 
-export async function getInviteDetails(hash: string) {
-  const response = await api.get<GetInviteDetailsResponse>(`/invites/${hash}/validate`)
-
+export async function getInviteDetails(hash: string): Promise<RegistrationLinkInfo> {
+  const response = await api.get<RegistrationLinkInfo>(`/invites/${hash}`)
   return response.data
 }
