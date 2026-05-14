@@ -1,7 +1,7 @@
 import { api } from "@/lib/axios"
 
 export interface GetAmountPatientsCardResponse {
-  total: number
+  amount: number
 }
 
 export async function getAmountPatientsCard(): Promise<GetAmountPatientsCardResponse> {
