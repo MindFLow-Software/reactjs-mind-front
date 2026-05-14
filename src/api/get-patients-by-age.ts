@@ -1,11 +1,9 @@
-import { api } from "@/lib/axios"
+import { api } from '@/lib/axios'
+import type { AgeRangeItem } from '@/contracts/types'
 
-export interface PatientsByAgeResponse {
-    ageRange: string
-    patients: number
-}
+export type { AgeRangeItem } from '@/contracts/types'
 
-export async function getPatientsByAge(): Promise<PatientsByAgeResponse[]> {
-    const response = await api.get<PatientsByAgeResponse[]>("/patients/stats/age")
-    return response.data
+export async function getPatientsByAge(): Promise<AgeRangeItem[]> {
+  const response = await api.get<AgeRangeItem[]>('/patients/stats/age')
+  return response.data
 }

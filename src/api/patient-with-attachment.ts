@@ -1,22 +1,11 @@
-import { api } from "@/lib/axios"
+import { api } from '@/lib/axios'
+import type { PatientHTTP } from '@/contracts/types'
 
-// Interface que espelha exatamente o que o PatientPresenter envia
-export interface PatientWithAttachment {
-  id: string
-  name: string
-  firstName: string
-  lastName: string
-  profileImageUrl: string | null
-}
+export type { PatientHTTP } from '@/contracts/types'
 
-/**
- * Busca apenas os pacientes que possuem documentos vinculados.
- * Rota segura: /patients/filter/with-attachments
- */
-export async function getPatientsWithAttachments(): Promise<PatientWithAttachment[]> {
-  const response = await api.get<{ patients: PatientWithAttachment[] }>(
-    '/patients/filter/with-attachments'
+export async function getPatientsWithAttachments(): Promise<PatientHTTP[]> {
+  const response = await api.get<{ patients: PatientHTTP[] }>(
+    '/patients/filter/with-attachments',
   )
-  
   return response.data.patients
 }
