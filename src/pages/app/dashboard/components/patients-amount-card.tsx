@@ -60,7 +60,7 @@ export const PatientsAmountCard = memo(function PatientsAmountCard() {
             ) : (
                 <div className="mt-3">
                     <p className="text-4xl font-bold tabular-nums text-foreground">
-                        {(cardData?.total ?? 0).toLocaleString('pt-BR')}
+                        {(cardData?.amount ?? 0).toLocaleString('pt-BR')}
                     </p>
                     {delta !== null && delta > 0 && (
                         <div className="mt-2 flex items-center gap-1.5">

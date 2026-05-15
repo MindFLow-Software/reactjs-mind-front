@@ -5,54 +5,14 @@ import { useForm } from 'react-hook-form'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { usePatientFilters } from '@/hooks/use-patient-filters'
-import { cn } from '@/lib/utils'
 
 interface PatientsTableFiltersProps {
   totalCount: number
-  activeCount: number
-  inactiveCount: number
   isFetching?: boolean
 }
 
-type StatusTab = 'all' | 'active' | 'inactive'
-
-const TABS: {
-  value: StatusTab
-  label: string
-  dot?: string
-  on: string
-  off: string
-  hover: string
-}[] = [
-  {
-    value: 'all',
-    label: 'Todos',
-    on: 'bg-slate-100 text-slate-800 border-slate-200',
-    off: 'bg-background text-muted-foreground border-border',
-    hover: 'hover:border-slate-400',
-  },
-  {
-    value: 'active',
-    label: 'Ativos',
-    dot: 'bg-green-600',
-    on: 'bg-green-100 text-green-800 border-green-200',
-    off: 'bg-background text-muted-foreground border-border',
-    hover: 'hover:border-green-400',
-  },
-  {
-    value: 'inactive',
-    label: 'Inativos',
-    dot: 'bg-red-600',
-    on: 'bg-red-100 text-red-800 border-red-200',
-    off: 'bg-background text-muted-foreground border-border',
-    hover: 'hover:border-red-400',
-  },
-]
-
 export function PatientsTableFilters({
   totalCount,
-  activeCount,
-  inactiveCount,
   isFetching,
 }: PatientsTableFiltersProps) {
   const { filters, setFilters, clearFilters } = usePatientFilters()
@@ -88,13 +48,7 @@ export function PatientsTableFilters({
     setValue('filter', '')
   }
 
-  const tabCount = (tab: StatusTab) => {
-    if (tab === 'all') return totalCount
-    if (tab === 'active') return activeCount
-    return inactiveCount
-  }
-
-  const hasFilters = !!filters.filter || filters.status !== 'all'
+  const hasFilters = !!filters.filter
 
   return (
     <div className="flex flex-col gap-3">
@@ -125,33 +79,9 @@ export function PatientsTableFilters({
           )}
         </div>
 
-        {/* Status chips — outline pill */}
-        <div className="flex items-center gap-2">
-          {TABS.map((tab) => {
-            const selected = filters.status === tab.value
-            return (
-              <button
-                key={tab.value}
-                type="button"
-                onClick={() => setFilters({ status: tab.value })}
-                className={cn(
-                  'inline-flex items-center gap-1.5 rounded-full px-3 py-1 text-xs font-semibold border transition-all cursor-pointer',
-                  selected ? tab.on : cn(tab.off, tab.hover),
-                )}
-              >
-                {tab.dot && (
-                  <span
-                    className={cn('h-1.5 w-1.5 rounded-full shrink-0', tab.dot)}
-                  />
-                )}
-                {tab.label}
-                <span className="tabular-nums font-medium opacity-60">
-                  {tabCount(tab.value)}
-                </span>
-              </button>
-            )
-          })}
-        </div>
+        <span className="text-xs text-muted-foreground tabular-nums hidden sm:block">
+          {totalCount} paciente{totalCount !== 1 ? 's' : ''}
+        </span>
 
         <div className="flex items-center gap-2 sm:ml-auto">
           {hasFilters && (

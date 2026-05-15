@@ -18,14 +18,20 @@ export interface GetProfileResponse {
   bannerImageUrl: string | null
   crp: string | null
   createdAt: string
+  paymentId: string | null
+  planExpiresAt: Date | null
+  status: string
+  type: string
 }
 
 export async function getProfile(): Promise<GetProfileResponse> {
-  const response = await api.get('/psychologist/me')
-  
-  const { psychologist: raw } = response.data
+  const response = await api.get('/me')
 
-  const psychologist: GetProfileResponse = {
+  const {
+    authenticatedUser: raw
+  }: { authenticatedUser: GetProfileResponse } = response.data
+
+  const user: GetProfileResponse = {
     id: raw.id,
     firstName: raw.firstName,
     lastName: raw.lastName,
@@ -38,12 +44,16 @@ export async function getProfile(): Promise<GetProfileResponse> {
     expertise: raw.expertise,
     isActive: raw.isActive,
     crp: raw.crp,
-    profileImageUrl: raw.profileImageUrl || null,
-    bannerImageUrl: raw.bannerImageUrl || null,
+    profileImageUrl: raw.profileImageUrl ?? null,
+    bannerImageUrl: raw.bannerImageUrl ?? null,
     createdAt: raw.createdAt,
+    paymentId: raw?.paymentId ?? null,
+    planExpiresAt: raw?.planExpiresAt ? new Date(raw.planExpiresAt) : null,
+    status: raw.status,
+    type: raw.type,
   }
 
-  localStorage.setItem('user', JSON.stringify(psychologist))
+  localStorage.setItem('user', JSON.stringify(user))
 
-  return psychologist
+  return user
 }

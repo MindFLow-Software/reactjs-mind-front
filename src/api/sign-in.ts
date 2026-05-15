@@ -7,17 +7,26 @@ export interface SignInBody {
 
 export interface SignInResponse {
   message: string
+  accessToken?: string
+  token?: string
   user: {
     id: string
     email: string
+    role?: string | { name: string }
   }
 }
 
 export async function signIn({ email, password }: SignInBody) {
-  const response = await api.post<SignInResponse>('/session', { 
-    email, 
-    password 
+  const response = await api.post<SignInResponse>('/session', {
+    email,
+    password
   })
 
-  return response.data
+  const data = response.data
+  const token = data.accessToken ?? data.token
+  if (token) {
+    localStorage.setItem('token', token)
+  }
+
+  return data
 }

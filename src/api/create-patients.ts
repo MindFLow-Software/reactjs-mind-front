@@ -1,34 +1,23 @@
-import { api } from "@/lib/axios"
-import { format } from "date-fns"
-import type { Expertise, PatientRole } from "@/types/expertise"
-import type { Gender } from "@/types/enum-gender"
+import { api } from '@/lib/axios'
+import type { CreatePatientBody, CreatePatientResponse } from '@/types/patient'
 
-export interface RegisterPatientsBody {
-  firstName: string
-  lastName: string
-  phoneNumber?: string
-  profileImageUrl?: string
+export type { CreatePatientBody, CreatePatientResponse } from '@/types/patient'
+
+export interface CreatePatientsInput extends Omit<CreatePatientBody, 'dateOfBirth'> {
   dateOfBirth?: Date | string | null
-  cpf?: string
-  role?: PatientRole
-  gender?: Gender
-  expertise?: Expertise
-  isActive?: boolean
-  attachmentIds?: string[]
 }
 
-export async function registerPatients(data: RegisterPatientsBody) {
-  const formattedData = {
+export async function createPatients(data: CreatePatientsInput): Promise<CreatePatientResponse> {
+  const formattedData: CreatePatientBody = {
     ...data,
-    cpf: data.cpf || undefined,
+    cpf: data.cpf ? data.cpf.replace(/\D/g, '') : undefined,
     phoneNumber: data.phoneNumber || undefined,
-    
     dateOfBirth:
       data.dateOfBirth instanceof Date
-        ? format(data.dateOfBirth, "yyyy-MM-dd")
+        ? data.dateOfBirth.toISOString()
         : data.dateOfBirth || undefined,
   }
 
-  const response = await api.post("/patient", formattedData)
+  const response = await api.post<CreatePatientResponse>('/patient', formattedData)
   return response.data
 }

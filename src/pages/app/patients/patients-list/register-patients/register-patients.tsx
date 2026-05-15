@@ -1,4 +1,4 @@
-import { useState, useRef } from "react"
+import { useState, useRef, useEffect } from "react"
 import { useForm, Controller } from "react-hook-form"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { z } from "zod"
@@ -23,8 +23,9 @@ import { Calendar } from "@/components/ui/calendar"
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover"
 import { Label } from "@/components/ui/label"
 
-import { registerPatients } from "@/api/create-patients"
+import { createPatients } from "@/api/create-patients"
 import { updatePatients } from "@/api/upadate-patient"
+import { api } from "@/lib/axios"
 import { cn } from "@/lib/utils"
 
 import { UploadZone } from "./upload-zone"
@@ -168,6 +169,8 @@ function GenderButtonGroup({
 }
 
 // ── Avatar upload (inline, matching design) ────────────────────────────────
+const UUID_REGEX = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i
+
 function AvatarUploadRow({
     onFileSelect,
     defaultValue,
@@ -176,7 +179,24 @@ function AvatarUploadRow({
     defaultValue?: string | null
 }) {
     const fileInputRef = useRef<HTMLInputElement>(null)
-    const [preview, setPreview] = useState<string | null>(null)
+    const [preview, setPreview]     = useState<string | null>(null)
+    const [isLoading, setIsLoading] = useState(false)
+
+    useEffect(() => {
+        if (!defaultValue) { setPreview(null); return }
+        if (defaultValue.startsWith('data:')) { setPreview(defaultValue); return }
+        if (!UUID_REGEX.test(defaultValue)) { setPreview(null); return }
+
+        let objectUrl: string | null = null
+        setIsLoading(true)
+
+        api.get(`/attachments/${defaultValue}`, { responseType: 'blob' })
+            .then((res) => { objectUrl = URL.createObjectURL(res.data); setPreview(objectUrl) })
+            .catch(() => setPreview(null))
+            .finally(() => setIsLoading(false))
+
+        return () => { if (objectUrl) URL.revokeObjectURL(objectUrl) }
+    }, [defaultValue])
 
     function handleFile(file: File) {
         const url = URL.createObjectURL(file)
@@ -190,27 +210,29 @@ function AvatarUploadRow({
         if (fileInputRef.current) fileInputRef.current.value = ""
     }
 
-    const imgSrc = preview ?? (defaultValue?.startsWith("data:") ? defaultValue : null)
-
     return (
         <div className="flex items-center gap-4">
             <div
-                onClick={() => fileInputRef.current?.click()}
+                onClick={() => !isLoading && fileInputRef.current?.click()}
                 className={cn(
                     "relative flex h-14 w-14 shrink-0 cursor-pointer items-center justify-center rounded-full transition-colors",
-                    imgSrc
+                    preview
                         ? "bg-transparent"
                         : "bg-blue-100 dark:bg-blue-900/30 hover:bg-blue-200 dark:hover:bg-blue-800/40"
                 )}
             >
-                {imgSrc ? (
-                    <img src={imgSrc} alt="Foto" className="h-full w-full rounded-full object-cover" />
+                {isLoading ? (
+                    <Loader2 className="h-5 w-5 animate-spin text-blue-500" />
+                ) : preview ? (
+                    <img src={preview} alt="Foto" className="h-full w-full rounded-full object-cover" />
                 ) : (
                     <UserRound className="h-7 w-7 text-blue-500" />
                 )}
-                <div className="absolute inset-0 flex items-center justify-center rounded-full bg-black/30 opacity-0 transition-opacity hover:opacity-100">
-                    <Camera className="h-4 w-4 text-white" />
-                </div>
+                {!isLoading && (
+                    <div className="absolute inset-0 flex items-center justify-center rounded-full bg-black/30 opacity-0 transition-opacity hover:opacity-100">
+                        <Camera className="h-4 w-4 text-white" />
+                    </div>
+                )}
             </div>
 
             <div className="flex flex-col gap-1">
@@ -224,7 +246,7 @@ function AvatarUploadRow({
                     >
                         Enviar foto
                     </button>
-                    {imgSrc && (
+                    {preview && (
                         <>
                             <span className="text-muted-foreground/40">·</span>
                             <button
@@ -323,7 +345,7 @@ export function RegisterPatients({ patient, onSuccess }: RegisterPatientsProps) 
     })
 
     const { mutateAsync: savePatientFn, isPending } = useMutation({
-        mutationFn: (data: any) => isEditMode ? updatePatients(data) : registerPatients(data),
+        mutationFn: (data: any) => isEditMode ? updatePatients(data) : createPatients(data),
     })
 
     async function handleNext() {
@@ -348,9 +370,6 @@ export function RegisterPatients({ patient, onSuccess }: RegisterPatientsProps) 
                 dateOfBirth: data.dateOfBirth || undefined,
                 cpf:         data.cpf ? data.cpf.replace(/\D/g, "") : undefined,
                 gender:      data.gender as any,
-                role:        "PATIENT" as any,
-                isActive:    true,
-                expertise:   "OTHER" as any,
             })
 
             const targetId = isEditMode ? patient.id : (patientResponse?.id || patientResponse?.patientId)
@@ -374,7 +393,7 @@ export function RegisterPatients({ patient, onSuccess }: RegisterPatientsProps) 
         } catch (error) {
             console.error(error)
             let msg = "Erro ao salvar. Verifique a conexão e os arquivos."
-            if (error instanceof AxiosError) msg = error.response?.data?.message || msg
+            if (error instanceof AxiosError) msg = error.message || msg
             toast.error(msg)
         } finally {
             setIsUploading(false)

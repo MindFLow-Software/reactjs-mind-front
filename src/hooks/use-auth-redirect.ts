@@ -11,19 +11,19 @@ export function useAuthRedirect(): { isChecking: boolean } {
 
     async function checkAuthentication() {
       try {
-        const response = await api.get('/psychologist/me')
-        const psychologist = response.data?.psychologist
+        const response = await api.get('/me')
+        const user = response.data?.authenticatedUser
 
         if (!isMounted) return
 
-        if (psychologist) {
+        if (user) {
           localStorage.setItem('isAuthenticated', 'true')
-          localStorage.setItem('user', JSON.stringify(psychologist))
+          localStorage.setItem('user', JSON.stringify(user))
         }
 
-        const roleValue = typeof psychologist?.role === 'object' && psychologist?.role !== null
-          ? psychologist.role.name
-          : psychologist?.role
+        const roleValue = typeof user?.role === 'object' && user?.role !== null
+          ? user.role.name
+          : user?.role
         const role = String(roleValue ?? '').trim().toUpperCase()
 
         navigate(role === 'SUPER_ADMIN' ? '/admin-dashboard' : '/dashboard', { replace: true })

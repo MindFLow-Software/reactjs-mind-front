@@ -84,7 +84,7 @@ export const SignInForm = memo(function SignInForm({
         if (error?.response?.status === 401) {
           toast.error("Credenciais inválidas. Verifique seu e-mail e senha.")
         } else {
-          toast.error(error?.response?.data?.message || "Ocorreu um erro inesperado.")
+          toast.error(error?.message || "Ocorreu um erro inesperado.")
         }
       }
     },

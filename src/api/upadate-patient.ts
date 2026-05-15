@@ -1,37 +1,29 @@
-import { api } from "@/lib/axios"
-import { format } from "date-fns"
-import type { Gender } from "@/types/enum-gender"
+import { api } from '@/lib/axios'
+import { format } from 'date-fns'
+import type { UpdatePatientBody } from '@/types/patient'
 
-export interface UpdatePatientData {
-    id: string
-    firstName?: string
-    lastName?: string
-    phoneNumber?: string
-    profileImageUrl?: string
-    dateOfBirth?: Date | string | null
-    cpf?: string
-    gender?: Gender
-    isActive?: boolean
-    attachmentIds?: string[]
+export type { UpdatePatientBody } from '@/types/patient'
+
+export interface UpdatePatientData extends Omit<UpdatePatientBody, 'dateOfBirth'> {
+  id: string
+  dateOfBirth?: Date | string
 }
 
 export async function updatePatients({ id, ...data }: UpdatePatientData) {
-    const formattedData = {
-        ...data,
-        dateOfBirth:
-            data.dateOfBirth instanceof Date
-                ? format(data.dateOfBirth, "yyyy-MM-dd")
-                : data.dateOfBirth || undefined,
-        cpf: data.cpf || undefined,
-        phoneNumber: data.phoneNumber || undefined,
-    }
+  const formattedData: UpdatePatientBody = {
+    ...data,
+    dateOfBirth:
+      data.dateOfBirth instanceof Date
+        ? format(data.dateOfBirth, 'yyyy-MM-dd')
+        : data.dateOfBirth || undefined,
+    cpf: data.cpf || undefined,
+    phoneNumber: data.phoneNumber || undefined,
+  }
 
-    const payload = Object.fromEntries(
-        Object.entries(formattedData).filter(
-            ([_, value]) => value !== undefined && value !== null
-        )
-    )
+  const payload = Object.fromEntries(
+    Object.entries(formattedData).filter(([, value]) => value !== undefined && value !== null),
+  )
 
-    const response = await api.put(`/patient/${id}`, payload)
-    return response.data
+  const response = await api.put(`/patients/${id}`, payload)
+  return response.data
 }

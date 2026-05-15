@@ -3,7 +3,6 @@ import { format, formatDistanceToNow } from 'date-fns'
 import { ptBR } from 'date-fns/locale'
 import {
   Archive,
-  ArchiveRestore,
   CalendarDays,
   CalendarPlus,
   ClipboardList,
@@ -33,7 +32,6 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu'
-import { StatusBadge } from '@/components/ui/status-badge'
 import { TableCell, TableRow } from '@/components/ui/table'
 import {
   Tooltip,
@@ -96,14 +94,13 @@ export const PatientsTableRow = memo(function PatientsTableRow({
     dateOfBirth,
     gender,
     profileImageUrl,
-    isActive,
     lastSessionAt,
   } = patient
 
   const fullName = `${firstName} ${lastName}`.trim()
 
   const { mutateAsync: toggleStatusFn, isPending: isUpdating } = useMutation({
-    mutationFn: () => deletePatients(id, !isActive),
+    mutationFn: () => deletePatients(id),
     onSuccess: async () => {
       await Promise.all([
         queryClient.invalidateQueries({ queryKey: ['patients'] }),
@@ -144,12 +141,7 @@ export const PatientsTableRow = memo(function PatientsTableRow({
 
   return (
     <TooltipProvider delayDuration={200}>
-      <TableRow
-        className={cn(
-          'group hover:bg-muted/40 transition-colors',
-          !isActive && 'opacity-60 bg-muted/20',
-        )}
-      >
+      <TableRow className="group hover:bg-muted/40 transition-colors">
         {/* Checkbox */}
         <TableCell className="w-[44px] pl-4">
           <Checkbox
@@ -176,11 +168,6 @@ export const PatientsTableRow = memo(function PatientsTableRow({
               </span>
             </div>
           </div>
-        </TableCell>
-
-        {/* Status */}
-        <TableCell className="w-[110px]">
-          <StatusBadge status={isActive ? 'active' : 'inactive'} />
         </TableCell>
 
         {/* Contato: telefone + email */}
@@ -326,15 +313,7 @@ export const PatientsTableRow = memo(function PatientsTableRow({
                   onSelect={handleOpenDelete}
                   className="cursor-pointer text-destructive focus:text-destructive"
                 >
-                  {isActive ? (
-                    <>
-                      <Archive className="mr-2 h-4 w-4" /> Arquivar
-                    </>
-                  ) : (
-                    <>
-                      <ArchiveRestore className="mr-2 h-4 w-4" /> Desarquivar
-                    </>
-                  )}
+                  <Archive className="mr-2 h-4 w-4" /> Remover paciente
                 </DropdownMenuItem>
               </DropdownMenuContent>
             </DropdownMenu>
@@ -359,10 +338,9 @@ export const PatientsTableRow = memo(function PatientsTableRow({
           {isDeleteOpen && (
             <DeletePatientDialog
               fullName={fullName}
-              isActive={isActive}
               isPending={isUpdating}
               onClose={() => setIsDeleteOpen(false)}
-              onInactivate={async () => {
+              onConfirm={async () => {
                 await toggleStatusFn()
                 setIsDeleteOpen(false)
               }}

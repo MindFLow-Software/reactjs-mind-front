@@ -93,7 +93,7 @@ export function GoogleOAuthComplete() {
         toast.error("Link de cadastro expirado. Tente novamente com o Google.")
         navigate("/sign-in", { replace: true })
       } else {
-        toast.error(error?.response?.data?.message ?? "Ocorreu um erro. Tente novamente.")
+        toast.error(error?.message ?? "Ocorreu um erro. Tente novamente.")
       }
     }
   }

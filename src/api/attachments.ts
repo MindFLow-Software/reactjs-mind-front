@@ -1,72 +1,65 @@
-import { api } from "@/lib/axios"
+import { api } from '@/lib/axios'
+import type {
+  AttachmentPatientItem,
+  AttachmentListItem,
+  AttachmentListMeta,
+  UploadAttachmentResponse,
+  FetchAllAttachmentsParams,
+} from '@/types/attachment'
 
-export interface Attachment {
-  id: string
-  filename: string
-  fileUrl: string
-  contentType: string
-  SizeInBytes: number
-  uploadedAt: string
-  patient: {
-    firstName: string
-    lastName: string
-  } | null
+export type {
+  AttachmentPatientItem,
+  AttachmentListItem,
+  AttachmentListMeta,
+  UploadAttachmentResponse,
+} from '@/types/attachment'
+
+export type { AttachmentListItem as Attachment } from '@/types/attachment'
+
+export interface GetAllAttachmentsResponse {
+  attachments: AttachmentListItem[]
+  meta:        AttachmentListMeta
 }
 
-interface GetAttachmentsResponse {
-  attachments: Attachment[]
-  meta: {
-    pageIndex: number
-    totalCount: number
-    perPage: number
-    totalStorageSize: number
-  }
+export async function uploadAttachment(
+  file: File,
+  patientId: string,
+): Promise<UploadAttachmentResponse> {
+  const formData = new FormData()
+  formData.append('file', file)
+  formData.append('patientId', patientId)
+
+  const { data } = await api.post<UploadAttachmentResponse>('/attachments', formData)
+  return data
+}
+
+export async function uploadAvatar(
+  file: File,
+  patientId: string,
+): Promise<UploadAttachmentResponse> {
+  const formData = new FormData()
+  formData.append('file', file)
+  formData.append('patientId', patientId)
+  formData.append('type', 'AVATAR')
+
+  const { data } = await api.post<UploadAttachmentResponse>('/attachments', formData)
+  return data
+}
+
+export async function getPatientAttachments(patientId: string): Promise<AttachmentPatientItem[]> {
+  const { data } = await api.get<{ attachments: AttachmentPatientItem[] }>(
+    `/attachments/patient/${patientId}`,
+  )
+  return data.attachments
 }
 
 export async function getAllAttachments(
-  pageIndex: number,
-  search?: string,
-  patientId?: string,
-  from?: Date,
-  to?: Date
-): Promise<GetAttachmentsResponse> {
-  const response = await api.get<GetAttachmentsResponse>("/attachments", {
-    params: {
-      page: pageIndex,
-      filter: search,
-      patientId: patientId === 'all' ? undefined : patientId,
-      from: from?.toISOString(),
-      to: to?.toISOString(),
-    }
-  })
-  return response.data
+  params: FetchAllAttachmentsParams,
+): Promise<GetAllAttachmentsResponse> {
+  const { data } = await api.get<GetAllAttachmentsResponse>('/attachments', { params })
+  return data
 }
 
-export async function getPatientAttachments(patientId: string) {
-  const response = await api.get<{ attachments: Attachment[] }>(`/attachments/patient/${patientId}`)
-  return response.data.attachments
-}
-
-export async function deleteAttachment(id: string) {
+export async function deleteAttachment(id: string): Promise<void> {
   await api.delete(`/attachments/${id}`)
-}
-
-async function uploadFile(file: File, patientId: string, type: 'DOCUMENT' | 'AVATAR') {
-  const formData = new FormData()
-
-  formData.append('patientId', patientId)
-  formData.append('type', type)
-  formData.append('file', file)
-
-  const response = await api.post("/attachments", formData)
-
-  return response.data
-}
-
-export async function uploadAttachment(file: File, patientId: string) {
-  return uploadFile(file, patientId, 'DOCUMENT')
-}
-
-export async function uploadAvatar(file: File, patientId: string) {
-  return uploadFile(file, patientId, 'AVATAR')
 }

@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useState } from "react"
 import { Helmet } from "react-helmet-async"
 import { useQuery } from "@tanstack/react-query"
-import { UsersRound, Activity, UserRoundPlus, QrCode, Clock, TrendingUp } from "lucide-react"
+import { UsersRound, UserRoundPlus, QrCode, Clock, TrendingUp } from "lucide-react"
 import { Dialog } from "@/components/ui/dialog"
 
 import { Pagination } from "@/components/pagination"
@@ -66,39 +66,16 @@ export function PatientsList() {
 
     // Main query
     const { data: result, isLoading, isFetching } = useQuery({
-        queryKey: ["patients", filters.pageIndex, filters.filter, filters.status, filters.sortBy, filters.order],
+        queryKey: ["patients", filters.pageIndex, filters.filter],
         queryFn: () => getPatients({
             pageIndex: filters.pageIndex,
             perPage:   filters.perPage,
             filter:    filters.filter,
-            status:    filters.status,
-            sortBy:    filters.sortBy,
-            order:     filters.order,
         }),
         staleTime: 30_000,
         gcTime: 300_000,
         refetchOnWindowFocus: true,
         placeholderData: (prev) => prev,
-    })
-
-    // Lightweight count queries — keys under ["patients"] so any patients mutation invalidates them too
-    const { data: totalData, isLoading: loadingTotal } = useQuery({
-        queryKey: ["patients", "count", "all"],
-        queryFn: () => getPatients({ pageIndex: 0, perPage: 1 }),
-        staleTime: 30_000,
-        gcTime: 300_000,
-    })
-    const { data: activeData } = useQuery({
-        queryKey: ["patients", "count", "active"],
-        queryFn: () => getPatients({ pageIndex: 0, perPage: 1, status: "active" }),
-        staleTime: 30_000,
-        gcTime: 300_000,
-    })
-    const { data: inactiveData } = useQuery({
-        queryKey: ["patients", "count", "inactive"],
-        queryFn: () => getPatients({ pageIndex: 0, perPage: 1, status: "inactive" }),
-        staleTime: 30_000,
-        gcTime: 300_000,
     })
 
     const patients = useMemo(() => result?.patients ?? [], [result])
@@ -108,11 +85,10 @@ export function PatientsList() {
         totalCount: 0,
     }, [result, filters])
 
-    const totalCount    = totalData?.meta.totalCount    ?? 0
-    const activeCount   = activeData?.meta.totalCount   ?? 0
-    const inactiveCount = inactiveData?.meta.totalCount ?? 0
+    const totalCount = meta.totalCount
+    const loadingTotal = isLoading
 
-    const hasActiveFilters = !!filters.filter || filters.status !== "all"
+    const hasActiveFilters = !!filters.filter
 
     const headerRight = (
         <div className="flex items-center gap-2">
@@ -165,12 +141,6 @@ export function PatientsList() {
                         isLoading={loadingTotal}
                     />
                     <MetricCard
-                        icon={<Activity className="h-5 w-5 text-emerald-600" />}
-                        iconBg="bg-emerald-500/10"
-                        value={activeCount}
-                        label="Ativos"
-                    />
-                    <MetricCard
                         icon={<UserRoundPlus className="h-5 w-5 text-amber-600" />}
                         iconBg="bg-amber-500/10"
                         value="—"
@@ -178,10 +148,11 @@ export function PatientsList() {
                         sub="em breve"
                     />
                     <MetricCard
-                        icon={<Clock className="h-5 w-5 text-red-500" />}
-                        iconBg="bg-red-500/10"
-                        value={inactiveCount}
-                        label="Inativos"
+                        icon={<Clock className="h-5 w-5 text-blue-400" />}
+                        iconBg="bg-blue-400/10"
+                        value="—"
+                        label="Última sessão"
+                        sub="em breve"
                     />
                 </div>
 
@@ -193,8 +164,6 @@ export function PatientsList() {
                         toolbar={
                             <PatientsTableFilters
                                 totalCount={totalCount}
-                                activeCount={activeCount}
-                                inactiveCount={inactiveCount}
                                 isFetching={isFetching}
                             />
                         }

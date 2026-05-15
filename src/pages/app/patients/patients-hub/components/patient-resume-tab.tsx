@@ -7,7 +7,7 @@ import { MetricCard } from "./metric-card"
 interface PatientResumeTabProps {
     meta: {
         totalCount: number
-        averageDuration: number
+        averageDuration: number | null
     }
 }
 

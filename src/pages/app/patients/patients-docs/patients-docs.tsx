@@ -43,13 +43,13 @@ export function PatientDocuments() {
 
     const { data: result, isLoading, isError } = useQuery({
         queryKey: ["all-attachments", pageIndex, debouncedSearch, patientId, date],
-        queryFn: () => getAllAttachments(
-            pageIndex,
-            debouncedSearch,
-            patientId,
-            date?.from,
-            date?.to
-        ),
+        queryFn: () => getAllAttachments({
+            page:      pageIndex,
+            filter:    debouncedSearch || undefined,
+            patientId: patientId === 'all' ? undefined : patientId,
+            from:      date?.from?.toISOString(),
+            to:        date?.to?.toISOString(),
+        }),
         staleTime: 1000 * 60 * 5,
         placeholderData: (previousData) => previousData,
     })

@@ -1,6 +1,6 @@
 "use client"
 
-import { Users, CheckCircle2, XCircle, VenusAndMars, Mars, Venus, History, ArrowDownWideNarrow, ArrowUpNarrowWide, CalendarDays, ClockArrowUp, ClockArrowDown } from "lucide-react"
+import { XCircle, VenusAndMars, Mars, Venus, History, ClockArrowUp, ClockArrowDown } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import {
     Select,
@@ -14,14 +14,10 @@ import { PatientsSearchInput } from "../../components/patients-search-input"
 interface PatientsRecordsTableFiltersProps {
     search: string
     onSearchChange: (value: string) => void
-    status: string
-    onStatusChange: (value: string) => void
     gender: string
     onGenderChange: (value: string) => void
-    order: string
-    onOrderChange: (value: string) => void
-    sessionVolume: string
-    onSessionVolumeChange: (value: string) => void
+    sessionOrder: "high" | "low" | "all"
+    onSessionOrderChange: (value: "high" | "low" | "all") => void
     onClearFilters: () => void
     isFetching?: boolean
 }
@@ -29,18 +25,14 @@ interface PatientsRecordsTableFiltersProps {
 export function PatientsRecordsTableFilters({
     search,
     onSearchChange,
-    status,
-    onStatusChange,
     gender,
     onGenderChange,
-    order,
-    onOrderChange,
-    sessionVolume,
-    onSessionVolumeChange,
+    sessionOrder,
+    onSessionOrderChange,
     onClearFilters,
 }: PatientsRecordsTableFiltersProps) {
 
-    const hasAnyFilter = search !== "" || status !== "all" || gender !== "all" || order !== "all" || sessionVolume !== "all"
+    const hasAnyFilter = search !== "" || gender !== "all" || sessionOrder !== "all"
 
     return (
         <div className="flex flex-col lg:flex-row gap-2 lg:items-center w-full overflow-x-auto lg:overflow-visible pb-2 lg:pb-0">
@@ -54,26 +46,6 @@ export function PatientsRecordsTableFilters({
                 />
 
                 <div className="flex flex-row gap-2 items-center">
-                    {/* Status */}
-                    <Select value={status} onValueChange={onStatusChange}>
-                        <SelectTrigger className="cursor-pointer h-9 min-w-[150px] w-auto bg-background border-muted-foreground/20 hover:border-primary/30 transition-all shadow-sm px-3 text-sm font-medium">
-                            <div className="flex items-center gap-2 whitespace-nowrap">
-                                <SelectValue placeholder="Status" />
-                            </div>
-                        </SelectTrigger>
-                        <SelectContent className="min-w-[200px]">
-                            <SelectItem value="all" className="cursor-pointer py-2.5">
-                                <div className="flex items-center gap-2 whitespace-nowrap"><Users className="h-4 w-4 text-slate-500" /><span>Todos Status</span></div>
-                            </SelectItem>
-                            <SelectItem value="active" className="cursor-pointer py-2.5">
-                                <div className="flex items-center gap-2 whitespace-nowrap"><CheckCircle2 className="h-4 w-4 text-emerald-500" /><span>Ativos</span></div>
-                            </SelectItem>
-                            <SelectItem value="inactive" className="cursor-pointer py-2.5">
-                                <div className="flex items-center gap-2 whitespace-nowrap"><XCircle className="h-4 w-4 text-rose-500" /><span>Inativos</span></div>
-                            </SelectItem>
-                        </SelectContent>
-                    </Select>
-
                     {/* Gênero */}
                     <Select value={gender} onValueChange={onGenderChange}>
                         <SelectTrigger className="cursor-pointer h-9 min-w-[150px] w-auto bg-background border-muted-foreground/20 hover:border-primary/30 transition-all shadow-sm px-3 text-sm font-medium">
@@ -94,28 +66,8 @@ export function PatientsRecordsTableFilters({
                         </SelectContent>
                     </Select>
 
-                    {/* Cadastro */}
-                    <Select value={order} onValueChange={onOrderChange}>
-                        <SelectTrigger className="cursor-pointer h-9 min-w-[150px] w-auto bg-background border-muted-foreground/20 hover:border-primary/30 transition-all shadow-sm px-3 text-sm font-medium">
-                            <div className="flex items-center gap-2 whitespace-nowrap">
-                                <SelectValue placeholder="Cadastro" />
-                            </div>
-                        </SelectTrigger>
-                        <SelectContent className="min-w-[200px]">
-                            <SelectItem value="all" className="cursor-pointer py-2.5">
-                                <div className="flex items-center gap-2 whitespace-nowrap"><CalendarDays className="h-4 w-4 text-slate-500" /><span>Data Cadastro</span></div>
-                            </SelectItem>
-                            <SelectItem value="desc" className="cursor-pointer py-2.5">
-                                <div className="flex items-center gap-2 whitespace-nowrap"><ArrowUpNarrowWide className="h-4 w-4 text-emerald-500" /><span>Mais Recentes</span></div>
-                            </SelectItem>
-                            <SelectItem value="asc" className="cursor-pointer py-2.5">
-                                <div className="flex items-center gap-2 whitespace-nowrap"><ArrowDownWideNarrow className="h-4 w-4 text-rose-500" /><span>Mais Antigos</span></div>
-                            </SelectItem>
-                        </SelectContent>
-                    </Select>
-
                     {/* Sessões */}
-                    <Select value={sessionVolume} onValueChange={onSessionVolumeChange}>
+                    <Select value={sessionOrder} onValueChange={(v) => onSessionOrderChange(v as "high" | "low" | "all")}>
                         <SelectTrigger className="cursor-pointer h-9 min-w-[150px] w-auto bg-background border-muted-foreground/20 hover:border-primary/30 transition-all shadow-sm px-3 text-sm font-medium">
                             <div className="flex items-center gap-2 whitespace-nowrap">
                                 <SelectValue placeholder="Sessões" />

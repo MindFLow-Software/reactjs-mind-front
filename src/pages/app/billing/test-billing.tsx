@@ -27,7 +27,7 @@ export function TestBilling() {
             console.error("Erro no teste:", error);
 
             alert(
-                error?.response?.data?.message ??
+                error?.message ??
                 "Erro ao criar cobrança"
             );
         }
