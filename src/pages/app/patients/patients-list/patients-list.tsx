@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useState } from "react"
 import { Helmet } from "react-helmet-async"
 import { useQuery } from "@tanstack/react-query"
-import { UsersRound, Activity, UserRoundPlus, QrCode, Clock, TrendingUp } from "lucide-react"
+import { UsersRound, UserRoundPlus, QrCode, Clock, TrendingUp } from "lucide-react"
 import { Dialog } from "@/components/ui/dialog"
 
 import { Pagination } from "@/components/pagination"

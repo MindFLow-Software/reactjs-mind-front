@@ -5,7 +5,6 @@ import { useForm } from 'react-hook-form'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { usePatientFilters } from '@/hooks/use-patient-filters'
-import { cn } from '@/lib/utils'
 
 interface PatientsTableFiltersProps {
   totalCount: number

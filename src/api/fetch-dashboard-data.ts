@@ -1,7 +1,7 @@
 import { api } from '@/lib/axios'
-import type { DashboardResponse, GetDashboardParams } from '@/contracts/types'
+import type { DashboardResponse, GetDashboardParams } from '@/types/dashboard'
 
-export type { DashboardResponse } from '@/contracts/types'
+export type { DashboardResponse } from '@/types/dashboard'
 
 export interface FetchDashboardParams {
   startDate?: Date

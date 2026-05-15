@@ -1,14 +1,15 @@
-// @_types/expertise.ts
-export type Expertise =
-  | "OTHER"
-  | "SOCIAL"
-  | "INFANT"
-  | "CLINICAL"
-  | "JURIDICAL"
-  | "PSYCHOTHERAPIST"
-  | "NEUROPSYCHOLOGY";
+export const Expertise = {
+  OTHER:           'OTHER',
+  SOCIAL:          'SOCIAL',
+  INFANT:          'INFANT',
+  CLINICAL:        'CLINICAL',
+  JURIDICAL:       'JURIDICAL',
+  EDUCATIONAL:     'EDUCATIONAL',
+  ORGANIZATIONAL:  'ORGANIZATIONAL',
+  PSYCHOTHERAPIST: 'PSYCHOTHERAPIST',
+  NEUROPSYCHOLOGY: 'NEUROPSYCHOLOGY',
+} as const
+export type Expertise = (typeof Expertise)[keyof typeof Expertise]
 
-// @_types/psychologist-role.ts
-export type PsychologistRole = | "PSYCHOLOGIST" | "PATIENT";
-export type PatientRole = | "PATIENT";
-
+export type PsychologistRole = 'PSYCHOLOGIST' | 'PATIENT'
+export type PatientRole      = 'PATIENT'

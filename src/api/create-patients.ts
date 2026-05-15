@@ -1,9 +1,9 @@
 import { api } from '@/lib/axios'
-import type { CreatePatientBody, CreatePatientResponse } from '@/contracts/types'
+import type { CreatePatientBody, CreatePatientResponse } from '@/types/patient'
 
-export type { CreatePatientBody, CreatePatientResponse } from '@/contracts/types'
+export type { CreatePatientBody, CreatePatientResponse } from '@/types/patient'
 
-export interface CreatePatientsInput extends CreatePatientBody {
+export interface CreatePatientsInput extends Omit<CreatePatientBody, 'dateOfBirth'> {
   dateOfBirth?: Date | string | null
 }
 

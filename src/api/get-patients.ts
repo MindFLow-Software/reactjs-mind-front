@@ -1,7 +1,9 @@
 import { api } from '@/lib/axios'
-import type { PatientHTTP, PaginationMeta, FetchPatientsParams } from '@/contracts/types'
+import type { PatientHTTP, FetchPatientsParams } from '@/types/patient'
+import type { PaginationMeta } from '@/types/pagination'
 
-export type { PatientHTTP, FetchPatientsParams } from '@/contracts/types'
+export type { PatientHTTP, FetchPatientsParams } from '@/types/patient'
+export type Patient = PatientHTTP
 
 export interface GetPatientsFilters {
   pageIndex: number

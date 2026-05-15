@@ -3,7 +3,6 @@ import { format, formatDistanceToNow } from 'date-fns'
 import { ptBR } from 'date-fns/locale'
 import {
   Archive,
-  ArchiveRestore,
   CalendarDays,
   CalendarPlus,
   ClipboardList,
@@ -33,7 +32,6 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu'
-import { StatusBadge } from '@/components/ui/status-badge'
 import { TableCell, TableRow } from '@/components/ui/table'
 import {
   Tooltip,

@@ -5,16 +5,16 @@ import type {
   AttachmentListMeta,
   UploadAttachmentResponse,
   FetchAllAttachmentsParams,
-} from '@/contracts/types'
+} from '@/types/attachment'
 
 export type {
   AttachmentPatientItem,
   AttachmentListItem,
   AttachmentListMeta,
   UploadAttachmentResponse,
-} from '@/contracts/types'
+} from '@/types/attachment'
 
-export type { AttachmentListItem as Attachment } from '@/contracts/types'
+export type { AttachmentListItem as Attachment } from '@/types/attachment'
 
 export interface GetAllAttachmentsResponse {
   attachments: AttachmentListItem[]

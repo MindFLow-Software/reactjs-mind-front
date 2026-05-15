@@ -1,7 +1,7 @@
 import { api } from '@/lib/axios'
-import type { ScheduledAppointmentResponse } from '@/contracts/types'
+import type { ScheduledAppointmentResponse } from '@/types/invite'
 
-export type { ScheduledAppointmentResponse } from '@/contracts/types'
+export type { ScheduledAppointmentResponse } from '@/types/invite'
 
 export async function getScheduledAppointment(
   patientId: string,
