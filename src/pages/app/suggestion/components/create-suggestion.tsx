@@ -3,7 +3,6 @@
 import { useState } from "react"
 import { useForm } from "react-hook-form"
 import { zodResolver } from "@hookform/resolvers/zod"
-import * as z from "zod"
 import { Send, Loader2, AlertCircle, Lightbulb, FileText, Paperclip } from "lucide-react"
 import { toast } from "sonner"
 import { useQueryClient } from "@tanstack/react-query"
@@ -30,19 +29,10 @@ import { createSuggestion } from "@/api/create-suggestion"
 import { SuggestionAttachments } from "./suggestion-attachments"
 import { SuggestionSuccess } from "./suggestion-success-dialog"
 import { cn } from "@/lib/utils"
+import { createSuggestionSchema, type CreateSuggestionSchema } from "@/validators/suggestions"
 
-const suggestionSchema = z.object({
-    title: z.string()
-        .min(10, "O título deve ser descritivo (mín. 10 caracteres)")
-        .max(80, "Título muito longo"),
-    description: z.string()
-        .min(200, "Por favor, detalhe sua sugestão com pelo menos 200 caracteres"),
-    category: z.enum(["UI_UX", "SCHEDULING", "REPORTS", "PRIVACY_LGPD", "INTEGRATIONS", "OTHERS"], {
-        message: "Selecione a categoria da sua sugestão",
-    }),
-})
-
-type SuggestionSchema = z.infer<typeof suggestionSchema>
+const suggestionSchema = createSuggestionSchema
+type SuggestionSchema = CreateSuggestionSchema
 
 interface CreateSuggestionProps {
     onSuccess: () => void

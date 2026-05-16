@@ -2,8 +2,8 @@
 
 import { useForm } from "react-hook-form"
 import { zodResolver } from "@hookform/resolvers/zod"
-import * as z from "zod"
 import { Check, X, Loader2, Save, MessageSquare, Tag, FileText } from "lucide-react"
+
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
@@ -16,14 +16,10 @@ import {
     SelectValue,
 } from "@/components/ui/select"
 import { DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog"
+import { editSuggestionSchema, type EditSuggestionSchema } from "@/validators/suggestions"
 
-const editSchema = z.object({
-    title: z.string().min(5, "Título muito curto"),
-    category: z.string(),
-    description: z.string().min(10, "Descrição muito curta"),
-})
-
-type EditSchema = z.infer<typeof editSchema>
+const editSchema = editSuggestionSchema
+type EditSchema = EditSuggestionSchema
 
 interface EditSuggestionFormProps {
     item: any
