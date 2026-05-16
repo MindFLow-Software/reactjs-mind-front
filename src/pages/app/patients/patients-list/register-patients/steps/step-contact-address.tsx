@@ -76,7 +76,7 @@ export function StepContactAddress({
                                 id="email"
                                 type="email"
                                 placeholder="paciente@email.com"
-                                autoComplete="email"
+                                autoComplete="off"
                                 className={cn(inputCls, "pl-9", errors.email && "border-red-600")}
                             />
                         </div>
