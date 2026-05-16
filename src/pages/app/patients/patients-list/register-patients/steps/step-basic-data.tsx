@@ -8,6 +8,7 @@ import { cn } from "@/lib/utils"
 import { formatCPF } from "@/utils/formatCPF"
 import { formatAGE } from "@/utils/formatAGE"
 
+import type { PatientHTTP } from "@/types/patient"
 import type { PatientFormData } from "@/validators/patients"
 import { GENDER_OPTIONS } from "../constants"
 import { inputCls } from "../form-styles"
@@ -30,7 +31,7 @@ interface StepBasicDataProps {
     birthInput:     string
     onBirthChange:  (e: ChangeEvent<HTMLInputElement>, fieldOnChange: (v: Date | null) => void) => void
     onAvatarSelect: (f: File | null) => void
-    patient?:       Record<string, unknown>
+    patient?:       PatientHTTP
 }
 
 export function StepBasicData({
@@ -40,14 +41,14 @@ export function StepBasicData({
 }: StepBasicDataProps) {
     const age      = calcAge(birthInput)
     const initials = patient
-        ? `${String(patient.firstName ?? "")[0] ?? ""}${String(patient.lastName ?? "")[0] ?? ""}`.toUpperCase()
+        ? `${patient.firstName[0] ?? ""}${patient.lastName[0] ?? ""}`.toUpperCase()
         : undefined
 
     return (
         <div className="space-y-5">
             <PatientAvatarUpload
                 onFileSelect={onAvatarSelect}
-                defaultValue={patient?.profileImageUrl as string | null | undefined}
+                defaultValue={patient?.profileImageUrl}
                 initials={initials}
             />
 
