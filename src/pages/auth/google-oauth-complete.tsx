@@ -2,7 +2,6 @@ import { useEffect, useState } from "react"
 import { useNavigate, useSearchParams } from "react-router-dom"
 import { useForm, Controller } from "react-hook-form"
 import { zodResolver } from "@hookform/resolvers/zod"
-import { z } from "zod"
 import { toast } from "sonner"
 import { Helmet } from "react-helmet-async"
 import { Loader2, Mars, Venus, Users } from "lucide-react"
@@ -25,19 +24,10 @@ import { EXPERTISE_TRANSLATIONS } from "@/utils/mappers"
 import { cn } from "@/lib/utils"
 import type { Expertise } from "@/types/expertise"
 import type { Gender } from "@/types/enum-gender"
+import { completeRegistrationSchema, type CompleteRegistrationSchema } from "@/validators/auth"
 
-const completeSchema = z.object({
-  crp: z.string().min(4, "CRP é obrigatório"),
-  expertise: z.enum(
-    ["CLINICAL", "SOCIAL", "INFANT", "JURIDICAL", "PSYCHOTHERAPIST", "NEUROPSYCHOLOGY", "OTHER"],
-    { error: "Selecione uma especialidade" }
-  ),
-  gender: z.enum(["MASCULINE", "FEMININE", "OTHER"], {
-    error: "Selecione um gênero",
-  }),
-})
-
-type CompleteSchema = z.infer<typeof completeSchema>
+type CompleteSchema = CompleteRegistrationSchema
+const completeSchema = completeRegistrationSchema
 
 const GENDER_OPTIONS: { value: Gender; label: string; icon: React.ReactNode }[] = [
   { value: "FEMININE",  label: "Feminino",            icon: <Venus  className="h-4 w-4 text-rose-500"   /> },
