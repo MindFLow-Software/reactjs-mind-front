@@ -20,6 +20,7 @@ import { memo, useCallback, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 
 import { deletePatients } from '@/api/delete-patients'
+import { togglePatientStatus } from '@/api/toggle-patient-status'
 import type { Patient } from '@/api/get-patients'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
@@ -95,6 +96,7 @@ export const PatientsTableRow = memo(function PatientsTableRow({
     gender,
     profileImageUrl,
     lastSessionAt,
+    isActive,
   } = patient
 
   const fullName = `${firstName} ${lastName}`.trim()
@@ -106,6 +108,13 @@ export const PatientsTableRow = memo(function PatientsTableRow({
         queryClient.invalidateQueries({ queryKey: ['patients'] }),
         queryClient.invalidateQueries({ queryKey: ['patient-details', id] }),
       ])
+    },
+  })
+
+  const { mutate: handleToggleStatus, isPending: isTogglingStatus } = useMutation({
+    mutationFn: () => togglePatientStatus(id, !isActive),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['patients'] })
     },
   })
 
@@ -168,6 +177,36 @@ export const PatientsTableRow = memo(function PatientsTableRow({
               </span>
             </div>
           </div>
+        </TableCell>
+
+        {/* Status */}
+        <TableCell className="w-[120px]">
+          <Tooltip>
+            <TooltipTrigger asChild>
+              <button
+                type="button"
+                onClick={() => handleToggleStatus()}
+                disabled={isTogglingStatus}
+                className={cn(
+                  "flex items-center gap-1.5 h-6 px-2.5 rounded-full text-[11px] font-semibold transition-colors cursor-pointer",
+                  isTogglingStatus && "opacity-50 cursor-not-allowed",
+                  isActive
+                    ? "bg-emerald-100 text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-400 hover:bg-emerald-200 dark:hover:bg-emerald-900/50"
+                    : "bg-red-100 text-red-700 dark:bg-red-900/30 dark:text-red-400 hover:bg-red-200 dark:hover:bg-red-900/50",
+                )}
+                aria-label={isActive ? 'Desativar paciente' : 'Ativar paciente'}
+              >
+                <span className={cn(
+                  "h-1.5 w-1.5 rounded-full shrink-0",
+                  isActive ? "bg-emerald-500" : "bg-red-500",
+                )} />
+                {isActive ? 'Ativo' : 'Inativo'}
+              </button>
+            </TooltipTrigger>
+            <TooltipContent className="text-xs">
+              {isActive ? 'Clique para desativar' : 'Clique para ativar'}
+            </TooltipContent>
+          </Tooltip>
         </TableCell>
 
         {/* Contato: telefone + email */}

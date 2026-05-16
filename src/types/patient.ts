@@ -20,6 +20,7 @@ export interface PatientHTTP {
   profileImageUrl: string | null
   createdAt:       string
   lastSessionAt:   string | null
+  isActive:        boolean
 }
 
 export interface SessionItem {

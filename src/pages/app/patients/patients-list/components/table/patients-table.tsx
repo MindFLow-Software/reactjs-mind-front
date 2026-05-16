@@ -72,7 +72,7 @@ export function PatientsTable({
     onClearFilters,
     onRegister,
 }: PatientsTableProps) {
-    const colSpan = 7
+    const colSpan = 8
 
     return (
         <div className="rounded-xl border bg-background shadow-sm overflow-hidden">
@@ -90,6 +90,15 @@ export function PatientsTable({
                             sortOrder={sortOrder}
                             onSort={onSort}
                             className="min-w-[180px]"
+                        />
+
+                        <SortableHead
+                            column="status"
+                            label="Status"
+                            sortBy={sortBy}
+                            sortOrder={sortOrder}
+                            onSort={onSort}
+                            className="w-[120px]"
                         />
 
                         <SortableHead
