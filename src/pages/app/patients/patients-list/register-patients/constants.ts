@@ -12,7 +12,7 @@ export type StepId = 1 | 2 | 3 | 4
 export const GENDER_OPTIONS = [
     { value: "FEMININE",  label: "Feminino",                  icon: Venus, checkedCls: "border-pink-300 bg-pink-50 text-pink-700"   },
     { value: "MASCULINE", label: "Masculino",                 icon: Mars,  checkedCls: "border-blue-300 bg-blue-50 text-blue-700"   },
-    { value: "OTHER",     label: "Outro / Prefiro não dizer", icon: Users, checkedCls: "border-zinc-300 bg-zinc-100 text-zinc-600"  },
+    { value: "OTHER",     label: "Outro / Prefiro não dizer", icon: Users, checkedCls: "border-purple-300 bg-purple-50 text-purple-700"  },
 ] as const
 
 export const MODALITY_OPTIONS = [
