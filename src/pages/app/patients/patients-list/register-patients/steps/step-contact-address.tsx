@@ -44,7 +44,7 @@ export function StepContactAddress({
                 <div className="grid grid-cols-2 gap-x-3.5 gap-y-3">
                     <div>
                         <label className="mb-[5px] flex items-center gap-1 text-[12px] font-semibold text-slate-700">
-                            Celular <span className="text-red-600">*</span>
+                            Celular
                         </label>
                         <div className="relative">
                             <Phone className="pointer-events-none absolute left-3 top-1/2 size-[14px] -translate-y-1/2 text-slate-400" />

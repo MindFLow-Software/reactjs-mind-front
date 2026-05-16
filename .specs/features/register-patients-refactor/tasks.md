@@ -12,7 +12,7 @@ Rastreabilidade: [spec.md](spec.md) · [design.md](design.md)
 - [x] Atualizar `register-patients.tsx` para importar de `@/validators/patients`
 - [x] Atualizar `steps/step-basic-data.tsx` para importar de `@/validators/patients`
 - [x] Deletar `register-patients/schema.ts` (removido)
-- [ ] Verificar: `npx tsc --noEmit` → zero erros
+- [x] Verificar: `npx tsc --noEmit` → zero erros
 
 **Req cobertos:** RPR-06, RPR-07
 
@@ -34,7 +34,7 @@ feat(validators): centralize patient schema in src/validators/patients
 - [x] Mover sem alteração: `section-title.tsx`, `pill-radio.tsx`, `markdown-editor.tsx`, `patient-avatar-upload.tsx`, `delete-attachments-button.tsx`
 - [x] Atualizar imports em `register-patients.tsx` para apontar para `./steps/*`
 - [x] Raiz de `register-patients/` contém apenas: `register-patients.tsx`, `constants.ts`, `form-styles.ts`, `steps/`
-- [ ] Verificar: `npx tsc --noEmit` → zero erros
+- [x] Verificar: `npx tsc --noEmit` → zero erros
 
 **Req cobertos:** RPR-01, RPR-02
 
@@ -104,7 +104,7 @@ feat(register-patients): add drag-drop and new UI to upload-zone
 - [x] `selectedFiles` state mantido (staging antes do submit)
 - [ ] Teste manual (modo criação): step 4 exibe apenas dropzone, sem lista de documentos
 - [ ] Teste manual (modo edição): step 4 exibe lista de documentos + dropzone
-- [ ] Verificar: `npx tsc --noEmit` → zero erros
+- [x] Verificar: `npx tsc --noEmit` → zero erros
 
 **Req cobertos:** RPR-05
 
@@ -126,7 +126,7 @@ refactor(register-patients): simplify step 4 — remove attachment state from co
 - [x] Atualizar `complete-registration.tsx` para importar de `@/validators/auth`
 - [x] Atualizar `google-oauth-complete.tsx` para importar de `@/validators/auth`
 - [x] `completeRegistrationSchema` é definição única compartilhada entre as 2 páginas
-- [ ] Verificar: `npx tsc --noEmit` → zero erros
+- [x] Verificar: `npx tsc --noEmit` → zero erros
 
 **Req cobertos:** RPR-09, RPR-10
 
@@ -144,7 +144,7 @@ feat(validators): centralize auth schemas in src/validators/auth
 - [x] Criar `src/validators/suggestions.ts` exportando: `editSuggestionSchema`, `createSuggestionSchema` e seus tipos
 - [x] Atualizar `edit-suggestion-form.tsx` para importar de `@/validators/suggestions`
 - [x] Atualizar `create-suggestion.tsx` para importar de `@/validators/suggestions`
-- [ ] Verificar: `npx tsc --noEmit` → zero erros
+- [x] Verificar: `npx tsc --noEmit` → zero erros
 
 **Req cobertos:** RPR-11, RPR-12
 
@@ -159,8 +159,8 @@ feat(validators): centralize suggestion schemas in src/validators/suggestions
 
 **Critério de saída:** todos os itens abaixo passam antes de abrir PR.
 
-- [ ] `npx tsc --noEmit` → 0 erros
-- [ ] `grep -r "z\.object" src/pages` → 0 resultados (nenhum schema inline restante)
+- [x] `npx tsc --noEmit` → 0 erros
+- [x] `grep -r "z\.object" src/pages` → 0 resultados (nenhum schema inline restante)
 - [ ] Step 4 modo criação: abre modal "Novo paciente" → step 4 exibe apenas UploadZone
 - [ ] Step 4 modo edição: abre modal de edição → step 4 exibe AttachmentsList (grid 2 cols) + UploadZone
 - [ ] Drag-drop: arrastar arquivo → borda azul; soltar → aparece na lista com tamanho legível
@@ -188,4 +188,4 @@ feat(validators): centralize suggestion schemas in src/validators/suggestions
 | RPR-10 | 5 arquivos auth atualizados | 6 | ✅ impl |
 | RPR-11 | `src/validators/suggestions.ts` criado | 7 | ✅ impl |
 | RPR-12 | 2 arquivos sugestão atualizados | 7 | ✅ impl |
-| RPR-13 | `tsc --noEmit` zero erros | Gate | ⏳ pendente |
+| RPR-13 | `tsc --noEmit` zero erros | Gate | ✅ verificado |
