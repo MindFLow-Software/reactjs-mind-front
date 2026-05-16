@@ -41,9 +41,9 @@ export function PatientAvatarUpload({ onFileSelect, defaultValue, initials }: Pa
     }
 
     return (
-        <div className="mb-4 flex items-center gap-3.5 rounded-[8px] border border-slate-100 bg-slate-50 p-3">
+        <div className="mb-4 flex items-center gap-3.5 rounded-[8px] border border-border bg-muted/50 p-3">
             <div
-                className="group relative size-[60px] shrink-0 cursor-pointer overflow-hidden rounded-full border-2 border-white shadow-sm"
+                className="group relative size-[60px] shrink-0 cursor-pointer overflow-hidden rounded-full border-2 border-card shadow-sm"
                 style={{ background: preview ? undefined : "linear-gradient(135deg, #4e8ed3, #1858b0)" }}
                 onClick={() => !loading && inputRef.current?.click()}
             >
@@ -67,8 +67,8 @@ export function PatientAvatarUpload({ onFileSelect, defaultValue, initials }: Pa
             </div>
 
             <div className="flex flex-col gap-0.5">
-                <span className="text-[13px] font-semibold text-slate-800">Foto do paciente</span>
-                <span className="text-[11.5px] text-slate-500">JPG ou PNG · até 2 MB · opcional</span>
+                <span className="text-[13px] font-semibold text-foreground">Foto do paciente</span>
+                <span className="text-[11.5px] text-muted-foreground">JPG ou PNG · até 2 MB · opcional</span>
                 <div className="mt-0.5 flex items-center gap-2">
                     <button
                         type="button"
@@ -79,11 +79,11 @@ export function PatientAvatarUpload({ onFileSelect, defaultValue, initials }: Pa
                     </button>
                     {preview && (
                         <>
-                            <span className="text-slate-300">·</span>
+                            <span className="text-border">·</span>
                             <button
                                 type="button"
                                 onClick={handleRemove}
-                                className="cursor-pointer rounded px-2 py-1 text-[11.5px] font-semibold text-slate-500 transition-colors hover:text-slate-700"
+                                className="cursor-pointer rounded px-2 py-1 text-[11.5px] font-semibold text-muted-foreground transition-colors hover:text-foreground"
                             >
                                 Remover
                             </button>
