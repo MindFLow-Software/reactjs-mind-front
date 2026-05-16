@@ -1,4 +1,4 @@
-import { useState, useRef } from "react"
+import { useState, useRef, useLayoutEffect } from "react"
 import {
     FileText, Bold, Italic, Heading, List, ListOrdered,
     Quote, Link, Code, Eye, Pencil,
@@ -62,6 +62,13 @@ interface MarkdownEditorProps {
 export function MarkdownEditor({ value, onChange }: MarkdownEditorProps) {
     const [tab, setTab] = useState<"write" | "preview">("write")
     const ref = useRef<HTMLTextAreaElement>(null)
+
+    useLayoutEffect(() => {
+        const el = ref.current
+        if (!el) return
+        el.style.height = "auto"
+        el.style.height = `${el.scrollHeight}px`
+    }, [value])
 
     function insertInline(prefix: string, suffix: string, placeholder: string) {
         const el = ref.current; if (!el) return
@@ -132,7 +139,7 @@ export function MarkdownEditor({ value, onChange }: MarkdownEditorProps) {
                     value={value}
                     onChange={(e) => onChange(e.target.value)}
                     placeholder={"Ex:\n## Queixa principal\nAnsiedade generalizada com episódios noturnos.\n\n**Encaminhamento:** psiquiatra (Dra. Lima)\n\n- Insônia há 3 meses\n- Pico após mudança de emprego"}
-                    className="w-full resize-y bg-white p-3 font-mono text-[13px] leading-relaxed text-slate-900 outline-none placeholder:font-sans placeholder:text-slate-400"
+                    className="w-full resize-none overflow-hidden bg-white p-3 font-mono text-[13px] leading-relaxed text-slate-900 outline-none placeholder:font-sans placeholder:text-slate-400"
                     style={{ minHeight: 160 }}
                 />
             ) : (
