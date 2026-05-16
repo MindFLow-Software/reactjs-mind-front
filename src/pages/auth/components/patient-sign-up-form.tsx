@@ -3,7 +3,6 @@
 import type React from "react"
 import { useForm } from "react-hook-form"
 import { toast } from "sonner"
-import { z } from "zod"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { useNavigate, Link } from "react-router-dom"
 import { useMutation } from "@tanstack/react-query"
@@ -16,21 +15,7 @@ import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { api } from "@/lib/axios"
-
-const patientSignUpSchema = z.object({
-    firstName: z.string().min(2, "Nome é obrigatório"),
-    lastName: z.string().min(2, "Sobrenome é obrigatório"),
-    email: z.string().email("E-mail inválido"),
-    password: z.string().min(6, "A senha deve ter no mínimo 6 caracteres"),
-    phoneNumber: z.string().min(10, "Telefone inválido"),
-    cpf: z.string().min(11, "CPF inválido"),
-    dateOfBirth: z.string().min(10, "Data de nascimento é obrigatória"),
-    gender: z.enum(["MASCULINE", "FEMININE", "OTHER"], {
-        message: "Selecione seu gênero",
-    }),
-})
-
-type PatientSignUpSchema = z.infer<typeof patientSignUpSchema>
+import { patientSignUpSchema, type PatientSignUpSchema } from "@/validators/auth"
 
 export function PatientSignUpForm({ className, ...props }: React.ComponentProps<"form">) {
     const navigate = useNavigate()

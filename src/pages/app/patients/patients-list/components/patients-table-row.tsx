@@ -66,7 +66,7 @@ const GENDER_CONFIG = {
     label: 'Outro',
     icon: Users,
     className:
-      'bg-zinc-100 text-zinc-600 dark:bg-zinc-800/50 dark:text-zinc-400 border-0',
+      'bg-purple-100 text-purple-700 dark:bg-purple-900/30 dark:text-purple-400 border-0',
   },
 } as const
 
@@ -163,7 +163,7 @@ export const PatientsTableRow = memo(function PatientsTableRow({
               <span className="font-semibold text-sm leading-tight text-nowrap">
                 {fullName}
               </span>
-              <span className="text-[11px] text-muted-foreground font-mono tracking-tight">
+              <span className="text-[13px] text-muted-foreground font-mono tracking-tight">
                 {cpf ? formatCPF(cpf) : '—'}
               </span>
             </div>

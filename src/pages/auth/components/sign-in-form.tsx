@@ -2,7 +2,6 @@ import type React from "react"
 import { memo, useState, useCallback } from "react"
 import { useForm } from "react-hook-form"
 import { toast } from "sonner"
-import { z } from "zod"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { Link, useSearchParams, useNavigate } from "react-router-dom"
 import { useMutation } from "@tanstack/react-query"
@@ -15,13 +14,7 @@ import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { signIn } from "@/api/sign-in"
 import { env } from "@/env"
-
-const signInSchema = z.object({
-  email: z.string().email({ message: "E-mail inválido" }),
-  password: z.string().min(1, { message: "A senha é obrigatória" }),
-})
-
-type SignInSchema = z.infer<typeof signInSchema>
+import { signInSchema, type SignInSchema } from "@/validators/auth"
 
 interface UserWithRole {
   id: string
