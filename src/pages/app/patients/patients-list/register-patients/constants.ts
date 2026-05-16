@@ -10,9 +10,9 @@ export const STEPS = [
 export type StepId = 1 | 2 | 3 | 4
 
 export const GENDER_OPTIONS = [
-    { value: "FEMININE",  label: "Feminino",                  icon: Venus, checkedCls: "border-pink-300 bg-pink-50 text-pink-700"   },
-    { value: "MASCULINE", label: "Masculino",                 icon: Mars,  checkedCls: "border-blue-300 bg-blue-50 text-blue-700"   },
-    { value: "OTHER",     label: "Outro / Prefiro não dizer", icon: Users, checkedCls: "border-purple-300 bg-purple-50 text-purple-700"  },
+    { value: "FEMININE",  label: "Feminino",                  icon: Venus, checkedCls: "border-pink-300 bg-pink-50 text-pink-700 dark:border-pink-800 dark:bg-pink-950/40 dark:text-pink-300"         },
+    { value: "MASCULINE", label: "Masculino",                 icon: Mars,  checkedCls: "border-blue-300 bg-blue-50 text-blue-700 dark:border-blue-800 dark:bg-blue-950/40 dark:text-blue-300"         },
+    { value: "OTHER",     label: "Outro / Prefiro não dizer", icon: Users, checkedCls: "border-purple-300 bg-purple-50 text-purple-700 dark:border-purple-800 dark:bg-purple-950/40 dark:text-purple-300" },
 ] as const
 
 export const MODALITY_OPTIONS = [

@@ -178,9 +178,9 @@ export function RegisterPatients({ patient, onSuccess }: RegisterPatientsProps) 
             style={{ maxHeight: "92vh" }}
         >
             {/* Header */}
-            <div className="flex items-start gap-3.5 border-b border-slate-200 bg-white px-[22px] pb-[14px] pt-[18px]">
-                <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-[10px] border border-blue-100 bg-blue-50">
-                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#1e6fd9" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+            <div className="flex items-start gap-3.5 border-b border-border bg-card px-[22px] pb-[14px] pt-[18px]">
+                <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-[10px] border border-blue-200 bg-blue-50 dark:border-blue-800 dark:bg-blue-950/40">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-blue-600">
                         <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2" />
                         <circle cx="9" cy="7" r="4" />
                         <line x1="19" y1="8" x2="19" y2="14" />
@@ -188,10 +188,10 @@ export function RegisterPatients({ patient, onSuccess }: RegisterPatientsProps) 
                     </svg>
                 </div>
                 <div className="min-w-0 flex-1">
-                    <h2 className="font-title text-[18px] font-bold tracking-[-0.01em] text-slate-900">
+                    <h2 className="font-title text-[18px] font-bold tracking-[-0.01em] text-foreground">
                         {isEditMode ? "Editar paciente" : "Cadastrar paciente"}
                     </h2>
-                    <p className="mt-0.5 max-w-[520px] text-[13px] text-slate-500">
+                    <p className="mt-0.5 max-w-[520px] text-[13px] text-muted-foreground">
                         {isEditMode
                             ? `Atualize os dados de ${patient!.firstName}. Mudanças salvam automaticamente ao avançar.`
                             : "Comece apenas com nome e contato — o resto pode ser preenchido depois."}
@@ -200,7 +200,7 @@ export function RegisterPatients({ patient, onSuccess }: RegisterPatientsProps) 
             </div>
 
             {/* Tab stepper */}
-            <div className="flex items-stretch border-b border-slate-200 bg-white px-[22px]">
+            <div className="flex items-stretch border-b border-border bg-card px-[22px]">
                 {STEPS.map((s) => {
                     const active = step === s.id
                     const done   = step > s.id
@@ -211,12 +211,12 @@ export function RegisterPatients({ patient, onSuccess }: RegisterPatientsProps) 
                             onClick={() => setStep(s.id)}
                             className={cn(
                                 "-mb-px flex cursor-pointer items-center gap-[7px] border-b-2 px-[14px] py-[10px] text-[13px] font-semibold transition-colors duration-[120ms]",
-                                active ? "border-blue-600 text-blue-600" : "border-transparent text-slate-500 hover:text-slate-800"
+                                active ? "border-blue-600 text-blue-600" : "border-transparent text-muted-foreground hover:text-foreground"
                             )}
                         >
                             <span className={cn(
                                 "flex h-[18px] w-[18px] shrink-0 items-center justify-center rounded-full text-[11px] font-bold transition-colors",
-                                active ? "bg-blue-600 text-white" : done ? "bg-emerald-500 text-white" : "bg-slate-100 text-slate-500"
+                                active ? "bg-blue-600 text-white" : done ? "bg-emerald-500 text-white" : "bg-muted text-muted-foreground"
                             )}>
                                 {s.id}
                             </span>
@@ -228,7 +228,7 @@ export function RegisterPatients({ patient, onSuccess }: RegisterPatientsProps) 
             </div>
 
             {/* Progress bar */}
-            <div className="h-[2px] shrink-0 bg-slate-100">
+            <div className="h-[2px] shrink-0 bg-muted">
                 <div
                     className="h-full bg-blue-600 transition-[width] duration-[240ms]"
                     style={{ width: `${(step / 4) * 100}%` }}
@@ -279,13 +279,13 @@ export function RegisterPatients({ patient, onSuccess }: RegisterPatientsProps) 
             </div>
 
             {/* Footer */}
-            <div className="shrink-0 border-t border-slate-200 bg-slate-50 px-[22px] py-[14px]">
+            <div className="shrink-0 border-t border-border bg-muted/50 px-[22px] py-[14px]">
                 <div className="flex items-center justify-end gap-2.5">
                     {step > 1 && (
                         <button
                             type="button"
                             onClick={() => setStep((s) => (s - 1) as StepId)}
-                            className="flex cursor-pointer items-center gap-1 rounded-[6px] border border-slate-300 bg-white px-[14px] py-2 text-[13px] font-semibold text-slate-700 transition-colors hover:bg-slate-50"
+                            className="flex cursor-pointer items-center gap-1 rounded-[6px] border border-border bg-card px-[14px] py-2 text-[13px] font-semibold text-foreground transition-colors hover:bg-muted/50"
                         >
                             <ChevronLeft className="size-4" strokeWidth={2.5} />
                             Voltar
@@ -294,7 +294,7 @@ export function RegisterPatients({ patient, onSuccess }: RegisterPatientsProps) 
                     <button
                         type="button"
                         onClick={() => onSuccess?.()}
-                        className="cursor-pointer rounded-[6px] border border-slate-300 bg-white px-[14px] py-2 text-[13px] font-semibold text-slate-700 transition-colors hover:bg-slate-50"
+                        className="cursor-pointer rounded-[6px] border border-border bg-card px-[14px] py-2 text-[13px] font-semibold text-foreground transition-colors hover:bg-muted/50"
                     >
                         Cancelar
                     </button>

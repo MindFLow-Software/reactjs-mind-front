@@ -57,7 +57,7 @@ export function StepBasicData({
                 <SectionTitle icon={UserRound} label="Identificação" />
                 <div className="grid grid-cols-2 gap-x-3.5 gap-y-3">
                     <div>
-                        <label className="mb-[5px] flex items-center gap-1 text-[12px] font-semibold text-slate-700">
+                        <label className="mb-[5px] flex items-center gap-1 text-[12px] font-semibold text-foreground/80">
                             Nome <span className="text-red-600">*</span>
                         </label>
                         <Input
@@ -74,7 +74,7 @@ export function StepBasicData({
                         )}
                     </div>
                     <div>
-                        <label className="mb-[5px] flex items-center gap-1 text-[12px] font-semibold text-slate-700">
+                        <label className="mb-[5px] flex items-center gap-1 text-[12px] font-semibold text-foreground/80">
                             Sobrenome <span className="text-red-600">*</span>
                         </label>
                         <Input
@@ -99,8 +99,8 @@ export function StepBasicData({
                 <div className="grid grid-cols-2 gap-x-3.5 gap-y-3">
                     {/* CPF */}
                     <div>
-                        <label className="mb-[5px] flex items-center justify-between text-[12px] font-semibold text-slate-700">
-                            CPF <span className="text-[10.5px] font-medium text-slate-400">verificação automática</span>
+                        <label className="mb-[5px] flex items-center justify-between text-[12px] font-semibold text-foreground/80">
+                            CPF <span className="text-[10.5px] font-medium text-muted-foreground">verificação automática</span>
                         </label>
                         <div className="relative">
                             <Controller
@@ -136,7 +136,7 @@ export function StepBasicData({
 
                     {/* Nascimento */}
                     <div>
-                        <label className="mb-[5px] block text-[12px] font-semibold text-slate-700">Nascimento</label>
+                        <label className="mb-[5px] block text-[12px] font-semibold text-foreground/80">Nascimento</label>
                         <Controller
                             name="dateOfBirth"
                             control={control}
@@ -151,7 +151,7 @@ export function StepBasicData({
                                         className={cn(inputCls, "tabular-nums")}
                                     />
                                     {age !== null && (
-                                        <p className="mt-1 text-[11.5px] text-slate-500">{age} anos</p>
+                                        <p className="mt-1 text-[11.5px] text-muted-foreground">{age} anos</p>
                                     )}
                                 </div>
                             )}
@@ -161,7 +161,7 @@ export function StepBasicData({
 
                 {/* Gênero */}
                 <div className="mt-3">
-                    <label className="mb-[5px] block text-[12px] font-semibold text-slate-700">Gênero</label>
+                    <label className="mb-[5px] block text-[12px] font-semibold text-foreground/80">Gênero</label>
                     <Controller
                         name="gender"
                         control={control}

@@ -43,11 +43,11 @@ export function StepContactAddress({
                 <SectionTitle icon={Phone} label="Contato" />
                 <div className="grid grid-cols-2 gap-x-3.5 gap-y-3">
                     <div>
-                        <label className="mb-[5px] flex items-center gap-1 text-[12px] font-semibold text-slate-700">
+                        <label className="mb-[5px] flex items-center gap-1 text-[12px] font-semibold text-foreground/80">
                             Celular
                         </label>
                         <div className="relative">
-                            <Phone className="pointer-events-none absolute left-3 top-1/2 size-[14px] -translate-y-1/2 text-slate-400" />
+                            <Phone className="pointer-events-none absolute left-3 top-1/2 size-[14px] -translate-y-1/2 text-muted-foreground" />
                             <Controller
                                 name="phoneNumber"
                                 control={control}
@@ -68,15 +68,15 @@ export function StepContactAddress({
                         </div>
                     </div>
                     <div>
-                        <label className="mb-[5px] block text-[12px] font-semibold text-slate-700">E-mail</label>
+                        <label className="mb-[5px] block text-[12px] font-semibold text-foreground/80">E-mail</label>
                         <div className="relative">
-                            <Mail className="pointer-events-none absolute left-3 top-1/2 size-[14px] -translate-y-1/2 text-slate-400" />
+                            <Mail className="pointer-events-none absolute left-3 top-1/2 size-[14px] -translate-y-1/2 text-muted-foreground" />
                             <Input
                                 {...register("email")}
                                 id="email"
                                 type="email"
                                 placeholder="paciente@email.com"
-                                autoComplete="email"
+                                autoComplete="off"
                                 className={cn(inputCls, "pl-9", errors.email && "border-red-600")}
                             />
                         </div>
@@ -94,8 +94,8 @@ export function StepContactAddress({
                 <SectionTitle icon={MapPin} label="Endereço" />
                 <div className="grid grid-cols-3 gap-x-3.5 gap-y-3">
                     <div>
-                        <label className="mb-[5px] flex items-center justify-between text-[12px] font-semibold text-slate-700">
-                            CEP <span className="text-[10.5px] font-medium text-slate-400">preenche automático</span>
+                        <label className="mb-[5px] flex items-center justify-between text-[12px] font-semibold text-foreground/80">
+                            CEP <span className="text-[10.5px] font-medium text-muted-foreground">preenche automático</span>
                         </label>
                         <Input
                             value={cep}
@@ -107,7 +107,7 @@ export function StepContactAddress({
                         />
                     </div>
                     <div className="col-span-2">
-                        <label className="mb-[5px] block text-[12px] font-semibold text-slate-700">Logradouro</label>
+                        <label className="mb-[5px] block text-[12px] font-semibold text-foreground/80">Logradouro</label>
                         <Input
                             value={street}
                             onChange={(e) => onStreetChange(e.target.value)}
@@ -116,7 +116,7 @@ export function StepContactAddress({
                         />
                     </div>
                     <div>
-                        <label className="mb-[5px] block text-[12px] font-semibold text-slate-700">Bairro</label>
+                        <label className="mb-[5px] block text-[12px] font-semibold text-foreground/80">Bairro</label>
                         <Input
                             value={district}
                             onChange={(e) => onDistrictChange(e.target.value)}
@@ -125,7 +125,7 @@ export function StepContactAddress({
                         />
                     </div>
                     <div>
-                        <label className="mb-[5px] block text-[12px] font-semibold text-slate-700">Cidade</label>
+                        <label className="mb-[5px] block text-[12px] font-semibold text-foreground/80">Cidade</label>
                         <Input
                             value={city}
                             onChange={(e) => onCityChange(e.target.value)}
@@ -134,7 +134,7 @@ export function StepContactAddress({
                         />
                     </div>
                     <div>
-                        <label className="mb-[5px] block text-[12px] font-semibold text-slate-700">UF</label>
+                        <label className="mb-[5px] block text-[12px] font-semibold text-foreground/80">UF</label>
                         <select
                             value={uf}
                             onChange={(e) => onUfChange(e.target.value)}

@@ -1,7 +1,7 @@
 import type { CSSProperties } from "react"
 
 export const inputCls =
-    "h-[38px] border-slate-200 text-[13.5px] text-slate-900 placeholder:text-slate-400 " +
+    "h-[38px] border-border text-[13.5px] text-foreground placeholder:text-muted-foreground " +
     "focus-visible:border-blue-600 focus-visible:ring-[3px] focus-visible:ring-blue-600/[.18]"
 
 export const selectCls: CSSProperties = {
@@ -12,6 +12,6 @@ export const selectCls: CSSProperties = {
 }
 
 export const selectClassName =
-    "flex h-[38px] w-full appearance-none rounded-[6px] border border-slate-200 bg-white px-3 " +
-    "text-[13.5px] text-slate-900 transition-[border-color,box-shadow] " +
+    "flex h-[38px] w-full appearance-none rounded-[6px] border border-border bg-card px-3 " +
+    "text-[13.5px] text-foreground transition-[border-color,box-shadow] " +
     "focus:border-blue-600 focus:outline-none focus:ring-[3px] focus:ring-blue-600/[.18] cursor-pointer"
