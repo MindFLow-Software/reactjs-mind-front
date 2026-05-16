@@ -16,6 +16,8 @@ import { updatePatients, type UpdatePatientData } from "@/api/upadate-patient"
 import { uploadAttachment, uploadAvatar } from "@/api/attachments"
 
 import type { PatientHTTP } from "@/types/patient"
+import { formatCPF } from "@/utils/formatCPF"
+import { formatPhone } from "@/utils/formatPhone"
 import { patientSchema, type PatientFormData } from "@/validators/patients"
 import { STEPS, type StepId } from "./constants"
 import { StepBasicData } from "./steps/step-basic-data"
@@ -67,12 +69,12 @@ export function RegisterPatients({ patient, onSuccess }: RegisterPatientsProps) 
         resolver: zodResolver(patientSchema),
         mode: "onTouched",
         defaultValues: {
-            firstName:   patient?.firstName   ?? "",
-            lastName:    patient?.lastName    ?? "",
-            phoneNumber: patient?.phoneNumber ?? "",
-            email:       patient?.email       ?? "",
-            cpf:         patient?.cpf         ?? "",
-            gender:      patient?.gender      ?? "FEMININE",
+            firstName:   patient?.firstName                            ?? "",
+            lastName:    patient?.lastName                             ?? "",
+            phoneNumber: patient?.phoneNumber ? formatPhone(patient.phoneNumber) : "",
+            email:       patient?.email                                ?? "",
+            cpf:         patient?.cpf         ? formatCPF(patient.cpf)  : "",
+            gender:      patient?.gender                               ?? "FEMININE",
             dateOfBirth: patient?.dateOfBirth ? new Date(patient.dateOfBirth) : null,
         },
     })
