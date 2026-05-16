@@ -15,6 +15,7 @@ import { createPatients, type CreatePatientsInput } from "@/api/create-patients"
 import { updatePatients, type UpdatePatientData } from "@/api/upadate-patient"
 import { uploadAttachment, uploadAvatar } from "@/api/attachments"
 
+import type { PatientHTTP } from "@/types/patient"
 import { patientSchema, type PatientFormData } from "@/validators/patients"
 import { STEPS, type StepId } from "./constants"
 import { StepBasicData } from "./steps/step-basic-data"
@@ -24,7 +25,7 @@ import { AttachmentsList } from "./steps/attachments-list"
 import { UploadZone } from "./steps/upload-zone"
 
 interface RegisterPatientsProps {
-    patient?:   Record<string, unknown>
+    patient?:   PatientHTTP
     onSuccess?: () => void
 }
 
@@ -43,7 +44,7 @@ export function RegisterPatients({ patient, onSuccess }: RegisterPatientsProps) 
     // ── Birth input (DD/MM/AAAA string kept separate from form Date) ──────────
     const [birthInput, setBirthInput] = useState(() => {
         if (!patient?.dateOfBirth) return ""
-        try { return format(new Date(patient.dateOfBirth as string), "dd/MM/yyyy") } catch { return "" }
+        try { return format(new Date(patient.dateOfBirth), "dd/MM/yyyy") } catch { return "" }
     })
 
     // ── Visual-only clinical/address fields (not yet in API) ──────────────────
@@ -66,13 +67,13 @@ export function RegisterPatients({ patient, onSuccess }: RegisterPatientsProps) 
         resolver: zodResolver(patientSchema),
         mode: "onTouched",
         defaultValues: {
-            firstName:   (patient?.firstName   as string) ?? "",
-            lastName:    (patient?.lastName    as string) ?? "",
-            phoneNumber: (patient?.phoneNumber as string) ?? "",
-            email:       (patient?.email       as string) ?? "",
-            cpf:         (patient?.cpf         as string) ?? "",
-            gender:      (patient?.gender as "FEMININE" | "MASCULINE" | "OTHER") ?? "FEMININE",
-            dateOfBirth: patient?.dateOfBirth ? new Date(patient.dateOfBirth as string) : null,
+            firstName:   patient?.firstName   ?? "",
+            lastName:    patient?.lastName    ?? "",
+            phoneNumber: patient?.phoneNumber ?? "",
+            email:       patient?.email       ?? "",
+            cpf:         patient?.cpf         ?? "",
+            gender:      patient?.gender      ?? "FEMININE",
+            dateOfBirth: patient?.dateOfBirth ? new Date(patient.dateOfBirth) : null,
         },
     })
 
@@ -134,14 +135,14 @@ export function RegisterPatients({ patient, onSuccess }: RegisterPatientsProps) 
             }
             const res = await savePatientFn(
                 isEditMode
-                    ? { ...basePayload, id: patient!.id as string }
+                    ? { ...basePayload, id: patient!.id }
                     : basePayload
             )
             const targetId = isEditMode ? patient!.id : ((res as { id?: string; patientId?: string })?.id || (res as { id?: string; patientId?: string })?.patientId)
             if (!targetId) throw new Error("ID não identificado")
 
-            if (avatarFile) await uploadAvatar(avatarFile, targetId as string)
-            for (const f of selectedFiles) await uploadAttachment(f, targetId as string)
+            if (avatarFile) await uploadAvatar(avatarFile, targetId)
+            for (const f of selectedFiles) await uploadAttachment(f, targetId)
 
             await Promise.all([
                 queryClient.invalidateQueries({ queryKey: ["patients"] }),
@@ -190,7 +191,7 @@ export function RegisterPatients({ patient, onSuccess }: RegisterPatientsProps) 
                     </h2>
                     <p className="mt-0.5 max-w-[520px] text-[13px] text-slate-500">
                         {isEditMode
-                            ? `Atualize os dados de ${patient!.firstName as string}. Mudanças salvam automaticamente ao avançar.`
+                            ? `Atualize os dados de ${patient!.firstName}. Mudanças salvam automaticamente ao avançar.`
                             : "Comece apenas com nome e contato — o resto pode ser preenchido depois."}
                     </p>
                 </div>
@@ -269,7 +270,7 @@ export function RegisterPatients({ patient, onSuccess }: RegisterPatientsProps) 
                 )}
                 {step === 4 && (
                     <div className="space-y-5">
-                        {isEditMode && <AttachmentsList patientId={patient!.id as string} />}
+                        {isEditMode && <AttachmentsList patientId={patient!.id} />}
                         <UploadZone selectedFiles={selectedFiles} onFilesChange={setSelectedFiles} />
                     </div>
                 )}
