@@ -58,11 +58,11 @@ export function AttachmentsList({ patientId }: AttachmentsListProps) {
         <div>
             <div className="mb-[10px] flex items-center gap-[7px]">
                 <FileText className="size-[13px] shrink-0 text-blue-600" />
-                <span className="text-[11px] font-bold uppercase tracking-[0.06em] text-slate-500">
+                <span className="text-[11px] font-bold uppercase tracking-[0.06em] text-muted-foreground">
                     Documentos enviados
                 </span>
                 {attachments && attachments.length > 0 && (
-                    <span className="ml-0.5 rounded-[10px] bg-slate-100 px-2 py-0.5 text-[11px] font-semibold text-slate-500">
+                    <span className="ml-0.5 rounded-[10px] bg-muted px-2 py-0.5 text-[11px] font-semibold text-muted-foreground">
                         {attachments.length}
                     </span>
                 )}
@@ -73,7 +73,7 @@ export function AttachmentsList({ patientId }: AttachmentsListProps) {
                     <Loader2 className="size-5 animate-spin text-blue-500/50" />
                 </div>
             ) : !attachments || attachments.length === 0 ? (
-                <p className="rounded-[8px] border border-dashed border-slate-200 py-6 text-center text-[12px] text-slate-400">
+                <p className="rounded-[8px] border border-dashed border-border py-6 text-center text-[12px] text-muted-foreground">
                     Nenhum documento enviado ainda.
                 </p>
             ) : (
@@ -87,7 +87,7 @@ export function AttachmentsList({ patientId }: AttachmentsListProps) {
                         return (
                             <div
                                 key={file.id}
-                                className="flex items-start gap-2.5 rounded-[8px] border border-slate-200 bg-white p-[10px] transition-all hover:border-blue-200 hover:bg-blue-50 hover:shadow-sm"
+                                className="flex items-start gap-2.5 rounded-[8px] border border-border bg-card p-[10px] transition-all hover:border-blue-200 hover:bg-blue-50 hover:shadow-sm dark:hover:border-blue-800 dark:hover:bg-blue-950/30"
                             >
                                 <div
                                     className="relative flex shrink-0 items-center justify-center rounded-[4px] text-[9px] font-black uppercase tracking-[0.04em] text-white"
@@ -101,10 +101,10 @@ export function AttachmentsList({ patientId }: AttachmentsListProps) {
                                 </div>
 
                                 <div className="min-w-0 flex-1">
-                                    <p className="truncate text-[12.5px] font-semibold text-slate-900">{file.filename}</p>
-                                    <div className="mt-0.5 flex items-center gap-1.5 text-[11px] text-slate-500">
+                                    <p className="truncate text-[12.5px] font-semibold text-foreground">{file.filename}</p>
+                                    <div className="mt-0.5 flex items-center gap-1.5 text-[11px] text-muted-foreground">
                                         <span>{formatBytes(file.size)}</span>
-                                        <span className="size-1.5 shrink-0 rounded-full bg-slate-300" />
+                                        <span className="size-1.5 shrink-0 rounded-full bg-border" />
                                         <span>Enviado {uploadDate}</span>
                                     </div>
                                 </div>
@@ -114,7 +114,7 @@ export function AttachmentsList({ patientId }: AttachmentsListProps) {
                                         type="button"
                                         title="Visualizar"
                                         onClick={() => window.open(file.url, "_blank")}
-                                        className="flex h-[28px] w-[28px] items-center justify-center rounded-[5px] text-slate-500 transition-all hover:bg-white hover:text-blue-600 hover:shadow-sm"
+                                        className="flex h-[28px] w-[28px] items-center justify-center rounded-[5px] text-muted-foreground transition-all hover:bg-background hover:text-blue-600 hover:shadow-sm"
                                     >
                                         <Eye className="size-3.5" />
                                     </button>
@@ -122,7 +122,7 @@ export function AttachmentsList({ patientId }: AttachmentsListProps) {
                                         type="button"
                                         title="Baixar"
                                         onClick={() => handleFileDownload(file.id, file.filename)}
-                                        className="flex h-[28px] w-[28px] items-center justify-center rounded-[5px] text-slate-500 transition-all hover:bg-white hover:text-blue-600 hover:shadow-sm"
+                                        className="flex h-[28px] w-[28px] items-center justify-center rounded-[5px] text-muted-foreground transition-all hover:bg-background hover:text-blue-600 hover:shadow-sm"
                                     >
                                         <Download className="size-3.5" />
                                     </button>

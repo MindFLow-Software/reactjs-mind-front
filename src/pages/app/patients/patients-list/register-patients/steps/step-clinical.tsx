@@ -36,11 +36,11 @@ export function StepClinical({
                 <SectionTitle icon={Activity} label="Atendimento" />
                 <div className="grid grid-cols-2 gap-x-3.5 gap-y-4">
                     <div>
-                        <label className="mb-[5px] block text-[12px] font-semibold text-slate-700">Modalidade</label>
+                        <label className="mb-[5px] block text-[12px] font-semibold text-foreground/80">Modalidade</label>
                         <PillRadio name="modality" options={MODALITY_OPTIONS} value={modality} onChange={onModalityChange} />
                     </div>
                     <div>
-                        <label className="mb-[5px] block text-[12px] font-semibold text-slate-700">Frequência</label>
+                        <label className="mb-[5px] block text-[12px] font-semibold text-foreground/80">Frequência</label>
                         <select
                             value={frequency}
                             onChange={(e) => onFrequencyChange(e.target.value)}
@@ -53,9 +53,9 @@ export function StepClinical({
                         </select>
                     </div>
                     <div>
-                        <label className="mb-[5px] block text-[12px] font-semibold text-slate-700">Valor da sessão</label>
+                        <label className="mb-[5px] block text-[12px] font-semibold text-foreground/80">Valor da sessão</label>
                         <div className="relative">
-                            <span className="pointer-events-none absolute left-3 top-1/2 z-10 -translate-y-1/2 text-[13px] font-semibold text-slate-500">R$</span>
+                            <span className="pointer-events-none absolute left-3 top-1/2 z-10 -translate-y-1/2 text-[13px] font-semibold text-muted-foreground">R$</span>
                             <Input
                                 value={price}
                                 onChange={onPriceChange}
@@ -66,7 +66,7 @@ export function StepClinical({
                         </div>
                     </div>
                     <div>
-                        <label className="mb-[5px] block text-[12px] font-semibold text-slate-700">Indicação</label>
+                        <label className="mb-[5px] block text-[12px] font-semibold text-foreground/80">Indicação</label>
                         <Input
                             value={source}
                             onChange={(e) => onSourceChange(e.target.value)}

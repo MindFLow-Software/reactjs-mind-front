@@ -73,7 +73,7 @@ export const UploadZone = memo(({ selectedFiles, onFilesChange }: UploadZoneProp
             <label
                 className={cn(
                     "flex cursor-pointer flex-col items-center gap-3 rounded-[10px] border-2 border-dashed p-[22px] text-center transition-all duration-[150ms]",
-                    isDrag ? "border-blue-600 bg-blue-50" : "border-slate-200 bg-slate-50 hover:border-blue-600 hover:bg-blue-50"
+                    isDrag ? "border-blue-600 bg-blue-50 dark:bg-blue-950/40" : "border-border bg-muted/50 hover:border-blue-600 hover:bg-blue-50 dark:hover:bg-blue-950/30"
                 )}
                 onDragEnter={(e) => { e.preventDefault(); setIsDrag(true) }}
                 onDragOver={(e)  => { e.preventDefault(); setIsDrag(true) }}
@@ -81,12 +81,12 @@ export const UploadZone = memo(({ selectedFiles, onFilesChange }: UploadZoneProp
                 onDrop={handleDrop}
                 onClick={triggerInput}
             >
-                <div className="flex h-[42px] w-[42px] items-center justify-center rounded-full border border-blue-100 bg-white text-blue-600">
+                <div className="flex h-[42px] w-[42px] items-center justify-center rounded-full border border-blue-100 bg-card text-blue-600 dark:border-blue-900">
                     <CloudUpload className="size-6" />
                 </div>
                 <div>
-                    <p className="text-[13.5px] font-semibold text-slate-800">Arraste arquivos ou clique para anexar</p>
-                    <p className="mt-0.5 text-[11.5px] text-slate-500">
+                    <p className="text-[13.5px] font-semibold text-foreground">Arraste arquivos ou clique para anexar</p>
+                    <p className="mt-0.5 text-[11.5px] text-muted-foreground">
                         PDFs ou imagens · máximo {MAX_DOC_FILES} arquivos · até 3 MB cada
                     </p>
                 </div>
@@ -106,11 +106,11 @@ export const UploadZone = memo(({ selectedFiles, onFilesChange }: UploadZoneProp
                     {selectedFiles.map((file, i) => (
                         <div
                             key={`${file.name}-${i}`}
-                            className="flex items-center gap-2 rounded-[6px] border border-slate-200 bg-white px-[10px] py-[7px]"
+                            className="flex items-center gap-2 rounded-[6px] border border-border bg-card px-[10px] py-[7px]"
                         >
                             <FileText className="size-4 shrink-0 text-blue-600" />
-                            <span className="min-w-0 flex-1 truncate text-[12.5px] font-medium text-slate-900">{file.name}</span>
-                            <span className="shrink-0 tabular-nums text-[11px] text-slate-500">{formatBytes(file.size)}</span>
+                            <span className="min-w-0 flex-1 truncate text-[12.5px] font-medium text-foreground">{file.name}</span>
+                            <span className="shrink-0 tabular-nums text-[11px] text-muted-foreground">{formatBytes(file.size)}</span>
                             <button
                                 type="button"
                                 onClick={(e) => {
@@ -118,7 +118,7 @@ export const UploadZone = memo(({ selectedFiles, onFilesChange }: UploadZoneProp
                                     e.stopPropagation()
                                     onFilesChange(selectedFiles.filter((_, j) => j !== i))
                                 }}
-                                className="flex h-[22px] w-[22px] cursor-pointer items-center justify-center rounded text-slate-400 transition-colors hover:bg-red-50 hover:text-red-600"
+                                className="flex h-[22px] w-[22px] cursor-pointer items-center justify-center rounded text-muted-foreground transition-colors hover:bg-red-50 hover:text-red-600 dark:hover:bg-red-950/30"
                             >
                                 <X className="size-3.5" />
                             </button>

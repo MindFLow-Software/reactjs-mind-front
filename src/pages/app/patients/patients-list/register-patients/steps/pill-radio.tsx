@@ -27,8 +27,8 @@ export function PillRadio({ name, options, value, onChange }: PillRadioProps) {
                         className={cn(
                             "flex cursor-pointer items-center gap-[6px] rounded-[6px] border-[1.5px] px-3 py-[7px] text-[12.5px] font-semibold transition-all duration-[120ms]",
                             checked
-                                ? (opt.checkedCls ?? "border-blue-600 bg-blue-50 text-blue-700")
-                                : "border-slate-200 bg-white text-slate-600 hover:border-slate-300 hover:bg-slate-50"
+                                ? (opt.checkedCls ?? "border-blue-600 bg-blue-50 text-blue-700 dark:bg-blue-950/40 dark:text-blue-300")
+                                : "border-border bg-card text-foreground/70 hover:border-border hover:bg-muted/50"
                         )}
                     >
                         <input
