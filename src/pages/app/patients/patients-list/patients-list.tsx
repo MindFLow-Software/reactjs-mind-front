@@ -5,8 +5,8 @@ import { UsersRound, UserRoundPlus, QrCode, Clock, TrendingUp } from "lucide-rea
 import { Dialog } from "@/components/ui/dialog"
 
 import { Pagination } from "@/components/pagination"
-import { PatientsTableFilters } from "./components/patients-table-filters"
-import { PatientsTable } from "./components/patients-table"
+import { PatientsTableFilters } from "./components/table/patients-table-filters"
+import { PatientsTable } from "./components/table/patients-table"
 
 import { useHeaderStore } from "@/hooks/use-header-store"
 import { usePatientFilters } from "@/hooks/use-patient-filters"
@@ -14,7 +14,7 @@ import { getPatients } from "@/api/get-patients"
 import { PatientsDataBlock } from "../components/patients-data-block"
 import { PatientsPageShell } from "../components/patients-page-shell"
 import { RegisterPatients } from "./register-patients/register-patients"
-import { GenerateInviteModal } from "./components/generate-Invite-modal"
+import { GenerateInviteModal } from "./components/dialogs/generate-invite-modal"
 import { cn } from "@/lib/utils"
 
 // ── Metric Card ──────────────────────────────────────────────────────────────

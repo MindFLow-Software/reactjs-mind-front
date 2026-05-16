@@ -45,9 +45,9 @@ import { formatAGE } from '@/utils/formatAGE'
 import { formatCPF } from '@/utils/formatCPF'
 import { formatPhone } from '@/utils/formatPhone'
 
-import { RegisterPatients } from '../register-patients/register-patients'
-import { DeletePatientDialog } from './delete-patient-dialog'
-import { PatientsDetails } from './patients-details'
+import { RegisterPatients } from '../../register-patients/register-patients'
+import { DeletePatientDialog } from '../dialogs/delete-patient-dialog'
+import { PatientsDetails } from '../details/patients-details'
 
 const GENDER_CONFIG = {
   MASCULINE: {
