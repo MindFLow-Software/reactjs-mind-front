@@ -11,7 +11,6 @@ import { PatientsTable } from "./components/table/patients-table"
 import { useHeaderStore } from "@/hooks/use-header-store"
 import { usePatientFilters } from "@/hooks/use-patient-filters"
 import { getPatients } from "@/api/get-patients"
-import { getAmountPatientsCard } from "@/api/get-amount-patients-card"
 import { PatientsDataBlock } from "../components/patients-data-block"
 import { PatientsPageShell } from "../components/patients-page-shell"
 import { RegisterPatients } from "./register-patients/register-patients"
@@ -89,22 +88,26 @@ export function PatientsList() {
     const totalCount = meta.totalCount
     const loadingTotal = isLoading
 
-    const { data: activeData, isLoading: loadingActive } = useQuery({
-        queryKey: ["patients-count", "active"],
-        queryFn: getAmountPatientsCard,
+    const { data: statusCounts, isLoading: loadingCounts } = useQuery({
+        queryKey: ["patients-count"],
+        queryFn: async () => {
+            const [active, inactive] = await Promise.all([
+                getPatients({ pageIndex: 0, perPage: 1, status: "active" }),
+                getPatients({ pageIndex: 0, perPage: 1, status: "inactive" }),
+            ])
+            return {
+                active:   active.meta.totalCount,
+                inactive: inactive.meta.totalCount,
+            }
+        },
         staleTime: 60_000,
-        gcTime: 300_000,
+        gcTime:    300_000,
+        refetchOnWindowFocus: false,
+        placeholderData: (prev) => prev,
     })
 
-    const { data: inactiveData, isLoading: loadingInactive } = useQuery({
-        queryKey: ["patients-count", "inactive"],
-        queryFn: () => getPatients({ pageIndex: 0, perPage: 1, status: "inactive" }),
-        staleTime: 60_000,
-        gcTime: 300_000,
-    })
-
-    const activeCount   = activeData?.amount ?? 0
-    const inactiveCount = inactiveData?.meta.totalCount ?? 0
+    const activeCount   = statusCounts?.active   ?? 0
+    const inactiveCount = statusCounts?.inactive ?? 0
 
     const hasActiveFilters = !!filters.filter
 
@@ -184,7 +187,7 @@ export function PatientsList() {
                         label="Ativos"
                         sub="8 este mês"
                         subTrend="up"
-                        isLoading={loadingActive}
+                        isLoading={loadingCounts}
                     />
                     <MetricCard
                         icon={<UserRoundPlus className="h-5 w-5 text-amber-600" />}
@@ -201,7 +204,7 @@ export function PatientsList() {
                         label="Inativos"
                         sub="sem sessão há 60 dias"
                         subTrend="neutral"
-                        isLoading={loadingInactive}
+                        isLoading={loadingCounts}
                     />
                 </div>
 
