@@ -5,7 +5,7 @@ import { useQuery } from "@tanstack/react-query"
 import { Loader2, Timer , Eye, Info } from "lucide-react"
 import { format, parseISO } from "date-fns"
 import { ptBR } from "date-fns/locale"
-import { getPatientDetails } from "@/api/get-patient-details"
+import { getPatientDetails } from "@/api/patients/get-patient-details"
 import { usePsychologistProfile } from "@/hooks/use-psychologist-profile"
 import { IMaskMixin } from "react-imask"
 

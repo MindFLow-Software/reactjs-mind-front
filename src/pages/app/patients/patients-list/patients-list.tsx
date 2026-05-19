@@ -10,7 +10,7 @@ import { PatientsTable } from "./components/table/patients-table"
 
 import { useHeaderStore } from "@/hooks/use-header-store"
 import { usePatientFilters } from "@/hooks/use-patient-filters"
-import { getPatients } from "@/api/get-patients"
+import { getPatients } from "@/api/patients/get-patients"
 import { PatientsDataBlock } from "../components/patients-data-block"
 import { PatientsPageShell } from "../components/patients-page-shell"
 import { RegisterPatients } from "./register-patients/register-patients"

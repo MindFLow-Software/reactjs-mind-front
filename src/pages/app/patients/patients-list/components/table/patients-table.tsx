@@ -7,7 +7,7 @@ import { Button } from "@/components/ui/button"
 import { Checkbox } from "@/components/ui/checkbox"
 import { PatientsTableRow } from "./patients-table-row"
 import { PatientsTableLoading } from "./loading"
-import type { Patient } from "@/api/get-patients"
+import type { Patient } from "@/api/patients/get-patients"
 import type { PatientSortBy, PatientSortOrder } from "@/hooks/use-patient-filters"
 import { cn } from "@/lib/utils"
 

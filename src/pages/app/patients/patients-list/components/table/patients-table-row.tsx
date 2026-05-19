@@ -19,9 +19,9 @@ import {
 import { memo, useCallback, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 
-import { deletePatients } from '@/api/delete-patients'
-import { togglePatientStatus } from '@/api/toggle-patient-status'
-import type { Patient } from '@/api/get-patients'
+import { deletePatients } from '@/api/patients/delete-patient'
+import { togglePatientStatus } from '@/api/patients/toggle-patient-status'
+import type { Patient } from '@/api/patients/get-patients'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { Checkbox } from '@/components/ui/checkbox'

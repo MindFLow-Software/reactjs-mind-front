@@ -11,8 +11,8 @@ import type { ChangeEvent } from "react"
 import { DialogContent } from "@/components/ui/dialog"
 import { cn } from "@/lib/utils"
 
-import { createPatients, type CreatePatientsInput } from "@/api/create-patients"
-import { updatePatients, type UpdatePatientData } from "@/api/upadate-patient"
+import { createPatients, type CreatePatientsInput } from "@/api/patients/create-patient"
+import { updatePatients, type UpdatePatientData } from "@/api/patients/update-patient"
 import { uploadAttachment, uploadAvatar } from "@/api/attachments"
 
 import type { PatientHTTP } from "@/types/patient"

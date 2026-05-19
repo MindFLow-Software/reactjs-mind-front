@@ -1,4 +1,4 @@
-import type { AnamnesisData } from "@/api/anamnesis"
+import type { AnamnesisData } from "@/api/patients/anamnesis"
 import type { AnamnesisBlock, SerializedBlock } from "./anamnesis-types"
 
 export const DYNAMIC_TEMPLATE_PREFIX = "__ANAMNESIS_BLOCKS_V1__:"

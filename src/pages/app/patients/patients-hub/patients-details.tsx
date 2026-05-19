@@ -24,7 +24,7 @@ import {
     DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
 
-import { getPatientDetails } from "@/api/get-patient-details"
+import { getPatientDetails } from "@/api/patients/get-patient-details"
 import { PatientDetailsHeader } from "./components/patient-details-header"
 import { useHeaderStore } from "@/hooks/use-header-store"
 import { PatientInfo } from "./components/patient-Info"

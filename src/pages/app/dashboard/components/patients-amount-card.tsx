@@ -6,8 +6,8 @@ import { subDays, startOfDay, endOfDay } from "date-fns"
 import { Users, TrendingUp, AlertCircle } from "lucide-react"
 import { Card } from "@/components/ui/card"
 import { Skeleton } from "@/components/ui/skeleton"
-import { getAmountPatientsCard } from "@/api/get-amount-patients-card"
-import { getAmountPatientsChart } from "@/api/get-amount-patients-chart"
+import { getAmountPatientsCard } from "@/api/patients/get-amount-patients-card"
+import { getAmountPatientsChart } from "@/api/patients/get-amount-patients-chart"
 import { cn } from "@/lib/utils"
 
 export const PatientsAmountCard = memo(function PatientsAmountCard() {

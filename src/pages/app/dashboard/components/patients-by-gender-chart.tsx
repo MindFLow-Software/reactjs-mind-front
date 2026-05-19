@@ -18,7 +18,7 @@ import {
     ChartTooltipContent,
     type ChartConfig,
 } from "@/components/ui/chart"
-import { getPatientsByGender } from "@/api/get-patients-by-gender"
+import { getPatientsByGender } from "@/api/patients/get-patients-by-gender"
 import type { DashboardPeriod } from "./dashboard-header"
 
 const GENDER_TRANSLATIONS: Record<string, string> = {

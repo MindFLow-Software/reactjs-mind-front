@@ -10,7 +10,7 @@ import { ptBR } from "date-fns/locale"
 
 import { Card, CardContent } from "@/components/ui/card"
 import { Skeleton } from "@/components/ui/skeleton"
-import { getPatients } from "@/api/get-patients"
+import { getPatients } from "@/api/patients/get-patients"
 import { useHeaderStore } from "@/hooks/use-header-store"
 import { PatientsRecordsTableFilters } from "./components/patients-records-table-filters"
 import { UserAvatar } from "@/components/user-avatar"
