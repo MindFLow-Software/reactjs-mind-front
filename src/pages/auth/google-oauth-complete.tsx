@@ -18,7 +18,7 @@ import {
   SelectValue,
 } from "@/components/ui/select"
 import { Field, FieldGroup, FieldLabel } from "@/components/ui/field"
-import { completeGoogleRegistration } from "@/api/complete-google-registration"
+import { completeGoogleRegistration } from "@/api/auth/complete-google-registration"
 import { getProfile } from "@/api/get-profile"
 import { EXPERTISE_TRANSLATIONS } from "@/utils/mappers"
 import { cn } from "@/lib/utils"
