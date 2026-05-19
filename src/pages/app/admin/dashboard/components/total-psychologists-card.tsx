@@ -1,4 +1,4 @@
-"use client"
+﻿"use client"
 
 import { useQuery } from "@tanstack/react-query"
 import { Users, AlertCircle } from "lucide-react"
@@ -6,7 +6,7 @@ import { Card } from "@/components/ui/card"
 import { Skeleton } from "@/components/ui/skeleton"
 import { Separator } from "@/components/ui/separator"
 import { cn } from "@/lib/utils"
-import { getTotalPsychologists } from "@/api/get-total-psychologists"
+import { getTotalPsychologists } from "@/api/psychologists/get-total-psychologists"
 
 export const TotalPsychologistsCard = () => {
     const { data, isLoading, isError } = useQuery({

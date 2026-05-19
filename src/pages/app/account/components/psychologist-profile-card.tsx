@@ -1,8 +1,8 @@
-"use client"
+﻿"use client"
 
 import { useState } from "react"
 import { useQuery } from "@tanstack/react-query"
-import { getProfile, type GetProfileResponse } from "@/api/get-profile"
+import { getProfile, type GetProfileResponse } from "@/api/psychologists/get-profile"
 import { PsychologistAvatarUpload } from "./psychologist-avatar-upload"
 import { Skeleton } from "@/components/ui/skeleton"
 import { Mail, Phone, FileText, Award, ChevronRight, Calendar, UserRoundPen } from "lucide-react"

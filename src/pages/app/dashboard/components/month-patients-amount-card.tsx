@@ -1,4 +1,4 @@
-"use client"
+﻿"use client"
 
 import { memo, useMemo } from "react"
 import { useQuery } from "@tanstack/react-query"
@@ -6,7 +6,7 @@ import { subDays, startOfDay, endOfDay } from "date-fns"
 import { CalendarCheck, TrendingUp, TrendingDown, AlertCircle, RefreshCcw } from "lucide-react"
 import { Card } from "@/components/ui/card"
 import { Skeleton } from "@/components/ui/skeleton"
-import { getMonthlySessionsCount } from "@/api/get-monthly-sessions-count"
+import { getMonthlySessionsCount } from "@/api/metrics/get-monthly-sessions-count"
 import { cn } from "@/lib/utils"
 
 interface MonthPatientsAmountCardProps {

@@ -1,4 +1,4 @@
-import { markPopupAsViewed, type Popup } from '@/api/popups'
+﻿import { markPopupAsViewed, type Popup } from '@/api/popups/popups'
 import { WelcomeModal } from './popups/welcome-modal'
 
 interface PopupRendererProps {

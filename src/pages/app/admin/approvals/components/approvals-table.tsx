@@ -1,10 +1,10 @@
-"use client"
+﻿"use client"
 
 import { Table, TableBody, TableHead, TableHeader, TableRow, TableCell } from "@/components/ui/table"
 import { Skeleton } from "@/components/ui/skeleton"
 import { UserCheck } from "lucide-react"
 import { ApprovalsTableRow } from "./approvals-table-row"
-import type { PendingPsychologist } from "@/api/approvals"
+import type { PendingPsychologist } from "@/api/psychologists/approvals"
 
 interface ApprovalsTableProps {
     psychologists: PendingPsychologist[]

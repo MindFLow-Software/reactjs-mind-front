@@ -1,4 +1,4 @@
-"use client"
+﻿"use client"
 
 import { useEffect } from "react"
 import { Helmet } from "react-helmet-async"
@@ -6,7 +6,7 @@ import { useQuery } from "@tanstack/react-query"
 import { Loader2, RefreshCw } from "lucide-react"
 
 import { useHeaderStore } from "@/hooks/use-header-store"
-import { getProfile } from "@/api/get-profile"
+import { getProfile } from "@/api/psychologists/get-profile"
 import { Button } from "@/components/ui/button"
 import { PsychologistProfileCard } from "./components/psychologist-profile-card"
 import { ActivityHeatmap } from "./components/activity-heatmap"

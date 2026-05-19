@@ -1,4 +1,4 @@
-"use client"
+﻿"use client"
 
 import { useMemo, useState } from "react"
 import { useQuery } from "@tanstack/react-query"
@@ -19,8 +19,8 @@ import {
 import { ptBR } from "date-fns/locale"
 import { Skeleton } from "@/components/ui/skeleton"
 import { cn } from "@/lib/utils"
-import { getDailySessionsMetrics, type DailySessionMetric } from "@/api/get-daily-sessions-metrics"
-import { getProfile } from "@/api/get-profile"
+import { getDailySessionsMetrics, type DailySessionMetric } from "@/api/metrics/get-daily-sessions-metrics"
+import { getProfile } from "@/api/psychologists/get-profile"
 
 export function ActivityHeatmap() {
     const today = startOfToday()

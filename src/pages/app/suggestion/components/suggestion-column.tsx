@@ -1,11 +1,11 @@
-"use client"
+﻿"use client"
 
 import type React from "react"
 import { useMemo } from "react"
 import { cn } from "@/lib/utils"
-import type { Suggestion } from "@/api/get-suggestions"
-import { toggleSuggestionLike } from "@/api/toggle-suggestion-like"
-import { getProfile } from "@/api/get-profile"
+import type { Suggestion } from "@/api/suggestions/get-suggestions"
+import { toggleSuggestionLike } from "@/api/suggestions/toggle-suggestion-like"
+import { getProfile } from "@/api/psychologists/get-profile"
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query"
 import { SuggestionCard } from "@/components/suggestion-card"
 

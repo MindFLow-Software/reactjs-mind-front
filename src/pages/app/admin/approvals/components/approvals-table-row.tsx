@@ -1,4 +1,4 @@
-"use client"
+﻿"use client"
 
 import { useState } from "react"
 import { Check, X, Search, LucideAward as IdCardLanyard, CalendarDays, Mail } from "lucide-react"
@@ -10,7 +10,7 @@ import { TableCell, TableRow } from "@/components/ui/table"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { Dialog } from "@/components/ui/dialog"
 import { Tooltip, TooltipProvider, TooltipTrigger, TooltipContent } from "@/components/ui/tooltip"
-import { approvePsychologist, rejectPsychologist } from "@/api/approvals" // Importado reject
+import { approvePsychologist, rejectPsychologist } from "@/api/psychologists/approvals" // Importado reject
 import { formatAGE } from "@/utils/formatAGE"
 import { ApprovalsDetailsDialog } from "./approvals-details-dialog"
 

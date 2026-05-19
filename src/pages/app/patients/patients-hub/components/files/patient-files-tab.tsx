@@ -1,10 +1,10 @@
-"use client"
+﻿"use client"
 
 import { useState, useMemo } from "react"
 import { useQuery, useQueryClient } from "@tanstack/react-query"
 import { Loader2, FileSearch } from "lucide-react"
 
-import { getPatientAttachments } from "@/api/attachments"
+import { getPatientAttachments } from "@/api/attachments/attachments"
 import type { AttachmentPatientItem } from "@/types/attachment"
 import { FileUploadZone } from "./file-upload-zone"
 import { FileTypeFilter, getFileType } from "./file-type-filter"

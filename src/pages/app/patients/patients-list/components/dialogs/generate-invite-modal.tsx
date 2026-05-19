@@ -1,4 +1,4 @@
-"use client"
+﻿"use client"
 
 import { useState } from "react"
 import { QRCodeSVG } from "qrcode.react"
@@ -11,7 +11,7 @@ import {
     DialogHeader,
     DialogTitle,
 } from "@/components/ui/dialog"
-import { generateRegistrationLink } from "@/api/generate-registration-link"
+import { generateRegistrationLink } from "@/api/invites/generate-registration-link"
 import { useInviteStore } from "@/utils/use-invite-store"
 
 export function GenerateInviteModal() {
