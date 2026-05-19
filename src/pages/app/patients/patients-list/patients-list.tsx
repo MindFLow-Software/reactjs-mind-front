@@ -138,7 +138,7 @@ export function PatientsList() {
                     "flex h-9 cursor-pointer items-center gap-2 rounded-xl px-4",
                     "bg-blue-600 text-[13px] font-medium text-white",
                     "shadow-[0_2px_8px_rgba(37,99,235,0.25)] transition-all",
-                    "hover:bg-blue-700 hover:-translate-y-px active:scale-[0.98]",
+                    "hover:bg-blue-700 hover:-translate-y-px active:scale-[0.98] cursor-pointer",
                 )}
             >
                 <UserRoundPlus className="h-4 w-4" />

@@ -176,7 +176,7 @@ export function PatientsTable({
                                                 <p className="text-sm font-medium">Nenhum paciente cadastrado</p>
                                                 <p className="text-xs text-muted-foreground">Comece cadastrando seu primeiro paciente</p>
                                             </div>
-                                            <Button size="sm" onClick={onRegister}>
+                                            <Button size="sm" className="cursor-pointer" onClick={onRegister}>
                                                 Cadastrar primeiro paciente
                                             </Button>
                                         </>
