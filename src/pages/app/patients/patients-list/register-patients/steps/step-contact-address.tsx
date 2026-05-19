@@ -60,7 +60,7 @@ export function StepContactAddress({
                                         ref={field.ref}
                                         placeholder="(00) 00000-0000"
                                         inputMode="numeric"
-                                        autoComplete="tel"
+                                        autoComplete="off"
                                         className={cn(inputCls, "pl-9 tabular-nums")}
                                     />
                                 )}
@@ -103,6 +103,7 @@ export function StepContactAddress({
                             placeholder="00000-000"
                             inputMode="numeric"
                             maxLength={9}
+                            autoComplete="off"
                             className={cn(inputCls, "tabular-nums")}
                         />
                     </div>
@@ -112,6 +113,7 @@ export function StepContactAddress({
                             value={street}
                             onChange={(e) => onStreetChange(e.target.value)}
                             placeholder="Rua, número"
+                            autoComplete="off"
                             className={inputCls}
                         />
                     </div>
@@ -121,6 +123,7 @@ export function StepContactAddress({
                             value={district}
                             onChange={(e) => onDistrictChange(e.target.value)}
                             placeholder="Bairro"
+                            autoComplete="off"
                             className={inputCls}
                         />
                     </div>
@@ -130,6 +133,7 @@ export function StepContactAddress({
                             value={city}
                             onChange={(e) => onCityChange(e.target.value)}
                             placeholder="Cidade"
+                            autoComplete="off"
                             className={inputCls}
                         />
                     </div>
