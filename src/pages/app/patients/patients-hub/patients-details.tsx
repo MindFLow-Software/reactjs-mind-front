@@ -203,7 +203,7 @@ export default function PatientDetails() {
                     description="Navegue entre dados cadastrais, anamnese, historico, arquivos e resumo clinico."
                     className="min-w-0 w-full space-y-6 overflow-hidden rounded-2xl bg-card px-5 py-5 shadow-sm md:px-6 md:py-6"
                 >
-                    <div className="pb-5 border-b border-border/60">
+                    <div className="pb-5">
                         <PatientDetailsHeader
                             patient={{
                                 ...patientData,
