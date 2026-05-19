@@ -9,7 +9,7 @@ import { ChevronLeft, ChevronRight, Calendar as CalendarIcon, LayoutGrid, List, 
 
 import { Button } from "@/components/ui/button"
 import { cn } from "@/lib/utils"
-import { type Appointment } from "@/api/get-appointment"
+import { type Appointment } from "@/api/appointments/get-appointment"
 
 const locales = { "pt-BR": ptBR }
 const localizer = dateFnsLocalizer({

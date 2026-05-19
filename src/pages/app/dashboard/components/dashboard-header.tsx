@@ -6,7 +6,7 @@ import { ptBR } from "date-fns/locale"
 import { useQuery } from "@tanstack/react-query"
 import { cn } from "@/lib/utils"
 import { usePsychologistProfile } from "@/hooks/use-psychologist-profile"
-import { fetchAppointments } from "@/api/fetch-appointments"
+import { fetchAppointments } from "@/api/appointments/fetch-appointments"
 
 export type DashboardPeriod = '7d' | '30d' | '90d' | 'year'
 

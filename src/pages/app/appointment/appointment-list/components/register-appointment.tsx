@@ -18,7 +18,7 @@ import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover
 import { Calendar } from "@/components/ui/calendar"
 import { Label } from "@/components/ui/label"
 
-import { registerAppointment, type RegisterAppointmentRequest } from "@/api/create-appointment"
+import { registerAppointment, type RegisterAppointmentRequest } from "@/api/appointments/create-appointment"
 import { getPatients } from "@/api/patients/get-patients"
 
 const MAX_NOTE_LENGTH = 200

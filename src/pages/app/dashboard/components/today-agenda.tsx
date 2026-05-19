@@ -9,8 +9,8 @@ import { Link } from "react-router-dom"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Skeleton } from "@/components/ui/skeleton"
 import { cn } from "@/lib/utils"
-import { fetchAppointments } from "@/api/fetch-appointments"
-import type { Appointment } from "@/api/fetch-appointments"
+import { fetchAppointments } from "@/api/appointments/fetch-appointments"
+import type { Appointment } from "@/api/appointments/fetch-appointments"
 import { AppointmentStatus } from "@/types/appointment"
 
 const STATUS_CONFIG: Record<string, { label: string; className: string }> = {
