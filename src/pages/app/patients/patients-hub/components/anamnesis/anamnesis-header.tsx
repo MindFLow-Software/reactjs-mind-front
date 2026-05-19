@@ -8,7 +8,7 @@ interface AnamnesisHeaderProps {
     isExporting: boolean
     isCopyDisabled: boolean
     copied: boolean
-    pdfSuccess: boolean // <-- Novo prop aqui
+    pdfSuccess: boolean
 }
 
 export function AnamnesisHeader({
@@ -17,7 +17,7 @@ export function AnamnesisHeader({
     isExporting,
     isCopyDisabled,
     copied,
-    pdfSuccess // Recebe o novo estado
+    pdfSuccess
 }: AnamnesisHeaderProps) {
     return (
         <div className="flex flex-wrap items-center justify-between gap-3">

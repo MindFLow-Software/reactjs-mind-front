@@ -3,7 +3,6 @@
 import { useEffect, useMemo, useRef, useState } from "react"
 import { useMutation, useQuery } from "@tanstack/react-query"
 import { getAnamnesis, saveAnamnesis, type AnamnesisData } from "@/api/anamnesis"
-import { Label } from "@/components/ui/label"
 import { Button } from "@/components/ui/button"
 import { Plus } from "lucide-react"
 import { toast } from "sonner"
@@ -11,21 +10,25 @@ import { format } from "date-fns"
 import { ptBR } from "date-fns/locale"
 import { pdf } from "@react-pdf/renderer"
 
-import { AnamnesisHeader } from "./components/anamnesis-header"
-import { AnamnesisToolbar } from "./components/anamnesis-toolbar"
-import { AnamnesisEditorBlock } from "./components/anamnesis-editor-block"
-import { AnamnesisSkeleton } from "./components/anamnesis-skeleton"
-import { AnamnesisNavigation } from "./components/anamnesis-navigation"
+import { AnamnesisHeader } from "./anamnesis-header"
+import { AnamnesisToolbar } from "./anamnesis-toolbar"
+import { AnamnesisEditorBlock } from "./anamnesis-editor-block"
+import { AnamnesisSkeleton } from "./anamnesis-skeleton"
+import { AnamnesisNavigation } from "./anamnesis-navigation"
 import { AnamnesisPDFTemplate } from "@/utils/anamnesis-pdf-template"
 
-import type { AnamnesisBlock, AnamnesisDraft, SectionAnchor } from "./components/types"
+import type { AnamnesisBlock, AnamnesisDraft } from "./anamnesis-types"
 import {
     buildInitialBlocks,
     toApiData,
     buildContentFromBlocks,
     normalizeBlocks,
     createBlock,
-} from "./components/anamnesis-utils"
+} from "./anamnesis-utils"
+
+function wordCount(text: string): number {
+    return text.trim().split(/\s+/).filter(Boolean).length
+}
 
 export function AnamnesisForm({ patientId, patientName }: { patientId: string; patientName: string }) {
     const [blocks, setBlocks] = useState<AnamnesisBlock[]>([])
@@ -52,7 +55,7 @@ export function AnamnesisForm({ patientId, patientName }: { patientId: string; p
             setHasLocalDraft(false)
             localStorage.removeItem(draftStorageKey)
         },
-        onError: () => toast.error("Erro ao sincronizar com o servidor.")
+        onError: () => toast.error("Erro ao sincronizar com o servidor."),
     })
 
     const normalizedBlocks = useMemo(() => normalizeBlocks(blocks), [blocks])
@@ -60,10 +63,26 @@ export function AnamnesisForm({ patientId, patientName }: { patientId: string; p
     const content = useMemo(() => buildContentFromBlocks(normalizedBlocks), [normalizedBlocks])
     const payloadHash = JSON.stringify(payload)
 
-    const sections = useMemo<SectionAnchor[]>(() =>
-        normalizedBlocks.map((b, i) => ({ id: b.id, label: b.title || `Seção ${i + 1}` })),
-        [normalizedBlocks]
+    const wordCounts = useMemo(
+        () => normalizedBlocks.map((b) => wordCount(b.content)),
+        [normalizedBlocks],
     )
+
+    const sections = useMemo(
+        () =>
+            normalizedBlocks.map((b, i) => ({
+                id: b.id,
+                label: b.title || `Seção ${i + 1}`,
+                wordCount: wordCounts[i],
+            })),
+        [normalizedBlocks, wordCounts],
+    )
+
+    const saveStatus: "synced" | "pending" | "draft" = isPending
+        ? "pending"
+        : hasLocalDraft
+        ? "draft"
+        : "synced"
 
     useEffect(() => {
         if (!data) return
@@ -103,10 +122,7 @@ export function AnamnesisForm({ patientId, patientName }: { patientId: string; p
     useEffect(() => {
         if (!hydrated) return
 
-        const draft: AnamnesisDraft = {
-            blocks: normalizedBlocks,
-            updatedAt: Date.now()
-        }
+        const draft: AnamnesisDraft = { blocks: normalizedBlocks, updatedAt: Date.now() }
         localStorage.setItem(draftStorageKey, JSON.stringify(draft))
 
         if (payloadHash !== lastPersistedHash.current) {
@@ -117,17 +133,16 @@ export function AnamnesisForm({ patientId, patientName }: { patientId: string; p
     }, [payloadHash, hydrated, mutate, payload, normalizedBlocks, draftStorageKey])
 
     const handleUpdateBlock = (id: string, updates: Partial<AnamnesisBlock>) => {
-        setBlocks(prev => prev.map(b => b.id === id ? { ...b, ...updates } : b))
+        setBlocks((prev) => prev.map((b) => (b.id === id ? { ...b, ...updates } : b)))
     }
 
     const handleAddBlock = () => {
-        const newBlock: AnamnesisBlock = { id: crypto.randomUUID(), title: `Nova Seção`, content: "" }
-        setBlocks(prev => [...prev, newBlock])
+        const newBlock: AnamnesisBlock = { id: crypto.randomUUID(), title: "Nova Seção", content: "" }
+        setBlocks((prev) => [...prev, newBlock])
         setActiveBlockId(newBlock.id)
-
         setTimeout(() => {
             textareaRefs.current[newBlock.id]?.focus()
-            textareaRefs.current[newBlock.id]?.scrollIntoView({ behavior: 'smooth', block: 'center' })
+            textareaRefs.current[newBlock.id]?.scrollIntoView({ behavior: "smooth", block: "center" })
         }, 50)
     }
 
@@ -138,11 +153,11 @@ export function AnamnesisForm({ patientId, patientName }: { patientId: string; p
 
         const start = textarea.selectionStart
         const end = textarea.selectionEnd
-        const currentContent = textarea.value
-        const selected = currentContent.slice(start, end)
+        const cur = textarea.value
+        const selected = cur.slice(start, end)
 
-        const nextText = `${currentContent.slice(0, start)}${marker}${selected}${marker}${currentContent.slice(end)}`
-        handleUpdateBlock(targetId!, { content: nextText })
+        const next = `${cur.slice(0, start)}${marker}${selected}${marker}${cur.slice(end)}`
+        handleUpdateBlock(targetId!, { content: next })
 
         requestAnimationFrame(() => {
             textarea.focus()
@@ -168,7 +183,7 @@ export function AnamnesisForm({ patientId, patientName }: { patientId: string; p
         try {
             const generatedAt = format(new Date(), "dd/MM/yyyy 'às' HH:mm", { locale: ptBR })
             const blob = await pdf(
-                <AnamnesisPDFTemplate patientName={patientName} content={content} generatedAt={generatedAt} />
+                <AnamnesisPDFTemplate patientName={patientName} content={content} generatedAt={generatedAt} />,
             ).toBlob()
 
             const url = URL.createObjectURL(blob)
@@ -181,7 +196,7 @@ export function AnamnesisForm({ patientId, patientName }: { patientId: string; p
             setPdfSuccess(true)
             setTimeout(() => setPdfSuccess(false), 2000)
             toast.success("PDF baixado!")
-        } catch (e) {
+        } catch {
             toast.error("Erro ao gerar PDF.")
         } finally {
             setIsExporting(false)
@@ -192,62 +207,62 @@ export function AnamnesisForm({ patientId, patientName }: { patientId: string; p
 
     return (
         <div className="w-full space-y-4">
-            <div className="rounded-2xl bg-card p-5 border shadow-sm">
-                <AnamnesisHeader
-                    onGeneratePDF={handleGeneratePDF}
-                    onCopy={handleCopy}
-                    isExporting={isExporting}
-                    isCopyDisabled={!content.trim()}
-                    copied={copied}
-                    pdfSuccess={pdfSuccess}
+            {/* PDF / Copy header */}
+            <AnamnesisHeader
+                onGeneratePDF={handleGeneratePDF}
+                onCopy={handleCopy}
+                isExporting={isExporting}
+                isCopyDisabled={!content.trim()}
+                copied={copied}
+                pdfSuccess={pdfSuccess}
+            />
+
+            {/* Toolbar */}
+            <AnamnesisToolbar
+                onFormat={handleApplyFormat}
+                onList={(prefix) => handleApplyFormat(prefix)}
+                saveStatus={saveStatus}
+            />
+
+            {/* Sidebar + editor */}
+            <div className="flex gap-4 items-start">
+                <AnamnesisNavigation
+                    sections={sections}
+                    activeBlockId={activeBlockId}
+                    onJump={(id) => {
+                        setActiveBlockId(id)
+                        textareaRefs.current[id]?.focus()
+                        textareaRefs.current[id]?.scrollIntoView({ behavior: "smooth", block: "center" })
+                    }}
                 />
 
-                <div className="mt-4 space-y-4">
-                    <AnamnesisToolbar
-                        onFormat={handleApplyFormat}
-                        onList={(prefix) => handleApplyFormat(prefix)}
-                    />
+                <div className="flex-1 min-w-0 space-y-3">
+                    {normalizedBlocks.map((block, index) => (
+                        <AnamnesisEditorBlock
+                            key={block.id}
+                            block={block}
+                            index={index}
+                            isActive={activeBlockId === block.id}
+                            isRemoveDisabled={normalizedBlocks.length <= 1}
+                            saveStatus={saveStatus}
+                            onUpdate={handleUpdateBlock}
+                            onRemove={(id) => setBlocks((prev) => prev.filter((b) => b.id !== id))}
+                            onFocus={setActiveBlockId}
+                            registerRef={(id, el) => {
+                                textareaRefs.current[id] = el
+                            }}
+                        />
+                    ))}
 
-                    <AnamnesisNavigation
-                        sections={sections}
-                        activeBlockId={activeBlockId}
-                        onJump={(id) => {
-                            setActiveBlockId(id)
-                            textareaRefs.current[id]?.focus()
-                            textareaRefs.current[id]?.scrollIntoView({ behavior: 'smooth', block: 'center' })
-                        }}
-                    />
-
-                    <div className="flex items-center justify-between">
-                        <Label className="text-xs font-medium uppercase text-muted-foreground tracking-wider">Registro Clínico</Label>
-                        <Button size="sm" onClick={handleAddBlock} className="cursor-pointer bg-emerald-600 hover:bg-emerald-700 h-8">
-                            <Plus className="mr-1 h-4 w-4" /> Novo bloco
-                        </Button>
-                    </div>
-
-                    <div className="space-y-3">
-                        {normalizedBlocks.map((block, index) => (
-                            <AnamnesisEditorBlock
-                                key={block.id}
-                                block={block}
-                                index={index}
-                                isActive={activeBlockId === block.id}
-                                isRemoveDisabled={normalizedBlocks.length <= 1}
-                                onUpdate={handleUpdateBlock}
-                                onRemove={(id) => setBlocks(prev => prev.filter(b => b.id !== id))}
-                                onFocus={setActiveBlockId}
-                                registerRef={(id, el) => {
-                                    textareaRefs.current[id] = el
-                                }}
-                            />
-                        ))}
-                    </div>
+                    <Button
+                        size="sm"
+                        onClick={handleAddBlock}
+                        variant="outline"
+                        className="w-full cursor-pointer border-dashed text-muted-foreground hover:text-foreground hover:border-border"
+                    >
+                        <Plus className="mr-1.5 h-4 w-4" /> Novo bloco
+                    </Button>
                 </div>
-            </div>
-
-            <div className="flex justify-between px-1 text-[10px] uppercase tracking-widest text-muted-foreground font-medium">
-                <span>Blocos: {normalizedBlocks.length}</span>
-                <span>{isPending ? "Sincronizando..." : hasLocalDraft ? "Rascunho Local" : "Sincronizado"}</span>
             </div>
         </div>
     )

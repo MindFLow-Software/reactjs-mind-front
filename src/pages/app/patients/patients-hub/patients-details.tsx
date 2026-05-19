@@ -28,14 +28,14 @@ import { getPatientDetails } from "@/api/get-patient-details"
 import { PatientDetailsHeader } from "./components/patient-details-header"
 import { useHeaderStore } from "@/hooks/use-header-store"
 import { PatientInfo } from "./components/patient-Info"
-import { PatientSessionsTimeline } from "./components/patient-sessions-timeline"
-import { AnamnesisForm } from "./components/anamnesis-form"
+import { PatientSessionsTimeline } from "./components/timeline/patient-sessions-timeline"
+import { AnamnesisForm } from "./components/anamnesis/anamnesis-form"
 import { PatientResumeTab } from "./components/patient-resume-tab"
 import { PatientsDetailsLoading } from "./components/loading"
 import { PatientsDataBlock } from "../components/patients-data-block"
 import { PatientsPageShell } from "../components/patients-page-shell"
 import { PatientNavigationControls } from "../patients-records/components/patient-navigation-controls"
-import { PatientFilesTab } from "./components/patient-files-tab"
+import { PatientFilesTab } from "./components/files/patient-files-tab"
 
 const HUB_TABS = [
     { value: "clinical", label: "Dados Cadastrais" },

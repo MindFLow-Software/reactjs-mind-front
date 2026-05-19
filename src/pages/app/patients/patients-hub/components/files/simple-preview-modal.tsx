@@ -19,29 +19,18 @@ import {
     DialogFooter
 } from "@/components/ui/dialog"
 import { handleFileDownload } from "@/utils/handle-file-download"
+import type { AttachmentPatientItem } from "@/types/attachment"
 
 const BACKEND_FALLBACK_URL = "http://localhost:8080"
 const IMAGE_EXTENSIONS = /\.(jpg|jpeg|png|webp|gif)$/i
 
-type PreviewFile = {
-    id: string
-    filename?: string
-    fileName?: string
-    contentType?: string
-    fileType?: string
-}
-
 interface SimplePreviewModalProps {
-    file: PreviewFile | null
+    file: AttachmentPatientItem | null
     onClose: () => void
 }
 
 const buildAttachmentUrl = (id: string) =>
     `${import.meta.env.VITE_API_URL?.trim() ?? BACKEND_FALLBACK_URL}/attachments/${id}`
-
-const normalizeFileName = (file: PreviewFile) => file.filename ?? file.fileName ?? "Arquivo"
-const normalizeFileMime = (file: PreviewFile) =>
-    (file.contentType ?? file.fileType ?? "application/octet-stream").toLowerCase()
 
 const isImageMime = (mime: string, name: string) =>
     mime.includes("image") || IMAGE_EXTENSIONS.test(name)
@@ -57,8 +46,8 @@ export function SimplePreviewModal({ file, onClose }: SimplePreviewModalProps) {
 
     const { id } = file
     const fileUrl = useMemo(() => buildAttachmentUrl(id), [id])
-    const fileName = normalizeFileName(file)
-    const fileMime = normalizeFileMime(file)
+    const fileName = file.filename
+    const fileMime = file.type.toLowerCase()
     const lowerFileName = fileName.toLowerCase()
     const isImage = isImageMime(fileMime, lowerFileName)
     const isPDF = !isImage && isPdfMime(fileMime, lowerFileName)
