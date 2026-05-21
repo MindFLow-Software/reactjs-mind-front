@@ -163,7 +163,7 @@ export function PatientsTable({
                                                 <p className="text-sm font-medium">Nenhum paciente encontrado</p>
                                                 <p className="text-xs text-muted-foreground">Tente ajustar os filtros de busca</p>
                                             </div>
-                                            <Button variant="outline" size="sm" onClick={onClearFilters}>
+                                            <Button variant="outline" className='cursor-pointer' size="sm" onClick={onClearFilters}>
                                                 Limpar filtros
                                             </Button>
                                         </>
