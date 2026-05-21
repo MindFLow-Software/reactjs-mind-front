@@ -228,6 +228,7 @@ export default function PatientDetails() {
                                     cpf: patientData.cpf,
                                     email: patientData.email,
                                     phoneNumber: patientData.phoneNumber,
+                                    gender: patientData.gender,
                                 }}
                             />
                         </TabsContent>

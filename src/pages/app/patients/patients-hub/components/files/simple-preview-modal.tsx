@@ -1,18 +1,15 @@
 "use client"
 
 import { useMemo } from "react"
-import { FileText, ArrowDownToLine, Loader2, ImageIcon } from "lucide-react"
+import { FileText, ArrowDownToLine, Loader2, X } from "lucide-react"
 
 import { Button } from "@/components/ui/button"
 import {
     Dialog,
     DialogContent,
-    DialogHeader,
     DialogTitle,
     DialogDescription,
-    DialogFooter,
 } from "@/components/ui/dialog"
-import { Separator } from "@/components/ui/separator"
 import { handleFileDownload } from "@/utils/handle-file-download"
 import type { AttachmentPatientItem } from "@/types/attachment"
 
@@ -33,9 +30,6 @@ const isImageMime = (mime: string, name: string) =>
 const isPdfMime = (mime: string, name: string) =>
     mime.includes("pdf") || name.endsWith(".pdf")
 
-const getDownloadLabel = (isImage: boolean, isPDF: boolean) =>
-    isImage ? "Imagem" : isPDF ? "PDF" : "Arquivo"
-
 export function SimplePreviewModal({ file, onClose }: SimplePreviewModalProps) {
     if (!file) return null
 
@@ -46,32 +40,35 @@ export function SimplePreviewModal({ file, onClose }: SimplePreviewModalProps) {
     const lowerFileName = fileName.toLowerCase()
     const isImage = isImageMime(fileMime, lowerFileName)
     const isPDF = !isImage && isPdfMime(fileMime, lowerFileName)
-    const downloadLabel = getDownloadLabel(isImage, isPDF)
+    const downloadLabel = isImage ? "Imagem" : isPDF ? "PDF" : "Arquivo"
 
     return (
         <Dialog open={Boolean(file)} onOpenChange={onClose}>
-            <DialogContent className="max-w-4xl h-[88vh] p-0 flex flex-col overflow-hidden rounded-2xl shadow-xl">
-                <DialogHeader className="px-5 py-4 flex flex-row items-center gap-3 shrink-0 space-y-0">
-                    <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-blue-50 dark:bg-blue-950/40">
-                        {isImage
-                            ? <ImageIcon className="size-4 text-blue-600" />
-                            : <FileText className="size-4 text-blue-600" />
-                        }
-                    </div>
+            <DialogContent
+                showCloseButton={false}
+                className="max-w-4xl h-[88vh] p-0 flex flex-col overflow-hidden rounded-2xl shadow-2xl border-0 gap-0"
+            >
+                <div className="flex items-center gap-3 px-5 py-4 bg-[#0d1117] shrink-0">
                     <div className="flex-1 min-w-0">
                         <DialogTitle
-                            className="text-sm font-semibold text-foreground truncate"
+                            className="text-sm font-semibold text-white truncate leading-tight"
                             title={fileName}
                         >
                             {fileName}
                         </DialogTitle>
-                        <DialogDescription className="text-[11px] text-muted-foreground">
-                            Visualização do arquivo
+                        <DialogDescription className="text-[10px] text-blue-400/70 uppercase tracking-[0.12em] mt-0.5 font-medium">
+                            MindFlush · Visualizador de Alta Precisão
                         </DialogDescription>
                     </div>
-                </DialogHeader>
+                    <button
+                        onClick={onClose}
+                        className="shrink-0 flex h-8 w-8 items-center justify-center rounded-full border border-white/25 text-white/60 hover:text-white hover:border-white/50 transition-colors cursor-pointer"
+                    >
+                        <X className="size-4" />
+                    </button>
+                </div>
 
-                <Separator />
+                <div className="h-[3px] bg-blue-600 shrink-0" />
 
                 <div className="flex-1 relative flex items-center justify-center overflow-hidden bg-muted/40">
                     <div className="absolute inset-0 flex items-center justify-center z-0">
@@ -105,13 +102,11 @@ export function SimplePreviewModal({ file, onClose }: SimplePreviewModalProps) {
                     )}
                 </div>
 
-                <Separator />
-
-                <DialogFooter className="px-5 py-3 flex items-center justify-between sm:justify-between shrink-0 gap-3">
+                <div className="flex items-center justify-between px-5 py-3 bg-[#0d1117] shrink-0 gap-3">
                     <Button
                         variant="ghost"
                         size="sm"
-                        className="cursor-pointer text-muted-foreground hover:text-foreground"
+                        className="cursor-pointer text-white/40 hover:text-white hover:bg-white/10 text-[11px] tracking-[0.1em] uppercase font-semibold"
                         onClick={onClose}
                     >
                         Fechar
@@ -124,7 +119,7 @@ export function SimplePreviewModal({ file, onClose }: SimplePreviewModalProps) {
                         <ArrowDownToLine className="size-3.5" />
                         Baixar {downloadLabel}
                     </Button>
-                </DialogFooter>
+                </div>
             </DialogContent>
         </Dialog>
     )
