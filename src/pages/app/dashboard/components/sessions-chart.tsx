@@ -1,4 +1,4 @@
-"use client"
+﻿"use client"
 
 import * as React from "react"
 import { Bar, BarChart, CartesianGrid, XAxis, YAxis } from "recharts"
@@ -20,7 +20,7 @@ import {
     ChartTooltipContent,
     type ChartConfig,
 } from "@/components/ui/chart"
-import { getDailySessionsMetrics } from "@/api/get-daily-sessions-metrics"
+import { getDailySessionsMetrics } from "@/api/metrics/get-daily-sessions-metrics"
 import type { DashboardPeriod } from "./dashboard-header"
 
 interface SessionsBarChartProps {

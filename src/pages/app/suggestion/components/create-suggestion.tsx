@@ -1,4 +1,4 @@
-"use client"
+﻿"use client"
 
 import { useState } from "react"
 import { useForm } from "react-hook-form"
@@ -25,7 +25,7 @@ import {
     DialogDescription,
 } from "@/components/ui/dialog"
 
-import { createSuggestion } from "@/api/create-suggestion"
+import { createSuggestion } from "@/api/suggestions/create-suggestion"
 import { SuggestionAttachments } from "./suggestion-attachments"
 import { SuggestionSuccess } from "./suggestion-success-dialog"
 import { cn } from "@/lib/utils"

@@ -19,9 +19,9 @@ import {
   SelectLabel,
 } from "@/components/ui/select"
 
-import { startAppointmentSession } from "@/api/start-appointment-session"
-import { finishAppointmentSession } from "@/api/finish-appointment-session"
-import { getActiveAppointmentsGrouped } from "@/api/get-active-appointments-grouped"
+import { startAppointmentSession } from "@/api/appointments/start-appointment-session"
+import { finishAppointmentSession } from "@/api/appointments/finish-appointment-session"
+import { getActiveAppointmentsGrouped } from "@/api/appointments/get-active-appointments-grouped"
 
 interface AppointmentAddFormProps {
   onSelectPatient: (appointmentId: string) => void

@@ -1,4 +1,4 @@
-import { useState } from "react"
+﻿import { useState } from "react"
 import { useForm } from "react-hook-form"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { useMutation, useQueryClient } from "@tanstack/react-query"
@@ -11,9 +11,9 @@ import type { ChangeEvent } from "react"
 import { DialogContent } from "@/components/ui/dialog"
 import { cn } from "@/lib/utils"
 
-import { createPatients, type CreatePatientsInput } from "@/api/create-patients"
-import { updatePatients, type UpdatePatientData } from "@/api/upadate-patient"
-import { uploadAttachment, uploadAvatar } from "@/api/attachments"
+import { createPatients, type CreatePatientsInput } from "@/api/patients/create-patient"
+import { updatePatients, type UpdatePatientData } from "@/api/patients/update-patient"
+import { uploadAttachment, uploadAvatar } from "@/api/attachments/attachments"
 
 import type { PatientHTTP } from "@/types/patient"
 import { formatCPF } from "@/utils/formatCPF"

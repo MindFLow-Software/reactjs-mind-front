@@ -1,4 +1,4 @@
-import { createBilling } from "@/api/create-billing.ts";
+﻿import { createBilling } from "@/api/billing/create-billing";
 import { useState } from "react";
 
 export function TestBilling() {

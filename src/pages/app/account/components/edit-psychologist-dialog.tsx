@@ -1,4 +1,4 @@
-"use client"
+﻿"use client"
 
 import { useState } from "react"
 import { useMutation, useQueryClient } from "@tanstack/react-query"
@@ -10,7 +10,7 @@ import { Button } from "@/components/ui/button"
 import { Label } from "@/components/ui/label"
 import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from "@/components/ui/select"
 import { formatPhone } from "@/utils/formatPhone"
-import { updatePsychologist, type UpdatePsychologistBody } from "@/api/update-psychologist"
+import { updatePsychologist, type UpdatePsychologistBody } from "@/api/psychologists/update-psychologist"
 import { EXPERTISE_TRANSLATIONS } from "@/utils/mappers"
 import { cn } from "@/lib/utils"
 

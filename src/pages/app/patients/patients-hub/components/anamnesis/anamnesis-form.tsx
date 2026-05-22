@@ -2,7 +2,7 @@
 
 import { useEffect, useMemo, useRef, useState } from "react"
 import { useMutation, useQuery } from "@tanstack/react-query"
-import { getAnamnesis, saveAnamnesis, type AnamnesisData } from "@/api/anamnesis"
+import { getAnamnesis, saveAnamnesis, type AnamnesisData } from "@/api/patients/anamnesis"
 import { Button } from "@/components/ui/button"
 import { Plus } from "lucide-react"
 import { toast } from "sonner"

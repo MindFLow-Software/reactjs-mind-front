@@ -1,4 +1,4 @@
-"use client"
+﻿"use client"
 
 import { useEffect, useRef, useState, useCallback } from "react"
 import {
@@ -30,8 +30,8 @@ import {
 } from "@/components/ui/select"
 import { cn } from "@/lib/utils"
 import { useHeaderStore } from "@/hooks/use-header-store"
-import { getSuggestions } from "@/api/get-suggestions"
-import { updateSuggestionStatus } from "@/api/update-suggestion-status"
+import { getSuggestions } from "@/api/suggestions/get-suggestions"
+import { updateSuggestionStatus } from "@/api/suggestions/update-suggestion-status"
 import { RoadmapCard } from "./components/roadmap-card"
 
 const CATEGORIES = [

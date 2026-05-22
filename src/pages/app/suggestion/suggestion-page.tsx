@@ -1,4 +1,4 @@
-"use client"
+﻿"use client"
 
 import { useEffect, useState } from "react"
 import { Helmet } from "react-helmet-async"
@@ -15,7 +15,7 @@ import {
 import { useQuery } from "@tanstack/react-query"
 
 import { useHeaderStore } from "@/hooks/use-header-store"
-import { getSuggestions } from "@/api/get-suggestions"
+import { getSuggestions } from "@/api/suggestions/get-suggestions"
 import { SuggestionColumn } from "./components/suggestion-column"
 import { Input } from "@/components/ui/input"
 import { Button } from "@/components/ui/button"

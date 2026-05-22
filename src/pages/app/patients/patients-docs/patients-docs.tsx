@@ -1,4 +1,4 @@
-"use client"
+﻿"use client"
 
 import { useEffect, useMemo, useState } from "react"
 import { Helmet } from "react-helmet-async"
@@ -10,7 +10,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { PaginationDocsPatients } from "@/components/pagination-docs-patients"
 
 import { useHeaderStore } from "@/hooks/use-header-store"
-import { getAllAttachments, deleteAttachment } from "@/api/attachments"
+import { getAllAttachments, deleteAttachment } from "@/api/attachments/attachments"
 import { PatientsDataBlock } from "../components/patients-data-block"
 import { AttachmentsTableFilters } from "./components/attachments-table-filters"
 import { AttachmentsTable } from "./components/attachments-table"

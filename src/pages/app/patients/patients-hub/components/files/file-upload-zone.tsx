@@ -1,11 +1,11 @@
-"use client"
+﻿"use client"
 
 import { useRef, useState } from "react"
 import { CloudUpload, Loader2 } from "lucide-react"
 import { useMutation } from "@tanstack/react-query"
 import { toast } from "sonner"
 
-import { uploadAttachment } from "@/api/attachments"
+import { uploadAttachment } from "@/api/attachments/attachments"
 import { uploadFileSchema, ACCEPTED_MIME_TYPES } from "@/validators/attachments"
 import { cn } from "@/lib/utils"
 

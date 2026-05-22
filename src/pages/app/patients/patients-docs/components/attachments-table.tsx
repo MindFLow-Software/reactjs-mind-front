@@ -1,4 +1,4 @@
-"use client"
+﻿"use client"
 
 import { useState, useCallback } from "react"
 import { Paperclip } from "lucide-react"
@@ -13,7 +13,7 @@ import {
 import { Skeleton } from "@/components/ui/skeleton"
 import { Checkbox } from "@/components/ui/checkbox"
 import { AttachmentsTableRow } from "./attachments-table-row"
-import type { Attachment } from "@/api/attachments"
+import type { Attachment } from "@/api/attachments/attachments"
 import { BulkDeleteAction } from "./bulk-delete-action"
 
 interface AttachmentsTableProps {

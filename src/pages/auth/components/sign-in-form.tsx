@@ -12,7 +12,7 @@ import { cn } from "@/lib/utils"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
-import { signIn } from "@/api/sign-in"
+import { signIn } from "@/api/auth/sign-in"
 import { env } from "@/env"
 import { signInSchema, type SignInSchema } from "@/validators/auth"
 

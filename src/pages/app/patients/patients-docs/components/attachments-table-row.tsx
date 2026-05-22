@@ -1,4 +1,4 @@
-"use client"
+﻿"use client"
 
 import { FileText, Trash2, Download, User, CalendarDays, PackageOpen } from "lucide-react"
 import { format } from "date-fns"
@@ -12,7 +12,7 @@ import { Checkbox } from "@/components/ui/checkbox"
 import { cn } from "@/lib/utils"
 
 import { handleFileDownload } from "@/utils/handle-file-download"
-import type { Attachment } from "@/api/attachments"
+import type { Attachment } from "@/api/attachments/attachments"
 
 interface AttachmentsTableRowProps {
     attachment: Attachment

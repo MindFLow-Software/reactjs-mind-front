@@ -1,22 +1,14 @@
 "use client"
 
 import { useMemo } from "react"
-import {
-    FileText,
-    ArrowDownToLine,
-    Loader2,
-    ImageIcon,
-    X,
-} from "lucide-react"
+import { FileText, ArrowDownToLine, Loader2, X } from "lucide-react"
 
 import { Button } from "@/components/ui/button"
 import {
     Dialog,
     DialogContent,
-    DialogHeader,
     DialogTitle,
     DialogDescription,
-    DialogFooter
 } from "@/components/ui/dialog"
 import { handleFileDownload } from "@/utils/handle-file-download"
 import type { AttachmentPatientItem } from "@/types/attachment"
@@ -38,9 +30,6 @@ const isImageMime = (mime: string, name: string) =>
 const isPdfMime = (mime: string, name: string) =>
     mime.includes("pdf") || name.endsWith(".pdf")
 
-const getDownloadLabel = (isImage: boolean, isPDF: boolean) =>
-    isImage ? "Imagem" : isPDF ? "PDF" : "Arquivo"
-
 export function SimplePreviewModal({ file, onClose }: SimplePreviewModalProps) {
     if (!file) return null
 
@@ -51,87 +40,86 @@ export function SimplePreviewModal({ file, onClose }: SimplePreviewModalProps) {
     const lowerFileName = fileName.toLowerCase()
     const isImage = isImageMime(fileMime, lowerFileName)
     const isPDF = !isImage && isPdfMime(fileMime, lowerFileName)
-    const downloadLabel = getDownloadLabel(isImage, isPDF)
+    const downloadLabel = isImage ? "Imagem" : isPDF ? "PDF" : "Arquivo"
 
     return (
         <Dialog open={Boolean(file)} onOpenChange={onClose}>
-            <DialogContent className="max-w-5xl h-[92vh] p-0 flex flex-col overflow-hidden bg-slate-950 border-none shadow-2xl">
-                <DialogHeader className="p-4 border-b border-white/5 bg-slate-900 flex flex-row items-center justify-between shrink-0 space-y-0">
-                    <div className="flex flex-col gap-0.5">
-                        <DialogTitle className="text-sm font-bold text-white flex items-center gap-2">
-                            <span className="p-1 bg-blue-600 rounded text-white shrink-0">
-                                {isImage ? <ImageIcon className="size-3" /> : <FileText className="size-3" />}
-                            </span>
-                            <span className="truncate max-w-[300px]" title={fileName}>
-                                {fileName}
-                            </span>
+            <DialogContent
+                showCloseButton={false}
+                className="max-w-4xl h-[88vh] p-0 flex flex-col overflow-hidden rounded-2xl shadow-2xl border-0 gap-0"
+            >
+                <div className="flex items-center gap-3 px-5 py-4 bg-[#0d1117] shrink-0">
+                    <div className="flex-1 min-w-0">
+                        <DialogTitle
+                            className="text-sm font-semibold text-white truncate leading-tight"
+                            title={fileName}
+                        >
+                            {fileName}
                         </DialogTitle>
-                        <DialogDescription className="text-[10px] text-blue-400 font-bold uppercase tracking-widest">
-                            MindFlush • Visualizador de Alta Precisão
+                        <DialogDescription className="text-[10px] text-blue-400/70 uppercase tracking-[0.12em] mt-0.5 font-medium">
+                            MindFlush · Visualizador de Alta Precisão
                         </DialogDescription>
                     </div>
-                    <div className="flex items-center gap-2 pr-6">
-                        <Button
-                            variant="ghost"
-                            size="icon"
-                            className="cursor-pointer size-8 rounded-full text-slate-400 hover:bg-red-500/20 hover:text-red-400 transition-colors"
-                            onClick={onClose}
-                        >
-                            <X className="size-4" />
-                        </Button>
-                    </div>
-                </DialogHeader>
+                    <button
+                        onClick={onClose}
+                        className="shrink-0 flex h-8 w-8 items-center justify-center rounded-full border border-white/25 text-white/60 hover:text-white hover:border-white/50 transition-colors cursor-pointer"
+                    >
+                        <X className="size-4" />
+                    </button>
+                </div>
 
-                <div className="flex-1 bg-slate-900 relative flex items-center justify-center overflow-hidden">
-                    <div className="absolute inset-0 flex flex-col items-center justify-center z-0">
-                        <Loader2 className="size-8 animate-spin text-blue-600/20 mb-2" />
+                <div className="h-[3px] bg-blue-600 shrink-0" />
+
+                <div className="flex-1 relative flex items-center justify-center overflow-hidden bg-muted/40">
+                    <div className="absolute inset-0 flex items-center justify-center z-0">
+                        <Loader2 className="size-7 animate-spin text-muted-foreground/20" />
                     </div>
 
                     {isImage ? (
                         <img
                             src={fileUrl}
                             alt={fileName}
-                            className="relative z-10 w-full h-full object-contain"
+                            className="relative z-10 w-full h-full object-contain p-4"
                             loading="lazy"
-                            onError={(event) => {
-                                event.currentTarget.style.display = "none"
-                            }}
+                            onError={(e) => { e.currentTarget.style.display = "none" }}
                         />
                     ) : isPDF ? (
                         <iframe
                             src={`${fileUrl}#toolbar=0&navpanes=0&scrollbar=0`}
-                            className="relative z-10 w-full h-full border-none bg-white"
+                            className="relative z-10 w-full h-full border-none"
                             title="Visualização de PDF"
                         />
                     ) : (
-                        <div className="relative z-10 py-20 text-center flex flex-col items-center justify-center">
-                            <FileText className="size-16 mb-4 text-slate-700" />
-                            <p className="text-sm text-slate-400 font-medium px-10">
-                                Visualização não disponível para este formato.
+                        <div className="relative z-10 flex flex-col items-center justify-center gap-3 py-20 text-center">
+                            <div className="flex h-14 w-14 items-center justify-center rounded-full bg-muted">
+                                <FileText className="size-7 text-muted-foreground/40" />
+                            </div>
+                            <p className="text-sm font-medium text-foreground">Formato não suportado</p>
+                            <p className="text-xs text-muted-foreground max-w-[240px]">
+                                Não é possível visualizar este tipo de arquivo. Faça o download para abri-lo.
                             </p>
                         </div>
                     )}
                 </div>
 
-                <DialogFooter className="p-3 bg-slate-900 border-t border-white/5 flex items-center justify-between sm:justify-between shrink-0 gap-4">
-                    <div className="flex items-center gap-3 w-full sm:w-auto">
-                        <Button
-                            variant="ghost"
-                            size="sm"
-                            className="cursor-pointer text-slate-400 hover:text-white hover:bg-white/5 text-xs font-bold uppercase"
-                            onClick={onClose}
-                        >
-                            Fechar
-                        </Button>
-                        <Button
-                            className="cursor-pointer bg-blue-600 hover:bg-blue-500 text-white gap-2 shadow-xl shadow-blue-900/20 h-9 px-8 rounded-full transition-all active:scale-[0.98] font-bold text-xs uppercase tracking-wider"
-                            onClick={() => handleFileDownload(id, fileName)}
-                        >
-                            <ArrowDownToLine className="size-4" />
-                            Baixar {downloadLabel}
-                        </Button>
-                    </div>
-                </DialogFooter>
+                <div className="flex items-center justify-between px-5 py-3 bg-[#0d1117] shrink-0 gap-3">
+                    <Button
+                        variant="ghost"
+                        size="sm"
+                        className="cursor-pointer text-white/40 hover:text-white hover:bg-white/10 text-[11px] tracking-[0.1em] uppercase font-semibold"
+                        onClick={onClose}
+                    >
+                        Fechar
+                    </Button>
+                    <Button
+                        size="sm"
+                        className="cursor-pointer bg-blue-600 hover:bg-blue-700 text-white gap-2 h-8 px-5"
+                        onClick={() => handleFileDownload(id, fileName)}
+                    >
+                        <ArrowDownToLine className="size-3.5" />
+                        Baixar {downloadLabel}
+                    </Button>
+                </div>
             </DialogContent>
         </Dialog>
     )

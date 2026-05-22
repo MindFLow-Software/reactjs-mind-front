@@ -1,4 +1,4 @@
-import { useCallback, useState, useEffect, type ChangeEvent } from "react"
+﻿import { useCallback, useState, useEffect, type ChangeEvent } from "react"
 import { useForm, Controller } from "react-hook-form"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { toast } from "sonner"
@@ -23,7 +23,7 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from "@/components/ui/popover"
-import { registerPsychologist } from "@/api/create-user"
+import { registerPsychologist } from "@/api/psychologists/create-user"
 import { env } from "@/env"
 import { signUpFormSchema, type SignUpFormData } from "@/validators/auth"
 

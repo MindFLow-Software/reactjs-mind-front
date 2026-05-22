@@ -1,10 +1,11 @@
-"use client"
+﻿"use client"
 
 import { useState, useMemo } from "react"
-import { useQuery, useQueryClient } from "@tanstack/react-query"
+import { useQuery, useQueryClient, useMutation } from "@tanstack/react-query"
 import { Loader2, FileSearch } from "lucide-react"
+import { toast } from "sonner"
 
-import { getPatientAttachments } from "@/api/attachments"
+import { getPatientAttachments, deleteAttachment } from "@/api/attachments/attachments"
 import type { AttachmentPatientItem } from "@/types/attachment"
 import { FileUploadZone } from "./file-upload-zone"
 import { FileTypeFilter, getFileType } from "./file-type-filter"
@@ -55,6 +56,15 @@ export function PatientFilesTab({ patientId }: { patientId: string }) {
         [sorted, typeFilter],
     )
 
+    const { mutate: removeFile } = useMutation({
+        mutationFn: deleteAttachment,
+        onSuccess: () => {
+            queryClient.invalidateQueries({ queryKey: ["patient-attachments", patientId] })
+            toast.success("Arquivo removido.")
+        },
+        onError: () => toast.error("Erro ao remover arquivo."),
+    })
+
     function handleUploadSuccess() {
         queryClient.invalidateQueries({ queryKey: ["patient-attachments", patientId] })
     }
@@ -86,6 +96,7 @@ export function PatientFilesTab({ patientId }: { patientId: string }) {
                             key={file.id}
                             file={file}
                             onPreview={setPreviewFile}
+                            onDelete={removeFile}
                         />
                     ))}
                 </div>

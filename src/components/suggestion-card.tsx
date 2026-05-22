@@ -1,10 +1,10 @@
-"use client"
+﻿"use client"
 
 import { ThumbsUp, Calendar } from "lucide-react"
 import { format } from "date-fns"
 import { ptBR } from "date-fns/locale"
 import { cn } from "@/lib/utils"
-import type { Suggestion } from "@/api/get-suggestions"
+import type { Suggestion } from "@/api/suggestions/get-suggestions"
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog"
 
 const CATEGORY_LABELS: Record<string, string> = {

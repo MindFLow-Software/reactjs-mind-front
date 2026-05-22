@@ -1,10 +1,10 @@
-"use client"
+﻿"use client"
 
 import { useEffect, useState, useCallback, useMemo, memo } from "react"
 import { createPortal } from "react-dom"
 import { X, Trophy, Star, Zap, Crown } from "lucide-react"
 import { cn } from "@/lib/utils"
-import type { Popup } from "@/api/popups"
+import type { Popup } from "@/api/popups/popups"
 
 export type AchievementVariant = "bronze" | "silver" | "gold" | "platinum"
 

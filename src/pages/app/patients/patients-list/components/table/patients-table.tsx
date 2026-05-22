@@ -7,7 +7,7 @@ import { Button } from "@/components/ui/button"
 import { Checkbox } from "@/components/ui/checkbox"
 import { PatientsTableRow } from "./patients-table-row"
 import { PatientsTableLoading } from "./loading"
-import type { Patient } from "@/api/get-patients"
+import type { Patient } from "@/api/patients/get-patients"
 import type { PatientSortBy, PatientSortOrder } from "@/hooks/use-patient-filters"
 import { cn } from "@/lib/utils"
 
@@ -163,7 +163,7 @@ export function PatientsTable({
                                                 <p className="text-sm font-medium">Nenhum paciente encontrado</p>
                                                 <p className="text-xs text-muted-foreground">Tente ajustar os filtros de busca</p>
                                             </div>
-                                            <Button variant="outline" size="sm" onClick={onClearFilters}>
+                                            <Button variant="outline" className='cursor-pointer' size="sm" onClick={onClearFilters}>
                                                 Limpar filtros
                                             </Button>
                                         </>

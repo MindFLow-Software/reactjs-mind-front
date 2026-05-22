@@ -72,6 +72,7 @@ export function PatientsTableFilters({
         <Input
           {...register('filter')}
           placeholder="Buscar por nome, CPF, e-mail ou telefone"
+          autoComplete="off"
           className="pl-9 pr-8 h-9 text-sm"
         />
         {watchedFilter && (

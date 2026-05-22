@@ -1,7 +1,7 @@
-"use client"
+﻿"use client"
 
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query"
-import { fetchUnseenPopups, markPopupAsViewed } from "@/api/popups"
+import { fetchUnseenPopups, markPopupAsViewed } from "@/api/popups/popups"
 import { WelcomeModal } from "./popups/welcome-modal"
 import { AchievementToast } from "./popups/achievement-toast"
 

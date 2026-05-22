@@ -64,7 +64,7 @@ export function StepBasicData({
                             {...register("firstName")}
                             id="firstName"
                             placeholder="Ex: Ana Luísa"
-                            autoComplete="given-name"
+                            autoComplete="off"
                             className={cn(inputCls, errors.firstName && "border-red-600 focus-visible:ring-red-600/20")}
                         />
                         {errors.firstName && (
@@ -81,7 +81,7 @@ export function StepBasicData({
                             {...register("lastName")}
                             id="lastName"
                             placeholder="Ex: Costa"
-                            autoComplete="family-name"
+                            autoComplete="off"
                             className={cn(inputCls, errors.lastName && "border-red-600 focus-visible:ring-red-600/20")}
                         />
                         {errors.lastName && (
@@ -115,6 +115,7 @@ export function StepBasicData({
                                         ref={field.ref}
                                         placeholder="000.000.000-00"
                                         inputMode="numeric"
+                                        autoComplete="off"
                                         className={cn(
                                             inputCls, "tabular-nums",
                                             cpfDigits.length === 11 && !errors.cpf && "border-emerald-500 pr-9",
@@ -148,6 +149,7 @@ export function StepBasicData({
                                         placeholder="DD/MM/AAAA"
                                         maxLength={10}
                                         inputMode="numeric"
+                                        autoComplete="off"
                                         className={cn(inputCls, "tabular-nums")}
                                     />
                                     {age !== null && (

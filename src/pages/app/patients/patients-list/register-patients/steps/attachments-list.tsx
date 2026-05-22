@@ -1,9 +1,9 @@
-"use client"
+﻿"use client"
 
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query"
 import { Eye, Download, FileText, Loader2 } from "lucide-react"
 import { toast } from "sonner"
-import { getPatientAttachments, deleteAttachment } from "@/api/attachments"
+import { getPatientAttachments, deleteAttachment } from "@/api/attachments/attachments"
 import { handleFileDownload } from "@/utils/handle-file-download"
 import type { AttachmentPatientItem } from "@/types/attachment"
 import { DeleteActionButton } from "./delete-attachments-button"
