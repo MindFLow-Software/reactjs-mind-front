@@ -31,7 +31,6 @@ interface SuggestionCardProps {
 export function SuggestionCard({ item, userId, onLike }: SuggestionCardProps) {
     const isLiked       = userId ? item.likes?.includes(userId) : false
     const isImplemented = item.status === "IMPLEMENTED"
-    const isPlanned     = item.status === "PLANNED"
     const cat           = CATEGORY_CONFIG[item.category]
 
     const initials = item.psychologistName
@@ -66,11 +65,9 @@ export function SuggestionCard({ item, userId, onLike }: SuggestionCardProps) {
                             onClick={(e) => { e.stopPropagation(); onLike(item.id) }}
                             className={cn(
                                 "flex flex-col items-center justify-center gap-0.5 shrink-0 w-10 h-[58px] self-center rounded-2xl transition-all cursor-pointer active:scale-95",
-                                isPlanned
-                                    ? "bg-gradient-to-b from-blue-600 to-blue-500 text-white shadow-sm shadow-blue-500/30"
-                                    : isLiked
-                                        ? "bg-primary text-primary-foreground shadow-sm shadow-primary/20"
-                                        : "bg-muted text-muted-foreground hover:bg-muted/80 border border-border"
+                                isLiked
+                                    ? "bg-primary text-primary-foreground shadow-sm shadow-primary/20"
+                                    : "bg-muted text-muted-foreground hover:bg-muted/80 border border-border"
                             )}
                         >
                             <ChevronUp className="size-3.5" strokeWidth={2.5} />
