@@ -1,11 +1,10 @@
 "use client"
 
-import { ChevronUp, Check, Calendar } from "lucide-react"
-import { format } from "date-fns"
-import { ptBR } from "date-fns/locale"
+import { ChevronUp, Check } from "lucide-react"
 import { cn } from "@/lib/utils"
 import type { Suggestion } from "@/api/suggestions/get-suggestions"
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog"
+import { Dialog, DialogTrigger } from "@/components/ui/dialog"
+import { SuggestionDetailModalContent } from "@/components/suggestion-detail-modal"
 
 type CategoryKey = Suggestion["category"]
 
@@ -60,9 +59,6 @@ export function SuggestionCard({ item, userId, onLike }: SuggestionCardProps) {
                             <div className="size-8 rounded-full bg-emerald-500 flex items-center justify-center">
                                 <Check className="size-[15px] text-white" strokeWidth={3} />
                             </div>
-                            <span className="text-[10px] font-bold text-emerald-700 dark:text-emerald-400 text-center leading-tight tabular-nums">
-                                {format(new Date(item.createdAt), "dd/MM", { locale: ptBR })}
-                            </span>
                         </div>
                     ) : (
                         <button
@@ -82,7 +78,6 @@ export function SuggestionCard({ item, userId, onLike }: SuggestionCardProps) {
                         </button>
                     )}
 
-                    {/* Content — hierarquia: título 13.5 > descrição 12 > meta 11 */}
                     <div className="flex-1 min-w-0 space-y-1.5">
                         <h3 className={cn(
                             "font-bold leading-snug line-clamp-2 break-words transition-colors text-[14.5px]",
@@ -100,7 +95,6 @@ export function SuggestionCard({ item, userId, onLike }: SuggestionCardProps) {
                         )}
 
                         <div className="flex items-center gap-2 flex-wrap">
-                            {/* Categoria — 6 famílias suaves 50/700 com bolinha */}
                             <span className={cn(
                                 "inline-flex items-center gap-1 text-[11px] font-semibold px-2 py-0.5 rounded-full shrink-0",
                                 cat.pillBg, cat.pillText
@@ -119,50 +113,7 @@ export function SuggestionCard({ item, userId, onLike }: SuggestionCardProps) {
                 </article>
             </DialogTrigger>
 
-            <DialogContent className="sm:max-w-[550px] border-border bg-card gap-6 rounded-2xl overflow-hidden">
-                <DialogHeader className="min-w-0">
-                    <div className="mb-2">
-                        <span className={cn(
-                            "text-[10px] px-2 py-0.5 rounded-full font-black uppercase tracking-wider",
-                            cat.pillBg, cat.pillText
-                        )}>
-                            {cat.label}
-                        </span>
-                    </div>
-                    <DialogTitle className="text-xl font-bold text-foreground leading-tight break-words">
-                        {item.title}
-                    </DialogTitle>
-                </DialogHeader>
-
-                <div className="space-y-6 min-w-0">
-                    <div className="bg-muted/30 p-4 rounded-xl border border-border max-h-[300px] overflow-y-auto scrollbar-thin scrollbar-thumb-border">
-                        <p className="text-sm text-muted-foreground whitespace-pre-wrap leading-relaxed break-words">
-                            {item.description}
-                        </p>
-                    </div>
-
-                    <footer className="flex items-center gap-6 pt-2 border-t border-dashed border-border">
-                        <div className="flex items-center gap-3 min-w-0">
-                            <div className="size-8 rounded-full bg-muted flex items-center justify-center shrink-0 border border-border">
-                                <Calendar className="size-4 text-muted-foreground" />
-                            </div>
-                            <div className="flex flex-col min-w-0">
-                                <span className="font-bold text-muted-foreground text-[10px] uppercase">Postado em</span>
-                                <span className="font-medium text-foreground text-xs truncate">
-                                    {format(new Date(item.createdAt), "dd 'de' MMMM", { locale: ptBR })}
-                                </span>
-                            </div>
-                        </div>
-
-                        <div className="flex items-center gap-2 ml-auto shrink-0">
-                            <div className="size-7 rounded-full bg-muted border border-border flex items-center justify-center text-[10px] font-bold text-foreground/60">
-                                {initials}
-                            </div>
-                            <span className="text-xs text-muted-foreground font-medium">{item.psychologistName}</span>
-                        </div>
-                    </footer>
-                </div>
-            </DialogContent>
+            <SuggestionDetailModalContent item={item} userId={userId} onLike={onLike} />
         </Dialog>
     )
 }

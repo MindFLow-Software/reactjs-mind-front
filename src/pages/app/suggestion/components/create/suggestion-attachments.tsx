@@ -4,14 +4,6 @@ import { useRef, memo } from "react"
 import { CloudUpload, FileText, Paperclip, X, ImageIcon, File as FileIcon } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { FieldSet } from "@/components/ui/field"
-import {
-    Empty,
-    EmptyContent,
-    EmptyDescription,
-    EmptyHeader,
-    EmptyMedia,
-    EmptyTitle
-} from "@/components/ui/empty"
 
 interface SuggestionAttachmentsProps {
     files: File[]
@@ -69,34 +61,22 @@ export const SuggestionAttachments = memo(({ files, onFileChange }: SuggestionAt
 
             <FieldSet className="border-none p-0 shadow-none">
                 {files.length === 0 ? (
-                    <Empty
-                        className="border-2 border-dashed border-border py-8 hover:bg-muted/30 transition-colors cursor-pointer rounded-xl"
+                    <div
+                        className="flex cursor-pointer flex-col items-center gap-3 rounded-[10px] border-2 border-dashed border-border p-[22px] text-center transition-all duration-150 bg-muted/50 hover:border-blue-600 hover:bg-blue-50 dark:hover:bg-blue-950/30"
                         onClick={triggerFileInput}
                     >
-                        <EmptyHeader>
-                            <EmptyMedia>
-                                <div className="p-3 rounded-full bg-muted">
-                                    <CloudUpload className="h-8 w-8 text-muted-foreground/50" />
-                                </div>
-                            </EmptyMedia>
-                            <EmptyTitle className="text-base font-medium text-foreground text-center">
-                                Nenhum print ou documento
-                            </EmptyTitle>
-                            <EmptyDescription className="text-sm text-center">
-                                Clique aqui para anexar arquivos que ilustrem sua ideia
-                            </EmptyDescription>
-                        </EmptyHeader>
-                        <EmptyContent className="flex justify-center">
-                            <Button
-                                variant="outline"
-                                size="sm"
-                                type="button"
-                                className="cursor-pointer"
-                            >
-                                Selecionar Arquivos
-                            </Button>
-                        </EmptyContent>
-                    </Empty>
+                        <div className="flex h-[42px] w-[42px] items-center justify-center rounded-full border border-blue-100 dark:border-blue-900 bg-card text-blue-600">
+                            <CloudUpload className="size-6" />
+                        </div>
+                        <div>
+                            <p className="text-[13.5px] font-semibold text-foreground">
+                                Arraste arquivos ou clique para anexar
+                            </p>
+                            <p className="mt-0.5 text-[11.5px] text-muted-foreground">
+                                Imagens ou PDFs que ilustrem sua ideia
+                            </p>
+                        </div>
+                    </div>
                 ) : (
                     <div className="grid gap-1.5 max-h-[200px] overflow-y-auto pr-1 scrollbar-thin scrollbar-thumb-muted">
                         {files.map((file, index) => (
