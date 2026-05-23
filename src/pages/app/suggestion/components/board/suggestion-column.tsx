@@ -12,13 +12,12 @@ import { SuggestionCard } from "@/components/suggestion-card"
 interface SuggestionColumnProps {
     title: string
     icon: React.ReactNode
-    color: string
-    dotColor: string
+    badgeClass: string
     suggestions?: Suggestion[]
     isLoading: boolean
 }
 
-export function SuggestionColumn({ title, icon, color, dotColor, suggestions = [], isLoading }: SuggestionColumnProps) {
+export function SuggestionColumn({ title, icon, badgeClass, suggestions = [], isLoading }: SuggestionColumnProps) {
     const queryClient = useQueryClient()
 
     const { data: profile } = useQuery({
@@ -71,16 +70,15 @@ export function SuggestionColumn({ title, icon, color, dotColor, suggestions = [
 
     return (
         <div className="flex flex-col w-full bg-card rounded-xl border border-border h-full overflow-hidden shadow-sm transition-colors">
-            <header className={cn("p-4 flex items-center gap-2.5 font-semibold text-sm text-foreground shrink-0 border-b border-border", color)}>
-                <div className={cn("size-2 rounded-full animate-pulse", dotColor)} />
-                <span className="text-base">{icon}</span>
-                <span className="truncate flex-1 uppercase tracking-wider text-[11px] font-bold">{title}</span>
-                <span className="text-[10px] bg-background/50 backdrop-blur-md px-2 py-0.5 rounded-full font-bold text-muted-foreground border border-border">
+            <header className="px-4 py-3 flex items-center gap-2 shrink-0 border-b border-border bg-card">
+                <span className="text-base leading-none">{icon}</span>
+                <span className="flex-1 uppercase tracking-widest text-[11px] font-bold text-foreground truncate">{title}</span>
+                <span className={cn("text-xs font-bold px-2.5 py-0.5 rounded-full tabular-nums", badgeClass)}>
                     {suggestions.length}
                 </span>
             </header>
 
-            <div className="flex-1 overflow-y-auto p-3 space-y-3 min-h-0 scroll-smooth scrollbar-thin scrollbar-thumb-border hover:scrollbar-thumb-muted-foreground/20">
+            <div className="flex-1 overflow-y-auto p-3 space-y-3 min-h-0 scroll-smooth scrollbar-thin scrollbar-thumb-border hover:scrollbar-thumb-muted-foreground/20 bg-muted/30">
                 {isLoading ? (
                     <div className="space-y-3">
                         {[1, 2, 3].map((i) => (

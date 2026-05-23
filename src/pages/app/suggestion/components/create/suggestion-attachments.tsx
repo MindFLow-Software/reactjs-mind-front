@@ -3,7 +3,6 @@
 import { useRef, memo } from "react"
 import { CloudUpload, FileText, Paperclip, X, ImageIcon, File as FileIcon } from "lucide-react"
 import { Button } from "@/components/ui/button"
-import { Label } from "@/components/ui/label"
 import { FieldSet } from "@/components/ui/field"
 import {
     Empty,
@@ -43,25 +42,21 @@ export const SuggestionAttachments = memo(({ files, onFileChange }: SuggestionAt
     }
 
     return (
-        <div className="pt-4 border-t mt-2">
-            <div className="flex items-center justify-between mb-3 px-1">
-                <Label className="block font-medium text-[#27187E]">
-                    Anexos da Sugestão (Opcional)
-                </Label>
-
-                {files.length > 0 && (
+        <div>
+            {files.length > 0 && (
+                <div className="flex justify-end mb-2">
                     <Button
                         variant="outline"
                         size="sm"
                         type="button"
                         onClick={triggerFileInput}
-                        className="h-8 text-xs cursor-pointer border-[#27187E]/20 text-[#27187E] hover:bg-[#27187E]/5"
+                        className="h-8 text-xs cursor-pointer"
                     >
                         <Paperclip className="w-3 h-3 mr-2" />
                         Adicionar
                     </Button>
-                )}
-            </div>
+                </div>
+            )}
 
             <input
                 type="file"
@@ -75,13 +70,13 @@ export const SuggestionAttachments = memo(({ files, onFileChange }: SuggestionAt
             <FieldSet className="border-none p-0 shadow-none">
                 {files.length === 0 ? (
                     <Empty
-                        className="border-2 border-dashed border-[#27187E]/20 py-8 mt-1 hover:bg-[#27187E]/5 transition-colors cursor-pointer rounded-xl"
+                        className="border-2 border-dashed border-border py-8 hover:bg-muted/30 transition-colors cursor-pointer rounded-xl"
                         onClick={triggerFileInput}
                     >
                         <EmptyHeader>
                             <EmptyMedia>
-                                <div className="p-3 rounded-full bg-[#27187E]/5">
-                                    <CloudUpload className="h-8 w-8 text-[#27187E]/60" />
+                                <div className="p-3 rounded-full bg-muted">
+                                    <CloudUpload className="h-8 w-8 text-muted-foreground/50" />
                                 </div>
                             </EmptyMedia>
                             <EmptyTitle className="text-base font-medium text-foreground text-center">
@@ -96,7 +91,7 @@ export const SuggestionAttachments = memo(({ files, onFileChange }: SuggestionAt
                                 variant="outline"
                                 size="sm"
                                 type="button"
-                                className="cursor-pointer border-[#27187E]/30 text-[#27187E]"
+                                className="cursor-pointer"
                             >
                                 Selecionar Arquivos
                             </Button>
@@ -107,7 +102,7 @@ export const SuggestionAttachments = memo(({ files, onFileChange }: SuggestionAt
                         {files.map((file, index) => (
                             <div
                                 key={`${file.name}-${index}`}
-                                className="group flex items-center justify-between p-2 rounded-xl border border-transparent hover:bg-[#27187E]/5 transition-all duration-200"
+                                className="group flex items-center justify-between p-2 rounded-xl border border-transparent hover:bg-muted/30 transition-all duration-200"
                             >
                                 <div className="flex items-center gap-3 overflow-hidden">
                                     <div className="h-9 w-9 rounded-full bg-background flex items-center justify-center border shrink-0">
