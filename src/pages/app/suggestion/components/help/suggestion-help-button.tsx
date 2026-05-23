@@ -22,29 +22,29 @@ const STEPS = [
         title: "Pesquise antes",
         description: "Use a busca para ver se sua ideia já existe e evitar sugestões duplicadas.",
         icon: Search,
-        color: "text-blue-600",
-        bg: "bg-blue-50"
+        color: "text-blue-600 dark:text-blue-400",
+        bg: "bg-blue-50 dark:bg-blue-950/30"
     },
     {
         title: "Capriche no detalhe",
         description: "Explique o porquê e como sua ideia ajudaria no dia a dia clínico.",
         icon: FileText,
-        color: "text-amber-600",
-        bg: "bg-amber-50"
+        color: "text-amber-600 dark:text-amber-400",
+        bg: "bg-amber-50 dark:bg-amber-950/30"
     },
     {
         title: "Vote em outras",
         description: "Curtiu uma sugestão? Vote! As mais apoiadas ganham prioridade.",
         icon: ThumbsUp,
-        color: "text-emerald-600",
-        bg: "bg-emerald-50"
+        color: "text-emerald-600 dark:text-emerald-400",
+        bg: "bg-emerald-50 dark:bg-emerald-950/30"
     },
     {
         title: "Acompanhe o status",
         description: "Veja sua ideia evoluir de sugestão até funcionalidade entregue.",
         icon: Rocket,
-        color: "text-indigo-600",
-        bg: "bg-indigo-50"
+        color: "text-indigo-600 dark:text-indigo-400",
+        bg: "bg-indigo-50 dark:bg-indigo-950/30"
     }
 ]
 
@@ -63,7 +63,7 @@ export function SuggestionHelpButton() {
                                     shadow-xl hover:shadow-2xl
                                     hover:scale-110 transition-all
                                     active:scale-95
-                                    border-2 border-white
+                                    border-2 border-white/30 dark:border-white/10
                                     focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2
                                     cursor-pointer
                                 ">
@@ -78,30 +78,30 @@ export function SuggestionHelpButton() {
                 </TooltipProvider>
 
                 <DialogContent className="max-w-2xl p-0 overflow-hidden border-none sm:rounded-2xl">
-                    <DialogHeader className="p-6 pb-4 bg-slate-50/70 border-b border-slate-100">
+                    <DialogHeader className="p-6 pb-4 bg-muted/50 border-b border-border">
                         <div className="flex items-center gap-4">
-                            <div className="p-3 rounded-xl bg-white shadow-sm">
-                                <Lightbulb className="size-5 text-indigo-600" />
+                            <div className="p-3 rounded-xl bg-card shadow-sm">
+                                <Lightbulb className="size-5 text-indigo-600 dark:text-indigo-400" />
                             </div>
                             <div className="text-left">
-                                <DialogTitle className="text-lg font-extrabold text-slate-900">
+                                <DialogTitle className="text-lg font-extrabold text-foreground">
                                     Comunidade MindFlow
                                 </DialogTitle>
-                                <DialogDescription className="text-sm text-slate-500">
+                                <DialogDescription className="text-sm text-muted-foreground">
                                     Suas ideias ajudam a definir os próximos passos do sistema.
                                 </DialogDescription>
                             </div>
                         </div>
                     </DialogHeader>
 
-                    <div className="cursor-pointer grid grid-cols-1 md:grid-cols-2 divide-y md:divide-y-0 md:divide-x divide-slate-100">
+                    <div className="cursor-pointer grid grid-cols-1 md:grid-cols-2 divide-y md:divide-y-0 md:divide-x divide-border">
                         {STEPS.map((step, index) => (
                             <div
                                 key={index}
                                 className={cn(
                                     "p-6 flex gap-4 transition-all duration-300",
-                                    "hover:bg-slate-50/60 hover:shadow-sm group",
-                                    index < 2 && "md:border-b border-slate-100"
+                                    "hover:bg-muted/50 hover:shadow-sm group",
+                                    index < 2 && "md:border-b border-border"
                                 )}
                             >
                                 <div className={cn(
@@ -113,13 +113,13 @@ export function SuggestionHelpButton() {
                                 </div>
 
                                 <div className="space-y-1">
-                                    <span className="text-[10px] font-bold text-slate-400 tracking-widest">
+                                    <span className="text-[10px] font-bold text-muted-foreground tracking-widest">
                                         PASSO {index + 1}
                                     </span>
-                                    <h3 className="text-xs font-bold text-slate-800 uppercase tracking-wide">
+                                    <h3 className="text-xs font-bold text-foreground uppercase tracking-wide">
                                         {step.title}
                                     </h3>
-                                    <p className="text-sm text-slate-600 leading-relaxed">
+                                    <p className="text-sm text-muted-foreground leading-relaxed">
                                         {step.description}
                                     </p>
                                 </div>
@@ -127,8 +127,8 @@ export function SuggestionHelpButton() {
                         ))}
                     </div>
 
-                    <div className="p-4 bg-slate-50 text-center">
-                        <p className="text-[13px] text-slate-600 font-medium">
+                    <div className="p-4 bg-muted/50 border-t border-border text-center">
+                        <p className="text-[13px] text-muted-foreground font-medium">
                             ❤️ As sugestões são avaliadas semanalmente com base no número de votos. ❤️
                         </p>
                     </div>

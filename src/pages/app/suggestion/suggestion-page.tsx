@@ -10,11 +10,11 @@ import {
     XCircle,
     Plus,
     Lightbulb,
-    SquarePen,
     ChevronsUp,
     Zap,
     Check,
     ListFilter,
+    BadgeCheck,
 } from "lucide-react"
 import { useQuery } from "@tanstack/react-query"
 
@@ -28,6 +28,7 @@ import { Dialog, DialogTrigger } from "@/components/ui/dialog"
 import { cn } from "@/lib/utils"
 import { CreateSuggestion } from "./components/create/create-suggestion"
 import { SuggestionHelpButton } from "./components/help/suggestion-help-button"
+import { StatCard } from "@/components/stat-card"
 
 type CategoryFilter = "UI_UX" | "SCHEDULING" | "REPORTS" | "PRIVACY_LGPD" | "INTEGRATIONS" | "OTHERS"
 
@@ -48,28 +49,28 @@ const COLUMN_CONFIG = [
         icon: Lightbulb,
         status: "OPEN",
         iconColor: "text-blue-500",
-        badgeClass: "bg-blue-100 text-blue-700",
+        badgeClass: "bg-blue-100 dark:bg-blue-950/40 text-blue-700 dark:text-blue-400",
     },
     {
         title: "Em Estudo",
         icon: Microscope,
         status: "UNDER_REVIEW",
         iconColor: "text-purple-500",
-        badgeClass: "bg-purple-100 text-purple-700",
+        badgeClass: "bg-purple-100 dark:bg-purple-950/40 text-purple-700 dark:text-purple-400",
     },
     {
         title: "Implementando",
         icon: Rocket,
         status: "PLANNED",
         iconColor: "text-amber-500",
-        badgeClass: "bg-amber-100 text-amber-700",
+        badgeClass: "bg-amber-100 dark:bg-amber-950/40 text-amber-700 dark:text-amber-400",
     },
     {
         title: "Concluído",
         icon: Check,
         status: "IMPLEMENTED",
         iconColor: "text-emerald-500",
-        badgeClass: "bg-emerald-100 text-emerald-700",
+        badgeClass: "bg-emerald-100 dark:bg-emerald-950/40 text-emerald-700 dark:text-emerald-400",
     },
 ] as const
 
@@ -147,47 +148,32 @@ export function SuggestionPage() {
                 </div>
 
                 <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 shrink-0">
-                    <div className="flex items-center gap-4 bg-card border border-border rounded-xl px-5 py-4">
-                        <div className="size-11 rounded-lg bg-muted flex items-center justify-center shrink-0">
-                            <SquarePen className="size-5 text-muted-foreground" />
-                        </div>
-                        <div>
-                            <p className="text-2xl font-bold leading-none">128</p>
-                            <p className="text-xs text-muted-foreground mt-1.5">Sugestões totais</p>
-                        </div>
-                    </div>
-
-                    <div className="flex items-center gap-4 bg-card border border-border rounded-xl px-5 py-4">
-                        <div className="size-11 rounded-lg bg-violet-50 flex items-center justify-center shrink-0">
-                            <ChevronsUp className="size-5 text-violet-500" />
-                        </div>
-                        <div>
-                            <p className="text-2xl font-bold leading-none">2.341</p>
-                            <p className="text-xs text-muted-foreground mt-1.5">Votos da comunidade</p>
-                            <p className="text-[11px] font-semibold text-emerald-600 mt-1">+84 esta semana</p>
-                        </div>
-                    </div>
-
-                    <div className="flex items-center gap-4 bg-card border border-border rounded-xl px-5 py-4">
-                        <div className="size-11 rounded-lg bg-muted flex items-center justify-center shrink-0">
-                            <Zap className="size-5 text-muted-foreground" />
-                        </div>
-                        <div>
-                            <p className="text-2xl font-bold leading-none">9</p>
-                            <p className="text-xs text-muted-foreground mt-1.5">Em produção agora</p>
-                        </div>
-                    </div>
-
-                    <div className="flex items-center gap-4 bg-card border border-border rounded-xl px-5 py-4">
-                        <div className="size-11 rounded-lg bg-emerald-50 flex items-center justify-center shrink-0">
-                            <Check className="size-5 text-emerald-600" />
-                        </div>
-                        <div>
-                            <p className="text-2xl font-bold leading-none">42</p>
-                            <p className="text-xs text-muted-foreground mt-1.5">Já implementadas</p>
-                            <p className="text-[11px] font-semibold text-emerald-600 mt-1">+6 nos últimos 30d</p>
-                        </div>
-                    </div>
+                    <StatCard
+                        icon={<BadgeCheck className="size-5 text-blue-500" />}
+                        iconBg="bg-blue-50 dark:bg-blue-950/30"
+                        value="128"
+                        label="Sugestões totais"
+                    />
+                    <StatCard
+                        icon={<ChevronsUp className="size-5 text-violet-500" />}
+                        iconBg="bg-violet-50 dark:bg-violet-950/30"
+                        value="2.341"
+                        label="Votos da comunidade"
+                        trend="+84 esta semana"
+                    />
+                    <StatCard
+                        icon={<Zap className="size-5 text-red-500" />}
+                        iconBg="bg-red-50 dark:bg-red-950/30"
+                        value="9"
+                        label="Em produção agora"
+                    />
+                    <StatCard
+                        icon={<Check className="size-5 text-emerald-600" />}
+                        iconBg="bg-emerald-50 dark:bg-emerald-950/30"
+                        value="42"
+                        label="Já implementadas"
+                        trend="+6 nos últimos 30d"
+                    />
                 </div>
 
                 <div className="border border-border rounded-xl p-3 bg-card shrink-0">

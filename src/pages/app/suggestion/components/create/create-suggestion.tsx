@@ -40,12 +40,12 @@ interface CategoryConfig {
 }
 
 const CATEGORIES: CategoryConfig[] = [
-    { value: "UI_UX",        label: "Interface e Visual",   description: "UI/UX, design, usabilidade",    icon: Activity,    iconColor: "text-violet-600",  iconBg: "bg-violet-100"  },
-    { value: "SCHEDULING",   label: "Agenda e Consultas",   description: "Horários, sessões, calendário", icon: Heart,       iconColor: "text-blue-600",    iconBg: "bg-blue-100"    },
-    { value: "REPORTS",      label: "Relatórios",           description: "Financeiro, gráficos, exports", icon: BarChart2,   iconColor: "text-amber-600",   iconBg: "bg-amber-100"   },
-    { value: "PRIVACY_LGPD", label: "Segurança e LGPD",    description: "Privacidade, dados, proteção",  icon: Shield,      iconColor: "text-emerald-600", iconBg: "bg-emerald-100" },
-    { value: "INTEGRATIONS", label: "Integrações Externas", description: "WhatsApp, Google, APIs",        icon: Zap,         iconColor: "text-indigo-600",  iconBg: "bg-indigo-100"  },
-    { value: "OTHERS",       label: "Outros Assuntos",      description: "Qualquer outra sugestão",       icon: HelpCircle,  iconColor: "text-slate-400",   iconBg: "bg-slate-100"   },
+    { value: "UI_UX",        label: "Interface e Visual",   description: "UI/UX, design, usabilidade",    icon: Activity,    iconColor: "text-violet-600 dark:text-violet-400",  iconBg: "bg-violet-100 dark:bg-violet-950/40"  },
+    { value: "SCHEDULING",   label: "Agenda e Consultas",   description: "Horários, sessões, calendário", icon: Heart,       iconColor: "text-blue-600 dark:text-blue-400",      iconBg: "bg-blue-100 dark:bg-blue-950/40"      },
+    { value: "REPORTS",      label: "Relatórios",           description: "Financeiro, gráficos, exports", icon: BarChart2,   iconColor: "text-amber-600 dark:text-amber-400",    iconBg: "bg-amber-100 dark:bg-amber-950/40"    },
+    { value: "PRIVACY_LGPD", label: "Segurança e LGPD",    description: "Privacidade, dados, proteção",  icon: Shield,      iconColor: "text-emerald-600 dark:text-emerald-400",iconBg: "bg-emerald-100 dark:bg-emerald-950/40"},
+    { value: "INTEGRATIONS", label: "Integrações Externas", description: "WhatsApp, Google, APIs",        icon: Zap,         iconColor: "text-indigo-600 dark:text-indigo-400",  iconBg: "bg-indigo-100 dark:bg-indigo-950/40"  },
+    { value: "OTHERS",       label: "Outros Assuntos",      description: "Qualquer outra sugestão",       icon: HelpCircle,  iconColor: "text-slate-400",                        iconBg: "bg-slate-100 dark:bg-slate-800/50"    },
 ]
 
 interface CreateSuggestionProps {
@@ -95,7 +95,7 @@ export function CreateSuggestion({ onSuccess }: CreateSuggestionProps) {
         <DialogContent className="max-w-2xl p-0 gap-0 flex flex-col max-h-[90vh] sm:rounded-2xl overflow-hidden">
             <DialogHeader className="px-6 pt-5 pb-4 border-b shrink-0">
                 <div className="flex items-center gap-3">
-                    <div className="p-2 rounded-xl bg-blue-50 shrink-0">
+                    <div className="p-2 rounded-xl bg-blue-50 dark:bg-blue-950/30 shrink-0">
                         <Lightbulb className="size-5 text-blue-600" />
                     </div>
                     <div>
@@ -108,18 +108,18 @@ export function CreateSuggestion({ onSuccess }: CreateSuggestionProps) {
             </DialogHeader>
 
             <div className="flex-1 overflow-y-auto px-6 py-5 space-y-6 min-h-0">
-                <div className="bg-blue-50 border border-blue-100 rounded-xl p-4 flex gap-3">
-                    <div className="size-5 rounded-full bg-blue-100 flex items-center justify-center shrink-0 mt-0.5">
-                        <span className="text-blue-600 text-[10px] font-extrabold">i</span>
+                <div className="bg-blue-50 dark:bg-blue-950/30 border border-blue-100 dark:border-blue-900 rounded-xl p-4 flex gap-3">
+                    <div className="size-5 rounded-full bg-blue-100 dark:bg-blue-900/50 flex items-center justify-center shrink-0 mt-0.5">
+                        <span className="text-blue-600 dark:text-blue-400 text-[10px] font-extrabold">i</span>
                     </div>
                     <div className="space-y-2 min-w-0">
-                        <p className="text-sm font-semibold text-blue-900">Antes de enviar, dê uma olhada no board</p>
-                        <p className="text-sm text-blue-800 leading-relaxed">
+                        <p className="text-sm font-semibold text-blue-900 dark:text-blue-100">Antes de enviar, dê uma olhada no board</p>
+                        <p className="text-sm text-blue-800 dark:text-blue-200 leading-relaxed">
                             Sua ideia pode já existir. Se encontrar algo parecido, prefira{" "}
                             <strong>dar um voto</strong> na sugestão existente — assim ela ganha mais força.
                         </p>
-                        <div className="inline-flex items-center gap-1.5 text-xs font-medium text-blue-700 bg-white/70 border border-blue-200 rounded-full px-3 py-1">
-                            <span className="text-blue-500 font-bold">✓</span>
+                        <div className="inline-flex items-center gap-1.5 text-xs font-medium text-blue-700 dark:text-blue-300 bg-white/70 dark:bg-blue-950/50 border border-blue-200 dark:border-blue-800 rounded-full px-3 py-1">
+                            <span className="text-blue-500 dark:text-blue-400 font-bold">✓</span>
                             Mínimo de 200 caracteres no detalhamento
                         </div>
                     </div>
@@ -164,7 +164,7 @@ export function CreateSuggestion({ onSuccess }: CreateSuggestionProps) {
                                             className={cn(
                                                 "flex flex-col gap-2.5 p-3 rounded-xl border-2 text-left transition-all cursor-pointer",
                                                 isSelected
-                                                    ? "border-blue-500 bg-blue-50/60 shadow-sm"
+                                                    ? "border-blue-500 bg-blue-50/60 dark:bg-blue-950/30 shadow-sm"
                                                     : "border-border bg-card hover:border-muted-foreground/30 hover:bg-muted/20"
                                             )}
                                         >
@@ -174,7 +174,7 @@ export function CreateSuggestion({ onSuccess }: CreateSuggestionProps) {
                                             <div className="space-y-0.5">
                                                 <p className={cn(
                                                     "text-xs font-semibold leading-tight",
-                                                    isSelected ? "text-blue-700" : "text-foreground"
+                                                    isSelected ? "text-blue-700 dark:text-blue-300" : "text-foreground"
                                                 )}>
                                                     {cat.label}
                                                 </p>
@@ -201,8 +201,8 @@ export function CreateSuggestion({ onSuccess }: CreateSuggestionProps) {
                             <span className={cn(
                                 "text-[11px] font-bold px-2.5 py-0.5 rounded-full",
                                 descriptionValue.length < 200
-                                    ? "bg-red-50 text-red-600"
-                                    : "bg-emerald-50 text-emerald-600"
+                                    ? "bg-red-50 dark:bg-red-950/30 text-red-600 dark:text-red-400"
+                                    : "bg-emerald-50 dark:bg-emerald-950/30 text-emerald-600 dark:text-emerald-400"
                             )}>
                                 {descriptionValue.length} / 200
                             </span>
