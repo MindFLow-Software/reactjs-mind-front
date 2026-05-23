@@ -32,12 +32,12 @@ import { SuggestionHelpButton } from "./components/help/suggestion-help-button"
 type CategoryFilter = "UI_UX" | "SCHEDULING" | "REPORTS" | "PRIVACY_LGPD" | "INTEGRATIONS" | "OTHERS"
 
 const FILTER_CATEGORIES: { value: CategoryFilter; label: string; dot: string }[] = [
-    { value: "UI_UX",        label: "Fluxo",       dot: "bg-violet-500" },
-    { value: "REPORTS",      label: "Relatórios",  dot: "bg-amber-500"  },
-    { value: "INTEGRATIONS", label: "Integrações", dot: "bg-blue-500"   },
-    { value: "SCHEDULING",   label: "Paciente",    dot: "bg-pink-500"   },
-    { value: "PRIVACY_LGPD", label: "Financeiro",  dot: "bg-emerald-500"},
-    { value: "OTHERS",       label: "Outros",      dot: "bg-slate-400"  },
+    { value: "UI_UX", label: "Fluxo", dot: "bg-violet-500" },
+    { value: "REPORTS", label: "Relatórios", dot: "bg-amber-500" },
+    { value: "INTEGRATIONS", label: "Integrações", dot: "bg-blue-500" },
+    { value: "SCHEDULING", label: "Paciente", dot: "bg-pink-500" },
+    { value: "PRIVACY_LGPD", label: "Financeiro", dot: "bg-emerald-500" },
+    { value: "OTHERS", label: "Outros", dot: "bg-slate-400" },
 ]
 
 const BRAND_COLOR = "#2563eb"
@@ -128,10 +128,10 @@ export function SuggestionPage() {
                             <span>Sugestões da Comunidade</span>
                         </h1>
                         <p className="text-sm text-muted-foreground">
-                        Compartilhe ideias para melhorar o Mind. Vote nas sugestões que mais
+                            Compartilhe ideias para melhorar o Mind. Vote nas sugestões que mais
                         </p>
                         <p className="text-sm text-muted-foreground">
-                        importam - As mais votadas viram prioridade no desenvolvimento.
+                            importam - As mais votadas viram prioridade no desenvolvimento.
                         </p>
                     </div>
 
@@ -147,57 +147,57 @@ export function SuggestionPage() {
                 </div>
 
                 <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 shrink-0">
-                    <div className="flex items-center gap-3 bg-card border border-border rounded-xl px-4 py-3">
-                        <div className="size-9 rounded-lg bg-muted flex items-center justify-center shrink-0">
-                            <SquarePen className="size-4 text-muted-foreground" />
+                    <div className="flex items-center gap-4 bg-card border border-border rounded-xl px-5 py-4">
+                        <div className="size-11 rounded-lg bg-muted flex items-center justify-center shrink-0">
+                            <SquarePen className="size-5 text-muted-foreground" />
                         </div>
                         <div>
-                            <p className="text-xl font-bold leading-none">128</p>
-                            <p className="text-xs text-muted-foreground mt-1">Sugestões totais</p>
+                            <p className="text-2xl font-bold leading-none">128</p>
+                            <p className="text-xs text-muted-foreground mt-1.5">Sugestões totais</p>
                         </div>
                     </div>
 
-                    <div className="flex items-center gap-3 bg-card border border-border rounded-xl px-4 py-3">
-                        <div className="size-9 rounded-lg bg-violet-50 flex items-center justify-center shrink-0">
-                            <ChevronsUp className="size-4 text-violet-500" />
+                    <div className="flex items-center gap-4 bg-card border border-border rounded-xl px-5 py-4">
+                        <div className="size-11 rounded-lg bg-violet-50 flex items-center justify-center shrink-0">
+                            <ChevronsUp className="size-5 text-violet-500" />
                         </div>
                         <div>
-                            <p className="text-xl font-bold leading-none">2.341</p>
-                            <p className="text-xs text-muted-foreground mt-1">Votos da comunidade</p>
-                            <p className="text-[11px] font-semibold text-emerald-600 mt-0.5">+84 esta semana</p>
+                            <p className="text-2xl font-bold leading-none">2.341</p>
+                            <p className="text-xs text-muted-foreground mt-1.5">Votos da comunidade</p>
+                            <p className="text-[11px] font-semibold text-emerald-600 mt-1">+84 esta semana</p>
                         </div>
                     </div>
 
-                    <div className="flex items-center gap-3 bg-card border border-border rounded-xl px-4 py-3">
-                        <div className="size-9 rounded-lg bg-muted flex items-center justify-center shrink-0">
-                            <Zap className="size-4 text-muted-foreground" />
+                    <div className="flex items-center gap-4 bg-card border border-border rounded-xl px-5 py-4">
+                        <div className="size-11 rounded-lg bg-muted flex items-center justify-center shrink-0">
+                            <Zap className="size-5 text-muted-foreground" />
                         </div>
                         <div>
-                            <p className="text-xl font-bold leading-none">9</p>
-                            <p className="text-xs text-muted-foreground mt-1">Em produção agora</p>
+                            <p className="text-2xl font-bold leading-none">9</p>
+                            <p className="text-xs text-muted-foreground mt-1.5">Em produção agora</p>
                         </div>
                     </div>
 
-                    <div className="flex items-center gap-3 bg-card border border-border rounded-xl px-4 py-3">
-                        <div className="size-9 rounded-lg bg-emerald-50 flex items-center justify-center shrink-0">
-                            <Check className="size-4 text-emerald-600" />
+                    <div className="flex items-center gap-4 bg-card border border-border rounded-xl px-5 py-4">
+                        <div className="size-11 rounded-lg bg-emerald-50 flex items-center justify-center shrink-0">
+                            <Check className="size-5 text-emerald-600" />
                         </div>
                         <div>
-                            <p className="text-xl font-bold leading-none">42</p>
-                            <p className="text-xs text-muted-foreground mt-1">Já implementadas</p>
-                            <p className="text-[11px] font-semibold text-emerald-600 mt-0.5">+6 nos últimos 30d</p>
+                            <p className="text-2xl font-bold leading-none">42</p>
+                            <p className="text-xs text-muted-foreground mt-1.5">Já implementadas</p>
+                            <p className="text-[11px] font-semibold text-emerald-600 mt-1">+6 nos últimos 30d</p>
                         </div>
                     </div>
                 </div>
 
-                <div className="border border-border rounded-xl p-3 space-y-2 bg-card shrink-0">
-                    <div className="grid grid-cols-[auto_1fr] gap-3 items-center">
-                        <div className="relative shrink-0">
+                <div className="border border-border rounded-xl p-3 bg-card shrink-0">
+                    <div className="flex items-center gap-2 flex-wrap">
+                        <div className="relative flex-1 min-w-[160px]">
                             <Search className="absolute left-2.5 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-muted-foreground pointer-events-none" />
                             <Input
                                 ref={searchInputRef}
-                                placeholder={`Buscar sugestões`}
-                                className="h-8 w-[280px] pl-8 text-sm"
+                                placeholder="Buscar sugestões"
+                                className="h-8 w-full pl-8 text-sm"
                                 value={search}
                                 onChange={(e) => setSearch(e.target.value)}
                             />
@@ -211,18 +211,30 @@ export function SuggestionPage() {
                             )}
                         </div>
 
-                        <div className="grid grid-cols-7 gap-1.5">
+                        <button className="inline-flex items-center gap-1.5 h-7 px-3 rounded-full text-xs font-medium border border-border text-muted-foreground hover:bg-muted/50 transition-colors cursor-pointer shrink-0">
+                            <ListFilter className="size-3.5" />
+                            Mais votadas
+                        </button>
+
+                        <div className="h-4 w-px bg-border shrink-0" />
+
+                        <div className="flex items-center gap-1.5 flex-wrap">
                             <button
                                 onClick={() => setSelectedCategory(null)}
                                 className={cn(
-                                    "inline-flex items-center justify-center gap-1.5 h-8 px-2 rounded-lg text-xs font-medium whitespace-nowrap transition-colors cursor-pointer border",
+                                    "inline-flex items-center gap-1.5 h-7 px-3 rounded-full text-xs font-medium whitespace-nowrap transition-colors cursor-pointer border",
                                     selectedCategory === null
-                                        ? "border-foreground/20 bg-muted/60 text-foreground"
+                                        ? "border-blue-500 bg-blue-50 text-blue-700 dark:bg-blue-950/30 dark:text-blue-400"
                                         : "border-border text-muted-foreground hover:bg-muted/50"
                                 )}
                             >
                                 Todas
-                                <span className="text-[10px] px-1.5 py-0.5 rounded bg-muted text-muted-foreground font-semibold">
+                                <span className={cn(
+                                    "text-[10px] px-1.5 py-0.5 rounded-full font-semibold",
+                                    selectedCategory === null
+                                        ? "bg-blue-100 text-blue-600 dark:bg-blue-900/50 dark:text-blue-300"
+                                        : "bg-muted text-muted-foreground"
+                                )}>
                                     {totalCount}
                                 </span>
                             </button>
@@ -234,28 +246,26 @@ export function SuggestionPage() {
                                         key={cat.value}
                                         onClick={() => setSelectedCategory(isSelected ? null : cat.value)}
                                         className={cn(
-                                            "inline-flex items-center justify-center gap-1.5 h-8 px-2 rounded-lg text-xs font-medium whitespace-nowrap transition-colors cursor-pointer border",
+                                            "inline-flex items-center gap-1.5 h-7 px-3 rounded-full text-xs font-medium whitespace-nowrap transition-colors cursor-pointer border",
                                             isSelected
-                                                ? "border-foreground/20 bg-muted/60 text-foreground"
+                                                ? "border-blue-500 bg-blue-50 text-blue-700 dark:bg-blue-950/30 dark:text-blue-400"
                                                 : "border-border text-muted-foreground hover:bg-muted/50"
                                         )}
                                     >
                                         <span className={cn("size-2 rounded-full shrink-0", cat.dot)} />
                                         {cat.label}
-                                        <span className="text-xs px-1.5 py-0.5 rounded bg-muted text-muted-foreground font-semibold">
+                                        <span className={cn(
+                                            "text-[10px] px-1.5 py-0.5 rounded-full font-semibold",
+                                            isSelected
+                                                ? "bg-blue-100 text-blue-600 dark:bg-blue-900/50 dark:text-blue-300"
+                                                : "bg-muted text-muted-foreground"
+                                        )}>
                                             {categoryCount(cat.value)}
                                         </span>
                                     </button>
                                 )
                             })}
                         </div>
-                    </div>
-
-                    <div>
-                        <button className="inline-flex items-center gap-1.5 h-8 px-3 rounded-lg text-sm font-medium border border-border text-muted-foreground hover:bg-muted/50 transition-colors cursor-pointer">
-                            <ListFilter className="size-3.5" />
-                            Mais votadas
-                        </button>
                     </div>
                 </div>
 
