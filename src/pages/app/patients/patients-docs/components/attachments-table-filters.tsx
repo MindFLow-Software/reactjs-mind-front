@@ -1,6 +1,6 @@
 "use client"
 
-import { XCircle, Users, User, Filter } from "lucide-react" // Adicionei Filter para seguir o padrão
+import { XCircle, Users, User, Filter } from "lucide-react"
 import { useQuery } from "@tanstack/react-query"
 import { Button } from "@/components/ui/button"
 import {
@@ -16,6 +16,13 @@ import { type DateRange } from "react-day-picker"
 import { PatientsSearchInput } from "../../components/patients-search-input"
 import { cn } from "@/lib/utils"
 
+const FILE_TYPE_CHIPS = [
+    { label: "Todos",    value: undefined,           count: null },
+    { label: "PDF",      value: "application/pdf",   count: null },
+    { label: "Imagens",  value: "image/",            count: null },
+    { label: "DOC",      value: "application/msword",count: null },
+] as const
+
 interface AttachmentsTableFiltersProps {
     search: string
     onSearchChange: (value: string) => void
@@ -23,6 +30,8 @@ interface AttachmentsTableFiltersProps {
     onPatientChange: (value: string) => void
     date: DateRange | undefined
     onDateChange: (date: DateRange | undefined) => void
+    contentType: string | undefined
+    onContentTypeChange: (value: string | undefined) => void
     onClearFilters: () => void
 }
 
@@ -33,7 +42,9 @@ export function AttachmentsTableFilters({
     onPatientChange,
     date,
     onDateChange,
-    onClearFilters
+    contentType,
+    onContentTypeChange,
+    onClearFilters,
 }: AttachmentsTableFiltersProps) {
 
     const { data: patients, isLoading } = useQuery({
@@ -43,12 +54,36 @@ export function AttachmentsTableFilters({
     })
 
     const isPatientSelected = patientId && patientId !== "all"
+    const hasActiveFilter = search || isPatientSelected || date?.from || contentType
 
     return (
-        <div className="flex flex-col lg:flex-row gap-3 lg:items-center">
-            <div className="flex flex-col lg:flex-row gap-2 flex-1 lg:items-center">
+        <div className="flex flex-col gap-3">
+            {/* File type chips */}
+            <div className="flex items-center gap-1.5 flex-wrap">
+                {FILE_TYPE_CHIPS.map((chip) => {
+                    const isActive = contentType === chip.value
+                    return (
+                        <button
+                            key={chip.label}
+                            type="button"
+                            onClick={() => onContentTypeChange(chip.value)}
+                            className={cn(
+                                "inline-flex items-center gap-1.5 rounded-full px-3 py-1 text-[12px] font-semibold transition-all duration-150 border",
+                                isActive
+                                    ? "bg-primary text-primary-foreground border-primary"
+                                    : "bg-background text-muted-foreground border-border hover:border-blue-300 hover:text-foreground hover:bg-blue-50 dark:hover:bg-blue-950/30",
+                            )}
+                        >
+                            {chip.label}
+                        </button>
+                    )
+                })}
+            </div>
+
+            {/* Search + dropdowns */}
+            <div className="flex flex-col lg:flex-row gap-2 lg:items-center">
                 <PatientsSearchInput
-                    placeholder="Buscar arquivo..."
+                    placeholder="Buscar por nome, arquivo..."
                     value={search}
                     onChange={(e) => onSearchChange(e.target.value)}
                 />
@@ -56,8 +91,8 @@ export function AttachmentsTableFilters({
                 <Select value={patientId} onValueChange={onPatientChange}>
                     <SelectTrigger
                         className={cn(
-                            "cursor-pointer h-9 w-full lg:w-[260px] bg-background border-muted-foreground/20 hover:border-primary/30 transition-all shadow-sm px-3 text-left font-normal",
-                            !isPatientSelected && "text-muted-foreground"
+                            "cursor-pointer h-9 w-full lg:w-[240px] bg-background border-muted-foreground/20 hover:border-primary/30 transition-all shadow-sm px-3 text-left font-normal",
+                            !isPatientSelected && "text-muted-foreground",
                         )}
                     >
                         <div className="flex items-center gap-2 whitespace-nowrap overflow-hidden">
@@ -82,9 +117,7 @@ export function AttachmentsTableFilters({
                             >
                                 <div className="flex items-center gap-2 overflow-hidden">
                                     <User className="h-4 w-4 text-blue-500 shrink-0" />
-                                    <span className="text-sm font-medium truncate">
-                                        {patient.name}
-                                    </span>
+                                    <span className="text-sm font-medium truncate">{patient.name}</span>
                                 </div>
                             </SelectItem>
                         ))}
@@ -94,12 +127,10 @@ export function AttachmentsTableFilters({
                 <DatePickerWithRange
                     date={date}
                     onDateChange={onDateChange}
-                    className={cn(
-                        "min-w-[220px]"
-                    )}
+                    className="min-w-[220px]"
                 />
 
-                {(search || isPatientSelected || date?.from) && (
+                {hasActiveFilter && (
                     <Button
                         variant="ghost"
                         size="sm"
@@ -108,7 +139,7 @@ export function AttachmentsTableFilters({
                         className="cursor-pointer h-9 px-2 lg:px-3 text-muted-foreground hover:text-destructive gap-2 transition-colors"
                     >
                         <XCircle className="h-4 w-4" />
-                        <span className="text-sm">Limpar filtros</span>
+                        <span className="text-sm">Limpar</span>
                     </Button>
                 )}
             </div>

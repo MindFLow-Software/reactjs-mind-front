@@ -1,14 +1,20 @@
-﻿"use client"
+"use client"
 
-import { FileText, Trash2, Download, User, CalendarDays, PackageOpen } from "lucide-react"
+import { Trash2, Download, Eye, MoreHorizontal } from "lucide-react"
 import { format } from "date-fns"
 import { ptBR } from "date-fns/locale"
 
 import { Button } from "@/components/ui/button"
-import { Badge } from "@/components/ui/badge"
 import { TableCell, TableRow } from "@/components/ui/table"
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip"
 import { Checkbox } from "@/components/ui/checkbox"
+import {
+    DropdownMenu,
+    DropdownMenuContent,
+    DropdownMenuItem,
+    DropdownMenuSeparator,
+    DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu"
 import { cn } from "@/lib/utils"
 
 import { handleFileDownload } from "@/utils/handle-file-download"
@@ -17,138 +23,252 @@ import type { Attachment } from "@/api/attachments/attachments"
 interface AttachmentsTableRowProps {
     attachment: Attachment
     isSelected: boolean
+    isActivePreview: boolean
     onSelectChange: (checked: boolean) => void
     onDelete: (id: string) => void
+    onPreview: (doc: Attachment) => void
 }
 
-export function AttachmentsTableRow({ attachment, isSelected, onSelectChange, onDelete }: AttachmentsTableRowProps) {
+function getFileKind(contentType: string): "pdf" | "image" | "doc" | "xls" | "other" {
+    const ct = contentType.toLowerCase()
+    if (ct.includes("pdf")) return "pdf"
+    if (ct.includes("image")) return "image"
+    if (ct.includes("word") || ct.includes("document") || ct.includes("msword")) return "doc"
+    if (ct.includes("excel") || ct.includes("spreadsheet") || ct.includes("csv")) return "xls"
+    return "other"
+}
+
+const FILE_KIND_STYLES: Record<string, { gradient: string; label: string; labelColor: string }> = {
+    pdf:   { gradient: "from-red-600 to-red-800",   label: "PDF",  labelColor: "#fca5a5" },
+    image: { gradient: "from-cyan-500 to-cyan-700",  label: "IMG",  labelColor: "#67e8f9" },
+    doc:   { gradient: "from-blue-500 to-blue-800",  label: "DOC",  labelColor: "#93c5fd" },
+    xls:   { gradient: "from-green-600 to-green-800",label: "XLS",  labelColor: "#86efac" },
+    other: { gradient: "from-slate-500 to-slate-700",label: "FILE", labelColor: "#cbd5e1" },
+}
+
+function DocThumb({ contentType, filename }: { contentType: string; filename: string }) {
+    const kind = getFileKind(contentType)
+    const style = FILE_KIND_STYLES[kind]
+    const ext = filename.split(".").pop()?.toUpperCase().slice(0, 4) ?? style.label
+
+    return (
+        <div
+            className={cn(
+                "relative flex h-11 w-9 shrink-0 items-end justify-center rounded-md bg-gradient-to-br overflow-hidden",
+                style.gradient,
+            )}
+        >
+            {/* corner fold */}
+            <div className="absolute top-0 right-0 w-0 h-0 border-b-[8px] border-b-transparent border-l-[8px] border-l-white/25" />
+            <span className="mb-1 text-[8px] font-bold tracking-tight" style={{ color: style.labelColor }}>
+                {ext}
+            </span>
+        </div>
+    )
+}
+
+function PatientAvatar({ firstName, lastName }: { firstName: string; lastName: string }) {
+    const initials = `${firstName[0] ?? ""}${lastName[0] ?? ""}`.toUpperCase()
+    return (
+        <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-gradient-to-br from-blue-400 to-blue-600 text-[11px] font-bold text-white select-none">
+            {initials}
+        </div>
+    )
+}
+
+function formatBytes(bytes: number | undefined | null): string {
+    const value = Number(bytes)
+    if (isNaN(value) || value <= 0) return "—"
+    const k = 1024
+    const sizes = ["B", "KB", "MB", "GB"]
+    const i = Math.min(Math.floor(Math.log(value) / Math.log(k)), sizes.length - 1)
+    return `${parseFloat((value / Math.pow(k, i)).toFixed(1))} ${sizes[i]}`
+}
+
+const TYPE_BADGE: Record<string, { bg: string; text: string; label: string }> = {
+    pdf:   { bg: "bg-red-50 dark:bg-red-950/30",   text: "text-red-700 dark:text-red-400",   label: "PDF" },
+    image: { bg: "bg-cyan-50 dark:bg-cyan-950/30",  text: "text-cyan-700 dark:text-cyan-400",  label: "Imagem" },
+    doc:   { bg: "bg-blue-50 dark:bg-blue-950/30",  text: "text-blue-700 dark:text-blue-400",  label: "Documento" },
+    xls:   { bg: "bg-green-50 dark:bg-green-950/30",text: "text-green-700 dark:text-green-400",label: "Planilha" },
+    other: { bg: "bg-muted",                         text: "text-muted-foreground",              label: "Arquivo" },
+}
+
+export function AttachmentsTableRow({
+    attachment,
+    isSelected,
+    isActivePreview,
+    onSelectChange,
+    onDelete,
+    onPreview,
+}: AttachmentsTableRowProps) {
     const { id, filename, contentType, SizeInBytes, uploadedAt, patient } = attachment
 
-    const formatBytes = (bytes: number | undefined | null) => {
-        const value = Number(bytes)
-        if (isNaN(value) || value <= 0) return '0 Bytes'
-        const k = 1024
-        const sizes = ['Bytes', 'KB', 'MB', 'GB', 'TB']
-        const i = Math.floor(Math.log(value) / Math.log(k))
-        const unitIndex = Math.min(i, sizes.length - 1)
-        return `${parseFloat((value / Math.pow(k, unitIndex)).toFixed(2))} ${sizes[unitIndex]}`
-    }
-
-    const fileType = contentType.split('/')[1]?.toUpperCase() || 'FILE'
+    const kind = getFileKind(contentType)
+    const badge = TYPE_BADGE[kind]
 
     return (
         <TooltipProvider delayDuration={200}>
             <TableRow
+                onClick={() => onPreview(attachment)}
                 className={cn(
-                    "group hover:bg-muted/50 transition-all border-l-2 border-l-transparent",
-                    isSelected ? "bg-primary/5 border-l-primary/50" : "hover:border-l-primary/30"
+                    "group cursor-pointer transition-colors border-l-2 border-l-transparent",
+                    isActivePreview
+                        ? "bg-blue-50 dark:bg-blue-950/20 border-l-primary"
+                        : isSelected
+                        ? "bg-primary/5 border-l-primary/40"
+                        : "hover:bg-blue-50/60 dark:hover:bg-blue-950/10 hover:border-l-primary/30",
                 )}
             >
-                <TableCell className="px-4">
+                <TableCell className="px-4" onClick={(e) => e.stopPropagation()}>
                     <Checkbox
                         checked={isSelected}
-                        onCheckedChange={(checked) => onSelectChange(!!checked)}
+                        onCheckedChange={(c) => onSelectChange(!!c)}
                         aria-label={`Selecionar ${filename}`}
                         className="cursor-pointer"
                     />
                 </TableCell>
 
+                {/* Name */}
                 <TableCell>
                     <div className="flex items-center gap-3">
-                        <div className="p-2 bg-primary/5 rounded-lg border border-primary/10 group-hover:bg-primary/10 transition-colors">
-                            <FileText className="h-4 w-4 text-primary" aria-hidden="true" />
-                        </div>
-                        <div className="flex flex-col">
+                        <DocThumb contentType={contentType} filename={filename} />
+                        <div className="min-w-0">
                             <Tooltip>
                                 <TooltipTrigger asChild>
-                                    <span className="font-semibold text-sm leading-tight text-foreground truncate max-w-[180px] cursor-default">
+                                    <p className="max-w-[180px] truncate text-[13.5px] font-semibold text-foreground leading-tight">
                                         {filename}
-                                    </span>
+                                    </p>
                                 </TooltipTrigger>
-                                <TooltipContent side="top" className="text-xs font-medium">
-                                    {filename}
-                                </TooltipContent>
+                                <TooltipContent side="top" className="text-xs">{filename}</TooltipContent>
                             </Tooltip>
-                            <span className="text-[11px] text-muted-foreground/70 uppercase font-medium tracking-tighter">
-                                {fileType}
-                            </span>
+                            <p className="text-[11px] text-muted-foreground mt-0.5 font-medium">
+                                {formatBytes(SizeInBytes)}
+                            </p>
                         </div>
                     </div>
                 </TableCell>
 
+                {/* Patient */}
                 <TableCell>
                     {patient ? (
-                        <div className="flex items-center gap-2">
-                            <div className="p-1 rounded-full bg-muted/50">
-                                <User className="h-3 w-3 text-muted-foreground" aria-hidden="true" />
+                        <div className="flex items-center gap-2.5">
+                            <PatientAvatar firstName={patient.firstName} lastName={patient.lastName} />
+                            <div className="min-w-0">
+                                <p className="text-[13px] font-semibold text-foreground truncate max-w-[130px]">
+                                    {patient.firstName} {patient.lastName}
+                                </p>
                             </div>
-                            <span className="text-xs font-medium text-foreground">
-                                {patient.firstName} {patient.lastName}
-                            </span>
                         </div>
                     ) : (
-                        <Badge variant="secondary" className="bg-zinc-500/10 text-zinc-600 border-zinc-500/20 text-[10px] font-bold uppercase tracking-tight h-[20px]">
+                        <span className="rounded-full bg-muted px-2.5 py-0.5 text-[11px] font-semibold text-muted-foreground">
                             Sem vínculo
-                        </Badge>
+                        </span>
                     )}
                 </TableCell>
 
+                {/* Size */}
                 <TableCell>
-                    <div className="inline-flex items-center gap-1.5 px-2 py-1 rounded-md bg-muted/50 border border-transparent font-mono text-xs font-medium tabular-nums text-muted-foreground">
-                        <PackageOpen className="h-3.5 w-3.5" aria-hidden="true" />
+                    <span className="font-mono text-[12.5px] font-medium text-muted-foreground tabular-nums">
                         {formatBytes(SizeInBytes)}
-                    </div>
+                    </span>
                 </TableCell>
 
+                {/* Date */}
                 <TableCell>
-                    <div className="flex flex-col tabular-nums">
-                        <span className="text-[10px] text-muted-foreground/70 flex items-center gap-1 uppercase font-medium">
-                            <CalendarDays className="h-2.5 w-2.5" aria-hidden="true" />
-                            Enviado em
-                        </span>
-                        <span className="text-sm font-semibold tracking-tight text-foreground">
+                    <div className="flex flex-col">
+                        <span className="text-[13px] font-semibold text-foreground tabular-nums">
                             {uploadedAt ? format(new Date(uploadedAt), "dd/MM/yyyy", { locale: ptBR }) : "—"}
                         </span>
+                        {uploadedAt && (
+                            <span className="text-[11px] text-muted-foreground">
+                                {format(new Date(uploadedAt), "HH:mm")}
+                            </span>
+                        )}
                     </div>
                 </TableCell>
 
-                <TableCell className="text-right">
-                    <div className="flex justify-end gap-2 pr-2">
+                {/* Type badge */}
+                <TableCell>
+                    <span className={cn(
+                        "inline-flex items-center rounded-full px-2 py-0.5 text-[11px] font-semibold",
+                        badge.bg, badge.text,
+                    )}>
+                        {badge.label}
+                    </span>
+                </TableCell>
+
+                {/* Actions */}
+                <TableCell className="text-right" onClick={(e) => e.stopPropagation()}>
+                    <div className="flex justify-end items-center gap-1 pr-2">
                         <Tooltip>
                             <TooltipTrigger asChild>
                                 <Button
                                     variant="ghost"
                                     size="icon"
-                                    className="cursor-pointer h-8 w-8 rounded-lg transition-all text-muted-foreground hover:text-blue-600 hover:bg-blue-100/50"
-                                    onClick={(e) => {
-                                        e.preventDefault()
-                                        e.stopPropagation()
-                                        handleFileDownload(id, filename)
-                                    }}
+                                    className="h-7 w-7 rounded-md text-muted-foreground hover:text-primary hover:bg-blue-50 dark:hover:bg-blue-950/30 cursor-pointer"
+                                    onClick={() => onPreview(attachment)}
                                 >
-                                    <Download className="h-4 w-4" aria-hidden="true" />
+                                    <Eye className="h-3.5 w-3.5" />
                                 </Button>
                             </TooltipTrigger>
-                            <TooltipContent side="top" className="text-xs font-medium">Download</TooltipContent>
+                            <TooltipContent side="top" className="text-xs">Visualizar</TooltipContent>
                         </Tooltip>
 
                         <Tooltip>
                             <TooltipTrigger asChild>
                                 <Button
-                                    size="icon"
                                     variant="ghost"
-                                    className="cursor-pointer h-8 w-8 rounded-lg transition-all text-muted-foreground hover:text-red-600 hover:bg-red-100/50"
-                                    onClick={(e) => {
-                                        e.preventDefault()
-                                        e.stopPropagation()
-                                        onDelete(id)
-                                    }}
+                                    size="icon"
+                                    className="h-7 w-7 rounded-md text-muted-foreground hover:text-blue-600 hover:bg-blue-50 dark:hover:bg-blue-950/30 cursor-pointer"
+                                    onClick={() => handleFileDownload(id, filename)}
                                 >
-                                    <Trash2 className="h-4 w-4" aria-hidden="true" />
+                                    <Download className="h-3.5 w-3.5" />
                                 </Button>
                             </TooltipTrigger>
-                            <TooltipContent side="top" className="text-xs font-medium">Excluir</TooltipContent>
+                            <TooltipContent side="top" className="text-xs">Baixar</TooltipContent>
                         </Tooltip>
+
+                        <DropdownMenu>
+                            <Tooltip>
+                                <TooltipTrigger asChild>
+                                    <DropdownMenuTrigger asChild>
+                                        <Button
+                                            variant="ghost"
+                                            size="icon"
+                                            className="h-7 w-7 rounded-md text-muted-foreground hover:text-foreground hover:bg-muted cursor-pointer"
+                                        >
+                                            <MoreHorizontal className="h-3.5 w-3.5" />
+                                        </Button>
+                                    </DropdownMenuTrigger>
+                                </TooltipTrigger>
+                                <TooltipContent side="top" className="text-xs">Mais ações</TooltipContent>
+                            </Tooltip>
+
+                            <DropdownMenuContent align="end" className="w-44">
+                                <DropdownMenuItem
+                                    className="cursor-pointer gap-2 text-[13px]"
+                                    onClick={() => onPreview(attachment)}
+                                >
+                                    <Eye className="h-3.5 w-3.5" />
+                                    Visualizar
+                                </DropdownMenuItem>
+                                <DropdownMenuItem
+                                    className="cursor-pointer gap-2 text-[13px]"
+                                    onClick={() => handleFileDownload(id, filename)}
+                                >
+                                    <Download className="h-3.5 w-3.5" />
+                                    Baixar
+                                </DropdownMenuItem>
+                                <DropdownMenuSeparator />
+                                <DropdownMenuItem
+                                    className="cursor-pointer gap-2 text-[13px] text-destructive focus:text-destructive"
+                                    onClick={() => onDelete(id)}
+                                >
+                                    <Trash2 className="h-3.5 w-3.5" />
+                                    Excluir
+                                </DropdownMenuItem>
+                            </DropdownMenuContent>
+                        </DropdownMenu>
                     </div>
                 </TableCell>
             </TableRow>
