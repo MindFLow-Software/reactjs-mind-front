@@ -40,7 +40,7 @@ export default function PatientsRecords() {
             perPage: 100,
             filter: debouncedSearch || undefined,
             gender: gender !== "all" ? gender as "OTHER" | "FEMININE" | "MASCULINE" : undefined,
-            order: sessionOrder !== "all" ? sessionOrder : undefined,
+            sessionVolume: sessionOrder !== "all" ? sessionOrder : undefined,
         }),
         placeholderData: (previousData) => previousData,
     })

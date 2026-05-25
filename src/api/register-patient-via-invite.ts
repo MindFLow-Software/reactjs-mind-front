@@ -2,12 +2,12 @@ import { api } from '@/lib/axios'
 import type {
   RegisterPatientViaInviteBody,
   RegisterPatientViaInviteResponse,
-} from '@/contracts/types'
+} from '@/types/patient'
 
 export type {
   RegisterPatientViaInviteBody,
   RegisterPatientViaInviteResponse,
-} from '@/contracts/types'
+} from '@/types/patient'
 
 export async function registerPatientViaInvite(
   hash: string,

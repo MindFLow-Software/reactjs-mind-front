@@ -1,10 +1,10 @@
 import { api } from '@/lib/axios'
 import { format } from 'date-fns'
-import type { UpdatePatientBody } from '@/contracts/types'
+import type { UpdatePatientBody } from '@/types/patient'
 
-export type { UpdatePatientBody } from '@/contracts/types'
+export type { UpdatePatientBody } from '@/types/patient'
 
-export interface UpdatePatientData extends UpdatePatientBody {
+export interface UpdatePatientData extends Omit<UpdatePatientBody, 'dateOfBirth'> {
   id: string
   dateOfBirth?: Date | string
 }

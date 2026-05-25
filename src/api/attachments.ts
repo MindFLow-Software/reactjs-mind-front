@@ -5,33 +5,21 @@ import type {
   AttachmentListMeta,
   UploadAttachmentResponse,
   FetchAllAttachmentsParams,
-} from '@/contracts/types'
+} from '@/types/attachment'
 
 export type {
   AttachmentPatientItem,
   AttachmentListItem,
   AttachmentListMeta,
   UploadAttachmentResponse,
-} from '@/contracts/types'
+} from '@/types/attachment'
 
-// Alias para compatibilidade com componentes existentes
-export type { AttachmentListItem as Attachment } from '@/contracts/types'
+export type { AttachmentListItem as Attachment } from '@/types/attachment'
 
-// Tipo normalizado para uso interno no frontend
-// Unifica os dois formatos distintos que o backend retorna
-export interface NormalizedAttachment {
-  id:          string
-  filename:    string
-  storageKey:  string
-  mimeType:    string
-  sizeInBytes: number
-  uploadedAt:  string
-  patient?:    { firstName: string; lastName: string } | null
+export interface GetAllAttachmentsResponse {
+  attachments: AttachmentListItem[]
+  meta:        AttachmentListMeta
 }
-
-// ---------------------------------------------------------------------------
-// Upload
-// ---------------------------------------------------------------------------
 
 export async function uploadAttachment(
   file: File,
@@ -58,26 +46,11 @@ export async function uploadAvatar(
   return data
 }
 
-// ---------------------------------------------------------------------------
-// GET /attachments/patient/:patientId
-// Response shape: { url, type, size } — diferente do endpoint paginado
-// ---------------------------------------------------------------------------
-
 export async function getPatientAttachments(patientId: string): Promise<AttachmentPatientItem[]> {
   const { data } = await api.get<{ attachments: AttachmentPatientItem[] }>(
     `/attachments/patient/${patientId}`,
   )
   return data.attachments
-}
-
-// ---------------------------------------------------------------------------
-// GET /attachments — listagem paginada do psicólogo
-// Response shape: { fileUrl, contentType, SizeInBytes } — diferente do endpoint acima
-// ---------------------------------------------------------------------------
-
-export interface GetAllAttachmentsResponse {
-  attachments: AttachmentListItem[]
-  meta:        AttachmentListMeta
 }
 
 export async function getAllAttachments(
@@ -86,10 +59,6 @@ export async function getAllAttachments(
   const { data } = await api.get<GetAllAttachmentsResponse>('/attachments', { params })
   return data
 }
-
-// ---------------------------------------------------------------------------
-// DELETE /attachments/:id
-// ---------------------------------------------------------------------------
 
 export async function deleteAttachment(id: string): Promise<void> {
   await api.delete(`/attachments/${id}`)
