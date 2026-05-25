@@ -22,3 +22,10 @@ export const uploadFileSchema = z
     })
 
 export type UploadFileInput = z.infer<typeof uploadFileSchema>
+
+export const uploadFormSchema = z.object({
+    patientId: z.string().min(1, "Selecione um paciente"),
+    files:     z.array(uploadFileSchema).min(1, "Selecione pelo menos um arquivo"),
+})
+
+export type UploadFormData = z.infer<typeof uploadFormSchema>

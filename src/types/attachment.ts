@@ -34,9 +34,10 @@ export interface UploadAttachmentResponse {
 }
 
 export type FetchAllAttachmentsParams = {
-  page?:      number
-  filter?:    string
-  patientId?: string
-  from?:      string
-  to?:        string
+  page?:        number
+  filter?:      string
+  patientId?:   string
+  from?:        string
+  to?:          string
+  contentType?: string
 }
