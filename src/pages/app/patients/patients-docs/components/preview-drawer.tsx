@@ -22,67 +22,28 @@ import {
     AlertDialogTitle,
     AlertDialogTrigger,
 } from "@/components/ui/alert-dialog"
-import { handleFileDownload } from "@/utils/handle-file-download"
-import type { Attachment } from "@/api/attachments/attachments"
 import { cn } from "@/lib/utils"
+import { handleFileDownload } from "@/utils/handle-file-download"
+import { formatFileSize } from "@/utils/format-file-size"
+import type { Attachment } from "@/api/attachments/attachments"
+import { getFileKind, getFileLabel, FILE_KIND_STYLES } from "@/utils/file-helpers"
 
 const BACKEND_URL = import.meta.env.VITE_API_URL?.trim() ?? "http://localhost:8080"
 
 interface PreviewDrawerProps {
-    doc: Attachment | null
-    onClose: () => void
+    doc:      Attachment | null
+    onClose:  () => void
     onDelete: (id: string) => void
 }
-
-function formatBytes(bytes: number | undefined | null): string {
-    const value = Number(bytes)
-    if (isNaN(value) || value <= 0) return "—"
-    const k = 1024
-    const sizes = ["B", "KB", "MB", "GB"]
-    const i = Math.min(Math.floor(Math.log(value) / Math.log(k)), sizes.length - 1)
-    return `${parseFloat((value / Math.pow(k, i)).toFixed(1))} ${sizes[i]}`
-}
-
-function getFileKind(contentType: string): "pdf" | "image" | "other" {
-    const ct = contentType.toLowerCase()
-    if (ct.includes("pdf")) return "pdf"
-    if (ct.includes("image")) return "image"
-    return "other"
-}
-
-function getFileLabel(contentType: string): string {
-    const ct = contentType.toLowerCase()
-    if (ct.includes("pdf")) return "PDF"
-    if (ct.includes("jpeg") || ct.includes("jpg")) return "JPEG"
-    if (ct.includes("png")) return "PNG"
-    if (ct.includes("gif")) return "GIF"
-    if (ct.includes("webp")) return "WebP"
-    if (ct.includes("word") || ct.includes("document")) return "Word"
-    if (ct.includes("excel") || ct.includes("spreadsheet")) return "Excel"
-    if (ct.includes("text")) return "Texto"
-    return "Arquivo"
-}
-
-const THUMB_GRADIENT: Record<string, string> = {
-    pdf:   "from-red-600 to-red-800",
-    image: "from-cyan-500 to-cyan-700",
-    other: "from-slate-500 to-slate-700",
-}
-
-const INFO_ITEMS = [
-    { icon: User,     label: "Paciente" },
-    { icon: Calendar, label: "Enviado em" },
-    { icon: HardDrive,label: "Tamanho" },
-    { icon: FileType, label: "Tipo" },
-]
 
 export function PreviewDrawer({ doc, onClose, onDelete }: PreviewDrawerProps) {
     if (!doc) return null
 
     const { id, filename, contentType, SizeInBytes, uploadedAt, patient } = doc
-    const kind = getFileKind(contentType)
+    const kind    = getFileKind(contentType)
+    const style   = FILE_KIND_STYLES[kind]
     const fileUrl = `${BACKEND_URL}/attachments/${id}`
-    const ext = filename.split(".").pop()?.toUpperCase().slice(0, 4) ?? "FILE"
+    const ext     = filename.split(".").pop()?.toUpperCase().slice(0, 4) ?? "FILE"
 
     return (
         <Sheet open={!!doc} onOpenChange={(open) => { if (!open) onClose() }}>
@@ -92,12 +53,10 @@ export function PreviewDrawer({ doc, onClose, onDelete }: PreviewDrawerProps) {
             >
                 {/* Head */}
                 <div className="flex items-start gap-3 px-5 py-4 border-b border-border shrink-0">
-                    <div
-                        className={cn(
-                            "flex h-11 w-9 shrink-0 items-end justify-center rounded-md bg-gradient-to-br overflow-hidden",
-                            THUMB_GRADIENT[kind],
-                        )}
-                    >
+                    <div className={cn(
+                        "flex h-11 w-9 shrink-0 items-end justify-center rounded-md bg-gradient-to-br overflow-hidden",
+                        style.gradient,
+                    )}>
                         <span className="mb-1 text-[8px] font-bold text-white/80 tracking-tight">{ext}</span>
                     </div>
                     <div className="min-w-0 flex-1">
@@ -105,7 +64,7 @@ export function PreviewDrawer({ doc, onClose, onDelete }: PreviewDrawerProps) {
                             {filename}
                         </SheetTitle>
                         <SheetDescription className="text-[12px] text-muted-foreground mt-0.5">
-                            {getFileLabel(contentType)} · {formatBytes(SizeInBytes)}
+                            {getFileLabel(contentType)} · {formatFileSize(SizeInBytes)}
                         </SheetDescription>
                     </div>
                     <button
@@ -184,7 +143,7 @@ export function PreviewDrawer({ doc, onClose, onDelete }: PreviewDrawerProps) {
                                 <HardDrive className="h-3 w-3" /> Tamanho
                             </p>
                             <p className="text-[13px] font-semibold text-foreground font-mono">
-                                {formatBytes(SizeInBytes)}
+                                {formatFileSize(SizeInBytes)}
                             </p>
                         </div>
                         <div>
