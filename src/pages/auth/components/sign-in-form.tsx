@@ -12,15 +12,18 @@ import { cn } from "@/lib/utils"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
-import { signIn } from "@/api/auth/sign-in"
-import { env } from "@/env"
-import { signInSchema, type SignInSchema } from "@/validators/auth"
 
-interface UserWithRole {
-  id: string
-  email: string
-  role: string | { name: string }
-}
+import z from "zod"
+import { signIn } from "@/api/auth/sign-in"
+import { Sanitize } from "@/utils/Sanitizer"
+import { Authenticate, type IProvider } from "@/api/oauth-authenticate"
+
+const signInSchema = z.object({
+  email: z.email({ message: "E-mail inválido" }),
+  password: z.string().min(1, { message: "A senha é obrigatória" }),
+})
+
+type SignInSchema = z.infer<typeof signInSchema>
 
 const containerVariants: Variants = {
   hidden: {},
@@ -52,37 +55,39 @@ export const SignInForm = memo(function SignInForm({
     },
   })
 
-  const { mutateAsync: authenticate } = useMutation({ mutationFn: signIn })
+  const {
+    mutateAsync: authenticate
+  } = useMutation({
+    mutationFn: signIn
+  })
 
   const handleSignIn = useCallback(
     async (data: SignInSchema) => {
       try {
-        const response = await authenticate(data) as unknown as { user: UserWithRole }
+        const response = await authenticate(data)
         const user = response.user
 
         localStorage.setItem("isAuthenticated", "true")
         localStorage.setItem("user", JSON.stringify(user))
 
-        const roleValue = typeof user.role === "object" && user.role !== null
-          ? (user.role as { name: string }).name
-          : user.role
-        const role = String(roleValue).trim().toUpperCase()
+        const role = user.role
 
         toast.success("Login realizado com sucesso!", { duration: 2000 })
 
         setTimeout(() => {
           navigate(role === "SUPER_ADMIN" ? "/admin-dashboard" : "/dashboard", { replace: true })
         }, 100)
-      } catch (error: any) {
-        if (error?.response?.status === 401) {
-          toast.error("Credenciais inválidas. Verifique seu e-mail e senha.")
-        } else {
-          toast.error(error?.message || "Ocorreu um erro inesperado.")
-        }
+      } catch (error) {
+        const errorMessage = Sanitize.responseError(error)
+        toast.error(errorMessage)
       }
     },
     [authenticate, navigate],
   )
+
+  const handleOauth = async (provider: IProvider) => {
+    await Authenticate.Oauth(provider)
+  }
 
   const togglePasswordVisibility = useCallback(() => setShowPassword((p) => !p), [])
 
@@ -103,7 +108,7 @@ export const SignInForm = memo(function SignInForm({
           type="button"
           variant="outline"
           className="w-full h-11 gap-2 font-medium cursor-pointer"
-          onClick={() => { window.location.href = `${env.VITE_API_URL}/auth/google` }}
+          onClick={() => handleOauth('google')}
         >
           <svg viewBox="0 0 24 24" className="h-4 w-4" aria-hidden="true">
             <path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4" />
