@@ -12,7 +12,7 @@ export interface SignInResponse {
   user: {
     id: string
     email: string
-    role?: string | { name: string }
+    role?: string
   }
 }
 
