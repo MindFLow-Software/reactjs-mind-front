@@ -5,6 +5,7 @@ import { Skeleton } from "@/components/ui/skeleton"
 interface PatientsDataBlockProps {
     title?: ReactNode
     description?: ReactNode
+    headerActions?: ReactNode
     toolbar?: ReactNode
     children: ReactNode
     footer?: ReactNode
@@ -16,6 +17,7 @@ interface PatientsDataBlockProps {
 export function PatientsDataBlock({
     title,
     description,
+    headerActions,
     toolbar,
     children,
     footer,
@@ -25,15 +27,20 @@ export function PatientsDataBlock({
 }: PatientsDataBlockProps) {
     return (
         <section className={cn("space-y-4", className)}>
-            {(title || description || isLoading) && (
-                <header className="space-y-1">
-                    {isLoading ? (
-                        <Skeleton className="h-5 w-32" />
-                    ) : (
-                        title && <h2 className="text-base font-semibold tracking-tight">{title}</h2>
-                    )}
-                    {description && !isLoading && (
-                        <p className="text-sm text-muted-foreground">{description}</p>
+            {(title || description || headerActions || isLoading) && (
+                <header className="flex items-start justify-between gap-4">
+                    <div className="space-y-1 min-w-0">
+                        {isLoading ? (
+                            <Skeleton className="h-5 w-32" />
+                        ) : (
+                            title && <h2 className="text-base font-semibold tracking-tight">{title}</h2>
+                        )}
+                        {description && !isLoading && (
+                            <p className="text-sm text-muted-foreground">{description}</p>
+                        )}
+                    </div>
+                    {headerActions && (
+                        <div className="flex items-center gap-2 shrink-0">{headerActions}</div>
                     )}
                 </header>
             )}

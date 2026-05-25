@@ -1,4 +1,4 @@
-"use client"
+﻿"use client"
 
 import * as React from "react"
 import { Cell, Pie, PieChart } from "recharts"
@@ -19,7 +19,7 @@ import {
     ChartTooltipContent,
     type ChartConfig,
 } from "@/components/ui/chart"
-import { getPsychologistsGenderStats } from "@/api/get-psychologists-gender-stats"
+import { getPsychologistsGenderStats } from "@/api/psychologists/get-psychologists-gender-stats"
 
 const GENDER_TRANSLATIONS: Record<string, string> = {
     FEMININE: "Feminino",

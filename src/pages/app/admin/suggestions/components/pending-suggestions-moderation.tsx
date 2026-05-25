@@ -1,4 +1,4 @@
-"use client"
+﻿"use client"
 
 import { useState } from "react"
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query"
@@ -21,7 +21,7 @@ import {
 } from "@/components/ui/select"
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger, DialogFooter } from "@/components/ui/dialog"
 import { api } from "@/lib/axios"
-import { updateSuggestionStatus } from "@/api/update-suggestion-status"
+import { updateSuggestionStatus } from "@/api/suggestions/update-suggestion-status"
 import {
     Tooltip,
     TooltipContent,

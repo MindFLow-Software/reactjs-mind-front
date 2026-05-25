@@ -28,7 +28,7 @@ import {
     FieldLabel,
 } from "@/components/ui/field"
 
-import type { Appointment } from "@/api/get-appointment"
+import type { Appointment } from "@/api/appointments/get-appointment"
 
 interface EditAppointmentProps {
     appointment: Appointment

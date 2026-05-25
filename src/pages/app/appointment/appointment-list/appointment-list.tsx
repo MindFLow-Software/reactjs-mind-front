@@ -17,9 +17,9 @@ import { RescheduleAppointmentDialog } from "./components/reschedule-appointment
 import { CancelAppointmentDialog } from "./components/cancel-appointment-dialog"
 import { RegisterAppointment } from "./components/register-appointment"
 
-import { getAppointments, type GetAppointmentsResponse, type Appointment } from "@/api/get-appointment"
-import { rescheduleAppointment } from "@/api/reschedule-appointment"
-import { cancelAppointment } from "@/api/cancel-appointment"
+import { getAppointments, type GetAppointmentsResponse, type Appointment } from "@/api/appointments/get-appointment"
+import { rescheduleAppointment } from "@/api/appointments/reschedule-appointment"
+import { cancelAppointment } from "@/api/appointments/cancel-appointment"
 import { useHeaderStore } from "@/hooks/use-header-store"
 import { AppointmentsTableFilters } from "./components/appointments-table-filters"
 

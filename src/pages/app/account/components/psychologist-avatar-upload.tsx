@@ -1,13 +1,13 @@
-"use client"
+﻿"use client"
 
 import { useRef, useState } from "react"
 import { Camera, Upload, Loader2 } from "lucide-react"
 import { useMutation, useQueryClient } from "@tanstack/react-query"
 import { toast } from "sonner"
 import { api } from "@/lib/axios"
-import { updatePsychologist } from "@/api/update-psychologist"
+import { updatePsychologist } from "@/api/psychologists/update-psychologist"
 import { UserAvatar } from "@/components/user-avatar"
-import type { GetProfileResponse } from "@/api/get-profile"
+import type { GetProfileResponse } from "@/api/psychologists/get-profile"
 
 interface AvatarUploadProps {
     currentImage?: string | null

@@ -1,10 +1,10 @@
-"use client"
+﻿"use client"
 
 import { useEffect } from "react"
 import { Helmet } from "react-helmet-async"
 import { useQuery } from "@tanstack/react-query"
 import { useHeaderStore } from "@/hooks/use-header-store"
-import { getPendingApprovals } from "@/api/approvals"
+import { getPendingApprovals } from "@/api/psychologists/approvals"
 import { ApprovalsTable } from "./components/approvals-table"
 
 export function AdminApprovalsPage() {

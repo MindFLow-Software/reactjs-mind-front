@@ -1,7 +1,7 @@
-"use client"
+﻿"use client"
 
 import { useQuery } from "@tanstack/react-query"
-import { getProfile } from "@/api/get-profile"
+import { getProfile } from "@/api/psychologists/get-profile"
 
 export function usePsychologistProfile() {
   return useQuery({

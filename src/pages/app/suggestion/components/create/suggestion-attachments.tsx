@@ -1,0 +1,117 @@
+"use client"
+
+import { useRef, memo } from "react"
+import { CloudUpload, FileText, Paperclip, X, ImageIcon, File as FileIcon } from "lucide-react"
+import { Button } from "@/components/ui/button"
+import { FieldSet } from "@/components/ui/field"
+
+interface SuggestionAttachmentsProps {
+    files: File[]
+    onFileChange: (files: File[]) => void
+}
+
+const getFileIcon = (type: string) => {
+    if (type.includes("image")) return <ImageIcon className="h-4 w-4 text-emerald-600" />
+    if (type.includes("pdf")) return <FileText className="h-4 w-4 text-red-500" />
+    return <FileIcon className="h-4 w-4 text-muted-foreground/70" />
+}
+
+export const SuggestionAttachments = memo(({ files, onFileChange }: SuggestionAttachmentsProps) => {
+    const fileInputRef = useRef<HTMLInputElement>(null)
+
+    const triggerFileInput = () => fileInputRef.current?.click()
+
+    const handleFileSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
+        if (e.target.files && e.target.files.length > 0) {
+            const newFiles = Array.from(e.target.files)
+            onFileChange([...files, ...newFiles])
+        }
+        if (e.target) e.target.value = ""
+    }
+
+    const handleRemoveFile = (indexToRemove: number) => {
+        onFileChange(files.filter((_, index) => index !== indexToRemove))
+    }
+
+    return (
+        <div>
+            {files.length > 0 && (
+                <div className="flex justify-end mb-2">
+                    <Button
+                        variant="outline"
+                        size="sm"
+                        type="button"
+                        onClick={triggerFileInput}
+                        className="h-8 text-xs cursor-pointer"
+                    >
+                        <Paperclip className="w-3 h-3 mr-2" />
+                        Adicionar
+                    </Button>
+                </div>
+            )}
+
+            <input
+                type="file"
+                ref={fileInputRef}
+                className="hidden"
+                multiple
+                accept=".jpg,.jpeg,.png,.pdf"
+                onChange={handleFileSelect}
+            />
+
+            <FieldSet className="border-none p-0 shadow-none">
+                {files.length === 0 ? (
+                    <div
+                        className="flex cursor-pointer flex-col items-center gap-3 rounded-[10px] border-2 border-dashed border-border p-[22px] text-center transition-all duration-150 bg-muted/50 hover:border-blue-600 hover:bg-blue-50 dark:hover:bg-blue-950/30"
+                        onClick={triggerFileInput}
+                    >
+                        <div className="flex h-[42px] w-[42px] items-center justify-center rounded-full border border-blue-100 dark:border-blue-900 bg-card text-blue-600">
+                            <CloudUpload className="size-6" />
+                        </div>
+                        <div>
+                            <p className="text-[13.5px] font-semibold text-foreground">
+                                Arraste arquivos ou clique para anexar
+                            </p>
+                            <p className="mt-0.5 text-[11.5px] text-muted-foreground">
+                                Imagens ou PDFs que ilustrem sua ideia
+                            </p>
+                        </div>
+                    </div>
+                ) : (
+                    <div className="grid gap-1.5 max-h-[200px] overflow-y-auto pr-1 scrollbar-thin scrollbar-thumb-muted">
+                        {files.map((file, index) => (
+                            <div
+                                key={`${file.name}-${index}`}
+                                className="group flex items-center justify-between p-2 rounded-xl border border-transparent hover:bg-muted/30 transition-all duration-200"
+                            >
+                                <div className="flex items-center gap-3 overflow-hidden">
+                                    <div className="h-9 w-9 rounded-full bg-background flex items-center justify-center border shrink-0">
+                                        {getFileIcon(file.type)}
+                                    </div>
+                                    <div className="flex flex-col min-w-0">
+                                        <span className="text-[12px] font-medium text-foreground/80 truncate max-w-[180px]">
+                                            {file.name}
+                                        </span>
+                                        <span className="text-[10px] text-muted-foreground/60">
+                                            {(file.size / 1024 / 1024).toFixed(2)} MB
+                                        </span>
+                                    </div>
+                                </div>
+
+                                <Button
+                                    variant="ghost"
+                                    size="icon"
+                                    type="button"
+                                    className="h-7 w-7 rounded-full text-muted-foreground hover:text-red-500 hover:bg-red-50 opacity-0 group-hover:opacity-100 transition-opacity cursor-pointer"
+                                    onClick={() => handleRemoveFile(index)}
+                                >
+                                    <X className="h-4 w-4" />
+                                </Button>
+                            </div>
+                        ))}
+                    </div>
+                )}
+            </FieldSet>
+        </div>
+    )
+})

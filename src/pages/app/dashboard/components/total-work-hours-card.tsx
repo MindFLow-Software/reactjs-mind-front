@@ -1,11 +1,11 @@
-"use client"
+﻿"use client"
 
 import { memo } from "react"
 import { useQuery } from "@tanstack/react-query"
 import { Clock, Minus, AlertCircle } from "lucide-react"
 import { Card } from "@/components/ui/card"
 import { Skeleton } from "@/components/ui/skeleton"
-import { getTotalWorkHours } from "@/api/get-total-work-hours"
+import { getTotalWorkHours } from "@/api/metrics/get-total-work-hours"
 import { cn } from "@/lib/utils"
 
 const MONTHLY_GOAL_HOURS = 80

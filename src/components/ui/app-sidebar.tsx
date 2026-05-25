@@ -1,4 +1,4 @@
-"use client"
+﻿"use client"
 
 import * as React from "react"
 import {
@@ -20,7 +20,7 @@ import {
   SidebarHeader,
   SidebarRail,
 } from "@/components/ui/sidebar"
-import { getProfile, type GetProfileResponse } from "@/api/get-profile"
+import { getProfile, type GetProfileResponse } from "@/api/psychologists/get-profile"
 import { TeamSwitcher } from "./team-switcher"
 import { NavMain } from "./nav-main"
 import { NavUser } from "./nav-user"

@@ -24,18 +24,18 @@ import {
     DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
 
-import { getPatientDetails } from "@/api/get-patient-details"
+import { getPatientDetails } from "@/api/patients/get-patient-details"
 import { PatientDetailsHeader } from "./components/patient-details-header"
 import { useHeaderStore } from "@/hooks/use-header-store"
 import { PatientInfo } from "./components/patient-Info"
-import { PatientSessionsTimeline } from "./components/patient-sessions-timeline"
-import { AnamnesisForm } from "./components/anamnesis-form"
+import { PatientSessionsTimeline } from "./components/timeline/patient-sessions-timeline"
+import { AnamnesisForm } from "./components/anamnesis/anamnesis-form"
 import { PatientResumeTab } from "./components/patient-resume-tab"
 import { PatientsDetailsLoading } from "./components/loading"
 import { PatientsDataBlock } from "../components/patients-data-block"
 import { PatientsPageShell } from "../components/patients-page-shell"
 import { PatientNavigationControls } from "../patients-records/components/patient-navigation-controls"
-import { PatientFilesTab } from "./components/patient-files-tab"
+import { PatientFilesTab } from "./components/files/patient-files-tab"
 
 const HUB_TABS = [
     { value: "clinical", label: "Dados Cadastrais" },
@@ -203,7 +203,7 @@ export default function PatientDetails() {
                     description="Navegue entre dados cadastrais, anamnese, historico, arquivos e resumo clinico."
                     className="min-w-0 w-full space-y-6 overflow-hidden rounded-2xl bg-card px-5 py-5 shadow-sm md:px-6 md:py-6"
                 >
-                    <div className="pb-5 border-b border-border/60">
+                    <div className="pb-5">
                         <PatientDetailsHeader
                             patient={{
                                 ...patientData,
@@ -228,6 +228,7 @@ export default function PatientDetails() {
                                     cpf: patientData.cpf,
                                     email: patientData.email,
                                     phoneNumber: patientData.phoneNumber,
+                                    gender: patientData.gender,
                                 }}
                             />
                         </TabsContent>

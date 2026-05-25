@@ -1,7 +1,7 @@
-import { useEffect, useRef } from "react"
+﻿import { useEffect, useRef } from "react"
 import { useNavigate } from "react-router-dom"
 import { toast } from "sonner"
-import { getProfile } from "@/api/get-profile"
+import { getProfile } from "@/api/psychologists/get-profile"
 import { api } from "@/lib/axios"
 
 export function GoogleOAuthSuccess() {

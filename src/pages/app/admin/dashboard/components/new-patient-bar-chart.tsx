@@ -1,4 +1,4 @@
-"use client"
+﻿"use client"
 
 import * as React from "react"
 import { Bar, BarChart, CartesianGrid, XAxis } from "recharts"
@@ -27,7 +27,7 @@ import {
     SelectTrigger,
     SelectValue,
 } from "@/components/ui/select"
-import { getTotalPatientsAdminChart } from "@/api/get-total-patients-admin-chart"
+import { getTotalPatientsAdminChart } from "@/api/metrics/get-total-patients-admin-chart"
 
 interface NewPatientsBarChartProps {
     endDate: Date | undefined

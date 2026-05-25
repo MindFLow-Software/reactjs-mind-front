@@ -1,8 +1,7 @@
-import { useCallback, useState, useEffect, type ChangeEvent } from "react"
+﻿import { useCallback, useState, useEffect, type ChangeEvent } from "react"
 import { useForm, Controller } from "react-hook-form"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { toast } from "sonner"
-import { z } from "zod"
 import { useNavigate, Link } from "react-router-dom"
 import { useMutation } from "@tanstack/react-query"
 import { Eye, EyeOff, CalendarIcon, Loader2, Mars, Users, Venus } from "lucide-react"
@@ -24,48 +23,13 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from "@/components/ui/popover"
-import { registerPsychologist } from "@/api/create-user"
+import { registerPsychologist } from "@/api/psychologists/create-user"
 import { env } from "@/env"
+import { signUpFormSchema, type SignUpFormData } from "@/validators/auth"
 
 const today = new Date()
 const minDate = new Date(today.getFullYear() - 120, today.getMonth(), today.getDate())
 const maxDateForPro = new Date(today.getFullYear() - 18, today.getMonth(), today.getDate())
-
-function isValidCPF(cpf: string): boolean {
-  const cleanCPF = cpf.replace(/\D/g, "")
-  if (cleanCPF.length !== 11 || /^(\d)\1{10}$/.test(cleanCPF)) return false
-  let sum = 0, remainder
-  for (let i = 1; i <= 9; i++) sum += parseInt(cleanCPF.substring(i - 1, i)) * (11 - i)
-  remainder = (sum * 10) % 11
-  if (remainder === 10 || remainder === 11) remainder = 0
-  if (remainder !== parseInt(cleanCPF.substring(9, 10))) return false
-  sum = 0
-  for (let i = 1; i <= 10; i++) sum += parseInt(cleanCPF.substring(i - 1, i)) * (12 - i)
-  remainder = (sum * 10) % 11
-  if (remainder === 10 || remainder === 11) remainder = 0
-  if (remainder !== parseInt(cleanCPF.substring(10, 11))) return false
-  return true
-}
-
-const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*])[A-Za-z\d!@#$%^&*]{8,30}$/
-
-export const signUpFormSchema = z.object({
-  firstName: z.string().min(1, "Obrigatório"),
-  lastName: z.string().min(1, "Obrigatório"),
-  phoneNumber: z.string().min(1, "Obrigatório").max(15),
-  email: z.string().email("Email inválido").min(1, "Obrigatório"),
-  password: z.string()
-    .min(8, "Mínimo 8 caracteres")
-    .max(30, "Máximo 30 caracteres")
-    .regex(passwordRegex, "Senha muito fraca"),
-  dateOfBirth: z.date({ message: "Obrigatório" })
-    .refine((d) => d >= minDate, { message: "Data inválida." })
-    .refine((d) => d <= maxDateForPro, { message: "Necessário ter 18+ anos." }),
-  cpf: z.string().min(11, "CPF incompleto").refine(isValidCPF, "CPF inválido"),
-  gender: z.enum(["MASCULINE", "FEMININE", "OTHER"], { message: "Obrigatório" }),
-})
-
-type SignUpFormData = z.infer<typeof signUpFormSchema>
 
 const MaskedInput = IMaskMixin(({ inputRef, ...props }: any) => (
   <Input ref={inputRef} {...props} />

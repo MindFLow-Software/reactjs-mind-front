@@ -1,11 +1,11 @@
-"use client"
+﻿"use client"
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query"
 import { Loader2, TrendingUp } from "lucide-react"
 
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card"
-import { getMostVotedSuggestions } from "@/api/get-most-voted-suggestions"
-import { toggleSuggestionLike } from "@/api/toggle-suggestion-like"
-import { getProfile } from "@/api/get-profile"
+import { getMostVotedSuggestions } from "@/api/suggestions/get-most-voted-suggestions"
+import { toggleSuggestionLike } from "@/api/suggestions/toggle-suggestion-like"
+import { getProfile } from "@/api/psychologists/get-profile"
 import { SuggestionCard } from "@/components/suggestion-card"
 
 export function MostVotedSuggestionsCard() {

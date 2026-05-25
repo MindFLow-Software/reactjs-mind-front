@@ -44,7 +44,21 @@ Always create atomic commits per task. Never batch unrelated changes into one co
 
 ---
 
-## UI/UX — shadcn/ui Rules
+## UI/UX — Design System
+
+**Canonical reference:** `.specs/project/design-system.md`
+
+Read it before building any new screen, component, or state. It defines tokens, typography scale, gender colors, spacing grid, component patterns, dark mode rules, and accessibility requirements. Do not invent new colors or patterns — map everything to what is already documented there.
+
+Key rules from the design system:
+
+- **Dark mode:** replace all `bg-white`/`bg-slate-*`/`text-slate-*`/`border-slate-*` with semantic tokens (`bg-card`, `bg-muted/50`, `text-foreground`, `text-foreground/80`, `text-muted-foreground`, `border-border`). Add `dark:` hover variants for blue (`dark:hover:bg-blue-950/30`) and red (`dark:hover:bg-red-950/30`) fills.
+- **Gender colors:** Feminino = pink, Masculino = blue, Outro = purple. Always. No exceptions, no zinc/slate fallback.
+- **Input focus:** `border-blue-600 ring-[3px] ring-blue-600/[.18]`
+- **Input height:** `h-[38px]`
+- **Form fields:** patient email/phone/CPF inputs use `autoComplete="off"` — they are third-party data, not the user's own.
+
+### shadcn/ui Rules
 
 This project uses shadcn/ui with the **new-york** style and **neutral** base color. All component usage must follow these conventions:
 

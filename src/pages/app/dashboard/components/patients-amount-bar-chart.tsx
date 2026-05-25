@@ -27,7 +27,7 @@ import {
     SelectTrigger,
     SelectValue,
 } from "@/components/ui/select"
-import { getAmountPatientsChart } from "@/api/get-amount-patients-chart"
+import { getAmountPatientsChart } from "@/api/patients/get-amount-patients-chart"
 
 interface NewPatientsBarChartProps {
     endDate: Date | undefined

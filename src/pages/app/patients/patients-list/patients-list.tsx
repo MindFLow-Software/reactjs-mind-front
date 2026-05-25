@@ -1,20 +1,20 @@
 import { useEffect, useMemo, useState } from "react"
 import { Helmet } from "react-helmet-async"
 import { useQuery } from "@tanstack/react-query"
-import { UsersRound, UserRoundPlus, QrCode, Clock, TrendingUp } from "lucide-react"
+import { UsersRound, UserRoundPlus, QrCode, Clock, Activity, ArrowUp, Upload, Download, Columns3 } from "lucide-react"
 import { Dialog } from "@/components/ui/dialog"
 
 import { Pagination } from "@/components/pagination"
-import { PatientsTableFilters } from "./components/patients-table-filters"
-import { PatientsTable } from "./components/patients-table"
+import { PatientsTableFilters } from "./components/table/patients-table-filters"
+import { PatientsTable } from "./components/table/patients-table"
 
 import { useHeaderStore } from "@/hooks/use-header-store"
 import { usePatientFilters } from "@/hooks/use-patient-filters"
-import { getPatients } from "@/api/get-patients"
+import { getPatients } from "@/api/patients/get-patients"
 import { PatientsDataBlock } from "../components/patients-data-block"
 import { PatientsPageShell } from "../components/patients-page-shell"
 import { RegisterPatients } from "./register-patients/register-patients"
-import { GenerateInviteModal } from "./components/generate-Invite-modal"
+import { GenerateInviteModal } from "./components/dialogs/generate-invite-modal"
 import { cn } from "@/lib/utils"
 
 // ── Metric Card ──────────────────────────────────────────────────────────────
@@ -31,7 +31,7 @@ interface MetricCardProps {
 function MetricCard({ icon, iconBg, value, label, sub, subTrend, isLoading }: MetricCardProps) {
     return (
         <div className="flex items-center gap-4 rounded-xl border bg-card px-5 py-4 shadow-sm">
-            <div className={cn("flex h-10 w-10 shrink-0 items-center justify-center rounded-lg", iconBg)}>
+            <div className={cn("flex h-10 w-10 shrink-0 items-center justify-center rounded-full", iconBg)}>
                 {icon}
             </div>
             <div className="flex flex-col gap-0.5">
@@ -44,9 +44,9 @@ function MetricCard({ icon, iconBg, value, label, sub, subTrend, isLoading }: Me
                 {sub && (
                     <span className={cn(
                         "text-[11px] font-medium flex items-center gap-1",
-                        subTrend === "up" ? "text-emerald-600" : "text-muted-foreground"
+                        subTrend === "up" ? "text-emerald-600 dark:text-emerald-400" : "text-muted-foreground"
                     )}>
-                        {subTrend === "up" && <TrendingUp className="h-3 w-3" />}
+                        {subTrend === "up" && <ArrowUp className="h-3 w-3" />}
                         {sub}
                     </span>
                 )}
@@ -88,18 +88,45 @@ export function PatientsList() {
     const totalCount = meta.totalCount
     const loadingTotal = isLoading
 
+    const { data: statusCounts, isLoading: loadingCounts } = useQuery({
+        queryKey: ["patients-count"],
+        queryFn: async () => {
+            const [active, inactive] = await Promise.all([
+                getPatients({ pageIndex: 0, perPage: 1, status: "active" }),
+                getPatients({ pageIndex: 0, perPage: 1, status: "inactive" }),
+            ])
+            return {
+                active:   active.meta.totalCount,
+                inactive: inactive.meta.totalCount,
+            }
+        },
+        staleTime: 60_000,
+        gcTime:    300_000,
+        refetchOnWindowFocus: false,
+        placeholderData: (prev) => prev,
+    })
+
+    const activeCount   = statusCounts?.active   ?? 0
+    const inactiveCount = statusCounts?.inactive ?? 0
+
     const hasActiveFilters = !!filters.filter
+
+    const btnSecondary = cn(
+        "flex h-9 cursor-pointer items-center gap-2 rounded-xl px-4",
+        "border border-border bg-background text-[13px] font-medium",
+        "shadow-sm transition-all hover:bg-muted hover:-translate-y-px active:scale-[0.98]",
+    )
 
     const headerRight = (
         <div className="flex items-center gap-2">
+            <button type="button" className={btnSecondary}>
+                <Upload className="h-4 w-4" />
+                Importar
+            </button>
             <button
                 type="button"
                 onClick={() => setIsInviteOpen(true)}
-                className={cn(
-                    "flex h-9 cursor-pointer items-center gap-2 rounded-xl px-4",
-                    "border border-border bg-background text-[13px] font-medium",
-                    "shadow-sm transition-all hover:bg-muted hover:-translate-y-px active:scale-[0.98]",
-                )}
+                className={btnSecondary}
             >
                 <QrCode className="h-4 w-4" />
                 Link de auto-cadastro
@@ -111,13 +138,26 @@ export function PatientsList() {
                     "flex h-9 cursor-pointer items-center gap-2 rounded-xl px-4",
                     "bg-blue-600 text-[13px] font-medium text-white",
                     "shadow-[0_2px_8px_rgba(37,99,235,0.25)] transition-all",
-                    "hover:bg-blue-700 hover:-translate-y-px active:scale-[0.98]",
+                    "hover:bg-blue-700 hover:-translate-y-px active:scale-[0.98] cursor-pointer",
                 )}
             >
                 <UserRoundPlus className="h-4 w-4" />
                 Cadastrar paciente
             </button>
         </div>
+    )
+
+    const tableActions = (
+        <>
+            <button type="button" className={cn(btnSecondary, "h-8 px-3 text-xs rounded-lg")}>
+                <Download className="h-3.5 w-3.5" />
+                Exportar
+            </button>
+            <button type="button" className={cn(btnSecondary, "h-8 px-3 text-xs rounded-lg")}>
+                <Columns3 className="h-3.5 w-3.5" />
+                Colunas
+            </button>
+        </>
     )
 
     return (
@@ -141,18 +181,30 @@ export function PatientsList() {
                         isLoading={loadingTotal}
                     />
                     <MetricCard
+                        icon={<Activity className="h-5 w-5 text-emerald-600" />}
+                        iconBg="bg-emerald-500/10"
+                        value={activeCount}
+                        label="Ativos"
+                        sub="8 este mês"
+                        subTrend="up"
+                        isLoading={loadingCounts}
+                    />
+                    <MetricCard
                         icon={<UserRoundPlus className="h-5 w-5 text-amber-600" />}
                         iconBg="bg-amber-500/10"
                         value="—"
                         label="Novos (30 dias)"
-                        sub="em breve"
+                        sub="24%"
+                        subTrend="up"
                     />
                     <MetricCard
-                        icon={<Clock className="h-5 w-5 text-blue-400" />}
-                        iconBg="bg-blue-400/10"
-                        value="—"
-                        label="Última sessão"
-                        sub="em breve"
+                        icon={<Clock className="h-5 w-5 text-red-500" />}
+                        iconBg="bg-red-500/10"
+                        value={inactiveCount}
+                        label="Inativos"
+                        sub="sem sessão há 60 dias"
+                        subTrend="neutral"
+                        isLoading={loadingCounts}
                     />
                 </div>
 
@@ -161,6 +213,7 @@ export function PatientsList() {
                     <PatientsDataBlock
                         title="Lista de pacientes"
                         description={`Mostrando ${meta.totalCount > 0 ? Math.min(filters.perPage, meta.totalCount) : 0} de ${meta.totalCount} pacientes`}
+                        headerActions={tableActions}
                         toolbar={
                             <PatientsTableFilters
                                 totalCount={totalCount}
