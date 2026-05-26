@@ -67,6 +67,7 @@ This project uses shadcn/ui with the **new-york** style and **neutral** base col
 - Never install raw Radix primitives directly — always use the shadcn wrapper
 - Use `cn()` from `@/lib/utils` for conditional class merging
 - Prefer composition over custom styling
+- **Never duplicate JSX across files.** Any element used in more than one place must be extracted into its own component before use. No exceptions — inline duplication is always wrong.
 
 ### Styling
 - Use CSS variables (`hsl(var(--primary))`) — never hardcode colors
@@ -149,3 +150,4 @@ Types: `feat`, `fix`, `refactor`, `perf`, `docs`, `test`, `chore`, `build`, `ci`
 - No hardcoded colors or spacing — use design tokens
 - No `any` types — always type explicitly
 - No direct DOM manipulation — use React state/refs
+- No duplicated JSX — extract to a component first, then use it everywhere
