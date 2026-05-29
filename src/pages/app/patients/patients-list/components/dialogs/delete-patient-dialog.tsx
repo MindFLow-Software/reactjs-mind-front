@@ -20,7 +20,7 @@ export function DeletePatientDialog({ fullName, onClose, onConfirm, isPending }:
         try {
             setError(null)
             await onConfirm()
-            toast.success(`Paciente ${fullName} removido com sucesso.`)
+            toast.success(`Paciente ${fullName} arquivado com sucesso.`)
             onClose()
         } catch (err: any) {
             const errorMessage = err?.message || "Erro ao processar. Tente novamente."
@@ -40,12 +40,12 @@ export function DeletePatientDialog({ fullName, onClose, onConfirm, isPending }:
 
                 <DialogHeader className="mb-2">
                     <DialogTitle className="text-2xl font-bold text-foreground">
-                        Remover paciente?
+                        Arquivar paciente?
                     </DialogTitle>
                 </DialogHeader>
 
                 <DialogDescription className="max-w-[85%] text-base text-muted-foreground mx-auto leading-relaxed">
-                    Você está prestes a remover <strong>{fullName}</strong>. Esta ação não pode ser desfeita.
+                    Você está prestes a arquivar <strong>{fullName}</strong>. O paciente poderá ser reativado depois.
                 </DialogDescription>
             </div>
 
@@ -68,7 +68,7 @@ export function DeletePatientDialog({ fullName, onClose, onConfirm, isPending }:
                     {isPending ? (
                         <Loader2 className="h-4 w-4 animate-spin" />
                     ) : (
-                        'Sim, remover'
+                        'Sim, arquivar'
                     )}
                 </Button>
             </DialogFooter>

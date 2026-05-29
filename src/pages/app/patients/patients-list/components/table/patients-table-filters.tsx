@@ -13,9 +13,9 @@ interface PatientsTableFiltersProps {
 }
 
 const STATUS_PILLS = [
-  { value: 'all',      label: 'Todos',    dot: null              },
-  { value: 'active',   label: 'Ativos',   dot: 'bg-emerald-500'  },
-  { value: 'inactive', label: 'Inativos', dot: 'bg-red-500'      },
+  { value: 'all',      label: 'Todos',    dot: null,             activeCls: 'border border-blue-500 bg-background text-foreground'                                                                  },
+  { value: 'active',   label: 'Ativos',   dot: 'bg-emerald-500', activeCls: 'border border-emerald-500 bg-emerald-100 text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-400'               },
+  { value: 'inactive', label: 'Arquivados', dot: 'bg-red-500',   activeCls: 'border border-red-500 bg-red-100 text-red-700 dark:bg-red-900/30 dark:text-red-400'                                   },
 ] as const
 
 export function PatientsTableFilters({
@@ -100,7 +100,7 @@ export function PatientsTableFilters({
               className={cn(
                 "flex items-center gap-1.5 h-8 px-3 rounded-lg text-xs font-medium transition-colors cursor-pointer",
                 isActive
-                  ? "border border-blue-500 bg-background text-foreground"
+                  ? pill.activeCls
                   : "bg-muted text-muted-foreground hover:bg-muted/70 hover:text-foreground",
               )}
             >

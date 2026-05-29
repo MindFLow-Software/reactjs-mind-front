@@ -176,7 +176,7 @@ export const PatientsTableRow = memo(function PatientsTableRow({
               <span className="font-semibold text-sm leading-tight text-nowrap">
                 {fullName}
               </span>
-              <span className="text-[13px] text-muted-foreground font-mono tracking-tight">
+              <span className="text-[13px] font-mono tracking-tight">
                 {cpf ? formatCPF(cpf) : '—'}
               </span>
             </div>
@@ -198,17 +198,17 @@ export const PatientsTableRow = memo(function PatientsTableRow({
                     ? "bg-emerald-100 text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-400 hover:bg-emerald-200 dark:hover:bg-emerald-900/50"
                     : "bg-red-100 text-red-700 dark:bg-red-900/30 dark:text-red-400 hover:bg-red-200 dark:hover:bg-red-900/50",
                 )}
-                aria-label={patientIsActive ? 'Desativar paciente' : 'Ativar paciente'}
+                aria-label={patientIsActive ? 'Arquivar paciente' : 'Reativar paciente'}
               >
                 <span className={cn(
                   "h-1.5 w-1.5 rounded-full shrink-0",
                   patientIsActive ? "bg-emerald-500" : "bg-red-500",
                 )} />
-                {patientIsActive ? 'Ativo' : 'Inativo'}
+                {patientIsActive ? 'Ativo' : 'Arquivado'}
               </button>
             </TooltipTrigger>
             <TooltipContent className="text-xs">
-              {patientIsActive ? 'Clique para desativar' : 'Clique para ativar'}
+              {patientIsActive ? 'Clique para arquivar' : 'Clique para reativar'}
             </TooltipContent>
           </Tooltip>
         </TableCell>
@@ -221,7 +221,7 @@ export const PatientsTableRow = memo(function PatientsTableRow({
                 className="h-3 w-3 text-muted-foreground shrink-0"
                 aria-hidden="true"
               />
-              <span className="text-xs font-medium tabular-nums">
+              <span className="text-xs font-medium">
                 {phoneNumber ? formatPhone(phoneNumber) : '—'}
               </span>
             </div>
@@ -230,16 +230,9 @@ export const PatientsTableRow = memo(function PatientsTableRow({
                 className="h-3 w-3 text-muted-foreground shrink-0"
                 aria-hidden="true"
               />
-              <Tooltip>
-                <TooltipTrigger asChild>
-                  <span className="text-xs text-muted-foreground truncate max-w-[160px] cursor-default">
-                    {email || '—'}
-                  </span>
-                </TooltipTrigger>
-                {email && (
-                  <TooltipContent className="text-xs">{email}</TooltipContent>
-                )}
-              </Tooltip>
+              <span className="text-xs font-medium">
+                {email || '—'}
+              </span>
             </div>
           </div>
         </TableCell>

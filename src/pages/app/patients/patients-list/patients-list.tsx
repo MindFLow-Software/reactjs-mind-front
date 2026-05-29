@@ -201,7 +201,7 @@ export function PatientsList() {
                         icon={<Clock className="h-5 w-5 text-red-500" />}
                         iconBg="bg-red-500/10"
                         value={inactiveCount}
-                        label="Inativos"
+                        label="Arquivados"
                         sub="sem sessão há 60 dias"
                         subTrend="neutral"
                         isLoading={loadingCounts}

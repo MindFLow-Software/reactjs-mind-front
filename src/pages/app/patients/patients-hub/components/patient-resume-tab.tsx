@@ -405,7 +405,7 @@ export function PatientResumeTab(_props: PatientResumeTabProps) {
                         <AlertRow
                             type="warning"
                             tag="Atenção"
-                            title="Status marcado como Inativo"
+                            title="Status marcado como Arquivado"
                             description="Considere entrar em contato — sem sessões há 42 dias."
                         />
                         <AlertRow

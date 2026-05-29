@@ -3,7 +3,7 @@
 import { useEffect, useRef, useState } from "react"
 import { Helmet } from "react-helmet-async"
 import {
-    LayoutGrid,
+    Hand,
     Rocket,
     Microscope,
     Search,
@@ -41,7 +41,6 @@ const FILTER_CATEGORIES: { value: CategoryFilter; label: string; dot: string }[]
     { value: "OTHERS", label: "Outros", dot: "bg-slate-400" },
 ]
 
-const BRAND_COLOR = "#2563eb"
 
 const COLUMN_CONFIG = [
     {
@@ -122,30 +121,28 @@ export function SuggestionPage() {
             <Helmet title="Envios da Comunidade" />
 
             <div className="flex flex-col gap-6 mt-4 h-[calc(100vh-160px)] overflow-hidden">
-                <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4 border-l-4 pl-5 py-2" style={{ borderLeftColor: BRAND_COLOR }}>
+                <header className="flex flex-col lg:flex-row lg:items-center justify-between gap-4 border-l-4 border-primary pl-5 py-2">
                     <div className="space-y-1">
                         <h1 className="text-2xl font-bold tracking-tight flex items-center gap-3">
-                            <LayoutGrid className="size-6" style={{ color: BRAND_COLOR }} />
+                            <Hand className="size-6 text-blue-600" />
                             <span>Sugestões da Comunidade</span>
                         </h1>
                         <p className="text-sm text-muted-foreground">
-                            Compartilhe ideias para melhorar o Mind. Vote nas sugestões que mais
-                        </p>
-                        <p className="text-sm text-muted-foreground">
-                            importam - As mais votadas viram prioridade no desenvolvimento.
+                            Compartilhe ideias para melhorar o Mind — as mais votadas viram prioridade no desenvolvimento.
                         </p>
                     </div>
-
-                    <Dialog open={isCreateOpen} onOpenChange={setIsCreateOpen}>
-                        <DialogTrigger asChild>
-                            <Button size="sm" className="cursor-pointer gap-2 w-full lg:w-auto shrink-0 bg-blue-700 hover:bg-blue-800 shadow-sm transition-all">
-                                <Plus className="h-4 w-4" />
-                                Nova sugestão
-                            </Button>
-                        </DialogTrigger>
-                        <CreateSuggestion onSuccess={() => setIsCreateOpen(false)} />
-                    </Dialog>
-                </div>
+                    <div className="shrink-0">
+                        <Dialog open={isCreateOpen} onOpenChange={setIsCreateOpen}>
+                            <DialogTrigger asChild>
+                                <Button size="sm" className="cursor-pointer gap-2 w-full lg:w-auto bg-blue-600 hover:bg-blue-700 shadow-sm transition-all">
+                                    <Plus className="h-4 w-4" />
+                                    Nova sugestão
+                                </Button>
+                            </DialogTrigger>
+                            <CreateSuggestion onSuccess={() => setIsCreateOpen(false)} />
+                        </Dialog>
+                    </div>
+                </header>
 
                 <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 shrink-0">
                     <StatCard
