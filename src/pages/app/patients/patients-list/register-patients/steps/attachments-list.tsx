@@ -5,32 +5,15 @@ import { Eye, Download, FileText, Loader2 } from "lucide-react"
 import { toast } from "sonner"
 import { getPatientAttachments, deleteAttachment } from "@/api/attachments/attachments"
 import { handleFileDownload } from "@/utils/handle-file-download"
+import { formatFileSize } from "@/utils/format-file-size"
+import { getFileKind, FILE_KIND_STYLES } from "@/utils/file-helpers"
+import { cn } from "@/lib/utils"
 import type { AttachmentPatientItem } from "@/types/attachment"
 import { DeleteActionButton } from "./delete-attachments-button"
 
 interface AttachmentsListProps {
     patientId: string
 }
-
-function formatBytes(bytes: number): string {
-    if (bytes < 1024) return `${bytes} B`
-    if (bytes < 1024 * 1024) return `${(bytes / 1024).toFixed(0)} KB`
-    return `${(bytes / 1024 / 1024).toFixed(1)} MB`
-}
-
-function getDocType(att: AttachmentPatientItem): "PDF" | "IMG" | "DOC" {
-    const t = (att.type ?? "").toLowerCase()
-    const f = (att.filename ?? "").toLowerCase()
-    if (t.includes("pdf") || f.endsWith(".pdf")) return "PDF"
-    if (t.includes("image") || /\.(jpg|jpeg|png|gif|webp|svg)$/.test(f)) return "IMG"
-    return "DOC"
-}
-
-const DOC_GRADIENTS = {
-    PDF: "linear-gradient(135deg, #dc2626, #991b1b)",
-    IMG: "linear-gradient(135deg, #0891b2, #0e7490)",
-    DOC: "linear-gradient(135deg, #2563eb, #1e40af)",
-} as const
 
 export function AttachmentsList({ patientId }: AttachmentsListProps) {
     const queryClient = useQueryClient()
@@ -79,7 +62,8 @@ export function AttachmentsList({ patientId }: AttachmentsListProps) {
             ) : (
                 <div className="grid grid-cols-2 gap-2">
                     {attachments.map((file) => {
-                        const docType    = getDocType(file)
+                        const kind       = getFileKind(file.type ?? "")
+                        const fileStyle  = FILE_KIND_STYLES[kind]
                         const uploadDate = new Date(file.uploadedAt).toLocaleDateString("pt-BR", {
                             day: "2-digit", month: "2-digit", year: "numeric",
                         })
@@ -90,10 +74,13 @@ export function AttachmentsList({ patientId }: AttachmentsListProps) {
                                 className="flex items-start gap-2.5 rounded-[8px] border border-border bg-card p-[10px] transition-all hover:border-blue-200 hover:bg-blue-50 hover:shadow-sm dark:hover:border-blue-800 dark:hover:bg-blue-950/30"
                             >
                                 <div
-                                    className="relative flex shrink-0 items-center justify-center rounded-[4px] text-[9px] font-black uppercase tracking-[0.04em] text-white"
-                                    style={{ width: 36, height: 44, background: DOC_GRADIENTS[docType] }}
+                                    className={cn(
+                                        "relative flex shrink-0 items-center justify-center rounded-[4px] bg-gradient-to-br text-[9px] font-black uppercase tracking-[0.04em] text-white",
+                                        fileStyle.gradient,
+                                    )}
+                                    style={{ width: 36, height: 44 }}
                                 >
-                                    {docType}
+                                    {fileStyle.label}
                                     <div
                                         className="absolute right-0 top-0"
                                         style={{ width: 0, height: 0, borderStyle: "solid", borderWidth: "9px 9px 0 0", borderColor: "white white transparent transparent" }}
@@ -103,7 +90,7 @@ export function AttachmentsList({ patientId }: AttachmentsListProps) {
                                 <div className="min-w-0 flex-1">
                                     <p className="truncate text-[12.5px] font-semibold text-foreground">{file.filename}</p>
                                     <div className="mt-0.5 flex items-center gap-1.5 text-[11px] text-muted-foreground">
-                                        <span>{formatBytes(file.size)}</span>
+                                        <span>{formatFileSize(file.size)}</span>
                                         <span className="size-1.5 shrink-0 rounded-full bg-border" />
                                         <span>Enviado {uploadDate}</span>
                                     </div>

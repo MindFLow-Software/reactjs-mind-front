@@ -18,6 +18,7 @@ import { uploadAttachment, uploadAvatar } from "@/api/attachments/attachments"
 import type { PatientHTTP } from "@/types/patient"
 import { formatCPF } from "@/utils/formatCPF"
 import { formatPhone } from "@/utils/formatPhone"
+import { formatCEP } from "@/utils/formatCEP"
 import { patientSchema, type PatientFormData } from "@/validators/patients"
 import { STEPS, type StepId } from "./constants"
 import { StepBasicData } from "./steps/step-basic-data"
@@ -104,9 +105,8 @@ export function RegisterPatients({ patient, onSuccess }: RegisterPatientsProps) 
     }
 
     function handleCepChange(e: ChangeEvent<HTMLInputElement>) {
-        let v = e.target.value.replace(/\D/g, "").slice(0, 8)
-        if (v.length > 5) v = v.slice(0, 5) + "-" + v.slice(5)
-        setCep(v)
+        const digits = e.target.value.replace(/\D/g, "").slice(0, 8)
+        setCep(formatCEP(digits))
     }
 
     function handlePriceChange(e: ChangeEvent<HTMLInputElement>) {

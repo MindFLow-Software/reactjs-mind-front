@@ -5,17 +5,12 @@ import type { DragEvent } from "react"
 import { CloudUpload, FileText, X, AlertCircle } from "lucide-react"
 import { toast } from "sonner"
 import { cn } from "@/lib/utils"
+import { formatFileSize } from "@/utils/format-file-size"
 import { MAX_DOC_FILES, MAX_DOC_SIZE } from "../constants"
 
 interface UploadZoneProps {
     selectedFiles: File[]
     onFilesChange: (files: File[]) => void
-}
-
-function formatBytes(bytes: number): string {
-    if (bytes < 1024) return `${bytes} B`
-    if (bytes < 1024 * 1024) return `${(bytes / 1024).toFixed(0)} KB`
-    return `${(bytes / 1024 / 1024).toFixed(1)} MB`
 }
 
 export const UploadZone = memo(({ selectedFiles, onFilesChange }: UploadZoneProps) => {
@@ -110,7 +105,7 @@ export const UploadZone = memo(({ selectedFiles, onFilesChange }: UploadZoneProp
                         >
                             <FileText className="size-4 shrink-0 text-blue-600" />
                             <span className="min-w-0 flex-1 truncate text-[12.5px] font-medium text-foreground">{file.name}</span>
-                            <span className="shrink-0 tabular-nums text-[11px] text-muted-foreground">{formatBytes(file.size)}</span>
+                            <span className="shrink-0 tabular-nums text-[11px] text-muted-foreground">{formatFileSize(file.size)}</span>
                             <button
                                 type="button"
                                 onClick={(e) => {
