@@ -66,11 +66,12 @@ export function PatientsList() {
 
     // Main query
     const { data: result, isLoading, isFetching } = useQuery({
-        queryKey: ["patients", filters.pageIndex, filters.filter],
+        queryKey: ["patients", filters.pageIndex, filters.filter, filters.status],
         queryFn: () => getPatients({
             pageIndex: filters.pageIndex,
             perPage:   filters.perPage,
             filter:    filters.filter,
+            status:    filters.status as 'active' | 'inactive' | 'all',
         }),
         staleTime: 30_000,
         gcTime: 300_000,
@@ -216,7 +217,6 @@ export function PatientsList() {
                         headerActions={tableActions}
                         toolbar={
                             <PatientsTableFilters
-                                totalCount={totalCount}
                                 isFetching={isFetching}
                             />
                         }

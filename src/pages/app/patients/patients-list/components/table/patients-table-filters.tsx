@@ -8,7 +8,6 @@ import { usePatientFilters } from '@/hooks/use-patient-filters'
 import { cn } from '@/lib/utils'
 
 interface PatientsTableFiltersProps {
-  totalCount: number
   isFetching?: boolean
 }
 
@@ -19,7 +18,6 @@ const STATUS_PILLS = [
 ] as const
 
 export function PatientsTableFilters({
-  totalCount,
   isFetching,
 }: PatientsTableFiltersProps) {
   const { filters, setFilters, clearFilters } = usePatientFilters()
@@ -91,7 +89,6 @@ export function PatientsTableFilters({
       <div className="flex items-center gap-1">
         {STATUS_PILLS.map((pill) => {
           const isActive = activeStatus === pill.value
-          const count = pill.value === 'all' ? totalCount : undefined
           return (
             <button
               key={pill.value}
@@ -108,11 +105,6 @@ export function PatientsTableFilters({
                 <span className={cn("h-1.5 w-1.5 rounded-full shrink-0", pill.dot)} />
               )}
               {pill.label}
-              {count !== undefined && (
-                <span className="ml-0.5 tabular-nums text-muted-foreground">
-                  {count}
-                </span>
-              )}
             </button>
           )
         })}
