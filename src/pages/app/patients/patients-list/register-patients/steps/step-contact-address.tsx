@@ -5,12 +5,11 @@ import { Info, Mail, MapPin, Phone } from "lucide-react"
 import { Input } from "@/components/ui/input"
 import { cn } from "@/lib/utils"
 import { formatPhone } from "@/utils/formatPhone"
+import { UF_LIST } from "@/utils/mappers"
 
 import type { PatientFormData } from "@/validators/patients"
 import { inputCls, selectCls, selectClassName } from "../form-styles"
 import { SectionTitle } from "./section-title"
-
-const UF_LIST = ["SP", "RJ", "MG", "RS", "PR", "SC", "BA", "DF", "GO", "PE", "CE", "AM", "PA", "MA", "PB", "RN", "AL", "PI", "ES", "MT", "MS", "RO", "TO", "AC", "AP", "RR", "SE"]
 
 interface StepContactAddressProps {
     register:          UseFormRegister<PatientFormData>

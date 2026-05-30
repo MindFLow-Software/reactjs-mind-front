@@ -7,6 +7,7 @@ import { format, parseISO } from "date-fns"
 import { ptBR } from "date-fns/locale"
 import { getPatientDetails } from "@/api/patients/get-patient-details"
 import { usePsychologistProfile } from "@/hooks/use-psychologist-profile"
+import { getSessionStatusLabel, FINISHED_SESSION_STATUSES } from "@/utils/mappers"
 import { IMaskMixin } from "react-imask"
 
 import { DialogContent, DialogDescription, DialogHeader, DialogTitle } from "@/components/ui/dialog"
@@ -66,24 +67,9 @@ export function PatientsDetails({ patientId }: PatientsDetailsProps) {
     const { patient, meta } = data
     const patientFullName = `${patient.firstName ?? ""} ${patient.lastName ?? ""}`.trim() || "Paciente sem nome"
 
-    const getStatusLabel = (status: string) => {
-        const s = status?.toUpperCase()
-        const statuses: Record<string, { label: string; color: string }> = {
-            SCHEDULED: { label: "Agendado", color: "text-blue-500" },
-            ATTENDING: { label: "Em andamento", color: "text-amber-500" },
-            FINISHED: { label: "Concluída", color: "text-emerald-600" },
-            CONCLUÍDA: { label: "Concluída", color: "text-emerald-600" },
-            CANCELED: { label: "Cancelado", color: "text-red-500" },
-            NOT_ATTEND: { label: "Não compareceu", color: "text-orange-500" },
-            RESCHEDULED: { label: "Remarcado", color: "text-purple-500" },
-        }
-        return statuses[s] || { label: status || "N/A", color: "text-muted-foreground" }
-    }
-
-    const totalFinished = patient.sessions.filter((session: any) => {
-        const s = session.status?.toUpperCase()
-        return ["FINISHED", "CONCLUÍDA", "CONCLUIDO"].includes(s)
-    }).length
+    const totalFinished = patient.sessions.filter((session: any) =>
+        (FINISHED_SESSION_STATUSES as readonly string[]).includes(session.status?.toUpperCase())
+    ).length
 
     return (
         <DialogContent
@@ -180,8 +166,8 @@ export function PatientsDetails({ patientId }: PatientsDetailsProps) {
                                 <TableBody>
                                     {patient.sessions.length > 0 ? (
                                         patient.sessions.map((session: any) => {
-                                            const status = getStatusLabel(session.status)
-                                            const isFinished = ["FINISHED", "CONCLUÍDA", "CONCLUIDO"].includes(session.status?.toUpperCase())
+                                            const status = getSessionStatusLabel(session.status)
+                                            const isFinished = (FINISHED_SESSION_STATUSES as readonly string[]).includes(session.status?.toUpperCase())
 
                                             return (
                                                 <TableRow key={session.id} className="group">
