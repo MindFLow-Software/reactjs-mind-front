@@ -11,6 +11,7 @@ import {
   MoreVertical,
   Pencil,
   Phone,
+  RotateCcw,
   Search,
   Users,
   Venus,
@@ -18,10 +19,10 @@ import {
 } from 'lucide-react'
 import { memo, useCallback, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
+import { toast } from 'sonner'
 
-import { deletePatients } from '@/api/patients/delete-patient'
 import { togglePatientStatus } from '@/api/patients/toggle-patient-status'
-import type { Patient } from '@/api/patients/get-patients'
+import type { GetPatientsResponse, Patient } from '@/api/patients/get-patients'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { Checkbox } from '@/components/ui/checkbox'
@@ -96,29 +97,85 @@ export const PatientsTableRow = memo(function PatientsTableRow({
     gender,
     profileImageUrl,
     lastSessionAt,
-    isActive,
     status,
   } = patient
 
-  const patientIsActive = status === 'active' || (status === undefined && isActive === true)
+  const patientIsActive = status === 'active'
 
   const fullName = `${firstName} ${lastName}`.trim()
 
   const { mutateAsync: toggleStatusFn, isPending: isUpdating } = useMutation({
-    mutationFn: () => deletePatients(id),
-    onSuccess: async () => {
-      await Promise.all([
-        queryClient.invalidateQueries({ queryKey: ['patients'] }),
-        queryClient.invalidateQueries({ queryKey: ['patient-details', id] }),
-      ])
+    mutationFn: () => togglePatientStatus(id, false),
+
+    onMutate: async () => {
+      await queryClient.cancelQueries({ queryKey: ['patients'] })
+      const snapshot = queryClient.getQueriesData<GetPatientsResponse>({ queryKey: ['patients'], exact: false })
+      queryClient.setQueriesData<GetPatientsResponse>(
+        { queryKey: ['patients'], exact: false },
+        (old) => {
+          if (!old) return old
+          return {
+            ...old,
+            patients: old.patients.map((p) =>
+              p.id === id ? { ...p, status: 'inactive' as const, isActive: false } : p,
+            ),
+          }
+        },
+      )
+      return { snapshot }
+    },
+
+    onError: (_err, _vars, context) => {
+      if (context?.snapshot) {
+        context.snapshot.forEach(([key, data]) => {
+          queryClient.setQueryData(key, data)
+        })
+      }
+    },
+
+    onSettled: () => {
+      queryClient.invalidateQueries({ queryKey: ['patients'] })
+      queryClient.invalidateQueries({ queryKey: ['patient-details', id] })
+      queryClient.invalidateQueries({ queryKey: ['patients-count'] })
     },
   })
 
   const { mutate: handleToggleStatus, isPending: isTogglingStatus } = useMutation({
     mutationFn: () => togglePatientStatus(id, !patientIsActive),
+
+    onMutate: async () => {
+      await queryClient.cancelQueries({ queryKey: ['patients'] })
+      queryClient.setQueriesData<GetPatientsResponse>(
+        { queryKey: ['patients'], exact: false },
+        (old) => {
+          if (!old) return old
+          return {
+            ...old,
+            patients: old.patients.map((p) =>
+              p.id === id
+                ? { ...p, status: patientIsActive ? 'inactive' : 'active', isActive: !patientIsActive }
+                : p,
+            ),
+          }
+        },
+      )
+    },
+
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['patients'] })
       queryClient.invalidateQueries({ queryKey: ['patients-count'] })
+      toast.success(
+        patientIsActive
+          ? `${fullName} arquivado com sucesso.`
+          : `${fullName} reativado com sucesso.`,
+      )
+    },
+
+    onError: () => {
+      toast.error('Erro ao alterar status do paciente. Tente novamente.')
+    },
+
+    onSettled: () => {
+      queryClient.invalidateQueries({ queryKey: ['patients'] })
     },
   })
 
@@ -185,32 +242,16 @@ export const PatientsTableRow = memo(function PatientsTableRow({
 
         {/* Status */}
         <TableCell className="w-[120px]">
-          <Tooltip>
-            <TooltipTrigger asChild>
-              <button
-                type="button"
-                onClick={() => handleToggleStatus()}
-                disabled={isTogglingStatus}
-                className={cn(
-                  "flex items-center gap-1.5 h-6 px-2.5 rounded-full text-[11px] font-semibold transition-colors cursor-pointer",
-                  isTogglingStatus && "opacity-50 cursor-not-allowed",
-                  patientIsActive
-                    ? "bg-emerald-100 text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-400 hover:bg-emerald-200 dark:hover:bg-emerald-900/50"
-                    : "bg-red-100 text-red-700 dark:bg-red-900/30 dark:text-red-400 hover:bg-red-200 dark:hover:bg-red-900/50",
-                )}
-                aria-label={patientIsActive ? 'Arquivar paciente' : 'Reativar paciente'}
-              >
-                <span className={cn(
-                  "h-1.5 w-1.5 rounded-full shrink-0",
-                  patientIsActive ? "bg-emerald-500" : "bg-red-500",
-                )} />
-                {patientIsActive ? 'Ativo' : 'Arquivado'}
-              </button>
-            </TooltipTrigger>
-            <TooltipContent className="text-xs">
-              {patientIsActive ? 'Clique para arquivar' : 'Clique para reativar'}
-            </TooltipContent>
-          </Tooltip>
+          <span
+            className={cn(
+              "inline-flex items-center gap-1.5 h-6 px-2.5 rounded-full text-[11px] font-semibold",
+              patientIsActive
+                ? "bg-emerald-100 text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-400"
+                : "bg-red-100 text-red-700 dark:bg-red-900/30 dark:text-red-400",
+            )}
+          >
+            {patientIsActive ? 'Ativo' : 'Arquivado'}
+          </span>
         </TableCell>
 
         {/* Contato: telefone + email */}
@@ -345,12 +386,22 @@ export const PatientsTableRow = memo(function PatientsTableRow({
                   <Pencil className="mr-2 h-4 w-4" /> Editar
                 </DropdownMenuItem>
                 <DropdownMenuSeparator />
-                <DropdownMenuItem
-                  onSelect={handleOpenDelete}
-                  className="cursor-pointer text-destructive focus:text-destructive"
-                >
-                  <Archive className="mr-2 h-4 w-4" /> Arquivar paciente
-                </DropdownMenuItem>
+                {patientIsActive ? (
+                  <DropdownMenuItem
+                    onSelect={handleOpenDelete}
+                    className="cursor-pointer text-destructive focus:text-destructive"
+                  >
+                    <Archive className="mr-2 h-4 w-4" /> Arquivar paciente
+                  </DropdownMenuItem>
+                ) : (
+                  <DropdownMenuItem
+                    onSelect={() => handleToggleStatus()}
+                    disabled={isTogglingStatus}
+                    className="cursor-pointer text-emerald-700 dark:text-emerald-400 focus:text-emerald-700 dark:focus:text-emerald-400"
+                  >
+                    <RotateCcw className="mr-2 h-4 w-4" /> Reativar paciente
+                  </DropdownMenuItem>
+                )}
               </DropdownMenuContent>
             </DropdownMenu>
           </div>
@@ -378,7 +429,6 @@ export const PatientsTableRow = memo(function PatientsTableRow({
               onClose={() => setIsDeleteOpen(false)}
               onConfirm={async () => {
                 await toggleStatusFn()
-                setIsDeleteOpen(false)
               }}
             />
           )}
