@@ -43,9 +43,11 @@ export async function getPatients({
 
   const patients: PatientHTTP[] = response.data.patients.map((p) => ({
     ...p,
-    name: p.name || `${p.firstName} ${p.lastName}`.trim() || 'Paciente sem nome',
+    name:            p.name || `${p.firstName} ${p.lastName}`.trim() || 'Paciente sem nome',
     profileImageUrl: p.profileImageUrl ?? null,
-    lastSessionAt: p.lastSessionAt ?? null,
+    lastSessionAt:   p.lastSessionAt ?? null,
+    isActive:        p.isActive ?? (p.status === 'active'),
+    status:          p.status   ?? (p.isActive ? 'active' : 'inactive'),
   }))
 
   return {
