@@ -207,7 +207,7 @@ export default function PatientDetails() {
                         <PatientDetailsHeader
                             patient={{
                                 ...patientData,
-                                status: isPatientActive ? "active" : "inactive",
+                                isActive: isPatientActive,
                             }}
                         />
                     </div>

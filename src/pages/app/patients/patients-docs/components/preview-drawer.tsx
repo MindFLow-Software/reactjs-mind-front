@@ -39,7 +39,7 @@ interface PreviewDrawerProps {
 export function PreviewDrawer({ doc, onClose, onDelete }: PreviewDrawerProps) {
     if (!doc) return null
 
-    const { id, filename, contentType, SizeInBytes, uploadedAt, patient } = doc
+    const { id, filename, contentType, sizeInBytes, uploadedAt, patient } = doc
     const kind    = getFileKind(contentType)
     const style   = FILE_KIND_STYLES[kind]
     const fileUrl = `${BACKEND_URL}/attachments/${id}`
@@ -64,7 +64,7 @@ export function PreviewDrawer({ doc, onClose, onDelete }: PreviewDrawerProps) {
                             {filename}
                         </SheetTitle>
                         <SheetDescription className="text-[12px] text-muted-foreground mt-0.5">
-                            {getFileLabel(contentType)} · {formatFileSize(SizeInBytes)}
+                            {getFileLabel(contentType)} · {formatFileSize(sizeInBytes)}
                         </SheetDescription>
                     </div>
                     <button
@@ -143,7 +143,7 @@ export function PreviewDrawer({ doc, onClose, onDelete }: PreviewDrawerProps) {
                                 <HardDrive className="h-3 w-3" /> Tamanho
                             </p>
                             <p className="text-[13px] font-semibold text-foreground font-mono">
-                                {formatFileSize(SizeInBytes)}
+                                {formatFileSize(sizeInBytes)}
                             </p>
                         </div>
                         <div>

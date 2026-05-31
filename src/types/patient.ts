@@ -1,11 +1,13 @@
+import type { AccountStatus } from '@/types/auth'
+import type { AppointmentStatus } from '@/types/appointment'
+export type { AccountStatus }
+
 export const Gender = {
   OTHER:     'OTHER',
   FEMININE:  'FEMININE',
   MASCULINE: 'MASCULINE',
 } as const
 export type Gender = (typeof Gender)[keyof typeof Gender]
-
-export type PatientStatus = 'active' | 'inactive' | 'pending' | 'archived'
 
 export interface PatientHTTP {
   id:              string
@@ -21,17 +23,16 @@ export interface PatientHTTP {
   createdAt:       string
   lastSessionAt:   string | null
   isActive:        boolean
-  status:          'active' | 'inactive'
 }
 
 export interface SessionItem {
   id:          string
-  date:        string
-  sessionDate: string
-  createdAt:   string
-  theme:       string
-  duration:    string
-  status:      'Concluída' | 'Pendente'
+  date:        Date | null
+  sessionDate: Date | null
+  createdAt:   Date
+  theme:       string | null
+  duration:    number | null
+  status:      AppointmentStatus
   content:     string | null
 }
 
@@ -97,7 +98,7 @@ export type FetchPatientsParams = {
   pageIndex?:     number
   perPage?:       number
   filter?:        string
-  status?:        'active' | 'inactive'
+  status?:        AccountStatus
   gender?:        Gender
   order?:         'asc' | 'desc'
   sessionVolume?: 'high' | 'low'

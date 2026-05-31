@@ -65,7 +65,7 @@ export function AttachmentsTableRow({
     onDelete,
     onPreview,
 }: AttachmentsTableRowProps) {
-    const { id, filename, contentType, SizeInBytes, uploadedAt, patient } = attachment
+    const { id, filename, contentType, sizeInBytes, uploadedAt, patient } = attachment
     const kind  = getFileKind(contentType)
     const badge = TYPE_BADGE[kind]
 
@@ -105,7 +105,7 @@ export function AttachmentsTableRow({
                                 <TooltipContent side="top" className="text-xs">{filename}</TooltipContent>
                             </Tooltip>
                             <p className="text-[11px] text-muted-foreground mt-0.5 font-medium">
-                                {formatFileSize(SizeInBytes)}
+                                {formatFileSize(sizeInBytes)}
                             </p>
                         </div>
                     </div>
@@ -132,7 +132,7 @@ export function AttachmentsTableRow({
                 {/* Size */}
                 <TableCell>
                     <span className="font-mono text-[12.5px] font-medium text-muted-foreground tabular-nums">
-                        {formatFileSize(SizeInBytes)}
+                        {formatFileSize(sizeInBytes)}
                     </span>
                 </TableCell>
 
