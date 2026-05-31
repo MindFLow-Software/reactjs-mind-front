@@ -19,8 +19,6 @@ import {
 } from 'lucide-react'
 import { memo, useCallback, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { toast } from 'sonner'
-
 import { togglePatientStatus } from '@/api/patients/toggle-patient-status'
 import type { GetPatientsResponse, Patient } from '@/api/patients/get-patients'
 import { Badge } from '@/components/ui/badge'
@@ -50,6 +48,7 @@ import { formatPhone } from '@/utils/formatPhone'
 import { RegisterPatients } from '../../register-patients/register-patients'
 import { DeletePatientDialog } from '../dialogs/delete-patient-dialog'
 import { PatientsDetails } from '../details/patients-details'
+import { PatientStatusDialog } from '@/components/patient-status-dialog'
 
 const GENDER_CONFIG = {
   MASCULINE: {
@@ -80,9 +79,10 @@ export const PatientsTableRow = memo(function PatientsTableRow({
   patient,
 }: PatientsTableRowProps) {
   const navigate = useNavigate()
-  const [isDetailsOpen, setIsDetailsOpen] = useState(false)
-  const [isEditOpen, setIsEditOpen] = useState(false)
-  const [isDeleteOpen, setIsDeleteOpen] = useState(false)
+  const [isDetailsOpen,    setIsDetailsOpen]    = useState(false)
+  const [isEditOpen,       setIsEditOpen]       = useState(false)
+  const [isDeleteOpen,     setIsDeleteOpen]     = useState(false)
+  const [isReactivateOpen, setIsReactivateOpen] = useState(false)
 
   const queryClient = useQueryClient()
 
@@ -140,11 +140,12 @@ export const PatientsTableRow = memo(function PatientsTableRow({
     },
   })
 
-  const { mutate: handleToggleStatus, isPending: isTogglingStatus } = useMutation({
-    mutationFn: () => togglePatientStatus(id, !patientIsActive),
+  const { mutateAsync: reactivateStatusFn, isPending: isReactivating } = useMutation({
+    mutationFn: () => togglePatientStatus(id, true),
 
     onMutate: async () => {
       await queryClient.cancelQueries({ queryKey: ['patients'] })
+      const snapshot = queryClient.getQueriesData<GetPatientsResponse>({ queryKey: ['patients'], exact: false })
       queryClient.setQueriesData<GetPatientsResponse>(
         { queryKey: ['patients'], exact: false },
         (old) => {
@@ -152,36 +153,31 @@ export const PatientsTableRow = memo(function PatientsTableRow({
           return {
             ...old,
             patients: old.patients.map((p) =>
-              p.id === id
-                ? { ...p, status: patientIsActive ? 'inactive' : 'active', isActive: !patientIsActive }
-                : p,
+              p.id === id ? { ...p, status: 'active' as const, isActive: true } : p,
             ),
           }
         },
       )
+      return { snapshot }
     },
 
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['patients-count'] })
-      toast.success(
-        patientIsActive
-          ? `${fullName} arquivado com sucesso.`
-          : `${fullName} reativado com sucesso.`,
-      )
-    },
-
-    onError: () => {
-      toast.error('Erro ao alterar status do paciente. Tente novamente.')
+    onError: (_err, _vars, context) => {
+      if (context?.snapshot) {
+        context.snapshot.forEach(([key, data]) => queryClient.setQueryData(key, data))
+      }
     },
 
     onSettled: () => {
       queryClient.invalidateQueries({ queryKey: ['patients'] })
+      queryClient.invalidateQueries({ queryKey: ['patient-details', id] })
+      queryClient.invalidateQueries({ queryKey: ['patients-count'] })
     },
   })
 
-  const handleOpenDetails = useCallback(() => setIsDetailsOpen(true), [])
-  const handleOpenEdit = useCallback(() => setIsEditOpen(true), [])
-  const handleOpenDelete = useCallback(() => setIsDeleteOpen(true), [])
+  const handleOpenDetails    = useCallback(() => setIsDetailsOpen(true), [])
+  const handleOpenEdit       = useCallback(() => setIsEditOpen(true), [])
+  const handleOpenDelete     = useCallback(() => setIsDeleteOpen(true), [])
+  const handleOpenReactivate = useCallback(() => setIsReactivateOpen(true), [])
   const handleNavigate = useCallback(() => {
     sessionStorage.removeItem('active_patient_queue')
     sessionStorage.removeItem('active_patient_queue_source')
@@ -395,8 +391,7 @@ export const PatientsTableRow = memo(function PatientsTableRow({
                   </DropdownMenuItem>
                 ) : (
                   <DropdownMenuItem
-                    onSelect={() => handleToggleStatus()}
-                    disabled={isTogglingStatus}
+                    onSelect={handleOpenReactivate}
                     className="cursor-pointer text-emerald-700 dark:text-emerald-400 focus:text-emerald-700 dark:focus:text-emerald-400"
                   >
                     <RotateCcw className="mr-2 h-4 w-4" /> Reativar paciente
@@ -427,9 +422,19 @@ export const PatientsTableRow = memo(function PatientsTableRow({
               fullName={fullName}
               isPending={isUpdating}
               onClose={() => setIsDeleteOpen(false)}
-              onConfirm={async () => {
-                await toggleStatusFn()
-              }}
+              onConfirm={async () => { await toggleStatusFn() }}
+            />
+          )}
+        </Dialog>
+
+        <Dialog open={isReactivateOpen} onOpenChange={setIsReactivateOpen}>
+          {isReactivateOpen && (
+            <PatientStatusDialog
+              mode="reactivate"
+              fullName={fullName}
+              isPending={isReactivating}
+              onClose={() => setIsReactivateOpen(false)}
+              onConfirm={async () => { await reactivateStatusFn() }}
             />
           )}
         </Dialog>
