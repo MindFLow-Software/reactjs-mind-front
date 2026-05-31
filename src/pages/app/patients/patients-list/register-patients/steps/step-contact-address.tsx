@@ -1,10 +1,10 @@
-import type { ChangeEvent } from "react"
 import { Controller } from "react-hook-form"
 import type { Control, UseFormRegister, FieldErrors } from "react-hook-form"
 import { Info, Mail, MapPin, Phone } from "lucide-react"
 import { Input } from "@/components/ui/input"
 import { cn } from "@/lib/utils"
 import { formatPhone } from "@/utils/formatPhone"
+import { formatCEP } from "@/utils/formatCEP"
 import { UF_LIST } from "@/utils/mappers"
 
 import type { PatientFormData } from "@/validators/patients"
@@ -12,28 +12,16 @@ import { inputCls, selectCls, selectClassName } from "../form-styles"
 import { SectionTitle } from "./section-title"
 
 interface StepContactAddressProps {
-    register:          UseFormRegister<PatientFormData>
-    control:           Control<PatientFormData>
-    errors:            FieldErrors<PatientFormData>
-    cep:               string
-    onCepChange:       (e: ChangeEvent<HTMLInputElement>) => void
-    street:            string
-    onStreetChange:    (v: string) => void
-    district:          string
-    onDistrictChange:  (v: string) => void
-    city:              string
-    onCityChange:      (v: string) => void
-    uf:                string
-    onUfChange:        (v: string) => void
+    register:     UseFormRegister<PatientFormData>
+    control:      Control<PatientFormData>
+    errors:       FieldErrors<PatientFormData>
+    onCepBlur:    () => void
+    isCepLoading: boolean
 }
 
 export function StepContactAddress({
     register, control, errors,
-    cep, onCepChange,
-    street, onStreetChange,
-    district, onDistrictChange,
-    city, onCityChange,
-    uf, onUfChange,
+    onCepBlur, isCepLoading,
 }: StepContactAddressProps) {
     return (
         <div className="space-y-6">
@@ -96,57 +84,74 @@ export function StepContactAddress({
                         <label className="mb-[5px] flex items-center justify-between text-[12px] font-semibold text-foreground/80">
                             CEP <span className="text-[10.5px] font-medium text-muted-foreground">preenche automático</span>
                         </label>
-                        <Input
-                            value={cep}
-                            onChange={onCepChange}
-                            placeholder="00000-000"
-                            inputMode="numeric"
-                            maxLength={9}
-                            autoComplete="off"
-                            className={cn(inputCls, "tabular-nums")}
+                        <Controller
+                            name="cep"
+                            control={control}
+                            render={({ field }) => (
+                                <Input
+                                    value={field.value ?? ""}
+                                    onChange={(e) => field.onChange(formatCEP(e.target.value.replace(/\D/g, "").slice(0, 8)))}
+                                    onBlur={() => { field.onBlur(); onCepBlur() }}
+                                    ref={field.ref}
+                                    placeholder="00000-000"
+                                    inputMode="numeric"
+                                    maxLength={9}
+                                    autoComplete="off"
+                                    className={cn(inputCls, "tabular-nums")}
+                                />
+                            )}
                         />
                     </div>
                     <div className="col-span-2">
                         <label className="mb-[5px] block text-[12px] font-semibold text-foreground/80">Logradouro</label>
                         <Input
-                            value={street}
-                            onChange={(e) => onStreetChange(e.target.value)}
+                            {...register("logradouro")}
                             placeholder="Rua, número"
                             autoComplete="off"
-                            className={inputCls}
+                            disabled={isCepLoading}
+                            className={cn(inputCls, isCepLoading && "opacity-50")}
                         />
                     </div>
                     <div>
                         <label className="mb-[5px] block text-[12px] font-semibold text-foreground/80">Bairro</label>
                         <Input
-                            value={district}
-                            onChange={(e) => onDistrictChange(e.target.value)}
+                            {...register("bairro")}
                             placeholder="Bairro"
                             autoComplete="off"
-                            className={inputCls}
+                            disabled={isCepLoading}
+                            className={cn(inputCls, isCepLoading && "opacity-50")}
                         />
                     </div>
                     <div>
                         <label className="mb-[5px] block text-[12px] font-semibold text-foreground/80">Cidade</label>
                         <Input
-                            value={city}
-                            onChange={(e) => onCityChange(e.target.value)}
+                            {...register("cidade")}
                             placeholder="Cidade"
                             autoComplete="off"
-                            className={inputCls}
+                            disabled={isCepLoading}
+                            className={cn(inputCls, isCepLoading && "opacity-50")}
                         />
                     </div>
                     <div>
                         <label className="mb-[5px] block text-[12px] font-semibold text-foreground/80">UF</label>
-                        <select
-                            value={uf}
-                            onChange={(e) => onUfChange(e.target.value)}
-                            style={selectCls}
-                            className={selectClassName}
-                        >
-                            <option value="">—</option>
-                            {UF_LIST.map((s) => <option key={s}>{s}</option>)}
-                        </select>
+                        <Controller
+                            name="uf"
+                            control={control}
+                            render={({ field }) => (
+                                <select
+                                    value={field.value ?? ""}
+                                    onChange={(e) => field.onChange(e.target.value)}
+                                    onBlur={field.onBlur}
+                                    ref={field.ref}
+                                    disabled={isCepLoading}
+                                    style={selectCls}
+                                    className={cn(selectClassName, isCepLoading && "opacity-50")}
+                                >
+                                    <option value="">—</option>
+                                    {UF_LIST.map((s) => <option key={s}>{s}</option>)}
+                                </select>
+                            )}
+                        />
                     </div>
                 </div>
             </div>
