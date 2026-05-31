@@ -74,7 +74,7 @@ export function EditSuggestionForm({ item, onUpdate, isUpdating }: EditSuggestio
                         </Label>
                         <Select
                             defaultValue={item.category}
-                            onValueChange={(v) => setValue("category", v)}
+                            onValueChange={(v) => setValue("category", v as EditSuggestionSchema["category"])}
                         >
                             <SelectTrigger className="border-slate-200">
                                 <SelectValue />

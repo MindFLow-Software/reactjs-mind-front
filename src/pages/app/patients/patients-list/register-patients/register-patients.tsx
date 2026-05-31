@@ -1,5 +1,5 @@
 ﻿import { useState } from "react"
-import { useForm } from "react-hook-form"
+import { useForm, type Resolver } from "react-hook-form"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { useMutation, useQueryClient } from "@tanstack/react-query"
 import { format, parse as dateParse, isValid as dateIsValid } from "date-fns"
@@ -67,7 +67,7 @@ export function RegisterPatients({ patient, onSuccess }: RegisterPatientsProps) 
         register, handleSubmit, control, reset, trigger, watch,
         formState: { errors },
     } = useForm<PatientFormData>({
-        resolver: zodResolver(patientSchema),
+        resolver: zodResolver(patientSchema) as Resolver<PatientFormData>,
         mode: "onTouched",
         defaultValues: {
             firstName:   patient?.firstName                            ?? "",
