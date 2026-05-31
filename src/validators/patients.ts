@@ -9,6 +9,11 @@ export const patientSchema = z.object({
     dateOfBirth: z.date().nullable().optional().refine((d) => !d || d <= new Date(), { message: "Data de nascimento inválida" }),
     cpf:         z.string().optional().or(z.literal("")).refine((v) => !v || isValidCPF(v), { message: "CPF inválido" }),
     gender:      z.enum(["FEMININE", "MASCULINE", "OTHER"]),
+    cep:         z.string().optional().or(z.literal("")),
+    logradouro:  z.string().optional().or(z.literal("")),
+    bairro:      z.string().optional().or(z.literal("")),
+    cidade:      z.string().optional().or(z.literal("")),
+    uf:          z.string().max(2).optional().or(z.literal("")),
 })
 
 export type PatientFormData = z.infer<typeof patientSchema>

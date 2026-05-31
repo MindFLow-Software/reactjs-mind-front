@@ -22,6 +22,19 @@ export interface PatientHTTP {
   lastSessionAt:   string | null
   isActive:        boolean
   status:          'active' | 'inactive'
+  cep:             string | null
+  logradouro:      string | null
+  bairro:          string | null
+  cidade:          string | null
+  uf:              string | null
+}
+
+export interface AddressByCepResponse {
+  cep:        string
+  logradouro: string
+  bairro:     string
+  cidade:     string
+  uf:         string
 }
 
 export interface SessionItem {
@@ -63,6 +76,11 @@ export interface CreatePatientBody {
   dateOfBirth?:     string
   cpf?:             string
   gender?:          Gender
+  cep?:             string
+  logradouro?:      string
+  bairro?:          string
+  cidade?:          string
+  uf?:              string
 }
 
 export type CreatePatientResponse = PatientHTTP
@@ -76,6 +94,11 @@ export interface UpdatePatientBody {
   gender?:          Gender
   profileImageUrl?: string
   attachmentIds?:   string[]
+  cep?:             string | null
+  logradouro?:      string | null
+  bairro?:          string | null
+  cidade?:          string | null
+  uf?:              string | null
 }
 
 // POST /invites/:hash/register — senha: mín. 8 chars, maiúscula, minúscula, número, especial
