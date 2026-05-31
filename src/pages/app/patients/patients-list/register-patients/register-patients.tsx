@@ -1,4 +1,4 @@
-﻿import { useState } from "react"
+﻿import { useState, useEffect } from "react"
 import { useForm } from "react-hook-form"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { useMutation, useQueryClient } from "@tanstack/react-query"
@@ -14,12 +14,14 @@ import { cn } from "@/lib/utils"
 import { createPatients, type CreatePatientsInput } from "@/api/patients/create-patient"
 import { updatePatients, type UpdatePatientData } from "@/api/patients/update-patient"
 import { uploadAttachment, uploadAvatar } from "@/api/attachments/attachments"
+import { getAddressByCep } from "@/api/address/get-address-by-cep"
 
 import type { PatientHTTP } from "@/types/patient"
 import { formatCPF } from "@/utils/formatCPF"
 import { formatPhone } from "@/utils/formatPhone"
 import { formatCEP } from "@/utils/formatCEP"
 import { patientSchema, type PatientFormData } from "@/validators/patients"
+import { usePatientDraft } from "@/hooks/use-patient-draft"
 import { STEPS, type StepId } from "./constants"
 import { StepBasicData } from "./steps/step-basic-data"
 import { StepContactAddress } from "./steps/step-contact-address"
@@ -35,9 +37,13 @@ interface RegisterPatientsProps {
 export function RegisterPatients({ patient, onSuccess }: RegisterPatientsProps) {
     const isEditMode  = !!patient
     const queryClient = useQueryClient()
+    const { readDraft, writeDraft, clearDraft } = usePatientDraft()
+
+    // ── Draft restore (create mode only, runs once synchronously before form) ──
+    const draft = !isEditMode ? readDraft() : null
 
     // ── Stepper ───────────────────────────────────────────────────────────────
-    const [step, setStep] = useState<StepId>(1)
+    const [step, setStep] = useState<StepId>((draft?.step as StepId | undefined) ?? 1)
 
     // ── File state ────────────────────────────────────────────────────────────
     const [avatarFile,    setAvatarFile]    = useState<File | null>(null)
@@ -46,39 +52,72 @@ export function RegisterPatients({ patient, onSuccess }: RegisterPatientsProps) 
 
     // ── Birth input (DD/MM/AAAA string kept separate from form Date) ──────────
     const [birthInput, setBirthInput] = useState(() => {
+        if (!isEditMode && draft?.birthInput) return draft.birthInput
         if (!patient?.dateOfBirth) return ""
         try { return format(new Date(patient.dateOfBirth), "dd/MM/yyyy") } catch { return "" }
     })
 
-    // ── Visual-only clinical/address fields (not yet in API) ──────────────────
-    const [modality,  setModality]  = useState("ONLINE")
-    const [frequency, setFrequency] = useState("Semanal")
-    const [price,     setPrice]     = useState("")
-    const [source,    setSource]    = useState("")
-    const [notes,     setNotes]     = useState("")
-    const [cep,       setCep]       = useState("")
-    const [street,    setStreet]    = useState("")
-    const [district,  setDistrict]  = useState("")
-    const [city,      setCity]      = useState("")
-    const [uf,        setUf]        = useState("")
+    // ── Visual-only clinical fields (not yet in API) ──────────────────────────
+    const [modality,      setModality]      = useState("ONLINE")
+    const [frequency,     setFrequency]     = useState("Semanal")
+    const [price,         setPrice]         = useState("")
+    const [source,        setSource]        = useState("")
+    const [notes,         setNotes]         = useState("")
+    const [isCepLoading,  setIsCepLoading]  = useState(false)
 
     // ── Form ──────────────────────────────────────────────────────────────────
     const {
-        register, handleSubmit, control, reset, trigger, watch,
+        register, handleSubmit, control, reset, trigger, watch, getValues, setValue,
         formState: { errors },
     } = useForm<PatientFormData>({
         resolver: zodResolver(patientSchema),
         mode: "onTouched",
         defaultValues: {
-            firstName:   patient?.firstName                            ?? "",
-            lastName:    patient?.lastName                             ?? "",
-            phoneNumber: patient?.phoneNumber ? formatPhone(patient.phoneNumber) : "",
-            email:       patient?.email                                ?? "",
-            cpf:         patient?.cpf         ? formatCPF(patient.cpf)  : "",
-            gender:      patient?.gender                               ?? "FEMININE",
-            dateOfBirth: patient?.dateOfBirth ? new Date(patient.dateOfBirth) : null,
+            firstName:   patient?.firstName   ?? draft?.firstName   ?? "",
+            lastName:    patient?.lastName    ?? draft?.lastName    ?? "",
+            phoneNumber: patient?.phoneNumber
+                ? formatPhone(patient.phoneNumber)
+                : draft?.phoneNumber ?? "",
+            email:       patient?.email       ?? draft?.email       ?? "",
+            cpf:         patient?.cpf         ? formatCPF(patient.cpf) : draft?.cpf ?? "",
+            gender:      (patient?.gender     ?? draft?.gender      ?? "FEMININE") as PatientFormData["gender"],
+            dateOfBirth: patient?.dateOfBirth
+                ? new Date(patient.dateOfBirth)
+                : draft?.dateOfBirth ? new Date(draft.dateOfBirth) : null,
+            cep:         patient?.cep         ? formatCEP(patient.cep) : draft?.cep        ?? "",
+            logradouro:  patient?.logradouro  ?? draft?.logradouro  ?? "",
+            bairro:      patient?.bairro      ?? draft?.bairro      ?? "",
+            cidade:      patient?.cidade      ?? draft?.cidade      ?? "",
+            uf:          patient?.uf          ?? draft?.uf          ?? "",
         },
     })
+
+    // ── Auto-save draft (create mode, 600ms debounce) ─────────────────────────
+    const formValues = watch()
+    useEffect(() => {
+        if (isEditMode) return
+        const timer = setTimeout(() => {
+            writeDraft({
+                firstName:   formValues.firstName   ?? "",
+                lastName:    formValues.lastName    ?? "",
+                phoneNumber: formValues.phoneNumber ?? "",
+                email:       formValues.email       ?? "",
+                cpf:         formValues.cpf         ?? "",
+                gender:      formValues.gender      ?? "FEMININE",
+                dateOfBirth: formValues.dateOfBirth instanceof Date
+                    ? formValues.dateOfBirth.toISOString()
+                    : null,
+                birthInput,
+                cep:         formValues.cep        ?? "",
+                logradouro:  formValues.logradouro ?? "",
+                bairro:      formValues.bairro     ?? "",
+                cidade:      formValues.cidade     ?? "",
+                uf:          formValues.uf         ?? "",
+                step,
+            })
+        }, 600)
+        return () => clearTimeout(timer)
+    }, [formValues, birthInput, step, isEditMode, writeDraft])
 
     // ── Mutations ─────────────────────────────────────────────────────────────
     const { mutateAsync: savePatientFn, isPending } = useMutation({
@@ -104,9 +143,24 @@ export function RegisterPatients({ patient, onSuccess }: RegisterPatientsProps) 
         }
     }
 
-    function handleCepChange(e: ChangeEvent<HTMLInputElement>) {
-        const digits = e.target.value.replace(/\D/g, "").slice(0, 8)
-        setCep(formatCEP(digits))
+    async function handleCepBlur() {
+        const digits = (getValues("cep") ?? "").replace(/\D/g, "")
+        if (digits.length < 8) return
+        try {
+            setIsCepLoading(true)
+            const address = await getAddressByCep(digits)
+            setValue("logradouro", address.logradouro)
+            setValue("bairro",     address.bairro)
+            setValue("cidade",     address.cidade)
+            setValue("uf",         address.uf)
+        } catch (error) {
+            const status = error instanceof AxiosError ? error.response?.status : null
+            if (status === 400)      toast.error("CEP inválido")
+            else if (status === 404) toast.error("CEP não encontrado")
+            else                     toast.error("Serviço de CEP indisponível. Preencha manualmente.")
+        } finally {
+            setIsCepLoading(false)
+        }
     }
 
     function handlePriceChange(e: ChangeEvent<HTMLInputElement>) {
@@ -134,6 +188,11 @@ export function RegisterPatients({ patient, onSuccess }: RegisterPatientsProps) 
                 email:       data.email || undefined,
                 dateOfBirth: data.dateOfBirth || undefined,
                 cpf:         data.cpf?.replace(/\D/g, "") || undefined,
+                cep:         data.cep?.replace(/\D/g, "") || undefined,
+                logradouro:  data.logradouro || undefined,
+                bairro:      data.bairro     || undefined,
+                cidade:      data.cidade     || undefined,
+                uf:          data.uf         || undefined,
             }
             const res = await savePatientFn(
                 isEditMode
@@ -153,7 +212,7 @@ export function RegisterPatients({ patient, onSuccess }: RegisterPatientsProps) 
             ])
 
             toast.success(isEditMode ? "Paciente atualizado!" : "Paciente cadastrado!")
-            if (!isEditMode) { reset(); setBirthInput(""); setNotes(""); setPrice(""); setSource("") }
+            if (!isEditMode) { clearDraft(); reset(); setBirthInput(""); setNotes(""); setPrice(""); setSource("") }
             setSelectedFiles([]); setAvatarFile(null)
             onSuccess?.()
         } catch (error) {
@@ -254,11 +313,8 @@ export function RegisterPatients({ patient, onSuccess }: RegisterPatientsProps) 
                         register={register}
                         control={control}
                         errors={errors}
-                        cep={cep}           onCepChange={handleCepChange}
-                        street={street}     onStreetChange={setStreet}
-                        district={district} onDistrictChange={setDistrict}
-                        city={city}         onCityChange={setCity}
-                        uf={uf}             onUfChange={setUf}
+                        onCepBlur={handleCepBlur}
+                        isCepLoading={isCepLoading}
                     />
                 )}
                 {step === 3 && (
