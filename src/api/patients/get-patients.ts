@@ -1,5 +1,5 @@
 import { api } from '@/lib/axios'
-import type { PatientHTTP, FetchPatientsParams } from '@/types/patient'
+import type { PatientHTTP, FetchPatientsParams, AccountStatus } from '@/types/patient'
 import type { PaginationMeta } from '@/types/pagination'
 
 export type { PatientHTTP, FetchPatientsParams } from '@/types/patient'
@@ -10,7 +10,7 @@ export interface GetPatientsFilters {
   perPage: number
   filter?: string | null
   gender?: PatientHTTP['gender'] | 'all' | null
-  status?: 'active' | 'inactive' | 'all' | null
+  status?: AccountStatus | 'all' | null
   order?: 'asc' | 'desc' | 'all' | null
   sessionVolume?: 'high' | 'low' | 'all' | null
 }
@@ -46,8 +46,6 @@ export async function getPatients({
     name:            p.name || `${p.firstName} ${p.lastName}`.trim() || 'Paciente sem nome',
     profileImageUrl: p.profileImageUrl ?? null,
     lastSessionAt:   p.lastSessionAt ?? null,
-    isActive:        p.isActive ?? (p.status === 'active'),
-    status:          p.status   ?? (p.isActive ? 'active' : 'inactive'),
   }))
 
   return {

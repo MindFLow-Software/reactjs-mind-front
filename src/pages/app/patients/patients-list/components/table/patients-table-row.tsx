@@ -97,10 +97,10 @@ export const PatientsTableRow = memo(function PatientsTableRow({
     gender,
     profileImageUrl,
     lastSessionAt,
-    status,
+    isActive,
   } = patient
 
-  const patientIsActive = status === 'active'
+  const patientIsActive = isActive
 
   const fullName = `${firstName} ${lastName}`.trim()
 
@@ -117,7 +117,7 @@ export const PatientsTableRow = memo(function PatientsTableRow({
           return {
             ...old,
             patients: old.patients.map((p) =>
-              p.id === id ? { ...p, status: 'inactive' as const, isActive: false } : p,
+              p.id === id ? { ...p, isActive: false } : p,
             ),
           }
         },
@@ -153,7 +153,7 @@ export const PatientsTableRow = memo(function PatientsTableRow({
             ...old,
             patients: old.patients.map((p) =>
               p.id === id
-                ? { ...p, status: patientIsActive ? 'inactive' : 'active', isActive: !patientIsActive }
+                ? { ...p, isActive: !patientIsActive }
                 : p,
             ),
           }

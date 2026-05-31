@@ -12,9 +12,9 @@ interface PatientsTableFiltersProps {
 }
 
 const STATUS_PILLS = [
-  { value: 'all',      label: 'Todos',    dot: null,             activeCls: 'border border-blue-500 bg-background text-foreground'                                                                  },
-  { value: 'active',   label: 'Ativos',   dot: 'bg-emerald-500', activeCls: 'border border-emerald-500 bg-emerald-100 text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-400'               },
-  { value: 'inactive', label: 'Arquivados', dot: 'bg-red-500',   activeCls: 'border border-red-500 bg-red-100 text-red-700 dark:bg-red-900/30 dark:text-red-400'                                   },
+  { value: 'all',     label: 'Todos',      dot: null,             activeCls: 'border border-blue-500 bg-background text-foreground'                                                                  },
+  { value: 'ACTIVE',  label: 'Ativos',     dot: 'bg-emerald-500', activeCls: 'border border-emerald-500 bg-emerald-100 text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-400'               },
+  { value: 'BLOCKED', label: 'Arquivados', dot: 'bg-red-500',     activeCls: 'border border-red-500 bg-red-100 text-red-700 dark:bg-red-900/30 dark:text-red-400'                                   },
 ] as const
 
 export function PatientsTableFilters({

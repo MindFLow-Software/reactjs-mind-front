@@ -11,6 +11,7 @@ import { PatientsTable } from "./components/table/patients-table"
 import { useHeaderStore } from "@/hooks/use-header-store"
 import { usePatientFilters } from "@/hooks/use-patient-filters"
 import { getPatients } from "@/api/patients/get-patients"
+import type { AccountStatus } from "@/types/auth"
 import { PatientsDataBlock } from "../components/patients-data-block"
 import { PatientsPageShell } from "../components/patients-page-shell"
 import { RegisterPatients } from "./register-patients/register-patients"
@@ -71,7 +72,7 @@ export function PatientsList() {
             pageIndex: filters.pageIndex,
             perPage:   filters.perPage,
             filter:    filters.filter,
-            status:    filters.status as 'active' | 'inactive' | 'all',
+            status:    filters.status as AccountStatus | 'all',
         }),
         staleTime: 30_000,
         gcTime: 300_000,
@@ -93,8 +94,8 @@ export function PatientsList() {
         queryKey: ["patients-count"],
         queryFn: async () => {
             const [active, inactive] = await Promise.all([
-                getPatients({ pageIndex: 0, perPage: 1, status: "active" }),
-                getPatients({ pageIndex: 0, perPage: 1, status: "inactive" }),
+                getPatients({ pageIndex: 0, perPage: 1, status: "ACTIVE" }),
+                getPatients({ pageIndex: 0, perPage: 1, status: "BLOCKED" }),
             ])
             return {
                 active:   active.meta.totalCount,

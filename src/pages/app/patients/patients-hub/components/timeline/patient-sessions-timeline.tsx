@@ -43,20 +43,23 @@ interface PatientSessionsTimelineProps {
     onPageChange: (newIndex: number) => void
 }
 
-type StatusFilter = "all" | "Concluída" | "Cancelada" | "Falta"
+type StatusFilter = "all" | "FINISHED" | "CANCELED" | "NOT_ATTEND"
 
 const STATUS_DOT: Record<string, string> = {
-    Concluída: "bg-blue-500",
-    Cancelada: "bg-red-500",
-    Pendente: "bg-gray-400",
-    Falta: "bg-amber-400",
+    FINISHED:    "bg-blue-500",
+    DONE:        "bg-blue-500",
+    CANCELED:    "bg-red-500",
+    SCHEDULED:   "bg-gray-400",
+    ATTENDING:   "bg-green-500",
+    NOT_ATTEND:  "bg-amber-400",
+    RESCHEDULED: "bg-purple-400",
 }
 
 const CHIPS: { key: StatusFilter; label: string; matchFn: (s: string) => boolean }[] = [
-    { key: "all", label: "Todas", matchFn: () => true },
-    { key: "Concluída", label: "Realizadas", matchFn: (s) => s === "Concluída" },
-    { key: "Cancelada", label: "Canceladas", matchFn: (s) => s === "Cancelada" },
-    { key: "Falta", label: "Faltas", matchFn: (s) => s === "Falta" },
+    { key: "all",        label: "Todas",      matchFn: () => true },
+    { key: "FINISHED",   label: "Realizadas", matchFn: (s) => s === "FINISHED" || s === "DONE" },
+    { key: "CANCELED",   label: "Canceladas", matchFn: (s) => s === "CANCELED" },
+    { key: "NOT_ATTEND", label: "Faltas",     matchFn: (s) => s === "NOT_ATTEND" },
 ]
 
 function getSessionDate(session: Session): Date {
@@ -239,9 +242,9 @@ function SessionRow({
 
     const date = getSessionDate(session)
     const dotColor = STATUS_DOT[session.status] ?? "bg-gray-400"
-    const isCancelled = session.status === "Cancelada"
-    const isCompleted = session.status === "Concluída"
-    const isFalta = session.status === "Falta"
+    const isCancelled = session.status === "CANCELED"
+    const isCompleted = session.status === "FINISHED" || session.status === "DONE"
+    const isFalta = session.status === "NOT_ATTEND"
 
     const handleExportPDF = async () => {
         setIsExporting(true)
@@ -305,7 +308,7 @@ function SessionRow({
                         )}
                         {isFalta && (
                             <span className="text-xs font-medium text-amber-600 dark:text-amber-400">
-                                Falta
+                                Não compareceu
                             </span>
                         )}
                         {session.theme && (

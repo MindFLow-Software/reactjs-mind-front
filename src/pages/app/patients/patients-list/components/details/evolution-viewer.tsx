@@ -13,7 +13,7 @@ import { SessionPDFTemplate } from "@/utils/session-pdf-template"
 interface EvolutionViewerProps {
     patientName: string
     content: string
-    date: string
+    date: Date | string | null
     diagnosis?: string
     psychologist: { name: string; crp: string }
     onBack: () => void
@@ -29,7 +29,7 @@ export function EvolutionViewer({
 }: EvolutionViewerProps) {
     const [isGenerating, setIsGenerating] = useState(false)
 
-    const parsedDate = new Date(date)
+    const parsedDate = date != null ? new Date(date) : new Date(NaN)
     const isDateValid = isValid(parsedDate)
 
     const handleExportPDF = async () => {

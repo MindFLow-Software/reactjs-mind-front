@@ -18,7 +18,7 @@ interface PatientDetailsHeaderProps {
     id: string
     firstName: string
     lastName: string
-    status: 'active' | 'inactive'
+    isActive: boolean
     profileImageUrl: string | null
   }
 }
@@ -29,7 +29,7 @@ export function PatientDetailsHeader({ patient }: PatientDetailsHeaderProps) {
     [patient.id],
   )
   const fullName = `${patient.firstName} ${patient.lastName}`
-  const isPatientActive = patient.status === 'active'
+  const isPatientActive = patient.isActive
 
   const handleCopyId = () => {
     navigator.clipboard.writeText(patient.id)
@@ -64,7 +64,7 @@ export function PatientDetailsHeader({ patient }: PatientDetailsHeaderProps) {
                 {fullName}
               </h1>
 
-              <StatusBadge status={patient.status} size="md" />
+              <StatusBadge status={isPatientActive ? 'ACTIVE' : 'BLOCKED'} size="md" />
             </div>
 
             <div className="group inline-flex items-center gap-1.5 text-xs text-muted-foreground">

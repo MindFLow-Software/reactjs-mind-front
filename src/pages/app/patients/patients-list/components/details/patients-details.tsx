@@ -3,7 +3,7 @@
 import { useState } from "react"
 import { useQuery } from "@tanstack/react-query"
 import { Loader2, Timer , Eye, Info } from "lucide-react"
-import { format, parseISO } from "date-fns"
+import { format } from "date-fns"
 import { ptBR } from "date-fns/locale"
 import { getPatientDetails } from "@/api/patients/get-patient-details"
 import { usePsychologistProfile } from "@/hooks/use-psychologist-profile"
@@ -172,7 +172,7 @@ export function PatientsDetails({ patientId }: PatientsDetailsProps) {
                                             return (
                                                 <TableRow key={session.id} className="group">
                                                     <TableCell className="whitespace-nowrap tabular-nums text-xs">
-                                                        {format(parseISO(session.date), "dd/MM/yy HH:mm", { locale: ptBR })}
+                                                        {format(new Date(session.date ?? session.sessionDate ?? session.createdAt), "dd/MM/yy HH:mm", { locale: ptBR })}
                                                     </TableCell>
                                                     <TableCell className="max-w-[180px] truncate italic text-muted-foreground text-xs">
                                                         {session.theme || "Sem tema definido"}
