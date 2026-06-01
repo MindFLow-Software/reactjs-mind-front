@@ -17,10 +17,8 @@ import { uploadAttachment, uploadAvatar } from "@/api/attachments/attachments"
 import { getAddressByCep } from "@/api/address/get-address-by-cep"
 
 import type { PatientHTTP } from "@/types/patient"
-import { formatCPF } from "@/utils/formatCPF"
-import { formatPhone } from "@/utils/formatPhone"
-import { formatCEP } from "@/utils/formatCEP"
 import { patientSchema, type PatientFormData } from "@/validators/patients"
+import { buildPatientDefaults } from "./helpers"
 import { STEPS, type StepId } from "./constants"
 import { StepBasicData } from "./steps/step-basic-data"
 import { StepContactAddress } from "./steps/step-contact-address"
@@ -50,25 +48,7 @@ export function RegisterPatients({ patient, onSuccess }: RegisterPatientsProps) 
     const methods = useForm<PatientFormData>({
         resolver: zodResolver(patientSchema),
         mode: "onTouched",
-        defaultValues: {
-            firstName:   patient?.firstName   ?? "",
-            lastName:    patient?.lastName    ?? "",
-            phoneNumber: patient?.phoneNumber ? formatPhone(patient.phoneNumber) : "",
-            email:       patient?.email       ?? "",
-            cpf:         patient?.cpf         ? formatCPF(patient.cpf) : "",
-            gender:      (patient?.gender     ?? "FEMININE") as PatientFormData["gender"],
-            dateOfBirth: patient?.dateOfBirth ? new Date(patient.dateOfBirth) : null,
-            cep:         patient?.cep         ? formatCEP(patient.cep) : "",
-            logradouro:  patient?.logradouro  ?? "",
-            bairro:      patient?.bairro      ?? "",
-            cidade:      patient?.cidade      ?? "",
-            uf:          patient?.uf          ?? "",
-            modality:    "ONLINE",
-            frequency:   "Semanal",
-            price:       "",
-            source:      "",
-            notes:       "",
-        },
+        defaultValues: buildPatientDefaults(patient),
     })
 
     // ── Mutations ─────────────────────────────────────────────────────────────
