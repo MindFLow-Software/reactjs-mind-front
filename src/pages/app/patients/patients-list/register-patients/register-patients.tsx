@@ -8,7 +8,7 @@ import { toast } from "sonner"
 import { AxiosError } from "axios"
 import type { ChangeEvent } from "react"
 
-import { DialogContent } from "@/components/ui/dialog"
+import { DialogContent, DialogTitle } from "@/components/ui/dialog"
 import { cn } from "@/lib/utils"
 
 import { createPatients, type CreatePatientsInput } from "@/api/patients/create-patient"
@@ -188,9 +188,9 @@ export function RegisterPatients({ patient, onSuccess }: RegisterPatientsProps) 
                     </svg>
                 </div>
                 <div className="min-w-0 flex-1">
-                    <h2 className="font-title text-[18px] font-bold tracking-[-0.01em] text-foreground">
+                    <DialogTitle className="font-title text-[18px] font-bold tracking-[-0.01em] text-foreground">
                         {isEditMode ? "Editar paciente" : "Cadastrar paciente"}
-                    </h2>
+                    </DialogTitle>
                     <p className="mt-0.5 max-w-[520px] text-[13px] text-muted-foreground">
                         {isEditMode
                             ? `Atualize os dados de ${patient!.firstName}. Mudanças salvam automaticamente ao avançar.`
