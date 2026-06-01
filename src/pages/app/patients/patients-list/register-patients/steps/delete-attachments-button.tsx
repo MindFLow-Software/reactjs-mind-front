@@ -1,10 +1,10 @@
 import "./delete-attachments-button.css"
 import { useState } from "react"
 import { Trash2, Loader2, AlertTriangle } from "lucide-react"
+import { toast } from "sonner"
 import { cn } from "@/lib/utils"
 import {
     AlertDialog,
-    AlertDialogAction,
     AlertDialogCancel,
     AlertDialogContent,
     AlertDialogDescription,
@@ -35,7 +35,8 @@ export function DeleteActionButton({
         try {
             await onDelete()
             setOpen(false)
-        } catch (error) {
+        } catch {
+            toast.error("Erro ao excluir o arquivo.")
         }
     }
 
@@ -74,12 +75,12 @@ export function DeleteActionButton({
                     >
                         Cancelar
                     </AlertDialogCancel>
-                    <AlertDialogAction
+                    <Button
                         onClick={handleConfirm}
                         className="rp-delete-dialog__confirm"
                     >
                         {isLoading ? <Loader2 className="h-4 w-4 animate-spin" /> : "Sim, Excluir"}
-                    </AlertDialogAction>
+                    </Button>
                 </AlertDialogFooter>
             </AlertDialogContent>
         </AlertDialog>

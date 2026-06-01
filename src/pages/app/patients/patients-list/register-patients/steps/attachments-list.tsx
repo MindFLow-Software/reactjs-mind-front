@@ -1,4 +1,4 @@
-﻿import "./attachments-list.css"
+import "./attachments-list.css"
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query"
 import { Eye, Download, FileText, Loader2 } from "lucide-react"
 import { toast } from "sonner"

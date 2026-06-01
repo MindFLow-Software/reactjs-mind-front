@@ -1,25 +1,21 @@
 import "./form-components.css"
 import { useState } from "react"
 import { useForm } from "react-hook-form"
+import { useFileSelection } from "@/hooks/use-file-selection"
+import { useCepLookup } from "@/hooks/use-cep-lookup"
+import { usePatientFormSteps } from "./hooks/use-patient-form-steps"
+import { usePatientSubmit } from "./hooks/use-patient-submit"
 import { zodResolver } from "@hookform/resolvers/zod"
-import { useMutation, useQueryClient } from "@tanstack/react-query"
 import { Loader2, ChevronLeft, ChevronRight, Check } from "lucide-react"
-import { toast } from "sonner"
-import { AxiosError } from "axios"
 
 import { DialogContent } from "@/components/ui/dialog"
 import { Form } from "@/components/ui/form"
 import { cn } from "@/lib/utils"
 
-import { createPatients } from "@/api/patients/create-patient"
-import { updatePatients } from "@/api/patients/update-patient"
-import { uploadAttachment, uploadAvatar } from "@/api/attachments/attachments"
-import { getAddressByCep } from "@/api/address/get-address-by-cep"
-
 import type { PatientHTTP } from "@/types/patient"
 import { patientSchema, type PatientFormData } from "@/validators/patients"
 import { buildPatientDefaults } from "./helpers"
-import { STEPS, type StepId } from "./constants"
+import { STEPS, MAX_DOC_FILES, MAX_DOC_SIZE } from "./constants"
 import { StepBasicData } from "./steps/step-basic-data"
 import { StepContactAddress } from "./steps/step-contact-address"
 import { StepClinical } from "./steps/step-clinical"
@@ -32,117 +28,39 @@ interface RegisterPatientsProps {
 }
 
 export function RegisterPatients({ patient, onSuccess }: RegisterPatientsProps) {
-    const isEditMode  = !!patient
-    const queryClient = useQueryClient()
+    const isEditMode = !!patient
 
-    // ── Stepper ───────────────────────────────────────────────────────────────
-    const [step, setStep] = useState<StepId>(1)
+    const [avatarFile, setAvatarFile] = useState<File | null>(null)
+    const { files: selectedFiles, addFiles, removeFile, clearFiles } = useFileSelection({
+        maxFiles:     MAX_DOC_FILES,
+        maxSizeBytes: MAX_DOC_SIZE,
+    })
 
-    // ── File state ────────────────────────────────────────────────────────────
-    const [avatarFile,    setAvatarFile]    = useState<File | null>(null)
-    const [selectedFiles, setSelectedFiles] = useState<File[]>([])
-    const [isUploading,   setIsUploading]   = useState(false)
-    const [isCepLoading,  setIsCepLoading]  = useState(false)
-
-    // ── Form ──────────────────────────────────────────────────────────────────
     const methods = useForm<PatientFormData>({
         resolver: zodResolver(patientSchema),
         mode: "onTouched",
         defaultValues: buildPatientDefaults(patient),
     })
 
-    // ── Mutations ─────────────────────────────────────────────────────────────
-    const { mutateAsync: createFn, isPending: isCreating } = useMutation({
-        mutationFn: createPatients,
-    })
+    const { step, handleNext, handleBack, goToStep, isFirstStep, isLastStep } =
+        usePatientFormSteps({ trigger: methods.trigger })
 
-    const { mutateAsync: updateFn, isPending: isUpdating } = useMutation({
-        mutationFn: updatePatients,
-    })
+    const { onCepBlur, isCepLoading } = useCepLookup({ setValue: methods.setValue })
 
-    const isBusy = isCreating || isUpdating || isUploading
-    const isLast = step === 4
-
-    // ── Handlers ──────────────────────────────────────────────────────────────
-    async function handleCepBlur() {
-        const digits = (methods.getValues("cep") ?? "").replace(/\D/g, "")
-        if (digits.length < 8) return
-        try {
-            setIsCepLoading(true)
-            const address = await getAddressByCep(digits)
-            methods.setValue("logradouro", address.logradouro)
-            methods.setValue("bairro",     address.bairro)
-            methods.setValue("cidade",     address.cidade)
-            methods.setValue("uf",         address.uf)
-        } catch (error) {
-            const status = error instanceof AxiosError ? error.response?.status : null
-            if (status === 400)      toast.error("CEP inválido")
-            else if (status === 404) toast.error("CEP não encontrado")
-            else                     toast.error("Serviço de CEP indisponível. Preencha manualmente.")
-        } finally {
-            setIsCepLoading(false)
-        }
-    }
-
-    async function handleNext() {
-        const fields: (keyof PatientFormData)[] =
-            step === 1 ? ["firstName", "lastName", "cpf", "dateOfBirth", "gender"] :
-            step === 2 ? ["phoneNumber", "email"] : []
-        const valid = fields.length === 0 || await methods.trigger(fields)
-        if (valid && step < 4) setStep((s) => (s + 1) as StepId)
-    }
-
-    async function onSubmit(data: PatientFormData) {
-        const { modality, frequency, price, source, notes, email, dateOfBirth, phoneNumber, cpf, cep, logradouro, bairro, cidade, uf, ...coreFields } = data
-        const shared = {
-            ...coreFields,
-            phoneNumber: phoneNumber || undefined,
-            cpf:         cpf         || undefined,
-            cep:         cep         || undefined,
-            logradouro:  logradouro  || undefined,
-            bairro:      bairro      || undefined,
-            cidade:      cidade      || undefined,
-            uf:          uf          || undefined,
-            dateOfBirth: dateOfBirth || undefined,
-        }
-        try {
-            setIsUploading(true)
-            const res = isEditMode
-                ? await updateFn({ ...shared, id: patient!.id })
-                : await createFn({ ...shared, email: email || undefined })
-            const targetId = isEditMode
-                ? patient!.id
-                : ((res as { id?: string; patientId?: string })?.id || (res as { id?: string; patientId?: string })?.patientId)
-            if (!targetId) throw new Error("ID não identificado")
-
-            if (avatarFile) await uploadAvatar(avatarFile, targetId)
-            for (const f of selectedFiles) await uploadAttachment(f, targetId)
-
-            await Promise.all([
-                queryClient.invalidateQueries({ queryKey: ["patients"] }),
-                queryClient.invalidateQueries({ queryKey: ["patient", targetId] }),
-                queryClient.invalidateQueries({ queryKey: ["attachments", targetId] }),
-            ])
-
-            toast.success(isEditMode ? "Paciente atualizado!" : "Paciente cadastrado!")
+    const { submit, isSubmitting } = usePatientSubmit({
+        patient,
+        avatarFile,
+        files: selectedFiles,
+        onSuccess: () => {
             if (!isEditMode) methods.reset()
-            setSelectedFiles([]); setAvatarFile(null)
+            clearFiles()
+            setAvatarFile(null)
             onSuccess?.()
-        } catch (error) {
-            toast.error(error instanceof AxiosError ? error.message : "Erro ao salvar. Verifique os dados.")
-        } finally {
-            setIsUploading(false)
-        }
-    }
+        },
+    })
 
-    function handleSubmitClick() {
-        methods.handleSubmit(onSubmit)()
-    }
-
-    // ── Render ────────────────────────────────────────────────────────────────
     return (
         <DialogContent className="rp-modal">
-            {/* Header */}
             <div className="rp-modal-header">
                 <div className="rp-modal-icon-box">
                     <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-blue-600">
@@ -164,7 +82,6 @@ export function RegisterPatients({ patient, onSuccess }: RegisterPatientsProps) 
                 </div>
             </div>
 
-            {/* Tab stepper */}
             <div className="rp-modal-stepper">
                 {STEPS.map((s) => {
                     const active = step === s.id
@@ -173,7 +90,7 @@ export function RegisterPatients({ patient, onSuccess }: RegisterPatientsProps) 
                         <button
                             key={s.id}
                             type="button"
-                            onClick={() => setStep(s.id)}
+                            onClick={() => goToStep(s.id)}
                             className={cn("rp-modal-tab", active ? "rp-modal-tab--active" : "rp-modal-tab--idle")}
                         >
                             <span className={cn(
@@ -189,68 +106,44 @@ export function RegisterPatients({ patient, onSuccess }: RegisterPatientsProps) 
                 })}
             </div>
 
-            {/* Progress bar */}
             <div className="rp-modal-progress-track">
-                <div
-                    className="rp-modal-progress-fill"
-                    style={{ width: `${(step / 4) * 100}%` }}
-                />
+                <div className="rp-modal-progress-fill" style={{ width: `${(step / 4) * 100}%` }} />
             </div>
 
-            {/* Body */}
             <Form {...methods}>
                 <div className="rp-modal-body">
-                    {step === 1 && (
-                        <StepBasicData
-                            onAvatarSelect={setAvatarFile}
-                            patient={patient}
-                        />
-                    )}
-                    {step === 2 && (
-                        <StepContactAddress
-                            onCepBlur={handleCepBlur}
-                            isCepLoading={isCepLoading}
-                        />
-                    )}
+                    {step === 1 && <StepBasicData onAvatarSelect={setAvatarFile} patient={patient} />}
+                    {step === 2 && <StepContactAddress onCepBlur={onCepBlur} isCepLoading={isCepLoading} />}
                     {step === 3 && <StepClinical />}
                     {step === 4 && (
                         <div className="space-y-5">
                             {isEditMode && <AttachmentsList patientId={patient!.id} />}
-                            <UploadZone selectedFiles={selectedFiles} onFilesChange={setSelectedFiles} />
+                            <UploadZone selectedFiles={selectedFiles} onFilesChange={addFiles} onRemoveFile={removeFile} />
                         </div>
                     )}
                 </div>
             </Form>
 
-            {/* Footer */}
             <div className="rp-modal-footer">
                 <div className="flex items-center justify-end gap-2.5">
-                    {step > 1 && (
-                        <button
-                            type="button"
-                            onClick={() => setStep((s) => (s - 1) as StepId)}
-                            className="rp-btn-secondary"
-                        >
+                    {!isFirstStep && (
+                        <button type="button" onClick={handleBack} className="rp-btn-secondary">
                             <ChevronLeft className="size-4" strokeWidth={2.5} />
                             Voltar
                         </button>
                     )}
-                    <button
-                        type="button"
-                        onClick={() => onSuccess?.()}
-                        className="rp-btn-secondary"
-                    >
+                    <button type="button" onClick={() => onSuccess?.()} className="rp-btn-secondary">
                         Cancelar
                     </button>
                     <button
                         type="button"
-                        disabled={isBusy}
-                        onClick={isLast ? handleSubmitClick : handleNext}
+                        disabled={isSubmitting}
+                        onClick={isLastStep ? () => methods.handleSubmit(submit)() : handleNext}
                         className="rp-btn-primary"
                     >
-                        {isBusy && <Loader2 className="size-4 animate-spin" />}
-                        {isBusy ? "Salvando…" : isLast ? (isEditMode ? "Salvar alterações" : "Cadastrar paciente") : "Continuar"}
-                        {!isBusy && (isLast ? <Check className="size-4" /> : <ChevronRight className="size-4" />)}
+                        {isSubmitting && <Loader2 className="size-4 animate-spin" />}
+                        {isSubmitting ? "Salvando…" : isLastStep ? (isEditMode ? "Salvar alterações" : "Cadastrar paciente") : "Continuar"}
+                        {!isSubmitting && (isLastStep ? <Check className="size-4" /> : <ChevronRight className="size-4" />)}
                     </button>
                 </div>
             </div>

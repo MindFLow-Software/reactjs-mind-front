@@ -9,11 +9,12 @@ import { formatCEP } from "@/utils/formatCEP"
 import { UF_LIST } from "@/utils/mappers"
 
 import "./step-contact-address.css"
+import type React from "react"
 import type { PatientFormData } from "@/validators/patients"
 import { SectionTitle } from "./section-title"
 
 interface StepContactAddressProps {
-    onCepBlur:    () => void
+    onCepBlur:    React.FocusEventHandler<HTMLInputElement>
     isCepLoading: boolean
 }
 
@@ -83,7 +84,7 @@ export function StepContactAddress({ onCepBlur, isCepLoading }: StepContactAddre
                                 <Input
                                     value={field.value ?? ""}
                                     onChange={(e) => field.onChange(formatCEP(e.target.value.replace(/\D/g, "").slice(0, 8)))}
-                                    onBlur={() => { field.onBlur(); onCepBlur() }}
+                                    onBlur={(e) => { field.onBlur(); onCepBlur(e) }}
                                     ref={field.ref}
                                     placeholder="00000-000"
                                     inputMode="numeric"

@@ -1,59 +1,31 @@
 import "./upload-zone.css"
 import { useRef, useState, memo, useCallback } from "react"
 import type { DragEvent } from "react"
-import { CloudUpload, FileText, X, AlertCircle } from "lucide-react"
-import { toast } from "sonner"
+import { CloudUpload, FileText, X } from "lucide-react"
 import { cn } from "@/lib/utils"
 import { formatFileSize } from "@/utils/format-file-size"
-import { MAX_DOC_FILES, MAX_DOC_SIZE } from "../constants"
+import { MAX_DOC_FILES } from "../constants"
 
 interface UploadZoneProps {
     selectedFiles: File[]
-    onFilesChange: (files: File[]) => void
+    onFilesChange: (incoming: File[]) => void
+    onRemoveFile:  (index: number) => void
 }
 
-export const UploadZone = memo(({ selectedFiles, onFilesChange }: UploadZoneProps) => {
+export const UploadZone = memo(({ selectedFiles, onFilesChange, onRemoveFile }: UploadZoneProps) => {
     const inputRef            = useRef<HTMLInputElement>(null)
     const [isDrag, setIsDrag] = useState(false)
 
-    const addFiles = useCallback((incoming: File[]) => {
-        const oversized = incoming.filter((f) => f.size > MAX_DOC_SIZE)
-        oversized.forEach((f) => {
-            toast.error(`O arquivo "${f.name}" é muito grande.`, {
-                description: "O limite por arquivo é de 3MB."
-            })
-        })
-
-        const valid = incoming.filter((f) => {
-            if (f.size > MAX_DOC_SIZE) return false
-            if (selectedFiles.some((x) => x.name === f.name && x.size === f.size)) return false
-            return true
-        })
-
-        if (selectedFiles.length + valid.length > MAX_DOC_FILES) {
-            toast.error("Limite de arquivos excedido", {
-                description: `Você pode ter no máximo ${MAX_DOC_FILES} arquivos selecionados.`,
-                icon: <AlertCircle className="size-4 text-red-500" />
-            })
-            return
-        }
-
-        if (valid.length > 0) {
-            onFilesChange([...selectedFiles, ...valid])
-            toast.success(`${valid.length} arquivo(s) adicionado(s).`)
-        }
-    }, [selectedFiles, onFilesChange])
-
     const handleInput = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
-        if (e.target.files) addFiles(Array.from(e.target.files))
+        if (e.target.files) onFilesChange(Array.from(e.target.files))
         e.target.value = ""
-    }, [addFiles])
+    }, [onFilesChange])
 
     function handleDrop(e: DragEvent) {
         e.preventDefault()
         e.stopPropagation()
         setIsDrag(false)
-        addFiles(Array.from(e.dataTransfer.files))
+        onFilesChange(Array.from(e.dataTransfer.files))
     }
 
     const triggerInput = useCallback((e: React.MouseEvent) => {
@@ -104,7 +76,7 @@ export const UploadZone = memo(({ selectedFiles, onFilesChange }: UploadZoneProp
                                 onClick={(e) => {
                                     e.preventDefault()
                                     e.stopPropagation()
-                                    onFilesChange(selectedFiles.filter((_, j) => j !== i))
+                                    onRemoveFile(i)
                                 }}
                                 className="rp-upload-file-remove"
                             >

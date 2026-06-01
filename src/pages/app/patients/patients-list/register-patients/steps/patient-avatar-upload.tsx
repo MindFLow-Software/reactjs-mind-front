@@ -1,9 +1,14 @@
 import "./patient-avatar-upload.css"
-import { useState, useRef, useEffect } from "react"
+import { useEffect, useRef } from "react"
 import { Camera, Loader2 } from "lucide-react"
 import { api } from "@/lib/axios"
+import { useImagePreview } from "@/hooks/use-image-preview"
 
 const UUID_RE = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i
+
+function fetchAvatarBlob(url: string): Promise<Blob> {
+    return api.get(`/attachments/${url}`, { responseType: "blob" }).then(r => r.data as Blob)
+}
 
 interface PatientAvatarUploadProps {
     onFileSelect:  (f: File | null) => void
@@ -12,31 +17,22 @@ interface PatientAvatarUploadProps {
 }
 
 export function PatientAvatarUpload({ onFileSelect, defaultValue, initials }: PatientAvatarUploadProps) {
-    const inputRef            = useRef<HTMLInputElement>(null)
-    const [preview, setPreview] = useState<string | null>(null)
-    const [loading, setLoading] = useState(false)
+    const inputRef = useRef<HTMLInputElement>(null)
+    const { previewUrl, onFileSelected, clear, loadFromUrl, isLoading } = useImagePreview({ fetchBlob: fetchAvatarBlob })
 
     useEffect(() => {
-        if (!defaultValue) { setPreview(null); return }
-        if (defaultValue.startsWith("data:")) { setPreview(defaultValue); return }
-        if (!UUID_RE.test(defaultValue)) { setPreview(null); return }
-
-        let obj: string | null = null
-        setLoading(true)
-        api.get(`/attachments/${defaultValue}`, { responseType: "blob" })
-            .then((r) => { obj = URL.createObjectURL(r.data); setPreview(obj) })
-            .catch(() => setPreview(null))
-            .finally(() => setLoading(false))
-        return () => { if (obj) URL.revokeObjectURL(obj) }
-    }, [defaultValue])
+        if (!defaultValue) { clear(); return }
+        if (!defaultValue.startsWith("data:") && !UUID_RE.test(defaultValue)) { clear(); return }
+        void loadFromUrl(defaultValue)
+    }, [defaultValue, clear, loadFromUrl])
 
     function handleFile(file: File) {
-        setPreview(URL.createObjectURL(file))
+        onFileSelected(file)
         onFileSelect(file)
     }
 
     function handleRemove() {
-        setPreview(null)
+        clear()
         onFileSelect(null)
         if (inputRef.current) inputRef.current.value = ""
     }
@@ -45,15 +41,15 @@ export function PatientAvatarUpload({ onFileSelect, defaultValue, initials }: Pa
         <div className="rp-avatar-wrap">
             <div
                 className="rp-avatar-circle group"
-                style={{ background: preview ? undefined : "linear-gradient(135deg, #4e8ed3, #1858b0)" }}
-                onClick={() => !loading && inputRef.current?.click()}
+                style={{ background: previewUrl ? undefined : "linear-gradient(135deg, #4e8ed3, #1858b0)" }}
+                onClick={() => !isLoading && inputRef.current?.click()}
             >
-                {loading ? (
+                {isLoading ? (
                     <div className="flex h-full w-full items-center justify-center">
                         <Loader2 className="size-5 animate-spin text-white" />
                     </div>
-                ) : preview ? (
-                    <img src={preview} alt="Avatar" className="h-full w-full object-cover" />
+                ) : previewUrl ? (
+                    <img src={previewUrl} alt="Avatar" className="h-full w-full object-cover" />
                 ) : (
                     <div className="flex h-full w-full items-center justify-center">
                         <span className="font-title text-[20px] font-bold text-white">{initials || "+"}</span>
@@ -78,7 +74,7 @@ export function PatientAvatarUpload({ onFileSelect, defaultValue, initials }: Pa
                     >
                         Enviar foto
                     </button>
-                    {preview && (
+                    {previewUrl && (
                         <>
                             <span className="text-border">·</span>
                             <button
