@@ -151,3 +151,58 @@ Types: `feat`, `fix`, `refactor`, `perf`, `docs`, `test`, `chore`, `build`, `ci`
 - No `any` types — always type explicitly
 - No direct DOM manipulation — use React state/refs
 - No duplicated JSX — extract to a component first, then use it everywhere
+
+---
+
+## Feature Patterns — register-patients
+
+Patterns extracted from `src/pages/app/patients/patients-list/register-patients/`. Use this as the canonical reference for multi-step form features.
+
+### Component Structure
+
+- The root orchestrator (`register-patients.tsx`) only wires hooks together and renders the shell. No business logic lives there.
+- Step components (`step-basic-data.tsx`, `step-contact-address.tsx`, `step-clinical.tsx`) own layout and field rendering only. They receive only what they cannot get from `useFormContext`.
+- Components that own their own server state (`AttachmentsList`) call `useQuery` / `useMutation` directly — they do not receive data as props.
+- Atomic UI primitives (`SectionTitle`, `PillRadio`) accept only the minimum needed: icon + label, or options + value + onChange.
+- Wrap performance-sensitive leaf components with `memo()` and `useCallback` on their handlers (`UploadZone` is the example).
+- File-scoped helper functions used only within one component (`calcAge` in `step-basic-data.tsx`) stay in that file, not in `helpers.ts`.
+
+### Hook Composition
+
+- Each cross-cutting concern gets its own hook: `usePatientFormSteps` (navigation), `usePatientSubmit` (submission), `useCepLookup` (address lookup), `useFileSelection` (file state).
+- Feature-local hooks live in a `hooks/` subfolder inside the feature directory, not in global `src/hooks/`.
+- Hook options and return shapes are always typed as explicit interfaces (`UsePatientFormStepsOptions`, `UsePatientFormStepsReturn`).
+- Hooks receive React Hook Form primitives (`trigger`, `setValue`) as options instead of owning the form instance — hooks augment the form, they do not create it.
+- All handlers returned from hooks are wrapped with `useCallback` (`handleNext`, `handleBack`, `goToStep`).
+- The root component composes hooks and passes results as props. Step components never call feature-level hooks directly.
+
+### Form Patterns
+
+- Step components access the form via `useFormContext<PatientFormData>()` — never receive the form object as a prop.
+- Validation mode is `"onTouched"` — errors appear after the user blurs a field, not on mount.
+- Every field uses the full shadcn Form anatomy: `FormField` → `FormItem` → `FormLabel` → `FormControl` → `FormMessage`. Never skip a layer.
+- Invalid state drives class changes via `fieldState.invalid` inside `cn()`: `cn("patient-input", fieldState.invalid && "border-red-600 focus-visible:ring-red-600/20")`.
+- Masking runs on `onChange`, not in effects. `formatCPF`, `formatPhone`, `formatCEP` are applied inline inside the `onChange` handler.
+- Per-step validation uses a `STEP_FIELDS` map (in `use-patient-form-steps.ts`) to call `trigger(fields)` before advancing — do not validate the whole form on step change.
+- Default values are computed by a dedicated `buildPatientDefaults(patient?)` helper in `helpers.ts`. Never inline `defaultValues` in `useForm`.
+- Optional string fields default to `""`. Only `dateOfBirth` uses `null` as the empty sentinel.
+
+### API & Mutations
+
+- After a successful mutation, invalidate all related query keys in parallel via `Promise.all([queryClient.invalidateQueries(...), ...])` — see `use-patient-submit.ts`.
+- Derive the combined loading state from multiple pending flags: `isCreating || isUpdating || isUploading`.
+- Non-critical side effects (avatar upload in `use-patient-submit.ts`) are wrapped in their own `try/catch` with a `console.warn` — they must not block the primary success path.
+- Error toasts use an `AxiosError` type guard: `error instanceof AxiosError ? error.message : "Fallback message"`.
+- Sequential uploads (attachments) are done with `for...of` + `await` — not `Promise.all` — to respect server rate limits.
+
+<!-- CONFLICT: use-patient-submit.ts calls useMutation directly, not useApiMutation from @/hooks/use-api-mutation as the API Layer section requires. Audit the API Layer rule — either useApiMutation should wrap multi-mutation flows, or the rule should clarify when direct useMutation is acceptable. -->
+
+### File Organization
+
+- Feature root holds: `register-patients.tsx` (orchestrator), `constants.ts` (step config, option arrays, limits), `helpers.ts` (pure functions), `form-components.css` (shared form CSS).
+- Step components live in a `steps/` subfolder inside the feature directory.
+- Every `.tsx` file has a co-located `.css` file with the same base name (`step-basic-data.tsx` / `step-basic-data.css`).
+- CSS class names use a feature prefix (`rp-` for register-patients) to avoid global collisions.
+- Option arrays in `constants.ts` use `as const` for literal type inference (`GENDER_OPTIONS`, `MODALITY_OPTIONS`).
+- Branded type aliases for constrained values are exported from `constants.ts` (`StepId = 1 | 2 | 3 | 4`).
+- Local constants used only in one file (`FREQUENCY_OPTIONS` in `step-clinical.tsx`) stay in that file, not in `constants.ts`.
