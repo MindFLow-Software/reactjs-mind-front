@@ -1,5 +1,4 @@
-"use client"
-
+import "./upload-zone.css"
 import { useRef, useState, memo, useCallback } from "react"
 import type { DragEvent } from "react"
 import { CloudUpload, FileText, X, AlertCircle } from "lucide-react"
@@ -66,22 +65,19 @@ export const UploadZone = memo(({ selectedFiles, onFilesChange }: UploadZoneProp
     return (
         <div className="space-y-[10px]" onClick={(e) => e.stopPropagation()}>
             <label
-                className={cn(
-                    "flex cursor-pointer flex-col items-center gap-3 rounded-[10px] border-2 border-dashed p-[22px] text-center transition-all duration-[150ms]",
-                    isDrag ? "border-blue-600 bg-blue-50 dark:bg-blue-950/40" : "border-border bg-muted/50 hover:border-blue-600 hover:bg-blue-50 dark:hover:bg-blue-950/30"
-                )}
+                className={cn("rp-upload-zone", isDrag ? "rp-upload-zone--drag" : "rp-upload-zone--idle")}
                 onDragEnter={(e) => { e.preventDefault(); setIsDrag(true) }}
                 onDragOver={(e)  => { e.preventDefault(); setIsDrag(true) }}
                 onDragLeave={(e) => { e.preventDefault(); setIsDrag(false) }}
                 onDrop={handleDrop}
                 onClick={triggerInput}
             >
-                <div className="flex h-[42px] w-[42px] items-center justify-center rounded-full border border-blue-100 bg-card text-blue-600 dark:border-blue-900">
+                <div className="rp-upload-zone__icon-box">
                     <CloudUpload className="size-6" />
                 </div>
                 <div>
-                    <p className="text-[13.5px] font-semibold text-foreground">Arraste arquivos ou clique para anexar</p>
-                    <p className="mt-0.5 text-[11.5px] text-muted-foreground">
+                    <p className="rp-upload-zone__title">Arraste arquivos ou clique para anexar</p>
+                    <p className="rp-upload-zone__desc">
                         PDFs ou imagens · máximo {MAX_DOC_FILES} arquivos · até 3 MB cada
                     </p>
                 </div>
@@ -97,15 +93,12 @@ export const UploadZone = memo(({ selectedFiles, onFilesChange }: UploadZoneProp
             />
 
             {selectedFiles.length > 0 && (
-                <div className="flex flex-col gap-[6px]">
+                <div className="rp-upload-file-list">
                     {selectedFiles.map((file, i) => (
-                        <div
-                            key={`${file.name}-${i}`}
-                            className="flex items-center gap-2 rounded-[6px] border border-border bg-card px-[10px] py-[7px]"
-                        >
+                        <div key={`${file.name}-${i}`} className="rp-upload-file-item">
                             <FileText className="size-4 shrink-0 text-blue-600" />
-                            <span className="min-w-0 flex-1 truncate text-[12.5px] font-medium text-foreground">{file.name}</span>
-                            <span className="shrink-0 tabular-nums text-[11px] text-muted-foreground">{formatFileSize(file.size)}</span>
+                            <span className="rp-upload-file-name">{file.name}</span>
+                            <span className="rp-upload-file-size">{formatFileSize(file.size)}</span>
                             <button
                                 type="button"
                                 onClick={(e) => {
@@ -113,7 +106,7 @@ export const UploadZone = memo(({ selectedFiles, onFilesChange }: UploadZoneProp
                                     e.stopPropagation()
                                     onFilesChange(selectedFiles.filter((_, j) => j !== i))
                                 }}
-                                className="flex h-[22px] w-[22px] cursor-pointer items-center justify-center rounded text-muted-foreground transition-colors hover:bg-red-50 hover:text-red-600 dark:hover:bg-red-950/30"
+                                className="rp-upload-file-remove"
                             >
                                 <X className="size-3.5" />
                             </button>

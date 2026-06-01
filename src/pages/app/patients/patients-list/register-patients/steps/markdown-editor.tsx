@@ -1,3 +1,4 @@
+import "./markdown-editor.css"
 import { useState, useRef, useLayoutEffect } from "react"
 import {
     FileText, Bold, Italic, Heading, List, ListOrdered,
@@ -104,27 +105,27 @@ export function MarkdownEditor({ value, onChange }: MarkdownEditorProps) {
     ]
 
     return (
-        <div className="overflow-hidden rounded-[8px] border border-border bg-card transition-[border-color,box-shadow] focus-within:border-blue-600 focus-within:ring-[3px] focus-within:ring-blue-600/[.18]">
-            <div className="flex items-center border-b border-border bg-muted/50">
+        <div className="rp-md-editor">
+            <div className="rp-md-editor__toolbar">
                 <div className="flex shrink-0">
                     {(["write", "preview"] as const).map((t) => (
                         <button key={t} type="button" onClick={() => setTab(t)}
                             className={cn(
-                                "flex items-center gap-[6px] border-b-2 px-3 py-2 text-[12px] font-semibold transition-all",
-                                tab === t ? "border-blue-600 bg-card text-blue-600" : "border-transparent text-muted-foreground"
+                                "rp-md-editor__tab",
+                                tab === t ? "rp-md-editor__tab--active" : "rp-md-editor__tab--inactive"
                             )}>
                             {t === "write" ? <Pencil className="size-[13px]" /> : <Eye className="size-[13px]" />}
                             {t === "write" ? "Escrever" : "Visualizar"}
                         </button>
                     ))}
                 </div>
-                <div className={cn("ml-auto flex items-center pr-1.5", tab === "preview" && "pointer-events-none opacity-40")}>
+                <div className={cn("rp-md-editor__actions", tab === "preview" && "pointer-events-none opacity-40")}>
                     {groups.map((grp, gi) => (
                         <div key={gi} className="flex items-center">
-                            {gi > 0 && <div className="mx-1 h-4 w-px bg-border" />}
+                            {gi > 0 && <div className="rp-md-editor__divider" />}
                             {grp.map(({ Icon, title, fn }) => (
                                 <button key={title} type="button" title={title} onClick={fn}
-                                    className="flex h-[26px] w-[26px] items-center justify-center rounded text-muted-foreground transition-all hover:bg-card hover:text-blue-600">
+                                    className="rp-md-editor__fmt-btn">
                                     <Icon className="size-[13px]" />
                                 </button>
                             ))}
@@ -139,13 +140,11 @@ export function MarkdownEditor({ value, onChange }: MarkdownEditorProps) {
                     value={value}
                     onChange={(e) => onChange(e.target.value)}
                     placeholder={"Ex:\n## Queixa principal\nAnsiedade generalizada com episódios noturnos.\n\n**Encaminhamento:** psiquiatra (Dra. Lima)\n\n- Insônia há 3 meses\n- Pico após mudança de emprego"}
-                    className="w-full resize-none overflow-hidden bg-card p-3 font-mono text-[13px] leading-relaxed text-foreground outline-none placeholder:font-sans placeholder:text-muted-foreground"
-                    style={{ minHeight: 160 }}
+                    className="rp-md-editor__textarea"
                 />
             ) : (
                 <div
-                    className="mk-preview overflow-y-auto px-4 py-3.5 text-[13.5px] leading-[1.65] text-foreground"
-                    style={{ minHeight: 160, maxHeight: 340 }}
+                    className="mk-preview rp-md-editor__preview"
                     dangerouslySetInnerHTML={{
                         __html: value.trim()
                             ? renderMarkdown(value)
@@ -154,15 +153,15 @@ export function MarkdownEditor({ value, onChange }: MarkdownEditorProps) {
                 />
             )}
 
-            <div className="flex items-center justify-between border-t border-border bg-muted/50 px-3 py-[6px]">
-                <div className="flex flex-wrap items-center gap-1 text-[11px] text-muted-foreground">
+            <div className="rp-md-editor__footer">
+                <div className="rp-md-editor__help">
                     <FileText className="size-[11px]" />
                     <span>Markdown suportado ·</span>
                     {["**negrito**", "*itálico*", "# título", "- lista"].map((ex) => (
-                        <code key={ex} className="rounded border border-border bg-card px-1 text-[10px]">{ex}</code>
+                        <code key={ex} className="rp-md-editor__help-code">{ex}</code>
                     ))}
                 </div>
-                <span className="shrink-0 tabular-nums text-[11px] text-muted-foreground">{value.length} caracteres</span>
+                <span className="rp-md-editor__char-count">{value.length} caracteres</span>
             </div>
         </div>
     )

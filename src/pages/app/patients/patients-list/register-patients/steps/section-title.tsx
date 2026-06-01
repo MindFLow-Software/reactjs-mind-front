@@ -1,3 +1,4 @@
+import "./section-title.css"
 import type { ElementType } from "react"
 
 interface SectionTitleProps {
@@ -7,9 +8,9 @@ interface SectionTitleProps {
 
 export function SectionTitle({ icon: Icon, label }: SectionTitleProps) {
     return (
-        <div className="mb-[10px] flex items-center gap-[7px]">
-            <Icon className="size-[13px] shrink-0 text-blue-600" />
-            <span className="text-[11px] font-bold uppercase tracking-[0.06em] text-muted-foreground">{label}</span>
+        <div className="rp-section-title">
+            <Icon className="rp-section-title__icon" />
+            <span className="rp-section-title__label">{label}</span>
         </div>
     )
 }

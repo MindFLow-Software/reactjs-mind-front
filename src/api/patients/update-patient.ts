@@ -1,5 +1,4 @@
 import { api } from '@/lib/axios'
-import { format } from 'date-fns'
 import type { UpdatePatientBody } from '@/types/patient'
 
 export type { UpdatePatientBody } from '@/types/patient'
@@ -14,10 +13,11 @@ export async function updatePatients({ id, ...data }: UpdatePatientData) {
     ...data,
     dateOfBirth:
       data.dateOfBirth instanceof Date
-        ? format(data.dateOfBirth, 'yyyy-MM-dd')
+        ? data.dateOfBirth.toISOString()
         : data.dateOfBirth || undefined,
     cpf: data.cpf || undefined,
-    phoneNumber: data.phoneNumber || undefined,
+    phoneNumber: data.phoneNumber?.replace(/\D/g, '') || undefined,
+    cep: data.cep?.replace(/\D/g, '') || undefined,
   }
 
   const payload = Object.fromEntries(

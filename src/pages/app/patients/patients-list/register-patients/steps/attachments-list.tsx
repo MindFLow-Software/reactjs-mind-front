@@ -1,5 +1,4 @@
-﻿"use client"
-
+﻿import "./attachments-list.css"
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query"
 import { Eye, Download, FileText, Loader2 } from "lucide-react"
 import { toast } from "sonner"
@@ -8,7 +7,6 @@ import { handleFileDownload } from "@/utils/handle-file-download"
 import { formatFileSize } from "@/utils/format-file-size"
 import { getFileKind, FILE_KIND_STYLES } from "@/utils/file-helpers"
 import { cn } from "@/lib/utils"
-import type { AttachmentPatientItem } from "@/types/attachment"
 import { DeleteActionButton } from "./delete-attachments-button"
 
 interface AttachmentsListProps {
@@ -39,9 +37,9 @@ export function AttachmentsList({ patientId }: AttachmentsListProps) {
 
     return (
         <div>
-            <div className="mb-[10px] flex items-center gap-[7px]">
-                <FileText className="size-[13px] shrink-0 text-blue-600" />
-                <span className="text-[11px] font-bold uppercase tracking-[0.06em] text-muted-foreground">
+            <div className="rp-section-title">
+                <FileText className="rp-section-title__icon" />
+                <span className="rp-section-title__label">
                     Documentos enviados
                 </span>
                 {attachments && attachments.length > 0 && (
@@ -56,11 +54,11 @@ export function AttachmentsList({ patientId }: AttachmentsListProps) {
                     <Loader2 className="size-5 animate-spin text-blue-500/50" />
                 </div>
             ) : !attachments || attachments.length === 0 ? (
-                <p className="rounded-[8px] border border-dashed border-border py-6 text-center text-[12px] text-muted-foreground">
+                <p className="rp-att-empty">
                     Nenhum documento enviado ainda.
                 </p>
             ) : (
-                <div className="grid grid-cols-2 gap-2">
+                <div className="rp-att-grid">
                     {attachments.map((file) => {
                         const kind       = getFileKind(file.type ?? "")
                         const fileStyle  = FILE_KIND_STYLES[kind]
@@ -69,17 +67,8 @@ export function AttachmentsList({ patientId }: AttachmentsListProps) {
                         })
 
                         return (
-                            <div
-                                key={file.id}
-                                className="flex items-start gap-2.5 rounded-[8px] border border-border bg-card p-[10px] transition-all hover:border-blue-200 hover:bg-blue-50 hover:shadow-sm dark:hover:border-blue-800 dark:hover:bg-blue-950/30"
-                            >
-                                <div
-                                    className={cn(
-                                        "relative flex shrink-0 items-center justify-center rounded-[4px] bg-gradient-to-br text-[9px] font-black uppercase tracking-[0.04em] text-white",
-                                        fileStyle.gradient,
-                                    )}
-                                    style={{ width: 36, height: 44 }}
-                                >
+                            <div key={file.id} className="rp-att-card">
+                                <div className={cn("rp-att-badge", fileStyle.gradient)}>
                                     {fileStyle.label}
                                     <div
                                         className="absolute right-0 top-0"
@@ -88,8 +77,8 @@ export function AttachmentsList({ patientId }: AttachmentsListProps) {
                                 </div>
 
                                 <div className="min-w-0 flex-1">
-                                    <p className="truncate text-[12.5px] font-semibold text-foreground">{file.filename}</p>
-                                    <div className="mt-0.5 flex items-center gap-1.5 text-[11px] text-muted-foreground">
+                                    <p className="rp-att-name">{file.filename}</p>
+                                    <div className="rp-att-meta">
                                         <span>{formatFileSize(file.size)}</span>
                                         <span className="size-1.5 shrink-0 rounded-full bg-border" />
                                         <span>Enviado {uploadDate}</span>
@@ -101,7 +90,7 @@ export function AttachmentsList({ patientId }: AttachmentsListProps) {
                                         type="button"
                                         title="Visualizar"
                                         onClick={() => window.open(file.url, "_blank")}
-                                        className="flex h-[28px] w-[28px] items-center justify-center rounded-[5px] text-muted-foreground transition-all hover:bg-background hover:text-blue-600 hover:shadow-sm"
+                                        className="rp-att-action"
                                     >
                                         <Eye className="size-3.5" />
                                     </button>
@@ -109,7 +98,7 @@ export function AttachmentsList({ patientId }: AttachmentsListProps) {
                                         type="button"
                                         title="Baixar"
                                         onClick={() => handleFileDownload(file.id, file.filename)}
-                                        className="flex h-[28px] w-[28px] items-center justify-center rounded-[5px] text-muted-foreground transition-all hover:bg-background hover:text-blue-600 hover:shadow-sm"
+                                        className="rp-att-action"
                                     >
                                         <Download className="size-3.5" />
                                     </button>

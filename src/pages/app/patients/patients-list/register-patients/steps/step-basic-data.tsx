@@ -1,17 +1,17 @@
-import type { ChangeEvent } from "react"
-import { Controller } from "react-hook-form"
-import type { Control, UseFormRegister, FieldErrors } from "react-hook-form"
-import { parse as dateParse, isValid as dateIsValid } from "date-fns"
-import { Check, Info, Shield, UserRound } from "lucide-react"
+import { useState, type ChangeEvent } from "react"
+import { useFormContext, useWatch } from "react-hook-form"
+import { parse as dateParse, isValid as dateIsValid, format } from "date-fns"
+import { Check, Shield, UserRound } from "lucide-react"
 import { Input } from "@/components/ui/input"
+import { FormField, FormItem, FormLabel, FormControl, FormMessage } from "@/components/ui/form"
 import { cn } from "@/lib/utils"
 import { formatCPF } from "@/utils/formatCPF"
 import { formatAGE } from "@/utils/formatAGE"
 
 import type { PatientHTTP } from "@/types/patient"
 import type { PatientFormData } from "@/validators/patients"
+import "./step-basic-data.css"
 import { GENDER_OPTIONS } from "../constants"
-import { inputCls } from "../form-styles"
 import { SectionTitle } from "./section-title"
 import { PillRadio } from "./pill-radio"
 import { PatientAvatarUpload } from "./patient-avatar-upload"
@@ -24,25 +24,36 @@ function calcAge(ddmmyyyy: string): number | null {
 }
 
 interface StepBasicDataProps {
-    register:       UseFormRegister<PatientFormData>
-    control:        Control<PatientFormData>
-    errors:         FieldErrors<PatientFormData>
-    cpfDigits:      string
-    birthInput:     string
-    onBirthChange:  (e: ChangeEvent<HTMLInputElement>, fieldOnChange: (v: Date | null) => void) => void
     onAvatarSelect: (f: File | null) => void
     patient?:       PatientHTTP
 }
 
-export function StepBasicData({
-    register, control, errors,
-    cpfDigits, birthInput, onBirthChange,
-    onAvatarSelect, patient,
-}: StepBasicDataProps) {
-    const age      = calcAge(birthInput)
-    const initials = patient
+export function StepBasicData({ onAvatarSelect, patient }: StepBasicDataProps) {
+    const { control, getValues } = useFormContext<PatientFormData>()
+    const [birthInput, setBirthInput] = useState(() => {
+        const d = getValues("dateOfBirth")
+        return d instanceof Date ? format(d, "dd/MM/yyyy") : ""
+    })
+    const cpfValue  = useWatch({ control, name: "cpf" })
+    const cpfDigits = (cpfValue ?? "").replace(/\D/g, "")
+    const age       = calcAge(birthInput)
+    const initials  = patient
         ? `${patient.firstName[0] ?? ""}${patient.lastName[0] ?? ""}`.toUpperCase()
         : undefined
+
+    function handleBirthChange(e: ChangeEvent<HTMLInputElement>, fieldOnChange: (v: Date | null) => void) {
+        let val = e.target.value.replace(/\D/g, "")
+        if (val.length > 2) val = val.slice(0, 2) + "/" + val.slice(2)
+        if (val.length > 5) val = val.slice(0, 5) + "/" + val.slice(5)
+        if (val.length > 10) val = val.slice(0, 10)
+        setBirthInput(val)
+        if (val.length === 10) {
+            const d = dateParse(val, "dd/MM/yyyy", new Date())
+            fieldOnChange(dateIsValid(d) && d <= new Date() ? d : null)
+        } else {
+            fieldOnChange(null)
+        }
+    }
 
     return (
         <div className="space-y-5">
@@ -55,58 +66,52 @@ export function StepBasicData({
             {/* Identificação */}
             <div>
                 <SectionTitle icon={UserRound} label="Identificação" />
-                <div className="grid grid-cols-2 gap-x-3.5 gap-y-3">
-                    <div>
-                        <label className="mb-[5px] flex items-center gap-1 text-[12px] font-semibold text-foreground/80">
-                            Nome <span className="text-red-600">*</span>
-                        </label>
-                        <Input
-                            {...register("firstName")}
-                            id="firstName"
-                            placeholder="Ex: Ana Luísa"
-                            autoComplete="off"
-                            className={cn(inputCls, errors.firstName && "border-red-600 focus-visible:ring-red-600/20")}
-                        />
-                        {errors.firstName && (
-                            <p className="mt-1 flex items-center gap-1 text-[11.5px] font-medium text-red-600">
-                                <Info className="size-3 shrink-0" />{errors.firstName.message}
-                            </p>
-                        )}
-                    </div>
-                    <div>
-                        <label className="mb-[5px] flex items-center gap-1 text-[12px] font-semibold text-foreground/80">
-                            Sobrenome <span className="text-red-600">*</span>
-                        </label>
-                        <Input
-                            {...register("lastName")}
-                            id="lastName"
-                            placeholder="Ex: Costa"
-                            autoComplete="off"
-                            className={cn(inputCls, errors.lastName && "border-red-600 focus-visible:ring-red-600/20")}
-                        />
-                        {errors.lastName && (
-                            <p className="mt-1 flex items-center gap-1 text-[11.5px] font-medium text-red-600">
-                                <Info className="size-3 shrink-0" />{errors.lastName.message}
-                            </p>
-                        )}
-                    </div>
+                <div className="patient-form-grid-2">
+                    <FormField control={control} name="firstName" render={({ field, fieldState }) => (
+                        <FormItem>
+                            <FormLabel>Nome <span className="text-red-600">*</span></FormLabel>
+                            <FormControl>
+                                <Input
+                                    {...field}
+                                    id="firstName"
+                                    placeholder="Ex: Ana Luísa"
+                                    autoComplete="off"
+                                    className={cn("patient-input", fieldState.invalid && "border-red-600 focus-visible:ring-red-600/20")}
+                                />
+                            </FormControl>
+                            <FormMessage />
+                        </FormItem>
+                    )} />
+                    <FormField control={control} name="lastName" render={({ field, fieldState }) => (
+                        <FormItem>
+                            <FormLabel>Sobrenome <span className="text-red-600">*</span></FormLabel>
+                            <FormControl>
+                                <Input
+                                    {...field}
+                                    id="lastName"
+                                    placeholder="Ex: Costa"
+                                    autoComplete="off"
+                                    className={cn("patient-input", fieldState.invalid && "border-red-600 focus-visible:ring-red-600/20")}
+                                />
+                            </FormControl>
+                            <FormMessage />
+                        </FormItem>
+                    )} />
                 </div>
             </div>
 
             {/* Dados pessoais */}
             <div>
                 <SectionTitle icon={Shield} label="Dados pessoais" />
-                <div className="grid grid-cols-2 gap-x-3.5 gap-y-3">
+                <div className="patient-form-grid-2">
                     {/* CPF */}
-                    <div>
-                        <label className="mb-[5px] flex items-center justify-between text-[12px] font-semibold text-foreground/80">
-                            CPF <span className="text-[10.5px] font-medium text-muted-foreground">verificação automática</span>
-                        </label>
-                        <div className="relative">
-                            <Controller
-                                name="cpf"
-                                control={control}
-                                render={({ field }) => (
+                    <FormField control={control} name="cpf" render={({ field, fieldState }) => (
+                        <FormItem>
+                            <FormLabel className="flex items-center justify-between">
+                                CPF <span className="patient-field-hint">verificação automática</span>
+                            </FormLabel>
+                            <div className="relative">
+                                <FormControl>
                                     <Input
                                         id="cpf"
                                         value={field.value ?? ""}
@@ -117,60 +122,54 @@ export function StepBasicData({
                                         inputMode="numeric"
                                         autoComplete="off"
                                         className={cn(
-                                            inputCls, "tabular-nums",
-                                            cpfDigits.length === 11 && !errors.cpf && "border-emerald-500 pr-9",
-                                            errors.cpf && "border-red-600 focus-visible:ring-red-600/20"
+                                            "patient-input", "tabular-nums",
+                                            cpfDigits.length === 11 && !fieldState.invalid && "border-emerald-500 pr-9",
+                                            fieldState.invalid && "border-red-600 focus-visible:ring-red-600/20",
                                         )}
                                     />
+                                </FormControl>
+                                {cpfDigits.length === 11 && !fieldState.invalid && (
+                                    <Check className="rp-cpf-check" />
                                 )}
-                            />
-                            {cpfDigits.length === 11 && !errors.cpf && (
-                                <Check className="absolute right-3 top-1/2 size-3.5 -translate-y-1/2 text-emerald-500" />
-                            )}
-                        </div>
-                        {errors.cpf && (
-                            <p className="mt-1 flex items-center gap-1 text-[11.5px] font-medium text-red-600">
-                                <Info className="size-3 shrink-0" />{errors.cpf.message}
-                            </p>
-                        )}
-                    </div>
+                            </div>
+                            <FormMessage />
+                        </FormItem>
+                    )} />
 
                     {/* Nascimento */}
-                    <div>
-                        <label className="mb-[5px] block text-[12px] font-semibold text-foreground/80">Nascimento</label>
-                        <Controller
-                            name="dateOfBirth"
-                            control={control}
-                            render={({ field }) => (
-                                <div>
-                                    <Input
-                                        value={birthInput}
-                                        onChange={(e) => onBirthChange(e, field.onChange)}
-                                        placeholder="DD/MM/AAAA"
-                                        maxLength={10}
-                                        inputMode="numeric"
-                                        autoComplete="off"
-                                        className={cn(inputCls, "tabular-nums")}
-                                    />
-                                    {age !== null && (
-                                        <p className="mt-1 text-[11.5px] text-muted-foreground">{age} anos</p>
-                                    )}
-                                </div>
+                    <FormField control={control} name="dateOfBirth" render={({ field }) => (
+                        <FormItem>
+                            <FormLabel>Nascimento</FormLabel>
+                            <FormControl>
+                                <Input
+                                    value={birthInput}
+                                    onChange={(e) => handleBirthChange(e, field.onChange)}
+                                    placeholder="DD/MM/AAAA"
+                                    maxLength={10}
+                                    inputMode="numeric"
+                                    autoComplete="off"
+                                    className={cn("patient-input", "tabular-nums")}
+                                />
+                            </FormControl>
+                            {age !== null && (
+                                <p className="patient-value-hint">{age} anos</p>
                             )}
-                        />
-                    </div>
+                            <FormMessage />
+                        </FormItem>
+                    )} />
                 </div>
 
                 {/* Gênero */}
                 <div className="mt-3">
-                    <label className="mb-[5px] block text-[12px] font-semibold text-foreground/80">Gênero</label>
-                    <Controller
-                        name="gender"
-                        control={control}
-                        render={({ field }) => (
-                            <PillRadio name="gender" options={GENDER_OPTIONS} value={field.value} onChange={field.onChange} />
-                        )}
-                    />
+                    <FormField control={control} name="gender" render={({ field }) => (
+                        <FormItem>
+                            <FormLabel>Gênero</FormLabel>
+                            <FormControl>
+                                <PillRadio name="gender" options={GENDER_OPTIONS} value={field.value} onChange={field.onChange} />
+                            </FormControl>
+                            <FormMessage />
+                        </FormItem>
+                    )} />
                 </div>
             </div>
         </div>

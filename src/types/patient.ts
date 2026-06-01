@@ -71,6 +71,7 @@ export interface PatientDetailsMeta {
 export interface CreatePatientBody {
   firstName:        string
   lastName:         string
+  email?:           string
   phoneNumber?:     string
   profileImageUrl?: string
   dateOfBirth?:     string

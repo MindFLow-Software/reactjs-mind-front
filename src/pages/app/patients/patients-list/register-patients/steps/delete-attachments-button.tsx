@@ -1,5 +1,4 @@
-"use client"
-
+import "./delete-attachments-button.css"
 import { useState } from "react"
 import { Trash2, Loader2, AlertTriangle } from "lucide-react"
 import { cn } from "@/lib/utils"
@@ -47,19 +46,16 @@ export function DeleteActionButton({
                     variant="ghost"
                     size="icon"
                     disabled={isLoading}
-                    className={cn(
-                        "cursor-pointer h-8 w-8 rounded-full text-muted-foreground hover:text-destructive hover:bg-destructive/10 transition-all duration-200",
-                        className
-                    )}
+                    className={cn("rp-delete-btn", className)}
                 >
                     {isLoading ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> : <Trash2 className="h-3.5 w-3.5" />}
                 </Button>
             </AlertDialogTrigger>
 
-            <AlertDialogContent className="max-w-[400px] rounded-2xl bg-card border-border text-foreground">
+            <AlertDialogContent className="rp-delete-dialog">
                 <AlertDialogHeader>
                     <div className="flex items-center gap-3 mb-2">
-                        <div className="flex h-10 w-10 items-center justify-center rounded-full bg-destructive/10">
+                        <div className="rp-delete-dialog__icon">
                             <AlertTriangle className="h-5 w-5 text-destructive" />
                         </div>
                         <AlertDialogTitle className="text-xl font-semibold tracking-tight text-foreground">
@@ -71,17 +67,16 @@ export function DeleteActionButton({
                     </AlertDialogDescription>
                 </AlertDialogHeader>
 
-                <AlertDialogFooter className="mt-4 gap-2 sm:gap-0">
+                <AlertDialogFooter className="rp-delete-dialog__footer">
                     <AlertDialogCancel
                         disabled={isLoading}
-                        className="cursor-pointer rounded-xl border-none bg-muted/50 hover:bg-muted text-muted-foreground transition-colors"
+                        className="rp-delete-dialog__cancel"
                     >
                         Cancelar
                     </AlertDialogCancel>
                     <AlertDialogAction
                         onClick={handleConfirm}
-                        className="bg-red-500 text-white hover:bg-red-600 rounded-xl
-                        font-bold transition-all cursor-pointer"
+                        className="rp-delete-dialog__confirm"
                     >
                         {isLoading ? <Loader2 className="h-4 w-4 animate-spin" /> : "Sim, Excluir"}
                     </AlertDialogAction>

@@ -1,3 +1,4 @@
+import "./pill-radio.css"
 import type { ElementType } from "react"
 import { cn } from "@/lib/utils"
 
@@ -17,7 +18,7 @@ interface PillRadioProps {
 
 export function PillRadio({ name, options, value, onChange }: PillRadioProps) {
     return (
-        <div className="flex flex-wrap gap-2">
+        <div className="rp-pill-radio">
             {options.map((opt) => {
                 const Icon    = opt.icon
                 const checked = value === opt.value
@@ -25,10 +26,10 @@ export function PillRadio({ name, options, value, onChange }: PillRadioProps) {
                     <label
                         key={opt.value}
                         className={cn(
-                            "flex cursor-pointer items-center gap-[6px] rounded-[6px] border-[1.5px] px-3 py-[7px] text-[12.5px] font-semibold transition-all duration-[120ms]",
+                            "rp-pill-radio__label",
                             checked
-                                ? (opt.checkedCls ?? "border-blue-600 bg-blue-50 text-blue-700 dark:bg-blue-950/40 dark:text-blue-300")
-                                : "border-border bg-card text-foreground/70 hover:border-border hover:bg-muted/50"
+                                ? (opt.checkedCls ?? "rp-pill-radio__label--checked")
+                                : "rp-pill-radio__label--unchecked"
                         )}
                     >
                         <input

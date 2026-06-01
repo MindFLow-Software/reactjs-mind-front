@@ -11,7 +11,9 @@ export async function createPatients(data: CreatePatientsInput): Promise<CreateP
   const formattedData: CreatePatientBody = {
     ...data,
     cpf: data.cpf ? data.cpf.replace(/\D/g, '') : undefined,
-    phoneNumber: data.phoneNumber || undefined,
+    phoneNumber: data.phoneNumber?.replace(/\D/g, '') || undefined,
+    email: data.email,
+    cep: data.cep?.replace(/\D/g, '') || undefined,
     dateOfBirth:
       data.dateOfBirth instanceof Date
         ? data.dateOfBirth.toISOString()

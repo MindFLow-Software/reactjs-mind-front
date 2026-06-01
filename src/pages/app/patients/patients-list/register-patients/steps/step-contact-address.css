@@ -1,0 +1,5 @@
+@reference "../../../../../../global.css";
+
+@layer components {
+  /* no component-specific classes — uses shared patient-form-grid-* and patient-icon-prefix from form-components.css */
+}

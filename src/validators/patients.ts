@@ -14,6 +14,11 @@ export const patientSchema = z.object({
     bairro:      z.string().optional().or(z.literal("")),
     cidade:      z.string().optional().or(z.literal("")),
     uf:          z.string().max(2).optional().or(z.literal("")),
+    modality:    z.enum(["ONLINE", "PRESENCIAL", "HIBRIDO"]).optional(),
+    frequency:   z.string().optional(),
+    price:       z.string().optional(),
+    source:      z.string().optional(),
+    notes:       z.string().optional(),
 })
 
 export type PatientFormData = z.infer<typeof patientSchema>

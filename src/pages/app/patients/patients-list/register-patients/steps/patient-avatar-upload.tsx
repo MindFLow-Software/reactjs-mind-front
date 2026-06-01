@@ -1,3 +1,4 @@
+import "./patient-avatar-upload.css"
 import { useState, useRef, useEffect } from "react"
 import { Camera, Loader2 } from "lucide-react"
 import { api } from "@/lib/axios"
@@ -41,9 +42,9 @@ export function PatientAvatarUpload({ onFileSelect, defaultValue, initials }: Pa
     }
 
     return (
-        <div className="mb-4 flex items-center gap-3.5 rounded-[8px] border border-border bg-muted/50 p-3">
+        <div className="rp-avatar-wrap">
             <div
-                className="group relative size-[60px] shrink-0 cursor-pointer overflow-hidden rounded-full border-2 border-card shadow-sm"
+                className="rp-avatar-circle group"
                 style={{ background: preview ? undefined : "linear-gradient(135deg, #4e8ed3, #1858b0)" }}
                 onClick={() => !loading && inputRef.current?.click()}
             >
@@ -59,21 +60,21 @@ export function PatientAvatarUpload({ onFileSelect, defaultValue, initials }: Pa
                     </div>
                 )}
                 <div
-                    className="absolute inset-0 flex items-center justify-center rounded-full opacity-0 transition-opacity group-hover:opacity-100"
+                    className="rp-avatar-overlay group-hover:opacity-100"
                     style={{ background: "rgba(15,52,100,0.55)" }}
                 >
                     <Camera className="size-[18px] text-white" />
                 </div>
             </div>
 
-            <div className="flex flex-col gap-0.5">
-                <span className="text-[13px] font-semibold text-foreground">Foto do paciente</span>
-                <span className="text-[11.5px] text-muted-foreground">JPG ou PNG · até 2 MB · opcional</span>
+            <div className="rp-avatar-info">
+                <span className="rp-avatar-label">Foto do paciente</span>
+                <span className="rp-avatar-desc">JPG ou PNG · até 2 MB · opcional</span>
                 <div className="mt-0.5 flex items-center gap-2">
                     <button
                         type="button"
                         onClick={() => inputRef.current?.click()}
-                        className="cursor-pointer rounded px-2 py-1 text-[11.5px] font-semibold text-blue-600 transition-colors hover:bg-blue-50"
+                        className="rp-avatar-btn-upload"
                     >
                         Enviar foto
                     </button>
@@ -83,7 +84,7 @@ export function PatientAvatarUpload({ onFileSelect, defaultValue, initials }: Pa
                             <button
                                 type="button"
                                 onClick={handleRemove}
-                                className="cursor-pointer rounded px-2 py-1 text-[11.5px] font-semibold text-muted-foreground transition-colors hover:text-foreground"
+                                className="rp-avatar-btn-remove"
                             >
                                 Remover
                             </button>
