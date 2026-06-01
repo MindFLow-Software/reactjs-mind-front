@@ -2,60 +2,40 @@
 
 import * as React from "react"
 import { useQuery } from "@tanstack/react-query"
-import { subDays, startOfDay, endOfDay } from "date-fns"
 import { Users, AlertCircle, RefreshCcw } from "lucide-react"
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card"
 import { Skeleton } from "@/components/ui/skeleton"
-import { api } from "@/lib/axios"
+import { fetchDashboardData } from "@/api/metrics/fetch-dashboard-data"
 import type { DashboardPeriod } from "./dashboard-header"
 
 interface AgeStats {
-    ageRange: string
-    patients: number
-}
-
-async function getPatientsByAgeStats(params: { startDate?: string; endDate?: string }): Promise<AgeStats[]> {
-    const response = await api.get<AgeStats[]>("/patients/stats/age", { params })
-    return response.data
-}
-
-const PERIOD_DAYS: Record<DashboardPeriod, number> = {
-    '7d': 7,
-    '30d': 30,
-    '90d': 90,
-    'year': 365,
+    range: string
+    count: number
 }
 
 interface PatientsByAgeChartProps {
     period: DashboardPeriod
 }
 
-export const PatientsByAgeChart = React.memo(function PatientsByAgeChart({ period }: PatientsByAgeChartProps) {
-    const { startDateToFetch, endDateToFetch } = React.useMemo(() => {
-        const ref = new Date()
-        const days = PERIOD_DAYS[period]
-        return {
-            startDateToFetch: startOfDay(subDays(ref, days)),
-            endDateToFetch: endOfDay(ref),
-        }
-    }, [period])
-
-    const { data, isLoading, isError, refetch } = useQuery<AgeStats[]>({
-        queryKey: ['dashboard', 'age-stats', startDateToFetch, endDateToFetch],
-        queryFn: () => getPatientsByAgeStats({
-            startDate: startDateToFetch.toISOString(),
-            endDate: endDateToFetch.toISOString()
-        }),
+export const PatientsByAgeChart = React.memo(function PatientsByAgeChart({ period: _period }: PatientsByAgeChartProps) {
+    const { data: dashboard, isLoading, isError, refetch } = useQuery({
+        queryKey: ['dashboard'],
+        queryFn: () => fetchDashboardData({}),
         staleTime: 5 * 60 * 1000,
         gcTime: 10 * 60 * 1000,
     })
 
+    const data: AgeStats[] = React.useMemo(
+        () => dashboard?.patientsByAge?.map(item => ({ range: item.range, count: item.count })) ?? [],
+        [dashboard]
+    )
+
     const maxValue = React.useMemo(
-        () => Math.max(...(data?.map(d => d.patients) ?? [1])),
+        () => Math.max(...(data.map(d => d.count)), 1),
         [data]
     )
 
-    const isEmpty = !data || data.length === 0 || data.every(d => d.patients === 0)
+    const isEmpty = data.length === 0 || data.every(d => d.count === 0)
 
     return (
         <Card className="border-border bg-card shadow-sm rounded-2xl flex flex-col">
@@ -97,11 +77,11 @@ export const PatientsByAgeChart = React.memo(function PatientsByAgeChart({ perio
                 ) : (
                     <div className="space-y-4">
                         {data.map((item) => {
-                            const pct = maxValue > 0 ? (item.patients / maxValue) * 100 : 0
+                            const pct = maxValue > 0 ? (item.count / maxValue) * 100 : 0
                             return (
-                                <div key={item.ageRange} className="flex items-center gap-4">
+                                <div key={item.range} className="flex items-center gap-4">
                                     <span className="w-14 shrink-0 text-sm font-medium text-muted-foreground tabular-nums whitespace-nowrap">
-                                        {item.ageRange}
+                                        {item.range}
                                     </span>
                                     <div className="flex-1 overflow-hidden rounded-full bg-muted h-2.5">
                                         <div
@@ -110,7 +90,7 @@ export const PatientsByAgeChart = React.memo(function PatientsByAgeChart({ perio
                                         />
                                     </div>
                                     <span className="w-8 shrink-0 text-right text-sm font-semibold text-foreground tabular-nums">
-                                        {item.patients}
+                                        {item.count}
                                     </span>
                                 </div>
                             )

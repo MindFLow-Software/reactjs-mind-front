@@ -18,7 +18,7 @@ import {
     ChartTooltipContent,
     type ChartConfig,
 } from "@/components/ui/chart"
-import { getPatientsByGender } from "@/api/patients/get-patients-by-gender"
+import { fetchDashboardData } from "@/api/metrics/fetch-dashboard-data"
 import type { DashboardPeriod } from "./dashboard-header"
 
 const GENDER_TRANSLATIONS: Record<string, string> = {
@@ -44,26 +44,27 @@ interface PatientsByGenderChartProps {
 }
 
 export const PatientsByGenderChart = React.memo(function PatientsByGenderChart({ period: _period }: PatientsByGenderChartProps) {
-    const { data: rawData, isLoading, isError, refetch } = useQuery({
-        queryKey: ['dashboard', 'gender-stats'],
-        queryFn: () => getPatientsByGender(),
+    const { data: dashboard, isLoading, isError, refetch } = useQuery({
+        queryKey: ['dashboard'],
+        queryFn: () => fetchDashboardData({}),
         staleTime: 5 * 60 * 1000,
         gcTime: 10 * 60 * 1000,
     })
 
     const { chartData, totalPatients, isEmpty } = React.useMemo(() => {
+        const rawData = dashboard?.patientsByGender
         if (!rawData) return { chartData: [], totalPatients: 0, isEmpty: true }
         const translated = rawData.map(item => ({
-            ...item,
             gender: GENDER_TRANSLATIONS[item.gender] || item.gender,
+            count: item.count,
         }))
-        const total = translated.reduce((sum, item) => sum + item.patients, 0)
+        const total = translated.reduce((sum, item) => sum + item.count, 0)
         return {
             chartData: translated,
             totalPatients: total,
             isEmpty: translated.length === 0 || total === 0
         }
-    }, [rawData])
+    }, [dashboard])
 
     return (
         <Card className="border-border bg-card shadow-sm rounded-2xl flex flex-col">
@@ -99,7 +100,7 @@ export const PatientsByGenderChart = React.memo(function PatientsByGenderChart({
                                 <ChartTooltip cursor={false} content={<ChartTooltipContent hideLabel />} />
                                 <Pie
                                     data={chartData}
-                                    dataKey="patients"
+                                    dataKey="count"
                                     nameKey="gender"
                                     innerRadius={52}
                                     outerRadius={72}
@@ -153,7 +154,7 @@ export const PatientsByGenderChart = React.memo(function PatientsByGenderChart({
 
                         <div className="flex flex-col gap-3 flex-1">
                             {chartData.map((item, index) => {
-                                const percentage = ((item.patients / totalPatients) * 100).toFixed(0)
+                                const percentage = ((item.count / totalPatients) * 100).toFixed(0)
                                 return (
                                     <div key={item.gender} className="flex items-center gap-2.5">
                                         <div
