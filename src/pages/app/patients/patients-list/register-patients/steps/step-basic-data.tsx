@@ -8,7 +8,7 @@ import { cn } from "@/lib/utils"
 import { formatCPF } from "@/utils/formatCPF"
 import { formatAGE } from "@/utils/formatAGE"
 
-import type { PatientHTTP } from "@/types/patient"
+import type { Ipatient } from "@/types/patient"
 import type { PatientFormData } from "@/validators/patients"
 import "./step-basic-data.css"
 import { GENDER_OPTIONS } from "../constants"
@@ -25,7 +25,7 @@ function calcAge(ddmmyyyy: string): number | null {
 
 interface StepBasicDataProps {
     onAvatarSelect: (f: File | null) => void
-    patient?:       PatientHTTP
+    patient: Ipatient | null
 }
 
 export function StepBasicData({ onAvatarSelect, patient }: StepBasicDataProps) {
@@ -34,11 +34,11 @@ export function StepBasicData({ onAvatarSelect, patient }: StepBasicDataProps) {
         const d = getValues("dateOfBirth")
         return d instanceof Date ? format(d, "dd/MM/yyyy") : ""
     })
-    const cpfValue  = useWatch({ control, name: "cpf" })
+    const cpfValue = useWatch({ control, name: "cpf" })
     const cpfDigits = (cpfValue ?? "").replace(/\D/g, "")
-    const age       = calcAge(birthInput)
-    const initials  = patient
-        ? `${patient.firstName[0] ?? ""}${patient.lastName[0] ?? ""}`.toUpperCase()
+    const age = calcAge(birthInput)
+    const initials = patient
+        ? `${patient?.firstName[0] ?? ""}${patient?.lastName[0] ?? ""}`.toUpperCase()
         : undefined
 
     function handleBirthChange(e: ChangeEvent<HTMLInputElement>, fieldOnChange: (v: Date | null) => void) {

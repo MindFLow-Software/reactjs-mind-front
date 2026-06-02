@@ -23,6 +23,6 @@ export interface GetPatientByCpfResponse {
 export async function getPatientByCpf(
   cpf: string,
 ): Promise<GetPatientByCpfResponse> {
-  const response = await api.get<GetPatientByCpfResponse>(`/patients/${cpf}`)
+  const response = await api.get<GetPatientByCpfResponse>(`/patients/cpf/${cpf}`)
   return response.data
 }

@@ -186,7 +186,7 @@ Sem mudanças na interface pública:
 
 ```ts
 interface RegisterPatientsProps {
-  patient?:   PatientHTTP
+  patient?:   Ipatient
   onSuccess?: () => void
 }
 ```
@@ -196,7 +196,7 @@ interface RegisterPatientsProps {
 ```ts
 interface StepBasicDataProps {
   onAvatarSelect: (f: File | null) => void
-  patient?:       PatientHTTP
+  patient?:       Ipatient
 }
 ```
 

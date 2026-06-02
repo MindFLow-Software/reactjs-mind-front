@@ -25,6 +25,6 @@ export interface GetPatientsByNameResponse {
 export async function getPatientsByName(
   name: string,
 ): Promise<GetPatientsByNameResponse> {
-  const response = await api.get<GetPatientsByNameResponse>(`/patients/${name}`)
+  const response = await api.get<GetPatientsByNameResponse>(`/patients/name/${name}`)
   return response.data
 }

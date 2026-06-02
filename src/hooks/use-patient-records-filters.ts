@@ -1,13 +1,14 @@
+import type { IsessionVolume } from "@/types/patient"
 import { useState, useEffect } from "react"
 
 export interface PatientRecordsFilters {
     search: string
     debouncedSearch: string
     gender: string
-    sessionOrder: "high" | "low" | "all"
+    sessionOrder: IsessionVolume
     setSearch: (value: string) => void
     setGender: (value: string) => void
-    setSessionOrder: (value: "high" | "low" | "all") => void
+    setSessionOrder: (value: IsessionVolume) => void
     clearFilters: () => void
 }
 
@@ -15,7 +16,7 @@ export function usePatientRecordsFilters(): PatientRecordsFilters {
     const [search, setSearch] = useState("")
     const [debouncedSearch, setDebouncedSearch] = useState("")
     const [gender, setGender] = useState("all")
-    const [sessionOrder, setSessionOrder] = useState<"high" | "low" | "all">("all")
+    const [sessionOrder, setSessionOrder] = useState<IsessionVolume>("all")
 
     useEffect(() => {
         const handler = setTimeout(() => {

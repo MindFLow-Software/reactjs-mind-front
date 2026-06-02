@@ -1,5 +1,8 @@
-import { useSearchParams } from "react-router-dom"
 import { z } from "zod"
+import { useCallback } from "react"
+import { useSearchParams } from "react-router-dom"
+
+import type { PatientStatus, Gender, IsessionVolume } from "@/types/patient"
 
 export type PatientSortOrder = "asc" | "desc"
 export type PatientSortBy = "name" | "status" | "contact" | "lastSession" | "age" | "gender"
@@ -14,51 +17,65 @@ export function usePatientFilters() {
     .catch(0)
     .parse(page)
 
-  const filter  = searchParams.get("filter")  ?? ""
-  const status  = searchParams.get("status")  ?? "all"
-  const sortBy  = (searchParams.get("sortBy") ?? "name") as PatientSortBy
-  const order   = (searchParams.get("order")  ?? "asc")  as PatientSortOrder
+  const filter        = searchParams.get("filter")        ?? ""
+  const status        = searchParams.get("status")        as PatientStatus
+  const gender        = searchParams.get("gender")        as Gender
+  const sessionVolume = (searchParams.get("sessionVolume") ?? undefined) as IsessionVolume | undefined
+  const sortBy        = (searchParams.get("sortBy") ?? "name") as PatientSortBy
+  const order         = (searchParams.get("order")  ?? "asc")  as PatientSortOrder
 
   const filters = {
     pageIndex: Math.max(0, pageIndex),
     perPage: 10,
     filter,
     status,
+    gender,
+    sessionVolume,
     sortBy,
     order,
   }
 
-  function setPage(pageIndex: number) {
+  const setPage = useCallback((pageIndex: number) => {
     setSearchParams((state) => {
       state.set("page", (pageIndex + 1).toString())
       return state
     })
-  }
+  }, [setSearchParams])
 
-  function setFilters({ filter, status }: { filter?: string; status?: string }) {
+  const setFilters = useCallback(({
+    filter,
+    status,
+    gender,
+    sessionVolume,
+  }: {
+    filter?: string
+    status?: PatientStatus | null
+    gender?: Gender | null
+    sessionVolume?: string | null
+  }) => {
     setSearchParams((state) => {
-      if (filter !== undefined) {
-        if (filter.trim()) {
-          state.set("filter", filter.trim())
-        } else {
-          state.delete("filter")
-        }
-      }
+      filter
+      ? state.set("filter", filter.trim())
+      : state.delete("filter")
 
-      if (status !== undefined) {
-        if (status !== "all") {
-          state.set("status", status)
-        } else {
-          state.delete("status")
-        }
-      }
+      status
+      ? state.set("status", status)
+      : state.delete("status")
+
+      gender
+      ? state.set("gender", gender)
+      : state.delete("gender")
+
+      sessionVolume
+      ? state.set("sessionVolume", sessionVolume)
+      : state.delete("sessionVolume")
 
       state.set("page", "1")
       return state
     })
-  }
+  }, [setSearchParams])
 
-  function setSort(column: PatientSortBy) {
+  const setSort = useCallback((column: PatientSortBy) => {
     setSearchParams((state) => {
       const currentColumn = (state.get("sortBy") ?? "name") as PatientSortBy
       const currentOrder  = (state.get("order")  ?? "asc")  as PatientSortOrder
@@ -73,25 +90,26 @@ export function usePatientFilters() {
       state.set("page", "1")
       return state
     })
-  }
+  }, [setSearchParams])
 
-  // Keep backward-compat alias used in patients-list.tsx
-  function setOrder(next: PatientSortOrder) {
+  const setOrder = useCallback((next: PatientSortOrder) => {
     setSearchParams((state) => {
       state.set("order", next)
       state.set("page", "1")
       return state
     })
-  }
+  }, [setSearchParams])
 
-  function clearFilters() {
+  const clearFilters = useCallback(() => {
     setSearchParams((state) => {
       state.delete("filter")
       state.delete("status")
+      state.delete("gender")
+      state.delete("sessionVolume")
       state.set("page", "1")
       return state
     })
-  }
+  }, [setSearchParams])
 
   return { filters, setPage, setFilters, setSort, setOrder, clearFilters }
 }

@@ -12,13 +12,14 @@ import {
 } from '@/components/ui/tooltip'
 import { UserAvatar } from '@/components/user-avatar'
 import { cn } from '@/lib/utils'
+import type { PatientStatus } from '@/types/patient'
 
 interface PatientDetailsHeaderProps {
   patient: {
     id: string
     firstName: string
     lastName: string
-    status: 'active' | 'inactive'
+    status: PatientStatus
     profileImageUrl: string | null
   }
 }
@@ -29,7 +30,7 @@ export function PatientDetailsHeader({ patient }: PatientDetailsHeaderProps) {
     [patient.id],
   )
   const fullName = `${patient.firstName} ${patient.lastName}`
-  const isPatientActive = patient.status === 'active'
+  const isPatientActive = patient.status === 'ACTIVE'
 
   const handleCopyId = () => {
     navigator.clipboard.writeText(patient.id)

@@ -25,7 +25,7 @@ src/pages/app/patients/patients-records/
 - Sem dependências de API — puro estado de UI
 
 ### `patient-card.tsx`
-- Props: `{ patient: PatientHTTP; onOpen: (id: string) => void }`
+- Props: `{ patient: Ipatient; onOpen: (id: string) => void }`
 - Renderiza avatar, nome, última sessão (formatDistanceToNow), chevron
 - Hover state com `group` do Tailwind
 

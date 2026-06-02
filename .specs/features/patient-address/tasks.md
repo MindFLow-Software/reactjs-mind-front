@@ -6,9 +6,9 @@ Rastreabilidade: [spec.md](spec.md) · [design.md](design.md) · [contract.md](c
 
 ## T-01 — Atualizar tipos em `src/types/patient.ts` ⭐ P1
 
-**Escopo:** Adicionar os 5 novos campos de endereço ao `PatientHTTP` e aos bodies de criar/editar. Adicionar `AddressByCepResponse`.
+**Escopo:** Adicionar os 5 novos campos de endereço ao `Ipatient` e aos bodies de criar/editar. Adicionar `AddressByCepResponse`.
 
-- [ ] Adicionar ao final de `PatientHTTP`: `cep`, `logradouro`, `bairro`, `cidade`, `uf` — todos `string | null`
+- [ ] Adicionar ao final de `Ipatient`: `cep`, `logradouro`, `bairro`, `cidade`, `uf` — todos `string | null`
 - [ ] Adicionar a `CreatePatientBody`: `cep?`, `logradouro?`, `bairro?`, `cidade?`, `uf?` — todos `string`
 - [ ] Adicionar a `UpdatePatientBody`: `cep?`, `logradouro?`, `bairro?`, `cidade?`, `uf?` — todos `string | null`
 - [ ] Criar interface `AddressByCepResponse` com os 5 campos como `string` (não nulos — o backend sempre retorna preenchido)
@@ -18,7 +18,7 @@ Rastreabilidade: [spec.md](spec.md) · [design.md](design.md) · [contract.md](c
 
 **Commit:**
 ```
-feat(patients): add address fields to PatientHTTP and request bodies
+feat(patients): add address fields to Ipatient and request bodies
 ```
 
 ---
@@ -150,7 +150,7 @@ refactor(step-contact-address): bind address fields to RHF and add CEP blur hand
 
 | Req | Descrição | Task | Status |
 |-----|-----------|------|--------|
-| PA-01 | `PatientHTTP` com 5 novos campos `string \| null` | T-01 | ⬜ pendente |
+| PA-01 | `Ipatient` com 5 novos campos `string \| null` | T-01 | ⬜ pendente |
 | PA-02 | Formulário de criação/edição envia endereço | T-04, T-05 | ⬜ pendente |
 | PA-03 | Schema Zod inclui campos de endereço | T-03 | ⬜ pendente |
 | PA-04 | CEP lookup auto-preenche logradouro/bairro/cidade/UF | T-02, T-04, T-05 | ⬜ pendente |

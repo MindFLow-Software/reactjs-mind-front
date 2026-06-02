@@ -158,7 +158,7 @@ After three sequential refactors (structural, architectural, address integration
 
 **Acceptance Criteria**:
 
-1. WHEN `buildPatientDefaults(patient)` receives a `PatientHTTP` THEN it SHALL return all form fields populated: name, CPF (formatted), phone (formatted), email, gender, dateOfBirth, cep (formatted), logradouro, bairro, cidade, uf
+1. WHEN `buildPatientDefaults(patient)` receives a `Ipatient` THEN it SHALL return all form fields populated: name, CPF (formatted), phone (formatted), email, gender, dateOfBirth, cep (formatted), logradouro, bairro, cidade, uf
 2. WHEN `buildPatientDefaults()` is called with no argument THEN it SHALL return empty strings and `null` for all fields
 3. WHEN a patient has `null` for any address field THEN the returned default SHALL be `""` (not the string `"null"`)
 4. WHEN the helper is active THEN `register-patients.tsx`'s `useForm` call SHALL read `defaultValues: buildPatientDefaults(patient)` with no inline ternaries

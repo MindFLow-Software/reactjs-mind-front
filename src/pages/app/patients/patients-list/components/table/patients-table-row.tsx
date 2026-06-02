@@ -1,5 +1,5 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query'
-import { format, formatDistanceToNow } from 'date-fns'
+import { differenceInYears, format, formatDistanceToNow } from 'date-fns'
 import { ptBR } from 'date-fns/locale'
 import {
   Archive,
@@ -20,7 +20,7 @@ import {
 import { memo, useCallback, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { togglePatientStatus } from '@/api/patients/toggle-patient-status'
-import type { GetPatientsResponse, Patient } from '@/api/patients/get-patients'
+import type { GetPatientsResponse } from '@/api/patients/get-patients'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { Checkbox } from '@/components/ui/checkbox'
@@ -41,7 +41,6 @@ import {
 } from '@/components/ui/tooltip'
 import { UserAvatar } from '@/components/user-avatar'
 import { cn } from '@/lib/utils'
-import { formatAGE } from '@/utils/formatAGE'
 import { formatCPF } from '@/utils/formatCPF'
 import { formatPhone } from '@/utils/formatPhone'
 
@@ -49,6 +48,7 @@ import { RegisterPatients } from '../../register-patients/register-patients'
 import { DeletePatientDialog } from '../dialogs/delete-patient-dialog'
 import { PatientsDetails } from '../details/patients-details'
 import { PatientStatusDialog } from '@/components/patient-status-dialog'
+import type { Ipatient } from '@/types/patient'
 
 const GENDER_CONFIG = {
   MASCULINE: {
@@ -72,7 +72,7 @@ const GENDER_CONFIG = {
 } as const
 
 interface PatientsTableRowProps {
-  patient: Patient
+  patient: Ipatient
 }
 
 export const PatientsTableRow = memo(function PatientsTableRow({
@@ -100,9 +100,9 @@ export const PatientsTableRow = memo(function PatientsTableRow({
     status,
   } = patient
 
-  const patientIsActive = status === 'active'
+  const fullName = `${firstName} ${lastName}`
 
-  const fullName = `${firstName} ${lastName}`.trim()
+  const patientIsActive = status === 'ACTIVE'
 
   const { mutateAsync: toggleStatusFn, isPending: isUpdating } = useMutation({
     mutationFn: () => togglePatientStatus(id, false),
@@ -117,7 +117,7 @@ export const PatientsTableRow = memo(function PatientsTableRow({
           return {
             ...old,
             patients: old.patients.map((p) =>
-              p.id === id ? { ...p, status: 'inactive' as const, isActive: false } : p,
+              p.id === id ? { ...p, status: 'BLOCKED' as const, isActive: false } : p,
             ),
           }
         },
@@ -153,7 +153,7 @@ export const PatientsTableRow = memo(function PatientsTableRow({
           return {
             ...old,
             patients: old.patients.map((p) =>
-              p.id === id ? { ...p, status: 'active' as const, isActive: true } : p,
+              p.id === id ? { ...p, status: 'ACTIVE' as const, isActive: true } : p,
             ),
           }
         },
@@ -178,6 +178,7 @@ export const PatientsTableRow = memo(function PatientsTableRow({
   const handleOpenEdit       = useCallback(() => setIsEditOpen(true), [])
   const handleOpenDelete     = useCallback(() => setIsDeleteOpen(true), [])
   const handleOpenReactivate = useCallback(() => setIsReactivateOpen(true), [])
+
   const handleNavigate = useCallback(() => {
     sessionStorage.removeItem('active_patient_queue')
     sessionStorage.removeItem('active_patient_queue_source')
@@ -188,9 +189,9 @@ export const PatientsTableRow = memo(function PatientsTableRow({
     navigate(`/appointment?patientId=${id}`)
   }, [navigate, id])
 
-  const isValidDate = dateOfBirth && !isNaN(new Date(dateOfBirth).getTime())
-  const age = isValidDate ? formatAGE(dateOfBirth) : null
-  const ageDisplay = age !== null ? `${age} ${age === 1 ? 'ano' : 'anos'}` : '—'
+  const now = new Date()
+  const age = dateOfBirth ? differenceInYears(now, dateOfBirth) : null
+  const ageDisplay = age ? `${age} ${age === 1 ? 'ano' : 'anos'}` : '—'
 
   const lastSessionRelative = lastSessionAt
     ? formatDistanceToNow(new Date(lastSessionAt), {
@@ -198,6 +199,7 @@ export const PatientsTableRow = memo(function PatientsTableRow({
         locale: ptBR,
       })
     : null
+
   const lastSessionExact = lastSessionAt
     ? format(new Date(lastSessionAt), "dd/MM/yyyy 'às' HH:mm", { locale: ptBR })
     : null
@@ -255,7 +257,7 @@ export const PatientsTableRow = memo(function PatientsTableRow({
           <div className="flex flex-col gap-1">
             <div className="flex items-center gap-1.5">
               <Phone
-                className="h-3 w-3 text-muted-foreground shrink-0"
+                className="size-3 text-muted-foreground shrink-0"
                 aria-hidden="true"
               />
               <span className="text-xs font-medium">
@@ -264,7 +266,7 @@ export const PatientsTableRow = memo(function PatientsTableRow({
             </div>
             <div className="flex items-center gap-1.5">
               <Mail
-                className="h-3 w-3 text-muted-foreground shrink-0"
+                className="size-3 text-muted-foreground shrink-0"
                 aria-hidden="true"
               />
               <span className="text-xs font-medium">
@@ -296,9 +298,9 @@ export const PatientsTableRow = memo(function PatientsTableRow({
         <TableCell className="w-[110px] hidden xl:table-cell">
           <div className="flex flex-col gap-0.5">
             <span className="text-sm font-bold tabular-nums">{ageDisplay}</span>
-            {isValidDate && (
+            {dateOfBirth && (
               <span className="text-[10px] text-muted-foreground flex items-center gap-1">
-                <CalendarDays className="h-2.5 w-2.5" aria-hidden="true" />
+                <CalendarDays className="size-2.5" aria-hidden="true" />
                 {format(new Date(dateOfBirth), 'dd/MM/yyyy')}
               </span>
             )}
@@ -313,7 +315,7 @@ export const PatientsTableRow = memo(function PatientsTableRow({
               genderCfg.className,
             )}
           >
-            <genderCfg.icon className="h-3 w-3" aria-hidden="true" />
+            <genderCfg.icon className="size-3" aria-hidden="true" />
             {genderCfg.label}
           </Badge>
         </TableCell>
@@ -410,7 +412,7 @@ export const PatientsTableRow = memo(function PatientsTableRow({
         <Dialog open={isEditOpen} onOpenChange={setIsEditOpen}>
           {isEditOpen && (
             <RegisterPatients
-              patient={patient}
+              patientId={patient.id}
               onSuccess={() => setIsEditOpen(false)}
             />
           )}

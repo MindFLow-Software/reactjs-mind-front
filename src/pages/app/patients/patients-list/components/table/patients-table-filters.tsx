@@ -6,22 +6,24 @@ import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { usePatientFilters } from '@/hooks/use-patient-filters'
 import { cn } from '@/lib/utils'
+import type { StatusPillOption } from '../../patients-list.types'
+import '../../patients-list.css'
 
 interface PatientsTableFiltersProps {
   isFetching?: boolean
 }
 
-const STATUS_PILLS = [
-  { value: 'all',      label: 'Todos',    dot: null,             activeCls: 'border border-blue-500 bg-background text-foreground'                                                                  },
-  { value: 'active',   label: 'Ativos',   dot: 'bg-emerald-500', activeCls: 'border border-emerald-500 bg-emerald-100 text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-400'               },
-  { value: 'inactive', label: 'Arquivados', dot: 'bg-red-500',   activeCls: 'border border-red-500 bg-red-100 text-red-700 dark:bg-red-900/30 dark:text-red-400'                                   },
-] as const
+const STATUS_PILLS: readonly StatusPillOption[] = [
+  { value: null,      label: 'Todos',      dot: null,             activeCls: 'border border-blue-500 bg-background text-foreground'                                                    },
+  { value: 'ACTIVE',  label: 'Ativos',     dot: 'bg-emerald-500', activeCls: 'border border-emerald-500 bg-emerald-100 text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-400' },
+  { value: 'BLOCKED', label: 'Arquivados', dot: 'bg-red-500',     activeCls: 'border border-red-500 bg-red-100 text-red-700 dark:bg-red-900/30 dark:text-red-400'                     },
+]
 
-export function PatientsTableFilters({
-  isFetching,
-}: PatientsTableFiltersProps) {
+export function PatientsTableFilters({ isFetching }: PatientsTableFiltersProps) {
   const { filters, setFilters, clearFilters } = usePatientFilters()
   const isFirstRender = useRef(true)
+  const setFiltersRef = useRef(setFilters)
+  setFiltersRef.current = setFilters
 
   const { register, watch, setValue } = useForm({
     values: { filter: filters.filter },
@@ -37,11 +39,11 @@ export function PatientsTableFilters({
     if (watchedFilter === filters.filter) return
 
     const timeout = setTimeout(() => {
-      setFilters({ filter: watchedFilter })
+      setFiltersRef.current({ filter: watchedFilter })
     }, 400)
 
     return () => clearTimeout(timeout)
-  }, [watchedFilter, filters.filter, setFilters])
+  }, [watchedFilter, filters.filter])
 
   function handleClearSearch() {
     setValue('filter', '')
@@ -53,13 +55,11 @@ export function PatientsTableFilters({
     setValue('filter', '')
   }
 
-  const hasFilters = !!filters.filter || filters.status !== 'all'
-  const activeStatus = filters.status ?? 'all'
+  const hasFilters = !!filters.filter || filters.status !== null
 
   return (
     <div className="flex flex-wrap items-center gap-2">
-      {/* Search */}
-      <div className="relative w-90 shrink-0">
+      <div className="ptf-search-wrapper">
         <span className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground pointer-events-none">
           {isFetching ? (
             <Loader2 className="h-4 w-4 animate-spin" />
@@ -85,24 +85,21 @@ export function PatientsTableFilters({
         )}
       </div>
 
-      {/* Status pills */}
-      <div className="flex items-center gap-1">
+      <div className="ptf-status-pills">
         {STATUS_PILLS.map((pill) => {
-          const isActive = activeStatus === pill.value
+          const isActive = filters.status === pill.value
           return (
             <button
-              key={pill.value}
+              key={pill.value ?? 'all'}
               type="button"
               onClick={() => setFilters({ status: pill.value })}
               className={cn(
-                "flex items-center gap-1.5 h-8 px-3 rounded-lg text-xs font-medium transition-colors cursor-pointer",
-                isActive
-                  ? pill.activeCls
-                  : "bg-muted text-muted-foreground hover:bg-muted/70 hover:text-foreground",
+                'ptf-pill',
+                isActive ? pill.activeCls : 'ptf-pill--inactive',
               )}
             >
               {pill.dot && (
-                <span className={cn("h-1.5 w-1.5 rounded-full shrink-0", pill.dot)} />
+                <span className={cn('h-1.5 w-1.5 rounded-full shrink-0', pill.dot)} />
               )}
               {pill.label}
             </button>
@@ -110,8 +107,7 @@ export function PatientsTableFilters({
         })}
       </div>
 
-      {/* Right side */}
-      <div className="flex items-center gap-2 ml-auto">
+      <div className="ptf-right-actions">
         {hasFilters && (
           <Button
             variant="ghost"

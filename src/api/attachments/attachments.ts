@@ -46,11 +46,11 @@ export async function uploadAvatar(
   return data
 }
 
-export async function getPatientAttachments(patientId: string): Promise<AttachmentPatientItem[]> {
+export async function getPatientAttachments(patientId: string | null): Promise<AttachmentPatientItem[]> {
   const { data } = await api.get<{ attachments: AttachmentPatientItem[] }>(
     `/attachments/patient/${patientId}`,
   )
-  return data.attachments
+  return data.attachments ?? []
 }
 
 export async function getAllAttachments(

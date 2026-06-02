@@ -10,7 +10,7 @@ import { cn } from "@/lib/utils"
 import { DeleteActionButton } from "./delete-attachments-button"
 
 interface AttachmentsListProps {
-    patientId: string
+    patientId: string | null
 }
 
 export function AttachmentsList({ patientId }: AttachmentsListProps) {

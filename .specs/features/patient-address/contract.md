@@ -11,19 +11,19 @@
 
 | O que mudou | Impacto no front |
 |-------------|-----------------|
-| `PatientHTTP` ganhou 5 novos campos de endereço | Atualizar tipo `PatientHTTP` em todo o projeto |
+| `Ipatient` ganhou 5 novos campos de endereço | Atualizar tipo `Ipatient` em todo o projeto |
 | `POST /patient` aceita campos de endereço | Formulário de cadastro pode enviar endereço |
 | `PUT /patient/:id` aceita campos de endereço | Formulário de edição pode atualizar endereço |
 | **Novo** `GET /address/cep/:cep` | Usar para auto-preencher formulário ao digitar CEP |
 
 ---
 
-## Tipo PatientHTTP — atualizado
+## Tipo Ipatient — atualizado
 
-O tipo `PatientHTTP` (retornado pelo `PatientPresenter`) ganhou **5 novos campos** ao final:
+O tipo `Ipatient` (retornado pelo `PatientPresenter`) ganhou **5 novos campos** ao final:
 
 ```ts
-interface PatientHTTP {
+interface Ipatient {
   id:              string        // UUID
   firstName:       string        // capitalizado pelo backend
   lastName:        string        // capitalizado pelo backend
@@ -140,7 +140,7 @@ interface UpdatePatientBody {
 
 ```ts
 interface UpdatePatientResponse {
-  patient: PatientHTTP  // shape atualizado com os 5 novos campos
+  patient: Ipatient  // shape atualizado com os 5 novos campos
 }
 ```
 
@@ -208,7 +208,7 @@ GET /address/cep/01001000
 
 ## Checklist de atualização no front
 
-- [ ] Atualizar interface/tipo `PatientHTTP` (ou equivalente) com os 5 novos campos `string | null`
+- [ ] Atualizar interface/tipo `Ipatient` (ou equivalente) com os 5 novos campos `string | null`
 - [ ] Formulário de **cadastro de paciente**: adicionar campos CEP, Logradouro, Bairro, Cidade, UF
 - [ ] Formulário de **edição de paciente**: adicionar os mesmos campos com valores pré-preenchidos
 - [ ] Implementar chamada a `GET /address/cep/:cep` ao sair do campo CEP (onBlur / após 8 dígitos)

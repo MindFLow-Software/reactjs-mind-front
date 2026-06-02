@@ -7,12 +7,12 @@ import { Button } from "@/components/ui/button"
 import { Checkbox } from "@/components/ui/checkbox"
 import { PatientsTableRow } from "./patients-table-row"
 import { PatientsTableLoading } from "./loading"
-import type { Patient } from "@/api/patients/get-patients"
+import type { Ipatient } from "@/types/patient"
 import type { PatientSortBy, PatientSortOrder } from "@/hooks/use-patient-filters"
 import { cn } from "@/lib/utils"
 
 interface PatientsTableProps {
-    patients: Patient[]
+    patients: Ipatient[]
     isLoading: boolean
     perPage?: number
     hasActiveFilters?: boolean
@@ -24,10 +24,10 @@ interface PatientsTableProps {
 }
 
 function SortIcon({ active, order }: { active: boolean; order?: PatientSortOrder }) {
-    if (!active) return <ArrowUpDown className="ml-1.5 h-3 w-3 shrink-0 text-muted-foreground/50" />
+    if (!active) return <ArrowUpDown className="ml-1.5 size-3 shrink-0 text-muted-foreground/50" />
     return order === "asc"
-        ? <ArrowUp  className="ml-1.5 h-3 w-3 shrink-0 text-primary" />
-        : <ArrowDown className="ml-1.5 h-3 w-3 shrink-0 text-primary" />
+        ? <ArrowUp  className="ml-1.5 size-3 shrink-0 text-primary" />
+        : <ArrowDown className="ml-1.5 size-3 shrink-0 text-primary" />
 }
 
 const COL_HEAD = "text-[11px] font-semibold uppercase tracking-wider text-muted-foreground whitespace-nowrap"

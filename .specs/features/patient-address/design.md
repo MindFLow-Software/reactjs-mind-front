@@ -16,7 +16,7 @@ O backend adicionou suporte a endereço estruturado no domínio de paciente (`ce
 Três mudanças coordenadas sem alterar a arquitetura existente:
 
 1. **Mover endereço para dentro do form** — os 5 `useState` viram campos do `patientSchema` e do `useForm`, eliminando a bifurcação entre estado local e estado validado
-2. **Conectar à API** — incluir endereço no payload de criar/editar e pre-fill no modo edição a partir dos dados do `PatientHTTP`
+2. **Conectar à API** — incluir endereço no payload de criar/editar e pre-fill no modo edição a partir dos dados do `Ipatient`
 3. **Implementar CEP lookup** — `onBlur` no campo CEP dispara `GET /address/cep/:cep` e popula os demais campos via `setValue`
 
 ---
@@ -90,7 +90,7 @@ O lookup de CEP é usado em exatamente um lugar (`register-patients.tsx`). Extra
 
 | Arquivo | O que muda |
 |---------|-----------|
-| `src/types/patient.ts` | `PatientHTTP` +5 campos; `CreatePatientBody` +5 opcionais; `UpdatePatientBody` +5 anuláveis; `AddressByCepResponse` nova interface |
+| `src/types/patient.ts` | `Ipatient` +5 campos; `CreatePatientBody` +5 opcionais; `UpdatePatientBody` +5 anuláveis; `AddressByCepResponse` nova interface |
 | `src/validators/patients.ts` | `patientSchema` +5 campos de endereço (`cep`, `logradouro`, `bairro`, `cidade`, `uf`) |
 | `register-patients.tsx` | Remove 5 `useState`; adiciona ao `useForm`; `handleCepBlur`; `isCepLoading`; payload do submit |
 | `steps/step-contact-address.tsx` | Remove 10 props de value/callback; vincula ao form via `register`/`Controller`; `onBlur` no CEP; `disabled` no loading |

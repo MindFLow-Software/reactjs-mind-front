@@ -124,7 +124,7 @@ useImagePreview(options?: { fetchBlob?: (url: string) => Promise<Blob> })
 
 ### T5: Create `buildPatientDefaults` + wire into orchestrator
 
-**What**: Create a pure function that builds `useForm` `defaultValues` from a `PatientHTTP | undefined`. Update the orchestrator's `useForm` call to use it.
+**What**: Create a pure function that builds `useForm` `defaultValues` from a `Ipatient | undefined`. Update the orchestrator's `useForm` call to use it.
 **Where**: `register-patients/helpers.ts` (new); `register-patients.tsx`
 **Depends on**: None (touches orchestrator in isolation — only the `defaultValues` block)
 **Requirement**: RPLEAN-06
@@ -132,7 +132,7 @@ useImagePreview(options?: { fetchBlob?: (url: string) => Promise<Blob> })
 **Function signature**:
 
 ```ts
-buildPatientDefaults(patient?: PatientHTTP): PatientFormData
+buildPatientDefaults(patient?: Ipatient): PatientFormData
 ```
 
 **Done when**:
@@ -251,7 +251,7 @@ usePatientFormSteps(options: { trigger: UseFormTrigger<PatientFormData> })
 
 ```ts
 usePatientSubmit(options: {
-  patient?: PatientHTTP
+  patient?: Ipatient
   avatarFile: File | null
   files: File[]
   onSuccess?: () => void

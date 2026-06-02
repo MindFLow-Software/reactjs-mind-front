@@ -11,7 +11,7 @@
 
 | Mudança | Detalhe |
 |---------|---------|
-| `PatientHTTP` ganhou 5 novos campos | `cep`, `logradouro`, `bairro`, `cidade`, `uf` — todos `string \| null` |
+| `Ipatient` ganhou 5 novos campos | `cep`, `logradouro`, `bairro`, `cidade`, `uf` — todos `string \| null` |
 | `POST /patient` aceita endereço | Campos opcionais no body |
 | `PUT /patient/:id` aceita endereço | Campos opcionais/anuláveis no body |
 | Novo `GET /address/cep/:cep` | Endpoint público — auto-fill via ViaCEP |
@@ -33,7 +33,7 @@ Os campos de endereço (CEP, logradouro, bairro, cidade, UF) já existem visualm
 ## Escopo de implementação
 
 ### T1 — Tipos (`src/types/patient.ts`)
-- Adicionar 5 campos a `PatientHTTP`: `cep | null`, `logradouro | null`, `bairro | null`, `cidade | null`, `uf | null`
+- Adicionar 5 campos a `Ipatient`: `cep | null`, `logradouro | null`, `bairro | null`, `cidade | null`, `uf | null`
 - Adicionar 5 campos opcionais a `CreatePatientBody`: `cep?`, `logradouro?`, `bairro?`, `cidade?`, `uf?`
 - Adicionar 5 campos opcionais/anuláveis a `UpdatePatientBody`: mesmos, mas `string | null`
 - Adicionar interface `AddressByCepResponse`
@@ -77,7 +77,7 @@ Os campos de endereço (CEP, logradouro, bairro, cidade, UF) já existem visualm
 
 ## Critérios de aceitação
 
-- [ ] `PatientHTTP` tem os 5 novos campos com `string | null`
+- [ ] `Ipatient` tem os 5 novos campos com `string | null`
 - [ ] Criar paciente com endereço → campos persistidos no backend
 - [ ] Editar paciente → Step 2 pré-preenchido com endereço existente
 - [ ] Digitar CEP válido → onBlur auto-preenche logradouro, bairro, cidade, UF

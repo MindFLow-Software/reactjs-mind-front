@@ -7,19 +7,19 @@ import { createPatients } from "@/api/patients/create-patient"
 import { updatePatients } from "@/api/patients/update-patient"
 import { uploadAttachment, uploadAvatar } from "@/api/attachments/attachments"
 
-import type { PatientHTTP } from "@/types/patient"
+import type { Ipatient } from "@/types/patient"
 import type { PatientFormData } from "@/validators/patients"
 
 interface UsePatientSubmitOptions {
-    patient?:   PatientHTTP
+    patient: Ipatient | null
     avatarFile: File | null
-    files:      File[]
+    files: File[]
     onSuccess?: () => void
 }
 
 export function usePatientSubmit({ patient, avatarFile, files, onSuccess }: UsePatientSubmitOptions) {
     const queryClient = useQueryClient()
-    const isEditMode  = !!patient
+    const isEditMode = !!patient
     const [isUploading, setIsUploading] = useState(false)
 
     const { mutateAsync: createFn, isPending: isCreating } = useMutation({
@@ -43,16 +43,16 @@ export function usePatientSubmit({ patient, avatarFile, files, onSuccess }: UseP
 
         const shared = {
             ...coreFields,
-            phoneNumber:   phoneNumber   || undefined,
-            cpf:           cpf           || undefined,
-            zipCode:       zipCode       || undefined,
-            street:        street        || undefined,
-            neighborhood:  neighborhood  || undefined,
-            city:          city          || undefined,
-            state:         state         || undefined,
-            complement:    complement    || undefined,
-            number:        number        || undefined,
-            dateOfBirth:   dateOfBirth   || undefined,
+            phoneNumber: phoneNumber || undefined,
+            cpf: cpf || undefined,
+            zipCode: zipCode || undefined,
+            street: street || undefined,
+            neighborhood: neighborhood || undefined,
+            city: city || undefined,
+            state: state || undefined,
+            complement: complement || undefined,
+            number: number || undefined,
+            dateOfBirth: dateOfBirth || undefined,
         }
 
         try {

@@ -1,5 +1,5 @@
 import "./form-components.css"
-import { useState } from "react"
+import { useEffect, useState } from "react"
 import { useForm } from "react-hook-form"
 import { useFileSelection } from "@/hooks/use-file-selection"
 import { useCepLookup } from "@/hooks/use-cep-lookup"
@@ -8,11 +8,10 @@ import { usePatientSubmit } from "./hooks/use-patient-submit"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { Loader2, ChevronLeft, ChevronRight, Check } from "lucide-react"
 
-import { DialogContent } from "@/components/ui/dialog"
+import { DialogContent, DialogTitle } from "@/components/ui/dialog"
 import { Form } from "@/components/ui/form"
 import { cn } from "@/lib/utils"
 
-import type { PatientHTTP } from "@/types/patient"
 import { patientSchema, type PatientFormData } from "@/validators/patients"
 import { buildPatientDefaults } from "./helpers"
 import { STEPS, MAX_DOC_FILES, MAX_DOC_SIZE } from "./constants"
@@ -21,39 +20,31 @@ import { StepContactAddress } from "./steps/step-contact-address"
 import { StepClinical } from "./steps/step-clinical"
 import { AttachmentsList } from "./steps/attachments-list"
 import { UploadZone } from "./steps/upload-zone"
-import type { CreatePatientDraft } from "./hooks/use-create-patient-draft"
+import { usePatient } from "@/hooks/use-patient"
 
 interface RegisterPatientsProps {
-    patient?:   PatientHTTP
-    draft?:     CreatePatientDraft
+    patientId?: string
     onSuccess?: () => void
 }
 
-export function RegisterPatients({ patient, draft, onSuccess }: RegisterPatientsProps) {
-    const isEditMode = !!patient
+export function RegisterPatients({ patientId, onSuccess }: RegisterPatientsProps) {
+    const isEditMode = Boolean(patientId)
+
+    const { patient } = usePatient(patientId)
 
     // Internal state — used only in edit mode (draft is never provided for edit)
-    const internalMethods = useForm<PatientFormData>({
+    const methods = useForm<PatientFormData>({
         resolver: zodResolver(patientSchema),
         mode: "onTouched",
-        defaultValues: buildPatientDefaults(patient),
+        // defaultValues: buildPatientDefaults(patient),
     })
-    const [internalAvatarFile, setInternalAvatarFile] = useState<File | null>(null)
+    const [avatarFile, setAvatarFile] = useState<File | null>(null)
     const {
-        files:      internalFiles,
-        addFiles:   internalAddFiles,
-        removeFile: internalRemoveFile,
-        clearFiles: internalClearFiles,
+        files,
+        addFiles,
+        removeFile,
+        clearFiles,
     } = useFileSelection({ maxFiles: MAX_DOC_FILES, maxSizeBytes: MAX_DOC_SIZE })
-
-    // Create mode uses the persistent draft from the parent; edit mode uses internal state
-    const methods       = draft?.methods       ?? internalMethods
-    const avatarFile    = draft?.avatarFile    ?? internalAvatarFile
-    const setAvatarFile = draft?.setAvatarFile ?? setInternalAvatarFile
-    const selectedFiles = draft?.files         ?? internalFiles
-    const addFiles      = draft?.addFiles      ?? internalAddFiles
-    const removeFile    = draft?.removeFile    ?? internalRemoveFile
-    const clearFiles    = draft?.clearFiles    ?? internalClearFiles
 
     const { step, handleNext, handleBack, goToStep, isFirstStep, isLastStep } =
         usePatientFormSteps({ trigger: methods.trigger })
@@ -63,7 +54,7 @@ export function RegisterPatients({ patient, draft, onSuccess }: RegisterPatients
     const { submit, isSubmitting } = usePatientSubmit({
         patient,
         avatarFile,
-        files: selectedFiles,
+        files,
         onSuccess: () => {
             if (!isEditMode) methods.reset()
             clearFiles()
@@ -72,6 +63,12 @@ export function RegisterPatients({ patient, draft, onSuccess }: RegisterPatients
         },
     })
 
+    useEffect(() => {
+        const patientDefaults = buildPatientDefaults(patient)
+        methods.reset(patientDefaults)
+    }, [patient, buildPatientDefaults])
+
+    // ToDo: change components to shadcn components
     return (
         <DialogContent className="rp-modal !max-w-[920px] flex flex-col gap-0 p-0 overflow-hidden">
             <div className="rp-modal-header">
@@ -83,22 +80,22 @@ export function RegisterPatients({ patient, draft, onSuccess }: RegisterPatients
                         <line x1="22" y1="11" x2="16" y2="11" />
                     </svg>
                 </div>
-                <div className="min-w-0 flex-1">
+                <DialogTitle className="min-w-0 flex-1">
                     <h2 className="rp-modal-title">
                         {isEditMode ? "Editar paciente" : "Cadastrar paciente"}
                     </h2>
                     <p className="rp-modal-subtitle">
                         {isEditMode
-                            ? `Atualize os dados de ${patient!.firstName}. Mudanças salvam automaticamente ao avançar.`
+                            ? `Atualize os dados de ${patient?.firstName}. Mudanças salvam automaticamente ao avançar.`
                             : "Comece apenas com nome e contato — o resto pode ser preenchido depois."}
                     </p>
-                </div>
+                </DialogTitle>
             </div>
 
             <div className="rp-modal-stepper">
                 {STEPS.map((s) => {
                     const active = step === s.id
-                    const done   = step > s.id
+                    const done = step > s.id
                     return (
                         <button
                             key={s.id}
@@ -130,8 +127,8 @@ export function RegisterPatients({ patient, draft, onSuccess }: RegisterPatients
                     {step === 3 && <StepClinical />}
                     {step === 4 && (
                         <div className="space-y-5">
-                            {isEditMode && <AttachmentsList patientId={patient!.id} />}
-                            <UploadZone selectedFiles={selectedFiles} onFilesChange={addFiles} onRemoveFile={removeFile} />
+                            {isEditMode && <AttachmentsList patientId={patient?.id ?? null} />}
+                            <UploadZone selectedFiles={files} onFilesChange={addFiles} onRemoveFile={removeFile} />
                         </div>
                     )}
                 </div>

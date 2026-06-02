@@ -13,7 +13,7 @@ Spec: [spec.md](spec.md) | Integration ref: [frontend-integration.md](frontend-i
 
 ---
 
-## T-01 — Corrigir tipo PatientHTTP e normalizar em get-patients.ts
+## T-01 — Corrigir tipo Ipatient e normalizar em get-patients.ts
 
 **Status:** `[x] done`
 **Satisfaz:** REQ-05
@@ -242,7 +242,7 @@ Sequência recomendada: **T-01 → T-02 → T-03 → T-04 → T-05**
 
 Um commit atômico por task:
 ```
-fix(patients): tornar isActive e status required em PatientHTTP
+fix(patients): tornar isActive e status required em Ipatient
 fix(patients): corrigir mutation de arquivo para usar PATCH /status
 fix(patients): adicionar optimistic update e toast no toggle de status
 fix(patients): adicionar opção reativar no dropdown de ações

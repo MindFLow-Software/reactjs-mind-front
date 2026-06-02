@@ -1,22 +1,19 @@
 import { api } from '@/lib/axios'
-import type { PatientHTTP, FetchPatientsParams, PatientStatus } from '@/types/patient'
+import type { Ipatient, FetchPatientsParams, PatientStatus, Gender, IsessionVolume } from '@/types/patient'
 import type { PaginationMeta } from '@/types/pagination'
-
-export type { PatientHTTP, FetchPatientsParams } from '@/types/patient'
-export type Patient = PatientHTTP
 
 export interface GetPatientsFilters {
   pageIndex: number
   perPage: number
-  filter?: string | null
-  gender?: PatientHTTP['gender'] | 'all' | null
-  status?: PatientStatus | 'all'
-  order?: 'asc' | 'desc' | 'all' | null
-  sessionVolume?: 'high' | 'low' | 'all' | null
+  filter?: string
+  gender?: Gender
+  status?: PatientStatus
+  order?: 'asc' | 'desc'
+  sessionVolume?: IsessionVolume
 }
 
 export interface GetPatientsResponse {
-  patients: PatientHTTP[]
+  patients: Ipatient[]
   meta: PaginationMeta
 }
 
@@ -25,29 +22,25 @@ export async function getPatients({
   perPage,
   filter,
   gender,
-  // status,
+  status,
   order,
   sessionVolume,
 }: GetPatientsFilters): Promise<GetPatientsResponse> {
   const params: FetchPatientsParams = {
     pageIndex,
     perPage,
-    filter: filter || undefined,
-    // status: status && status !== 'all' ? status : undefined,
-    gender: gender && gender !== 'all' ? gender : undefined,
-    order: order && order !== 'all' ? order : undefined,
-    sessionVolume: sessionVolume && sessionVolume !== 'all' ? sessionVolume : undefined,
+    filter,
+    status,
+    gender,
+    order,
+    sessionVolume: sessionVolume,
   }
 
   const response = await api.get<GetPatientsResponse>('/patients', { params })
 
-  const patients: PatientHTTP[] = response.data.patients.map((p) => ({
-    ...p,
-    name:            p.name || `${p.firstName} ${p.lastName}`.trim() || 'Paciente sem nome',
-    profileImageUrl: p.profileImageUrl ?? null,
-    lastSessionAt:   p.lastSessionAt ?? null,
-    isActive:        p.isActive ?? (p.status === 'ACTIVE'),
-    status:          p.status   ?? (p.isActive ? 'active' : 'inactive'),
+  const patients = response.data.patients.map((patient) => ({
+    ...patient,
+    name: patient.name ?? `${patient.firstName} ${patient.lastName}`.trim() ?? 'Paciente sem nome',
   }))
 
   return {

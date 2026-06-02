@@ -14,7 +14,7 @@ Psicólogos precisam arquivar e reativar pacientes (soft toggle, sem perda de da
 | REQ-02 | Ação "Arquivar" no dropdown deve chamar `PATCH /patients/:id/status` com `{ isActive: false }`, não `DELETE /patients/:id` | Alta |
 | REQ-03 | Dropdown deve exibir "Reativar paciente" para pacientes inativos (chama toggle direto, sem dialog) e "Arquivar paciente" para ativos (abre dialog de confirmação) — mutuamente exclusivos | Alta |
 | REQ-04 | Toast de sucesso/erro em toda mudança de status via badge click (`handleToggleStatus`) — dropdown via dialog já tem toast interno | Média |
-| REQ-05 | `PatientHTTP` deve refletir o contrato real do backend: `isActive: boolean` e `status: 'active' \| 'inactive'` como campos required. `get-patients.ts` normaliza os dois campos para garantir consistência independente da versão da API | Alta |
+| REQ-05 | `Ipatient` deve refletir o contrato real do backend: `isActive: boolean` e `status: 'active' \| 'inactive'` como campos required. `get-patients.ts` normaliza os dois campos para garantir consistência independente da versão da API | Alta |
 | REQ-06 | Toggle de status deve usar optimistic update (React Query `onMutate`) para UI instantânea — rollback automático em caso de erro | Média |
 
 ---
@@ -54,10 +54,10 @@ Filtro de status
 
 ---
 
-## Contrato de Tipo (PatientHTTP após REQ-05)
+## Contrato de Tipo (Ipatient após REQ-05)
 
 ```ts
-export interface PatientHTTP {
+export interface Ipatient {
   id:              string
   firstName:       string
   lastName:        string
