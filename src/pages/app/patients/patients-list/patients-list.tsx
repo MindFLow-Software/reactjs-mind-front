@@ -14,6 +14,7 @@ import { getPatients } from "@/api/patients/get-patients"
 import { PatientsDataBlock } from "../components/patients-data-block"
 import { PatientsPageShell } from "../components/patients-page-shell"
 import { RegisterPatients } from "./register-patients/register-patients"
+import { useCreatePatientDraft } from "./register-patients/hooks/use-create-patient-draft"
 import { GenerateInviteModal } from "./components/dialogs/generate-invite-modal"
 import { cn } from "@/lib/utils"
 
@@ -61,6 +62,7 @@ export function PatientsList() {
     const { filters, setPage, setSort, clearFilters } = usePatientFilters()
     const [isRegisterOpen, setIsRegisterOpen] = useState(false)
     const [isInviteOpen,   setIsInviteOpen]   = useState(false)
+    const registerDraft = useCreatePatientDraft()
 
     useEffect(() => { setTitle("Pacientes") }, [setTitle])
 
@@ -249,7 +251,10 @@ export function PatientsList() {
             {/* Dialogs fora do shell */}
             <Dialog open={isRegisterOpen} onOpenChange={setIsRegisterOpen}>
                 {isRegisterOpen && (
-                    <RegisterPatients onSuccess={() => setIsRegisterOpen(false)} />
+                    <RegisterPatients
+                        draft={registerDraft}
+                        onSuccess={() => setIsRegisterOpen(false)}
+                    />
                 )}
             </Dialog>
 
