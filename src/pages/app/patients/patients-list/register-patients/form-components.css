@@ -12,8 +12,8 @@
 
   /* ── Form layout — shared across steps ──────────────────────────── */
 
-  .patient-form-grid-2 { @apply grid grid-cols-2 gap-x-3.5 gap-y-3; }
-  .patient-form-grid-3 { @apply grid grid-cols-3 gap-x-3.5 gap-y-3; }
+  .patient-form-grid-2 { @apply grid grid-cols-2 items-start gap-x-3.5 gap-y-3; }
+  .patient-form-grid-3 { @apply grid grid-cols-3 items-start gap-x-3.5 gap-y-3; }
 
   /* Sub-label hint — "verificação automática", "preenche automático" */
   .patient-field-hint { @apply text-[10.5px] font-medium text-muted-foreground; }
@@ -35,11 +35,11 @@
   /* ── Modal — register-patients.tsx ──────────────────────────────── */
 
   .rp-modal {
-    @apply flex w-full max-w-[720px] flex-col gap-0 overflow-hidden p-0 sm:rounded-xl max-h-[92vh];
+    @apply flex w-full flex-col gap-0 overflow-hidden p-0 sm:rounded-xl max-h-[92vh];
   }
 
   .rp-modal-header {
-    @apply flex items-start gap-3.5 border-b border-border bg-card px-[22px] pb-[14px] pt-[18px];
+    @apply flex shrink-0 items-start gap-3.5 border-b border-border bg-card px-[22px] pb-[14px] pt-[18px];
   }
 
   .rp-modal-icon-box {
@@ -56,7 +56,7 @@
   }
 
   .rp-modal-stepper {
-    @apply flex items-stretch border-b border-border bg-card px-[22px];
+    @apply flex shrink-0 items-stretch border-b border-border bg-card px-[22px];
   }
 
   .rp-modal-tab {
@@ -76,10 +76,10 @@
   .rp-modal-tab-badge--done    { @apply bg-emerald-500 text-white; }
   .rp-modal-tab-badge--pending { @apply bg-muted text-muted-foreground; }
 
-  .rp-modal-progress-track { @apply h-[2px] shrink-0 bg-muted; }
-  .rp-modal-progress-fill  { @apply h-full bg-blue-600 transition-[width] duration-[240ms]; }
+  .rp-modal-progress-track { @apply h-[3px] shrink-0 overflow-hidden bg-muted; }
+  .rp-modal-progress-fill  { @apply h-full bg-blue-600 transition-[width] duration-300 ease-out; }
 
-  .rp-modal-body   { @apply flex-1 overflow-y-auto px-[22px] py-5; }
+  .rp-modal-body   { @apply min-h-0 flex-1 overflow-y-auto px-[22px] py-5; }
   .rp-modal-footer { @apply shrink-0 border-t border-border bg-muted/50 px-[22px] py-[14px]; }
 
   .rp-btn-secondary {

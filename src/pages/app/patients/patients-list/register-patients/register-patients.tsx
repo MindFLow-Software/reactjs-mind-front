@@ -21,26 +21,39 @@ import { StepContactAddress } from "./steps/step-contact-address"
 import { StepClinical } from "./steps/step-clinical"
 import { AttachmentsList } from "./steps/attachments-list"
 import { UploadZone } from "./steps/upload-zone"
+import type { CreatePatientDraft } from "./hooks/use-create-patient-draft"
 
 interface RegisterPatientsProps {
     patient?:   PatientHTTP
+    draft?:     CreatePatientDraft
     onSuccess?: () => void
 }
 
-export function RegisterPatients({ patient, onSuccess }: RegisterPatientsProps) {
+export function RegisterPatients({ patient, draft, onSuccess }: RegisterPatientsProps) {
     const isEditMode = !!patient
 
-    const [avatarFile, setAvatarFile] = useState<File | null>(null)
-    const { files: selectedFiles, addFiles, removeFile, clearFiles } = useFileSelection({
-        maxFiles:     MAX_DOC_FILES,
-        maxSizeBytes: MAX_DOC_SIZE,
-    })
-
-    const methods = useForm<PatientFormData>({
+    // Internal state — used only in edit mode (draft is never provided for edit)
+    const internalMethods = useForm<PatientFormData>({
         resolver: zodResolver(patientSchema),
         mode: "onTouched",
         defaultValues: buildPatientDefaults(patient),
     })
+    const [internalAvatarFile, setInternalAvatarFile] = useState<File | null>(null)
+    const {
+        files:      internalFiles,
+        addFiles:   internalAddFiles,
+        removeFile: internalRemoveFile,
+        clearFiles: internalClearFiles,
+    } = useFileSelection({ maxFiles: MAX_DOC_FILES, maxSizeBytes: MAX_DOC_SIZE })
+
+    // Create mode uses the persistent draft from the parent; edit mode uses internal state
+    const methods       = draft?.methods       ?? internalMethods
+    const avatarFile    = draft?.avatarFile    ?? internalAvatarFile
+    const setAvatarFile = draft?.setAvatarFile ?? setInternalAvatarFile
+    const selectedFiles = draft?.files         ?? internalFiles
+    const addFiles      = draft?.addFiles      ?? internalAddFiles
+    const removeFile    = draft?.removeFile    ?? internalRemoveFile
+    const clearFiles    = draft?.clearFiles    ?? internalClearFiles
 
     const { step, handleNext, handleBack, goToStep, isFirstStep, isLastStep } =
         usePatientFormSteps({ trigger: methods.trigger })
@@ -60,7 +73,7 @@ export function RegisterPatients({ patient, onSuccess }: RegisterPatientsProps) 
     })
 
     return (
-        <DialogContent className="rp-modal">
+        <DialogContent className="rp-modal !max-w-[920px] flex flex-col gap-0 p-0 overflow-hidden">
             <div className="rp-modal-header">
                 <div className="rp-modal-icon-box">
                     <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-blue-600">
