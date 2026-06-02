@@ -3,9 +3,10 @@ export const Gender = {
   FEMININE:  'FEMININE',
   MASCULINE: 'MASCULINE',
 } as const
+
 export type Gender = (typeof Gender)[keyof typeof Gender]
 
-export type PatientStatus = 'active' | 'inactive' | 'pending' | 'archived'
+export type PatientStatus = 'ACTIVE' | 'REJECTED' | 'PENDING' | 'BLOCKED'
 
 export interface PatientHTTP {
   id:              string
@@ -21,7 +22,7 @@ export interface PatientHTTP {
   createdAt:       string
   lastSessionAt:   string | null
   isActive:        boolean
-  status:          'active' | 'inactive'
+  status:          PatientStatus
   cep:             string | null
   logradouro:      string | null
   bairro:          string | null
@@ -30,11 +31,13 @@ export interface PatientHTTP {
 }
 
 export interface AddressByCepResponse {
-  cep:        string
-  logradouro: string
-  bairro:     string
-  cidade:     string
-  uf:         string
+  zipCode:        string
+  street:         string
+  neighborhood:   string
+  city:           string
+  number:         string
+  state:          string
+  complement:     string | null
 }
 
 export interface SessionItem {
@@ -121,7 +124,7 @@ export type FetchPatientsParams = {
   pageIndex?:     number
   perPage?:       number
   filter?:        string
-  status?:        'active' | 'inactive'
+  status?:        PatientStatus
   gender?:        Gender
   order?:         'asc' | 'desc'
   sessionVolume?: 'high' | 'low'

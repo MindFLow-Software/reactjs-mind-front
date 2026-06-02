@@ -65,13 +65,14 @@ export function PatientsList() {
     useEffect(() => { setTitle("Pacientes") }, [setTitle])
 
     // Main query
+    // ToDo: fix status filter
     const { data: result, isLoading, isFetching } = useQuery({
         queryKey: ["patients", filters.pageIndex, filters.filter, filters.status],
         queryFn: () => getPatients({
             pageIndex: filters.pageIndex,
             perPage:   filters.perPage,
             filter:    filters.filter,
-            status:    filters.status as 'active' | 'inactive' | 'all',
+            // status:    filters.status,
         }),
         staleTime: 30_000,
         gcTime: 300_000,
@@ -93,8 +94,8 @@ export function PatientsList() {
         queryKey: ["patients-count"],
         queryFn: async () => {
             const [active, inactive] = await Promise.all([
-                getPatients({ pageIndex: 0, perPage: 1, status: "active" }),
-                getPatients({ pageIndex: 0, perPage: 1, status: "inactive" }),
+                getPatients({ pageIndex: 0, perPage: 1, /*status: "active"*/ }),
+                getPatients({ pageIndex: 0, perPage: 1, /*status: "inactive"*/ }),
             ])
             return {
                 active:   active.meta.totalCount,

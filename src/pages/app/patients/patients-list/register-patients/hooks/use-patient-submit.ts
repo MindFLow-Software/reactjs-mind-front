@@ -36,20 +36,23 @@ export function usePatientSubmit({ patient, avatarFile, files, onSuccess }: UseP
         const {
             modality, frequency, price, source, notes,
             email, dateOfBirth, phoneNumber, cpf,
-            cep, logradouro, bairro, cidade, uf,
+            zipCode, street, neighborhood, city, state,
+            complement, number,
             ...coreFields
         } = data
 
         const shared = {
             ...coreFields,
-            phoneNumber: phoneNumber || undefined,
-            cpf:         cpf         || undefined,
-            cep:         cep         || undefined,
-            logradouro:  logradouro  || undefined,
-            bairro:      bairro      || undefined,
-            cidade:      cidade      || undefined,
-            uf:          uf          || undefined,
-            dateOfBirth: dateOfBirth || undefined,
+            phoneNumber:   phoneNumber   || undefined,
+            cpf:           cpf           || undefined,
+            zipCode:       zipCode       || undefined,
+            street:        street        || undefined,
+            neighborhood:  neighborhood  || undefined,
+            city:          city          || undefined,
+            state:         state         || undefined,
+            complement:    complement    || undefined,
+            number:        number        || undefined,
+            dateOfBirth:   dateOfBirth   || undefined,
         }
 
         try {
@@ -59,9 +62,8 @@ export function usePatientSubmit({ patient, avatarFile, files, onSuccess }: UseP
                 ? await updateFn({ ...shared, id: patient!.id })
                 : await createFn({ ...shared, email: email || undefined })
 
-            const targetId = isEditMode
-                ? patient!.id
-                : ((res as { id?: string; patientId?: string })?.id ?? (res as { id?: string; patientId?: string })?.patientId)
+            // ToDo: type response
+            const targetId = res?.id ?? res?.patientId
 
             if (!targetId) throw new Error("ID não identificado")
 

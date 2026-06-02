@@ -9,17 +9,26 @@ import { formatCEP } from "@/utils/formatCEP"
 import { UF_LIST } from "@/utils/mappers"
 
 import "./step-contact-address.css"
-import type React from "react"
 import type { PatientFormData } from "@/validators/patients"
 import { SectionTitle } from "./section-title"
+import { Normalizer } from "@/utils/normalizer"
+import type { UseCepLookupReturn } from "@/hooks/use-cep-lookup"
 
 interface StepContactAddressProps {
-    onCepBlur:    React.FocusEventHandler<HTMLInputElement>
+    onCepChange:    UseCepLookupReturn['onCepChange']
     isCepLoading: boolean
 }
 
-export function StepContactAddress({ onCepBlur, isCepLoading }: StepContactAddressProps) {
+export function StepContactAddress({ onCepChange, isCepLoading }: StepContactAddressProps) {
     const { control } = useFormContext<PatientFormData>()
+
+    const handleCepChange = (cepValue: string) => {
+        const cep = Normalizer.digits(cepValue)
+        const fomattedCep = formatCEP(cep.slice(0, 8))
+        onCepChange(cep)
+
+        return fomattedCep
+    }
 
     return (
         <div className="space-y-6">
@@ -75,7 +84,7 @@ export function StepContactAddress({ onCepBlur, isCepLoading }: StepContactAddre
             <div>
                 <SectionTitle icon={MapPin} label="Endereço" />
                 <div className="patient-form-grid-3">
-                    <FormField control={control} name="cep" render={({ field }) => (
+                    <FormField control={control} name="zipCode" render={({ field }) => (
                         <FormItem>
                             <FormLabel className="flex items-center justify-between">
                                 CEP <span className="patient-field-hint">preenche automático</span>
@@ -83,8 +92,9 @@ export function StepContactAddress({ onCepBlur, isCepLoading }: StepContactAddre
                             <FormControl>
                                 <Input
                                     value={field.value ?? ""}
-                                    onChange={(e) => field.onChange(formatCEP(e.target.value.replace(/\D/g, "").slice(0, 8)))}
-                                    onBlur={(e) => { field.onBlur(); onCepBlur(e) }}
+                                    onChange={(e) => {
+                                        field.onChange(handleCepChange(e.target.value))
+                                    }}
                                     ref={field.ref}
                                     placeholder="00000-000"
                                     inputMode="numeric"
@@ -96,7 +106,7 @@ export function StepContactAddress({ onCepBlur, isCepLoading }: StepContactAddre
                             <FormMessage />
                         </FormItem>
                     )} />
-                    <FormField control={control} name="logradouro" render={({ field }) => (
+                    <FormField control={control} name="street" render={({ field }) => (
                         <FormItem className="col-span-2">
                             <FormLabel>Logradouro</FormLabel>
                             <FormControl>
@@ -111,7 +121,7 @@ export function StepContactAddress({ onCepBlur, isCepLoading }: StepContactAddre
                             <FormMessage />
                         </FormItem>
                     )} />
-                    <FormField control={control} name="bairro" render={({ field }) => (
+                    <FormField control={control} name="neighborhood" render={({ field }) => (
                         <FormItem>
                             <FormLabel>Bairro</FormLabel>
                             <FormControl>
@@ -126,7 +136,7 @@ export function StepContactAddress({ onCepBlur, isCepLoading }: StepContactAddre
                             <FormMessage />
                         </FormItem>
                     )} />
-                    <FormField control={control} name="cidade" render={({ field }) => (
+                    <FormField control={control} name="city" render={({ field }) => (
                         <FormItem>
                             <FormLabel>Cidade</FormLabel>
                             <FormControl>
@@ -141,7 +151,7 @@ export function StepContactAddress({ onCepBlur, isCepLoading }: StepContactAddre
                             <FormMessage />
                         </FormItem>
                     )} />
-                    <FormField control={control} name="uf" render={({ field }) => (
+                    <FormField control={control} name="state" render={({ field }) => (
                         <FormItem>
                             <FormLabel>UF</FormLabel>
                             <Select

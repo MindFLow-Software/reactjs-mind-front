@@ -45,7 +45,7 @@ export function RegisterPatients({ patient, onSuccess }: RegisterPatientsProps) 
     const { step, handleNext, handleBack, goToStep, isFirstStep, isLastStep } =
         usePatientFormSteps({ trigger: methods.trigger })
 
-    const { onCepBlur, isCepLoading } = useCepLookup({ setValue: methods.setValue })
+    const { onCepChange, isCepLoading } = useCepLookup({ setValue: methods.setValue })
 
     const { submit, isSubmitting } = usePatientSubmit({
         patient,
@@ -113,7 +113,7 @@ export function RegisterPatients({ patient, onSuccess }: RegisterPatientsProps) 
             <Form {...methods}>
                 <div className="rp-modal-body">
                     {step === 1 && <StepBasicData onAvatarSelect={setAvatarFile} patient={patient} />}
-                    {step === 2 && <StepContactAddress onCepBlur={onCepBlur} isCepLoading={isCepLoading} />}
+                    {step === 2 && <StepContactAddress onCepChange={onCepChange} isCepLoading={isCepLoading} />}
                     {step === 3 && <StepClinical />}
                     {step === 4 && (
                         <div className="space-y-5">
