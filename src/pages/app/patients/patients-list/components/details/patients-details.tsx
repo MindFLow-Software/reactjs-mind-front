@@ -3,12 +3,13 @@
 import { useState } from "react"
 import { useQuery } from "@tanstack/react-query"
 import { Loader2, Timer , Eye, Info } from "lucide-react"
-import { format, parseISO } from "date-fns"
+import { format, parseISO, isValid } from "date-fns"
 import { ptBR } from "date-fns/locale"
 import { getPatientDetails } from "@/api/patients/get-patient-details"
 import { usePsychologistProfile } from "@/hooks/use-psychologist-profile"
 import { getSessionStatusLabel, FINISHED_SESSION_STATUSES } from "@/utils/mappers"
 import { IMaskMixin } from "react-imask"
+import type { SessionItem } from "@/types/patient"
 
 import { DialogContent, DialogDescription, DialogHeader, DialogTitle } from "@/components/ui/dialog"
 import { Table, TableBody, TableCell, TableFooter, TableHead, TableHeader, TableRow } from "@/components/ui/table"
@@ -23,7 +24,7 @@ interface PatientsDetailsProps {
     patientId: string
 }
 
-const MaskedInfo = IMaskMixin(({ inputRef, ...props }: any) => (
+const MaskedInfo = IMaskMixin(({ inputRef, ...props }: { inputRef: React.Ref<HTMLInputElement> } & React.InputHTMLAttributes<HTMLInputElement>) => (
     <input
         ref={inputRef}
         disabled
@@ -46,7 +47,7 @@ function DataField({ value, mask }: { value?: string | null; mask?: string }) {
 
 export function PatientsDetails({ patientId }: PatientsDetailsProps) {
     const [pageIndex, setPageIndex] = useState(0)
-    const [selectedSession, setSelectedSession] = useState<any | null>(null)
+    const [selectedSession, setSelectedSession] = useState<SessionItem | null>(null)
 
     const { data, isLoading } = useQuery({
         queryKey: ["patient-details", patientId, pageIndex],
@@ -67,7 +68,7 @@ export function PatientsDetails({ patientId }: PatientsDetailsProps) {
     const { patient, meta } = data
     const patientFullName = `${patient.firstName ?? ""} ${patient.lastName ?? ""}`.trim() || "Paciente sem nome"
 
-    const totalFinished = patient.sessions.filter((session: any) =>
+    const totalFinished = patient.sessions.filter((session: SessionItem) =>
         (FINISHED_SESSION_STATUSES as readonly string[]).includes(session.status?.toUpperCase())
     ).length
 
@@ -165,14 +166,16 @@ export function PatientsDetails({ patientId }: PatientsDetailsProps) {
                                 </TableHeader>
                                 <TableBody>
                                     {patient.sessions.length > 0 ? (
-                                        patient.sessions.map((session: any) => {
+                                        patient.sessions.map((session: SessionItem) => {
                                             const status = getSessionStatusLabel(session.status)
                                             const isFinished = (FINISHED_SESSION_STATUSES as readonly string[]).includes(session.status?.toUpperCase())
 
                                             return (
                                                 <TableRow key={session.id} className="group">
                                                     <TableCell className="whitespace-nowrap tabular-nums text-xs">
-                                                        {format(parseISO(session.date), "dd/MM/yy HH:mm", { locale: ptBR })}
+                                                        {session.date && isValid(parseISO(session.date))
+                                                            ? format(parseISO(session.date), "dd/MM/yy HH:mm", { locale: ptBR })
+                                                            : '—'}
                                                     </TableCell>
                                                     <TableCell className="max-w-[180px] truncate italic text-muted-foreground text-xs">
                                                         {session.theme || "Sem tema definido"}

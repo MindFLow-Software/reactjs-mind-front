@@ -1,6 +1,6 @@
 import "./upload-zone.css"
-import { useRef, useState, memo, useCallback } from "react"
-import type { DragEvent } from "react"
+import { memo } from "react"
+import { useDropzone } from "react-dropzone"
 import { CloudUpload, FileText, X } from "lucide-react"
 import { cn } from "@/lib/utils"
 import { formatFileSize } from "@/utils/format-file-size"
@@ -12,39 +12,20 @@ interface UploadZoneProps {
     onRemoveFile:  (index: number) => void
 }
 
-// ToDo: Replace ALL the logic in this component to use react-dropzone.
 export const UploadZone = memo(({ selectedFiles, onFilesChange, onRemoveFile }: UploadZoneProps) => {
-    const inputRef            = useRef<HTMLInputElement>(null)
-    const [isDrag, setIsDrag] = useState(false)
-
-    const handleInput = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
-        if (e.target.files) onFilesChange(Array.from(e.target.files))
-        e.target.value = ""
-    }, [onFilesChange])
-
-    function handleDrop(e: DragEvent) {
-        e.preventDefault()
-        e.stopPropagation()
-        setIsDrag(false)
-        onFilesChange(Array.from(e.dataTransfer.files))
-    }
-
-    const triggerInput = useCallback((e: React.MouseEvent) => {
-        e.preventDefault()
-        e.stopPropagation()
-        inputRef.current?.click()
-    }, [])
+    const { getRootProps, getInputProps, isDragActive } = useDropzone({
+        onDrop: onFilesChange,
+        accept: { "application/pdf": [], "image/*": [] },
+        multiple: true,
+    })
 
     return (
         <div className="space-y-[10px]" onClick={(e) => e.stopPropagation()}>
-            <label
-                className={cn("rp-upload-zone", isDrag ? "rp-upload-zone--drag" : "rp-upload-zone--idle")}
-                onDragEnter={(e) => { e.preventDefault(); setIsDrag(true) }}
-                onDragOver={(e)  => { e.preventDefault(); setIsDrag(true) }}
-                onDragLeave={(e) => { e.preventDefault(); setIsDrag(false) }}
-                onDrop={handleDrop}
-                onClick={triggerInput}
+            <div
+                {...getRootProps()}
+                className={cn("rp-upload-zone", isDragActive ? "rp-upload-zone--drag" : "rp-upload-zone--idle")}
             >
+                <input {...getInputProps()} />
                 <div className="rp-upload-zone__icon-box">
                     <CloudUpload className="size-6" />
                 </div>
@@ -54,16 +35,7 @@ export const UploadZone = memo(({ selectedFiles, onFilesChange, onRemoveFile }: 
                         PDFs ou imagens · máximo {MAX_DOC_FILES} arquivos · até 3 MB cada
                     </p>
                 </div>
-            </label>
-
-            <input
-                ref={inputRef}
-                type="file"
-                multiple
-                accept=".pdf,image/*"
-                className="hidden"
-                onChange={handleInput}
-            />
+            </div>
 
             {selectedFiles.length > 0 && (
                 <div className="rp-upload-file-list">

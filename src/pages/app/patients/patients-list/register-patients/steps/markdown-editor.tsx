@@ -17,29 +17,28 @@ export function MarkdownEditor({ value, onChange }: MarkdownEditorProps) {
     const ref = useRef<HTMLTextAreaElement>(null)
 
     useLayoutEffect(() => {
-        // ToDo: Adjust this logic; do not create variables that are not self-descriptive.
-        const el = ref.current
-        if (!el) return
-        el.style.height = "auto"
-        el.style.height = `${el.scrollHeight}px`
+        const textarea = ref.current
+        if (!textarea) return
+        textarea.style.height = "auto"
+        textarea.style.height = `${textarea.scrollHeight}px`
     }, [value])
 
-    // ToDo: Adjust this logic; do not create variables that are not self-descriptive.
     function insertInline(prefix: string, suffix: string, placeholder: string) {
-        const el = ref.current; if (!el) return
-        const { selectionStart: ss, selectionEnd: se } = el
-        const sel = value.slice(ss, se) || placeholder
-        onChange(value.slice(0, ss) + prefix + sel + suffix + value.slice(se))
-        requestAnimationFrame(() => { el.focus(); el.setSelectionRange(ss + prefix.length, ss + prefix.length + sel.length) })
+        const textarea = ref.current
+        if (!textarea) return
+        const { selectionStart: selStart, selectionEnd: selEnd } = textarea
+        const selected = value.slice(selStart, selEnd) || placeholder
+        onChange(value.slice(0, selStart) + prefix + selected + suffix + value.slice(selEnd))
+        requestAnimationFrame(() => { textarea.focus(); textarea.setSelectionRange(selStart + prefix.length, selStart + prefix.length + selected.length) })
     }
 
-    // ToDo: Adjust this logic; do not create variables that are not self-descriptive.
     function insertLinePrefix(prefix: string) {
-        const el = ref.current; if (!el) return
-        const ss = el.selectionStart
-        const ls = value.lastIndexOf("\n", ss - 1) + 1
-        onChange(value.slice(0, ls) + prefix + value.slice(ls))
-        requestAnimationFrame(() => { el.focus(); el.setSelectionRange(ss + prefix.length, ss + prefix.length) })
+        const textarea = ref.current
+        if (!textarea) return
+        const selStart = textarea.selectionStart
+        const lineStart = value.lastIndexOf("\n", selStart - 1) + 1
+        onChange(value.slice(0, lineStart) + prefix + value.slice(lineStart))
+        requestAnimationFrame(() => { textarea.focus(); textarea.setSelectionRange(selStart + prefix.length, selStart + prefix.length) })
     }
 
     const groups = [

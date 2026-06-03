@@ -1,574 +1,474 @@
 # Patients List Refactor — Tasks
 
 **Spec**: `.specs/features/patients-list-refactor/spec.md`
-**Status**: Draft
+**Design**: `.specs/features/patients-list-refactor/design.md`
+**Status**: Ready to execute
 
 ---
 
-## Execution Plan
+## Execution Order
 
-### Phase 1 — Independent Foundation [Parallel]
-
-New files with no code dependencies.
-
-```
-T1 [P] ─┐
-T7 [P] ─┤── (all complete) ──→ Phase 2
-T8 [P] ─┘
-```
-
-### Phase 2 — Contract Alignment [Parallel, after T1]
-
-Fix existing files to use correct types.
+TSK-01 (TypeScript) must run first — it unblocks compilation for all other areas.
+All P1 tasks after TSK-01 are independently implementable in parallel.
+P2 tasks run after all P1 tasks are complete.
+P3 tasks run last.
 
 ```
-T1 complete, then:
-  T2 [P] ─┐
-  T3 [P] ─┤── (all complete) ──→ Phase 3
- T10 [P] ─┘
-```
+TSK-01
+  ├── TSK-02 [P]   optimistic toggle + invalidation
+  ├── TSK-03 [P]   submit hook edit mode + metrics invalidation
+  ├── TSK-04 [P]   filter hook enum validation
+  ├── TSK-05 [P]   query params builder (depends on TSK-04)
+  └── TSK-06 [P]   attachment query guard
 
-### Phase 3 — Hook Extraction [Partial parallel, after T2+T3]
+(P1 complete) ──►
+  ├── TSK-07 [P]   staleTime config
+  ├── TSK-08 [P]   avatar HTTP URL preview
+  ├── TSK-09 [P]   dateOfBirth key remount
+  ├── TSK-10 [P]   filter UI pills alignment (depends on TSK-04, TSK-05)
+  ├── TSK-11 [P]   nonfunctional UI + hardcoded metrics cleanup
+  ├── TSK-12 [P]   markdown link sanitization
+  └── TSK-13 [P]   mojibake text restoration
 
-```
-T2+T3 complete, then:
-  T4 [P] ──→ T5 (sequential)
-  T6 [P]
-  T9 [P]
+(P2 complete) ──►
+  ├── TSK-14       dead code removal
+  └── TSK-15       gender/sessionVolume URL wiring verification
 
-Phase 3 done when T5 + T6 + T9 all complete.
-```
-
-### Phase 4 — Integration [Sequential]
-
-```
-T5 + T6 + T7 + T8 + T9 + T10 complete, then:
-  T11
-```
-
-### Phase 5 — Verification
-
-```
-T11 complete, then:
-  T12
+(All complete) ──►
+  TSK-16           final gate check (build + lint + manual)
 ```
 
 ---
 
-## Task Breakdown
+## P1 Tasks — Correctness Blockers
 
-### T1: Create `patients-list.types.ts` [P]
+### TSK-01 — TypeScript contract alignment
+**Req**: PLR-10, PLR-23
+**Priority**: P1 — run first; unblocks everything
+**Files**:
+- `src/pages/app/patients/patients-list/patients-list.types.ts`
+- `src/pages/app/patients/patients-list/components/details/patients-details.tsx`
 
-**What**: Create the types file with all types extracted from inline declarations in patients-list.tsx and patients-table-filters.tsx.
-**Where**: `src/pages/app/patients/patients-list/patients-list.types.ts` (new)
-**Depends on**: None
-**Reuses**: `PatientStatus`, `Gender` from `src/types/patient.ts`; `Patient` from `src/api/patients/get-patients.ts`; `PaginationMeta` from `src/types/pagination.ts`
-**Requirement**: PLR-06
+**What**:
+
+`patients-list.types.ts`:
+- Replace `import type { Patient } from '@/api/patients/get-patients'` with `import type { Ipatient } from '@/types/patient'`
+- Rename every `Patient` reference to `Ipatient`
+
+`patients-details.tsx`:
+- Add `SessionItem` to import from `@/types/patient`
+- Replace `useState<any | null>(null)` with `useState<SessionItem | null>(null)` for `selectedSession`
+- Replace `(session: any)` with `(session: SessionItem)` in `.filter()` and `.map()` callbacks
+- Replace the `any` in `IMaskMixin(({ inputRef, ...props }: any) => ...)` with `{ inputRef: React.Ref<HTMLInputElement> } & React.InputHTMLAttributes<HTMLInputElement>`
+- Add `isValid` to the `date-fns` import
+- Guard `format(parseISO(session.date), ...)` with `session.date && isValid(parseISO(session.date)) ? format(...) : '—'`
 
 **Done when**:
+- [ ] `npx tsc --noEmit` exits 0 in patients-list related files with zero type errors
+- [ ] Zero `any` usages remain in both files
 
-- [ ] `MetricCardProps` interface exported (icon, iconBg, value, label, sub?, subTrend?, isLoading?)
-- [ ] `StatusPillOption` interface exported (value: PatientStatus | null, label: string, dot: string | null, activeCls: string)
-- [ ] `PatientsMetrics` interface exported ({ activeCount: number, archivedCount: number, isLoading: boolean })
-- [ ] `PatientsListQueryResult` interface exported ({ patients: Patient[], meta: PaginationMeta, isLoading: boolean, isFetching: boolean })
-- [ ] Gate check passes: `pnpm build`
-
-**Tests**: none
-**Gate**: build
-
-**Commit**: `refactor(patients-list): extract shared types to patients-list.types.ts`
+**Gate**: `npx tsc --noEmit`
+**Commit**: `fix(patients-list): align TypeScript contracts; replace any with SessionItem; guard parseISO`
 
 ---
 
-### T7: Create `patients-list.helpers.ts` [P]
+### TSK-02 — Fix optimistic status toggle and invalidation
+**Req**: PLR-11, PLR-12 (partial)
+**Priority**: P1
+**Depends on**: TSK-01
+**File**: `src/pages/app/patients/patients-list/components/table/patients-table-row.tsx`
 
-**What**: Create pure helper functions used in patients-list.tsx.
-**Where**: `src/pages/app/patients/patients-list/patients-list.helpers.ts` (new)
-**Depends on**: None
-**Reuses**: `PatientStatus` from `src/types/patient.ts`
-**Requirement**: PLR-06
+**What**:
 
-**Done when**:
-
-- [ ] `formatPatientsShowing(showing: number, total: number): string` exported — returns `"Mostrando X de Y pacientes"`
-- [ ] `calcTotalPatients(perPage: number, total: number): number` exported — returns `Math.min(perPage, total)` when total > 0, else 0
-- [ ] `hasActiveFilters(filter: string, status: PatientStatus | null): boolean` exported — returns true when filter is non-empty or status is non-null
-- [ ] Gate check passes: `pnpm build`
-
-**Tests**: none
-**Gate**: build
-
-**Commit**: `refactor(patients-list): extract pure helpers to patients-list.helpers.ts`
-
----
-
-### T8: Create `patients-list.css` [P]
-
-**What**: Create the CSS file with semantic `@apply` classes for patients-list.tsx and patients-table-filters.tsx.
-**Where**: `src/pages/app/patients/patients-list/patients-list.css` (new)
-**Depends on**: None
-**Requirement**: PLR-07
-
-**Classes to define** (all under `@layer components`):
-
-- `.pl-header-actions` — `@apply flex items-center gap-2`
-- `.pl-action-btn` — `@apply flex h-9 cursor-pointer items-center gap-2 rounded-xl px-4 border border-border bg-background text-[13px] font-medium shadow-sm transition-all hover:bg-muted hover:-translate-y-px active:scale-[0.98]`
-- `.pl-primary-btn` — `@apply flex h-9 cursor-pointer items-center gap-2 rounded-xl px-4 bg-blue-600 text-[13px] font-medium text-white shadow-[0_2px_8px_rgba(37,99,235,0.25)] transition-all hover:bg-blue-700 hover:-translate-y-px active:scale-[0.98]`
-- `.pl-table-action-btn` — `@apply pl-action-btn h-8 px-3 text-xs rounded-lg`
-- `.pl-metrics-grid` — `@apply grid grid-cols-2 lg:grid-cols-4 gap-3 px-6 pt-2 pb-0`
-- `.pl-table-section` — `@apply px-6 py-4`
-- `.ptf-search-wrapper` — `@apply relative w-90 shrink-0`
-- `.ptf-status-pills` — `@apply flex items-center gap-1`
-- `.ptf-pill` — `@apply flex items-center gap-1.5 h-8 px-3 rounded-lg text-xs font-medium transition-colors cursor-pointer`
-- `.ptf-pill--inactive` — `@apply bg-muted text-muted-foreground hover:bg-muted/70 hover:text-foreground`
-- `.ptf-right-actions` — `@apply flex items-center gap-2 ml-auto`
-
-**Done when**:
-
-- [ ] All classes defined under `@layer components` with `@apply`
-- [ ] Class names use `pl-` prefix (orchestrator) or `ptf-` prefix (table filters)
-- [ ] Gate check passes: `pnpm build`
-
-**Tests**: none
-**Gate**: build
-
-**Commit**: `refactor(patients-list): add patients-list.css with semantic @apply classes`
-
----
-
-### T2: Fix `get-patients.ts` [P]
-
-**What**: Fix the `GetPatientsFilters` interface to accept only backend-valid types; uncomment `status`; fix patient normalization.
-**Where**: `src/api/patients/get-patients.ts` (modify)
-**Depends on**: T1
-**Reuses**: `PatientStatus`, `Gender` from `src/types/patient.ts`
-**Requirement**: PLR-03
-
-**Changes**:
-
-1. `GetPatientsFilters.gender`: `Ipatient['gender'] | 'all' | null` → `Gender | undefined`
-2. `GetPatientsFilters.status`: uncomment; `PatientStatus | 'all'` → `PatientStatus | undefined`
-3. `GetPatientsFilters.order`: `'asc' | 'desc' | 'all' | null` → `'asc' | 'desc' | undefined`
-4. `GetPatientsFilters.sessionVolume`: `'high' | 'low' | 'all' | null` → `string | undefined`
-5. Function body: uncomment `status` in destructuring and in `params` object; remove all `&& x !== 'all'` guards
-6. Patient normalization: `status: p.status ?? (p.isActive ? 'active' : 'inactive')` → `status: p.status` (already typed as `PatientStatus` on `Ipatient`)
-
-**Done when**:
-
-- [ ] `GetPatientsFilters` has no `| 'all'` or `| null` types
-- [ ] `status` is destructured and forwarded to `params` when provided
-- [ ] Patient normalization uses only `PatientStatus` values
-- [ ] Gate check passes: `pnpm build`
-
-**Tests**: none
-**Gate**: build
-
-**Commit**: `fix(get-patients): align GetPatientsFilters to backend contract; re-enable status`
-
----
-
-### T3: Fix `use-patient-filters.ts` [P]
-
-**What**: Replace UI sentinel values with typed nulls; add `gender` and `sessionVolume` to URL state; stabilize all setter functions with `useCallback`.
-**Where**: `src/hooks/use-patient-filters.ts` (modify)
-**Depends on**: T1
-**Reuses**: `PatientStatus`, `Gender` from `src/types/patient.ts`
-**Requirement**: PLR-01, PLR-05, PLR-09
-
-**Changes**:
-
-1. `status` in returned `filters`: `string` defaulting to `"all"` → `PatientStatus | null` (null when URL has no `status` param)
-2. `gender` in returned `filters`: add as `Gender | null` (read from `searchParams.get("gender")`, cast via `as Gender`)
-3. `sessionVolume` in returned `filters`: add as `string | null` (read from `searchParams.get("sessionVolume")`)
-4. `sortBy` remains in `filters` object — UI-only for table column highlighting, never sent to backend
-5. `setFilters` signature: `{ filter?: string; status?: PatientStatus | null; gender?: Gender | null; sessionVolume?: string | null }`
-6. `setFilters` body: sentinel check `status !== "all"` → `status != null`; null → `state.delete(key)`, value → `state.set(key, value)`; add gender and sessionVolume handling with same pattern
-7. Wrap ALL returned functions in `useCallback`: `setPage`, `setFilters`, `setSort`, `setOrder`, `clearFilters` — use `[setSearchParams]` as the dependency array for all of them (`setSearchParams` is stable in React Router)
-8. Keep `clearFilters` clearing gender and sessionVolume from URL as well
-
-**Done when**:
-
-- [ ] `filters.status` is `PatientStatus | null`, never `"all"`
-- [ ] `filters.gender` and `filters.sessionVolume` are read from URL and typed correctly
-- [ ] `setFilters` accepts `null` to clear any filter param
-- [ ] All returned setters wrapped with `useCallback([setSearchParams])`
-- [ ] `clearFilters` deletes `filter`, `status`, `gender`, `sessionVolume` and resets `page` to `"1"`
-- [ ] Gate check passes: `pnpm build`
-
-**Tests**: none
-**Gate**: build
-
-**Commit**: `fix(use-patient-filters): replace sentinels with typed nulls; add gender/sessionVolume; stabilize with useCallback`
-
----
-
-### T10: Extract `MetricCard` component [P]
-
-**What**: Move the inline `MetricCard` function and `MetricCardProps` interface out of `patients-list.tsx` into its own component file.
-**Where**: `src/pages/app/patients/patients-list/components/metric-card.tsx` (new)
-**Depends on**: T1
-**Reuses**: `MetricCardProps` from `../patients-list.types`; `cn` from `@/lib/utils`; `ArrowUp` from `lucide-react`
-**Requirement**: PLR-02, PLR-06
-
-**Done when**:
-
-- [ ] `MetricCard` component exported from `components/metric-card.tsx`
-- [ ] `MetricCardProps` imported from `patients-list.types.ts` (not redefined inline)
-- [ ] The original inline definition in `patients-list.tsx` is removed (import updated)
-- [ ] Gate check passes: `pnpm build`
-
-**Tests**: none
-**Gate**: build
-
-**Commit**: `refactor(patients-list): extract MetricCard to its own component file`
-
----
-
-### T4: Create `usePatientsQueryParams` [P]
-
-**What**: Create a hook that derives backend-valid API params from URL filter state — the single source of truth for what goes to the backend.
-**Where**: `src/pages/app/patients/patients-list/hooks/use-patients-query-params.ts` (new)
-**Depends on**: T3
-**Reuses**: `usePatientFilters` from `@/hooks/use-patient-filters`; `PatientStatus`, `Gender` from `@/types/patient`
-**Requirement**: PLR-01, PLR-03, PLR-04
-
-**Return shape** (`PatientsQueryParams` interface, defined in this file):
-
-```ts
-interface PatientsQueryParams {
-  pageIndex: number
-  perPage: number
-  filter?: string
-  status?: PatientStatus
-  gender?: Gender
-  sessionVolume?: string
-  order: 'asc' | 'desc'
-}
+`onMutate` — derive next state from current `p.isActive`, not hardcoded:
+```typescript
+{ ...p, status: p.isActive ? 'BLOCKED' : 'ACTIVE', isActive: !p.isActive }
 ```
 
-**Logic**:
-- `filter`: include only when `filters.filter` is non-empty
-- `status`: include only when `filters.status !== null`
-- `gender`: include only when `filters.gender !== null`
-- `sessionVolume`: include only when `filters.sessionVolume !== null`
-- `order`: always include (always `'asc' | 'desc'`)
-- `sortBy`: NEVER included
-
-**Done when**:
-
-- [ ] `usePatientsQueryParams` and `PatientsQueryParams` both exported
-- [ ] `sortBy` is absent from the return value
-- [ ] `status`, `gender`, `sessionVolume` use object spread/conditional inclusion so the key is absent (not `undefined`) when not set
-- [ ] Gate check passes: `pnpm build`
-
-**Tests**: none
-**Gate**: build
-
-**Commit**: `feat(patients-list): add usePatientsQueryParams — derives backend-valid params from URL`
-
----
-
-### T6: Create `usePatientsMetrics` [P]
-
-**What**: Create a hook that owns the two parallel `getPatients` calls for active/archived patient counts.
-**Where**: `src/pages/app/patients/patients-list/hooks/use-patients-metrics.ts` (new)
-**Depends on**: T2
-**Reuses**: `getPatients` from `@/api/patients/get-patients`; `PatientsMetrics` from `../patients-list.types`
-**Requirement**: PLR-04, PLR-06
-
-**Implementation**:
-- One `useQuery` per status using `Promise.all` inside `queryFn`, or two separate `useQuery` calls
-- Query key: `['patients-metrics']` — intentionally filter-independent (clinic-wide totals; must NOT include pageIndex or filter params to satisfy PLR-04)
-- `staleTime: 60_000`, `gcTime: 300_000`, `refetchOnWindowFocus: false`
-
-**Done when**:
-
-- [ ] `usePatientsMetrics` exported; returns `PatientsMetrics` (`{ activeCount, archivedCount, isLoading }`)
-- [ ] Uses `status: 'ACTIVE'` and `status: 'BLOCKED'` in the two parallel calls
-- [ ] Query key is `['patients-metrics']` with no filter params
-- [ ] Gate check passes: `pnpm build`
-
-**Tests**: none
-**Gate**: build
-
-**Commit**: `feat(patients-list): add usePatientsMetrics hook`
-
----
-
-### T9: Fix `patients-table-filters.tsx` [P]
-
-**What**: Replace invalid STATUS_PILLS values with backend enums; fix the debounce `useEffect` dependency; apply CSS classes from T8.
-**Where**: `src/pages/app/patients/patients-list/components/table/patients-table-filters.tsx` (modify)
-**Depends on**: T3
-**Reuses**: `StatusPillOption` from `../../patients-list.types`; CSS classes from `../../patients-list.css`
-**Requirement**: PLR-05, PLR-08
-
-**Changes**:
-
-1. `STATUS_PILLS` typed as `readonly StatusPillOption[]`:
-   - `{ value: null, label: 'Todos', dot: null, activeCls: '...' }`
-   - `{ value: 'ACTIVE', label: 'Ativos', dot: 'bg-emerald-500', activeCls: '...' }`
-   - `{ value: 'BLOCKED', label: 'Arquivados', dot: 'bg-red-500', activeCls: '...' }`
-2. `onClick`: `setFilters({ status: pill.value })` — `null` clears the URL param via the updated hook
-3. `activeStatus` check: `filters.status === pill.value` — works for null === null (Todos)
-4. `hasFilters`: `!!filters.filter || filters.status !== null`
-5. Debounce `useEffect`: remove `setFilters` from dep array. Since it's now stable via `useCallback`, ESLint may warn — add `// eslint-disable-next-line react-hooks/exhaustive-deps` with a brief note, OR use a `useRef` to capture `setFilters` and call it through the ref
-6. Apply CSS classes: `.ptf-search-wrapper`, `.ptf-status-pills`, `.ptf-pill`, `.ptf-pill--inactive`, `.ptf-right-actions`
-
-**Done when**:
-
-- [ ] `STATUS_PILLS` values are `null`, `'ACTIVE'`, `'BLOCKED'`
-- [ ] Clicking "Todos" → `status` absent from URL
-- [ ] Clicking "Ativos" → `?status=ACTIVE` in URL
-- [ ] Clicking "Arquivados" → `?status=BLOCKED` in URL
-- [ ] `useEffect` dep array does not include `setFilters`
-- [ ] CSS classes from patients-list.css applied
-- [ ] Gate check passes: `pnpm build`
-
-**Tests**: none
-**Gate**: build
-
-**Commit**: `fix(patients-table-filters): align status pills to backend enums; fix debounce deps`
-
----
-
-### T5: Create `usePatientsListQuery`
-
-**What**: Create the hook that owns the `useQuery` call for the patient list, consuming backend-valid params from `usePatientsQueryParams`.
-**Where**: `src/pages/app/patients/patients-list/hooks/use-patients-list-query.ts` (new)
-**Depends on**: T4, T2
-**Reuses**: `usePatientsQueryParams` (T4); `getPatients` from `@/api/patients/get-patients`; `PatientsListQueryResult` from `../patients-list.types`
-**Requirement**: PLR-02, PLR-03, PLR-04, PLR-06
-
-**Query key**: `['patients', params]` where `params` is the full `PatientsQueryParams` object. React Query performs deep equality on the key array, so every param change triggers a refetch.
-
-**Query config**: `staleTime: 30_000`, `gcTime: 300_000`, `refetchOnWindowFocus: true`, `placeholderData: (prev) => prev`
-
-**Safe defaults when `data` is undefined**:
-- `patients`: `[]`
-- `meta`: `{ pageIndex: 0, perPage: 10, totalCount: 0 }`
-
-**Done when**:
-
-- [ ] `usePatientsListQuery` exported; return type matches `PatientsListQueryResult`
-- [ ] Query key is `['patients', params]` — `params` from `usePatientsQueryParams`, no `sortBy`
-- [ ] Safe defaults applied for patients and meta
-- [ ] Gate check passes: `pnpm build`
-
-**Tests**: none
-**Gate**: build
-
-**Commit**: `feat(patients-list): add usePatientsListQuery hook`
-
----
-
-### T11: Refactor `patients-list.tsx` to clean orchestrator
-
-**What**: Reduce `patients-list.tsx` to under 120 lines by consuming all extracted hooks and components; remove all inline logic, types, and computed JSX variables.
-**Where**: `src/pages/app/patients/patients-list/patients-list.tsx` (modify); import `./patients-list.css`
-**Depends on**: T5, T6, T7, T8, T9, T10
-**Reuses**: `usePatientsListQuery` (T5), `usePatientsMetrics` (T6), helpers from T7, `MetricCard` from T10, `usePatientFilters` (for `filters.sortBy`, `setPage`, `setSort`, `clearFilters`)
-**Requirement**: PLR-02, PLR-06, PLR-07
-
-**Remove from current file**:
-- `MetricCardProps` interface + `MetricCard` function (now in T10)
-- `btnSecondary` computed const (→ `.pl-action-btn`)
-- `headerRight` and `tableActions` JSX variables (inline directly into JSX)
-- Both raw `useQuery` calls (→ T5, T6)
-- Both `useMemo` calls for `patients` and `meta` (→ T5)
-- Inline metric derivations (`activeCount`, `inactiveCount`, `totalCount`, `loadingCounts`, `loadingTotal`)
-
-**Target structure**:
-
-```tsx
-import './patients-list.css'
-// other imports...
-
-export function PatientsList() {
-  useEffect(() => { setTitle("Pacientes") }, [setTitle])
-
-  const { filters, setPage, setSort, clearFilters } = usePatientFilters()
-  const [isRegisterOpen, setIsRegisterOpen] = useState(false)
-  const [isInviteOpen,   setIsInviteOpen]   = useState(false)
-  const registerDraft = useCreatePatientDraft()
-
-  const { patients, meta, isLoading, isFetching } = usePatientsListQuery()
-  const { activeCount, archivedCount, isLoading: loadingMetrics } = usePatientsMetrics()
-
-  const showing = calcTotalPatients(meta.perPage, meta.totalCount)
-  const filtersActive = hasActiveFilters(filters.filter, filters.status)
-
-  return (
-    <>
-      <Helmet title="Pacientes" />
-      <PatientsPageShell ... headerRight={<div className="pl-header-actions">...</div>}>
-        <div className="pl-metrics-grid">
-          <MetricCard ... /> {/* × 4 */}
-        </div>
-        <div className="pl-table-section">
-          <PatientsDataBlock
-            description={formatPatientsShowing(showing, meta.totalCount)}
-            ...
-          >
-            <PatientsTableFilters isFetching={isFetching} />
-            <PatientsTable ... />
-            {meta.totalCount > 0 && <Pagination ... />}
-          </PatientsDataBlock>
-        </div>
-      </PatientsPageShell>
-      <Dialog open={isRegisterOpen} onOpenChange={setIsRegisterOpen}>
-        {isRegisterOpen && <RegisterPatients ... />}
-      </Dialog>
-      <Dialog open={isInviteOpen} onOpenChange={setIsInviteOpen}>
-        <GenerateInviteModal />
-      </Dialog>
-    </>
-  )
-}
+`onSettled` — replace `['patients-count']` with correct keys, add `['patients-metrics']`:
+```typescript
+Promise.all([
+    queryClient.invalidateQueries({ queryKey: ['patients'] }),
+    queryClient.invalidateQueries({ queryKey: ['patient', id] }),
+    queryClient.invalidateQueries({ queryKey: ['patient-details', id] }),
+    queryClient.invalidateQueries({ queryKey: ['patients-metrics'] }),
+])
 ```
 
 **Done when**:
+- [ ] Archive active patient → row badge immediately shows "Arquivado" before refetch
+- [ ] Reactivate blocked patient → row badge immediately shows "Ativo" before refetch
+- [ ] Metrics cards update after archive/reactivate without page refresh
+- [ ] No `['patients-count']` invalidation call remains
 
-- [ ] File is under 120 lines
-- [ ] Zero inline type declarations
-- [ ] Zero raw `useQuery` or `useMemo` calls
-- [ ] `className` attributes use `.pl-*` / `.ptf-*` CSS classes or ≤4 Tailwind utilities inline
-- [ ] All dialogs open/close correctly
-- [ ] Gate check passes: `pnpm build`
-
-**Tests**: none
-**Gate**: build
-
-**Commit**: `refactor(patients-list): reduce orchestrator to <120 lines using extracted hooks and components`
+**Gate**: manual browser test + `npx tsc --noEmit`
+**Commit**: `fix(patients-table-row): fix optimistic toggle direction; add patients-metrics invalidation`
 
 ---
 
-### T12: Build check and smoke test
+### TSK-03 — Fix edit mode correctness and metrics invalidation in submit hook
+**Req**: PLR-16, PLR-12 (partial)
+**Priority**: P1
+**Depends on**: TSK-01
+**Files**:
+- `register-patients/hooks/use-patient-submit.ts`
+- `register-patients/register-patients.tsx`
 
-**What**: Run the gate check; verify end-to-end behavior in the browser.
-**Where**: Terminal + browser DevTools
-**Depends on**: T11
-**Requirement**: All PLR-01 through PLR-09
+**What**:
+
+`use-patient-submit.ts`:
+- Add `patientId?: string` to `UsePatientSubmitOptions` interface
+- Replace `const isEditMode = !!patient` with `const isEditMode = Boolean(patientId)`
+- Add `queryClient.invalidateQueries({ queryKey: ["patients-metrics"] })` to both create and update `Promise.all` invalidation arrays
+
+`register-patients.tsx`:
+- Pass `patientId` into `usePatientSubmit({ patientId, patient, ... })`
+- Add `const isEditLoading = Boolean(patientId) && !patient`
+- Add `disabled={isSubmitting || isEditLoading}` to the submit button
+- Remove `buildPatientDefaults` from the `useEffect` dependency array (it's a static function)
 
 **Done when**:
+- [ ] Open edit modal → submit button is disabled while patient data loads
+- [ ] After patient data loads → button is enabled, form shows correct patient data
+- [ ] Create patient → metrics cards update without refresh
+- [ ] `patientId` present never routes to create path, even before patient data resolves
 
-- [ ] `pnpm build` exits 0 — zero TypeScript errors
-- [ ] `pnpm lint` exits 0 (or only pre-existing warnings)
-- [ ] /patients loads — page, metrics cards, and table render correctly
-- [ ] Type in search → wait 400ms → exactly one network request fires with `filter=<term>` and `pageIndex=0`
-- [ ] Click "Ativos" → URL shows `?status=ACTIVE`; network request has `status=ACTIVE`
-- [ ] Click "Todos" → URL has no `status` param; network request has no `status` param
-- [ ] Click "Arquivados" → URL shows `?status=BLOCKED`; network request has `status=BLOCKED`
-- [ ] Navigate to page 2 → network request has `pageIndex=1`; metrics do NOT refetch
-- [ ] Click a column sort header → network request has `order=asc` or `order=desc`; NO `sortBy` param in request
-- [ ] Network tab confirms: no request ever contains `sortBy`, `"all"`, `"active"`, or `"inactive"`
-- [ ] Manually set `?gender=FEMININE` in URL → network request includes `gender=FEMININE`
-- [ ] Open Register Patient dialog → works; close → works
-- [ ] Open Invite modal → works; close → works
-
-**Tests**: none (manual verification)
-**Gate**: build + manual
+**Gate**: manual browser test + `npx tsc --noEmit`
+**Commit**: `fix(use-patient-submit): use patientId for edit mode; add patients-metrics invalidation`
 
 ---
 
-## Parallel Execution Map
+### TSK-04 — Fix filter hook enum validation
+**Req**: PLR-01, PLR-22
+**Priority**: P1
+**Depends on**: TSK-01
+**File**: `src/hooks/use-patient-filters.ts`
 
+**What**:
+- Add module-level constants (not exported):
+  ```typescript
+  const VALID_STATUSES = ['ACTIVE', 'REJECTED', 'PENDING', 'BLOCKED'] as const
+  const VALID_GENDERS  = Object.values(Gender)
+  ```
+- Replace `searchParams.get("status") as PatientStatus` with guarded cast:
+  ```typescript
+  const rawStatus = searchParams.get("status")
+  const status = (VALID_STATUSES as readonly string[]).includes(rawStatus ?? '')
+      ? (rawStatus as PatientStatus)
+      : null
+  ```
+- Replace `searchParams.get("gender") as Gender` with same guarded pattern using `VALID_GENDERS`
+- Verify: when `status` is `null`, the setter removes the `status` key from URL entirely
+- Verify: every setter resets `page` to `"1"` on change
+- Verify: setters clone params before mutation (callback form of `setSearchParams`)
+
+**Done when**:
+- [ ] Manually set `?status=GARBAGE` in URL → network request has no `status` param
+- [ ] Manually set `?gender=BAD` in URL → network request has no gender param
+- [ ] Valid `?status=ACTIVE` passes through correctly
+
+**Gate**: manual URL manipulation + `npx tsc --noEmit`
+**Commit**: `fix(use-patient-filters): validate status and gender URL params before casting`
+
+---
+
+### TSK-05 — Fix GET /patients query params builder
+**Req**: PLR-03
+**Priority**: P1
+**Depends on**: TSK-04
+**File**: `src/pages/app/patients/patients-list/hooks/use-patients-query-params.ts`
+
+**What**:
+- Rewrite return using conditional spreads to omit null/empty/invalid values:
+  ```typescript
+  return {
+      pageIndex: filters.pageIndex,
+      perPage:   filters.perPage,
+      order:     filters.order,
+      ...(filters.filter                                              ? { filter: filters.filter }               : {}),
+      ...(filters.status                                              ? { status: filters.status }               : {}),
+      ...(filters.gender                                              ? { gender: filters.gender }               : {}),
+      ...(filters.sessionVolume && filters.sessionVolume !== 'all'   ? { sessionVolume: filters.sessionVolume } : {}),
+  }
+  ```
+- Confirm `sortBy` is NOT in the returned object
+
+**Done when**:
+- [ ] Network tab shows no `sortBy` param
+- [ ] No `null`, `"all"`, `"active"`, `"inactive"` ever appears as a query param value
+- [ ] `status=ACTIVE` appears when "Ativos" is active; `status` key absent when "Todos"
+
+**Gate**: manual Network tab inspection + `npx tsc --noEmit`
+**Commit**: `fix(use-patients-query-params): omit null/invalid params; remove sortBy from API payload`
+
+---
+
+### TSK-06 — Attachment query enabled guard
+**Req**: PLR-14
+**Priority**: P1
+**Depends on**: TSK-01
+**File**: `register-patients/steps/attachments-list.tsx`
+
+**What**:
+- Add `enabled: Boolean(patientId)` to the `useQuery` call for `getPatientAttachments`
+- Use non-null assertion `patientId!` in `queryFn` (safe because `enabled` guarantees non-null)
+
+**Done when**:
+- [ ] Open DevTools before opening a details modal → no `/attachments/patient/null` request appears in Network tab
+
+**Gate**: manual Network tab inspection + `npx tsc --noEmit`
+**Commit**: `fix(attachments-list): guard query with enabled:Boolean(patientId)`
+
+---
+
+## P2 Tasks — Quality & UI Correctness
+
+### TSK-07 — Uncomment staleTime config in list and metrics queries
+**Req**: PLR-06 (partial)
+**Priority**: P2
+**Depends on**: TSK-01
+**Files**:
+- `src/pages/app/patients/patients-list/hooks/use-patients-list-query.ts`
+- `src/pages/app/patients/patients-list/hooks/use-patients-metrics.ts`
+
+**What**:
+
+`use-patients-list-query.ts` — uncomment/add:
+```typescript
+staleTime:            30_000,
+gcTime:              300_000,
+refetchOnWindowFocus: true,
+placeholderData:      (prev) => prev,
 ```
-Phase 1 (Parallel — no deps):
-  T1 [P]  ──────────────────────────────────────────┐
-  T7 [P]  ──────────────────────────────────────────┤
-  T8 [P]  ──────────────────────────────────────────┘
-                                                     │ (T1, T7, T8 done)
-Phase 2 (Parallel — after T1):                       ▼
-  T2  [P] ─────────────────────────────────────────┐
-  T3  [P] ─────────────────────────────────────────┤
-  T10 [P] ─────────────────────────────────────────┘
-                                                    │ (T2, T3, T10 done)
-Phase 3 (Partial parallel — after T2+T3):           ▼
-  T4  [P] ───────────────────────┐
-  T6  [P] ───────────────────────┤
-  T9  [P] ───────────────────────┤
-                                 │ (T4 done)
-                             T5 ─┘ (sequential after T4)
-                                                    │ (T5, T6, T9 done)
-Phase 4 (Sequential — after T5+T6+T7+T8+T9+T10):   ▼
-  T11
 
-Phase 5 (Sequential — after T11):
-  T12
+`use-patients-metrics.ts` — uncomment/add:
+```typescript
+staleTime:            60_000,
+gcTime:              300_000,
+refetchOnWindowFocus: false,
 ```
 
----
+**Done when**:
+- [ ] Switching away and back to the tab does not refetch metrics
+- [ ] Patient list refetches on window focus
 
-## Task Granularity Check
-
-| Task | Scope | Status |
-|------|-------|--------|
-| T1: patients-list.types.ts | 1 new file, 4 interfaces | ✅ Granular |
-| T2: Fix get-patients.ts | 1 file, type + body fix | ✅ Granular |
-| T3: Fix use-patient-filters.ts | 1 file, contract + useCallback | ✅ Granular |
-| T4: usePatientsQueryParams | 1 new hook file | ✅ Granular |
-| T5: usePatientsListQuery | 1 new hook file | ✅ Granular |
-| T6: usePatientsMetrics | 1 new hook file | ✅ Granular |
-| T7: patients-list.helpers.ts | 1 new file, 3 pure functions | ✅ Granular |
-| T8: patients-list.css | 1 new CSS file | ✅ Granular |
-| T9: Fix patients-table-filters.tsx | 1 file | ✅ Granular |
-| T10: Extract MetricCard | 1 new component file | ✅ Granular |
-| T11: Refactor patients-list.tsx | 1 file | ✅ Granular |
-| T12: Build + smoke test | Verification only | ✅ Granular |
+**Gate**: `npx tsc --noEmit`
+**Commit**: `fix(patients-list): restore staleTime and gcTime config in list and metrics queries`
 
 ---
 
-## Diagram-Definition Cross-Check
+### TSK-08 — Avatar preview for HTTP/HTTPS stored URLs
+**Req**: PLR-15
+**Priority**: P2
+**Depends on**: TSK-01
+**File**: `register-patients/steps/patient-avatar-upload.tsx`
 
-| Task | Depends On (body) | Diagram Shows | Status |
-|------|-------------------|---------------|--------|
-| T1 | None | Phase 1 start | ✅ |
-| T7 | None | Phase 1 start | ✅ |
-| T8 | None | Phase 1 start | ✅ |
-| T2 | T1 | After Phase 1 | ✅ |
-| T3 | T1 | After Phase 1 | ✅ |
-| T10 | T1 | After Phase 1 | ✅ |
-| T4 | T3 | After Phase 2, parallel | ✅ |
-| T6 | T2 | After Phase 2, parallel | ✅ |
-| T9 | T3 | After Phase 2, parallel | ✅ |
-| T5 | T4, T2 | After T4 (sequential) | ✅ |
-| T11 | T5, T6, T7, T8, T9, T10 | After Phase 3 | ✅ |
-| T12 | T11 | After Phase 4 | ✅ |
+**What**:
+- Add `const [directUrl, setDirectUrl] = useState<string | null>(null)`
+- In the `useEffect`: if `defaultValue` starts with `"http://"` or `"https://"`, call `setDirectUrl(defaultValue)` and `clear()`; else clear `directUrl` and use existing UUID/data-URI logic
+- Compute `const displayUrl = previewUrl ?? directUrl`
+- Replace all `previewUrl` references in JSX with `displayUrl`
 
----
+**Done when**:
+- [ ] Edit a patient with an avatar → avatar photo renders in preview, not initials
 
-## Test Co-location Validation
-
-TESTING.md: No test framework configured. Gate is `pnpm build` (TypeScript) for all tasks.
-
-| Task | Code Layer | Matrix Requires | Task Says | Status |
-|------|-----------|-----------------|-----------|--------|
-| T1 | Types file | none | none | ✅ |
-| T2 | API function | none | none | ✅ |
-| T3 | Custom hook | none | none | ✅ |
-| T4 | Custom hook | none | none | ✅ |
-| T5 | Custom hook | none | none | ✅ |
-| T6 | Custom hook | none | none | ✅ |
-| T7 | Pure functions | none | none | ✅ |
-| T8 | CSS file | none | none | ✅ |
-| T9 | UI component | none | none | ✅ |
-| T10 | UI component | none | none | ✅ |
-| T11 | UI component | none | none | ✅ |
-| T12 | Verification | none | manual | ✅ |
+**Gate**: manual browser test + `npx tsc --noEmit`
+**Commit**: `fix(patient-avatar-upload): accept HTTP/HTTPS URLs as valid preview source`
 
 ---
 
-## Requirement Traceability
+### TSK-09 — dateOfBirth display sync via key remount
+**Req**: PLR-21
+**Priority**: P2
+**Depends on**: TSK-01
+**File**: `register-patients/register-patients.tsx`
 
-| Requirement ID | Implemented By |
-|---------------|---------------|
-| PLR-01 | T3, T4 |
-| PLR-02 | T10, T11 |
-| PLR-03 | T2, T4, T5 |
-| PLR-04 | T4, T5, T6 |
-| PLR-05 | T3, T9 |
-| PLR-06 | T1, T4, T5, T6, T7, T10 |
-| PLR-07 | T8, T9, T11 |
-| PLR-08 | T3, T9 |
-| PLR-09 | T3, T4 |
+**What**:
+- Add `key={patient?.id ?? 'new'}` to the `<StepBasicData>` render:
+  ```tsx
+  {step === 1 && <StepBasicData key={patient?.id ?? 'new'} onAvatarSelect={setAvatarFile} patient={patient} />}
+  ```
+- This forces React to remount `StepBasicData` when patient data loads, re-running `useState(() => getValues("dateOfBirth"))` with the correct value from the now-populated form context
+
+**Done when**:
+- [ ] Open edit form for a patient with a known birth date → date field shows correct value immediately after data loads, not blank
+
+**Gate**: manual browser test
+**Commit**: `fix(register-patients): remount StepBasicData on patient load to sync birthInput`
+
+---
+
+### TSK-10 — Align filter UI status pills to backend enums
+**Req**: PLR-08
+**Priority**: P2
+**Depends on**: TSK-04, TSK-05
+**File**: patients table filters component (wherever `STATUS_PILLS` or equivalent options array is defined)
+
+**What**:
+- Ensure status filter options are exactly: `null` (Todos), `'ACTIVE'` (Ativos), `'BLOCKED'` (Arquivados)
+- Fix any option using lowercase/sentinel values (`'active'`, `'inactive'`, `'all'`)
+- Active pill must have visual active state; inactive pills must not
+
+**Done when**:
+- [ ] Click "Ativos" → URL contains `status=ACTIVE`, network shows `status=ACTIVE`
+- [ ] Click "Todos" → no `status` param in URL or request
+- [ ] Click "Arquivados" → URL and request contain `status=BLOCKED`
+
+**Gate**: manual Network tab + URL inspection + `npx tsc --noEmit`
+**Commit**: `fix(patients-table-filters): align status pill values to backend enums`
+
+---
+
+### TSK-11 — Remove nonfunctional UI and hardcoded metrics
+**Req**: PLR-19
+**Priority**: P2
+**Depends on**: TSK-01
+**File**: `src/pages/app/patients/patients-list/patients-list.tsx`
+
+**What**:
+- Add `disabled` + `className="... opacity-50 cursor-not-allowed"` to Importar, Exportar, and Colunas buttons (do not remove — avoids layout shift)
+- Add `disabled` or remove "Filtros avançados" button
+- Remove the entire "Novos 30 dias" `MetricCard` block (hardcoded `value="—"`, `sub="24%"`)
+- Remove `sub` and `subTrend` props from Ativos and Arquivados `MetricCard` calls
+
+**Done when**:
+- [ ] Importar, Exportar, Colunas buttons are visually disabled with `cursor-not-allowed`
+- [ ] "Novos 30 dias" card is absent from the rendered page
+- [ ] Ativos/Arquivados cards show no hardcoded sub-labels
+
+**Gate**: manual browser inspection + `npx tsc --noEmit`
+**Commit**: `fix(patients-list): disable nonfunctional buttons; remove hardcoded metric card`
+
+---
+
+### TSK-12 — Markdown link sanitization
+**Req**: PLR-17
+**Priority**: P2
+**File**: `src/utils/renderMarkdown.ts`
+
+**What**:
+- Add module-level constant: `const SAFE_HREF_RE = /^https?:|^mailto:/i`
+- Add function: `function sanitizeHref(url: string): string { return SAFE_HREF_RE.test(url.trimStart()) ? url : '#' }`
+- Update `applyInline` link replacement to use callback form:
+  ```typescript
+  .replace(/\[([^\]]+)\]\(([^)]+)\)/g, (_, text, url) =>
+      `<a href="${sanitizeHref(url)}" target="_blank" rel="noopener noreferrer">${text}</a>`)
+  ```
+
+**Done when**:
+- [ ] Enter `[x](javascript:void(0))` in notes editor → preview shows no `javascript:` href (renders `href="#"`)
+- [ ] A normal `[link](https://example.com)` still renders as a clickable link
+
+**Gate**: manual browser test + `npx tsc --noEmit`
+**Commit**: `fix(renderMarkdown): sanitize link hrefs to block javascript: URIs`
+
+---
+
+### TSK-13 — Restore mojibake Portuguese strings
+**Req**: PLR-18
+**Priority**: P2
+
+**What**:
+- Grep under `src/pages/app/patients/patients-list/` for patterns: `Ã`, `â€`, `Ã§`
+- Fix each occurrence by replacing mojibake bytes with correct UTF-8 Portuguese characters
+- Save files as UTF-8 without BOM
+
+**Done when**:
+- [ ] Load patients list → no garbled characters visible in any label, tooltip, or comment
+- [ ] Source files contain correct Portuguese characters (`ã`, `é`, `ç`, `ó`, etc.)
+
+**Gate**: visual scan of rendered patients list
+**Commit**: `fix(patients-list): restore correct UTF-8 Portuguese characters`
+
+---
+
+## P3 Tasks — Cleanup
+
+### TSK-14 — Dead code removal
+**Req**: PLR-20
+**Priority**: P3
+
+**What**:
+- `grep -r "useCreatePatientDraft"` across the project → if zero results, delete `register-patients/hooks/use-create-patient-draft.ts`
+- `grep -r "ExportPDFButton\|export-pdf-button"` across the project → if zero results, delete `components/details/export-pdf-button.tsx`
+- Scan remaining files under `patients-list/` for any other hooks or components with zero import references; delete or flag
+
+**Done when**:
+- [ ] Grep for `useCreatePatientDraft` returns zero results
+- [ ] Grep for `ExportPDFButton` returns zero results (if file was deleted)
+
+**Gate**: `npx tsc --noEmit` (deletion must not introduce new errors)
+**Commit**: `chore(patients-list): delete unused draft hook and PDF button`
+
+---
+
+### TSK-15 — Gender and sessionVolume URL wiring verification
+**Req**: PLR-09
+**Priority**: P3
+**Depends on**: TSK-04, TSK-05
+
+**What**:
+- Verify `use-patient-filters.ts` (after TSK-04) reads and writes `gender` and `sessionVolume` from URL params
+- Verify `use-patients-query-params.ts` (after TSK-05) includes them in the API payload when present
+- Verify `clearFilters` removes both from URL
+
+**Done when**:
+- [ ] Manually set `?gender=FEMININE` → network request includes `gender=FEMININE`
+- [ ] `clearFilters` removes gender and sessionVolume from URL
+
+**Gate**: manual URL manipulation + Network tab
+**Note**: No UI panel needed — URL-only wiring. This task may be a no-op if TSK-04 and TSK-05 already covered it.
+
+---
+
+## Final Gate
+
+### TSK-16 — Build, lint, and manual verification
+**Depends on**: All previous tasks
+
+```bash
+npm run build   # must exit 0 — zero TypeScript errors
+npm run lint    # must exit 0 (or only pre-existing warnings)
+```
+
+Manual checklist (browser DevTools Network tab open):
+
+1. `npx tsc --noEmit` → 0 errors
+2. Create patient → metrics cards update without page refresh
+3. Archive active patient → row immediately shows "Arquivado"; Reactivate → immediately "Ativo"
+4. Set `?status=GARBAGE` in URL → network request has no `status` param
+5. Click "Ativos" → `status=ACTIVE` in URL and request; click "Todos" → no status param
+6. Network tab → no `sortBy` param, no `null` query param values
+7. Open edit modal → submit disabled while data loads; enabled after patient loads
+8. Edit patient with avatar → photo renders in preview (not initials)
+9. Open edit form for patient with birth date → date field shows correct value immediately
+10. Type `[x](javascript:void(0))` in notes editor → preview renders `href="#"` not `javascript:`
+11. No `/attachments/patient/null` request in network tab
+12. Importar/Exportar/Colunas are visually disabled; "Novos 30 dias" card is absent
+13. No garbled characters visible in patients list UI
+
+---
+
+## Requirement → Task Traceability
+
+| Req ID | Story | Task |
+|--------|-------|------|
+| PLR-01 | Filter hook URL param validation | TSK-04 |
+| PLR-03 | Correct GET /patients payload | TSK-05 |
+| PLR-04 | Query key centralization / metrics invalidation | TSK-02, TSK-03 |
+| PLR-06 | staleTime config restored | TSK-07 |
+| PLR-08 | Aligned filter UI options | TSK-10 |
+| PLR-09 | Gender/sessionVolume URL wiring | TSK-15 |
+| PLR-10 | TypeScript contract alignment | TSK-01 |
+| PLR-11 | Optimistic status toggle fix | TSK-02 |
+| PLR-12 | Metrics invalidation after mutations | TSK-02, TSK-03 |
+| PLR-14 | Attachment query enabled guard | TSK-06 |
+| PLR-15 | Avatar preview for HTTP URLs | TSK-08 |
+| PLR-16 | Edit mode correctness in submit hook | TSK-03 |
+| PLR-17 | Markdown link safety | TSK-12 |
+| PLR-18 | Mojibake text restoration | TSK-13 |
+| PLR-19 | Nonfunctional UI cleanup | TSK-11 |
+| PLR-20 | Dead code removal | TSK-14 |
+| PLR-21 | dateOfBirth display sync | TSK-09 |
+| PLR-22 | URL param enum validation | TSK-04 |
+| PLR-23 | Details/session type safety | TSK-01 |

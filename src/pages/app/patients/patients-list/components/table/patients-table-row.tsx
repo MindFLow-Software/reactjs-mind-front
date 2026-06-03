@@ -7,14 +7,11 @@ import {
   CalendarPlus,
   ClipboardList,
   Mail,
-  Mars,
   MoreVertical,
   Pencil,
   Phone,
   RotateCcw,
   Search,
-  Users,
-  Venus,
   Video,
 } from 'lucide-react'
 import { memo, useCallback, useState } from 'react'
@@ -50,28 +47,7 @@ import { PatientsDetails } from '../details/patients-details'
 import { PatientStatusDialog } from '@/components/patient-status-dialog'
 import type { Ipatient } from '@/types/patient'
 
-// ToDo: to make this setting global and reusable across the platform
-// not scoped for this feat
-const GENDER_CONFIG = {
-  MASCULINE: {
-    label: 'Masculino',
-    icon: Mars,
-    className:
-      'bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-400 border-0',
-  },
-  FEMININE: {
-    label: 'Feminino',
-    icon: Venus,
-    className:
-      'bg-pink-100 text-pink-700 dark:bg-pink-900/30 dark:text-pink-400 border-0',
-  },
-  OTHER: {
-    label: 'Outro',
-    icon: Users,
-    className:
-      'bg-purple-100 text-purple-700 dark:bg-purple-900/30 dark:text-purple-400 border-0',
-  },
-} as const
+import { GENDER_CONFIG } from '@/utils/gender-config'
 
 interface PatientsTableRowProps {
   patient: Ipatient
@@ -121,13 +97,11 @@ export const PatientsTableRow = memo(function PatientsTableRow({
 
           return {
             ...old,
-            patients: old.patients.map((patient) => {
-              if (patient.id === id ) {
-                return { ...patient, status: 'BLOCKED', isActive: false }
-              }
-
-              return patient
-            }),
+            patients: old.patients.map((p) =>
+              p.id === id
+                ? { ...p, status: p.isActive ? 'BLOCKED' : 'ACTIVE', isActive: !p.isActive }
+                : p
+            ),
           }
         },
       )
@@ -141,9 +115,12 @@ export const PatientsTableRow = memo(function PatientsTableRow({
       }
     },
     onSettled: () => {
-      queryClient.invalidateQueries({ queryKey: ['patients'] })
-      queryClient.invalidateQueries({ queryKey: ['patient-details', id] })
-      queryClient.invalidateQueries({ queryKey: ['patients-count'] })
+      Promise.all([
+        queryClient.invalidateQueries({ queryKey: ['patients'] }),
+        queryClient.invalidateQueries({ queryKey: ['patient', id] }),
+        queryClient.invalidateQueries({ queryKey: ['patient-details', id] }),
+        queryClient.invalidateQueries({ queryKey: ['patients-metrics'] }),
+      ])
     },
   })
 

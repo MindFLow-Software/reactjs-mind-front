@@ -18,9 +18,9 @@ export function usePatientsQueryParams(): PatientsQueryParams {
     pageIndex: filters.pageIndex,
     perPage:   filters.perPage,
     order:     filters.order,
-    filter: filters.filter,
-    status:  filters.status,
-    gender:  filters.gender,
-    sessionVolume: filters.sessionVolume,
+    ...(filters.filter                                              ? { filter: filters.filter }               : {}),
+    ...(filters.status                                              ? { status: filters.status }               : {}),
+    ...(filters.gender                                              ? { gender: filters.gender }               : {}),
+    ...(filters.sessionVolume && filters.sessionVolume !== 'all'   ? { sessionVolume: filters.sessionVolume } : {}),
   }
 }

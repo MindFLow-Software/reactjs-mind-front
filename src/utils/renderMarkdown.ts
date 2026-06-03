@@ -2,12 +2,19 @@ function esc(s: string): string {
     return s.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;")
 }
 
+const SAFE_HREF_RE = /^https?:|^mailto:/i
+
+function sanitizeHref(url: string): string {
+    return SAFE_HREF_RE.test(url.trimStart()) ? url : '#'
+}
+
 function applyInline(text: string): string {
     return text
         .replace(/\*\*([^*]+)\*\*/g, "<strong>$1</strong>")
         .replace(/\*([^*]+)\*/g, "<em>$1</em>")
         .replace(/`([^`]+)`/g, "<code>$1</code>")
-        .replace(/\[([^\]]+)\]\(([^)]+)\)/g, '<a href="$2" target="_blank" rel="noopener noreferrer">$1</a>')
+        .replace(/\[([^\]]+)\]\(([^)]+)\)/g, (_, linkText, url) =>
+            `<a href="${sanitizeHref(url)}" target="_blank" rel="noopener noreferrer">${linkText}</a>`)
 }
 
 export function renderMarkdown(text: string): string {

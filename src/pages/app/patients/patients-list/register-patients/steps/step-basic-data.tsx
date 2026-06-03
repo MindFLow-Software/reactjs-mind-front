@@ -7,7 +7,9 @@ import { FormField, FormItem, FormLabel, FormControl, FormMessage } from "@/comp
 import { cn } from "@/lib/utils"
 import { formatCPF } from "@/utils/formatCPF"
 import { formatAGE } from "@/utils/formatAGE"
+import { formatDateInput } from "@/utils/formatDateInput"
 
+import { Normalizer } from "@/utils/normalizer"
 import type { Ipatient } from "@/types/patient"
 import type { PatientFormData } from "@/validators/patients"
 import "./step-basic-data.css"
@@ -15,14 +17,6 @@ import { GENDER_OPTIONS } from "../constants"
 import { SectionTitle } from "./section-title"
 import { PillRadio } from "./pill-radio"
 import { PatientAvatarUpload } from "./patient-avatar-upload"
-
-// ToDo: ALWAYS USE DATE-FNS FOR DATES
-function calcAge(ddmmyyyy: string): number | null {
-    if (ddmmyyyy.length !== 10) return null
-    const d = dateParse(ddmmyyyy, "dd/MM/yyyy", new Date())
-    if (!dateIsValid(d) || d > new Date()) return null
-    return formatAGE(d)
-}
 
 interface StepBasicDataProps {
     onAvatarSelect: (f: File | null) => void
@@ -32,28 +26,22 @@ interface StepBasicDataProps {
 export function StepBasicData({ onAvatarSelect, patient }: StepBasicDataProps) {
     const { control, getValues } = useFormContext<PatientFormData>()
 
-    // ToDo: Remove unnecessary useState
     const [birthInput, setBirthInput] = useState(() => {
         const d = getValues("dateOfBirth")
         return d instanceof Date ? format(d, "dd/MM/yyyy") : ""
     })
 
-    const cpfValue = useWatch({ control, name: "cpf" })
-    // ToDo: ALWAYS USE Normalizer.digits TO LEAVE ONLY NUMBERS
-    const cpfDigits = (cpfValue ?? "").replace(/\D/g, "")
+    const cpfValue    = useWatch({ control, name: "cpf" })
+    const dateOfBirth = useWatch({ control, name: "dateOfBirth" })
+    const cpfDigits   = Normalizer.digits(cpfValue ?? "")
+    const age         = dateOfBirth ? formatAGE(dateOfBirth) : null
 
-    // ToDo: ALWAYS USE DATE-FNS FOR DATES 
-    const age = calcAge(birthInput)
     const initials = patient
         ? `${patient?.firstName[0] ?? ""}${patient?.lastName[0] ?? ""}`.toUpperCase()
         : undefined
 
-    // ToDo: Adjust the logic below; ALWAYS USE DATE-FNS FOR DATES, remove or replace this function
     function handleBirthChange(e: ChangeEvent<HTMLInputElement>, fieldOnChange: (v: Date | null) => void) {
-        let val = e.target.value.replace(/\D/g, "")
-        if (val.length > 2) val = val.slice(0, 2) + "/" + val.slice(2)
-        if (val.length > 5) val = val.slice(0, 5) + "/" + val.slice(5)
-        if (val.length > 10) val = val.slice(0, 10)
+        const val = formatDateInput(e.target.value)
         setBirthInput(val)
         if (val.length === 10) {
             const d = dateParse(val, "dd/MM/yyyy", new Date())

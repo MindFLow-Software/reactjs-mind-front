@@ -11,18 +11,16 @@ import type { Ipatient } from "@/types/patient"
 import type { PatientFormData } from "@/validators/patients"
 
 interface UsePatientSubmitOptions {
+    patientId?: string
     patient: Ipatient | null
     avatarFile: File | null
     files: File[]
     onSuccess?: () => void
 }
 
-export function usePatientSubmit({ patient, avatarFile, files, onSuccess }: UsePatientSubmitOptions) {
+export function usePatientSubmit({ patientId, patient, avatarFile, files, onSuccess }: UsePatientSubmitOptions) {
     const queryClient = useQueryClient()
-    // ToDo: find all register-patient locations that perform
-    // this logic of defining `isEditMode` with `!!patient` and changing it to
-    // a more robust logic to validate if it is an update state
-    const isEditMode = !!patient
+    const isEditMode = Boolean(patientId)
     const [isUploading, setIsUploading] = useState(false)
 
     const { mutateAsync: createFn, isPending: isCreating } = useMutation({
@@ -65,10 +63,7 @@ export function usePatientSubmit({ patient, avatarFile, files, onSuccess }: UseP
                 ? await updateFn({ ...shared, id: patient!.id })
                 : await createFn({ ...shared, email: email || undefined })
 
-            // ToDo: type response correctly
-            const targetId = res?.id ?? res?.patientId
-
-            if (!targetId) throw new Error("ID não identificado")
+            const targetId = isEditMode ? patientId! : res.id
 
             if (avatarFile) {
                 try {
@@ -84,6 +79,7 @@ export function usePatientSubmit({ patient, avatarFile, files, onSuccess }: UseP
                 queryClient.invalidateQueries({ queryKey: ["patients"] }),
                 queryClient.invalidateQueries({ queryKey: ["patient", targetId] }),
                 queryClient.invalidateQueries({ queryKey: ["attachments", targetId] }),
+                queryClient.invalidateQueries({ queryKey: ["patients-metrics"] }),
             ])
 
             toast.success(isEditMode ? "Paciente atualizado!" : "Paciente cadastrado!")

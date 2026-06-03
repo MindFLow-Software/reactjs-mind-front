@@ -11,10 +11,10 @@ export function usePatientsListQuery(): PatientsListQueryResult {
   const { data, isLoading, isFetching } = useQuery({
     queryKey: ['patients', params],
     queryFn:  () => getPatients(params),
-    // staleTime:            30_000,
-    // gcTime:              300_000,
-    // refetchOnWindowFocus: true,
-    // placeholderData:      (prev) => prev,
+    staleTime:            30_000,
+    gcTime:              300_000,
+    refetchOnWindowFocus: true,
+    placeholderData:      (prev) => prev,
   })
 
   return {

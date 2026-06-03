@@ -2,7 +2,11 @@ import { z } from "zod"
 import { useCallback } from "react"
 import { useSearchParams } from "react-router-dom"
 
-import type { PatientStatus, Gender, IsessionVolume } from "@/types/patient"
+import { Gender } from "@/types/patient"
+import type { PatientStatus, IsessionVolume } from "@/types/patient"
+
+const VALID_STATUSES = ['ACTIVE', 'REJECTED', 'PENDING', 'BLOCKED'] as const
+const VALID_GENDERS  = Object.values(Gender)
 
 export type PatientSortOrder = "asc" | "desc"
 export type PatientSortBy = "name" | "status" | "contact" | "lastSession" | "age" | "gender"
@@ -18,8 +22,15 @@ export function usePatientFilters() {
     .parse(page)
 
   const filter        = searchParams.get("filter")        ?? ""
-  const status        = searchParams.get("status")        as PatientStatus
-  const gender        = searchParams.get("gender")        as Gender
+  const rawStatus = searchParams.get("status")
+  const status = (VALID_STATUSES as readonly string[]).includes(rawStatus ?? '')
+    ? (rawStatus as PatientStatus)
+    : null
+
+  const rawGender = searchParams.get("gender")
+  const gender = (VALID_GENDERS as readonly string[]).includes(rawGender ?? '')
+    ? (rawGender as Gender)
+    : null
   const sessionVolume = (searchParams.get("sessionVolume") ?? undefined) as IsessionVolume | undefined
   const sortBy        = (searchParams.get("sortBy") ?? "name") as PatientSortBy
   const order         = (searchParams.get("order")  ?? "asc")  as PatientSortOrder

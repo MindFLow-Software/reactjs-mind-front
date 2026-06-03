@@ -1,10 +1,32 @@
 import "./patient-avatar-upload.css"
-import { useEffect, useRef } from "react"
+import { useEffect, useRef, useState } from "react"
 import { Camera, Loader2 } from "lucide-react"
 import { api } from "@/lib/axios"
 import { useImagePreview } from "@/hooks/use-image-preview"
 
 const UUID_RE = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i
+
+interface AvatarContentProps {
+    isLoading: boolean
+    displayUrl: string | null
+    initials?: string
+}
+
+function AvatarContent({ isLoading, displayUrl, initials }: AvatarContentProps) {
+    if (isLoading) return (
+        <div className="flex h-full w-full items-center justify-center">
+            <Loader2 className="size-5 animate-spin text-white" />
+        </div>
+    )
+    if (displayUrl) return (
+        <img src={displayUrl} alt="Avatar" className="h-full w-full object-cover" />
+    )
+    return (
+        <div className="flex h-full w-full items-center justify-center">
+            <span className="font-title text-[20px] font-bold text-white">{initials || "+"}</span>
+        </div>
+    )
+}
 
 function fetchAvatarBlob(url: string): Promise<Blob> {
     return api.get(`/attachments/${url}`, { responseType: "blob" }).then(r => r.data as Blob)
@@ -19,13 +41,21 @@ interface PatientAvatarUploadProps {
 export function PatientAvatarUpload({ onFileSelect, defaultValue, initials }: PatientAvatarUploadProps) {
     const inputRef = useRef<HTMLInputElement>(null)
     const { previewUrl, onFileSelected, clear, loadFromUrl, isLoading } = useImagePreview({ fetchBlob: fetchAvatarBlob })
+    const [directUrl, setDirectUrl] = useState<string | null>(null)
 
-    // ToDo: Adjust the logic below; it's not visually appealing, and I don't know what it does
     useEffect(() => {
-        if (!defaultValue) { clear(); return }
+        if (!defaultValue) { setDirectUrl(null); clear(); return }
+        if (defaultValue.startsWith("http://") || defaultValue.startsWith("https://")) {
+            setDirectUrl(defaultValue)
+            clear()
+            return
+        }
+        setDirectUrl(null)
         if (!defaultValue.startsWith("data:") && !UUID_RE.test(defaultValue)) { clear(); return }
         void loadFromUrl(defaultValue)
     }, [defaultValue, clear, loadFromUrl])
+
+    const displayUrl = previewUrl ?? directUrl
 
     function handleFile(file: File) {
         onFileSelected(file)
@@ -42,20 +72,10 @@ export function PatientAvatarUpload({ onFileSelect, defaultValue, initials }: Pa
         <div className="rp-avatar-wrap">
             <div
                 className="rp-avatar-circle group"
-                style={{ background: previewUrl ? undefined : "linear-gradient(135deg, #4e8ed3, #1858b0)" }}
+                style={{ background: displayUrl ? undefined : "linear-gradient(135deg, #4e8ed3, #1858b0)" }}
                 onClick={() => !isLoading && inputRef.current?.click()}
             >
-                {isLoading ? (
-                    <div className="flex h-full w-full items-center justify-center">
-                        <Loader2 className="size-5 animate-spin text-white" />
-                    </div>
-                ) : previewUrl ? (
-                    <img src={previewUrl} alt="Avatar" className="h-full w-full object-cover" />
-                ) : (
-                    <div className="flex h-full w-full items-center justify-center">
-                        <span className="font-title text-[20px] font-bold text-white">{initials || "+"}</span>
-                    </div>
-                )}
+                <AvatarContent isLoading={isLoading} displayUrl={displayUrl} initials={initials} />
                 <div
                     className="rp-avatar-overlay group-hover:opacity-100"
                     style={{ background: "rgba(15,52,100,0.55)" }}
@@ -75,7 +95,7 @@ export function PatientAvatarUpload({ onFileSelect, defaultValue, initials }: Pa
                     >
                         Enviar foto
                     </button>
-                    {previewUrl && (
+                    {displayUrl && (
                         <>
                             <span className="text-border">·</span>
                             <button

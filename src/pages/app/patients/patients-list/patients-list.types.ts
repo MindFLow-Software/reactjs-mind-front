@@ -1,5 +1,4 @@
-import type { PatientStatus } from '@/types/patient'
-import type { Patient } from '@/api/patients/get-patients'
+import type { PatientStatus, Ipatient } from '@/types/patient'
 import type { PaginationMeta } from '@/types/pagination'
 
 export interface MetricCardProps {
@@ -26,7 +25,7 @@ export interface PatientsMetrics {
 }
 
 export interface PatientsListQueryResult {
-  patients: Patient[]
+  patients: Ipatient[]
   meta: PaginationMeta
   isLoading: boolean
   isFetching: boolean

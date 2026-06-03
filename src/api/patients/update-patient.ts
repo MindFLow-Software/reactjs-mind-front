@@ -1,5 +1,5 @@
 import { api } from '@/lib/axios'
-import type { UpdatePatientBody } from '@/types/patient'
+import type { Ipatient, UpdatePatientBody } from '@/types/patient'
 
 export type { UpdatePatientBody } from '@/types/patient'
 
@@ -8,7 +8,7 @@ export interface UpdatePatientData extends Omit<UpdatePatientBody, 'dateOfBirth'
   dateOfBirth?: Date | string
 }
 
-export async function updatePatients({ id, ...data }: UpdatePatientData) {
+export async function updatePatients({ id, ...data }: UpdatePatientData): Promise<Ipatient> {
   const formattedData: UpdatePatientBody = {
     ...data,
     dateOfBirth:
@@ -24,6 +24,6 @@ export async function updatePatients({ id, ...data }: UpdatePatientData) {
     Object.entries(formattedData).filter(([, value]) => value !== undefined && value !== null),
   )
 
-  const response = await api.put(`/patients/${id}`, payload)
+  const response = await api.put<Ipatient>(`/patients/${id}`, payload)
   return response.data
 }

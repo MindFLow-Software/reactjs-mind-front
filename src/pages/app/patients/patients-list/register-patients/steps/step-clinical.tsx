@@ -18,7 +18,6 @@ export function StepClinical() {
     const { control } = useFormContext<PatientFormData>()
 
     function handlePriceChange(value: string, fieldOnChange: (v: string) => void) {
-        // ToDo: ALWAYS USE Normalizer.digits TO LEAVE ONLY NUMBERS
         fieldOnChange(value.replace(/[^\d,]/g, ""))
     }
 

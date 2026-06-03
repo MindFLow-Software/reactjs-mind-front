@@ -12,6 +12,7 @@ import {
   UserRoundPlus,
 } from 'lucide-react'
 
+import { Button } from '@/components/ui/button'
 import { Dialog } from '@/components/ui/dialog'
 import { Pagination } from '@/components/pagination'
 
@@ -36,15 +37,12 @@ export function PatientsList() {
   const { filters, setPage, setSort, clearFilters } = usePatientFilters()
   const [isRegisterOpen, setIsRegisterOpen] = useState(false)
   const [isInviteOpen, setIsInviteOpen] = useState(false)
-  // const registerDraft = useCreatePatientDraft()
-
   const { patients, meta, isLoading, isFetching } = usePatientsListQuery()
   const { activeCount, archivedCount, isLoading: loadingMetrics } = usePatientsMetrics()
 
   const totalPatients = calcTotalPatients(meta.perPage, meta.totalCount)
   const filtersActive = hasActiveFilters(filters.filter, filters.status)
 
-  // ToDo: change components to shadcn components
   return (
     <>
       <Helmet title="Pacientes" />
@@ -55,18 +53,18 @@ export function PatientsList() {
         contentClassName="p-0"
         headerRight={
           <div className="pl-header-actions">
-            <button type="button" className="pl-action-btn">
+            <Button type="button" variant="outline" disabled className="pl-action-btn">
               <Upload className="size-4" />
               Importar
-            </button>
-            <button type="button" onClick={() => setIsInviteOpen(true)} className="pl-action-btn">
+            </Button>
+            <Button type="button" variant="outline" onClick={() => setIsInviteOpen(true)} className="pl-action-btn">
               <QrCode className="size-4" />
               <span>Link de auto-cadastro</span>
-            </button>
-            <button type="button" onClick={() => setIsRegisterOpen(true)} className="pl-primary-btn">
+            </Button>
+            <Button type="button" onClick={() => setIsRegisterOpen(true)} className="pl-primary-btn">
               <UserRoundPlus className="size-4" />
               <span>Cadastrar paciente</span>
-            </button>
+            </Button>
           </div>
         }
       >
@@ -84,23 +82,12 @@ export function PatientsList() {
             iconBg="bg-emerald-500/10"
             value={activeCount}
             label="Ativos"
-            sub="8 este mês"
-            subTrend="up"
             isLoading={loadingMetrics} />
-          <MetricCard
-            icon={<UserRoundPlus className="size-5 text-amber-600" />}
-            iconBg="bg-amber-500/10"
-            value="—"
-            label="Novos (30 dias)"
-            sub="24%"
-            subTrend="up" />
           <MetricCard
             icon={<Clock className="size-5 text-red-500" />}
             iconBg="bg-red-500/10"
             value={archivedCount}
             label="Arquivados"
-            sub="sem sessão há 60 dias"
-            subTrend="neutral"
             isLoading={loadingMetrics} />
         </div>
         <div className="pl-table-section">
@@ -109,14 +96,14 @@ export function PatientsList() {
             description={formatPatientsShowing(totalPatients, meta.totalCount)}
             headerActions={
               <>
-                <button type="button" className="pl-table-action-btn">
+                <Button type="button" variant="outline" size="sm" disabled className="pl-table-action-btn">
                   <Download className="size-3.5" />
                   <span>Exportar</span>
-                </button>
-                <button type="button" className="pl-table-action-btn">
+                </Button>
+                <Button type="button" variant="outline" size="sm" disabled className="pl-table-action-btn">
                   <Columns3 className="size-3.5" />
                   <span>Colunas</span>
-                </button>
+                </Button>
               </>
             }
             toolbar={<PatientsTableFilters isFetching={isFetching} />}
@@ -136,9 +123,7 @@ export function PatientsList() {
               isLoading={isLoading}
               perPage={filters.perPage}
               hasActiveFilters={filtersActive}
-              sortBy={filters.sortBy}
-              sortOrder={filters.order}
-              onSort={setSort}
+              sort={{ by: filters.sortBy, order: filters.order, onSort: setSort }}
               onClearFilters={clearFilters}
               onRegister={() => setIsRegisterOpen(true)}
             />

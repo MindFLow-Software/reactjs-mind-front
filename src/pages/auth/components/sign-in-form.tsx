@@ -70,12 +70,12 @@ export const SignInForm = memo(function SignInForm({
         localStorage.setItem("isAuthenticated", "true")
         localStorage.setItem("user", JSON.stringify(user))
 
-        const role = user.role
+        const userType = user.type
 
         toast.success("Login realizado com sucesso!", { duration: 2000 })
 
         setTimeout(() => {
-          navigate(role === "SUPER_ADMIN" ? "/admin-dashboard" : "/dashboard", { replace: true })
+          navigate(userType === "ADMIN" ? "/admin-dashboard" : "/dashboard", { replace: true })
         }, 100)
       } catch (error) {
         const errorMessage = Sanitize.responseError(error)

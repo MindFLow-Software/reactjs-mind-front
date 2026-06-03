@@ -122,7 +122,8 @@ export function PatientsTableFilters({ isFetching }: PatientsTableFiltersProps) 
         <Button
           variant="outline"
           size="sm"
-          className="h-8 gap-1.5 text-xs cursor-pointer"
+          disabled
+          className="h-8 gap-1.5 text-xs opacity-50 cursor-not-allowed"
         >
           <SlidersHorizontal className="h-3.5 w-3.5" />
           Filtros avançados

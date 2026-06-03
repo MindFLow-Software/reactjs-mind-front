@@ -9,6 +9,7 @@ import { zodResolver } from "@hookform/resolvers/zod"
 import { Loader2, ChevronLeft, ChevronRight, Check } from "lucide-react"
 
 import { DialogContent, DialogTitle } from "@/components/ui/dialog"
+import { Button } from "@/components/ui/button"
 import { Form } from "@/components/ui/form"
 import { cn } from "@/lib/utils"
 
@@ -21,6 +22,17 @@ import { StepClinical } from "./steps/step-clinical"
 import { AttachmentsList } from "./steps/attachments-list"
 import { UploadZone } from "./steps/upload-zone"
 import { usePatient } from "@/hooks/use-patient"
+
+function AddPatientIcon() {
+    return (
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-blue-600">
+            <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2" />
+            <circle cx="9" cy="7" r="4" />
+            <line x1="19" y1="8" x2="19" y2="14" />
+            <line x1="22" y1="11" x2="16" y2="11" />
+        </svg>
+    )
+}
 
 interface RegisterPatientsProps {
     patientId?: string
@@ -36,6 +48,7 @@ export function RegisterPatients({ patientId, onSuccess }: RegisterPatientsProps
         mode: "onTouched",
         // defaultValues: buildPatientDefaults(patient),
     })
+
     const [avatarFile, setAvatarFile] = useState<File | null>(null)
     const {
         files,
@@ -50,6 +63,7 @@ export function RegisterPatients({ patientId, onSuccess }: RegisterPatientsProps
     const { onCepChange, isCepLoading } = useCepLookup({ setValue: methods.setValue })
 
     const { submit, isSubmitting } = usePatientSubmit({
+        patientId,
         patient,
         avatarFile,
         files,
@@ -61,23 +75,36 @@ export function RegisterPatients({ patientId, onSuccess }: RegisterPatientsProps
         },
     })
 
+    const isEditLoading = Boolean(patientId) && !patient
+
     useEffect(() => {
         const patientDefaults = buildPatientDefaults(patient)
         methods.reset(patientDefaults)
-    }, [patient, buildPatientDefaults])
+    }, [patient]) // eslint-disable-line react-hooks/exhaustive-deps
 
-    // ToDo: change components to shadcn components, where applicable
+    const submitLabel = isSubmitting
+        ? "Salvando…"
+        : isLastStep
+            ? (isEditMode ? "Salvar alterações" : "Cadastrar paciente")
+            : "Continuar"
+
+    function renderStepContent(currentStep: number) {
+        if (currentStep === 1) return <StepBasicData key={patient?.id ?? 'new'} onAvatarSelect={setAvatarFile} patient={patient} />
+        if (currentStep === 2) return <StepContactAddress onCepChange={onCepChange} isCepLoading={isCepLoading} />
+        if (currentStep === 3) return <StepClinical />
+        return (
+            <div className="space-y-5">
+                {isEditMode && <AttachmentsList patientId={patient?.id ?? null} />}
+                <UploadZone selectedFiles={files} onFilesChange={addFiles} onRemoveFile={removeFile} />
+            </div>
+        )
+    }
+
     return (
         <DialogContent className="rp-modal !max-w-[920px] flex flex-col gap-0 p-0 overflow-hidden">
             <div className="rp-modal-header">
                 <div className="rp-modal-icon-box">
-                    {/* ToDo: create a reusable constant on the platform named GOOGLE_LOGO_SVG, for example, to store this SVG */}
-                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-blue-600">
-                        <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2" />
-                        <circle cx="9" cy="7" r="4" />
-                        <line x1="19" y1="8" x2="19" y2="14" />
-                        <line x1="22" y1="11" x2="16" y2="11" />
-                    </svg>
+                    <AddPatientIcon />
                 </div>
                 <DialogTitle className="min-w-0 flex-1">
                     <h2 className="rp-modal-title">
@@ -121,42 +148,32 @@ export function RegisterPatients({ patientId, onSuccess }: RegisterPatientsProps
             </div>
 
             <Form {...methods}>
-                {/* ToDo: refactoring the step logic is not scalable */}
                 <div className="rp-modal-body">
-                    {step === 1 && <StepBasicData onAvatarSelect={setAvatarFile} patient={patient} />}
-                    {step === 2 && <StepContactAddress onCepChange={onCepChange} isCepLoading={isCepLoading} />}
-                    {step === 3 && <StepClinical />}
-                    {step === 4 && (
-                        <div className="space-y-5">
-                            {isEditMode && <AttachmentsList patientId={patient?.id ?? null} />}
-                            <UploadZone selectedFiles={files} onFilesChange={addFiles} onRemoveFile={removeFile} />
-                        </div>
-                    )}
+                    {renderStepContent(step)}
                 </div>
             </Form>
 
             <div className="rp-modal-footer">
                 <div className="flex items-center justify-end gap-2.5">
                     {!isFirstStep && (
-                        <button type="button" onClick={handleBack} className="rp-btn-secondary">
+                        <Button type="button" variant="outline" onClick={handleBack} className="rp-btn-secondary">
                             <ChevronLeft className="size-4" strokeWidth={2.5} />
                             Voltar
-                        </button>
+                        </Button>
                     )}
-                    <button type="button" onClick={() => onSuccess?.()} className="rp-btn-secondary">
+                    <Button type="button" variant="outline" onClick={() => onSuccess?.()} className="rp-btn-secondary">
                         Cancelar
-                    </button>
-                    <button
+                    </Button>
+                    <Button
                         type="button"
-                        disabled={isSubmitting}
+                        disabled={isSubmitting || isEditLoading}
                         onClick={isLastStep ? () => methods.handleSubmit(submit)() : handleNext}
                         className="rp-btn-primary"
                     >
-                        {/* ToDo: adjust multiple nested if and ternary statements with multiple conditions */}
                         {isSubmitting && <Loader2 className="size-4 animate-spin" />}
-                        {isSubmitting ? "Salvando…" : isLastStep ? (isEditMode ? "Salvar alterações" : "Cadastrar paciente") : "Continuar"}
+                        {submitLabel}
                         {!isSubmitting && (isLastStep ? <Check className="size-4" /> : <ChevronRight className="size-4" />)}
-                    </button>
+                    </Button>
                 </div>
             </div>
         </DialogContent>
