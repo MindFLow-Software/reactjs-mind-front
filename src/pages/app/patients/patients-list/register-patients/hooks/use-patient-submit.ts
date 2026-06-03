@@ -19,6 +19,9 @@ interface UsePatientSubmitOptions {
 
 export function usePatientSubmit({ patient, avatarFile, files, onSuccess }: UsePatientSubmitOptions) {
     const queryClient = useQueryClient()
+    // ToDo: find all register-patient locations that perform
+    // this logic of defining `isEditMode` with `!!patient` and changing it to
+    // a more robust logic to validate if it is an update state
     const isEditMode = !!patient
     const [isUploading, setIsUploading] = useState(false)
 
@@ -62,7 +65,7 @@ export function usePatientSubmit({ patient, avatarFile, files, onSuccess }: UseP
                 ? await updateFn({ ...shared, id: patient!.id })
                 : await createFn({ ...shared, email: email || undefined })
 
-            // ToDo: type response
+            // ToDo: type response correctly
             const targetId = res?.id ?? res?.patientId
 
             if (!targetId) throw new Error("ID não identificado")

@@ -19,7 +19,6 @@ export function AttachmentsList({ patientId }: AttachmentsListProps) {
     const { data: attachments, isLoading } = useQuery({
         queryKey: ["attachments", patientId],
         queryFn: () => getPatientAttachments(patientId),
-        staleTime: 1000 * 60 * 5,
     })
 
     const { mutateAsync: removeFn, isPending: isRemoving } = useMutation({
@@ -49,6 +48,7 @@ export function AttachmentsList({ patientId }: AttachmentsListProps) {
                 )}
             </div>
 
+            {/* ToDo: Adjust nested ternary equations with more than two conditionals */}
             {isLoading ? (
                 <div className="flex items-center justify-center py-8">
                     <Loader2 className="size-5 animate-spin text-blue-500/50" />
@@ -62,6 +62,7 @@ export function AttachmentsList({ patientId }: AttachmentsListProps) {
                     {attachments.map((file) => {
                         const kind       = getFileKind(file.type ?? "")
                         const fileStyle  = FILE_KIND_STYLES[kind]
+                        // ToDo: Adjust date formatting with date-fns, ALWAYS USE DATE-FNS FOR DATES
                         const uploadDate = new Date(file.uploadedAt).toLocaleDateString("pt-BR", {
                             day: "2-digit", month: "2-digit", year: "numeric",
                         })
@@ -86,6 +87,7 @@ export function AttachmentsList({ patientId }: AttachmentsListProps) {
                                 </div>
 
                                 <div className="flex shrink-0 items-center gap-0.5">
+                                    {/* ToDo: adicionar botões do shadcn */}
                                     <button
                                         type="button"
                                         title="Visualizar"

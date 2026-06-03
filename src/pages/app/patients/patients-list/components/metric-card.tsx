@@ -20,7 +20,7 @@ export function MetricCard({ icon, iconBg, value, label, sub, subTrend, isLoadin
             'text-[11px] font-medium flex items-center gap-1',
             subTrend === 'up' ? 'text-emerald-600 dark:text-emerald-400' : 'text-muted-foreground',
           )}>
-            {subTrend === 'up' && <ArrowUp className="h-3 w-3" />}
+            {subTrend === 'up' && <ArrowUp className="size-3" />}
             {sub}
           </span>
         )}

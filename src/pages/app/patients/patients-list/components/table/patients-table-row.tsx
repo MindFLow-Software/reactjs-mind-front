@@ -50,6 +50,8 @@ import { PatientsDetails } from '../details/patients-details'
 import { PatientStatusDialog } from '@/components/patient-status-dialog'
 import type { Ipatient } from '@/types/patient'
 
+// ToDo: to make this setting global and reusable across the platform
+// not scoped for this feat
 const GENDER_CONFIG = {
   MASCULINE: {
     label: 'Masculino',
@@ -79,12 +81,17 @@ export const PatientsTableRow = memo(function PatientsTableRow({
   patient,
 }: PatientsTableRowProps) {
   const navigate = useNavigate()
+  const queryClient = useQueryClient()
+
   const [isDetailsOpen,    setIsDetailsOpen]    = useState(false)
   const [isEditOpen,       setIsEditOpen]       = useState(false)
   const [isDeleteOpen,     setIsDeleteOpen]     = useState(false)
   const [isReactivateOpen, setIsReactivateOpen] = useState(false)
 
-  const queryClient = useQueryClient()
+  const handleOpenDetails    = useCallback(() => setIsDetailsOpen(true), [])
+  const handleOpenEdit       = useCallback(() => setIsEditOpen(true), [])
+  const handleOpenDelete     = useCallback(() => setIsDeleteOpen(true), [])
+  const handleOpenReactivate = useCallback(() => setIsReactivateOpen(true), [])
 
   const {
     id,
@@ -97,16 +104,13 @@ export const PatientsTableRow = memo(function PatientsTableRow({
     gender,
     profileImageUrl,
     lastSessionAt,
-    status,
+    isActive,
   } = patient
 
   const fullName = `${firstName} ${lastName}`
 
-  const patientIsActive = status === 'ACTIVE'
-
   const { mutateAsync: toggleStatusFn, isPending: isUpdating } = useMutation({
-    mutationFn: () => togglePatientStatus(id, false),
-
+    mutationFn: () => togglePatientStatus(id),
     onMutate: async () => {
       await queryClient.cancelQueries({ queryKey: ['patients'] })
       const snapshot = queryClient.getQueriesData<GetPatientsResponse>({ queryKey: ['patients'], exact: false })
@@ -114,17 +118,21 @@ export const PatientsTableRow = memo(function PatientsTableRow({
         { queryKey: ['patients'], exact: false },
         (old) => {
           if (!old) return old
+
           return {
             ...old,
-            patients: old.patients.map((p) =>
-              p.id === id ? { ...p, status: 'BLOCKED' as const, isActive: false } : p,
-            ),
+            patients: old.patients.map((patient) => {
+              if (patient.id === id ) {
+                return { ...patient, status: 'BLOCKED', isActive: false }
+              }
+
+              return patient
+            }),
           }
         },
       )
       return { snapshot }
     },
-
     onError: (_err, _vars, context) => {
       if (context?.snapshot) {
         context.snapshot.forEach(([key, data]) => {
@@ -132,56 +140,17 @@ export const PatientsTableRow = memo(function PatientsTableRow({
         })
       }
     },
-
     onSettled: () => {
       queryClient.invalidateQueries({ queryKey: ['patients'] })
       queryClient.invalidateQueries({ queryKey: ['patient-details', id] })
       queryClient.invalidateQueries({ queryKey: ['patients-count'] })
     },
   })
-
-  const { mutateAsync: reactivateStatusFn, isPending: isReactivating } = useMutation({
-    mutationFn: () => togglePatientStatus(id, true),
-
-    onMutate: async () => {
-      await queryClient.cancelQueries({ queryKey: ['patients'] })
-      const snapshot = queryClient.getQueriesData<GetPatientsResponse>({ queryKey: ['patients'], exact: false })
-      queryClient.setQueriesData<GetPatientsResponse>(
-        { queryKey: ['patients'], exact: false },
-        (old) => {
-          if (!old) return old
-          return {
-            ...old,
-            patients: old.patients.map((p) =>
-              p.id === id ? { ...p, status: 'ACTIVE' as const, isActive: true } : p,
-            ),
-          }
-        },
-      )
-      return { snapshot }
-    },
-
-    onError: (_err, _vars, context) => {
-      if (context?.snapshot) {
-        context.snapshot.forEach(([key, data]) => queryClient.setQueryData(key, data))
-      }
-    },
-
-    onSettled: () => {
-      queryClient.invalidateQueries({ queryKey: ['patients'] })
-      queryClient.invalidateQueries({ queryKey: ['patient-details', id] })
-      queryClient.invalidateQueries({ queryKey: ['patients-count'] })
-    },
-  })
-
-  const handleOpenDetails    = useCallback(() => setIsDetailsOpen(true), [])
-  const handleOpenEdit       = useCallback(() => setIsEditOpen(true), [])
-  const handleOpenDelete     = useCallback(() => setIsDeleteOpen(true), [])
-  const handleOpenReactivate = useCallback(() => setIsReactivateOpen(true), [])
 
   const handleNavigate = useCallback(() => {
     sessionStorage.removeItem('active_patient_queue')
     sessionStorage.removeItem('active_patient_queue_source')
+
     navigate(`/patients/${id}/details`, { state: { from: 'patients-list' } })
   }, [navigate, id])
 
@@ -243,12 +212,12 @@ export const PatientsTableRow = memo(function PatientsTableRow({
           <span
             className={cn(
               "inline-flex items-center gap-1.5 h-6 px-2.5 rounded-full text-[11px] font-semibold",
-              patientIsActive
+              isActive
                 ? "bg-emerald-100 text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-400"
                 : "bg-red-100 text-red-700 dark:bg-red-900/30 dark:text-red-400",
             )}
           >
-            {patientIsActive ? 'Ativo' : 'Arquivado'}
+            {isActive ? 'Ativo' : 'Arquivado'}
           </span>
         </TableCell>
 
@@ -328,11 +297,11 @@ export const PatientsTableRow = memo(function PatientsTableRow({
                 <Button
                   variant="ghost"
                   size="icon"
-                  className="h-8 w-8 cursor-pointer text-muted-foreground hover:text-foreground"
+                  className="size-8 cursor-pointer text-muted-foreground hover:text-foreground"
                   onClick={handleNavigate}
                   aria-label="Prontuário completo"
                 >
-                  <ClipboardList className="h-4 w-4" />
+                  <ClipboardList className="size-4" />
                 </Button>
               </TooltipTrigger>
               <TooltipContent className="text-xs">Prontuário</TooltipContent>
@@ -343,11 +312,11 @@ export const PatientsTableRow = memo(function PatientsTableRow({
                 <Button
                   variant="ghost"
                   size="icon"
-                  className="h-8 w-8 cursor-pointer text-muted-foreground hover:text-foreground"
+                  className="size-8 cursor-pointer text-muted-foreground hover:text-foreground"
                   onClick={handleOpenDetails}
                   aria-label="Ver sessões do paciente"
                 >
-                  <Video className="h-4 w-4" />
+                  <Video className="size-4" />
                 </Button>
               </TooltipTrigger>
               <TooltipContent className="text-xs">Sessões</TooltipContent>
@@ -358,10 +327,10 @@ export const PatientsTableRow = memo(function PatientsTableRow({
                 <Button
                   variant="ghost"
                   size="icon"
-                  className="h-8 w-8 cursor-pointer text-muted-foreground hover:text-foreground"
+                  className="size-8 cursor-pointer text-muted-foreground hover:text-foreground"
                   aria-label={`Mais ações — ${fullName}`}
                 >
-                  <MoreVertical className="h-4 w-4" />
+                  <MoreVertical className="size-4" />
                 </Button>
               </DropdownMenuTrigger>
               <DropdownMenuContent align="end" className="w-44">
@@ -369,34 +338,34 @@ export const PatientsTableRow = memo(function PatientsTableRow({
                   className="cursor-pointer"
                   onSelect={handleOpenDetails}
                 >
-                  <Search className="mr-2 h-4 w-4" /> Ver detalhes
+                  <Search className="mr-2 size-4" /> Ver detalhes
                 </DropdownMenuItem>
                 <DropdownMenuItem
                   className="cursor-pointer"
                   onSelect={handleScheduleSession}
                 >
-                  <CalendarPlus className="mr-2 h-4 w-4" /> Agendar sessão
+                  <CalendarPlus className="mr-2 size-4" /> Agendar sessão
                 </DropdownMenuItem>
                 <DropdownMenuItem
                   className="cursor-pointer"
                   onSelect={handleOpenEdit}
                 >
-                  <Pencil className="mr-2 h-4 w-4" /> Editar
+                  <Pencil className="mr-2 size-4" /> Editar
                 </DropdownMenuItem>
                 <DropdownMenuSeparator />
-                {patientIsActive ? (
+                {isActive ? (
                   <DropdownMenuItem
                     onSelect={handleOpenDelete}
                     className="cursor-pointer text-destructive focus:text-destructive"
                   >
-                    <Archive className="mr-2 h-4 w-4" /> Arquivar paciente
+                    <Archive className="mr-2 size-4" /> Arquivar paciente
                   </DropdownMenuItem>
                 ) : (
                   <DropdownMenuItem
                     onSelect={handleOpenReactivate}
                     className="cursor-pointer text-emerald-700 dark:text-emerald-400 focus:text-emerald-700 dark:focus:text-emerald-400"
                   >
-                    <RotateCcw className="mr-2 h-4 w-4" /> Reativar paciente
+                    <RotateCcw className="mr-2 size-4" /> Reativar paciente
                   </DropdownMenuItem>
                 )}
               </DropdownMenuContent>
@@ -434,9 +403,9 @@ export const PatientsTableRow = memo(function PatientsTableRow({
             <PatientStatusDialog
               mode="reactivate"
               fullName={fullName}
-              isPending={isReactivating}
+              isPending={isUpdating}
               onClose={() => setIsReactivateOpen(false)}
-              onConfirm={async () => { await reactivateStatusFn() }}
+              onConfirm={async () => { await toggleStatusFn() }}
             />
           )}
         </Dialog>

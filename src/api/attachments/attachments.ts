@@ -1,4 +1,7 @@
 import { api } from '@/lib/axios'
+
+// ToDo: fonte única da verdade, deve haver um único tipo Iattachment
+// não ter multiplas tipagens para a mesma entidade
 import type {
   AttachmentPatientItem,
   AttachmentListItem,
@@ -7,6 +10,8 @@ import type {
   FetchAllAttachmentsParams,
 } from '@/types/attachment'
 
+// ToDo: fonte única da verdade, deve haver um único tipo Iattachment
+// não ter multiplas tipagens para a mesma entidade
 export type {
   AttachmentPatientItem,
   AttachmentListItem,
@@ -48,6 +53,7 @@ export async function uploadAvatar(
 
 export async function getPatientAttachments(patientId: string | null): Promise<AttachmentPatientItem[]> {
   const { data } = await api.get<{ attachments: AttachmentPatientItem[] }>(
+    // ToDo: trocar rota, o correto, de acordo com o REST seria: /patients/${patientId}/attachments
     `/attachments/patient/${patientId}`,
   )
   return data.attachments ?? []

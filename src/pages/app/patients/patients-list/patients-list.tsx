@@ -22,7 +22,7 @@ import { PatientsPageShell } from '../components/patients-page-shell'
 import { PatientsDataBlock } from '../components/patients-data-block'
 import { GenerateInviteModal } from './components/dialogs/generate-invite-modal'
 import { PatientsTableFilters } from './components/table/patients-table-filters'
-import { calcShowing, formatPatientsShowing, hasActiveFilters } from './patients-list.helpers'
+import { calcTotalPatients, formatPatientsShowing, hasActiveFilters } from './patients-list.helpers'
 
 import { useHeaderStore } from '@/hooks/use-header-store'
 import { usePatientFilters } from '@/hooks/use-patient-filters'
@@ -41,7 +41,7 @@ export function PatientsList() {
   const { patients, meta, isLoading, isFetching } = usePatientsListQuery()
   const { activeCount, archivedCount, isLoading: loadingMetrics } = usePatientsMetrics()
 
-  const showing = calcShowing(meta.perPage, meta.totalCount)
+  const totalPatients = calcTotalPatients(meta.perPage, meta.totalCount)
   const filtersActive = hasActiveFilters(filters.filter, filters.status)
 
   // ToDo: change components to shadcn components
@@ -73,7 +73,7 @@ export function PatientsList() {
         <div className="pl-metrics-grid">
           <MetricCard
             icon={<UsersRound
-            className="size-5 text-blue-600" />}
+              className="size-5 text-blue-600" />}
             iconBg="bg-blue-500/10"
             value={meta.totalCount}
             label="Total de pacientes"
@@ -85,7 +85,8 @@ export function PatientsList() {
             value={activeCount}
             label="Ativos"
             sub="8 este mês"
-            subTrend="up" isLoading={loadingMetrics} />
+            subTrend="up"
+            isLoading={loadingMetrics} />
           <MetricCard
             icon={<UserRoundPlus className="size-5 text-amber-600" />}
             iconBg="bg-amber-500/10"
@@ -99,12 +100,13 @@ export function PatientsList() {
             value={archivedCount}
             label="Arquivados"
             sub="sem sessão há 60 dias"
-            subTrend="neutral" isLoading={loadingMetrics} />
+            subTrend="neutral"
+            isLoading={loadingMetrics} />
         </div>
         <div className="pl-table-section">
           <PatientsDataBlock
             title="Lista de pacientes"
-            description={formatPatientsShowing(showing, meta.totalCount)}
+            description={formatPatientsShowing(totalPatients, meta.totalCount)}
             headerActions={
               <>
                 <button type="button" className="pl-table-action-btn">

@@ -41,6 +41,7 @@ interface SortableHeadProps {
     className?: string
 }
 
+// ToDo: This SortableHead logic needs improvement; it doesn't work and is difficult to read
 function SortableHead({ column, label, sortBy, sortOrder, onSort, className }: SortableHeadProps) {
     const active = sortBy === column
     return (
@@ -144,6 +145,7 @@ export function PatientsTable({
                 </TableHeader>
 
                 <TableBody>
+                    {/* ToDo: adjust chained ternary with more than two conditions */}
                     {isLoading ? (
                         <PatientsTableLoading rows={perPage} />
                     ) : patients.length > 0 ? (

@@ -29,10 +29,8 @@ interface RegisterPatientsProps {
 
 export function RegisterPatients({ patientId, onSuccess }: RegisterPatientsProps) {
     const isEditMode = Boolean(patientId)
-
     const { patient } = usePatient(patientId)
 
-    // Internal state — used only in edit mode (draft is never provided for edit)
     const methods = useForm<PatientFormData>({
         resolver: zodResolver(patientSchema),
         mode: "onTouched",
@@ -68,11 +66,12 @@ export function RegisterPatients({ patientId, onSuccess }: RegisterPatientsProps
         methods.reset(patientDefaults)
     }, [patient, buildPatientDefaults])
 
-    // ToDo: change components to shadcn components
+    // ToDo: change components to shadcn components, where applicable
     return (
         <DialogContent className="rp-modal !max-w-[920px] flex flex-col gap-0 p-0 overflow-hidden">
             <div className="rp-modal-header">
                 <div className="rp-modal-icon-box">
+                    {/* ToDo: create a reusable constant on the platform named GOOGLE_LOGO_SVG, for example, to store this SVG */}
                     <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-blue-600">
                         <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2" />
                         <circle cx="9" cy="7" r="4" />
@@ -93,6 +92,7 @@ export function RegisterPatients({ patientId, onSuccess }: RegisterPatientsProps
             </div>
 
             <div className="rp-modal-stepper">
+                {/* ToDo: improve STEPS format, if applicable */}
                 {STEPS.map((s) => {
                     const active = step === s.id
                     const done = step > s.id
@@ -121,6 +121,7 @@ export function RegisterPatients({ patientId, onSuccess }: RegisterPatientsProps
             </div>
 
             <Form {...methods}>
+                {/* ToDo: refactoring the step logic is not scalable */}
                 <div className="rp-modal-body">
                     {step === 1 && <StepBasicData onAvatarSelect={setAvatarFile} patient={patient} />}
                     {step === 2 && <StepContactAddress onCepChange={onCepChange} isCepLoading={isCepLoading} />}
@@ -151,6 +152,7 @@ export function RegisterPatients({ patientId, onSuccess }: RegisterPatientsProps
                         onClick={isLastStep ? () => methods.handleSubmit(submit)() : handleNext}
                         className="rp-btn-primary"
                     >
+                        {/* ToDo: adjust multiple nested if and ternary statements with multiple conditions */}
                         {isSubmitting && <Loader2 className="size-4 animate-spin" />}
                         {isSubmitting ? "Salvando…" : isLastStep ? (isEditMode ? "Salvar alterações" : "Cadastrar paciente") : "Continuar"}
                         {!isSubmitting && (isLastStep ? <Check className="size-4" /> : <ChevronRight className="size-4" />)}

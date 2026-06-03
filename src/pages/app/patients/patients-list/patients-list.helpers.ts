@@ -4,7 +4,7 @@ export function formatPatientsShowing(showing: number, total: number): string {
   return `Mostrando ${showing} de ${total} pacientes`
 }
 
-export function calcShowing(perPage: number, total: number): number {
+export function calcTotalPatients(perPage: number, total: number): number {
   return total > 0 ? Math.min(perPage, total) : 0
 }
 

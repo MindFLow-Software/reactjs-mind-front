@@ -15,9 +15,9 @@ export function usePatientsMetrics(): PatientsMetrics {
         archivedCount: archived.meta.totalCount,
       }
     },
-    staleTime:            60_000,
-    gcTime:              300_000,
-    refetchOnWindowFocus: false,
+    // staleTime:            60_000,
+    // gcTime:              300_000,
+    // refetchOnWindowFocus: false,
   })
 
   return {

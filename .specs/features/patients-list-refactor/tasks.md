@@ -91,7 +91,7 @@ T11 complete, then:
 **Done when**:
 
 - [ ] `formatPatientsShowing(showing: number, total: number): string` exported — returns `"Mostrando X de Y pacientes"`
-- [ ] `calcShowing(perPage: number, total: number): number` exported — returns `Math.min(perPage, total)` when total > 0, else 0
+- [ ] `calcTotalPatients(perPage: number, total: number): number` exported — returns `Math.min(perPage, total)` when total > 0, else 0
 - [ ] `hasActiveFilters(filter: string, status: PatientStatus | null): boolean` exported — returns true when filter is non-empty or status is non-null
 - [ ] Gate check passes: `pnpm build`
 
@@ -395,7 +395,7 @@ export function PatientsList() {
   const { patients, meta, isLoading, isFetching } = usePatientsListQuery()
   const { activeCount, archivedCount, isLoading: loadingMetrics } = usePatientsMetrics()
 
-  const showing = calcShowing(meta.perPage, meta.totalCount)
+  const showing = calcTotalPatients(meta.perPage, meta.totalCount)
   const filtersActive = hasActiveFilters(filters.filter, filters.status)
 
   return (

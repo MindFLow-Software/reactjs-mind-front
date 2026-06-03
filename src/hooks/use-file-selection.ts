@@ -13,6 +13,7 @@ interface UseFileSelectionReturn {
     clearFiles: () => void
 }
 
+// ToDo: Replace ALL the logic in this component to use react-dropzone, if applicable, in this case
 export function useFileSelection({ maxFiles, maxSizeBytes }: UseFileSelectionOptions): UseFileSelectionReturn {
     const [files, setFiles] = useState<File[]>([])
 
@@ -22,6 +23,8 @@ export function useFileSelection({ maxFiles, maxSizeBytes }: UseFileSelectionOpt
         setFiles((prev) => {
             const valid: File[] = []
 
+            // ToDo: ajustar a lógica dentro do `for`, a lógica não está visual
+            // não está fácil de entender, prefira lógicas enxutas
             for (const file of incoming) {
                 if (file.size > maxSizeBytes) {
                     toast.error(`O arquivo "${file.name}" é muito grande.`, {
@@ -36,6 +39,8 @@ export function useFileSelection({ maxFiles, maxSizeBytes }: UseFileSelectionOpt
                 valid.push(file)
             }
 
+            // ToDo: ajustar a lógica dentro do `for`, a lógica não está visual
+            // não está fácil de entender, prefira lógicas enxutas
             const available = maxFiles - prev.length
             if (valid.length > available) {
                 toast.error("Limite de arquivos excedido", {

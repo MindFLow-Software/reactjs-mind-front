@@ -12,6 +12,7 @@ interface UploadZoneProps {
     onRemoveFile:  (index: number) => void
 }
 
+// ToDo: Replace ALL the logic in this component to use react-dropzone.
 export const UploadZone = memo(({ selectedFiles, onFilesChange, onRemoveFile }: UploadZoneProps) => {
     const inputRef            = useRef<HTMLInputElement>(null)
     const [isDrag, setIsDrag] = useState(false)

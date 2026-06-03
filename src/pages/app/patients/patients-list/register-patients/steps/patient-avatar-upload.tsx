@@ -20,6 +20,7 @@ export function PatientAvatarUpload({ onFileSelect, defaultValue, initials }: Pa
     const inputRef = useRef<HTMLInputElement>(null)
     const { previewUrl, onFileSelected, clear, loadFromUrl, isLoading } = useImagePreview({ fetchBlob: fetchAvatarBlob })
 
+    // ToDo: Adjust the logic below; it's not visually appealing, and I don't know what it does
     useEffect(() => {
         if (!defaultValue) { clear(); return }
         if (!defaultValue.startsWith("data:") && !UUID_RE.test(defaultValue)) { clear(); return }

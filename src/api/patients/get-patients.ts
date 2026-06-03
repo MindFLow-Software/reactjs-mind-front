@@ -3,8 +3,8 @@ import type { Ipatient, FetchPatientsParams, PatientStatus, Gender, IsessionVolu
 import type { PaginationMeta } from '@/types/pagination'
 
 export interface GetPatientsFilters {
-  pageIndex: number
-  perPage: number
+  pageIndex?: number
+  perPage?: number
   filter?: string
   gender?: Gender
   status?: PatientStatus

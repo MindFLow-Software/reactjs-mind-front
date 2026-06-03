@@ -17,12 +17,14 @@ export function MarkdownEditor({ value, onChange }: MarkdownEditorProps) {
     const ref = useRef<HTMLTextAreaElement>(null)
 
     useLayoutEffect(() => {
+        // ToDo: Adjust this logic; do not create variables that are not self-descriptive.
         const el = ref.current
         if (!el) return
         el.style.height = "auto"
         el.style.height = `${el.scrollHeight}px`
     }, [value])
 
+    // ToDo: Adjust this logic; do not create variables that are not self-descriptive.
     function insertInline(prefix: string, suffix: string, placeholder: string) {
         const el = ref.current; if (!el) return
         const { selectionStart: ss, selectionEnd: se } = el
@@ -31,6 +33,7 @@ export function MarkdownEditor({ value, onChange }: MarkdownEditorProps) {
         requestAnimationFrame(() => { el.focus(); el.setSelectionRange(ss + prefix.length, ss + prefix.length + sel.length) })
     }
 
+    // ToDo: Adjust this logic; do not create variables that are not self-descriptive.
     function insertLinePrefix(prefix: string) {
         const el = ref.current; if (!el) return
         const ss = el.selectionStart
