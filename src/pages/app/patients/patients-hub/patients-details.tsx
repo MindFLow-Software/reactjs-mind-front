@@ -247,6 +247,7 @@ export default function PatientDetails() {
                 <PatientDetailsHeader
                   patient={{
                     ...patientData,
+                    isActive: isPatientActive,
                     status: isPatientActive ? 'ACTIVE' : 'BLOCKED',
                   }}
                 />

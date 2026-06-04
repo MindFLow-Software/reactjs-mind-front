@@ -1,7 +1,7 @@
 'use client'
 
 import type React from 'react'
-import { useForm } from 'react-hook-form'
+import { useForm, type Resolver } from 'react-hook-form'
 import { toast } from 'sonner'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { useNavigate, Link } from 'react-router-dom'
@@ -49,7 +49,7 @@ export function PatientSignUpForm({
     setValue,
     formState: { isSubmitting, errors },
   } = useForm<PatientSignUpSchema>({
-    resolver: zodResolver(patientSignUpSchema),
+    resolver: zodResolver(patientSignUpSchema) as Resolver<PatientSignUpSchema>,
   })
 
   const { mutateAsync: registerPatient } = useMutation({
