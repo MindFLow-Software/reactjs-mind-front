@@ -1,4 +1,4 @@
-import { api } from "@/lib/axios"
+import { api } from '@/lib/axios'
 
 interface GenerateRegistrationLinkResponse {
   qrCodeLink: string
@@ -6,7 +6,7 @@ interface GenerateRegistrationLinkResponse {
 }
 
 export async function generateRegistrationLink() {
-  const response = await api.post<GenerateRegistrationLinkResponse>("/invites")
+  const response = await api.post<GenerateRegistrationLinkResponse>('/invites')
 
   return response.data
 }

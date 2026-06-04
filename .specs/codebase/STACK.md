@@ -31,8 +31,8 @@
 | Animações | Framer Motion | 12 |
 | Toasts | Sonner | 2.0 |
 | Temas light/dark | next-themes | 0.4 |
-| Ícones (primário) | @phosphor-icons/react | 2.1 |
-| Ícones (legado) | lucide-react | 0.545 |
+| Ícones (primário) | lucide-react | 0.545 |
+| Ícones (legado) | @phosphor-icons/react | 2.1 |
 
 ## Componentes Especializados
 

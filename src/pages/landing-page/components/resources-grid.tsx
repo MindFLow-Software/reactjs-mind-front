@@ -1,26 +1,26 @@
-import { motion } from "framer-motion"
-import { ArrowRight, Layers } from "lucide-react"
-import { Link } from "react-router-dom"
+import { motion } from 'framer-motion'
+import { ArrowRight, Layers } from 'lucide-react'
+import { Link } from 'react-router-dom'
 
-const BRAND = "#2563eb"
-const BRAND_LIGHT = "#3b82f6"
+const BRAND = '#2563eb'
+const BRAND_LIGHT = '#3b82f6'
 
 const CARDS = [
   {
-    tag: "Produtividade",
-    image: "/mind3.png",
-    title: "Menos burocracia,\nmais escuta",
+    tag: 'Produtividade',
+    image: '/mind3.png',
+    title: 'Menos burocracia,\nmais escuta',
     description:
-      "Criamos uma plataforma invisível e intuitiva que cuida da gestão, agenda e financeiro para que sua atenção fique 100% no paciente.",
-    href: "/sign-up",
+      'Criamos uma plataforma invisível e intuitiva que cuida da gestão, agenda e financeiro para que sua atenção fique 100% no paciente.',
+    href: '/sign-up',
   },
   {
-    tag: "Design",
-    image: "/mind5.png",
-    title: "Design invisível,\ngestão poderosa",
+    tag: 'Design',
+    image: '/mind5.png',
+    title: 'Design invisível,\ngestão poderosa',
     description:
-      "Diga adeus aos sistemas travados e complexos. O MindFlush foi desenhado para fluir naturalmente — automatizando a burocracia com poucos toques.",
-    href: "/sign-up",
+      'Diga adeus aos sistemas travados e complexos. O MindFlush foi desenhado para fluir naturalmente — automatizando a burocracia com poucos toques.',
+    href: '/sign-up',
   },
 ]
 
@@ -35,7 +35,7 @@ export function ResourcesGrid() {
         className="absolute inset-0 z-0 pointer-events-none"
         style={{
           backgroundImage: `linear-gradient(rgba(37,99,235,0.05) 1px, transparent 1px), linear-gradient(90deg, rgba(37,99,235,0.05) 1px, transparent 1px)`,
-          backgroundSize: "60px 60px",
+          backgroundSize: '60px 60px',
         }}
       />
 
@@ -43,12 +43,12 @@ export function ResourcesGrid() {
       <div
         className="absolute left-0 top-0 w-[500px] h-[400px] pointer-events-none"
         style={{
-          background: "radial-gradient(ellipse at 20% 10%, rgba(37,99,235,0.07) 0%, transparent 65%)",
+          background:
+            'radial-gradient(ellipse at 20% 10%, rgba(37,99,235,0.07) 0%, transparent 65%)',
         }}
       />
 
       <div className="container relative z-10 mx-auto px-6 md:px-8 lg:px-12">
-
         {/* Section header */}
         <div className="flex flex-col items-center text-center mb-14">
           <motion.div
@@ -77,15 +77,15 @@ export function ResourcesGrid() {
             className="text-[clamp(28px,3.6vw,44px)] font-semibold tracking-tight text-slate-900 leading-[1.15] mb-4 max-w-[540px]"
             style={{ fontFamily: "'Lora', serif" }}
           >
-            Tudo que você precisa,{" "}
+            Tudo que você precisa,{' '}
             <span className="relative inline-block">
               <em
                 className="not-italic"
                 style={{
                   background: `linear-gradient(135deg, ${BRAND} 0%, ${BRAND_LIGHT} 100%)`,
-                  WebkitBackgroundClip: "text",
-                  WebkitTextFillColor: "transparent",
-                  backgroundClip: "text",
+                  WebkitBackgroundClip: 'text',
+                  WebkitTextFillColor: 'transparent',
+                  backgroundClip: 'text',
                 }}
               >
                 em um só lugar.
@@ -94,9 +94,13 @@ export function ResourcesGrid() {
                 initial={{ scaleX: 0 }}
                 whileInView={{ scaleX: 1 }}
                 viewport={{ once: true }}
-                transition={{ delay: 0.65, duration: 0.9, ease: [0.16, 1, 0.3, 1] }}
+                transition={{
+                  delay: 0.65,
+                  duration: 0.9,
+                  ease: [0.16, 1, 0.3, 1],
+                }}
                 className="absolute bottom-[3px] -left-1 -right-1 h-[30%] rounded-sm origin-left -z-10"
-                style={{ background: "rgba(37,99,235,0.12)" }}
+                style={{ background: 'rgba(37,99,235,0.12)' }}
               />
             </span>
           </motion.h2>
@@ -108,7 +112,8 @@ export function ResourcesGrid() {
             transition={{ delay: 0.18, duration: 0.6 }}
             className="text-[15.5px] font-light leading-relaxed text-slate-500 max-w-[420px]"
           >
-            Construído para psicólogos que querem exercer sua profissão com excelência — sem perder tempo com burocracia.
+            Construído para psicólogos que querem exercer sua profissão com
+            excelência — sem perder tempo com burocracia.
           </motion.p>
         </div>
 
@@ -120,7 +125,11 @@ export function ResourcesGrid() {
               initial={{ opacity: 0, y: 24 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
-              transition={{ delay: 0.12 + i * 0.1, duration: 0.7, ease: [0.16, 1, 0.3, 1] }}
+              transition={{
+                delay: 0.12 + i * 0.1,
+                duration: 0.7,
+                ease: [0.16, 1, 0.3, 1],
+              }}
               className="group flex flex-col overflow-hidden rounded-3xl border border-slate-100 bg-white shadow-sm transition-all duration-300 hover:shadow-md hover:-translate-y-0.5"
             >
               {/* Image */}
@@ -133,7 +142,8 @@ export function ResourcesGrid() {
                 <div
                   className="absolute inset-0 opacity-0 transition-opacity duration-500 group-hover:opacity-100"
                   style={{
-                    background: "linear-gradient(to bottom, transparent 50%, rgba(37,99,235,0.05) 100%)",
+                    background:
+                      'linear-gradient(to bottom, transparent 50%, rgba(37,99,235,0.05) 100%)',
                   }}
                 />
               </div>

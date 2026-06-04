@@ -1,4 +1,4 @@
-import { api } from "@/lib/axios"
+import { api } from '@/lib/axios'
 
 export interface Appointment {
   id: string
@@ -28,7 +28,7 @@ export interface FetchAppointmentsResponse {
 export async function fetchAppointments(
   params: FetchAppointmentsParams,
 ): Promise<FetchAppointmentsResponse> {
-  const response = await api.get<FetchAppointmentsResponse>("/appointments", {
+  const response = await api.get<FetchAppointmentsResponse>('/appointments', {
     params, // Axios anexa pageIndex, perPage e orderBy como query parameters
   })
 

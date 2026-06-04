@@ -1,5 +1,5 @@
-import { api } from "@/lib/axios"
+import { api } from '@/lib/axios'
 
-export async function togglePatientStatus(id: string, isActive: boolean) {
-  await api.patch(`/patients/${id}/status`, { isActive })
+export async function togglePatientStatus(id: string) {
+  await api.patch(`/patients/${id}/status`)
 }

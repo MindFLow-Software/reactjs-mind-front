@@ -1,4 +1,4 @@
-import { api } from "@/lib/axios"
+import { api } from '@/lib/axios'
 
 export interface PsychologistGenderStats {
   gender: string
@@ -9,7 +9,7 @@ export type GetPsychologistsGenderResponse = PsychologistGenderStats[]
 
 export async function getPsychologistsGenderStats(): Promise<GetPsychologistsGenderResponse> {
   const response = await api.get<GetPsychologistsGenderResponse>(
-    "/admin/metrics/psychologists/gender"
+    '/admin/metrics/psychologists/gender',
   )
 
   return response.data

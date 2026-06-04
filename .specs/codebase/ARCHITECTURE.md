@@ -70,14 +70,33 @@ Componentes compartilhados entre sub-módulos: `src/pages/app/patients/component
 ## Padrão de Página
 
 ```
-PageComponent
-  └── useHeaderStore.setTitle()   ← define breadcrumb do Header
-  └── useXyzFilters()             ← filtros sincronizados com URL (useSearchParams + Zod)
-  └── useQuery(queryFn, queryKey) ← dados do servidor via React Query
-  └── <Table> / <List>
-      └── <Row> / <Card>
-          └── dialogs inline (edit, delete, detail)
+PageComponent                          ← orquestrador: só hooks + layout raiz
+  ├── useHeaderStore.setTitle()        ← define breadcrumb do Header
+  ├── useXyzFilters()                  ← filtros sincronizados com URL (useSearchParams + Zod)
+  ├── useQuery(queryFn, queryKey)      ← dados do servidor via React Query
+  │
+  ├── <PageShell>                      ← layout de página reutilizável
+  │     ├── <PageShell.Header>         ← título + descrição + actions
+  │     │     └── <LocalHeaderActions> ← subcomponente local com os botões do topo
+  │     └── <PageShell.Content>        ← área principal
+  │           ├── métricas (MetricCard.Icon / MetricCard.Value / MetricCard.Label)
+  │           └── <DataBlock>
+  │                 ├── <DataBlock.Header>   ← título + actions secundárias
+  │                 ├── <DataBlock.Toolbar>  ← filtros
+  │                 ├── <DataBlock.Content>  ← tabela / lista
+  │                 └── <DataBlock.Footer>   ← paginação
+  └── dialogs (Dialog + conteúdo interno)
 ```
+
+Referência canônica: `src/pages/app/patients/patients-list/patients-list.tsx`.
+
+### Regras de Composição
+
+- Componente orquestrador (a página) não contém lógica de UI — apenas compõe hooks e delega rendering.
+- Regiões com responsabilidade própria (header da página, toolbar da tabela, footer com paginação) viram subcomponentes locais nomeados.
+- Composição com namespace (`Shell.Header`, `DataBlock.Footer`, `MetricCard.Value`) é obrigatória em compound components que têm múltiplas regiões.
+- Props relacionadas são agrupadas em objetos quando reduzem ruído: `sort={{ by, order, onSort }}`.
+- Ações não implementadas ficam `disabled` — nunca parecem funcionais.
 
 ## Estado Global
 

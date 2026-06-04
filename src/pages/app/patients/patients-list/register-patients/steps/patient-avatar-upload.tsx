@@ -1,104 +1,164 @@
-import { useState, useRef, useEffect } from "react"
-import { Camera, Loader2 } from "lucide-react"
-import { api } from "@/lib/axios"
+import './patient-avatar-upload.css'
+import { useEffect, useRef, useState } from 'react'
+import { Camera, Loader2 } from 'lucide-react'
+import { api } from '@/lib/axios'
+import { useImagePreview } from '@/hooks/use-image-preview'
 
-const UUID_RE = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i
+const UUID_RE =
+  /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i
 
-interface PatientAvatarUploadProps {
-    onFileSelect:  (f: File | null) => void
-    defaultValue?: string | null
-    initials?:     string
+interface AvatarContentProps {
+  isLoading: boolean
+  displayUrl: string | null
+  initials?: string
 }
 
-export function PatientAvatarUpload({ onFileSelect, defaultValue, initials }: PatientAvatarUploadProps) {
-    const inputRef            = useRef<HTMLInputElement>(null)
-    const [preview, setPreview] = useState<string | null>(null)
-    const [loading, setLoading] = useState(false)
-
-    useEffect(() => {
-        if (!defaultValue) { setPreview(null); return }
-        if (defaultValue.startsWith("data:")) { setPreview(defaultValue); return }
-        if (!UUID_RE.test(defaultValue)) { setPreview(null); return }
-
-        let obj: string | null = null
-        setLoading(true)
-        api.get(`/attachments/${defaultValue}`, { responseType: "blob" })
-            .then((r) => { obj = URL.createObjectURL(r.data); setPreview(obj) })
-            .catch(() => setPreview(null))
-            .finally(() => setLoading(false))
-        return () => { if (obj) URL.revokeObjectURL(obj) }
-    }, [defaultValue])
-
-    function handleFile(file: File) {
-        setPreview(URL.createObjectURL(file))
-        onFileSelect(file)
-    }
-
-    function handleRemove() {
-        setPreview(null)
-        onFileSelect(null)
-        if (inputRef.current) inputRef.current.value = ""
-    }
-
+function AvatarContent({
+  isLoading,
+  displayUrl,
+  initials,
+}: AvatarContentProps) {
+  if (isLoading)
     return (
-        <div className="mb-4 flex items-center gap-3.5 rounded-[8px] border border-border bg-muted/50 p-3">
-            <div
-                className="group relative size-[60px] shrink-0 cursor-pointer overflow-hidden rounded-full border-2 border-card shadow-sm"
-                style={{ background: preview ? undefined : "linear-gradient(135deg, #4e8ed3, #1858b0)" }}
-                onClick={() => !loading && inputRef.current?.click()}
-            >
-                {loading ? (
-                    <div className="flex h-full w-full items-center justify-center">
-                        <Loader2 className="size-5 animate-spin text-white" />
-                    </div>
-                ) : preview ? (
-                    <img src={preview} alt="Avatar" className="h-full w-full object-cover" />
-                ) : (
-                    <div className="flex h-full w-full items-center justify-center">
-                        <span className="font-title text-[20px] font-bold text-white">{initials || "+"}</span>
-                    </div>
-                )}
-                <div
-                    className="absolute inset-0 flex items-center justify-center rounded-full opacity-0 transition-opacity group-hover:opacity-100"
-                    style={{ background: "rgba(15,52,100,0.55)" }}
-                >
-                    <Camera className="size-[18px] text-white" />
-                </div>
-            </div>
-
-            <div className="flex flex-col gap-0.5">
-                <span className="text-[13px] font-semibold text-foreground">Foto do paciente</span>
-                <span className="text-[11.5px] text-muted-foreground">JPG ou PNG · até 2 MB · opcional</span>
-                <div className="mt-0.5 flex items-center gap-2">
-                    <button
-                        type="button"
-                        onClick={() => inputRef.current?.click()}
-                        className="cursor-pointer rounded px-2 py-1 text-[11.5px] font-semibold text-blue-600 transition-colors hover:bg-blue-50"
-                    >
-                        Enviar foto
-                    </button>
-                    {preview && (
-                        <>
-                            <span className="text-border">·</span>
-                            <button
-                                type="button"
-                                onClick={handleRemove}
-                                className="cursor-pointer rounded px-2 py-1 text-[11.5px] font-semibold text-muted-foreground transition-colors hover:text-foreground"
-                            >
-                                Remover
-                            </button>
-                        </>
-                    )}
-                </div>
-            </div>
-
-            <input
-                ref={inputRef}
-                type="file"
-                accept="image/jpeg,image/png"
-                className="hidden"
-                onChange={(e) => { const f = e.target.files?.[0]; if (f) handleFile(f) }}
-            />
-        </div>
+      <div className="flex h-full w-full items-center justify-center">
+        <Loader2 className="size-5 animate-spin text-white" />
+      </div>
     )
+  if (displayUrl)
+    return (
+      <img
+        src={displayUrl}
+        alt="Avatar"
+        className="h-full w-full object-cover"
+      />
+    )
+  return (
+    <div className="flex h-full w-full items-center justify-center">
+      <span className="font-title text-[20px] font-bold text-white">
+        {initials || '+'}
+      </span>
+    </div>
+  )
+}
+
+function fetchAvatarBlob(url: string): Promise<Blob> {
+  return api
+    .get(`/attachments/${url}`, { responseType: 'blob' })
+    .then((r) => r.data as Blob)
+}
+
+interface PatientAvatarUploadProps {
+  onFileSelect: (f: File | null) => void
+  defaultValue?: string | null
+  initials?: string
+}
+
+export function PatientAvatarUpload({
+  onFileSelect,
+  defaultValue,
+  initials,
+}: PatientAvatarUploadProps) {
+  const inputRef = useRef<HTMLInputElement>(null)
+  const { previewUrl, onFileSelected, clear, loadFromUrl, isLoading } =
+    useImagePreview({ fetchBlob: fetchAvatarBlob })
+  const [directUrl, setDirectUrl] = useState<string | null>(null)
+
+  useEffect(() => {
+    if (!defaultValue) {
+      setDirectUrl(null)
+      clear()
+      return
+    }
+    if (
+      defaultValue.startsWith('http://') ||
+      defaultValue.startsWith('https://')
+    ) {
+      setDirectUrl(defaultValue)
+      clear()
+      return
+    }
+    setDirectUrl(null)
+    if (!defaultValue.startsWith('data:') && !UUID_RE.test(defaultValue)) {
+      clear()
+      return
+    }
+    // eslint-disable-next-line
+    void loadFromUrl(defaultValue)
+  }, [defaultValue, clear, loadFromUrl])
+
+  const displayUrl = previewUrl ?? directUrl
+
+  function handleFile(file: File) {
+    onFileSelected(file)
+    onFileSelect(file)
+  }
+
+  function handleRemove() {
+    clear()
+    onFileSelect(null)
+    if (inputRef.current) inputRef.current.value = ''
+  }
+
+  return (
+    <div className="rp-avatar-wrap">
+      <div
+        className="rp-avatar-circle group"
+        style={{
+          background: displayUrl
+            ? undefined
+            : 'linear-gradient(135deg, #4e8ed3, #1858b0)',
+        }}
+        onClick={() => !isLoading && inputRef.current?.click()}
+      >
+        <AvatarContent
+          isLoading={isLoading}
+          displayUrl={displayUrl}
+          initials={initials}
+        />
+        <div
+          className="rp-avatar-overlay group-hover:opacity-100"
+          style={{ background: 'rgba(15,52,100,0.55)' }}
+        >
+          <Camera className="size-[18px] text-white" />
+        </div>
+      </div>
+
+      <div className="rp-avatar-info">
+        <span className="rp-avatar-label">Foto do paciente</span>
+        <span className="rp-avatar-desc">JPG ou PNG · até 2 MB · opcional</span>
+        <div className="mt-0.5 flex items-center gap-2">
+          <button
+            type="button"
+            onClick={() => inputRef.current?.click()}
+            className="rp-avatar-btn-upload"
+          >
+            Enviar foto
+          </button>
+          {displayUrl && (
+            <>
+              <span className="text-border">·</span>
+              <button
+                type="button"
+                onClick={handleRemove}
+                className="rp-avatar-btn-remove"
+              >
+                Remover
+              </button>
+            </>
+          )}
+        </div>
+      </div>
+
+      <input
+        ref={inputRef}
+        type="file"
+        accept="image/jpeg,image/png"
+        className="hidden"
+        onChange={(e) => {
+          const f = e.target.files?.[0]
+          if (f) handleFile(f)
+        }}
+      />
+    </div>
+  )
 }

@@ -1,7 +1,7 @@
-import { api } from "@/lib/axios"
+import { api } from '@/lib/axios'
 
-import type { Expertise, PatientRole } from "@/types/expertise"
-import type { Gender } from "@/types/enum-gender"
+import type { Expertise, PatientRole } from '@/types/expertise'
+import type { Gender } from '@/types/enum-gender'
 
 export interface Patient {
   id: string
@@ -25,6 +25,8 @@ export interface GetPatientsByNameResponse {
 export async function getPatientsByName(
   name: string,
 ): Promise<GetPatientsByNameResponse> {
-  const response = await api.get<GetPatientsByNameResponse>(`/patients/${name}`)
+  const response = await api.get<GetPatientsByNameResponse>(
+    `/patients/name/${name}`,
+  )
   return response.data
 }

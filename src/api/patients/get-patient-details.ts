@@ -1,4 +1,4 @@
-import { api } from "@/lib/axios"
+import { api } from '@/lib/axios'
 
 export interface SessionItem {
   id: string
@@ -32,10 +32,16 @@ export interface GetPatientDetailsResponse {
   }
 }
 
-export async function getPatientDetails(patientId: string, pageIndex: number): Promise<GetPatientDetailsResponse> {
-  const response = await api.get<GetPatientDetailsResponse>(`/patients/${patientId}/details`, {
-    params: { pageIndex },
-  })
+export async function getPatientDetails(
+  patientId: string,
+  pageIndex: number,
+): Promise<GetPatientDetailsResponse> {
+  const response = await api.get<GetPatientDetailsResponse>(
+    `/patients/${patientId}/details`,
+    {
+      params: { pageIndex },
+    },
+  )
 
   return {
     ...response.data,

@@ -1,0 +1,28 @@
+@reference "../../../../../../global.css";
+
+@layer components {
+
+  .rp-delete-btn {
+    @apply cursor-pointer h-8 w-8 rounded-full text-muted-foreground
+           hover:text-destructive hover:bg-destructive/10 transition-all duration-200;
+  }
+
+  .rp-delete-dialog {
+    @apply max-w-[400px] rounded-2xl bg-card border-border text-foreground;
+  }
+
+  .rp-delete-dialog__icon {
+    @apply flex h-10 w-10 items-center justify-center rounded-full bg-destructive/10;
+  }
+
+  .rp-delete-dialog__footer { @apply mt-4 gap-2 sm:gap-0; }
+
+  .rp-delete-dialog__cancel {
+    @apply cursor-pointer rounded-xl border-none bg-muted/50 hover:bg-muted
+           text-muted-foreground transition-colors;
+  }
+
+  .rp-delete-dialog__confirm {
+    @apply bg-red-500 text-white hover:bg-red-600 rounded-xl font-bold transition-all cursor-pointer;
+  }
+}

@@ -1,1 +1,1 @@
-export { UploadModal } from "./upload-modal/index"
+export { UploadModal } from './upload-modal/index'

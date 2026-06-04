@@ -1,26 +1,26 @@
-import type React from "react"
-import { memo, useState, useCallback } from "react"
-import { useForm } from "react-hook-form"
-import { toast } from "sonner"
-import { zodResolver } from "@hookform/resolvers/zod"
-import { Link, useSearchParams, useNavigate } from "react-router-dom"
-import { useMutation } from "@tanstack/react-query"
-import { Eye, EyeOff, Loader2, Mail, Lock } from "lucide-react"
-import { motion, useReducedMotion, type Variants } from "framer-motion"
+import type React from 'react'
+import { memo, useState, useCallback } from 'react'
+import { useForm } from 'react-hook-form'
+import { toast } from 'sonner'
+import { zodResolver } from '@hookform/resolvers/zod'
+import { Link, useSearchParams, useNavigate } from 'react-router-dom'
+import { useMutation } from '@tanstack/react-query'
+import { Eye, EyeOff, Loader2, Mail, Lock } from 'lucide-react'
+import { motion, useReducedMotion, type Variants } from 'framer-motion'
 
-import { cn } from "@/lib/utils"
-import { Button } from "@/components/ui/button"
-import { Input } from "@/components/ui/input"
-import { Label } from "@/components/ui/label"
+import { cn } from '@/lib/utils'
+import { Button } from '@/components/ui/button'
+import { Input } from '@/components/ui/input'
+import { Label } from '@/components/ui/label'
 
-import z from "zod"
-import { signIn } from "@/api/auth/sign-in"
-import { Sanitize } from "@/utils/Sanitizer"
-import { GoogleAuthButton } from "./google-auth-button"
+import z from 'zod'
+import { signIn } from '@/api/auth/sign-in'
+import { Sanitize } from '@/utils/Sanitizer'
+import { GoogleAuthButton } from './google-auth-button'
 
 const signInSchema = z.object({
-  email: z.email({ message: "E-mail inválido" }),
-  password: z.string().min(1, { message: "A senha é obrigatória" }),
+  email: z.email({ message: 'E-mail inválido' }),
+  password: z.string().min(1, { message: 'A senha é obrigatória' }),
 })
 
 type SignInSchema = z.infer<typeof signInSchema>
@@ -31,13 +31,17 @@ const containerVariants: Variants = {
 }
 const itemVariants: Variants = {
   hidden: { opacity: 0, y: 8 },
-  visible: { opacity: 1, y: 0, transition: { duration: 0.22, ease: "easeOut" } },
+  visible: {
+    opacity: 1,
+    y: 0,
+    transition: { duration: 0.22, ease: 'easeOut' },
+  },
 }
 
 export const SignInForm = memo(function SignInForm({
   className,
   ...props
-}: React.ComponentProps<"form">) {
+}: React.ComponentProps<'form'>) {
   const [searchParams] = useSearchParams()
   const navigate = useNavigate()
   const [showPassword, setShowPassword] = useState(false)
@@ -50,15 +54,13 @@ export const SignInForm = memo(function SignInForm({
   } = useForm<SignInSchema>({
     resolver: zodResolver(signInSchema),
     defaultValues: {
-      email: searchParams.get("email") ?? "",
-      password: "",
+      email: searchParams.get('email') ?? '',
+      password: '',
     },
   })
 
-  const {
-    mutateAsync: authenticate
-  } = useMutation({
-    mutationFn: signIn
+  const { mutateAsync: authenticate } = useMutation({
+    mutationFn: signIn,
   })
 
   const handleSignIn = useCallback(
@@ -67,15 +69,17 @@ export const SignInForm = memo(function SignInForm({
         const response = await authenticate(data)
         const user = response.user
 
-        localStorage.setItem("isAuthenticated", "true")
-        localStorage.setItem("user", JSON.stringify(user))
+        localStorage.setItem('isAuthenticated', 'true')
+        localStorage.setItem('user', JSON.stringify(user))
 
-        const role = user.role
+        const userType = user.type
 
-        toast.success("Login realizado com sucesso!", { duration: 2000 })
+        toast.success('Login realizado com sucesso!', { duration: 2000 })
 
         setTimeout(() => {
-          navigate(role === "SUPER_ADMIN" ? "/admin-dashboard" : "/dashboard", { replace: true })
+          navigate(userType === 'ADMIN' ? '/admin-dashboard' : '/dashboard', {
+            replace: true,
+          })
         }, 100)
       } catch (error) {
         const errorMessage = Sanitize.responseError(error)
@@ -85,17 +89,21 @@ export const SignInForm = memo(function SignInForm({
     [authenticate, navigate],
   )
 
-  const togglePasswordVisibility = useCallback(() => setShowPassword((p) => !p), [])
+  const togglePasswordVisibility = useCallback(
+    () => setShowPassword((p) => !p),
+    [],
+  )
 
   const animItem = prefersReduced ? {} : { variants: itemVariants }
 
   return (
     <motion.form
       onSubmit={handleSubmit(handleSignIn)}
-      className={cn("flex flex-col gap-4", className)}
+      className={cn('flex flex-col gap-4', className)}
       variants={prefersReduced ? undefined : containerVariants}
-      initial={prefersReduced ? undefined : "hidden"}
-      animate={prefersReduced ? undefined : "visible"}
+      initial={prefersReduced ? undefined : 'hidden'}
+      animate={prefersReduced ? undefined : 'visible'}
+      // eslint-disable-next-line
       {...(props as any)}
     >
       {/* Google */}
@@ -117,14 +125,21 @@ export const SignInForm = memo(function SignInForm({
       <motion.div {...animItem} className="space-y-2">
         <Label htmlFor="email">E-mail profissional</Label>
         <div className="relative">
-          <Mail className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground pointer-events-none" size={16} aria-hidden="true" />
+          <Mail
+            className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground pointer-events-none"
+            size={16}
+            aria-hidden="true"
+          />
           <Input
             id="email"
             type="email"
             placeholder="exemplo@mindflush.com"
             autoComplete="email"
-            className={cn("pl-9 h-11", errors.email && "border-red-500 focus-visible:ring-red-500/20")}
-            {...register("email")}
+            className={cn(
+              'pl-9 h-11',
+              errors.email && 'border-red-500 focus-visible:ring-red-500/20',
+            )}
+            {...register('email')}
           />
         </div>
         {errors.email && (
@@ -144,20 +159,27 @@ export const SignInForm = memo(function SignInForm({
           </Link>
         </div>
         <div className="relative">
-          <Lock className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground pointer-events-none" size={16} aria-hidden="true" />
+          <Lock
+            className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground pointer-events-none"
+            size={16}
+            aria-hidden="true"
+          />
           <Input
             id="password"
-            type={showPassword ? "text" : "password"}
+            type={showPassword ? 'text' : 'password'}
             placeholder="••••••••"
             autoComplete="current-password"
-            className={cn("pl-9 pr-10 h-11", errors.password && "border-red-500 focus-visible:ring-red-500/20")}
-            {...register("password")}
+            className={cn(
+              'pl-9 pr-10 h-11',
+              errors.password && 'border-red-500 focus-visible:ring-red-500/20',
+            )}
+            {...register('password')}
           />
           <button
             type="button"
             onClick={togglePasswordVisibility}
             className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground transition-colors"
-            aria-label={showPassword ? "Ocultar senha" : "Mostrar senha"}
+            aria-label={showPassword ? 'Ocultar senha' : 'Mostrar senha'}
           >
             {showPassword ? <EyeOff size={16} /> : <Eye size={16} />}
           </button>
@@ -180,7 +202,7 @@ export const SignInForm = memo(function SignInForm({
               Entrando...
             </span>
           ) : (
-            "Entrar"
+            'Entrar'
           )}
         </Button>
       </motion.div>
@@ -188,7 +210,7 @@ export const SignInForm = memo(function SignInForm({
       {/* Sign-up link */}
       <motion.div {...animItem}>
         <p className="text-center text-sm text-muted-foreground">
-          Não tem uma conta?{" "}
+          Não tem uma conta?{' '}
           <Link
             to="/sign-up"
             className="font-semibold text-blue-600 hover:text-blue-700 underline-offset-4 hover:underline transition-colors"

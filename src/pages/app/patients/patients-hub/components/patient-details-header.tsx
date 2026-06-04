@@ -12,12 +12,14 @@ import {
 } from '@/components/ui/tooltip'
 import { UserAvatar } from '@/components/user-avatar'
 import { cn } from '@/lib/utils'
+import type { PatientStatus } from '@/types/patient'
 
 interface PatientDetailsHeaderProps {
   patient: {
     id: string
     firstName: string
     lastName: string
+    status: PatientStatus
     isActive: boolean
     profileImageUrl: string | null
   }

@@ -1,70 +1,70 @@
-"use client"
+'use client'
 
-import { CalendarIcon } from "lucide-react"
-import { format } from "date-fns"
-import { ptBR } from "date-fns/locale"
-import { type DateRange } from "react-day-picker"
+import { CalendarIcon } from 'lucide-react'
+import { format } from 'date-fns'
+import { ptBR } from 'date-fns/locale'
+import { type DateRange } from 'react-day-picker'
 
-import { cn } from "@/lib/utils"
-import { Button } from "@/components/ui/button"
-import { Calendar } from "@/components/ui/calendar"
+import { cn } from '@/lib/utils'
+import { Button } from '@/components/ui/button'
+import { Calendar } from '@/components/ui/calendar'
 import {
-    Popover,
-    PopoverContent,
-    PopoverTrigger,
-} from "@/components/ui/popover"
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from '@/components/ui/popover'
 
 interface DatePickerWithRangeProps {
-    className?: string
-    date: DateRange | undefined
-    onDateChange: (date: DateRange | undefined) => void
+  className?: string
+  date: DateRange | undefined
+  onDateChange: (date: DateRange | undefined) => void
 }
 
 export function DatePickerWithRange({
-    className,
-    date,
-    onDateChange,
+  className,
+  date,
+  onDateChange,
 }: DatePickerWithRangeProps) {
-    return (
-        <div className="grid gap-2">
-            <Popover>
-                <PopoverTrigger asChild>
-                    <Button
-                        id="date"
-                        variant={"outline"}
-                        className={cn(
-                            "cursor-pointer h-9 w-full lg:w-[260px] bg-background border border-muted-foreground/20 hover:border-primary/30 transition-all shadow-sm px-3 justify-start text-left font-normal",
-                            !date && "text-muted-foreground",
-                            className,
-                        )}
-                    >
-                        <CalendarIcon className="mr-2 h-4 w-4" />
-                        {date?.from ? (
-                            date.to ? (
-                                <>
-                                    {format(date.from, "dd/MM/yyyy", { locale: ptBR })} -{" "}
-                                    {format(date.to, "dd/MM/yyyy", { locale: ptBR })}
-                                </>
-                            ) : (
-                                format(date.from, "dd/MM/yyyy", { locale: ptBR })
-                            )
-                        ) : (
-                            <span>Selecione um período</span>
-                        )}
-                    </Button>
-                </PopoverTrigger>
-                <PopoverContent className="w-auto p-0" align="start">
-                    <Calendar
-                        initialFocus
-                        mode="range"
-                        defaultMonth={date?.from}
-                        selected={date}
-                        onSelect={onDateChange}
-                        numberOfMonths={2}
-                        locale={ptBR}
-                    />
-                </PopoverContent>
-            </Popover>
-        </div>
-    )
+  return (
+    <div className="grid gap-2">
+      <Popover>
+        <PopoverTrigger asChild>
+          <Button
+            id="date"
+            variant={'outline'}
+            className={cn(
+              'cursor-pointer h-9 w-full lg:w-[260px] bg-background border border-muted-foreground/20 hover:border-primary/30 transition-all shadow-sm px-3 justify-start text-left font-normal',
+              !date && 'text-muted-foreground',
+              className,
+            )}
+          >
+            <CalendarIcon className="mr-2 h-4 w-4" />
+            {date?.from ? (
+              date.to ? (
+                <>
+                  {format(date.from, 'dd/MM/yyyy', { locale: ptBR })} -{' '}
+                  {format(date.to, 'dd/MM/yyyy', { locale: ptBR })}
+                </>
+              ) : (
+                format(date.from, 'dd/MM/yyyy', { locale: ptBR })
+              )
+            ) : (
+              <span>Selecione um período</span>
+            )}
+          </Button>
+        </PopoverTrigger>
+        <PopoverContent className="w-auto p-0" align="start">
+          <Calendar
+            initialFocus
+            mode="range"
+            defaultMonth={date?.from}
+            selected={date}
+            onSelect={onDateChange}
+            numberOfMonths={2}
+            locale={ptBR}
+          />
+        </PopoverContent>
+      </Popover>
+    </div>
+  )
 }

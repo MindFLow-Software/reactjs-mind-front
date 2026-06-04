@@ -1,6 +1,6 @@
-import { useEffect, useState } from "react"
-import { useNavigate } from "react-router-dom"
-import { api } from "@/lib/axios"
+import { useEffect, useState } from 'react'
+import { useNavigate } from 'react-router-dom'
+import { api } from '@/lib/axios'
 
 export function useAuthRedirect(): { isChecking: boolean } {
   const navigate = useNavigate()
@@ -21,12 +21,17 @@ export function useAuthRedirect(): { isChecking: boolean } {
           localStorage.setItem('user', JSON.stringify(user))
         }
 
-        const roleValue = typeof user?.role === 'object' && user?.role !== null
-          ? user.role.name
-          : user?.role
-        const role = String(roleValue ?? '').trim().toUpperCase()
+        const roleValue =
+          typeof user?.role === 'object' && user?.role !== null
+            ? user.role.name
+            : user?.role
+        const role = String(roleValue ?? '')
+          .trim()
+          .toUpperCase()
 
-        navigate(role === 'SUPER_ADMIN' ? '/admin-dashboard' : '/dashboard', { replace: true })
+        navigate(role === 'SUPER_ADMIN' ? '/admin-dashboard' : '/dashboard', {
+          replace: true,
+        })
       } catch {
         if (isMounted) {
           localStorage.removeItem('isAuthenticated')
@@ -37,7 +42,9 @@ export function useAuthRedirect(): { isChecking: boolean } {
     }
 
     checkAuthentication()
-    return () => { isMounted = false }
+    return () => {
+      isMounted = false
+    }
   }, [navigate])
 
   return { isChecking }

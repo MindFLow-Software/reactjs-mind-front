@@ -1,4 +1,4 @@
-import { api } from "@/lib/axios"
+import { api } from '@/lib/axios'
 
 export interface GetMonthlySessionsCountRequest {
   startDate?: string
@@ -9,15 +9,18 @@ export interface GetMonthlySessionsCountResponse {
   count: number
 }
 
-export async function getMonthlySessionsCount({ startDate, endDate }: GetMonthlySessionsCountRequest) {
+export async function getMonthlySessionsCount({
+  startDate,
+  endDate,
+}: GetMonthlySessionsCountRequest) {
   const response = await api.get<GetMonthlySessionsCountResponse>(
     '/appointments/metrics/month-count',
     {
-      params: { 
-        startDate, 
-        endDate 
-      }
-    }
+      params: {
+        startDate,
+        endDate,
+      },
+    },
   )
 
   return response.data

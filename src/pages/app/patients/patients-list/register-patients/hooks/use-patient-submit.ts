@@ -1,0 +1,117 @@
+import { useState } from 'react'
+import { useMutation, useQueryClient } from '@tanstack/react-query'
+
+import { toast } from 'sonner'
+import { AxiosError } from 'axios'
+
+import { createPatients } from '@/api/patients/create-patient'
+import { updatePatients } from '@/api/patients/update-patient'
+import type { PatientFormData } from '@/validators/patients'
+import { uploadAttachment, uploadAvatar } from '@/api/attachments/attachments'
+
+interface UsePatientSubmitOptions {
+  files: File[]
+  patientId?: string
+  avatarFile: File | null
+  onSuccess?: () => void
+}
+
+export function usePatientSubmit({
+  files,
+  onSuccess,
+  patientId,
+  avatarFile,
+}: UsePatientSubmitOptions) {
+  const queryClient = useQueryClient()
+  const isEditMode = Boolean(patientId)
+  const [isUploading, setIsUploading] = useState(false)
+
+  const { mutateAsync: createFn, isPending: isCreating } = useMutation({
+    mutationFn: createPatients,
+    onSuccess: async (response) => {
+      const targetId = isEditMode ? patientId! : response.id
+
+      await Promise.all([
+        queryClient.invalidateQueries({ queryKey: ['patients'] }),
+        queryClient.invalidateQueries({ queryKey: ['patient', targetId] }),
+        queryClient.invalidateQueries({ queryKey: ['attachments', targetId] }),
+        queryClient.invalidateQueries({ queryKey: ['patients-metrics'] }),
+      ])
+
+      onSuccess?.()
+      toast.success('Paciente cadastrado!')
+    },
+    onError: (error) => {
+      const errorMessage =
+        error instanceof AxiosError
+          ? error.message
+          : 'Erro ao criar. Verifique os dados.'
+
+      toast.error(errorMessage)
+    },
+  })
+
+  const { mutateAsync: updateFn, isPending: isUpdating } = useMutation({
+    mutationFn: updatePatients,
+    onSuccess: async (response) => {
+      const targetId = isEditMode ? patientId! : response.id
+
+      await Promise.all([
+        queryClient.invalidateQueries({ queryKey: ['patients'] }),
+        queryClient.invalidateQueries({ queryKey: ['patient', targetId] }),
+        queryClient.invalidateQueries({ queryKey: ['attachments', targetId] }),
+        queryClient.invalidateQueries({ queryKey: ['patients-metrics'] }),
+      ])
+
+      onSuccess?.()
+      toast.success('Paciente atualizado!')
+    },
+    onError: (error) => {
+      const errorMessage =
+        error instanceof AxiosError
+          ? error.message
+          : 'Erro ao salvar. Verifique os dados.'
+
+      toast.error(errorMessage)
+    },
+  })
+
+  const isSubmitting = isCreating || isUpdating || isUploading
+
+  async function submit(data: PatientFormData) {
+    const shared = {
+      ...data,
+      dateOfBirth: data?.dateOfBirth ?? undefined,
+    }
+
+    try {
+      setIsUploading(true)
+
+      const response = isEditMode
+        ? await updateFn({ ...shared, id: patientId! })
+        : await createFn(shared)
+
+      const targetId = isEditMode ? patientId! : response.id
+
+      // The correct would be the uploads BEFORE the patient create/update
+      // and if some of them throws error, stops the flow
+      if (avatarFile) {
+        try {
+          await uploadAvatar(avatarFile, targetId)
+        } catch {
+          console.warn('Avatar upload failed — patient saved without avatar')
+        }
+      }
+
+      // The correct would be the uploads BEFORE the patient create/update
+      // and if some of them throws error, stops the flow
+      for (const file of files) await uploadAttachment(file, targetId)
+
+      return response
+    } finally {
+      setIsUploading(false)
+    }
+  }
+
+  return { submit, isSubmitting }
+}

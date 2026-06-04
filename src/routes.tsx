@@ -1,4 +1,10 @@
-import { createBrowserRouter, Outlet, redirect, Navigate, useLocation } from 'react-router-dom'
+import {
+  createBrowserRouter,
+  Outlet,
+  redirect,
+  Navigate,
+  useLocation,
+} from 'react-router-dom'
 import { api } from './lib/axios'
 import { AppLayout } from './pages/_layouts/app'
 import { AuthLayout } from './pages/_layouts/auth'
@@ -31,13 +37,14 @@ const getUser = () => {
 
   try {
     const user = JSON.parse(userData)
-    const roleValue = typeof user.role === 'object' && user.role !== null
-      ? user.role.name
-      : user.role
+    const roleValue =
+      typeof user.role === 'object' && user.role !== null
+        ? user.role.name
+        : user.role
 
     return {
       ...user,
-      role: roleValue ? String(roleValue).trim().toUpperCase() : undefined
+      role: roleValue ? String(roleValue).trim().toUpperCase() : undefined,
     }
   } catch {
     return null
@@ -50,6 +57,7 @@ const authLoader = async () => {
 
   // Sem flag local — pode ser login via Google OAuth (cookie já setado pelo backend)
   try {
+    // eslint-disable-next-line
     const response = await api.get<{ psychologist: any }>('/psychologist/me')
     const psychologist = response.data.psychologist
     localStorage.setItem('isAuthenticated', 'true')
@@ -104,9 +112,7 @@ export const router = createBrowserRouter([
     path: '/',
     element: <LandingLayout />,
     errorElement: <NotFound />,
-    children: [
-      { path: '/', element: <LandingPage /> },
-    ],
+    children: [{ path: '/', element: <LandingPage /> }],
   },
   {
     element: <AuthLayout />,

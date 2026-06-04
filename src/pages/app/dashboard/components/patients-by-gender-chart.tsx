@@ -1,17 +1,17 @@
-"use client"
+'use client'
 
-import * as React from "react"
-import { Cell, Label, Pie, PieChart } from "recharts"
-import { useQuery } from "@tanstack/react-query"
-import { Loader2, Users, AlertCircle, RefreshCcw } from "lucide-react"
+import * as React from 'react'
+import { Cell, Label, Pie, PieChart } from 'recharts'
+import { useQuery } from '@tanstack/react-query'
+import { Loader2, Users, AlertCircle, RefreshCcw } from 'lucide-react'
 
 import {
-    Card,
-    CardContent,
-    CardDescription,
-    CardHeader,
-    CardTitle,
-} from "@/components/ui/card"
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from '@/components/ui/card'
 import {
     ChartContainer,
     ChartTooltip,
@@ -22,25 +22,25 @@ import { fetchDashboardData } from "@/api/metrics/fetch-dashboard-data"
 import type { DashboardPeriod } from "./dashboard-header"
 
 const GENDER_TRANSLATIONS: Record<string, string> = {
-    FEMININE: "Feminino",
-    MASCULINE: "Masculino",
-    OTHER: "Outros",
+  FEMININE: 'Feminino',
+  MASCULINE: 'Masculino',
+  OTHER: 'Outros',
 }
 
 // Feminino → rosa, Masculino → azul, Outros → roxo
 const GENDER_COLORS: Record<string, string> = {
-    Feminino: "#ec4899",
-    Masculino: "#3b82f6",
-    Outros: "#a855f7",
+  Feminino: '#ec4899',
+  Masculino: '#3b82f6',
+  Outros: '#a855f7',
 }
-const CHART_COLORS = ["#ec4899", "#3b82f6", "#a855f7"]
+const CHART_COLORS = ['#ec4899', '#3b82f6', '#a855f7']
 
 const chartConfig = {
-    patients: { label: "Pacientes" },
+  patients: { label: 'Pacientes' },
 } satisfies ChartConfig
 
 interface PatientsByGenderChartProps {
-    period: DashboardPeriod
+  period: DashboardPeriod
 }
 
 export const PatientsByGenderChart = React.memo(function PatientsByGenderChart({ period: _period }: PatientsByGenderChartProps) {
@@ -66,12 +66,16 @@ export const PatientsByGenderChart = React.memo(function PatientsByGenderChart({
         }
     }, [dashboard])
 
-    return (
-        <Card className="border-border bg-card shadow-sm rounded-2xl flex flex-col">
-            <CardHeader className="px-6 pt-5 pb-4">
-                <CardTitle className="text-base font-semibold text-foreground">Perfil dos pacientes</CardTitle>
-                <CardDescription className="text-xs text-muted-foreground">Por gênero</CardDescription>
-            </CardHeader>
+  return (
+    <Card className="border-border bg-card shadow-sm rounded-2xl flex flex-col">
+      <CardHeader className="px-6 pt-5 pb-4">
+        <CardTitle className="text-base font-semibold text-foreground">
+          Perfil dos pacientes
+        </CardTitle>
+        <CardDescription className="text-xs text-muted-foreground">
+          Por gênero
+        </CardDescription>
+      </CardHeader>
 
             <CardContent className="flex-1 px-6 pb-6">
                 {isLoading ? (

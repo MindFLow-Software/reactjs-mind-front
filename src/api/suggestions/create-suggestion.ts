@@ -1,4 +1,4 @@
-import { api } from "@/lib/axios"
+import { api } from '@/lib/axios'
 
 interface CreateSuggestionRequest {
   title: string
@@ -15,19 +15,19 @@ export async function createSuggestion({
 }: CreateSuggestionRequest) {
   const formData = new FormData()
 
-  formData.append("title", title)
-  formData.append("description", description)
-  formData.append("category", category)
+  formData.append('title', title)
+  formData.append('description', description)
+  formData.append('category', category)
 
   if (files) {
     files.forEach((file) => {
-      formData.append("files", file)
+      formData.append('files', file)
     })
   }
 
-  await api.post("/suggestions", formData, {
+  await api.post('/suggestions', formData, {
     headers: {
-      "Content-Type": "multipart/form-data",
+      'Content-Type': 'multipart/form-data',
     },
   })
 }

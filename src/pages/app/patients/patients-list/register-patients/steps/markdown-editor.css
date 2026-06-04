@@ -1,0 +1,55 @@
+@reference "../../../../../../global.css";
+
+@layer components {
+
+  .rp-md-editor {
+    @apply overflow-hidden rounded-[8px] border border-border bg-card
+           transition-[border-color,box-shadow]
+           focus-within:border-blue-600 focus-within:ring-[3px] focus-within:ring-blue-600/[.18];
+  }
+
+  .rp-md-editor__toolbar { @apply flex items-center border-b border-border bg-muted/50; }
+
+  .rp-md-editor__tab {
+    @apply flex items-center gap-[6px] border-b-2 px-3 py-2 text-[12px] font-semibold transition-all;
+  }
+
+  .rp-md-editor__tab--active   { @apply border-blue-600 bg-card text-blue-600; }
+  .rp-md-editor__tab--inactive { @apply border-transparent text-muted-foreground; }
+
+  .rp-md-editor__actions { @apply ml-auto flex items-center pr-1.5; }
+
+  .rp-md-editor__divider { @apply mx-1 h-4 w-px bg-border; }
+
+  .rp-md-editor__fmt-btn {
+    @apply flex h-[26px] w-[26px] items-center justify-center rounded
+           text-muted-foreground transition-all hover:bg-card hover:text-blue-600;
+  }
+
+  .rp-md-editor__textarea {
+    @apply w-full resize-none overflow-hidden bg-card p-3 font-mono
+           text-[13px] leading-relaxed text-foreground outline-none
+           placeholder:font-sans placeholder:text-muted-foreground min-h-[160px];
+  }
+
+  .rp-md-editor__preview {
+    @apply overflow-y-auto px-4 py-3.5 text-[13.5px] leading-[1.65] text-foreground
+           min-h-[160px] max-h-[340px];
+  }
+
+  .rp-md-editor__footer {
+    @apply flex items-center justify-between border-t border-border bg-muted/50 px-3 py-[6px];
+  }
+
+  .rp-md-editor__help {
+    @apply flex flex-wrap items-center gap-1 text-[11px] text-muted-foreground;
+  }
+
+  .rp-md-editor__help-code {
+    @apply rounded border border-border bg-card px-1 text-[10px];
+  }
+
+  .rp-md-editor__char-count {
+    @apply shrink-0 tabular-nums text-[11px] text-muted-foreground;
+  }
+}

@@ -25,6 +25,7 @@ _(nenhum)_
 - [ ] Multi-série no SessionsBarChart requer backend retornar count por status — implementado com serie única + legenda visual por ora
 - [ ] F10 Auth Redesign: implementar T1–T8 (spec em .specs/features/auth-redesign/)
 - [ ] F13 Patients List Redesign: implementar T1–T10 (spec em .specs/features/patients-list-redesign/)
+- [ ] Patients List Refactor (PLR-01–PLR-09): fix backend contract + clean orchestrator (spec em .specs/features/patients-list-refactor/)
 
 ## Deferred Ideas
 

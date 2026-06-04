@@ -1,6 +1,6 @@
-import { api } from "@/lib/axios"
-import type { Expertise, PsychologistRole } from "@/types/expertise"
-import type { Gender } from "@/types/enum-gender"
+import { api } from '@/lib/axios'
+import type { Expertise, PsychologistRole } from '@/types/expertise'
+import type { Gender } from '@/types/enum-gender'
 
 export interface RegisterPsychologistBody {
   firstName: string
@@ -27,7 +27,7 @@ export async function registerPsychologist(data: RegisterPsychologistBody) {
         : data.dateOfBirth,
   }
 
-  const response = await api.post("/psychologist", formattedData)
-  
+  const response = await api.post('/psychologist', formattedData)
+
   return response.data
 }

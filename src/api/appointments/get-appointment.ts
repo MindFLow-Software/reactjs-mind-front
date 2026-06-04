@@ -10,7 +10,7 @@ export const AppointmentStatus = {
 } as const
 
 export type AppointmentStatus =
-  typeof AppointmentStatus[keyof typeof AppointmentStatus]
+  (typeof AppointmentStatus)[keyof typeof AppointmentStatus]
 
 export interface Appointment {
   id: string
@@ -25,13 +25,14 @@ export interface Appointment {
     firstName: string
     lastName: string
   } | null
-  
+
   // 🟢 Campos adicionados para compatibilidade com o Calendário (Frontend)
   start?: Date
   end?: Date
   title?: string
-  
+
   // 🟢 Assinatura de índice para permitir propriedades dinâmicas exigidas pelo Big Calendar
+  // eslint-disable-next-line
   [key: string]: any
 }
 
@@ -63,7 +64,8 @@ export async function getAppointments(
       perPage: params.perPage ?? 10,
       orderBy: finalOrderBy,
       ...(params.status && { status: params.status }),
-      ...(params.name && params.name.trim() !== '' && { patientName: params.name.trim() }),
+      ...(params.name &&
+        params.name.trim() !== '' && { patientName: params.name.trim() }),
     },
   })
 

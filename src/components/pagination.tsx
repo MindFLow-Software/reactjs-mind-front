@@ -20,7 +20,6 @@ export function Pagination({
   totalCount,
   onPageChange,
 }: PaginationProps) {
-
   const pages = Math.ceil(totalCount / perPage) || 1
   const isFirstPage = pageIndex === 0
   const isLastPage = pageIndex === pages - 1
@@ -36,7 +35,6 @@ export function Pagination({
           Página {pageIndex + 1} de {pages}
         </div>
         <div className="flex items-center gap-2">
-
           <Button
             onClick={() => onPageChange(0)}
             variant="outline"
@@ -51,7 +49,6 @@ export function Pagination({
             onClick={() => onPageChange(pageIndex - 1)}
             variant="outline"
             className="h-8 w-8 p-0 cursor-pointer"
-
             disabled={isFirstPage}
           >
             <ChevronLeft className="h-4 w-4" />
@@ -62,7 +59,6 @@ export function Pagination({
             onClick={() => onPageChange(pageIndex + 1)}
             variant="outline"
             className="h-8 w-8 p-0 cursor-pointer"
-
             disabled={isLastPage}
           >
             <ChevronRight className="h-4 w-4" />
@@ -73,7 +69,6 @@ export function Pagination({
             onClick={() => onPageChange(pages - 1)}
             variant="outline"
             className="h-8 w-8 p-0 cursor-pointer"
-
             disabled={isLastPage}
           >
             <ChevronsRight className="h-4 w-4" />

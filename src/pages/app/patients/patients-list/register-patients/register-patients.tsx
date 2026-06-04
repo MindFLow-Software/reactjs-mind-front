@@ -1,315 +1,236 @@
-﻿import { useState } from "react"
-import { useForm, type Resolver } from "react-hook-form"
-import { zodResolver } from "@hookform/resolvers/zod"
-import { useMutation, useQueryClient } from "@tanstack/react-query"
-import { format, parse as dateParse, isValid as dateIsValid } from "date-fns"
-import { Loader2, ChevronLeft, ChevronRight, Check } from "lucide-react"
-import { toast } from "sonner"
-import { AxiosError } from "axios"
-import type { ChangeEvent } from "react"
+import './form-components.css'
+import { useEffect, useState } from 'react'
+import { useForm } from 'react-hook-form'
+import { useFileSelection } from '@/hooks/use-file-selection'
+import { useCepLookup } from '@/hooks/use-cep-lookup'
+import { usePatientFormSteps } from './hooks/use-patient-form-steps'
+import { usePatientSubmit } from './hooks/use-patient-submit'
+import { zodResolver } from '@hookform/resolvers/zod'
+import {
+  Loader2,
+  ChevronLeft,
+  ChevronRight,
+  Check,
+  UserPlus,
+} from 'lucide-react'
 
-import { DialogContent, DialogTitle } from "@/components/ui/dialog"
-import { cn } from "@/lib/utils"
+import { DialogContent, DialogTitle } from '@/components/ui/dialog'
+import { Button } from '@/components/ui/button'
+import { Form } from '@/components/ui/form'
+import { cn } from '@/lib/utils'
 
-import { createPatients, type CreatePatientsInput } from "@/api/patients/create-patient"
-import { updatePatients, type UpdatePatientData } from "@/api/patients/update-patient"
-import { uploadAttachment, uploadAvatar } from "@/api/attachments/attachments"
-
-import type { PatientHTTP } from "@/types/patient"
-import { formatCPF } from "@/utils/formatCPF"
-import { formatPhone } from "@/utils/formatPhone"
-import { formatCEP } from "@/utils/formatCEP"
-import { patientSchema, type PatientFormData } from "@/validators/patients"
-import { STEPS, type StepId } from "./constants"
-import { StepBasicData } from "./steps/step-basic-data"
-import { StepContactAddress } from "./steps/step-contact-address"
-import { StepClinical } from "./steps/step-clinical"
-import { AttachmentsList } from "./steps/attachments-list"
-import { UploadZone } from "./steps/upload-zone"
+import { patientSchema, type PatientFormData } from '@/validators/patients'
+import { buildPatientDefaults } from './helpers'
+import { STEPS, MAX_DOC_FILES, MAX_DOC_SIZE } from './constants'
+import { StepBasicData } from './steps/step-basic-data'
+import { StepContactAddress } from './steps/step-contact-address'
+import { StepClinical } from './steps/step-clinical'
+import { AttachmentsList } from './steps/attachments-list'
+import { UploadZone } from './steps/upload-zone'
+import { usePatient } from '@/hooks/use-patient'
 
 interface RegisterPatientsProps {
-    patient?:   PatientHTTP
-    onSuccess?: () => void
+  patientId?: string
+  isEditing?: boolean
+  onSuccess?: () => void
 }
 
-export function RegisterPatients({ patient, onSuccess }: RegisterPatientsProps) {
-    const isEditMode  = !!patient
-    const queryClient = useQueryClient()
+export function RegisterPatients({
+  patientId,
+  isEditing,
+  onSuccess,
+}: RegisterPatientsProps) {
+  const isEditMode = Boolean(isEditing)
+  const { patient } = usePatient(patientId)
 
-    // ── Stepper ───────────────────────────────────────────────────────────────
-    const [step, setStep] = useState<StepId>(1)
+  const methods = useForm<PatientFormData>({
+    resolver: zodResolver(patientSchema),
+    mode: 'onTouched',
+  })
 
-    // ── File state ────────────────────────────────────────────────────────────
-    const [avatarFile,    setAvatarFile]    = useState<File | null>(null)
-    const [selectedFiles, setSelectedFiles] = useState<File[]>([])
-    const [isUploading,   setIsUploading]   = useState(false)
+  const [avatarFile, setAvatarFile] = useState<File | null>(null)
+  const { files, addFiles, removeFile, clearFiles } = useFileSelection({
+    maxFiles: MAX_DOC_FILES,
+    maxSizeBytes: MAX_DOC_SIZE,
+  })
 
-    // ── Birth input (DD/MM/AAAA string kept separate from form Date) ──────────
-    const [birthInput, setBirthInput] = useState(() => {
-        if (!patient?.dateOfBirth) return ""
-        try { return format(new Date(patient.dateOfBirth), "dd/MM/yyyy") } catch { return "" }
-    })
+  const {
+    step: currentStep,
+    handleNext,
+    handleBack,
+    goToStep,
+    isFirstStep,
+    isLastStep,
+  } = usePatientFormSteps({ trigger: methods.trigger })
 
-    // ── Visual-only clinical/address fields (not yet in API) ──────────────────
-    const [modality,  setModality]  = useState("ONLINE")
-    const [frequency, setFrequency] = useState("Semanal")
-    const [price,     setPrice]     = useState("")
-    const [source,    setSource]    = useState("")
-    const [notes,     setNotes]     = useState("")
-    const [cep,       setCep]       = useState("")
-    const [street,    setStreet]    = useState("")
-    const [district,  setDistrict]  = useState("")
-    const [city,      setCity]      = useState("")
-    const [uf,        setUf]        = useState("")
+  const { onCepChange, isCepLoading } = useCepLookup({
+    setValue: methods.setValue,
+  })
 
-    // ── Form ──────────────────────────────────────────────────────────────────
-    const {
-        register, handleSubmit, control, reset, trigger, watch,
-        formState: { errors },
-    } = useForm<PatientFormData>({
-        resolver: zodResolver(patientSchema) as Resolver<PatientFormData>,
-        mode: "onTouched",
-        defaultValues: {
-            firstName:   patient?.firstName                            ?? "",
-            lastName:    patient?.lastName                             ?? "",
-            phoneNumber: patient?.phoneNumber ? formatPhone(patient.phoneNumber) : "",
-            email:       patient?.email                                ?? "",
-            cpf:         patient?.cpf         ? formatCPF(patient.cpf)  : "",
-            gender:      patient?.gender                               ?? "FEMININE",
-            dateOfBirth: patient?.dateOfBirth ? new Date(patient.dateOfBirth) : null,
-        },
-    })
+  const { submit, isSubmitting } = usePatientSubmit({
+    patientId,
+    avatarFile,
+    files,
+    onSuccess: () => {
+      if (!isEditMode) methods.reset()
+      clearFiles()
+      setAvatarFile(null)
+      onSuccess?.()
+    },
+  })
 
-    // ── Mutations ─────────────────────────────────────────────────────────────
-    const { mutateAsync: savePatientFn, isPending } = useMutation({
-        mutationFn: (data: CreatePatientsInput | UpdatePatientData) =>
-            isEditMode
-                ? updatePatients(data as UpdatePatientData)
-                : createPatients(data as CreatePatientsInput),
-    })
+  const isEditLoading = Boolean(patientId) && !patient
 
-    // ── Handlers ──────────────────────────────────────────────────────────────
-    const cpfDigits = (watch("cpf") ?? "").replace(/\D/g, "")
+  useEffect(() => {
+    const patientDefaults = buildPatientDefaults(patient)
+    methods.reset(patientDefaults)
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [patient])
 
-    function handleBirthChange(e: ChangeEvent<HTMLInputElement>, fieldOnChange: (v: Date | null) => void) {
-        let v = e.target.value.replace(/\D/g, "").slice(0, 8)
-        if (v.length > 2) v = v.slice(0, 2) + "/" + v.slice(2)
-        if (v.length > 5) v = v.slice(0, 5) + "/" + v.slice(5)
-        setBirthInput(v)
-        if (v.length === 10) {
-            const d = dateParse(v, "dd/MM/yyyy", new Date())
-            fieldOnChange(dateIsValid(d) ? d : null)
-        } else {
-            fieldOnChange(null)
-        }
+  const findSubimtLabel = (): string => {
+    if (isSubmitting) return 'Salvando…'
+    if (!isLastStep) return 'Continuar'
+
+    return isEditMode ? 'Salvar alterações' : 'Cadastrar paciente'
+  }
+
+  const findStepClassName = (active: boolean, done: boolean): string => {
+    if (active) return 'rp-modal-tab-badge--active'
+    return done ? 'rp-modal-tab-badge--done' : 'rp-modal-tab-badge--pending'
+  }
+
+  function renderStepContent(currentStepId: number) {
+    switch (currentStepId) {
+      case 1: {
+        return (
+          <StepBasicData
+            key={patient?.id ?? 'new'}
+            onAvatarSelect={setAvatarFile}
+            patient={patient}
+          />
+        )
+      }
+      case 2: {
+        return (
+          <StepContactAddress
+            onCepChange={onCepChange}
+            isCepLoading={isCepLoading}
+          />
+        )
+      }
+      case 3: {
+        return <StepClinical />
+      }
+      case 4: {
+        return (
+          <div className="space-y-5">
+            {isEditMode && <AttachmentsList patientId={patient?.id ?? null} />}
+            <UploadZone
+              selectedFiles={files}
+              onFilesChange={addFiles}
+              onRemoveFile={removeFile}
+            />
+          </div>
+        )
+      }
     }
+  }
 
-    function handleCepChange(e: ChangeEvent<HTMLInputElement>) {
-        const digits = e.target.value.replace(/\D/g, "").slice(0, 8)
-        setCep(formatCEP(digits))
-    }
+  return (
+    <DialogContent className="rp-modal">
+      <DialogTitle className="rp-modal-header">
+        <div className="rp-modal-icon-box">
+          <UserPlus className="text-blue-600" />
+        </div>
+        <div className="flex-1 space-y-2">
+          <h2 className="rp-modal-title">
+            {isEditMode ? 'Editar paciente' : 'Cadastrar paciente'}
+          </h2>
+          <p className="rp-modal-subtitle">
+            {isEditMode
+              ? `Atualize os dados de ${patient?.firstName}. Mudanças salvam automaticamente ao avançar.`
+              : 'Comece apenas com nome e contato — o resto pode ser preenchido posteriormente.'}
+          </p>
+        </div>
+      </DialogTitle>
 
-    function handlePriceChange(e: ChangeEvent<HTMLInputElement>) {
-        const digits = e.target.value.replace(/\D/g, "")
-        if (!digits) { setPrice(""); return }
-        setPrice((parseInt(digits) / 100).toLocaleString("pt-BR", { minimumFractionDigits: 2, maximumFractionDigits: 2 }))
-    }
+      <div className="rp-modal-stepper">
+        {/* ToDo: improve STEPS format, if applicable */}
+        {STEPS.map((step) => {
+          const active = currentStep === step.id
+          const done = currentStep > step.id
+          const stepClassName = findStepClassName(active, done)
 
-    async function handleNext() {
-        const fields: (keyof PatientFormData)[] =
-            step === 1 ? ["firstName", "lastName", "cpf", "dateOfBirth", "gender"] :
-            step === 2 ? ["phoneNumber", "email"] : []
-        const valid = fields.length === 0 || await trigger(fields)
-        if (valid && step < 4) setStep((s) => (s + 1) as StepId)
-    }
+          return (
+            <button
+              key={step.id}
+              type="button"
+              className="rp-modal-tab"
+              onClick={() => goToStep(step.id)}
+            >
+              <span className={cn('rp-modal-tab-badge', stepClassName)}>
+                {step.id}
+              </span>
+              <span className="hidden sm:block">{step.label}</span>
+              {step.required && (
+                <span className="ml-0.5 text-[11px] text-red-600">*</span>
+              )}
+            </button>
+          )
+        })}
+      </div>
 
-    async function onSubmit(data: PatientFormData) {
-        try {
-            setIsUploading(true)
-            const basePayload = {
-                firstName:   data.firstName,
-                lastName:    data.lastName,
-                gender:      data.gender,
-                phoneNumber: data.phoneNumber?.replace(/\D/g, "") || undefined,
-                email:       data.email || undefined,
-                dateOfBirth: data.dateOfBirth || undefined,
-                cpf:         data.cpf?.replace(/\D/g, "") || undefined,
+      <div className="rp-modal-progress-track">
+        <div
+          className="rp-modal-progress-fill"
+          style={{ width: `${(currentStep / 4) * 100}%` }}
+        />
+      </div>
+
+      <Form {...methods}>
+        <div className="rp-modal-body">{renderStepContent(currentStep)}</div>
+      </Form>
+
+      <div className="rp-modal-footer">
+        <div className="flex items-center justify-end gap-2.5">
+          {!isFirstStep && (
+            <Button
+              type="button"
+              variant="outline"
+              onClick={handleBack}
+              className="rp-btn-secondary"
+            >
+              <ChevronLeft className="size-4" strokeWidth={2.5} />
+              Voltar
+            </Button>
+          )}
+          <Button
+            type="button"
+            variant="outline"
+            onClick={() => onSuccess?.()}
+            className="rp-btn-secondary"
+          >
+            Cancelar
+          </Button>
+          <Button
+            type="button"
+            disabled={isSubmitting || isEditLoading}
+            onClick={
+              isLastStep ? () => methods.handleSubmit(submit)() : handleNext
             }
-            const res = await savePatientFn(
-                isEditMode
-                    ? { ...basePayload, id: patient!.id }
-                    : basePayload
-            )
-            const targetId = isEditMode ? patient!.id : ((res as { id?: string; patientId?: string })?.id || (res as { id?: string; patientId?: string })?.patientId)
-            if (!targetId) throw new Error("ID não identificado")
-
-            if (avatarFile) await uploadAvatar(avatarFile, targetId)
-            for (const f of selectedFiles) await uploadAttachment(f, targetId)
-
-            await Promise.all([
-                queryClient.invalidateQueries({ queryKey: ["patients"] }),
-                queryClient.invalidateQueries({ queryKey: ["patient", targetId] }),
-                queryClient.invalidateQueries({ queryKey: ["attachments", targetId] }),
-            ])
-
-            toast.success(isEditMode ? "Paciente atualizado!" : "Paciente cadastrado!")
-            if (!isEditMode) { reset(); setBirthInput(""); setNotes(""); setPrice(""); setSource("") }
-            setSelectedFiles([]); setAvatarFile(null)
-            onSuccess?.()
-        } catch (error) {
-            toast.error(error instanceof AxiosError ? error.message : "Erro ao salvar. Verifique os dados.")
-        } finally {
-            setIsUploading(false)
-        }
-    }
-
-    async function handleSubmitClick() {
-        const valid = await trigger()
-        if (valid) handleSubmit(onSubmit)()
-    }
-
-    const isBusy = isPending || isUploading
-    const isLast = step === 4
-
-    // ── Render ────────────────────────────────────────────────────────────────
-    return (
-        <DialogContent
-            className="flex w-full max-w-[720px] flex-col gap-0 overflow-hidden p-0 sm:rounded-xl"
-            style={{ maxHeight: "92vh" }}
-        >
-            {/* Header */}
-            <div className="flex items-start gap-3.5 border-b border-border bg-card px-[22px] pb-[14px] pt-[18px]">
-                <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-[10px] border border-blue-200 bg-blue-50 dark:border-blue-800 dark:bg-blue-950/40">
-                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-blue-600">
-                        <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2" />
-                        <circle cx="9" cy="7" r="4" />
-                        <line x1="19" y1="8" x2="19" y2="14" />
-                        <line x1="22" y1="11" x2="16" y2="11" />
-                    </svg>
-                </div>
-                <div className="min-w-0 flex-1">
-                    <DialogTitle className="font-title text-[18px] font-bold tracking-[-0.01em] text-foreground">
-                        {isEditMode ? "Editar paciente" : "Cadastrar paciente"}
-                    </DialogTitle>
-                    <p className="mt-0.5 max-w-[520px] text-[13px] text-muted-foreground">
-                        {isEditMode
-                            ? `Atualize os dados de ${patient!.firstName}. Mudanças salvam automaticamente ao avançar.`
-                            : "Comece apenas com nome e contato — o resto pode ser preenchido depois."}
-                    </p>
-                </div>
-            </div>
-
-            {/* Tab stepper */}
-            <div className="flex items-stretch border-b border-border bg-card px-[22px]">
-                {STEPS.map((s) => {
-                    const active = step === s.id
-                    const done   = step > s.id
-                    return (
-                        <button
-                            key={s.id}
-                            type="button"
-                            onClick={() => setStep(s.id)}
-                            className={cn(
-                                "-mb-px flex cursor-pointer items-center gap-[7px] border-b-2 px-[14px] py-[10px] text-[13px] font-semibold transition-colors duration-[120ms]",
-                                active ? "border-blue-600 text-blue-600" : "border-transparent text-muted-foreground hover:text-foreground"
-                            )}
-                        >
-                            <span className={cn(
-                                "flex h-[18px] w-[18px] shrink-0 items-center justify-center rounded-full text-[11px] font-bold transition-colors",
-                                active ? "bg-blue-600 text-white" : done ? "bg-emerald-500 text-white" : "bg-muted text-muted-foreground"
-                            )}>
-                                {s.id}
-                            </span>
-                            <span className="hidden sm:block">{s.label}</span>
-                            {s.required && <span className="ml-0.5 text-[11px] text-red-600">*</span>}
-                        </button>
-                    )
-                })}
-            </div>
-
-            {/* Progress bar */}
-            <div className="h-[2px] shrink-0 bg-muted">
-                <div
-                    className="h-full bg-blue-600 transition-[width] duration-[240ms]"
-                    style={{ width: `${(step / 4) * 100}%` }}
-                />
-            </div>
-
-            {/* Body */}
-            <div className="flex-1 overflow-y-auto px-[22px] py-5">
-                {step === 1 && (
-                    <StepBasicData
-                        register={register}
-                        control={control}
-                        errors={errors}
-                        cpfDigits={cpfDigits}
-                        birthInput={birthInput}
-                        onBirthChange={handleBirthChange}
-                        onAvatarSelect={setAvatarFile}
-                        patient={patient}
-                    />
-                )}
-                {step === 2 && (
-                    <StepContactAddress
-                        register={register}
-                        control={control}
-                        errors={errors}
-                        cep={cep}           onCepChange={handleCepChange}
-                        street={street}     onStreetChange={setStreet}
-                        district={district} onDistrictChange={setDistrict}
-                        city={city}         onCityChange={setCity}
-                        uf={uf}             onUfChange={setUf}
-                    />
-                )}
-                {step === 3 && (
-                    <StepClinical
-                        modality={modality}   onModalityChange={setModality}
-                        frequency={frequency} onFrequencyChange={setFrequency}
-                        price={price}         onPriceChange={handlePriceChange}
-                        source={source}       onSourceChange={setSource}
-                        notes={notes}         onNotesChange={setNotes}
-                    />
-                )}
-                {step === 4 && (
-                    <div className="space-y-5">
-                        {isEditMode && <AttachmentsList patientId={patient!.id} />}
-                        <UploadZone selectedFiles={selectedFiles} onFilesChange={setSelectedFiles} />
-                    </div>
-                )}
-            </div>
-
-            {/* Footer */}
-            <div className="shrink-0 border-t border-border bg-muted/50 px-[22px] py-[14px]">
-                <div className="flex items-center justify-end gap-2.5">
-                    {step > 1 && (
-                        <button
-                            type="button"
-                            onClick={() => setStep((s) => (s - 1) as StepId)}
-                            className="flex cursor-pointer items-center gap-1 rounded-[6px] border border-border bg-card px-[14px] py-2 text-[13px] font-semibold text-foreground transition-colors hover:bg-muted/50"
-                        >
-                            <ChevronLeft className="size-4" strokeWidth={2.5} />
-                            Voltar
-                        </button>
-                    )}
-                    <button
-                        type="button"
-                        onClick={() => onSuccess?.()}
-                        className="cursor-pointer rounded-[6px] border border-border bg-card px-[14px] py-2 text-[13px] font-semibold text-foreground transition-colors hover:bg-muted/50"
-                    >
-                        Cancelar
-                    </button>
-                    <button
-                        type="button"
-                        disabled={isBusy}
-                        onClick={isLast ? handleSubmitClick : handleNext}
-                        className="flex cursor-pointer items-center gap-2 rounded-[6px] bg-blue-600 px-[14px] py-2 text-[13px] font-semibold text-white transition-all hover:bg-blue-700 hover:shadow-[0_4px_10px_rgba(30,111,217,.18)] disabled:cursor-not-allowed disabled:opacity-60"
-                    >
-                        {isBusy && <Loader2 className="size-4 animate-spin" />}
-                        {isBusy ? "Salvando…" : isLast ? (isEditMode ? "Salvar alterações" : "Cadastrar paciente") : "Continuar"}
-                        {!isBusy && (isLast ? <Check className="size-4" /> : <ChevronRight className="size-4" />)}
-                    </button>
-                </div>
-            </div>
-        </DialogContent>
-    )
+            className="rp-btn-primary"
+          >
+            {isSubmitting && <Loader2 className="size-4 animate-spin" />}
+            {findSubimtLabel()}
+            {!isSubmitting &&
+              (isLastStep ? (
+                <Check className="size-4" />
+              ) : (
+                <ChevronRight className="size-4" />
+              ))}
+          </Button>
+        </div>
+      </div>
+    </DialogContent>
+  )
 }

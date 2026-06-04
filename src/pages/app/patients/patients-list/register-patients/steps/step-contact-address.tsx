@@ -1,155 +1,250 @@
-import type { ChangeEvent } from "react"
-import { Controller } from "react-hook-form"
-import type { Control, UseFormRegister, FieldErrors } from "react-hook-form"
-import { Info, Mail, MapPin, Phone } from "lucide-react"
-import { Input } from "@/components/ui/input"
-import { cn } from "@/lib/utils"
-import { formatPhone } from "@/utils/formatPhone"
-import { UF_LIST } from "@/utils/mappers"
+import { useFormContext } from 'react-hook-form'
+import { Mail, MapPin, Phone } from 'lucide-react'
+import { Input } from '@/components/ui/input'
+import {
+  FormField,
+  FormItem,
+  FormLabel,
+  FormControl,
+  FormMessage,
+} from '@/components/ui/form'
+import {
+  Select,
+  SelectTrigger,
+  SelectValue,
+  SelectContent,
+  SelectItem,
+} from '@/components/ui/select'
+import { cn } from '@/lib/utils'
+import { formatPhone } from '@/utils/formatPhone'
+import { formatCEP } from '@/utils/formatCEP'
+import { UF_LIST } from '@/utils/mappers'
 
-import type { PatientFormData } from "@/validators/patients"
-import { inputCls, selectCls, selectClassName } from "../form-styles"
-import { SectionTitle } from "./section-title"
+import './step-contact-address.css'
+import type { PatientFormData } from '@/validators/patients'
+import { SectionTitle } from './section-title'
+import { Normalizer } from '@/utils/normalizer'
+import type { UseCepLookupReturn } from '@/hooks/use-cep-lookup'
 
 interface StepContactAddressProps {
-    register:          UseFormRegister<PatientFormData>
-    control:           Control<PatientFormData>
-    errors:            FieldErrors<PatientFormData>
-    cep:               string
-    onCepChange:       (e: ChangeEvent<HTMLInputElement>) => void
-    street:            string
-    onStreetChange:    (v: string) => void
-    district:          string
-    onDistrictChange:  (v: string) => void
-    city:              string
-    onCityChange:      (v: string) => void
-    uf:                string
-    onUfChange:        (v: string) => void
+  onCepChange: UseCepLookupReturn['onCepChange']
+  isCepLoading: boolean
 }
 
 export function StepContactAddress({
-    register, control, errors,
-    cep, onCepChange,
-    street, onStreetChange,
-    district, onDistrictChange,
-    city, onCityChange,
-    uf, onUfChange,
+  onCepChange,
+  isCepLoading,
 }: StepContactAddressProps) {
-    return (
-        <div className="space-y-6">
-            {/* Contato */}
-            <div>
-                <SectionTitle icon={Phone} label="Contato" />
-                <div className="grid grid-cols-2 gap-x-3.5 gap-y-3">
-                    <div>
-                        <label className="mb-[5px] flex items-center gap-1 text-[12px] font-semibold text-foreground/80">
-                            Celular
-                        </label>
-                        <div className="relative">
-                            <Phone className="pointer-events-none absolute left-3 top-1/2 size-[14px] -translate-y-1/2 text-muted-foreground" />
-                            <Controller
-                                name="phoneNumber"
-                                control={control}
-                                render={({ field }) => (
-                                    <Input
-                                        id="phoneNumber"
-                                        value={field.value ?? ""}
-                                        onChange={(e) => field.onChange(formatPhone(e.target.value))}
-                                        onBlur={field.onBlur}
-                                        ref={field.ref}
-                                        placeholder="(00) 00000-0000"
-                                        inputMode="numeric"
-                                        autoComplete="off"
-                                        className={cn(inputCls, "pl-9 tabular-nums")}
-                                    />
-                                )}
-                            />
-                        </div>
-                    </div>
-                    <div>
-                        <label className="mb-[5px] block text-[12px] font-semibold text-foreground/80">E-mail</label>
-                        <div className="relative">
-                            <Mail className="pointer-events-none absolute left-3 top-1/2 size-[14px] -translate-y-1/2 text-muted-foreground" />
-                            <Input
-                                {...register("email")}
-                                id="email"
-                                type="email"
-                                placeholder="paciente@email.com"
-                                autoComplete="off"
-                                className={cn(inputCls, "pl-9", errors.email && "border-red-600")}
-                            />
-                        </div>
-                        {errors.email && (
-                            <p className="mt-1 flex items-center gap-1 text-[11.5px] font-medium text-red-600">
-                                <Info className="size-3 shrink-0" />{errors.email.message}
-                            </p>
-                        )}
-                    </div>
-                </div>
-            </div>
+  const { control } = useFormContext<PatientFormData>()
 
-            {/* Endereço */}
-            <div>
-                <SectionTitle icon={MapPin} label="Endereço" />
-                <div className="grid grid-cols-3 gap-x-3.5 gap-y-3">
-                    <div>
-                        <label className="mb-[5px] flex items-center justify-between text-[12px] font-semibold text-foreground/80">
-                            CEP <span className="text-[10.5px] font-medium text-muted-foreground">preenche automático</span>
-                        </label>
-                        <Input
-                            value={cep}
-                            onChange={onCepChange}
-                            placeholder="00000-000"
-                            inputMode="numeric"
-                            maxLength={9}
-                            autoComplete="off"
-                            className={cn(inputCls, "tabular-nums")}
-                        />
-                    </div>
-                    <div className="col-span-2">
-                        <label className="mb-[5px] block text-[12px] font-semibold text-foreground/80">Logradouro</label>
-                        <Input
-                            value={street}
-                            onChange={(e) => onStreetChange(e.target.value)}
-                            placeholder="Rua, número"
-                            autoComplete="off"
-                            className={inputCls}
-                        />
-                    </div>
-                    <div>
-                        <label className="mb-[5px] block text-[12px] font-semibold text-foreground/80">Bairro</label>
-                        <Input
-                            value={district}
-                            onChange={(e) => onDistrictChange(e.target.value)}
-                            placeholder="Bairro"
-                            autoComplete="off"
-                            className={inputCls}
-                        />
-                    </div>
-                    <div>
-                        <label className="mb-[5px] block text-[12px] font-semibold text-foreground/80">Cidade</label>
-                        <Input
-                            value={city}
-                            onChange={(e) => onCityChange(e.target.value)}
-                            placeholder="Cidade"
-                            autoComplete="off"
-                            className={inputCls}
-                        />
-                    </div>
-                    <div>
-                        <label className="mb-[5px] block text-[12px] font-semibold text-foreground/80">UF</label>
-                        <select
-                            value={uf}
-                            onChange={(e) => onUfChange(e.target.value)}
-                            style={selectCls}
-                            className={selectClassName}
-                        >
-                            <option value="">—</option>
-                            {UF_LIST.map((s) => <option key={s}>{s}</option>)}
-                        </select>
-                    </div>
+  const handleCepChange = (cepValue: string) => {
+    const cep = Normalizer.digits(cepValue)
+    const fomattedCep = formatCEP(cep.slice(0, 8))
+    onCepChange(cep)
+
+    return fomattedCep
+  }
+
+  return (
+    <div className="space-y-6">
+      {/* Contato */}
+      <div>
+        <SectionTitle icon={Phone} label="Contato" />
+        <div className="patient-form-grid-2">
+          <FormField
+            control={control}
+            name="phoneNumber"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Celular</FormLabel>
+                <div className="relative">
+                  <Phone className="patient-icon-prefix" />
+                  <FormControl>
+                    <Input
+                      id="phoneNumber"
+                      value={field.value ?? ''}
+                      onChange={(e) =>
+                        field.onChange(formatPhone(e.target.value))
+                      }
+                      onBlur={field.onBlur}
+                      ref={field.ref}
+                      placeholder="(00) 00000-0000"
+                      inputMode="numeric"
+                      autoComplete="off"
+                      className={cn('patient-input', 'pl-9 tabular-nums')}
+                    />
+                  </FormControl>
                 </div>
-            </div>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+          <FormField
+            control={control}
+            name="email"
+            render={({ field, fieldState }) => (
+              <FormItem>
+                <FormLabel>E-mail</FormLabel>
+                <div className="relative">
+                  <Mail className="patient-icon-prefix" />
+                  <FormControl>
+                    <Input
+                      {...field}
+                      id="email"
+                      type="email"
+                      placeholder="paciente@email.com"
+                      autoComplete="off"
+                      className={cn(
+                        'patient-input',
+                        'pl-9',
+                        fieldState.invalid &&
+                          'border-red-600 focus-visible:ring-red-600/20',
+                      )}
+                    />
+                  </FormControl>
+                </div>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
         </div>
-    )
+      </div>
+
+      {/* Endereço */}
+      <div>
+        <SectionTitle icon={MapPin} label="Endereço" />
+        <div className="patient-form-grid-3">
+          <FormField
+            control={control}
+            name="zipCode"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel className="flex items-center justify-between">
+                  CEP{' '}
+                  <span className="patient-field-hint">
+                    preenche automático
+                  </span>
+                </FormLabel>
+                <FormControl>
+                  <Input
+                    value={field.value ?? ''}
+                    onChange={(e) => {
+                      field.onChange(handleCepChange(e.target.value))
+                    }}
+                    ref={field.ref}
+                    placeholder="00000-000"
+                    inputMode="numeric"
+                    maxLength={9}
+                    autoComplete="off"
+                    className={cn('patient-input', 'tabular-nums')}
+                  />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+          <FormField
+            control={control}
+            name="street"
+            render={({ field }) => (
+              <FormItem className="col-span-2">
+                <FormLabel>Logradouro</FormLabel>
+                <FormControl>
+                  <Input
+                    {...field}
+                    placeholder="Rua, número"
+                    autoComplete="off"
+                    disabled={isCepLoading}
+                    className={cn(
+                      'patient-input',
+                      isCepLoading && 'opacity-50',
+                    )}
+                  />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+          <FormField
+            control={control}
+            name="neighborhood"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Bairro</FormLabel>
+                <FormControl>
+                  <Input
+                    {...field}
+                    placeholder="Bairro"
+                    autoComplete="off"
+                    disabled={isCepLoading}
+                    className={cn(
+                      'patient-input',
+                      isCepLoading && 'opacity-50',
+                    )}
+                  />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+          <FormField
+            control={control}
+            name="city"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Cidade</FormLabel>
+                <FormControl>
+                  <Input
+                    {...field}
+                    placeholder="Cidade"
+                    autoComplete="off"
+                    disabled={isCepLoading}
+                    className={cn(
+                      'patient-input',
+                      isCepLoading && 'opacity-50',
+                    )}
+                  />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+          <FormField
+            control={control}
+            name="state"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>UF</FormLabel>
+                <Select
+                  value={field.value ?? ''}
+                  onValueChange={field.onChange}
+                  disabled={isCepLoading}
+                >
+                  <FormControl>
+                    <SelectTrigger
+                      className={cn(
+                        'patient-input',
+                        'cursor-pointer',
+                        isCepLoading && 'opacity-50',
+                      )}
+                    >
+                      <SelectValue placeholder="—" />
+                    </SelectTrigger>
+                  </FormControl>
+                  <SelectContent>
+                    {UF_LIST.map((s) => (
+                      <SelectItem key={s} value={s}>
+                        {s}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+        </div>
+      </div>
+    </div>
+  )
 }

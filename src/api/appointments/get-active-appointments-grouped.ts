@@ -10,7 +10,7 @@ export const AppointmentStatus = {
 } as const
 
 export type AppointmentStatus =
-  typeof AppointmentStatus[keyof typeof AppointmentStatus]
+  (typeof AppointmentStatus)[keyof typeof AppointmentStatus]
 
 export interface ActiveAppointment {
   id: string

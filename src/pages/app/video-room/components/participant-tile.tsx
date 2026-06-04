@@ -1,7 +1,7 @@
-"use client"
+'use client'
 
-import { Users, Mic, MicOff } from "lucide-react"
-import { Badge } from "@/components/ui/badge"
+import { Users, Mic, MicOff } from 'lucide-react'
+import { Badge } from '@/components/ui/badge'
 
 interface ParticipantTileProps {
   name: string
@@ -11,14 +11,20 @@ interface ParticipantTileProps {
   isFocus?: boolean
 }
 
-export function ParticipantTile({ name, isLocal, isMuted, isVideoEnabled, isFocus = false }: ParticipantTileProps) {
+export function ParticipantTile({
+  name,
+  isLocal,
+  isMuted,
+  isVideoEnabled,
+  isFocus = false,
+}: ParticipantTileProps) {
   return (
     <div
       className={`relative flex items-center justify-center overflow-hidden rounded-xl transition-all duration-300
         ${
           isFocus
-            ? "border-2 border-primary/60 h-full w-full bg-linear-to-br from-slate-900 to-slate-950"
-            : "border border-slate-700 h-28 w-48 sm:h-40 sm:w-64 bg-linear-to-br from-slate-800 to-slate-900 hover:border-slate-600"
+            ? 'border-2 border-primary/60 h-full w-full bg-linear-to-br from-slate-900 to-slate-950'
+            : 'border border-slate-700 h-28 w-48 sm:h-40 sm:w-64 bg-linear-to-br from-slate-800 to-slate-900 hover:border-slate-600'
         }`}
     >
       {/* Video Content Area */}
@@ -37,18 +43,26 @@ export function ParticipantTile({ name, isLocal, isMuted, isVideoEnabled, isFocu
         {/* Top Info - Focus Mode Only */}
         {isFocus && (
           <div className="flex items-center justify-between">
-            <Badge variant="secondary" className="bg-slate-700/60 text-slate-100">
-              {isLocal ? "Você" : "Apresentador"}
+            <Badge
+              variant="secondary"
+              className="bg-slate-700/60 text-slate-100"
+            >
+              {isLocal ? 'Você' : 'Apresentador'}
             </Badge>
           </div>
         )}
 
         {/* Bottom Info */}
         <div className="flex items-center justify-between gap-2">
-          <span className="text-xs sm:text-sm font-semibold text-white truncate flex-1" title={name}>
+          <span
+            className="text-xs sm:text-sm font-semibold text-white truncate flex-1"
+            title={name}
+          >
             {name}
           </span>
-          <div className={`shrink-0 rounded-full p-1.5 ${isMuted ? "bg-red-500/20" : "bg-green-500/20"}`}>
+          <div
+            className={`shrink-0 rounded-full p-1.5 ${isMuted ? 'bg-red-500/20' : 'bg-green-500/20'}`}
+          >
             {isMuted ? (
               <MicOff className="h-3 w-3 sm:h-4 sm:w-4 text-red-400" />
             ) : (

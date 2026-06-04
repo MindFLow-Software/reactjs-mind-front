@@ -1,8 +1,8 @@
-﻿import { useEffect, useRef } from "react"
-import { useNavigate } from "react-router-dom"
-import { toast } from "sonner"
-import { getProfile } from "@/api/psychologists/get-profile"
-import { api } from "@/lib/axios"
+import { useEffect, useRef } from 'react'
+import { useNavigate } from 'react-router-dom'
+import { toast } from 'sonner'
+import { getProfile } from '@/api/psychologists/get-profile'
+import { api } from '@/lib/axios'
 
 export function GoogleOAuthSuccess() {
   const navigate = useNavigate()
@@ -37,23 +37,24 @@ export function GoogleOAuthSuccess() {
         try {
           profile = await fetchProfileWithRetry()
         } catch {
-          await api.post("/session/refresh")
+          await api.post('/session/refresh')
           profile = await fetchProfileWithRetry()
         }
 
-        localStorage.setItem("isAuthenticated", "true")
-        localStorage.setItem("user", JSON.stringify(profile))
-        navigate("/dashboard", { replace: true })
+        localStorage.setItem('isAuthenticated', 'true')
+        localStorage.setItem('user', JSON.stringify(profile))
+        navigate('/dashboard', { replace: true })
+        // eslint-disable-next-line
       } catch (error: any) {
         const status = error?.response?.status
 
         if (status === 400 || status === 404) {
-          navigate("/complete-registration", { replace: true })
+          navigate('/complete-registration', { replace: true })
           return
         }
 
-        toast.error("Nao foi possivel completar o login. Tente novamente.")
-        navigate("/sign-in", { replace: true })
+        toast.error('Nao foi possivel completar o login. Tente novamente.')
+        navigate('/sign-in', { replace: true })
       }
     }
 

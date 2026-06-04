@@ -1,4 +1,4 @@
-import { api } from "@/lib/axios"
+import { api } from '@/lib/axios'
 
 // Tipagem baseada no que o seu Backend espera (Zod Schema)
 export interface UpdatePsychologistBody {
@@ -8,15 +8,15 @@ export interface UpdatePsychologistBody {
   phoneNumber?: string
   crp?: string
   // Expertise segue o Enum definido no backend
-  expertise?: 
-    | 'OTHER' 
-    | 'SOCIAL' 
-    | 'INFANT' 
-    | 'CLINICAL' 
-    | 'JURIDICAL' 
-    | 'EDUCATIONAL' 
-    | 'ORGANIZATIONAL' 
-    | 'PSYCHOTHERAPIST' 
+  expertise?:
+    | 'OTHER'
+    | 'SOCIAL'
+    | 'INFANT'
+    | 'CLINICAL'
+    | 'JURIDICAL'
+    | 'EDUCATIONAL'
+    | 'ORGANIZATIONAL'
+    | 'PSYCHOTHERAPIST'
     | 'NEUROPSYCHOLOGY'
   profileImageUrl?: string | null
 }
@@ -29,6 +29,6 @@ export async function updatePsychologist(body: UpdatePsychologistBody) {
   // Utilizamos PATCH pois o backend está configurado com @Patch('/profile')
   // e queremos uma atualização parcial (apenas o que foi enviado).
   const response = await api.patch('/psychologist/profile', body)
-  
+
   return response.data
 }

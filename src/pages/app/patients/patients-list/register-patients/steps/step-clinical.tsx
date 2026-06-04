@@ -1,87 +1,160 @@
-import type { ChangeEvent } from "react"
-import { Activity, FileText } from "lucide-react"
-import { Input } from "@/components/ui/input"
-import { cn } from "@/lib/utils"
+import { useFormContext } from 'react-hook-form'
+import { Activity, FileText } from 'lucide-react'
+import { Input } from '@/components/ui/input'
+import {
+  FormField,
+  FormItem,
+  FormLabel,
+  FormControl,
+  FormMessage,
+} from '@/components/ui/form'
+import {
+  Select,
+  SelectTrigger,
+  SelectValue,
+  SelectContent,
+  SelectItem,
+} from '@/components/ui/select'
+import { cn } from '@/lib/utils'
 
-import { MODALITY_OPTIONS } from "../constants"
-import { inputCls, selectCls, selectClassName } from "../form-styles"
-import { SectionTitle } from "./section-title"
-import { PillRadio } from "./pill-radio"
-import { MarkdownEditor } from "./markdown-editor"
+import './step-clinical.css'
+import type { PatientFormData } from '@/validators/patients'
+import { MODALITY_OPTIONS } from '../constants'
+import { SectionTitle } from './section-title'
+import { PillRadio } from './pill-radio'
+import { MarkdownEditor } from './markdown-editor'
 
-interface StepClinicalProps {
-    modality:          string
-    onModalityChange:  (v: string) => void
-    frequency:         string
-    onFrequencyChange: (v: string) => void
-    price:             string
-    onPriceChange:     (e: ChangeEvent<HTMLInputElement>) => void
-    source:            string
-    onSourceChange:    (v: string) => void
-    notes:             string
-    onNotesChange:     (v: string) => void
-}
+const FREQUENCY_OPTIONS = ['Semanal', 'Quinzenal', 'Mensal', 'Sob demanda']
 
-export function StepClinical({
-    modality, onModalityChange,
-    frequency, onFrequencyChange,
-    price, onPriceChange,
-    source, onSourceChange,
-    notes, onNotesChange,
-}: StepClinicalProps) {
-    return (
-        <div className="space-y-6">
-            {/* Atendimento */}
-            <div>
-                <SectionTitle icon={Activity} label="Atendimento" />
-                <div className="grid grid-cols-2 gap-x-3.5 gap-y-4">
-                    <div>
-                        <label className="mb-[5px] block text-[12px] font-semibold text-foreground/80">Modalidade</label>
-                        <PillRadio name="modality" options={MODALITY_OPTIONS} value={modality} onChange={onModalityChange} />
-                    </div>
-                    <div>
-                        <label className="mb-[5px] block text-[12px] font-semibold text-foreground/80">Frequência</label>
-                        <select
-                            value={frequency}
-                            onChange={(e) => onFrequencyChange(e.target.value)}
-                            style={selectCls}
-                            className={selectClassName}
-                        >
-                            {["Semanal", "Quinzenal", "Mensal", "Sob demanda"].map((f) => (
-                                <option key={f}>{f}</option>
-                            ))}
-                        </select>
-                    </div>
-                    <div>
-                        <label className="mb-[5px] block text-[12px] font-semibold text-foreground/80">Valor da sessão</label>
-                        <div className="relative">
-                            <span className="pointer-events-none absolute left-3 top-1/2 z-10 -translate-y-1/2 text-[13px] font-semibold text-muted-foreground">R$</span>
-                            <Input
-                                value={price}
-                                onChange={onPriceChange}
-                                placeholder="180,00"
-                                inputMode="decimal"
-                                className={cn(inputCls, "pl-9 tabular-nums")}
-                            />
-                        </div>
-                    </div>
-                    <div>
-                        <label className="mb-[5px] block text-[12px] font-semibold text-foreground/80">Indicação</label>
-                        <Input
-                            value={source}
-                            onChange={(e) => onSourceChange(e.target.value)}
-                            placeholder="Como conheceu? (opcional)"
-                            className={inputCls}
-                        />
-                    </div>
+export function StepClinical() {
+  const { control } = useFormContext<PatientFormData>()
+
+  function handlePriceChange(
+    value: string,
+    fieldOnChange: (v: string) => void,
+  ) {
+    fieldOnChange(value.replace(/[^\d,]/g, ''))
+  }
+
+  return (
+    <div className="space-y-6">
+      {/* Atendimento */}
+      <div>
+        <SectionTitle icon={Activity} label="Atendimento" />
+        <div className="rp-clinical-grid">
+          <FormField
+            control={control}
+            name="modality"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Modalidade</FormLabel>
+                <FormControl>
+                  <PillRadio
+                    name="modality"
+                    options={MODALITY_OPTIONS}
+                    value={field.value ?? 'ONLINE'}
+                    onChange={field.onChange}
+                  />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+          <FormField
+            control={control}
+            name="frequency"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Frequência</FormLabel>
+                <Select
+                  value={field.value ?? ''}
+                  onValueChange={field.onChange}
+                >
+                  <FormControl>
+                    <SelectTrigger
+                      className={cn('patient-input', 'cursor-pointer')}
+                    >
+                      <SelectValue placeholder="Selecione" />
+                    </SelectTrigger>
+                  </FormControl>
+                  <SelectContent>
+                    {FREQUENCY_OPTIONS.map((f) => (
+                      <SelectItem key={f} value={f}>
+                        {f}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+          <FormField
+            control={control}
+            name="price"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Valor da sessão</FormLabel>
+                <div className="relative">
+                  <span className="rp-price-prefix">R$</span>
+                  <FormControl>
+                    <Input
+                      value={field.value ?? ''}
+                      onChange={(e) =>
+                        handlePriceChange(e.target.value, field.onChange)
+                      }
+                      onBlur={field.onBlur}
+                      ref={field.ref}
+                      placeholder="180,00"
+                      inputMode="decimal"
+                      className={cn('patient-input', 'pl-9 tabular-nums')}
+                    />
+                  </FormControl>
                 </div>
-            </div>
-
-            {/* Notas clínicas */}
-            <div>
-                <SectionTitle icon={FileText} label="Queixa principal & observações" />
-                <MarkdownEditor value={notes} onChange={onNotesChange} />
-            </div>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+          <FormField
+            control={control}
+            name="source"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Indicação</FormLabel>
+                <FormControl>
+                  <Input
+                    {...field}
+                    value={field.value ?? ''}
+                    placeholder="Como conheceu? (opcional)"
+                    className={'patient-input'}
+                  />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
         </div>
-    )
+      </div>
+
+      {/* Notas clínicas */}
+      <div>
+        <SectionTitle icon={FileText} label="Queixa principal & observações" />
+        <FormField
+          control={control}
+          name="notes"
+          render={({ field }) => (
+            <FormItem>
+              <FormControl>
+                <MarkdownEditor
+                  value={field.value ?? ''}
+                  onChange={field.onChange}
+                />
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+      </div>
+    </div>
+  )
 }

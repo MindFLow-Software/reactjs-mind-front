@@ -1,4 +1,4 @@
-import { api } from "@/lib/axios"
+import { api } from '@/lib/axios'
 
 export interface GetTotalSuggestionsResponse {
   total: number
@@ -6,7 +6,7 @@ export interface GetTotalSuggestionsResponse {
 
 export async function getTotalSuggestionsCard() {
   const response = await api.get<GetTotalSuggestionsResponse>(
-    "/admin/metrics/suggestions/total"
+    '/admin/metrics/suggestions/total',
   )
   return response.data
 }

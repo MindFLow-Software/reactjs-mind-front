@@ -1,5 +1,5 @@
-import { Helmet } from "react-helmet-async"
-import { SignUpForm } from "./components/sign-up-form"
+import { Helmet } from 'react-helmet-async'
+import { SignUpForm } from './components/sign-up-form'
 
 export function SignUp() {
   return (

@@ -1,1 +1,1 @@
-export { AttachmentsTable } from "./attachments-table/index"
+export { AttachmentsTable } from './attachments-table/index'

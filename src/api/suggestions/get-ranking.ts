@@ -1,4 +1,4 @@
-import { api } from "@/lib/axios"
+import { api } from '@/lib/axios'
 
 export interface RankingItem {
   position: string
@@ -14,7 +14,7 @@ export interface GetRankingResponse {
 }
 
 export async function getRanking() {
-  const response = await api.get<GetRankingResponse>("/suggestions/ranking")
-  
+  const response = await api.get<GetRankingResponse>('/suggestions/ranking')
+
   return response.data.ranking
 }

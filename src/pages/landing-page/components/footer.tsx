@@ -1,10 +1,15 @@
-import { motion } from "framer-motion"
-import { Link } from "react-router-dom"
-import { Brain, InstagramLogo, LinkedinLogo, YoutubeLogo } from "@phosphor-icons/react"
-import { ArrowRight, Shield, Clock } from "lucide-react"
+import { motion } from 'framer-motion'
+import { Link } from 'react-router-dom'
+import {
+  Brain,
+  InstagramLogo,
+  LinkedinLogo,
+  YoutubeLogo,
+} from '@phosphor-icons/react'
+import { ArrowRight, Shield, Clock } from 'lucide-react'
 
-const BRAND = "#2563eb"
-const BRAND_LIGHT = "#3b82f6"
+const BRAND = '#2563eb'
+const BRAND_LIGHT = '#3b82f6'
 
 function XIcon({ size = 18 }: { size?: number }) {
   return (
@@ -16,50 +21,57 @@ function XIcon({ size = 18 }: { size?: number }) {
 
 const LINK_GROUPS = [
   {
-    title: "Produto",
+    title: 'Produto',
     links: [
-      { label: "Funcionalidades", href: "#funcionalidades" },
-      { label: "Integrações", href: "#integracoes" },
-      { label: "Planos e Preços", href: "#planos" },
-      { label: "Novidades", href: "#" },
+      { label: 'Funcionalidades', href: '#funcionalidades' },
+      { label: 'Integrações', href: '#integracoes' },
+      { label: 'Planos e Preços', href: '#planos' },
+      { label: 'Novidades', href: '#' },
     ],
   },
   {
-    title: "Conta",
+    title: 'Conta',
     links: [
-      { label: "Criar conta grátis", to: "/sign-up" },
-      { label: "Fazer login", to: "/sign-in" },
-      { label: "Recuperar senha", to: "/forgot-password" },
+      { label: 'Criar conta grátis', to: '/sign-up' },
+      { label: 'Fazer login', to: '/sign-in' },
+      { label: 'Recuperar senha', to: '/forgot-password' },
     ],
   },
   {
-    title: "Suporte",
+    title: 'Suporte',
     links: [
-      { label: "Central de Ajuda", href: "#" },
-      { label: "Falar no WhatsApp", href: "#" },
-      { label: "ajuda@mindflush.com.br", href: "mailto:ajuda@mindflush.com.br" },
+      { label: 'Central de Ajuda', href: '#' },
+      { label: 'Falar no WhatsApp', href: '#' },
+      {
+        label: 'ajuda@mindflush.com.br',
+        href: 'mailto:ajuda@mindflush.com.br',
+      },
     ],
   },
   {
-    title: "Legal",
+    title: 'Legal',
     links: [
-      { label: "Termos de Uso", to: "/termos" },
-      { label: "Privacidade", to: "/privacidade" },
-      { label: "Política de Cookies", to: "/cookies" },
-      { label: "Status do sistema", href: "#" },
+      { label: 'Termos de Uso', to: '/termos' },
+      { label: 'Privacidade', to: '/privacidade' },
+      { label: 'Política de Cookies', to: '/cookies' },
+      { label: 'Status do sistema', href: '#' },
     ],
   },
 ]
 
 const SOCIALS = [
-  { icon: LinkedinLogo, href: "#", label: "LinkedIn", hoverColor: "#0A66C2" },
-  { icon: InstagramLogo, href: "#", label: "Instagram", hoverColor: "#E1306C" },
-  { icon: YoutubeLogo, href: "#", label: "YouTube", hoverColor: "#FF0000" },
+  { icon: LinkedinLogo, href: '#', label: 'LinkedIn', hoverColor: '#0A66C2' },
+  { icon: InstagramLogo, href: '#', label: 'Instagram', hoverColor: '#E1306C' },
+  { icon: YoutubeLogo, href: '#', label: 'YouTube', hoverColor: '#FF0000' },
 ]
 
-function LinkItem({ link }: { link: { label: string; to?: string; href?: string } }) {
+function LinkItem({
+  link,
+}: {
+  link: { label: string; to?: string; href?: string }
+}) {
   const className =
-    "group relative w-fit text-[13px] font-light text-slate-500 no-underline transition-colors duration-200 hover:text-blue-600"
+    'group relative w-fit text-[13px] font-light text-slate-500 no-underline transition-colors duration-200 hover:text-blue-600'
   const inner = (
     <>
       {link.label}
@@ -67,24 +79,34 @@ function LinkItem({ link }: { link: { label: string; to?: string; href?: string 
     </>
   )
 
-  if (link.to) return <Link to={link.to} className={className}>{inner}</Link>
-  return <a href={link.href} className={className}>{inner}</a>
+  if (link.to)
+    return (
+      <Link to={link.to} className={className}>
+        {inner}
+      </Link>
+    )
+  return (
+    <a href={link.href} className={className}>
+      {inner}
+    </a>
+  )
 }
 
 export function Footer() {
   return (
     <footer className="w-full border-t border-slate-100 bg-white">
-
       {/* CTA Strip */}
       <div
         className="relative overflow-hidden"
-        style={{ background: `linear-gradient(135deg, ${BRAND} 0%, ${BRAND_LIGHT} 100%)` }}
+        style={{
+          background: `linear-gradient(135deg, ${BRAND} 0%, ${BRAND_LIGHT} 100%)`,
+        }}
       >
         <div
           className="absolute inset-0 pointer-events-none opacity-20"
           style={{
             backgroundImage: `linear-gradient(rgba(255,255,255,0.1) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.1) 1px, transparent 1px)`,
-            backgroundSize: "60px 60px",
+            backgroundSize: '60px 60px',
           }}
         />
 
@@ -98,7 +120,8 @@ export function Footer() {
                 Pronto para simplificar seu consultório?
               </h2>
               <p className="text-[15px] font-light text-blue-100 max-w-[420px]">
-                Junte-se a mais de 1.200 psicólogos que já recuperaram horas do seu dia.
+                Junte-se a mais de 1.200 psicólogos que já recuperaram horas do
+                seu dia.
               </p>
             </div>
 
@@ -129,13 +152,17 @@ export function Footer() {
       {/* Main footer body */}
       <div className="container mx-auto px-6 md:px-8 lg:px-12">
         <div className="flex flex-col gap-12 lg:flex-row lg:gap-16 py-14">
-
           {/* Brand column */}
           <div className="flex flex-col lg:w-[220px] lg:shrink-0">
-            <Link to="/" className="group flex items-center gap-2 mb-4 transition-opacity hover:opacity-80 w-fit">
+            <Link
+              to="/"
+              className="group flex items-center gap-2 mb-4 transition-opacity hover:opacity-80 w-fit"
+            >
               <div
                 className="w-8 h-8 rounded-xl flex items-center justify-center shadow-sm"
-                style={{ background: `linear-gradient(135deg, ${BRAND}, ${BRAND_LIGHT})` }}
+                style={{
+                  background: `linear-gradient(135deg, ${BRAND}, ${BRAND_LIGHT})`,
+                }}
               >
                 <Brain size={16} weight="bold" className="text-white" />
               </div>
@@ -148,7 +175,8 @@ export function Footer() {
             </Link>
 
             <p className="text-[13px] font-light leading-relaxed text-slate-500 mb-6">
-              Simplificando a gestão de consultórios de psicologia em todo o Brasil.
+              Simplificando a gestão de consultórios de psicologia em todo o
+              Brasil.
             </p>
 
             <div className="flex items-center gap-3">
@@ -160,9 +188,11 @@ export function Footer() {
                   whileHover={{ y: -2 }}
                   transition={{ duration: 0.2 }}
                   className="flex h-8 w-8 items-center justify-center rounded-lg border border-slate-100 bg-slate-50 text-slate-400 transition-colors duration-200"
-                  style={{ ["--hover-color" as string]: hoverColor }}
-                  onMouseEnter={(e) => (e.currentTarget.style.color = hoverColor)}
-                  onMouseLeave={(e) => (e.currentTarget.style.color = "")}
+                  style={{ ['--hover-color' as string]: hoverColor }}
+                  onMouseEnter={(e) =>
+                    (e.currentTarget.style.color = hoverColor)
+                  }
+                  onMouseLeave={(e) => (e.currentTarget.style.color = '')}
                 >
                   <Icon size={16} />
                 </motion.a>
@@ -194,20 +224,19 @@ export function Footer() {
               </div>
             ))}
           </div>
-
         </div>
 
         {/* Bottom bar */}
         <div className="flex flex-col items-center justify-between gap-3 border-t border-slate-100 py-6 md:flex-row">
           <span className="text-[12.5px] font-light text-slate-400">
-            &copy; {new Date().getFullYear()} MindFlush. Todos os direitos reservados.
+            &copy; {new Date().getFullYear()} MindFlush. Todos os direitos
+            reservados.
           </span>
           <span className="text-[12px] font-light text-slate-300">
             Feito com cuidado para psicólogos brasileiros 🧠
           </span>
         </div>
       </div>
-
     </footer>
   )
 }

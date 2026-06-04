@@ -1,7 +1,7 @@
-"use client"
+'use client'
 
-import { useCallback } from "react"
-import { useQueryClient } from "@tanstack/react-query"
+import { useCallback } from 'react'
+import { useQueryClient } from '@tanstack/react-query'
 
 export function usePatientAchievements() {
   const queryClient = useQueryClient()
@@ -10,7 +10,7 @@ export function usePatientAchievements() {
     queryClient.invalidateQueries({ queryKey: ['unseen-popups'] })
   }, [queryClient])
 
-  return { 
-    checkAchievement 
+  return {
+    checkAchievement,
   }
 }

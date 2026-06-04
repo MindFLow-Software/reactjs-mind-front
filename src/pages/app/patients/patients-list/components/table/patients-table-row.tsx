@@ -1,5 +1,5 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query'
-import { format, formatDistanceToNow } from 'date-fns'
+import { differenceInYears, format, formatDistanceToNow } from 'date-fns'
 import { ptBR } from 'date-fns/locale'
 import {
   Archive,
@@ -7,22 +7,17 @@ import {
   CalendarPlus,
   ClipboardList,
   Mail,
-  Mars,
   MoreVertical,
   Pencil,
   Phone,
   RotateCcw,
   Search,
-  Users,
-  Venus,
   Video,
 } from 'lucide-react'
 import { memo, useCallback, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { toast } from 'sonner'
-
 import { togglePatientStatus } from '@/api/patients/toggle-patient-status'
-import type { GetPatientsResponse, Patient } from '@/api/patients/get-patients'
+import type { GetPatientsResponse } from '@/api/patients/get-patients'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { Checkbox } from '@/components/ui/checkbox'
@@ -43,48 +38,36 @@ import {
 } from '@/components/ui/tooltip'
 import { UserAvatar } from '@/components/user-avatar'
 import { cn } from '@/lib/utils'
-import { formatAGE } from '@/utils/formatAGE'
 import { formatCPF } from '@/utils/formatCPF'
 import { formatPhone } from '@/utils/formatPhone'
 
 import { RegisterPatients } from '../../register-patients/register-patients'
 import { DeletePatientDialog } from '../dialogs/delete-patient-dialog'
 import { PatientsDetails } from '../details/patients-details'
+import { PatientStatusDialog } from '@/components/patient-status-dialog'
+import type { Ipatient } from '@/types/patient'
 
-const GENDER_CONFIG = {
-  MASCULINE: {
-    label: 'Masculino',
-    icon: Mars,
-    className:
-      'bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-400 border-0',
-  },
-  FEMININE: {
-    label: 'Feminino',
-    icon: Venus,
-    className:
-      'bg-pink-100 text-pink-700 dark:bg-pink-900/30 dark:text-pink-400 border-0',
-  },
-  OTHER: {
-    label: 'Outro',
-    icon: Users,
-    className:
-      'bg-purple-100 text-purple-700 dark:bg-purple-900/30 dark:text-purple-400 border-0',
-  },
-} as const
+import { GENDER_CONFIG } from '@/utils/gender-config'
 
 interface PatientsTableRowProps {
-  patient: Patient
+  patient: Ipatient
 }
 
 export const PatientsTableRow = memo(function PatientsTableRow({
   patient,
 }: PatientsTableRowProps) {
   const navigate = useNavigate()
+  const queryClient = useQueryClient()
+
   const [isDetailsOpen, setIsDetailsOpen] = useState(false)
   const [isEditOpen, setIsEditOpen] = useState(false)
   const [isDeleteOpen, setIsDeleteOpen] = useState(false)
+  const [isReactivateOpen, setIsReactivateOpen] = useState(false)
 
-  const queryClient = useQueryClient()
+  const handleOpenDetails = useCallback(() => setIsDetailsOpen(true), [])
+  const handleOpenEdit = useCallback(() => setIsEditOpen(true), [])
+  const handleOpenDelete = useCallback(() => setIsDeleteOpen(true), [])
+  const handleOpenReactivate = useCallback(() => setIsReactivateOpen(true), [])
 
   const {
     id,
@@ -100,20 +83,21 @@ export const PatientsTableRow = memo(function PatientsTableRow({
     isActive,
   } = patient
 
-  const patientIsActive = isActive
-
-  const fullName = `${firstName} ${lastName}`.trim()
+  const fullName = `${firstName} ${lastName}`
 
   const { mutateAsync: toggleStatusFn, isPending: isUpdating } = useMutation({
-    mutationFn: () => togglePatientStatus(id, false),
-
+    mutationFn: () => togglePatientStatus(id),
     onMutate: async () => {
       await queryClient.cancelQueries({ queryKey: ['patients'] })
-      const snapshot = queryClient.getQueriesData<GetPatientsResponse>({ queryKey: ['patients'], exact: false })
+      const snapshot = queryClient.getQueriesData<GetPatientsResponse>({
+        queryKey: ['patients'],
+        exact: false,
+      })
       queryClient.setQueriesData<GetPatientsResponse>(
         { queryKey: ['patients'], exact: false },
         (old) => {
           if (!old) return old
+
           return {
             ...old,
             patients: old.patients.map((p) =>
@@ -124,7 +108,6 @@ export const PatientsTableRow = memo(function PatientsTableRow({
       )
       return { snapshot }
     },
-
     onError: (_err, _vars, context) => {
       if (context?.snapshot) {
         context.snapshot.forEach(([key, data]) => {
@@ -132,59 +115,20 @@ export const PatientsTableRow = memo(function PatientsTableRow({
         })
       }
     },
-
     onSettled: () => {
-      queryClient.invalidateQueries({ queryKey: ['patients'] })
-      queryClient.invalidateQueries({ queryKey: ['patient-details', id] })
-      queryClient.invalidateQueries({ queryKey: ['patients-count'] })
+      Promise.all([
+        queryClient.invalidateQueries({ queryKey: ['patients'] }),
+        queryClient.invalidateQueries({ queryKey: ['patient', id] }),
+        queryClient.invalidateQueries({ queryKey: ['patient-details', id] }),
+        queryClient.invalidateQueries({ queryKey: ['patients-metrics'] }),
+      ])
     },
   })
 
-  const { mutate: handleToggleStatus, isPending: isTogglingStatus } = useMutation({
-    mutationFn: () => togglePatientStatus(id, !patientIsActive),
-
-    onMutate: async () => {
-      await queryClient.cancelQueries({ queryKey: ['patients'] })
-      queryClient.setQueriesData<GetPatientsResponse>(
-        { queryKey: ['patients'], exact: false },
-        (old) => {
-          if (!old) return old
-          return {
-            ...old,
-            patients: old.patients.map((p) =>
-              p.id === id
-                ? { ...p, isActive: !patientIsActive }
-                : p,
-            ),
-          }
-        },
-      )
-    },
-
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['patients-count'] })
-      toast.success(
-        patientIsActive
-          ? `${fullName} arquivado com sucesso.`
-          : `${fullName} reativado com sucesso.`,
-      )
-    },
-
-    onError: () => {
-      toast.error('Erro ao alterar status do paciente. Tente novamente.')
-    },
-
-    onSettled: () => {
-      queryClient.invalidateQueries({ queryKey: ['patients'] })
-    },
-  })
-
-  const handleOpenDetails = useCallback(() => setIsDetailsOpen(true), [])
-  const handleOpenEdit = useCallback(() => setIsEditOpen(true), [])
-  const handleOpenDelete = useCallback(() => setIsDeleteOpen(true), [])
   const handleNavigate = useCallback(() => {
     sessionStorage.removeItem('active_patient_queue')
     sessionStorage.removeItem('active_patient_queue_source')
+
     navigate(`/patients/${id}/details`, { state: { from: 'patients-list' } })
   }, [navigate, id])
 
@@ -192,9 +136,9 @@ export const PatientsTableRow = memo(function PatientsTableRow({
     navigate(`/appointment?patientId=${id}`)
   }, [navigate, id])
 
-  const isValidDate = dateOfBirth && !isNaN(new Date(dateOfBirth).getTime())
-  const age = isValidDate ? formatAGE(dateOfBirth) : null
-  const ageDisplay = age !== null ? `${age} ${age === 1 ? 'ano' : 'anos'}` : '—'
+  const now = new Date()
+  const age = dateOfBirth ? differenceInYears(now, dateOfBirth) : null
+  const ageDisplay = age ? `${age} ${age === 1 ? 'ano' : 'anos'}` : '—'
 
   const lastSessionRelative = lastSessionAt
     ? formatDistanceToNow(new Date(lastSessionAt), {
@@ -202,6 +146,7 @@ export const PatientsTableRow = memo(function PatientsTableRow({
         locale: ptBR,
       })
     : null
+
   const lastSessionExact = lastSessionAt
     ? format(new Date(lastSessionAt), "dd/MM/yyyy 'às' HH:mm", { locale: ptBR })
     : null
@@ -244,13 +189,13 @@ export const PatientsTableRow = memo(function PatientsTableRow({
         <TableCell className="w-[120px]">
           <span
             className={cn(
-              "inline-flex items-center gap-1.5 h-6 px-2.5 rounded-full text-[11px] font-semibold",
-              patientIsActive
-                ? "bg-emerald-100 text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-400"
-                : "bg-red-100 text-red-700 dark:bg-red-900/30 dark:text-red-400",
+              'inline-flex items-center gap-1.5 h-6 px-2.5 rounded-full text-[11px] font-semibold',
+              isActive
+                ? 'bg-emerald-100 text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-400'
+                : 'bg-red-100 text-red-700 dark:bg-red-900/30 dark:text-red-400',
             )}
           >
-            {patientIsActive ? 'Ativo' : 'Arquivado'}
+            {isActive ? 'Ativo' : 'Arquivado'}
           </span>
         </TableCell>
 
@@ -259,7 +204,7 @@ export const PatientsTableRow = memo(function PatientsTableRow({
           <div className="flex flex-col gap-1">
             <div className="flex items-center gap-1.5">
               <Phone
-                className="h-3 w-3 text-muted-foreground shrink-0"
+                className="size-3 text-muted-foreground shrink-0"
                 aria-hidden="true"
               />
               <span className="text-xs font-medium">
@@ -268,12 +213,10 @@ export const PatientsTableRow = memo(function PatientsTableRow({
             </div>
             <div className="flex items-center gap-1.5">
               <Mail
-                className="h-3 w-3 text-muted-foreground shrink-0"
+                className="size-3 text-muted-foreground shrink-0"
                 aria-hidden="true"
               />
-              <span className="text-xs font-medium">
-                {email || '—'}
-              </span>
+              <span className="text-xs font-medium">{email || '—'}</span>
             </div>
           </div>
         </TableCell>
@@ -300,9 +243,9 @@ export const PatientsTableRow = memo(function PatientsTableRow({
         <TableCell className="w-[110px] hidden xl:table-cell">
           <div className="flex flex-col gap-0.5">
             <span className="text-sm font-bold tabular-nums">{ageDisplay}</span>
-            {isValidDate && (
+            {dateOfBirth && (
               <span className="text-[10px] text-muted-foreground flex items-center gap-1">
-                <CalendarDays className="h-2.5 w-2.5" aria-hidden="true" />
+                <CalendarDays className="size-2.5" aria-hidden="true" />
                 {format(new Date(dateOfBirth), 'dd/MM/yyyy')}
               </span>
             )}
@@ -317,7 +260,7 @@ export const PatientsTableRow = memo(function PatientsTableRow({
               genderCfg.className,
             )}
           >
-            <genderCfg.icon className="h-3 w-3" aria-hidden="true" />
+            <genderCfg.icon className="size-3" aria-hidden="true" />
             {genderCfg.label}
           </Badge>
         </TableCell>
@@ -330,11 +273,11 @@ export const PatientsTableRow = memo(function PatientsTableRow({
                 <Button
                   variant="ghost"
                   size="icon"
-                  className="h-8 w-8 cursor-pointer text-muted-foreground hover:text-foreground"
+                  className="size-8 cursor-pointer text-muted-foreground hover:text-foreground"
                   onClick={handleNavigate}
                   aria-label="Prontuário completo"
                 >
-                  <ClipboardList className="h-4 w-4" />
+                  <ClipboardList className="size-4" />
                 </Button>
               </TooltipTrigger>
               <TooltipContent className="text-xs">Prontuário</TooltipContent>
@@ -345,11 +288,11 @@ export const PatientsTableRow = memo(function PatientsTableRow({
                 <Button
                   variant="ghost"
                   size="icon"
-                  className="h-8 w-8 cursor-pointer text-muted-foreground hover:text-foreground"
+                  className="size-8 cursor-pointer text-muted-foreground hover:text-foreground"
                   onClick={handleOpenDetails}
                   aria-label="Ver sessões do paciente"
                 >
-                  <Video className="h-4 w-4" />
+                  <Video className="size-4" />
                 </Button>
               </TooltipTrigger>
               <TooltipContent className="text-xs">Sessões</TooltipContent>
@@ -360,10 +303,10 @@ export const PatientsTableRow = memo(function PatientsTableRow({
                 <Button
                   variant="ghost"
                   size="icon"
-                  className="h-8 w-8 cursor-pointer text-muted-foreground hover:text-foreground"
+                  className="size-8 cursor-pointer text-muted-foreground hover:text-foreground"
                   aria-label={`Mais ações — ${fullName}`}
                 >
-                  <MoreVertical className="h-4 w-4" />
+                  <MoreVertical className="size-4" />
                 </Button>
               </DropdownMenuTrigger>
               <DropdownMenuContent align="end" className="w-44">
@@ -371,35 +314,34 @@ export const PatientsTableRow = memo(function PatientsTableRow({
                   className="cursor-pointer"
                   onSelect={handleOpenDetails}
                 >
-                  <Search className="mr-2 h-4 w-4" /> Ver detalhes
+                  <Search className="mr-2 size-4" /> Ver detalhes
                 </DropdownMenuItem>
                 <DropdownMenuItem
                   className="cursor-pointer"
                   onSelect={handleScheduleSession}
                 >
-                  <CalendarPlus className="mr-2 h-4 w-4" /> Agendar sessão
+                  <CalendarPlus className="mr-2 size-4" /> Agendar sessão
                 </DropdownMenuItem>
                 <DropdownMenuItem
                   className="cursor-pointer"
                   onSelect={handleOpenEdit}
                 >
-                  <Pencil className="mr-2 h-4 w-4" /> Editar
+                  <Pencil className="mr-2 size-4" /> Editar
                 </DropdownMenuItem>
                 <DropdownMenuSeparator />
-                {patientIsActive ? (
+                {isActive ? (
                   <DropdownMenuItem
                     onSelect={handleOpenDelete}
                     className="cursor-pointer text-destructive focus:text-destructive"
                   >
-                    <Archive className="mr-2 h-4 w-4" /> Arquivar paciente
+                    <Archive className="mr-2 size-4" /> Arquivar paciente
                   </DropdownMenuItem>
                 ) : (
                   <DropdownMenuItem
-                    onSelect={() => handleToggleStatus()}
-                    disabled={isTogglingStatus}
+                    onSelect={handleOpenReactivate}
                     className="cursor-pointer text-emerald-700 dark:text-emerald-400 focus:text-emerald-700 dark:focus:text-emerald-400"
                   >
-                    <RotateCcw className="mr-2 h-4 w-4" /> Reativar paciente
+                    <RotateCcw className="mr-2 size-4" /> Reativar paciente
                   </DropdownMenuItem>
                 )}
               </DropdownMenuContent>
@@ -415,7 +357,7 @@ export const PatientsTableRow = memo(function PatientsTableRow({
         <Dialog open={isEditOpen} onOpenChange={setIsEditOpen}>
           {isEditOpen && (
             <RegisterPatients
-              patient={patient}
+              patientId={patient.id}
               onSuccess={() => setIsEditOpen(false)}
             />
           )}
@@ -427,6 +369,20 @@ export const PatientsTableRow = memo(function PatientsTableRow({
               fullName={fullName}
               isPending={isUpdating}
               onClose={() => setIsDeleteOpen(false)}
+              onConfirm={async () => {
+                await toggleStatusFn()
+              }}
+            />
+          )}
+        </Dialog>
+
+        <Dialog open={isReactivateOpen} onOpenChange={setIsReactivateOpen}>
+          {isReactivateOpen && (
+            <PatientStatusDialog
+              mode="reactivate"
+              fullName={fullName}
+              isPending={isUpdating}
+              onClose={() => setIsReactivateOpen(false)}
               onConfirm={async () => {
                 await toggleStatusFn()
               }}

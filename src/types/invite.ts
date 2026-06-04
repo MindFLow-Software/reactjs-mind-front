@@ -1,12 +1,12 @@
 export interface RegistrationLinkInfo {
-  psychologistId:   string
+  psychologistId: string
   psychologistName: string
-  expiresAt:        string
+  expiresAt: string
 }
 
 export interface ScheduledAppointmentResponse {
   appointmentId: string
-  scheduledAt:   string
-  patientId:     string
-  status:        string
+  scheduledAt: string
+  patientId: string
+  status: string
 }

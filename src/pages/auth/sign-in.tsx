@@ -1,7 +1,7 @@
-import { Helmet } from "react-helmet-async"
-import { BrainIcon } from "@phosphor-icons/react"
-import { useAuthRedirect } from "@/hooks/use-auth-redirect"
-import { SignInForm } from "./components/sign-in-form"
+import { Helmet } from 'react-helmet-async'
+import { BrainIcon } from '@phosphor-icons/react'
+import { useAuthRedirect } from '@/hooks/use-auth-redirect'
+import { SignInForm } from './components/sign-in-form'
 
 function BrandedLoader() {
   return (
