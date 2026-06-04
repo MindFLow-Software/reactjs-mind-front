@@ -23,7 +23,7 @@ export type { AttachmentListItem as Attachment } from '@/types/attachment'
 
 export interface GetAllAttachmentsResponse {
   attachments: AttachmentListItem[]
-  meta:        AttachmentListMeta
+  meta: AttachmentListMeta
 }
 
 export async function uploadAttachment(
@@ -34,7 +34,10 @@ export async function uploadAttachment(
   formData.append('file', file)
   formData.append('patientId', patientId)
 
-  const { data } = await api.post<UploadAttachmentResponse>('/attachments', formData)
+  const { data } = await api.post<UploadAttachmentResponse>(
+    '/attachments',
+    formData,
+  )
   return data
 }
 
@@ -47,11 +50,16 @@ export async function uploadAvatar(
   formData.append('patientId', patientId)
   formData.append('type', 'AVATAR')
 
-  const { data } = await api.post<UploadAttachmentResponse>('/attachments', formData)
+  const { data } = await api.post<UploadAttachmentResponse>(
+    '/attachments',
+    formData,
+  )
   return data
 }
 
-export async function getPatientAttachments(patientId: string | null): Promise<AttachmentPatientItem[]> {
+export async function getPatientAttachments(
+  patientId: string | null,
+): Promise<AttachmentPatientItem[]> {
   const { data } = await api.get<{ attachments: AttachmentPatientItem[] }>(
     // ToDo: trocar rota, o correto, de acordo com o REST seria: /patients/${patientId}/attachments
     `/attachments/patient/${patientId}`,
@@ -62,7 +70,9 @@ export async function getPatientAttachments(patientId: string | null): Promise<A
 export async function getAllAttachments(
   params: FetchAllAttachmentsParams,
 ): Promise<GetAllAttachmentsResponse> {
-  const { data } = await api.get<GetAllAttachmentsResponse>('/attachments', { params })
+  const { data } = await api.get<GetAllAttachmentsResponse>('/attachments', {
+    params,
+  })
   return data
 }
 

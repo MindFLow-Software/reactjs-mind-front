@@ -1,6 +1,6 @@
-﻿"use client"
+'use client'
 
-import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query"
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import {
   BadgeCheck,
   Bell,
@@ -11,14 +11,17 @@ import {
   Moon,
   Sun,
   Laptop,
-  Palette
-} from "lucide-react"
-import { useNavigate, Link } from "react-router-dom"
-import { toast } from "sonner"
+  Palette,
+} from 'lucide-react'
+import { useNavigate, Link } from 'react-router-dom'
+import { toast } from 'sonner'
 
-import { signOut } from "@/api/auth/sign-out"
-import { getProfile, type GetProfileResponse } from "@/api/psychologists/get-profile"
-import { useTheme } from "../theme/theme-provider"
+import { signOut } from '@/api/auth/sign-out'
+import {
+  getProfile,
+  type GetProfileResponse,
+} from '@/api/psychologists/get-profile'
+import { useTheme } from '../theme/theme-provider'
 
 import {
   DropdownMenu,
@@ -31,16 +34,16 @@ import {
   DropdownMenuSub,
   DropdownMenuSubTrigger,
   DropdownMenuSubContent,
-  DropdownMenuPortal
-} from "@/components/ui/dropdown-menu"
+  DropdownMenuPortal,
+} from '@/components/ui/dropdown-menu'
 import {
   SidebarMenu,
   SidebarMenuButton,
   SidebarMenuItem,
   useSidebar,
-} from "@/components/ui/sidebar"
-import { Skeleton } from "@/components/ui/skeleton"
-import { UserAvatar } from "@/components/user-avatar" // Importando o componente padronizado
+} from '@/components/ui/sidebar'
+import { Skeleton } from '@/components/ui/skeleton'
+import { UserAvatar } from '@/components/user-avatar' // Importando o componente padronizado
 
 export function NavUser() {
   const { isMobile } = useSidebar()
@@ -53,7 +56,7 @@ export function NavUser() {
     isLoading,
     isError,
   } = useQuery<GetProfileResponse | null>({
-    queryKey: ["user-profile"],
+    queryKey: ['user-profile'],
     queryFn: getProfile,
     retry: false,
     staleTime: Infinity,
@@ -64,20 +67,20 @@ export function NavUser() {
     onSuccess: () => {
       queryClient.clear()
       toast.success('Sessão encerrada com segurança!', { duration: 4000 })
-      navigate("/sign-in", { replace: true })
+      navigate('/sign-in', { replace: true })
     },
     onError: (error) => {
-      console.error("Erro ao sair:", error)
+      console.error('Erro ao sair:', error)
       localStorage.removeItem('isAuthenticated')
-      navigate("/sign-in", { replace: true })
-    }
+      navigate('/sign-in', { replace: true })
+    },
   })
 
   const name = profile
     ? `${profile.firstName} ${profile.lastName}`
     : isError
-      ? "Erro ao carregar"
-      : "Carregando..."
+      ? 'Erro ao carregar'
+      : 'Carregando...'
 
   const profileImage = profile?.profileImageUrl || null
 
@@ -112,7 +115,7 @@ export function NavUser() {
                   <>
                     <span className="truncate font-medium">{name}</span>
                     <span className="truncate text-xs text-muted-foreground">
-                      {profile?.email || "Sem e-mail"}
+                      {profile?.email || 'Sem e-mail'}
                     </span>
                   </>
                 )}
@@ -125,7 +128,7 @@ export function NavUser() {
           {!isLoading && profile && (
             <DropdownMenuContent
               className="w-[--radix-dropdown-menu-trigger-width] min-w-56 rounded-lg"
-              side={isMobile ? "bottom" : "right"}
+              side={isMobile ? 'bottom' : 'right'}
               align="end"
               sideOffset={4}
             >
@@ -167,15 +170,24 @@ export function NavUser() {
                   </DropdownMenuSubTrigger>
                   <DropdownMenuPortal>
                     <DropdownMenuSubContent>
-                      <DropdownMenuItem onClick={() => setTheme("light")} className="cursor-pointer">
+                      <DropdownMenuItem
+                        onClick={() => setTheme('light')}
+                        className="cursor-pointer"
+                      >
                         <Sun className="mr-2 h-4 w-4" />
                         <span>Claro</span>
                       </DropdownMenuItem>
-                      <DropdownMenuItem onClick={() => setTheme("dark")} className="cursor-pointer">
+                      <DropdownMenuItem
+                        onClick={() => setTheme('dark')}
+                        className="cursor-pointer"
+                      >
                         <Moon className="mr-2 h-4 w-4" />
                         <span>Escuro</span>
                       </DropdownMenuItem>
-                      <DropdownMenuItem onClick={() => setTheme("system")} className="cursor-pointer">
+                      <DropdownMenuItem
+                        onClick={() => setTheme('system')}
+                        className="cursor-pointer"
+                      >
                         <Laptop className="mr-2 h-4 w-4" />
                         <span>Sistema</span>
                       </DropdownMenuItem>

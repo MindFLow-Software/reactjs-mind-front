@@ -59,14 +59,14 @@ export const PatientsTableRow = memo(function PatientsTableRow({
   const navigate = useNavigate()
   const queryClient = useQueryClient()
 
-  const [isDetailsOpen,    setIsDetailsOpen]    = useState(false)
-  const [isEditOpen,       setIsEditOpen]       = useState(false)
-  const [isDeleteOpen,     setIsDeleteOpen]     = useState(false)
+  const [isDetailsOpen, setIsDetailsOpen] = useState(false)
+  const [isEditOpen, setIsEditOpen] = useState(false)
+  const [isDeleteOpen, setIsDeleteOpen] = useState(false)
   const [isReactivateOpen, setIsReactivateOpen] = useState(false)
 
-  const handleOpenDetails    = useCallback(() => setIsDetailsOpen(true), [])
-  const handleOpenEdit       = useCallback(() => setIsEditOpen(true), [])
-  const handleOpenDelete     = useCallback(() => setIsDeleteOpen(true), [])
+  const handleOpenDetails = useCallback(() => setIsDetailsOpen(true), [])
+  const handleOpenEdit = useCallback(() => setIsEditOpen(true), [])
+  const handleOpenDelete = useCallback(() => setIsDeleteOpen(true), [])
   const handleOpenReactivate = useCallback(() => setIsReactivateOpen(true), [])
 
   const {
@@ -89,7 +89,10 @@ export const PatientsTableRow = memo(function PatientsTableRow({
     mutationFn: () => togglePatientStatus(id),
     onMutate: async () => {
       await queryClient.cancelQueries({ queryKey: ['patients'] })
-      const snapshot = queryClient.getQueriesData<GetPatientsResponse>({ queryKey: ['patients'], exact: false })
+      const snapshot = queryClient.getQueriesData<GetPatientsResponse>({
+        queryKey: ['patients'],
+        exact: false,
+      })
       queryClient.setQueriesData<GetPatientsResponse>(
         { queryKey: ['patients'], exact: false },
         (old) => {
@@ -99,8 +102,12 @@ export const PatientsTableRow = memo(function PatientsTableRow({
             ...old,
             patients: old.patients.map((p) =>
               p.id === id
-                ? { ...p, status: p.isActive ? 'BLOCKED' : 'ACTIVE', isActive: !p.isActive }
-                : p
+                ? {
+                    ...p,
+                    status: p.isActive ? 'BLOCKED' : 'ACTIVE',
+                    isActive: !p.isActive,
+                  }
+                : p,
             ),
           }
         },
@@ -188,10 +195,10 @@ export const PatientsTableRow = memo(function PatientsTableRow({
         <TableCell className="w-[120px]">
           <span
             className={cn(
-              "inline-flex items-center gap-1.5 h-6 px-2.5 rounded-full text-[11px] font-semibold",
+              'inline-flex items-center gap-1.5 h-6 px-2.5 rounded-full text-[11px] font-semibold',
               isActive
-                ? "bg-emerald-100 text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-400"
-                : "bg-red-100 text-red-700 dark:bg-red-900/30 dark:text-red-400",
+                ? 'bg-emerald-100 text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-400'
+                : 'bg-red-100 text-red-700 dark:bg-red-900/30 dark:text-red-400',
             )}
           >
             {isActive ? 'Ativo' : 'Arquivado'}
@@ -215,9 +222,7 @@ export const PatientsTableRow = memo(function PatientsTableRow({
                 className="size-3 text-muted-foreground shrink-0"
                 aria-hidden="true"
               />
-              <span className="text-xs font-medium">
-                {email || '—'}
-              </span>
+              <span className="text-xs font-medium">{email || '—'}</span>
             </div>
           </div>
         </TableCell>
@@ -370,7 +375,9 @@ export const PatientsTableRow = memo(function PatientsTableRow({
               fullName={fullName}
               isPending={isUpdating}
               onClose={() => setIsDeleteOpen(false)}
-              onConfirm={async () => { await toggleStatusFn() }}
+              onConfirm={async () => {
+                await toggleStatusFn()
+              }}
             />
           )}
         </Dialog>
@@ -382,7 +389,9 @@ export const PatientsTableRow = memo(function PatientsTableRow({
               fullName={fullName}
               isPending={isUpdating}
               onClose={() => setIsReactivateOpen(false)}
-              onConfirm={async () => { await toggleStatusFn() }}
+              onConfirm={async () => {
+                await toggleStatusFn()
+              }}
             />
           )}
         </Dialog>

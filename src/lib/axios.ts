@@ -53,7 +53,9 @@ api.interceptors.response.use(
       localStorage.removeItem('isAuthenticated')
       localStorage.removeItem('user')
       const currentPath = window.location.pathname
-      const shouldRedirect = !SKIP_REDIRECT_PATHS.some((p) => currentPath.startsWith(p))
+      const shouldRedirect = !SKIP_REDIRECT_PATHS.some((p) =>
+        currentPath.startsWith(p),
+      )
       if (shouldRedirect) window.location.href = '/sign-in'
     }
 

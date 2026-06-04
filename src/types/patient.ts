@@ -1,4 +1,4 @@
-import type { Iuser } from "./user"
+import type { Iuser } from './user'
 
 export const Gender = {
   OTHER: 'OTHER',
@@ -117,13 +117,3 @@ export type RegisterPatientViaInviteBody = RegisterPatientBody
 export type RegisterPatientViaInviteResponse = { message: string }
 
 export type IsessionVolume = 'high' | 'low' | 'all'
-
-export type FetchPatientsParams = {
-  pageIndex?: number
-  perPage?: number
-  filter?: string
-  status?: PatientStatus
-  gender?: Gender
-  order?: 'asc' | 'desc'
-  sessionVolume?: IsessionVolume
-}

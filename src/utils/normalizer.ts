@@ -9,7 +9,9 @@ export class Normalizer {
     return value.replace(/[^a-zA-Z]/g, '')
   }
 
-  static removeSpecialCharacters = (value: string | null | undefined): string => {
+  static removeSpecialCharacters = (
+    value: string | null | undefined,
+  ): string => {
     if (!value || typeof value !== 'string') return ''
     return value.replace(/[*#@]/g, '')
   }
@@ -17,9 +19,9 @@ export class Normalizer {
   static capitalize = (text: string | null | undefined): string => {
     if (!text) return ''
     return text
-    .toLowerCase()
-    .split(' ')
-    .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
-    .join(' ')
+      .toLowerCase()
+      .split(' ')
+      .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
+      .join(' ')
   }
 }

@@ -1,15 +1,20 @@
 import { api } from '@/lib/axios'
-import type { Ipatient, FetchPatientsParams, PatientStatus, Gender, IsessionVolume } from '@/types/patient'
+import type {
+  Gender,
+  Ipatient,
+  IsessionVolume,
+  PatientStatus,
+} from '@/types/patient'
 import type { PaginationMeta } from '@/types/pagination'
 
-export interface GetPatientsFilters {
+export interface IgetPatientsQueryParams {
   pageIndex?: number
   perPage?: number
   filter?: string
-  gender?: Gender
-  status?: PatientStatus
+  gender?: Gender | null
+  status?: PatientStatus | null
   order?: 'asc' | 'desc'
-  sessionVolume?: IsessionVolume
+  sessionVolume?: IsessionVolume | null
 }
 
 export interface GetPatientsResponse {
@@ -25,22 +30,25 @@ export async function getPatients({
   status,
   order,
   sessionVolume,
-}: GetPatientsFilters): Promise<GetPatientsResponse> {
-  const params: FetchPatientsParams = {
+}: IgetPatientsQueryParams): Promise<GetPatientsResponse> {
+  const params: IgetPatientsQueryParams = {
     pageIndex,
     perPage,
     filter,
     status,
     gender,
     order,
-    sessionVolume: sessionVolume,
+    sessionVolume,
   }
 
   const response = await api.get<GetPatientsResponse>('/patients', { params })
 
   const patients = response.data.patients.map((patient) => ({
     ...patient,
-    name: patient.name ?? `${patient.firstName} ${patient.lastName}`.trim() ?? 'Paciente sem nome',
+    name:
+      patient.name ??
+      `${patient.firstName} ${patient.lastName}`.trim() ??
+      'Paciente sem nome',
   }))
 
   return {

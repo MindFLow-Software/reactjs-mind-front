@@ -1,4 +1,4 @@
-import { api } from "@/lib/axios"
+import { api } from '@/lib/axios'
 
 export type NewPatientsResponse = {
   date: string
@@ -14,13 +14,12 @@ export async function getAmountPatientsChart({
   startDate,
   endDate,
 }: GetAmountPatientsChartParams): Promise<NewPatientsResponse> {
-  
-  const { data } = await api.get<NewPatientsResponse>("/patients/stats/new", {
+  const { data } = await api.get<NewPatientsResponse>('/patients/stats/new', {
     params: {
-      startDate: startDate.toISOString(), 
-      endDate: endDate.toISOString(),   
+      startDate: startDate.toISOString(),
+      endDate: endDate.toISOString(),
     },
   })
-  
+
   return data
 }

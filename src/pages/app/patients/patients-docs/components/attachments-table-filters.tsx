@@ -1,1 +1,1 @@
-export { AttachmentsTableFilters } from "./attachments-table/attachments-table-filters"
+export { AttachmentsTableFilters } from './attachments-table/attachments-table-filters'

@@ -14,12 +14,31 @@ interface PatientsTableFiltersProps {
 }
 
 const STATUS_PILLS: readonly StatusPillOption[] = [
-  { value: null,      label: 'Todos',      dot: null,             activeCls: 'border border-blue-500 bg-background text-foreground'                                                    },
-  { value: 'ACTIVE',  label: 'Ativos',     dot: 'bg-emerald-500', activeCls: 'border border-emerald-500 bg-emerald-100 text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-400' },
-  { value: 'BLOCKED', label: 'Arquivados', dot: 'bg-red-500',     activeCls: 'border border-red-500 bg-red-100 text-red-700 dark:bg-red-900/30 dark:text-red-400'                     },
+  {
+    value: null,
+    label: 'Todos',
+    dot: null,
+    activeCls: 'border border-blue-500 bg-background text-foreground',
+  },
+  {
+    value: 'ACTIVE',
+    label: 'Ativos',
+    dot: 'bg-emerald-500',
+    activeCls:
+      'border border-emerald-500 bg-emerald-100 text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-400',
+  },
+  {
+    value: 'BLOCKED',
+    label: 'Arquivados',
+    dot: 'bg-red-500',
+    activeCls:
+      'border border-red-500 bg-red-100 text-red-700 dark:bg-red-900/30 dark:text-red-400',
+  },
 ]
 
-export function PatientsTableFilters({ isFetching }: PatientsTableFiltersProps) {
+export function PatientsTableFilters({
+  isFetching,
+}: PatientsTableFiltersProps) {
   const { filters, setFilters, clearFilters } = usePatientFilters()
   const isFirstRender = useRef(true)
   const setFiltersRef = useRef(setFilters)
@@ -99,7 +118,9 @@ export function PatientsTableFilters({ isFetching }: PatientsTableFiltersProps) 
               )}
             >
               {pill.dot && (
-                <span className={cn('h-1.5 w-1.5 rounded-full shrink-0', pill.dot)} />
+                <span
+                  className={cn('h-1.5 w-1.5 rounded-full shrink-0', pill.dot)}
+                />
               )}
               {pill.label}
             </button>

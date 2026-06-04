@@ -27,9 +27,8 @@ export interface GetProfileResponse {
 export async function getProfile(): Promise<GetProfileResponse> {
   const response = await api.get('/me')
 
-  const {
-    authenticatedUser: raw
-  }: { authenticatedUser: GetProfileResponse } = response.data
+  const { authenticatedUser: raw }: { authenticatedUser: GetProfileResponse } =
+    response.data
 
   const user: GetProfileResponse = {
     id: raw.id,

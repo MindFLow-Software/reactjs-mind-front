@@ -34,6 +34,17 @@ export function usePsychologistProfile() {
 }
 ```
 
+## Mutations
+
+- **Mutations simples** (único endpoint, sem efeitos colaterais independentes): usar `useApiMutation` de `@/hooks/use-api-mutation`.
+- **Mutations complexas** (múltiplos endpoints sequenciais, uploads separados, efeitos colaterais não-críticos): usar `useMutation` do TanStack Query diretamente, encapsulado em um hook de domínio próprio.
+- Invalidar query keys relacionadas em paralelo com `Promise.all([queryClient.invalidateQueries(...), ...])` após sucesso.
+- Estado de loading combinado: derivar de múltiplas flags (`isCreating || isUpdating || isUploading`) — não criar estado local para isso.
+- Uploads sequenciais (attachments): usar `for...of` + `await`, não `Promise.all`, para respeitar rate limits do servidor.
+- Efeitos colaterais não-críticos (ex: upload de avatar): envolver em `try/catch` separado com `console.warn` — não devem bloquear o caminho de sucesso principal.
+
+Referência canônica: `src/pages/app/patients/patients-list/register-patients/hooks/use-patient-submit.ts`.
+
 ## Filtros de Página
 
 - Filtros persistidos na URL via `useSearchParams()` (React Router).
@@ -65,12 +76,13 @@ export function usePsychologistProfile() {
 - Tokens de cor e tipografia definidos em `src/global.css` via `@theme inline` (Tailwind 4).
 - Cor primária: `#4f35e1` (roxo). Sistema de cores em OKLch.
 - Dark mode via classe `.dark` (custom variant no global.css).
-- **Não criar classes CSS customizadas** — usar tokens do sistema.
+- Feature-scoped CSS files are acceptable when co-located with their `.tsx` component (same directory, same base name). All class names in a feature CSS file must carry a short feature prefix (`rp-`, `pl-`) to prevent global collisions.
+- Do not create standalone global utility classes — use Tailwind tokens directly in JSX for anything that is not feature-specific.
 
 ## Ícones
 
-- Preferir `@phosphor-icons/react` para novos componentes.
-- `lucide-react` está presente por legado — evitar adicionar novos usos.
+- Usar `lucide-react` para todos os novos componentes — é o sistema primário.
+- `@phosphor-icons/react` é legado — não adicionar novos usos. Substituir oportunisticamente ao tocar em código existente que o usa.
 
 ## Tradução de Enums
 

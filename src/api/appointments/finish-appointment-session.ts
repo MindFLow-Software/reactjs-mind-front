@@ -5,9 +5,9 @@ interface FinishAppointmentSessionRequest {
   content?: string
 }
 
-export async function finishAppointmentSession({ 
-  sessionId, 
-  content 
+export async function finishAppointmentSession({
+  sessionId,
+  content,
 }: FinishAppointmentSessionRequest) {
   await api.post(`/sessions/${sessionId}/finish`, { content })
 }

@@ -1,4 +1,4 @@
-import { api } from "@/lib/axios"
+import { api } from '@/lib/axios'
 
 interface StartAppointmentSessionRequest {
   appointmentId: string
@@ -13,7 +13,7 @@ export async function startAppointmentSession({
   appointmentId,
 }: StartAppointmentSessionRequest): Promise<StartAppointmentSessionResponse> {
   const response = await api.post<StartAppointmentSessionResponse>(
-    `/appointments/${appointmentId}/start`
+    `/appointments/${appointmentId}/start`,
   )
 
   return response.data

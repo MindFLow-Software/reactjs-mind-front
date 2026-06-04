@@ -1,8 +1,8 @@
 export interface AvailabilityHTTP {
-  id:             string
+  id: string
   psychologistId: string
-  dayOfWeek:      number
-  startTime:      string
-  endTime:        string
-  isActive:       boolean
+  dayOfWeek: number
+  startTime: string
+  endTime: string
+  isActive: boolean
 }

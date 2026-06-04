@@ -1,8 +1,8 @@
-import { useState, useCallback } from "react"
+import { useState, useCallback } from 'react'
 
 export function useAppointmentSession() {
-  const [selectedPatientId, setSelectedPatientId] = useState("")
-  const [notes, setNotes] = useState("")
+  const [selectedPatientId, setSelectedPatientId] = useState('')
+  const [notes, setNotes] = useState('')
   const [isSessionActive, setIsSessionActive] = useState(false)
   const [currentSessionId, setCurrentSessionId] = useState<string | null>(null)
 
@@ -14,14 +14,17 @@ export function useAppointmentSession() {
   const handleSessionFinished = useCallback(() => {
     setIsSessionActive(false)
     setCurrentSessionId(null)
-    setSelectedPatientId("")
-    setNotes("")
+    setSelectedPatientId('')
+    setNotes('')
   }, [])
 
-  const handleNotesChange = useCallback((e: React.ChangeEvent<HTMLTextAreaElement>) => {
-    const MAX_LENGTH = 8000
-    setNotes(e.target.value.substring(0, MAX_LENGTH))
-  }, [])
+  const handleNotesChange = useCallback(
+    (e: React.ChangeEvent<HTMLTextAreaElement>) => {
+      const MAX_LENGTH = 8000
+      setNotes(e.target.value.substring(0, MAX_LENGTH))
+    },
+    [],
+  )
 
   return {
     selectedPatientId,

@@ -1,95 +1,117 @@
-import { useState } from "react"
-import { useMutation, useQueryClient } from "@tanstack/react-query"
-import { toast } from "sonner"
-import { AxiosError } from "axios"
+import { useState } from 'react'
+import { useMutation, useQueryClient } from '@tanstack/react-query'
 
-import { createPatients } from "@/api/patients/create-patient"
-import { updatePatients } from "@/api/patients/update-patient"
-import { uploadAttachment, uploadAvatar } from "@/api/attachments/attachments"
+import { toast } from 'sonner'
+import { AxiosError } from 'axios'
 
-import type { Ipatient } from "@/types/patient"
-import type { PatientFormData } from "@/validators/patients"
+import { createPatients } from '@/api/patients/create-patient'
+import { updatePatients } from '@/api/patients/update-patient'
+import type { PatientFormData } from '@/validators/patients'
+import { uploadAttachment, uploadAvatar } from '@/api/attachments/attachments'
 
 interface UsePatientSubmitOptions {
-    patientId?: string
-    patient: Ipatient | null
-    avatarFile: File | null
-    files: File[]
-    onSuccess?: () => void
+  files: File[]
+  patientId?: string
+  avatarFile: File | null
+  onSuccess?: () => void
 }
 
-export function usePatientSubmit({ patientId, patient, avatarFile, files, onSuccess }: UsePatientSubmitOptions) {
-    const queryClient = useQueryClient()
-    const isEditMode = Boolean(patientId)
-    const [isUploading, setIsUploading] = useState(false)
+export function usePatientSubmit({
+  files,
+  onSuccess,
+  patientId,
+  avatarFile,
+}: UsePatientSubmitOptions) {
+  const queryClient = useQueryClient()
+  const isEditMode = Boolean(patientId)
+  const [isUploading, setIsUploading] = useState(false)
 
-    const { mutateAsync: createFn, isPending: isCreating } = useMutation({
-        mutationFn: createPatients,
-    })
+  const { mutateAsync: createFn, isPending: isCreating } = useMutation({
+    mutationFn: createPatients,
+    onSuccess: async (response) => {
+      const targetId = isEditMode ? patientId! : response.id
 
-    const { mutateAsync: updateFn, isPending: isUpdating } = useMutation({
-        mutationFn: updatePatients,
-    })
+      await Promise.all([
+        queryClient.invalidateQueries({ queryKey: ['patients'] }),
+        queryClient.invalidateQueries({ queryKey: ['patient', targetId] }),
+        queryClient.invalidateQueries({ queryKey: ['attachments', targetId] }),
+        queryClient.invalidateQueries({ queryKey: ['patients-metrics'] }),
+      ])
 
-    const isSubmitting = isCreating || isUpdating || isUploading
+      onSuccess?.()
+      toast.success('Paciente cadastrado!')
+    },
+    onError: (error) => {
+      const errorMessage =
+        error instanceof AxiosError
+          ? error.message
+          : 'Erro ao criar. Verifique os dados.'
 
-    async function submit(data: PatientFormData) {
-        const {
-            modality, frequency, price, source, notes,
-            email, dateOfBirth, phoneNumber, cpf,
-            zipCode, street, neighborhood, city, state,
-            complement, number,
-            ...coreFields
-        } = data
+      toast.error(errorMessage)
+    },
+  })
 
-        const shared = {
-            ...coreFields,
-            phoneNumber: phoneNumber || undefined,
-            cpf: cpf || undefined,
-            zipCode: zipCode || undefined,
-            street: street || undefined,
-            neighborhood: neighborhood || undefined,
-            city: city || undefined,
-            state: state || undefined,
-            complement: complement || undefined,
-            number: number || undefined,
-            dateOfBirth: dateOfBirth || undefined,
-        }
+  const { mutateAsync: updateFn, isPending: isUpdating } = useMutation({
+    mutationFn: updatePatients,
+    onSuccess: async (response) => {
+      const targetId = isEditMode ? patientId! : response.id
 
-        try {
-            setIsUploading(true)
+      await Promise.all([
+        queryClient.invalidateQueries({ queryKey: ['patients'] }),
+        queryClient.invalidateQueries({ queryKey: ['patient', targetId] }),
+        queryClient.invalidateQueries({ queryKey: ['attachments', targetId] }),
+        queryClient.invalidateQueries({ queryKey: ['patients-metrics'] }),
+      ])
 
-            const res = isEditMode
-                ? await updateFn({ ...shared, id: patient!.id })
-                : await createFn({ ...shared, email: email || undefined })
+      onSuccess?.()
+      toast.success('Paciente atualizado!')
+    },
+    onError: (error) => {
+      const errorMessage =
+        error instanceof AxiosError
+          ? error.message
+          : 'Erro ao salvar. Verifique os dados.'
 
-            const targetId = isEditMode ? patientId! : res.id
+      toast.error(errorMessage)
+    },
+  })
 
-            if (avatarFile) {
-                try {
-                    await uploadAvatar(avatarFile, targetId)
-                } catch {
-                    console.warn("Avatar upload failed — patient saved without avatar")
-                }
-            }
+  const isSubmitting = isCreating || isUpdating || isUploading
 
-            for (const f of files) await uploadAttachment(f, targetId)
-
-            await Promise.all([
-                queryClient.invalidateQueries({ queryKey: ["patients"] }),
-                queryClient.invalidateQueries({ queryKey: ["patient", targetId] }),
-                queryClient.invalidateQueries({ queryKey: ["attachments", targetId] }),
-                queryClient.invalidateQueries({ queryKey: ["patients-metrics"] }),
-            ])
-
-            toast.success(isEditMode ? "Paciente atualizado!" : "Paciente cadastrado!")
-            onSuccess?.()
-        } catch (error) {
-            toast.error(error instanceof AxiosError ? error.message : "Erro ao salvar. Verifique os dados.")
-        } finally {
-            setIsUploading(false)
-        }
+  async function submit(data: PatientFormData) {
+    const shared = {
+      ...data,
+      dateOfBirth: data?.dateOfBirth ?? undefined,
     }
 
-    return { submit, isSubmitting }
+    try {
+      setIsUploading(true)
+
+      const response = isEditMode
+        ? await updateFn({ ...shared, id: patientId! })
+        : await createFn(shared)
+
+      const targetId = isEditMode ? patientId! : response.id
+
+      // The correct would be the uploads BEFORE the patient create/update
+      // and if some of them throws error, stops the flow
+      if (avatarFile) {
+        try {
+          await uploadAvatar(avatarFile, targetId)
+        } catch {
+          console.warn('Avatar upload failed — patient saved without avatar')
+        }
+      }
+
+      // The correct would be the uploads BEFORE the patient create/update
+      // and if some of them throws error, stops the flow
+      for (const file of files) await uploadAttachment(file, targetId)
+
+      return response
+    } finally {
+      setIsUploading(false)
+    }
+  }
+
+  return { submit, isSubmitting }
 }

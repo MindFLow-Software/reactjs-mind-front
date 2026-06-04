@@ -11,17 +11,15 @@ export function usePatientsMetrics(): PatientsMetrics {
         getPatients({ pageIndex: 0, perPage: 1, status: 'BLOCKED' }),
       ])
       return {
-        activeCount:   active.meta.totalCount,
+        activeCount: active.meta.totalCount,
         archivedCount: archived.meta.totalCount,
       }
     },
-    staleTime:            60_000,
-    gcTime:              300_000,
     refetchOnWindowFocus: false,
   })
 
   return {
-    activeCount:   data?.activeCount   ?? 0,
+    activeCount: data?.activeCount ?? 0,
     archivedCount: data?.archivedCount ?? 0,
     isLoading,
   }

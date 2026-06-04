@@ -1,12 +1,12 @@
-"use client"
+'use client'
 
-import { Link } from "react-router-dom"
-import { Bell, Slash } from "lucide-react"
-import { SidebarTrigger } from "@/components/ui/sidebar"
-import { Separator } from "@/components/ui/separator"
-import { Button } from "@/components/ui/button"
-import { useHeaderStore } from "@/hooks/use-header-store"
-import { cn } from "@/lib/utils"
+import { Link } from 'react-router-dom'
+import { Bell, Slash } from 'lucide-react'
+import { SidebarTrigger } from '@/components/ui/sidebar'
+import { Separator } from '@/components/ui/separator'
+import { Button } from '@/components/ui/button'
+import { useHeaderStore } from '@/hooks/use-header-store'
+import { cn } from '@/lib/utils'
 
 export function Header() {
   const { title, titleHref, subtitle, subtitleHref } = useHeaderStore()
@@ -17,7 +17,10 @@ export function Header() {
         <SidebarTrigger className="-ml-1" />
         <Separator orientation="vertical" className="mr-2 h-4" />
 
-        <nav className="flex items-center gap-2 text-sm" aria-label="Breadcrumb">
+        <nav
+          className="flex items-center gap-2 text-sm"
+          aria-label="Breadcrumb"
+        >
           <Link
             to="/dashboard"
             className="text-muted-foreground hover:text-foreground transition-colors hidden sm:inline-block"
@@ -30,17 +33,23 @@ export function Header() {
             <Link
               to={titleHref}
               className={cn(
-                "transition-colors duration-300 hover:text-foreground",
-                subtitle ? "text-muted-foreground" : "font-semibold text-foreground"
+                'transition-colors duration-300 hover:text-foreground',
+                subtitle
+                  ? 'text-muted-foreground'
+                  : 'font-semibold text-foreground',
               )}
             >
               {title}
             </Link>
           ) : (
-            <span className={cn(
-              "transition-colors duration-300",
-              subtitle ? "text-muted-foreground" : "font-semibold text-foreground"
-            )}>
+            <span
+              className={cn(
+                'transition-colors duration-300',
+                subtitle
+                  ? 'text-muted-foreground'
+                  : 'font-semibold text-foreground',
+              )}
+            >
               {title}
             </span>
           )}
@@ -68,7 +77,11 @@ export function Header() {
       <div className="flex-1" />
 
       <div className="flex items-center gap-4">
-        <Button variant="ghost" size="icon" className="relative text-muted-foreground hover:text-foreground">
+        <Button
+          variant="ghost"
+          size="icon"
+          className="relative text-muted-foreground hover:text-foreground"
+        >
           <Bell className="h-5 w-5" />
           <span className="absolute top-2.5 right-2.5 h-2 w-2 rounded-full bg-red-600 border-2 border-background"></span>
           <span className="sr-only">Notificações</span>

@@ -1,6 +1,6 @@
-import { memo } from "react"
-import { useLocation } from "react-router-dom"
-import { BrainIcon } from "@phosphor-icons/react"
+import { memo } from 'react'
+import { useLocation } from 'react-router-dom'
+import { BrainIcon } from '@phosphor-icons/react'
 
 function SignInContent() {
   return (
@@ -16,7 +16,8 @@ function SignInContent() {
 
       <div className="rounded-2xl bg-white/10 backdrop-blur-sm p-5 border border-white/10">
         <p className="text-sm text-white/80 italic leading-relaxed">
-          "A saúde mental é o alicerce de tudo. Nossa plataforma existe para que você possa focar no que importa: as pessoas."
+          &quot;A saúde mental é o alicerce de tudo. Nossa plataforma existe
+          para que você possa focar no que importa: as pessoas.&quot;
         </p>
         <p className="mt-3 text-xs text-white/40 font-medium tracking-wide">
           — Equipe MindFlush
@@ -25,13 +26,15 @@ function SignInContent() {
 
       <div className="flex gap-6">
         {[
-          { value: "500+", label: "Psicólogos ativos" },
-          { value: "12k+", label: "Sessões realizadas" },
-          { value: "98%",  label: "Satisfação" },
+          { value: '500+', label: 'Psicólogos ativos' },
+          { value: '12k+', label: 'Sessões realizadas' },
+          { value: '98%', label: 'Satisfação' },
         ].map((stat) => (
           <div key={stat.label} className="flex flex-col gap-1">
             <span className="text-xl font-bold text-white">{stat.value}</span>
-            <span className="text-[11px] text-white/40 leading-tight">{stat.label}</span>
+            <span className="text-[11px] text-white/40 leading-tight">
+              {stat.label}
+            </span>
           </div>
         ))}
       </div>
@@ -41,9 +44,21 @@ function SignInContent() {
 
 function SignUpContent() {
   const steps = [
-    { n: 1, title: "Crie sua conta",       desc: "Preencha seus dados profissionais" },
-    { n: 2, title: "Configure seu espaço", desc: "Personalize agenda e horários"     },
-    { n: 3, title: "Comece a atender",     desc: "Seus pacientes já podem agendar"   },
+    {
+      n: 1,
+      title: 'Crie sua conta',
+      desc: 'Preencha seus dados profissionais',
+    },
+    {
+      n: 2,
+      title: 'Configure seu espaço',
+      desc: 'Personalize agenda e horários',
+    },
+    {
+      n: 3,
+      title: 'Comece a atender',
+      desc: 'Seus pacientes já podem agendar',
+    },
   ]
 
   return (
@@ -79,7 +94,7 @@ function SignUpContent() {
 
 export const AuthLeftPanel = memo(function AuthLeftPanel() {
   const { pathname } = useLocation()
-  const isSignUp = pathname.startsWith("/sign-up")
+  const isSignUp = pathname.startsWith('/sign-up')
 
   return (
     <div

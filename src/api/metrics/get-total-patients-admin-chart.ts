@@ -1,4 +1,4 @@
-import { api } from "@/lib/axios"
+import { api } from '@/lib/axios'
 
 export interface NewPatientsChartData {
   date: string
@@ -18,13 +18,13 @@ export async function getTotalPatientsAdminChart({
   endDate,
 }: GetTotalPatientsAdminChartParams): Promise<GetTotalPatientsAdminChartResponse> {
   const { data } = await api.get<GetTotalPatientsAdminChartResponse>(
-    "/admin/metrics/patients/new", // 🟢 Rota de Admin criada no backend
+    '/admin/metrics/patients/new', // 🟢 Rota de Admin criada no backend
     {
       params: {
         startDate: startDate.toISOString(),
         endDate: endDate.toISOString(),
       },
-    }
+    },
   )
 
   return data

@@ -3,11 +3,14 @@ import type { CreatePatientBody, CreatePatientResponse } from '@/types/patient'
 
 export type { CreatePatientBody, CreatePatientResponse } from '@/types/patient'
 
-export interface CreatePatientsInput extends Omit<CreatePatientBody, 'dateOfBirth'> {
+export interface CreatePatientsInput
+  extends Omit<CreatePatientBody, 'dateOfBirth'> {
   dateOfBirth?: Date | string | null
 }
 
-export async function createPatients(data: CreatePatientsInput): Promise<CreatePatientResponse> {
+export async function createPatients(
+  data: CreatePatientsInput,
+): Promise<CreatePatientResponse> {
   const formattedData: CreatePatientBody = {
     ...data,
     cpf: data.cpf ? data.cpf.replace(/\D/g, '') : undefined,
@@ -20,6 +23,9 @@ export async function createPatients(data: CreatePatientsInput): Promise<CreateP
         : data.dateOfBirth || undefined,
   }
 
-  const response = await api.post<CreatePatientResponse>('/patient', formattedData)
+  const response = await api.post<CreatePatientResponse>(
+    '/patient',
+    formattedData,
+  )
   return response.data
 }

@@ -1,12 +1,12 @@
-import { useQuery } from "@tanstack/react-query"
-import { getPatientById, type Ipatient } from "@/api/patients/get-patient-by-id"
+import { useQuery } from '@tanstack/react-query'
+import { getPatientById, type Ipatient } from '@/api/patients/get-patient-by-id'
 
 type IusePatient = {
   patient: Ipatient | null
 }
 
 export const usePatient = (patientId: string | undefined): IusePatient => {
-  if (!patientId){
+  if (!patientId) {
     return { patient: null }
   }
 

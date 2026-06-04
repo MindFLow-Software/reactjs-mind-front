@@ -10,16 +10,13 @@ export function usePatientsListQuery(): PatientsListQueryResult {
 
   const { data, isLoading, isFetching } = useQuery({
     queryKey: ['patients', params],
-    queryFn:  () => getPatients(params),
-    staleTime:            30_000,
-    gcTime:              300_000,
+    queryFn: () => getPatients(params),
     refetchOnWindowFocus: true,
-    placeholderData:      (prev) => prev,
   })
 
   return {
-    patients:   data?.patients ?? [],
-    meta:       data?.meta     ?? DEFAULT_META,
+    patients: data?.patients ?? [],
+    meta: data?.meta ?? DEFAULT_META,
     isLoading,
     isFetching,
   }

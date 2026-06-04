@@ -1,4 +1,4 @@
-import { api } from "@/lib/axios"
+import { api } from '@/lib/axios'
 
 export interface GetTotalPsychologistsResponse {
   total: number
@@ -6,7 +6,7 @@ export interface GetTotalPsychologistsResponse {
 
 export async function getTotalPsychologists() {
   const response = await api.get<GetTotalPsychologistsResponse>(
-    "/admin/metrics/psychologists/total"
+    '/admin/metrics/psychologists/total',
   )
 
   return response.data

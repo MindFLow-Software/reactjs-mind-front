@@ -1,4 +1,4 @@
-import { create } from "zustand"
+import { create } from 'zustand'
 
 type IheaderStore = {
   title: string
@@ -15,5 +15,6 @@ export const useHeaderStore = create<IheaderStore>((set) => ({
   subtitle: undefined,
   subtitleHref: undefined,
   setTitle: (newTitle, href) => set({ title: newTitle, titleHref: href }),
-  setSubtitle: (newSubtitle, href) => set({ subtitle: newSubtitle, subtitleHref: href }),
+  setSubtitle: (newSubtitle, href) =>
+    set({ subtitle: newSubtitle, subtitleHref: href }),
 }))

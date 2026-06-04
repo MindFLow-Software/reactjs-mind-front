@@ -1,45 +1,65 @@
-﻿import { useForm, Controller } from "react-hook-form"
-import { zodResolver } from "@hookform/resolvers/zod"
-import { toast } from "sonner"
-import { Helmet } from "react-helmet-async"
-import { Loader2, Mars, Venus, Users } from "lucide-react"
-import { useMutation } from "@tanstack/react-query"
-import { useNavigate } from "react-router-dom"
-import { IMaskMixin } from "react-imask"
+import { useForm, Controller } from 'react-hook-form'
+import { zodResolver } from '@hookform/resolvers/zod'
+import { toast } from 'sonner'
+import { Helmet } from 'react-helmet-async'
+import { Loader2, Mars, Venus, Users } from 'lucide-react'
+import { useMutation } from '@tanstack/react-query'
+import { useNavigate } from 'react-router-dom'
+import { IMaskMixin } from 'react-imask'
 
-import { Button } from "@/components/ui/button"
-import { Input } from "@/components/ui/input"
+import { Button } from '@/components/ui/button'
+import { Input } from '@/components/ui/input'
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from "@/components/ui/select"
-import { Field, FieldGroup, FieldLabel } from "@/components/ui/field"
-import { api } from "@/lib/axios"
-import { getProfile } from "@/api/psychologists/get-profile"
-import { EXPERTISE_TRANSLATIONS } from "@/utils/mappers"
-import { cn } from "@/lib/utils"
-import type { Expertise } from "@/types/expertise"
-import type { Gender } from "@/types/enum-gender"
-import { completeRegistrationSchema, type CompleteRegistrationSchema } from "@/validators/auth"
+} from '@/components/ui/select'
+import { Field, FieldGroup, FieldLabel } from '@/components/ui/field'
+import { api } from '@/lib/axios'
+import { getProfile } from '@/api/psychologists/get-profile'
+import { EXPERTISE_TRANSLATIONS } from '@/utils/mappers'
+import { cn } from '@/lib/utils'
+import type { Expertise } from '@/types/expertise'
+import type { Gender } from '@/types/enum-gender'
+import {
+  completeRegistrationSchema,
+  type CompleteRegistrationSchema,
+} from '@/validators/auth'
 
 type CompleteSchema = CompleteRegistrationSchema
 const completeSchema = completeRegistrationSchema
 
-const GENDER_OPTIONS: { value: Gender; label: string; icon: React.ReactNode }[] = [
-  { value: "FEMININE",  label: "Feminino",             icon: <Venus className="h-4 w-4 text-rose-500" />   },
-  { value: "MASCULINE", label: "Masculino",            icon: <Mars  className="h-4 w-4 text-blue-500" />   },
-  { value: "OTHER",     label: "Prefiro não informar", icon: <Users className="h-4 w-4 text-violet-500" /> },
+const GENDER_OPTIONS: {
+  value: Gender
+  label: string
+  icon: React.ReactNode
+}[] = [
+  {
+    value: 'FEMININE',
+    label: 'Feminino',
+    icon: <Venus className="h-4 w-4 text-rose-500" />,
+  },
+  {
+    value: 'MASCULINE',
+    label: 'Masculino',
+    icon: <Mars className="h-4 w-4 text-blue-500" />,
+  },
+  {
+    value: 'OTHER',
+    label: 'Prefiro não informar',
+    icon: <Users className="h-4 w-4 text-violet-500" />,
+  },
 ]
 
+// eslint-disable-next-line
 const MaskedInput = IMaskMixin(({ inputRef, ...props }: any) => (
   <Input ref={inputRef} {...props} />
 ))
 
 async function completeRegistration(data: CompleteSchema) {
-  const response = await api.post("/auth/complete-registration", {
+  const response = await api.post('/auth/complete-registration', {
     crp: data.crp,
     expertise: data.expertise,
     gender: data.gender,
@@ -67,12 +87,13 @@ export function CompleteRegistration() {
       await complete(data)
 
       const profile = await getProfile()
-      localStorage.setItem("isAuthenticated", "true")
-      localStorage.setItem("user", JSON.stringify(profile))
+      localStorage.setItem('isAuthenticated', 'true')
+      localStorage.setItem('user', JSON.stringify(profile))
 
-      navigate("/dashboard", { replace: true })
+      navigate('/dashboard', { replace: true })
+      // eslint-disable-next-line
     } catch (error: any) {
-      toast.error(error?.message ?? "Ocorreu um erro. Tente novamente.")
+      toast.error(error?.message ?? 'Ocorreu um erro. Tente novamente.')
     }
   }
 
@@ -82,21 +103,24 @@ export function CompleteRegistration() {
 
       <div className="flex min-h-svh justify-center p-4 sm:p-8">
         <div className="flex w-full max-w-[450px] flex-col justify-center gap-6 pt-16">
-
           <div className="flex flex-col gap-2 text-center">
-            <h1 className="text-2xl font-semibold tracking-tight">
-              Quase lá!
-            </h1>
+            <h1 className="text-2xl font-semibold tracking-tight">Quase lá!</h1>
             <p className="text-sm text-muted-foreground leading-relaxed">
-              Só precisamos de mais alguns dados para configurar seu perfil de psicólogo.
+              Só precisamos de mais alguns dados para configurar seu perfil de
+              psicólogo.
             </p>
           </div>
 
-          <form onSubmit={handleSubmit(handleComplete)} className="flex flex-col gap-6">
+          <form
+            onSubmit={handleSubmit(handleComplete)}
+            className="flex flex-col gap-6"
+          >
             <FieldGroup className="flex flex-col gap-4">
-
               <Field>
-                <FieldLabel htmlFor="crp" className={cn(errors.crp && "text-red-500")}>
+                <FieldLabel
+                  htmlFor="crp"
+                  className={cn(errors.crp && 'text-red-500')}
+                >
                   CRP
                 </FieldLabel>
                 <Controller
@@ -111,8 +135,9 @@ export function CompleteRegistration() {
                       placeholder="Ex: 06/123456"
                       autoComplete="off"
                       className={cn(
-                        "h-11 tabular-nums",
-                        errors.crp && "border-red-500 focus-visible:ring-red-500"
+                        'h-11 tabular-nums',
+                        errors.crp &&
+                          'border-red-500 focus-visible:ring-red-500',
                       )}
                     />
                   )}
@@ -125,7 +150,7 @@ export function CompleteRegistration() {
               </Field>
 
               <Field>
-                <FieldLabel className={cn(errors.expertise && "text-red-500")}>
+                <FieldLabel className={cn(errors.expertise && 'text-red-500')}>
                   Especialidade
                 </FieldLabel>
                 <Controller
@@ -135,15 +160,22 @@ export function CompleteRegistration() {
                     <Select value={field.value} onValueChange={field.onChange}>
                       <SelectTrigger
                         className={cn(
-                          "w-full cursor-pointer h-11",
-                          errors.expertise && "border-red-500 focus-visible:ring-red-500"
+                          'w-full cursor-pointer h-11',
+                          errors.expertise &&
+                            'border-red-500 focus-visible:ring-red-500',
                         )}
                       >
                         <SelectValue placeholder="Selecione sua especialidade" />
                       </SelectTrigger>
                       <SelectContent>
-                        {(Object.keys(EXPERTISE_TRANSLATIONS) as Expertise[]).map((key) => (
-                          <SelectItem key={key} value={key} className="cursor-pointer">
+                        {(
+                          Object.keys(EXPERTISE_TRANSLATIONS) as Expertise[]
+                        ).map((key) => (
+                          <SelectItem
+                            key={key}
+                            value={key}
+                            className="cursor-pointer"
+                          >
                             {EXPERTISE_TRANSLATIONS[key]}
                           </SelectItem>
                         ))}
@@ -159,7 +191,7 @@ export function CompleteRegistration() {
               </Field>
 
               <Field>
-                <FieldLabel className={cn(errors.gender && "text-red-500")}>
+                <FieldLabel className={cn(errors.gender && 'text-red-500')}>
                   Gênero
                 </FieldLabel>
                 <Controller
@@ -169,15 +201,20 @@ export function CompleteRegistration() {
                     <Select value={field.value} onValueChange={field.onChange}>
                       <SelectTrigger
                         className={cn(
-                          "w-full cursor-pointer h-11",
-                          errors.gender && "border-red-500 focus-visible:ring-red-500"
+                          'w-full cursor-pointer h-11',
+                          errors.gender &&
+                            'border-red-500 focus-visible:ring-red-500',
                         )}
                       >
                         <SelectValue placeholder="Selecione seu gênero" />
                       </SelectTrigger>
                       <SelectContent>
                         {GENDER_OPTIONS.map(({ value, label, icon }) => (
-                          <SelectItem key={value} value={value} className="cursor-pointer">
+                          <SelectItem
+                            key={value}
+                            value={value}
+                            className="cursor-pointer"
+                          >
                             <div className="flex items-center gap-2">
                               {icon}
                               {label}
@@ -194,7 +231,6 @@ export function CompleteRegistration() {
                   </p>
                 )}
               </Field>
-
             </FieldGroup>
 
             <Button
@@ -208,11 +244,10 @@ export function CompleteRegistration() {
                   Salvando...
                 </span>
               ) : (
-                "Concluir cadastro"
+                'Concluir cadastro'
               )}
             </Button>
           </form>
-
         </div>
       </div>
     </>

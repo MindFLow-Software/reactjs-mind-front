@@ -1,10 +1,10 @@
-import { motion } from "framer-motion"
-import { Plug, ArrowRight } from "lucide-react"
-import type { JSX } from "react"
-import { Link } from "react-router-dom"
+import { motion } from 'framer-motion'
+import { Plug, ArrowRight } from 'lucide-react'
+import type { JSX } from 'react'
+import { Link } from 'react-router-dom'
 
-const BRAND = "#2563eb"
-const BRAND_LIGHT = "#3b82f6"
+const BRAND = '#2563eb'
+const BRAND_LIGHT = '#3b82f6'
 
 function WhatsAppIcon({ size = 22 }: { size?: number }) {
   return (
@@ -21,10 +21,28 @@ function WhatsAppIcon({ size = 22 }: { size?: number }) {
 function GoogleCalendarIcon({ size = 22 }: { size?: number }) {
   return (
     <svg width={size} height={size} viewBox="0 0 32 32" fill="none">
-      <rect x="5" y="5" width="22" height="22" rx="3" fill="white" stroke="#e5e7eb" />
+      <rect
+        x="5"
+        y="5"
+        width="22"
+        height="22"
+        rx="3"
+        fill="white"
+        stroke="#e5e7eb"
+      />
       <rect x="5" y="5" width="22" height="8" rx="3" fill="#4285F4" />
       <rect x="5" y="10" width="22" height="3" fill="#4285F4" />
-      <text x="16" y="23" textAnchor="middle" fontSize="9" fontWeight="700" fill="#4285F4" fontFamily="sans-serif">16</text>
+      <text
+        x="16"
+        y="23"
+        textAnchor="middle"
+        fontSize="9"
+        fontWeight="700"
+        fill="#4285F4"
+        fontFamily="sans-serif"
+      >
+        16
+      </text>
       <rect x="10" y="3" width="2" height="5" rx="1" fill="#4285F4" />
       <rect x="20" y="3" width="2" height="5" rx="1" fill="#4285F4" />
     </svg>
@@ -43,19 +61,27 @@ function GoogleMeetIcon({ size = 22 }: { size?: number }) {
 function PixIcon({ size = 22 }: { size?: number }) {
   return (
     <svg width={size} height={size} viewBox="0 0 32 32" fill="none">
-      <path fillRule="evenodd" clipRule="evenodd"
+      <path
+        fillRule="evenodd"
+        clipRule="evenodd"
         d="M20.5 6.1a3.6 3.6 0 0 0-5.1 0l-1.1 1.1 3.2 3.2.5-.5a2.1 2.1 0 1 1 3 3l-.5.5 1.5 1.5 1.1-1.1a3.6 3.6 0 0 0 0-5.1l-2.6-2.6Z"
         fill="#32BCAD"
       />
-      <path fillRule="evenodd" clipRule="evenodd"
+      <path
+        fillRule="evenodd"
+        clipRule="evenodd"
         d="M11.5 25.9a3.6 3.6 0 0 0 5.1 0l1.1-1.1-3.2-3.2-.5.5a2.1 2.1 0 1 1-3-3l.5-.5-1.5-1.5-1.1 1.1a3.6 3.6 0 0 0 0 5.1l2.6 2.6Z"
         fill="#32BCAD"
       />
-      <path fillRule="evenodd" clipRule="evenodd"
+      <path
+        fillRule="evenodd"
+        clipRule="evenodd"
         d="M6.1 11.5a3.6 3.6 0 0 0 0 5.1l1.1 1.1 3.2-3.2-.5-.5a2.1 2.1 0 1 1 3-3l.5.5 1.5-1.5-1.1-1.1a3.6 3.6 0 0 0-5.1 0l-2.6 2.6Z"
         fill="#32BCAD"
       />
-      <path fillRule="evenodd" clipRule="evenodd"
+      <path
+        fillRule="evenodd"
+        clipRule="evenodd"
         d="M25.9 20.5a3.6 3.6 0 0 0 0-5.1l-1.1-1.1-3.2 3.2.5.5a2.1 2.1 0 1 1-3 3l-.5-.5-1.5 1.5 1.1 1.1a3.6 3.6 0 0 0 5.1 0l2.6-2.6Z"
         fill="#32BCAD"
       />
@@ -82,9 +108,19 @@ function LgpdIcon({ size = 22 }: { size?: number }) {
       <rect x="4" y="4" width="24" height="24" rx="5" fill="#0369A1" />
       <path
         d="M16 7.5l7 2.6V16c0 3.9-3 7.5-7 8.4-4-.9-7-4.5-7-8.4v-5.9l7-2.6Z"
-        stroke="white" strokeWidth="1.5" strokeLinejoin="round" fill="white" fillOpacity="0.15"
+        stroke="white"
+        strokeWidth="1.5"
+        strokeLinejoin="round"
+        fill="white"
+        fillOpacity="0.15"
       />
-      <path d="M13.5 16l1.8 1.8 3.5-3.5" stroke="white" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" />
+      <path
+        d="M13.5 16l1.8 1.8 3.5-3.5"
+        stroke="white"
+        strokeWidth="1.8"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      />
     </svg>
   )
 }
@@ -98,88 +134,92 @@ type PillDef = {
   y: string
   delay: number
   rotate?: number
-  side: "left" | "right"
+  side: 'left' | 'right'
 }
 
 const PILLS: PillDef[] = [
   {
-    id: "whatsapp",
-    name: "WhatsApp",
-    description: "Lembretes automáticos",
+    id: 'whatsapp',
+    name: 'WhatsApp',
+    description: 'Lembretes automáticos',
     Icon: WhatsAppIcon,
-    x: "70%",
-    y: "14%",
+    x: '70%',
+    y: '14%',
     delay: 0.25,
     rotate: -1.5,
-    side: "left",
+    side: 'left',
   },
   {
-    id: "google-calendar",
-    name: "Google Calendar",
-    description: "Agenda sincronizada",
+    id: 'google-calendar',
+    name: 'Google Calendar',
+    description: 'Agenda sincronizada',
     Icon: GoogleCalendarIcon,
-    x: "30%",
-    y: "46%",
+    x: '30%',
+    y: '46%',
     delay: 0.38,
     rotate: 1,
-    side: "left",
+    side: 'left',
   },
   {
-    id: "pix",
-    name: "PIX & Pagamentos",
-    description: "Cobranças automáticas",
+    id: 'pix',
+    name: 'PIX & Pagamentos',
+    description: 'Cobranças automáticas',
     Icon: PixIcon,
-    x: "70%",
-    y: "74%",
+    x: '70%',
+    y: '74%',
     delay: 0.52,
     rotate: -0.8,
-    side: "left",
+    side: 'left',
   },
   {
-    id: "google-meet",
-    name: "Google Meet",
-    description: "Sessões por vídeo",
+    id: 'google-meet',
+    name: 'Google Meet',
+    description: 'Sessões por vídeo',
     Icon: GoogleMeetIcon,
-    x: "70%",
-    y: "14%",
+    x: '70%',
+    y: '14%',
     delay: 0.32,
     rotate: 1.2,
-    side: "right",
+    side: 'right',
   },
   {
-    id: "cfp",
-    name: "Padrão CFP",
-    description: "Prontuários conformes",
+    id: 'cfp',
+    name: 'Padrão CFP',
+    description: 'Prontuários conformes',
     Icon: CfpIcon,
-    x: "30%",
-    y: "46%",
+    x: '30%',
+    y: '46%',
     delay: 0.46,
     rotate: -1,
-    side: "right",
+    side: 'right',
   },
   {
-    id: "lgpd",
-    name: "LGPD",
-    description: "Dados protegidos",
+    id: 'lgpd',
+    name: 'LGPD',
+    description: 'Dados protegidos',
     Icon: LgpdIcon,
-    x: "70%",
-    y: "74%",
-    delay: 0.60,
+    x: '70%',
+    y: '74%',
+    delay: 0.6,
     rotate: 0.8,
-    side: "right",
+    side: 'right',
   },
 ]
 
 function IntegrationPill({ pill }: { pill: PillDef }) {
   const Icon = pill.Icon
-  const isLeft = pill.side === "left"
+  const isLeft = pill.side === 'left'
 
   return (
     <motion.div
       initial={{ opacity: 0, x: isLeft ? -28 : 28 }}
       whileInView={{ opacity: 1, x: 0 }}
       viewport={{ once: true }}
-      transition={{ delay: pill.delay, duration: 0.65, ease: [0.16, 1, 0.3, 1] }}
+      transition={{
+        delay: pill.delay,
+        duration: 0.65,
+        ease: [0.16, 1, 0.3, 1],
+      }}
       className="absolute flex items-center gap-3 bg-white border border-slate-200/80 rounded-2xl px-4 py-3 shadow-[0_4px_20px_rgba(0,0,0,0.07)] hover:shadow-[0_6px_28px_rgba(37,99,235,0.12)] transition-shadow duration-300"
       style={{
         ...(isLeft ? { left: pill.x } : { right: pill.x }),
@@ -192,7 +232,9 @@ function IntegrationPill({ pill }: { pill: PillDef }) {
         <Icon size={22} />
       </div>
       <div>
-        <p className="text-[13.5px] font-semibold text-slate-800 leading-none mb-[5px]">{pill.name}</p>
+        <p className="text-[13.5px] font-semibold text-slate-800 leading-none mb-[5px]">
+          {pill.name}
+        </p>
         <p className="flex items-center gap-1.5 text-[11px] font-medium text-slate-400">
           <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 shrink-0" />
           <span className="text-emerald-600">{pill.description}</span>
@@ -203,8 +245,8 @@ function IntegrationPill({ pill }: { pill: PillDef }) {
 }
 
 export function IntegrationsSection() {
-  const leftPills = PILLS.filter((p) => p.side === "left")
-  const rightPills = PILLS.filter((p) => p.side === "right")
+  const leftPills = PILLS.filter((p) => p.side === 'left')
+  const rightPills = PILLS.filter((p) => p.side === 'right')
 
   return (
     <section
@@ -216,7 +258,7 @@ export function IntegrationsSection() {
         className="absolute inset-0 z-0 pointer-events-none"
         style={{
           backgroundImage: `linear-gradient(rgba(37,99,235,0.05) 1px, transparent 1px), linear-gradient(90deg, rgba(37,99,235,0.05) 1px, transparent 1px)`,
-          backgroundSize: "60px 60px",
+          backgroundSize: '60px 60px',
         }}
       />
 
@@ -224,13 +266,13 @@ export function IntegrationsSection() {
       <div
         className="absolute inset-0 pointer-events-none"
         style={{
-          background: "radial-gradient(ellipse 70% 60% at 50% 40%, rgba(37,99,235,0.07) 0%, transparent 70%)",
+          background:
+            'radial-gradient(ellipse 70% 60% at 50% 40%, rgba(37,99,235,0.07) 0%, transparent 70%)',
         }}
       />
 
       {/* Inner container with relative positioning for pills */}
       <div className="relative z-10 min-h-[560px] flex items-center">
-
         {/* Left pills column */}
         <div className="absolute inset-y-0 left-0 w-[280px] hidden lg:block">
           {leftPills.map((pill) => (
@@ -247,7 +289,6 @@ export function IntegrationsSection() {
 
         {/* Center content */}
         <div className="w-full flex flex-col items-center text-center px-4 py-20 lg:py-28">
-
           {/* Badge */}
           <motion.div
             initial={{ opacity: 0, y: 12 }}
@@ -276,15 +317,15 @@ export function IntegrationsSection() {
             className="text-[clamp(30px,4vw,54px)] font-semibold tracking-tight text-slate-900 leading-[1.15] mb-5 max-w-[580px]"
             style={{ fontFamily: "'Lora', serif" }}
           >
-            Conecta com as ferramentas{" "}
+            Conecta com as ferramentas{' '}
             <span className="relative inline-block">
               <em
                 className="not-italic"
                 style={{
                   background: `linear-gradient(135deg, ${BRAND} 0%, ${BRAND_LIGHT} 100%)`,
-                  WebkitBackgroundClip: "text",
-                  WebkitTextFillColor: "transparent",
-                  backgroundClip: "text",
+                  WebkitBackgroundClip: 'text',
+                  WebkitTextFillColor: 'transparent',
+                  backgroundClip: 'text',
                 }}
               >
                 que você já usa.
@@ -293,9 +334,13 @@ export function IntegrationsSection() {
                 initial={{ scaleX: 0 }}
                 whileInView={{ scaleX: 1 }}
                 viewport={{ once: true }}
-                transition={{ delay: 0.65, duration: 0.9, ease: [0.16, 1, 0.3, 1] }}
+                transition={{
+                  delay: 0.65,
+                  duration: 0.9,
+                  ease: [0.16, 1, 0.3, 1],
+                }}
                 className="absolute bottom-[3px] -left-1 -right-1 h-[30%] rounded-sm origin-left -z-10"
-                style={{ background: "rgba(37,99,235,0.12)" }}
+                style={{ background: 'rgba(37,99,235,0.12)' }}
               />
             </span>
           </motion.h2>
@@ -308,7 +353,8 @@ export function IntegrationsSection() {
             transition={{ delay: 0.18, duration: 0.6 }}
             className="text-[15.5px] font-light leading-relaxed text-slate-500 mb-9 max-w-[420px]"
           >
-            Nada de mudar sua rotina. O MindFlush se encaixa no seu fluxo de trabalho — do agendamento ao pagamento, tudo conectado e automático.
+            Nada de mudar sua rotina. O MindFlush se encaixa no seu fluxo de
+            trabalho — do agendamento ao pagamento, tudo conectado e automático.
           </motion.p>
 
           {/* CTA */}
@@ -341,17 +387,25 @@ export function IntegrationsSection() {
                   initial={{ opacity: 0, y: 12 }}
                   whileInView={{ opacity: 1, y: 0 }}
                   viewport={{ once: true }}
-                  transition={{ delay: i * 0.06, duration: 0.5, ease: [0.16, 1, 0.3, 1] }}
+                  transition={{
+                    delay: i * 0.06,
+                    duration: 0.5,
+                    ease: [0.16, 1, 0.3, 1],
+                  }}
                   className="flex items-center gap-3 bg-white border border-slate-200/80 rounded-2xl px-4 py-3 shadow-sm"
                 >
                   <div className="w-9 h-9 rounded-xl bg-slate-50 border border-slate-100 flex items-center justify-center shrink-0">
                     <Icon size={22} />
                   </div>
                   <div className="text-left">
-                    <p className="text-[13.5px] font-semibold text-slate-800 leading-none mb-[5px]">{pill.name}</p>
+                    <p className="text-[13.5px] font-semibold text-slate-800 leading-none mb-[5px]">
+                      {pill.name}
+                    </p>
                     <p className="flex items-center gap-1.5 text-[11px] font-medium">
                       <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 shrink-0" />
-                      <span className="text-emerald-600">{pill.description}</span>
+                      <span className="text-emerald-600">
+                        {pill.description}
+                      </span>
                     </p>
                   </div>
                 </motion.div>

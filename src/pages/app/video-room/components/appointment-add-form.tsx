@@ -1,14 +1,14 @@
-"use client"
+'use client'
 
-import { useMemo } from "react"
-import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query"
-import { format, parseISO, isToday, differenceInMinutes } from "date-fns"
-import { ptBR } from "date-fns/locale"
-import { User, Loader2, Clock, Calendar, CheckCircle2 } from "lucide-react"
-import { toast } from "sonner"
+import { useMemo } from 'react'
+import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
+import { format, parseISO, isToday, differenceInMinutes } from 'date-fns'
+import { ptBR } from 'date-fns/locale'
+import { User, Loader2, Clock, Calendar, CheckCircle2 } from 'lucide-react'
+import { toast } from 'sonner'
 
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
-import { Button } from "@/components/ui/button"
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
+import { Button } from '@/components/ui/button'
 import {
   Select,
   SelectContent,
@@ -17,11 +17,11 @@ import {
   SelectValue,
   SelectGroup,
   SelectLabel,
-} from "@/components/ui/select"
+} from '@/components/ui/select'
 
-import { startAppointmentSession } from "@/api/appointments/start-appointment-session"
-import { finishAppointmentSession } from "@/api/appointments/finish-appointment-session"
-import { getActiveAppointmentsGrouped } from "@/api/appointments/get-active-appointments-grouped"
+import { startAppointmentSession } from '@/api/appointments/start-appointment-session'
+import { finishAppointmentSession } from '@/api/appointments/finish-appointment-session'
+import { getActiveAppointmentsGrouped } from '@/api/appointments/get-active-appointments-grouped'
 
 interface AppointmentAddFormProps {
   onSelectPatient: (appointmentId: string) => void
@@ -45,25 +45,31 @@ export function AppointmentAddForm({
   const queryClient = useQueryClient()
 
   const { data: groupedData, isLoading: isAppointmentsLoading } = useQuery({
-    queryKey: ["active-appointments-grouped"],
+    queryKey: ['active-appointments-grouped'],
     queryFn: getActiveAppointmentsGrouped,
     staleTime: 1000 * 60,
   })
 
   // ✅ Performance: Memoização da lógica de validação de horário
   const startStatus = useMemo(() => {
-    if (isSessionActive || !currentAppointmentId || !groupedData) return { canStart: true, message: "" }
+    if (isSessionActive || !currentAppointmentId || !groupedData)
+      return { canStart: true, message: '' }
 
     const allAppointments = Object.values(groupedData.grouped).flat()
-    const selectedApp = allAppointments.find((app) => app.id === currentAppointmentId)
+    const selectedApp = allAppointments.find(
+      (app) => app.id === currentAppointmentId,
+    )
 
-    if (!selectedApp) return { canStart: false, message: "" }
+    if (!selectedApp) return { canStart: false, message: '' }
 
-    const diff = differenceInMinutes(parseISO(selectedApp.scheduledAt), new Date())
+    const diff = differenceInMinutes(
+      parseISO(selectedApp.scheduledAt),
+      new Date(),
+    )
 
     return {
       canStart: diff <= 10,
-      message: diff > 10 ? `Disponível em ${diff - 10} min` : "",
+      message: diff > 10 ? `Disponível em ${diff - 10} min` : '',
     }
   }, [currentAppointmentId, groupedData, isSessionActive])
 
@@ -71,35 +77,39 @@ export function AppointmentAddForm({
   const { mutateAsync: startSessionFn, isPending: isStarting } = useMutation({
     mutationFn: startAppointmentSession,
     onSuccess: (data) => {
-      queryClient.invalidateQueries({ queryKey: ["active-appointments-grouped"] })
+      queryClient.invalidateQueries({
+        queryKey: ['active-appointments-grouped'],
+      })
       onSessionStarted(data.sessionId)
-      toast.success("Atendimento iniciado")
+      toast.success('Atendimento iniciado')
     },
-    onError: (err: any) => toast.error(err.message || "Erro ao iniciar")
+    onError: (err) => toast.error(err?.message || 'Erro ao iniciar'),
   })
 
   // Mutação: Finalizar Atendimento (Com o campo content corrigido)
   const { mutateAsync: finishSessionFn, isPending: isFinishing } = useMutation({
     mutationFn: finishAppointmentSession,
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["active-appointments-grouped"] })
-      queryClient.invalidateQueries({ queryKey: ["patient-details"] })
+      queryClient.invalidateQueries({
+        queryKey: ['active-appointments-grouped'],
+      })
+      queryClient.invalidateQueries({ queryKey: ['patient-details'] })
       onSessionFinished()
-      toast.success("Atendimento finalizado e prontuário salvo")
+      toast.success('Atendimento finalizado e prontuário salvo')
     },
-    onError: () => toast.error("Erro ao finalizar atendimento")
+    onError: () => toast.error('Erro ao finalizar atendimento'),
   })
 
   const handleAction = async () => {
     try {
       if (isSessionActive) {
-        if (!currentSessionId) return toast.error("ID da sessão não encontrado")
+        if (!currentSessionId) return toast.error('ID da sessão não encontrado')
         await finishSessionFn({ sessionId: currentSessionId, content }) // ✅ Enviando 'content'
       } else {
-        if (!currentAppointmentId) return toast.error("Selecione um paciente")
+        if (!currentAppointmentId) return toast.error('Selecione um paciente')
         await startSessionFn({ appointmentId: currentAppointmentId })
       }
-    } catch { }
+    } catch {}
   }
 
   const isPending = isStarting || isFinishing
@@ -136,41 +146,51 @@ export function AppointmentAddForm({
               <SelectValue placeholder="Selecione o paciente..." />
             </SelectTrigger>
             <SelectContent className="max-h-[320px]">
-              {Object.entries(groupedData?.grouped || {}).map(([date, appointments]) => (
-                <SelectGroup key={date}>
-                  <SelectLabel className="cursor-pointer text-xs font-semibold text-primary uppercase tracking-wide py-2 sticky top-0 backdrop-blur bg-white/80 z-10">
-                    {format(parseISO(date), "EEEE, dd/MM", { locale: ptBR })}
-                    {isToday(parseISO(date)) && (
-                      <span className="ml-2 text-[10px] bg-primary/10 px-1.5 py-0.5 rounded-full normal-case">
-                        Hoje
-                      </span>
-                    )}
-                  </SelectLabel>
-                  {appointments.map((app) => (
-                    <SelectItem key={app.id} value={app.id} className="py-3 cursor-pointer">
-                      <div className="flex items-center justify-between w-full gap-4">
-                        <span className="font-medium truncate">{app.patientName}</span>
-                        <div className="flex items-center gap-1.5 text-muted-foreground shrink-0">
-                          <Clock className="w-3.5 h-3.5" />
-                          <span className="font-mono text-sm font-semibold">
-                            {format(parseISO(app.scheduledAt), "HH:mm")}
+              {Object.entries(groupedData?.grouped || {}).map(
+                ([date, appointments]) => (
+                  <SelectGroup key={date}>
+                    <SelectLabel className="cursor-pointer text-xs font-semibold text-primary uppercase tracking-wide py-2 sticky top-0 backdrop-blur bg-white/80 z-10">
+                      {format(parseISO(date), 'EEEE, dd/MM', { locale: ptBR })}
+                      {isToday(parseISO(date)) && (
+                        <span className="ml-2 text-[10px] bg-primary/10 px-1.5 py-0.5 rounded-full normal-case">
+                          Hoje
+                        </span>
+                      )}
+                    </SelectLabel>
+                    {appointments.map((app) => (
+                      <SelectItem
+                        key={app.id}
+                        value={app.id}
+                        className="py-3 cursor-pointer"
+                      >
+                        <div className="flex items-center justify-between w-full gap-4">
+                          <span className="font-medium truncate">
+                            {app.patientName}
                           </span>
+                          <div className="flex items-center gap-1.5 text-muted-foreground shrink-0">
+                            <Clock className="w-3.5 h-3.5" />
+                            <span className="font-mono text-sm font-semibold">
+                              {format(parseISO(app.scheduledAt), 'HH:mm')}
+                            </span>
+                          </div>
                         </div>
-                      </div>
-                    </SelectItem>
-                  ))}
-                </SelectGroup>
-              ))}
-              {(!groupedData || Object.keys(groupedData.grouped).length === 0) && !isAppointmentsLoading && (
-                <div className="p-8 text-center">
-                  <p className="text-sm text-muted-foreground font-medium">
-                    Nenhum agendamento marcado.
-                  </p>
-                  <p className="text-[10px] text-muted-foreground/60 mt-1">
-                    Agende uma sessão para iniciar o atendimento.
-                  </p>
-                </div>
+                      </SelectItem>
+                    ))}
+                  </SelectGroup>
+                ),
               )}
+              {(!groupedData ||
+                Object.keys(groupedData.grouped).length === 0) &&
+                !isAppointmentsLoading && (
+                  <div className="p-8 text-center">
+                    <p className="text-sm text-muted-foreground font-medium">
+                      Nenhum agendamento marcado.
+                    </p>
+                    <p className="text-[10px] text-muted-foreground/60 mt-1">
+                      Agende uma sessão para iniciar o atendimento.
+                    </p>
+                  </div>
+                )}
             </SelectContent>
           </Select>
         </div>
@@ -179,24 +199,37 @@ export function AppointmentAddForm({
           <div className="flex items-center gap-2.5 p-3 bg-amber-50 border border-amber-200/60 rounded-lg animate-in fade-in zoom-in duration-200">
             <Clock className="w-4 h-4 text-amber-600 shrink-0" />
             <div className="text-sm">
-              <p className="font-medium text-amber-900">{startStatus.message}</p>
-              <p className="text-xs text-amber-700/80">Liberação 10 minutos antes do horário</p>
+              <p className="font-medium text-amber-900">
+                {startStatus.message}
+              </p>
+              <p className="text-xs text-amber-700/80">
+                Liberação 10 minutos antes do horário
+              </p>
             </div>
           </div>
         )}
 
         <Button
           onClick={handleAction}
-          disabled={isPending || (!isSessionActive && (!currentAppointmentId || !startStatus.canStart))}
-          className={`cursor-pointer w-full h-11 font-medium transition-all ${isSessionActive ? "bg-green-600 hover:bg-green-700 text-white" : "shadow-sm"
-            }`}
+          disabled={
+            isPending ||
+            (!isSessionActive &&
+              (!currentAppointmentId || !startStatus.canStart))
+          }
+          className={`cursor-pointer w-full h-11 font-medium transition-all ${
+            isSessionActive
+              ? 'bg-green-600 hover:bg-green-700 text-white'
+              : 'shadow-sm'
+          }`}
         >
           {isPending ? (
             <Loader2 className="w-4 h-4 animate-spin" />
           ) : isSessionActive ? (
-            <><CheckCircle2 className="w-4 h-4 mr-2" /> Finalizar Atendimento</>
+            <>
+              <CheckCircle2 className="w-4 h-4 mr-2" /> Finalizar Atendimento
+            </>
           ) : (
-            "Iniciar Atendimento"
+            'Iniciar Atendimento'
           )}
         </Button>
       </CardContent>

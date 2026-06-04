@@ -15,6 +15,6 @@ export const useInviteStore = create<InviteState>()(
     {
       name: 'mindflush-invite-storage', // Nome da chave no localStorage
       storage: createJSONStorage(() => localStorage),
-    }
-  )
+    },
+  ),
 )

@@ -36,7 +36,7 @@ Always create atomic commits per task. Never batch unrelated changes into one co
 | Forms | React Hook Form + Zod v4 |
 | Styling | Tailwind CSS v4 |
 | UI Components | shadcn/ui (new-york style, neutral base) |
-| Icons | Phosphor Icons (`@phosphor-icons/react`) + Lucide |
+| Icons | Lucide (primary) · Phosphor Icons (legacy — avoid new uses) |
 | Animation | Framer Motion |
 | Toasts | Sonner |
 | Charts | Recharts |
@@ -121,7 +121,8 @@ src/
 
 - All API calls live in `src/api/`
 - Use `axios` instance — never raw `fetch`
-- All mutations use `useApiMutation` from `@/hooks/use-api-mutation`
+- Simple single-endpoint mutations: use `useApiMutation` from `@/hooks/use-api-mutation`.
+- Complex flows with multiple sequential mutations or non-critical side effects: use `useMutation` from TanStack Query directly — see `use-patient-submit.ts` as the canonical example.
 - TanStack Query for all server state — no local state for remote data
 - Query keys: array format `['patients', { page, search }]`
 
@@ -138,6 +139,74 @@ refactor(api): extract slot fetching to dedicated hook
 ```
 
 Types: `feat`, `fix`, `refactor`, `perf`, `docs`, `test`, `chore`, `build`, `ci`
+
+---
+
+## Coding Patterns
+
+**Canonical references:**
+- Page composition → `src/pages/app/patients/patients-list/patients-list.tsx`
+- Multi-step form → `src/pages/app/patients/patients-list/register-patients/`
+
+Claude must follow these patterns exactly. No deviations.
+
+### Component Composition
+
+- Orchestrator components compose hooks, minimal local state, and top-level layout only. No business logic in the root.
+- Extract local subcomponents when a UI region has its own responsibility: headers, toolbars, footers, action bars, content blocks. Inline JSX that grows complex or repeats must become a named component.
+- Use namespace composition (`Parent.Child`) when it improves readability of regions within a compound component:
+  - `PatientsPageShell.Header` / `PatientsPageShell.Content`
+  - `PatientsDataBlock.Header` / `PatientsDataBlock.Toolbar` / `PatientsDataBlock.Content` / `PatientsDataBlock.Footer`
+  - `MetricCard.Icon` / `MetricCard.Value` / `MetricCard.Label` / `MetricCard.Trend`
+- Group related props into an object when it reduces noise at the call site: `sort={{ by, order, onSort }}` instead of three separate props.
+- Keep handlers named and small. No anonymous arrow functions with logic inlined in JSX beyond single-expression calls.
+- Actions not yet implemented must be `disabled`. They must not look interactive or pretend to work.
+
+### Conditional Rendering
+
+- Two states: ternary is fine.
+- Three or more states: use a named `renderXyz` function with a `switch` statement.
+- Never nest ternaries.
+
+### Hook Architecture
+
+- Each cross-cutting concern gets its own hook: data fetching, form steps, submission, filters, file selection, address lookup.
+- Feature-local hooks live in a `hooks/` subfolder inside the feature directory, not in global `src/hooks/`, unless they are reused across multiple features.
+- Hook options and return shapes have explicit interfaces when not trivial (`UsePatientFormStepsOptions`, `UsePatientFormStepsReturn`).
+- Hooks receive RHF primitives (`trigger`, `setValue`) as options instead of owning the form instance — hooks augment the form, they do not create it.
+- All handlers returned from hooks are wrapped with `useCallback`.
+- The root orchestrator composes all hooks and passes results down as props. Step/child components never call feature-level hooks directly.
+
+### CSS
+
+- Feature-scoped CSS is acceptable. Co-locate `.css` files with their `.tsx` counterparts (same directory, same base name).
+- Every CSS class in a feature file uses a short feature-specific prefix: `rp-` for register-patients, `pl-` for patients-list. This prevents global collisions.
+- Do not scatter generic utility classes as global CSS rules — use Tailwind tokens directly in JSX.
+- `cn()` from `@/lib/utils` for all conditional class merging in JSX.
+
+### Masks & Formatters
+
+- Input masking and normalization run on `onChange`, not in `useEffect`.
+- Always use the existing utilities: `formatCPF`, `formatPhone`, `formatCEP`, `formatDateInput`, `Normalizer`, or `date-fns`. Never write raw regex inline for a format that an existing utility already handles.
+
+### Constants, Helpers, Types
+
+- Feature-level option arrays, step config, numeric limits, and branded type aliases live in `constants.ts` (or `constants.tsx` if JSX is needed). Use `as const` for literal type inference.
+- Pure transformation functions live in `helpers.ts`.
+- Local constants used only in one file stay in that file — do not move them to `constants.ts` just for organization.
+- Entity types have a single source of truth in `src/types/`. Never redefine an entity type inside a feature — import it.
+
+### Code Quality Checklist
+
+Every new or refactored piece of code must be:
+
+- **Lean**: no unused state, no speculative abstractions, no code for hypothetical future requirements.
+- **Performant**: wrap stable callbacks in `useCallback`; wrap expensive pure renders in `memo`.
+- **Readable**: short blocks, clear names, linear flow, minimal nesting.
+- **Typed without `any`**: explicit interfaces; entity types imported from `src/types/`.
+- **Single-source-of-truth**: one canonical definition per entity type.
+- **Comment-free for obvious logic**: one short line at most when the WHY is non-obvious.
+- **JSX-duplication-free**: extract before reusing — never copy-paste JSX.
 
 ---
 
@@ -194,8 +263,6 @@ Patterns extracted from `src/pages/app/patients/patients-list/register-patients/
 - Non-critical side effects (avatar upload in `use-patient-submit.ts`) are wrapped in their own `try/catch` with a `console.warn` — they must not block the primary success path.
 - Error toasts use an `AxiosError` type guard: `error instanceof AxiosError ? error.message : "Fallback message"`.
 - Sequential uploads (attachments) are done with `for...of` + `await` — not `Promise.all` — to respect server rate limits.
-
-<!-- CONFLICT: use-patient-submit.ts calls useMutation directly, not useApiMutation from @/hooks/use-api-mutation as the API Layer section requires. Audit the API Layer rule — either useApiMutation should wrap multi-mutation flows, or the rule should clarify when direct useMutation is acceptable. -->
 
 ### File Organization
 
