@@ -1,12 +1,12 @@
-import { ArrowDownToLine, Check, Clock, X } from 'lucide-react'
+import { ArrowDownToLine, Ban, Check, Clock } from 'lucide-react'
 
 import { cn } from '@/lib/utils'
-import type { PatientStatus } from '@/types/patient'
+import type { AccountStatus } from '@/types/auth'
 
-export type { PatientStatus }
+export type { AccountStatus }
 
 const STATUS_CONFIG: Record<
-  PatientStatus,
+  AccountStatus,
   {
     label: string
     bg: string
@@ -29,15 +29,15 @@ const STATUS_CONFIG: Record<
     ico: 'bg-amber-600',
     Icon: Clock,
   },
-  BLOCKED: {
-    label: 'Bloqueado',
+  REJECTED: {
+    label: 'Rejeitado',
     bg: 'bg-red-100',
     fg: 'text-red-800',
     ico: 'bg-red-600',
-    Icon: X,
+    Icon: Ban,
   },
-  REJECTED: {
-    label: 'Arquivado',
+  BLOCKED: {
+    label: 'Inativo',
     bg: 'bg-cyan-100',
     fg: 'text-cyan-800',
     ico: 'bg-cyan-600',
@@ -46,7 +46,7 @@ const STATUS_CONFIG: Record<
 }
 
 interface StatusBadgeProps {
-  status: PatientStatus
+  status: AccountStatus
   size?: 'sm' | 'md'
   className?: string
 }

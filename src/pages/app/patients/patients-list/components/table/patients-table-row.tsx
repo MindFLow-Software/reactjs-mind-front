@@ -101,13 +101,7 @@ export const PatientsTableRow = memo(function PatientsTableRow({
           return {
             ...old,
             patients: old.patients.map((p) =>
-              p.id === id
-                ? {
-                    ...p,
-                    status: p.isActive ? 'BLOCKED' : 'ACTIVE',
-                    isActive: !p.isActive,
-                  }
-                : p,
+              p.id === id ? { ...p, isActive: false } : p,
             ),
           }
         },

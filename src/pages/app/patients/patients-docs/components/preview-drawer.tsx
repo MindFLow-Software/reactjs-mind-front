@@ -54,51 +54,42 @@ interface PreviewDrawerProps {
 export function PreviewDrawer({ doc, onClose, onDelete }: PreviewDrawerProps) {
   if (!doc) return null
 
-  const { id, filename, contentType, SizeInBytes, uploadedAt, patient } = doc
-  const kind = getFileKind(contentType)
-  const style = FILE_KIND_STYLES[kind]
-  const fileUrl = `${BACKEND_URL}/attachments/${id}`
-  const ext = filename.split('.').pop()?.toUpperCase().slice(0, 4) ?? 'FILE'
+    const { id, filename, contentType, sizeInBytes, uploadedAt, patient } = doc
+    const kind    = getFileKind(contentType)
+    const style   = FILE_KIND_STYLES[kind]
+    const fileUrl = `${BACKEND_URL}/attachments/${id}`
+    const ext     = filename.split(".").pop()?.toUpperCase().slice(0, 4) ?? "FILE"
 
-  return (
-    <Sheet
-      open={!!doc}
-      onOpenChange={(open) => {
-        if (!open) onClose()
-      }}
-    >
-      <SheetContent
-        side="right"
-        className="w-full sm:max-w-[440px] p-0 flex flex-col gap-0 overflow-hidden"
-      >
-        {/* Head */}
-        <div className="flex items-start gap-3 px-5 py-4 border-b border-border shrink-0">
-          <div
-            className={cn(
-              'flex h-11 w-9 shrink-0 items-end justify-center rounded-md bg-gradient-to-br overflow-hidden',
-              style.gradient,
-            )}
-          >
-            <span className="mb-1 text-[8px] font-bold text-white/80 tracking-tight">
-              {ext}
-            </span>
-          </div>
-          <div className="min-w-0 flex-1">
-            <SheetTitle className="text-[14px] font-semibold text-foreground leading-snug truncate">
-              {filename}
-            </SheetTitle>
-            <SheetDescription className="text-[12px] text-muted-foreground mt-0.5">
-              {getFileLabel(contentType)} · {formatFileSize(SizeInBytes)}
-            </SheetDescription>
-          </div>
-          <button
-            onClick={onClose}
-            className="shrink-0 flex h-7 w-7 items-center justify-center rounded-md text-muted-foreground hover:text-foreground hover:bg-muted transition-colors cursor-pointer"
-            aria-label="Fechar preview"
-          >
-            <X className="h-4 w-4" />
-          </button>
-        </div>
+    return (
+        <Sheet open={!!doc} onOpenChange={(open) => { if (!open) onClose() }}>
+            <SheetContent
+                side="right"
+                className="w-full sm:max-w-[440px] p-0 flex flex-col gap-0 overflow-hidden"
+            >
+                {/* Head */}
+                <div className="flex items-start gap-3 px-5 py-4 border-b border-border shrink-0">
+                    <div className={cn(
+                        "flex h-11 w-9 shrink-0 items-end justify-center rounded-md bg-gradient-to-br overflow-hidden",
+                        style.gradient,
+                    )}>
+                        <span className="mb-1 text-[8px] font-bold text-white/80 tracking-tight">{ext}</span>
+                    </div>
+                    <div className="min-w-0 flex-1">
+                        <SheetTitle className="text-[14px] font-semibold text-foreground leading-snug truncate">
+                            {filename}
+                        </SheetTitle>
+                        <SheetDescription className="text-[12px] text-muted-foreground mt-0.5">
+                            {getFileLabel(contentType)} · {formatFileSize(sizeInBytes)}
+                        </SheetDescription>
+                    </div>
+                    <button
+                        onClick={onClose}
+                        className="shrink-0 flex h-7 w-7 items-center justify-center rounded-md text-muted-foreground hover:text-foreground hover:bg-muted transition-colors cursor-pointer"
+                        aria-label="Fechar preview"
+                    >
+                        <X className="h-4 w-4" />
+                    </button>
+                </div>
 
         {/* Preview area */}
         <div className="relative flex-1 overflow-hidden bg-muted/30 min-h-0">
@@ -144,45 +135,43 @@ export function PreviewDrawer({ doc, onClose, onDelete }: PreviewDrawerProps) {
 
         {/* Info grid */}
         <div className="border-t border-border px-5 py-4 shrink-0">
-          <p className="text-[11px] uppercase font-semibold text-muted-foreground tracking-wider mb-3">
-            Informações
-          </p>
-          <div className="grid grid-cols-2 gap-x-4 gap-y-3">
-            <div>
-              <p className="text-[11px] text-muted-foreground mb-0.5 flex items-center gap-1">
-                <User className="h-3 w-3" /> Paciente
-              </p>
-              <p className="text-[13px] font-semibold text-foreground">
-                {patient ? `${patient.firstName} ${patient.lastName}` : '—'}
-              </p>
+            <p className="text-[11px] uppercase font-semibold text-muted-foreground tracking-wider mb-3">
+                Informações
+            </p>
+            <div className="grid grid-cols-2 gap-x-4 gap-y-3">
+                <div>
+                    <p className="text-[11px] text-muted-foreground mb-0.5 flex items-center gap-1">
+                        <User className="h-3 w-3" /> Paciente
+                    </p>
+                    <p className="text-[13px] font-semibold text-foreground">
+                        {patient ? `${patient.firstName} ${patient.lastName}` : "—"}
+                    </p>
+                </div>
+                <div>
+                    <p className="text-[11px] text-muted-foreground mb-0.5 flex items-center gap-1">
+                        <Calendar className="h-3 w-3" /> Enviado em
+                    </p>
+                    <p className="text-[13px] font-semibold text-foreground">
+                        {uploadedAt ? format(new Date(uploadedAt), "dd/MM/yyyy", { locale: ptBR }) : "—"}
+                    </p>
+                </div>
+                <div>
+                    <p className="text-[11px] text-muted-foreground mb-0.5 flex items-center gap-1">
+                        <HardDrive className="h-3 w-3" /> Tamanho
+                    </p>
+                    <p className="text-[13px] font-semibold text-foreground font-mono">
+                        {formatFileSize(sizeInBytes)}
+                    </p>
+                </div>
+                <div>
+                    <p className="text-[11px] text-muted-foreground mb-0.5 flex items-center gap-1">
+                        <FileType className="h-3 w-3" /> Tipo
+                    </p>
+                    <p className="text-[13px] font-semibold text-foreground">
+                        {getFileLabel(contentType)}
+                    </p>
+                </div>
             </div>
-            <div>
-              <p className="text-[11px] text-muted-foreground mb-0.5 flex items-center gap-1">
-                <Calendar className="h-3 w-3" /> Enviado em
-              </p>
-              <p className="text-[13px] font-semibold text-foreground">
-                {uploadedAt
-                  ? format(new Date(uploadedAt), 'dd/MM/yyyy', { locale: ptBR })
-                  : '—'}
-              </p>
-            </div>
-            <div>
-              <p className="text-[11px] text-muted-foreground mb-0.5 flex items-center gap-1">
-                <HardDrive className="h-3 w-3" /> Tamanho
-              </p>
-              <p className="text-[13px] font-semibold text-foreground font-mono">
-                {formatFileSize(SizeInBytes)}
-              </p>
-            </div>
-            <div>
-              <p className="text-[11px] text-muted-foreground mb-0.5 flex items-center gap-1">
-                <FileType className="h-3 w-3" /> Tipo
-              </p>
-              <p className="text-[13px] font-semibold text-foreground">
-                {getFileLabel(contentType)}
-              </p>
-            </div>
-          </div>
         </div>
 
         {/* Footer actions */}

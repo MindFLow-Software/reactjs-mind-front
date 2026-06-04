@@ -51,24 +51,23 @@ interface PatientSessionsTimelineProps {
   onPageChange: (newIndex: number) => void
 }
 
-type StatusFilter = 'all' | 'Concluída' | 'Cancelada' | 'Falta'
+type StatusFilter = "all" | "FINISHED" | "CANCELED" | "NOT_ATTEND"
 
 const STATUS_DOT: Record<string, string> = {
-  Concluída: 'bg-blue-500',
-  Cancelada: 'bg-red-500',
-  Pendente: 'bg-gray-400',
-  Falta: 'bg-amber-400',
+    FINISHED:    "bg-blue-500",
+    DONE:        "bg-blue-500",
+    CANCELED:    "bg-red-500",
+    SCHEDULED:   "bg-gray-400",
+    ATTENDING:   "bg-green-500",
+    NOT_ATTEND:  "bg-amber-400",
+    RESCHEDULED: "bg-purple-400",
 }
 
-const CHIPS: {
-  key: StatusFilter
-  label: string
-  matchFn: (s: string) => boolean
-}[] = [
-  { key: 'all', label: 'Todas', matchFn: () => true },
-  { key: 'Concluída', label: 'Realizadas', matchFn: (s) => s === 'Concluída' },
-  { key: 'Cancelada', label: 'Canceladas', matchFn: (s) => s === 'Cancelada' },
-  { key: 'Falta', label: 'Faltas', matchFn: (s) => s === 'Falta' },
+const CHIPS: { key: StatusFilter; label: string; matchFn: (s: string) => boolean }[] = [
+    { key: "all",        label: "Todas",      matchFn: () => true },
+    { key: "FINISHED",   label: "Realizadas", matchFn: (s) => s === "FINISHED" || s === "DONE" },
+    { key: "CANCELED",   label: "Canceladas", matchFn: (s) => s === "CANCELED" },
+    { key: "NOT_ATTEND", label: "Faltas",     matchFn: (s) => s === "NOT_ATTEND" },
 ]
 
 function getSessionDate(session: Session): Date {
@@ -276,11 +275,11 @@ function SessionRow({
 }) {
   const [isExporting, setIsExporting] = useState(false)
 
-  const date = getSessionDate(session)
-  const dotColor = STATUS_DOT[session.status] ?? 'bg-gray-400'
-  const isCancelled = session.status === 'Cancelada'
-  const isCompleted = session.status === 'Concluída'
-  const isFalta = session.status === 'Falta'
+    const date = getSessionDate(session)
+    const dotColor = STATUS_DOT[session.status] ?? "bg-gray-400"
+    const isCancelled = session.status === "CANCELED"
+    const isCompleted = session.status === "FINISHED" || session.status === "DONE"
+    const isFalta = session.status === "NOT_ATTEND"
 
   const handleExportPDF = async () => {
     setIsExporting(true)
@@ -327,38 +326,38 @@ function SessionRow({
         {/* Top row */}
         <div className="flex items-center justify-between gap-2">
           <div className="flex flex-wrap items-center gap-x-2 gap-y-1">
-            <span className="text-sm font-bold text-foreground tabular-nums">
-              {format(date, 'dd/MM')}
-            </span>
-            <span className="text-sm text-muted-foreground tabular-nums">
-              {format(date, 'HH:mm')}
-            </span>
-            {session.duration && (
-              <span className="flex items-center gap-1 text-xs text-muted-foreground">
-                <Clock className="h-3 w-3" />
-                {session.duration}min
+              <span className="text-sm font-bold text-foreground tabular-nums">
+                  {format(date, "dd/MM")}
               </span>
-            )}
-            {isCancelled && (
-              <span className="text-xs font-medium text-red-600 dark:text-red-400">
-                × Cancelada
+              <span className="text-sm text-muted-foreground tabular-nums">
+                  {format(date, "HH:mm")}
               </span>
-            )}
-            {isFalta && (
-              <span className="text-xs font-medium text-amber-600 dark:text-amber-400">
-                Falta
-              </span>
-            )}
-            {session.theme && (
-              <span className="rounded-md bg-violet-100 dark:bg-violet-950/40 px-2 py-0.5 text-[11px] font-medium text-violet-700 dark:text-violet-400">
-                {session.theme}
-              </span>
-            )}
-            {isFalta && (
-              <span className="rounded-md bg-orange-100 dark:bg-orange-950/40 px-2 py-0.5 text-[11px] font-medium text-orange-700 dark:text-orange-400">
-                No-show
-              </span>
-            )}
+              {session.duration && (
+                  <span className="flex items-center gap-1 text-xs text-muted-foreground">
+                      <Clock className="h-3 w-3" />
+                      {session.duration}min
+                  </span>
+              )}
+              {isCancelled && (
+                  <span className="text-xs font-medium text-red-600 dark:text-red-400">
+                      × Cancelada
+                  </span>
+              )}
+              {isFalta && (
+                  <span className="text-xs font-medium text-amber-600 dark:text-amber-400">
+                      Não compareceu
+                  </span>
+              )}
+              {session.theme && (
+                  <span className="rounded-md bg-violet-100 dark:bg-violet-950/40 px-2 py-0.5 text-[11px] font-medium text-violet-700 dark:text-violet-400">
+                      {session.theme}
+                  </span>
+              )}
+              {isFalta && (
+                  <span className="rounded-md bg-orange-100 dark:bg-orange-950/40 px-2 py-0.5 text-[11px] font-medium text-orange-700 dark:text-orange-400">
+                      No-show
+                  </span>
+              )}
           </div>
 
           <div className="flex items-center gap-1 shrink-0">

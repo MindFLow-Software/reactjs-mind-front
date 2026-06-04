@@ -16,15 +16,15 @@ const passwordRegex =
   /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*])[A-Za-z\d!@#$%^&*]{8,30}$/
 
 export const signInSchema = z.object({
-  email: z.string().email({ message: 'E-mail inválido' }),
-  password: z.string().min(1, { message: 'A senha é obrigatória' }),
+    email:    z.email({ message: "E-mail inválido" }),
+    password: z.string().min(1, { message: "A senha é obrigatória" }),
 })
 
 export const signUpFormSchema = z.object({
   firstName: z.string().min(1, 'Obrigatório'),
   lastName: z.string().min(1, 'Obrigatório'),
   phoneNumber: z.string().min(1, 'Obrigatório').max(15),
-  email: z.string().email('Email inválido').min(1, 'Obrigatório'),
+  email: z.email('Email inválido').min(1, 'Obrigatório'),
   password: z
     .string()
     .min(8, 'Mínimo 8 caracteres')
@@ -41,35 +41,38 @@ export const signUpFormSchema = z.object({
 })
 
 export const patientSignUpSchema = z.object({
-  firstName: z.string().min(2, 'Nome é obrigatório'),
-  lastName: z.string().min(2, 'Sobrenome é obrigatório'),
-  email: z.string().email('E-mail inválido'),
-  password: z.string().min(6, 'A senha deve ter no mínimo 6 caracteres'),
-  phoneNumber: z.string().min(10, 'Telefone inválido'),
-  cpf: z.string().min(11, 'CPF inválido'),
-  dateOfBirth: z.string().min(10, 'Data de nascimento é obrigatória'),
-  gender: z.enum(['MASCULINE', 'FEMININE', 'OTHER'], {
-    message: 'Selecione seu gênero',
-  }),
+    firstName:   z.string().min(1, "Nome é obrigatório"),
+    lastName:    z.string().min(1, "Sobrenome é obrigatório"),
+    email:       z.email("E-mail inválido"),
+    password:    z.string()
+        .min(8, "A senha deve conter, no mínimo, 8 caracteres")
+        .regex(/[a-z]/, "A senha deve conter letras minúsculas")
+        .regex(/[A-Z]/, "A senha deve conter letras maiúsculas")
+        .regex(/[0-9]/, "A senha deve conter números")
+        .regex(/[^A-Za-z0-9]/, "A senha deve conter caracteres especiais"),
+    phoneNumber: z.string().min(10, "Telefone inválido"),
+    cpf:         z.string().min(11, "CPF inválido"),
+    dateOfBirth: z.coerce.date().optional(),
+    gender:      z.enum(["MASCULINE", "FEMININE", "OTHER"], { message: "Selecione seu gênero" }),
 })
 
 export const completeRegistrationSchema = z.object({
-  crp: z.string().min(4, 'CRP é obrigatório'),
-  expertise: z.enum(
-    [
-      'CLINICAL',
-      'SOCIAL',
-      'INFANT',
-      'JURIDICAL',
-      'PSYCHOTHERAPIST',
-      'NEUROPSYCHOLOGY',
-      'OTHER',
-    ],
-    { error: 'Selecione uma especialidade' },
-  ),
-  gender: z.enum(['MASCULINE', 'FEMININE', 'OTHER'], {
-    error: 'Selecione um gênero',
-  }),
+    crp:       z.string().min(4, "CRP é obrigatório"),
+    expertise: z.enum(
+        [
+          "CLINICAL",
+          "SOCIAL",
+          "INFANT",
+          "JURIDICAL",
+          "EDUCATIONAL",
+          "ORGANIZATIONAL",
+          "PSYCHOTHERAPIST",
+          "NEUROPSYCHOLOGY",
+          "OTHER",
+        ],
+        { error: "Selecione uma especialidade" }
+    ),
+    gender: z.enum(["MASCULINE", "FEMININE", "OTHER"], { error: "Selecione um gênero" }),
 })
 
 export type SignInSchema = z.infer<typeof signInSchema>

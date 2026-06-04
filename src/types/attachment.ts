@@ -9,15 +9,14 @@ export interface AttachmentPatientItem {
 }
 
 // GET /attachments (paginado)
-// ⚠️ SizeInBytes com S maiúsculo — bug de nomenclatura no backend
 export interface AttachmentListItem {
   id: string
   filename: string
   fileUrl: string
   contentType: string
-  SizeInBytes: number
-  uploadedAt: string
-  patient: { firstName: string; lastName: string } | null
+  sizeInBytes: number
+  uploadedAt:  string
+  patient:     { firstName: string; lastName: string } | null
 }
 
 export interface AttachmentListMeta {

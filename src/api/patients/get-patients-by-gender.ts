@@ -2,7 +2,7 @@ import { api } from '@/lib/axios'
 
 export interface PatientsByGenderResponse {
   gender: 'OTHER' | 'FEMININE' | 'MASCULINE'
-  patients: number
+  count: number
 }
 
 export async function getPatientsByGender(): Promise<

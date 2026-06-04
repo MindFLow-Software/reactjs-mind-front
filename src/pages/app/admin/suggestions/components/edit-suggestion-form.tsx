@@ -95,25 +95,25 @@ export function EditSuggestionForm({
           </div>
 
           <div className="space-y-2">
-            <Label className="text-xs font-black uppercase text-slate-400 flex items-center gap-2">
-              <Tag className="size-3" /> Categoria
-            </Label>
-            <Select
-              defaultValue={item.category}
-              onValueChange={(v) => setValue('category', v)}
-            >
-              <SelectTrigger className="border-slate-200">
-                <SelectValue />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="UI_UX">Interface / UX</SelectItem>
-                <SelectItem value="SCHEDULING">Agendamentos</SelectItem>
-                <SelectItem value="REPORTS">Relatórios</SelectItem>
-                <SelectItem value="PRIVACY_LGPD">Privacidade</SelectItem>
-                <SelectItem value="INTEGRATIONS">Integrações</SelectItem>
-                <SelectItem value="OTHERS">Outros</SelectItem>
-              </SelectContent>
-            </Select>
+              <Label className="text-xs font-black uppercase text-slate-400 flex items-center gap-2">
+                  <Tag className="size-3" /> Categoria
+              </Label>
+              <Select
+                  defaultValue={item.category}
+                  onValueChange={(v) => setValue("category", v as EditSuggestionSchema["category"])}
+              >
+                  <SelectTrigger className="border-slate-200">
+                      <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                      <SelectItem value="UI_UX">Interface / UX</SelectItem>
+                      <SelectItem value="SCHEDULING">Agendamentos</SelectItem>
+                      <SelectItem value="REPORTS">Relatórios</SelectItem>
+                      <SelectItem value="PRIVACY_LGPD">Privacidade</SelectItem>
+                      <SelectItem value="INTEGRATIONS">Integrações</SelectItem>
+                      <SelectItem value="OTHERS">Outros</SelectItem>
+                  </SelectContent>
+              </Select>
           </div>
         </div>
 
