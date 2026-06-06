@@ -1,32 +1,16 @@
-'use client'
-
 import { useMemo } from 'react'
-import { format, isToday } from 'date-fns'
+import { format } from 'date-fns'
 import { ptBR } from 'date-fns/locale'
-import { useQuery } from '@tanstack/react-query'
 import { cn } from '@/lib/utils'
 import { usePsychologistProfile } from '@/hooks/use-psychologist-profile'
-import { fetchAppointments } from '@/api/appointments/fetch-appointments'
-
-export type DashboardPeriod = '7d' | '30d' | '90d' | 'year'
+import type { DashboardPeriod } from '../constants'
+import { PERIODS } from '../constants'
+import { getGreeting } from '../helpers'
+import { useTodayAppointments } from '../hooks/use-today-appointments'
 
 interface DashboardHeaderProps {
   period: DashboardPeriod
   onPeriodChange: (p: DashboardPeriod) => void
-}
-
-const PERIODS: { value: DashboardPeriod; label: string }[] = [
-  { value: '7d', label: '7 dias' },
-  { value: '30d', label: '30 dias' },
-  { value: '90d', label: '90 dias' },
-  { value: 'year', label: 'Ano' },
-]
-
-function getGreeting() {
-  const h = new Date().getHours()
-  if (h >= 5 && h < 12) return 'Bom dia'
-  if (h >= 12 && h < 18) return 'Boa tarde'
-  return 'Boa noite'
 }
 
 export function DashboardHeader({
@@ -34,23 +18,12 @@ export function DashboardHeader({
   onPeriodChange,
 }: DashboardHeaderProps) {
   const { data: profile } = usePsychologistProfile()
+  const { count: appointmentCount } = useTodayAppointments()
 
   const formattedDate = useMemo(
     () => format(new Date(), "EEEE, d 'de' MMMM 'de' yyyy", { locale: ptBR }),
     [],
   )
-
-  const { data: apptData } = useQuery({
-    queryKey: ['dashboard', 'today-count'],
-    queryFn: () => fetchAppointments({ perPage: 200 }),
-    staleTime: 5 * 60 * 1000,
-  })
-
-  const todayCount = useMemo(() => {
-    if (!apptData?.appointments) return 0
-    return apptData.appointments.filter((a) => isToday(new Date(a.scheduledAt)))
-      .length
-  }, [apptData])
 
   const title = profile?.gender === 'FEMININE' ? 'Dra.' : 'Dr.'
   const name = profile
@@ -66,8 +39,8 @@ export function DashboardHeader({
         </h1>
         <p className="mt-1 text-sm text-muted-foreground capitalize">
           {formattedDate}
-          {todayCount > 0 &&
-            ` · ${todayCount} ${todayCount === 1 ? 'sessão hoje' : 'sessões hoje'}`}
+          {appointmentCount > 0 &&
+            ` · ${appointmentCount} ${appointmentCount === 1 ? 'sessão hoje' : 'sessões hoje'}`}
         </p>
       </div>
 

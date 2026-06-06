@@ -195,14 +195,13 @@ export function PatientSignUpForm({
         </div>
         <div className="space-y-2">
           <Label>Gênero</Label>
-          {/* eslint-disable-next-line */}
-          <Select onValueChange={(value) => setValue('gender', value as any)}>
+          <Select onValueChange={(value) => setValue('gender', value as PatientSignUpSchema['gender'])}>
             <SelectTrigger>
               <SelectValue placeholder="Selecione" />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value="MALE">Masculino</SelectItem>
-              <SelectItem value="FEMALE">Feminino</SelectItem>
+              <SelectItem value="MASCULINE">Masculino</SelectItem>
+              <SelectItem value="FEMININE">Feminino</SelectItem>
               <SelectItem value="OTHER">Outro</SelectItem>
             </SelectContent>
           </Select>
