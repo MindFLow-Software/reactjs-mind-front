@@ -8,11 +8,9 @@ export const PatientsAmountCard = memo(function PatientsAmountCard() {
 
   return (
     <MetricCard
-      isLoading={isLoading}
-      isError={isError}
       accentColor="blue"
-      label="Pacientes ativos"
-      icon={<Users className="size-4 text-blue-500" />}
+      header={{ label: 'Pacientes ativos', icon: <Users className="size-4 text-blue-500" /> }}
+      state={{ isLoading, isError }}
     >
       <MetricCard.Value>{total.toLocaleString('pt-BR')}</MetricCard.Value>
       {delta !== null && delta > 0 && (

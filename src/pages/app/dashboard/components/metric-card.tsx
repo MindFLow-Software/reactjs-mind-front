@@ -17,25 +17,25 @@ const ICON_RING: Record<AccentColor, string> = {
   emerald: 'bg-emerald-500/10 ring-emerald-500/20',
 }
 
-interface MetricCardRootProps {
+interface MetricCardHeader {
+  label: string
+  icon: React.ReactNode
+}
+
+interface MetricCardState {
   isLoading: boolean
   isError?: boolean
   onRetry?: () => void
+}
+
+interface MetricCardRootProps {
   accentColor: AccentColor
-  label: string
-  icon: React.ReactNode
+  header: MetricCardHeader
+  state: MetricCardState
   children: React.ReactNode
 }
 
-function MetricCardRoot({
-  isLoading,
-  isError,
-  onRetry,
-  accentColor,
-  label,
-  icon,
-  children,
-}: MetricCardRootProps) {
+function MetricCardRoot({ accentColor, header, state, children }: MetricCardRootProps) {
   return (
     <Card className="relative overflow-hidden rounded-lg border border-border bg-card p-5 shadow-sm">
       <div
@@ -46,25 +46,25 @@ function MetricCardRoot({
       />
       <div className="flex items-center gap-3">
         <div className={cn('flex h-9 w-9 shrink-0 items-center justify-center rounded-full ring-1', ICON_RING[accentColor])}>
-          {icon}
+          {header.icon}
         </div>
-        <p className="text-sm font-semibold text-foreground leading-tight">{label}</p>
+        <p className="text-sm font-semibold text-foreground leading-tight">{header.label}</p>
       </div>
       <div className="mt-3">
-        {isLoading ? (
+        {state.isLoading ? (
           <div className="space-y-2">
             <Skeleton className="h-9 w-24" />
             <Skeleton className="h-5 w-36" />
           </div>
-        ) : isError ? (
+        ) : state.isError ? (
           <div className="flex flex-col gap-2">
             <div className="flex items-center gap-2 text-red-500">
               <AlertCircle className="size-4" />
               <span className="text-sm">Erro ao carregar</span>
             </div>
-            {onRetry && (
+            {state.onRetry && (
               <button
-                onClick={onRetry}
+                onClick={state.onRetry}
                 className="flex items-center gap-1 text-xs font-semibold text-blue-500 hover:underline"
               >
                 <RefreshCcw className="size-3" /> Tentar novamente

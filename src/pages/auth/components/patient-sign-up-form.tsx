@@ -35,6 +35,7 @@ import {
   patientSignUpSchema,
   type PatientSignUpSchema,
 } from '@/validators/auth'
+import { Gender } from '@/types/patient'
 
 export function PatientSignUpForm({
   className,
@@ -195,14 +196,14 @@ export function PatientSignUpForm({
         </div>
         <div className="space-y-2">
           <Label>Gênero</Label>
-          <Select onValueChange={(value) => setValue('gender', value as PatientSignUpSchema['gender'])}>
+          <Select onValueChange={(value: Gender) => setValue('gender', value)}>
             <SelectTrigger>
               <SelectValue placeholder="Selecione" />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value="MASCULINE">Masculino</SelectItem>
-              <SelectItem value="FEMININE">Feminino</SelectItem>
-              <SelectItem value="OTHER">Outro</SelectItem>
+              <SelectItem value={Gender.MASCULINE}>Masculino</SelectItem>
+              <SelectItem value={Gender.FEMININE}>Feminino</SelectItem>
+              <SelectItem value={Gender.OTHER}>Outro</SelectItem>
             </SelectContent>
           </Select>
           {errors.gender && (

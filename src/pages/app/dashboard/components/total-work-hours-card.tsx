@@ -20,11 +20,9 @@ export const TotalWorkHoursCard = memo(function TotalWorkHoursCard({
 
   return (
     <MetricCard
-      isLoading={isLoading}
-      isError={isError}
       accentColor="emerald"
-      label="Horas atendidas"
-      icon={<Clock className="size-4 text-emerald-500" />}
+      header={{ label: 'Horas atendidas', icon: <Clock className="size-4 text-emerald-500" /> }}
+      state={{ isLoading, isError }}
     >
       <MetricCard.Value>
         {totalMinutes > 0 ? formatTime(totalMinutes) : '0h'}

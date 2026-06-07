@@ -21,9 +21,9 @@ const GENDER_TRANSLATIONS: Record<string, string> = {
 }
 
 const GENDER_COLORS: Record<string, string> = {
-  Feminino: '#ec4899',
-  Masculino: '#3b82f6',
-  Outro: '#a855f7',
+  FEMININE: '#ec4899',
+  MASCULINE: '#3b82f6',
+  OTHER: '#a855f7',
 }
 
 const CHART_COLORS = ['#ec4899', '#3b82f6', '#a855f7'] as const
@@ -40,6 +40,7 @@ export const PatientsByGenderChart = React.memo(
       const rawData = dashboard?.patientsByGender
       if (!rawData) return { chartData: [], totalPatients: 0, isEmpty: true }
       const translated = rawData.map((item) => ({
+        genderKey: item.gender,
         gender: GENDER_TRANSLATIONS[item.gender] || item.gender,
         count: item.count,
       }))
@@ -53,30 +54,26 @@ export const PatientsByGenderChart = React.memo(
 
     const patientLabel = totalPatients === 1 ? 'PACIENTE' : 'PACIENTES'
 
-    return (
-      <Card className="border-border bg-card shadow-sm rounded-xl flex flex-col">
-        <CardHeader className="px-6 pb-4 border-b border-border">
-          <div className="flex items-center gap-3">
-            <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-blue-500/10 ring-1 ring-blue-500/20">
-              <Users className="size-4 text-blue-600" />
-            </div>
-            <div>
-              <p className="text-base font-semibold text-foreground leading-tight">
-                Perfil dos pacientes
-              </p>
-              <p className="text-xs font-medium uppercase tracking-wider text-muted-foreground mt-0.5">
-                Distribuição por gênero
-              </p>
-            </div>
-          </div>
-        </CardHeader>
+    type ContentState = 'loading' | 'error' | 'empty' | 'data'
 
-        <CardContent className="flex-1 px-6 pb-6">
-          {isLoading ? (
+    const contentState: ContentState = isLoading
+      ? 'loading'
+      : isError
+        ? 'error'
+        : isEmpty
+          ? 'empty'
+          : 'data'
+
+    function renderContent() {
+      switch (contentState) {
+        case 'loading':
+          return (
             <div className="flex h-[180px] items-center justify-center">
               <Loader2 className="h-8 w-8 animate-spin text-muted-foreground" />
             </div>
-          ) : isError ? (
+          )
+        case 'error':
+          return (
             <div className="flex h-[180px] flex-col items-center justify-center gap-2 text-center">
               <AlertCircle className="size-5 text-red-500" />
               <p className="text-sm text-red-500">Erro ao carregar</p>
@@ -87,7 +84,9 @@ export const PatientsByGenderChart = React.memo(
                 <RefreshCcw size={12} /> Tentar novamente
               </button>
             </div>
-          ) : isEmpty ? (
+          )
+        case 'empty':
+          return (
             <div className="flex h-[180px] flex-col items-center justify-center gap-2 text-center">
               <div className="flex h-10 w-10 items-center justify-center rounded-full bg-muted/30">
                 <Users className="h-5 w-5 text-muted-foreground/50" />
@@ -96,7 +95,9 @@ export const PatientsByGenderChart = React.memo(
                 Sem dados de gênero
               </p>
             </div>
-          ) : (
+          )
+        case 'data':
+          return (
             <div className="flex items-center gap-6">
               <ChartContainer
                 config={chartConfig}
@@ -121,7 +122,7 @@ export const PatientsByGenderChart = React.memo(
                       <Cell
                         key={`cell-${index}`}
                         fill={
-                          GENDER_COLORS[item.gender] ??
+                          GENDER_COLORS[item.genderKey] ??
                           CHART_COLORS[index % CHART_COLORS.length]
                         }
                         className="hover:opacity-80 transition-opacity cursor-pointer outline-none"
@@ -169,7 +170,7 @@ export const PatientsByGenderChart = React.memo(
               <div className="flex flex-col gap-3 flex-1">
                 {chartData.map((item, index) => {
                   const color =
-                    GENDER_COLORS[item.gender] ??
+                    GENDER_COLORS[item.genderKey] ??
                     CHART_COLORS[index % CHART_COLORS.length]
                   const pct =
                     totalPatients > 0
@@ -196,7 +197,30 @@ export const PatientsByGenderChart = React.memo(
                 })}
               </div>
             </div>
-          )}
+          )
+      }
+    }
+
+    return (
+      <Card className="border-border bg-card shadow-sm rounded-xl flex flex-col">
+        <CardHeader className="px-6 pb-4 border-b border-border">
+          <div className="flex items-center gap-3">
+            <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-blue-500/10 ring-1 ring-blue-500/20">
+              <Users className="size-4 text-blue-600" />
+            </div>
+            <div>
+              <p className="text-base font-semibold text-foreground leading-tight">
+                Perfil dos pacientes
+              </p>
+              <p className="text-xs font-medium uppercase tracking-wider text-muted-foreground mt-0.5">
+                Distribuição por gênero
+              </p>
+            </div>
+          </div>
+        </CardHeader>
+
+        <CardContent className="flex-1 px-6 pb-6">
+          {renderContent()}
         </CardContent>
       </Card>
     )
