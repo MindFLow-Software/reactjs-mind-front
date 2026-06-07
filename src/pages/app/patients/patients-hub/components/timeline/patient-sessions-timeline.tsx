@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useMemo } from 'react'
+import { useState, useMemo, createElement, useCallback } from 'react'
 import { format } from 'date-fns'
 import { ptBR } from 'date-fns/locale'
 import {
@@ -15,7 +15,6 @@ import {
   CalendarDays,
   ListFilter,
 } from 'lucide-react'
-import { pdf } from '@react-pdf/renderer'
 import { toast } from 'sonner'
 
 import { Button } from '@/components/ui/button'
@@ -29,6 +28,9 @@ import {
 import { Pagination } from './sessions-pagination'
 import { SessionPDFTemplate } from '@/utils/session-pdf-template'
 import { cn } from '@/lib/utils'
+import { usePdfExport } from '../../hooks/use-pdf-export'
+import { Normalizer } from '@/utils/normalizer'
+import './patient-sessions-timeline.css'
 
 interface Session {
   id: string
@@ -51,23 +53,31 @@ interface PatientSessionsTimelineProps {
   onPageChange: (newIndex: number) => void
 }
 
-type StatusFilter = "all" | "FINISHED" | "CANCELED" | "NOT_ATTEND"
+type StatusFilter = 'all' | 'FINISHED' | 'CANCELED' | 'NOT_ATTEND'
 
 const STATUS_DOT: Record<string, string> = {
-    FINISHED:    "bg-blue-500",
-    DONE:        "bg-blue-500",
-    CANCELED:    "bg-red-500",
-    SCHEDULED:   "bg-gray-400",
-    ATTENDING:   "bg-green-500",
-    NOT_ATTEND:  "bg-amber-400",
-    RESCHEDULED: "bg-purple-400",
+  FINISHED: 'bg-blue-500',
+  DONE: 'bg-blue-500',
+  CANCELED: 'bg-red-500',
+  SCHEDULED: 'bg-gray-400',
+  ATTENDING: 'bg-green-500',
+  NOT_ATTEND: 'bg-amber-400',
+  RESCHEDULED: 'bg-purple-400',
 }
 
-const CHIPS: { key: StatusFilter; label: string; matchFn: (s: string) => boolean }[] = [
-    { key: "all",        label: "Todas",      matchFn: () => true },
-    { key: "FINISHED",   label: "Realizadas", matchFn: (s) => s === "FINISHED" || s === "DONE" },
-    { key: "CANCELED",   label: "Canceladas", matchFn: (s) => s === "CANCELED" },
-    { key: "NOT_ATTEND", label: "Faltas",     matchFn: (s) => s === "NOT_ATTEND" },
+const CHIPS: {
+  key: StatusFilter
+  label: string
+  matchFn: (s: string) => boolean
+}[] = [
+  { key: 'all', label: 'Todas', matchFn: () => true },
+  {
+    key: 'FINISHED',
+    label: 'Realizadas',
+    matchFn: (s) => s === 'FINISHED' || s === 'DONE',
+  },
+  { key: 'CANCELED', label: 'Canceladas', matchFn: (s) => s === 'CANCELED' },
+  { key: 'NOT_ATTEND', label: 'Faltas', matchFn: (s) => s === 'NOT_ATTEND' },
 ]
 
 function getSessionDate(session: Session): Date {
@@ -75,15 +85,20 @@ function getSessionDate(session: Session): Date {
 }
 
 function groupByMonth(sessions: Session[]): [string, Session[]][] {
-  const map = new Map<string, Session[]>()
-  for (const s of sessions) {
-    const key = format(getSessionDate(s), 'MMMM yyyy', {
+  const sessionsMap = new Map<string, Session[]>()
+
+  for (const session of sessions) {
+    const key = format(getSessionDate(session), 'MMMM yyyy', {
       locale: ptBR,
     }).toUpperCase()
-    if (!map.has(key)) map.set(key, [])
-    map.get(key)!.push(s)
+
+    if (!sessionsMap.has(key)) sessionsMap.set(key, [])
+
+    const existinSessions = sessionsMap.get(key) ?? []
+    sessionsMap.set(key, [...existinSessions, session])
   }
-  return Array.from(map.entries())
+
+  return Array.from(sessionsMap.entries())
 }
 
 export function PatientSessionsTimeline({
@@ -97,14 +112,17 @@ export function PatientSessionsTimeline({
   const [searchText, setSearchText] = useState('')
 
   const filtered = useMemo(() => {
-    const chip = CHIPS.find((c) => c.key === statusFilter)!
-    return sessions.filter((s) => {
-      if (!chip.matchFn(s.status)) return false
+    const chip = CHIPS.find((chip) => chip.key === statusFilter)
+
+    return sessions.filter((session) => {
+      if (!chip?.matchFn(session.status)) return false
       if (!searchText.trim()) return true
+
       const q = searchText.toLowerCase()
+
       return (
-        s.content?.toLowerCase().includes(q) ||
-        s.theme?.toLowerCase().includes(q)
+        session.content?.toLowerCase().includes(q) ||
+        session.theme?.toLowerCase().includes(q)
       )
     })
   }, [sessions, statusFilter, searchText])
@@ -124,29 +142,30 @@ export function PatientSessionsTimeline({
 
   if (sessions.length === 0) {
     return (
-      <div className="flex flex-col items-center py-24 text-muted-foreground border border-dashed rounded-2xl bg-muted/10">
-        <History className="h-10 w-10 opacity-20 mb-3" />
-        <p className="text-sm font-semibold">Sem histórico de sessões</p>
-        <p className="text-xs">As sessões realizadas aparecerão aqui.</p>
+      <div className="pst-empty-state">
+        <History className="pst-empty-state-icon" />
+        <p className="pst-empty-state-title">Sem histórico de sessões</p>
+        <p className="pst-empty-state-subtitle">
+          As sessões realizadas aparecerão aqui.
+        </p>
       </div>
     )
   }
 
   return (
     <div className="space-y-5">
-      {/* Filter bar */}
-      <div className="flex flex-wrap items-center gap-3 justify-between rounded-xl border border-border/60 bg-card px-4 py-2.5">
-        <div className="relative">
-          <Search className="absolute left-2.5 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-muted-foreground pointer-events-none" />
+      <div className="pst-filter-bar">
+        <div className="pst-search-wrapper">
+          <Search className="pst-search-icon" />
           <Input
             placeholder="Buscar nas anotações..."
             value={searchText}
             onChange={(e) => setSearchText(e.target.value)}
-            className="pl-8 h-8 text-sm w-52 border-0 bg-transparent shadow-none focus-visible:ring-0 focus-visible:ring-offset-0"
+            className="pst-search-input"
           />
         </div>
 
-        <div className="flex flex-wrap gap-1.5">
+        <div className="pst-chips-row">
           {CHIPS.map((chip) => {
             const active = statusFilter === chip.key
             return (
@@ -155,19 +174,17 @@ export function PatientSessionsTimeline({
                 type="button"
                 onClick={() => setStatusFilter(chip.key)}
                 className={cn(
-                  'inline-flex items-center gap-1.5 rounded-full border px-3 py-1 text-xs font-medium transition-colors cursor-pointer',
-                  active
-                    ? 'border-blue-600 bg-blue-600 text-white'
-                    : 'border-border bg-transparent text-muted-foreground hover:bg-muted/60 hover:text-foreground',
+                  'pst-chip',
+                  active ? 'pst-chip--active' : 'pst-chip--inactive',
                 )}
               >
                 {chip.label}
                 <span
                   className={cn(
-                    'rounded-full px-1.5 py-0.5 text-[10px] tabular-nums font-semibold',
+                    'pst-chip-count',
                     active
-                      ? 'bg-white/25 text-white'
-                      : 'bg-muted text-muted-foreground',
+                      ? 'pst-chip-count--active'
+                      : 'pst-chip-count--inactive',
                   )}
                 >
                   {chipCounts[chip.key]}
@@ -177,36 +194,28 @@ export function PatientSessionsTimeline({
           })}
         </div>
 
-        <div className="flex items-center gap-1.5">
-          <Button
-            variant="outline"
-            size="sm"
-            className="h-8 gap-1.5 text-xs text-muted-foreground font-medium cursor-not-allowed opacity-70"
-          >
-            <CalendarDays className="h-3.5 w-3.5" />
+        <div className="pst-filter-actions">
+          <Button variant="outline" size="sm" className="pst-filter-btn">
+            <CalendarDays className="pst-filter-btn-icon" />
             Período: 6 meses
           </Button>
-          <Button
-            variant="outline"
-            size="sm"
-            className="h-8 gap-1.5 text-xs text-muted-foreground font-medium cursor-not-allowed opacity-70"
-          >
-            <ListFilter className="h-3.5 w-3.5" />
+          <Button variant="outline" size="sm" className="pst-filter-btn">
+            <ListFilter className="pst-filter-btn-icon" />
             Ordenar
           </Button>
         </div>
       </div>
 
       {filtered.length === 0 ? (
-        <div className="flex flex-col items-center py-16 text-muted-foreground border border-dashed rounded-2xl bg-muted/5">
-          <History className="h-10 w-10 opacity-20 mb-3" />
-          <p className="text-sm font-semibold text-foreground">
-            Nenhuma sessão encontrada
+        <div className="pst-no-results">
+          <History className="pst-no-results-icon" />
+          <p className="pst-no-results-title">Nenhuma sessão encontrada</p>
+          <p className="pst-no-results-subtitle">
+            Tente outro filtro ou termo de busca.
           </p>
-          <p className="text-xs">Tente outro filtro ou termo de busca.</p>
         </div>
       ) : (
-        <div className="space-y-8 py-1">
+        <div className="pst-groups-container">
           {grouped.map(([month, monthSessions]) => (
             <MonthGroup
               key={month}
@@ -218,7 +227,7 @@ export function PatientSessionsTimeline({
         </div>
       )}
 
-      <div className="pt-4 border-t">
+      <div className="pst-pagination-wrapper">
         <Pagination
           pageIndex={pageIndex}
           totalCount={meta.totalCount}
@@ -241,19 +250,15 @@ function MonthGroup({
 }) {
   return (
     <div>
-      {/* Month header — circle center at x=8px from parent */}
-      <div className="flex items-center gap-3 mb-4">
-        <span className="h-4 w-4 flex-shrink-0 rounded-full border-2 border-muted-foreground/30 bg-background" />
-        <h3 className="text-[11px] font-bold uppercase tracking-widest text-muted-foreground flex-1">
-          {month}
-        </h3>
-        <span className="text-[11px] text-muted-foreground">
+      <div className="pst-month-header">
+        <span className="pst-month-dot" />
+        <h3 className="pst-month-label">{month}</h3>
+        <span className="pst-month-count">
           {sessions.length} {sessions.length === 1 ? 'sessão' : 'sessões'}
         </span>
       </div>
 
-      {/* Sessions — border-l center aligned with month circle (ml-2 = 8px) */}
-      <div className="relative ml-2 border-l border-border/50 space-y-3">
+      <div className="pst-month-sessions">
         {sessions.map((session) => (
           <SessionRow
             key={session.id}
@@ -273,112 +278,78 @@ function SessionRow({
   session: Session
   patientName: string
 }) {
-  const [isExporting, setIsExporting] = useState(false)
+  const { isExporting, setFilename, exportToPdf } = usePdfExport()
 
-    const date = getSessionDate(session)
-    const dotColor = STATUS_DOT[session.status] ?? "bg-gray-400"
-    const isCancelled = session.status === "CANCELED"
-    const isCompleted = session.status === "FINISHED" || session.status === "DONE"
-    const isFalta = session.status === "NOT_ATTEND"
+  const date = getSessionDate(session)
+  const dotColor = STATUS_DOT[session.status] ?? 'bg-gray-400'
+  const isCancelled = session.status === 'CANCELED'
+  const isCompleted = session.status === 'FINISHED' || session.status === 'DONE'
+  const isMissed = session.status === 'NOT_ATTEND'
 
-  const handleExportPDF = async () => {
-    setIsExporting(true)
-    try {
-      const dateFormatted = format(date, "dd/MM/yyyy 'às' HH:mm", {
-        locale: ptBR,
-      })
-      const blob = await pdf(
-        <SessionPDFTemplate
-          psychologist={{ name: 'Seu Nome Profissional', crp: '06/12345-X' }}
-          patientName={patientName}
-          date={dateFormatted}
-          content={session.content || 'Nenhuma nota registrada.'}
-          diagnosis={session.theme || ''}
-        />,
-      ).toBlob()
-      const url = URL.createObjectURL(blob)
-      const link = document.createElement('a')
-      link.href = url
-      link.download = `Evolucao-${patientName.replace(/\s/g, '_')}-${session.id.substring(0, 5)}.pdf`
-      document.body.appendChild(link)
-      link.click()
-      document.body.removeChild(link)
-      URL.revokeObjectURL(url)
-      toast.success('PDF baixado com sucesso!')
-    } catch {
-      toast.error('Erro ao gerar PDF.')
-    } finally {
-      setIsExporting(false)
-    }
-  }
+  const handleExportPDF = useCallback(async () => {
+    const dateFormatted = format(date, "dd/MM/yyyy 'às' HH:mm", {
+      locale: ptBR,
+    })
+
+    const filename = `Evolucao-${Normalizer.toSnakeCase(patientName)}-${session.id.substring(0, 5)}.pdf`
+    setFilename(filename)
+
+    exportToPdf(
+      createElement(SessionPDFTemplate, {
+        psychologist: { name: 'Seu Nome Profissional', crp: '06/12345-X' },
+        patientName,
+        date: dateFormatted,
+        content: session?.content ?? 'Nenhuma nota registrada.',
+        diagnosis: session?.theme ?? '',
+      }),
+    )
+  }, [date, exportToPdf, patientName, session, setFilename])
 
   return (
-    <div className="relative pl-8">
-      {/* Dot on timeline line — left-0 + -translate-x-1/2 centers it on the border-l */}
-      <span
-        className={cn(
-          'absolute left-0 top-[18px] h-2.5 w-2.5 -translate-x-1/2 rounded-full ring-2 ring-background z-10',
-          dotColor,
-        )}
-      />
+    <div className="pst-session-row">
+      <span className={cn('pst-session-dot', dotColor)} />
 
-      <div className="group rounded-xl border border-border/50 bg-card p-4 transition-shadow hover:shadow-sm">
-        {/* Top row */}
-        <div className="flex items-center justify-between gap-2">
-          <div className="flex flex-wrap items-center gap-x-2 gap-y-1">
-              <span className="text-sm font-bold text-foreground tabular-nums">
-                  {format(date, "dd/MM")}
+      <div className="pst-session-card group">
+        <div className="pst-session-top-row">
+          <div className="pst-session-meta">
+            <span className="pst-session-date">{format(date, 'dd/MM')}</span>
+            <span className="pst-session-time">{format(date, 'HH:mm')}</span>
+            {session.duration && (
+              <span className="pst-session-duration">
+                <Clock className="pst-session-duration-icon" />
+                {session.duration}min
               </span>
-              <span className="text-sm text-muted-foreground tabular-nums">
-                  {format(date, "HH:mm")}
-              </span>
-              {session.duration && (
-                  <span className="flex items-center gap-1 text-xs text-muted-foreground">
-                      <Clock className="h-3 w-3" />
-                      {session.duration}min
-                  </span>
-              )}
-              {isCancelled && (
-                  <span className="text-xs font-medium text-red-600 dark:text-red-400">
-                      × Cancelada
-                  </span>
-              )}
-              {isFalta && (
-                  <span className="text-xs font-medium text-amber-600 dark:text-amber-400">
-                      Não compareceu
-                  </span>
-              )}
-              {session.theme && (
-                  <span className="rounded-md bg-violet-100 dark:bg-violet-950/40 px-2 py-0.5 text-[11px] font-medium text-violet-700 dark:text-violet-400">
-                      {session.theme}
-                  </span>
-              )}
-              {isFalta && (
-                  <span className="rounded-md bg-orange-100 dark:bg-orange-950/40 px-2 py-0.5 text-[11px] font-medium text-orange-700 dark:text-orange-400">
-                      No-show
-                  </span>
-              )}
+            )}
+            {isCancelled && (
+              <span className="pst-session-cancelled-badge">× Cancelada</span>
+            )}
+            {isMissed && (
+              <span className="pst-session-missed-badge">Não compareceu</span>
+            )}
+            {session.theme && (
+              <span className="pst-session-theme-badge">{session.theme}</span>
+            )}
           </div>
 
-          <div className="flex items-center gap-1 shrink-0">
-            <div className="hidden group-hover:flex items-center gap-1">
+          <div className="pst-session-actions">
+            <div className="pst-session-hover-actions">
               <Button
                 size="icon"
                 variant="ghost"
-                className="h-7 w-7 text-muted-foreground hover:text-foreground cursor-pointer"
+                className="pst-session-action-btn"
               >
-                <Pencil className="h-3.5 w-3.5" />
+                <Pencil className="size-3.5" />
               </Button>
               <Button
                 size="icon"
                 variant="ghost"
-                className="h-7 w-7 text-muted-foreground hover:text-foreground cursor-pointer"
+                className="pst-session-action-btn"
                 onClick={() => {
                   navigator.clipboard.writeText(session.content ?? '')
                   toast.success('Notas copiadas.')
                 }}
               >
-                <Copy className="h-3.5 w-3.5" />
+                <Copy className="size-3.5" />
               </Button>
             </div>
             <DropdownMenu>
@@ -386,9 +357,9 @@ function SessionRow({
                 <Button
                   size="icon"
                   variant="ghost"
-                  className="h-7 w-7 text-muted-foreground hover:text-foreground cursor-pointer"
+                  className="pst-session-action-btn"
                 >
-                  <MoreHorizontal className="h-3.5 w-3.5" />
+                  <MoreHorizontal className="size-3.5" />
                 </Button>
               </DropdownMenuTrigger>
               <DropdownMenuContent align="end">
@@ -398,9 +369,9 @@ function SessionRow({
                   className="cursor-pointer"
                 >
                   {isExporting ? (
-                    <Loader2 className="mr-2 h-3.5 w-3.5 animate-spin" />
+                    <Loader2 className="mr-2 size-3.5 animate-spin" />
                   ) : (
-                    <Download className="mr-2 h-3.5 w-3.5" />
+                    <Download className="mr-2 size-3.5" />
                   )}
                   Exportar PDF
                 </DropdownMenuItem>
@@ -410,16 +381,12 @@ function SessionRow({
         </div>
 
         {isCompleted && (
-          <div className="mt-3 space-y-1">
-            <p className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground/70">
-              Notas da sessão
-            </p>
+          <div className="pst-session-content-block">
+            <p className="pst-session-content-label">Notas da sessão</p>
             {session.content ? (
-              <p className="text-sm text-foreground/80 leading-relaxed whitespace-pre-wrap">
-                {session.content}
-              </p>
+              <p className="pst-session-content-text">{session.content}</p>
             ) : (
-              <p className="text-sm italic text-muted-foreground">
+              <p className="pst-session-content-empty">
                 Nenhuma nota registrada.
               </p>
             )}
@@ -427,21 +394,15 @@ function SessionRow({
         )}
 
         {isCancelled && (
-          <div className="mt-3 space-y-1">
-            <p className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground/70">
-              Motivo
-            </p>
-            <p className="text-sm text-foreground/80 leading-relaxed">
-              {session.content || '—'}
-            </p>
+          <div className="pst-session-content-block">
+            <p className="pst-session-content-label">Motivo</p>
+            <p className="pst-session-content-text">{session.content || '—'}</p>
           </div>
         )}
 
-        {isFalta && session.content && (
+        {isMissed && session.content && (
           <div className="mt-3">
-            <p className="text-sm text-foreground/80 leading-relaxed">
-              {session.content}
-            </p>
+            <p className="pst-session-content-text">{session.content}</p>
           </div>
         )}
       </div>

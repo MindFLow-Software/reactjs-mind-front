@@ -1,0 +1,15 @@
+@reference "../../../../../global.css";
+
+.ph-shell {
+  display: grid;
+  grid-template-rows: auto 1fr;
+  min-height: 100%;
+}
+
+.ph-shell__header {
+  @apply sticky top-0 z-10 bg-background border-b border-border;
+}
+
+.ph-shell__content {
+  @apply min-w-0 overflow-hidden;
+}

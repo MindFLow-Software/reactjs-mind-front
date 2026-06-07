@@ -1,0 +1,43 @@
+@reference "../../../../../../global.css";
+
+/* Toolbar shell */
+.ph-anamnesis-toolbar {
+  @apply flex items-center justify-between gap-2 rounded-xl border border-border/50 bg-muted/30 px-3 py-2;
+}
+
+.ph-anamnesis-toolbar__buttons {
+  @apply flex flex-wrap items-center gap-1;
+}
+
+.ph-anamnesis-toolbar__separator {
+  @apply mx-1 h-4 w-px bg-border/60;
+}
+
+.ph-anamnesis-toolbar__btn {
+  @apply h-7 gap-1 px-2 text-muted-foreground hover:text-foreground hover:bg-background/80 cursor-pointer;
+}
+
+.ph-anamnesis-toolbar__btn-label {
+  @apply text-xs;
+}
+
+/* Save status */
+.ph-anamnesis-toolbar__status {
+  @apply flex shrink-0 items-center gap-1.5;
+}
+
+.ph-anamnesis-toolbar__status-dot {
+  @apply size-1.5 rounded-full;
+}
+
+.ph-anamnesis-toolbar__status-dot--synced {
+  @apply bg-emerald-500;
+}
+
+.ph-anamnesis-toolbar__status-dot--pending {
+  @apply bg-amber-400;
+}
+
+.ph-anamnesis-toolbar__status-label {
+  @apply text-[11px] text-muted-foreground whitespace-nowrap;
+}

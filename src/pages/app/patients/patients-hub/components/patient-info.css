@@ -1,0 +1,72 @@
+@reference "../../../../../global.css";
+
+/* Root */
+.ph-patient-info {
+  @apply space-y-4 mt-4;
+}
+
+.ph-patient-info__grid {
+  @apply grid grid-cols-1 lg:grid-cols-2 gap-4;
+}
+
+/* GenderBadge */
+.ph-gender-badge {
+  @apply inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs font-semibold;
+}
+
+.ph-gender-badge--masculine {
+  @apply bg-blue-50 text-blue-700 dark:bg-blue-950/40 dark:text-blue-300;
+}
+
+.ph-gender-badge--feminine {
+  @apply bg-pink-50 text-pink-700 dark:bg-pink-950/40 dark:text-pink-300;
+}
+
+.ph-gender-badge--other {
+  @apply bg-purple-50 text-purple-700 dark:bg-purple-950/40 dark:text-purple-300;
+}
+
+/* FieldRow */
+.ph-field-row {
+  @apply flex items-center gap-4 py-3;
+}
+
+.ph-field-row--bordered {
+  @apply border-b border-border/40;
+}
+
+.ph-field-row__label {
+  @apply text-[10px] font-bold uppercase tracking-wider text-muted-foreground w-32 shrink-0;
+}
+
+.ph-field-row__value {
+  @apply text-sm text-foreground flex items-center gap-2 min-w-0;
+}
+
+/* CardActionButton */
+.ph-card-action-edit {
+  @apply h-7 gap-1.5 text-xs text-muted-foreground hover:text-foreground cursor-pointer shrink-0;
+}
+
+.ph-card-action-add {
+  @apply text-sm text-blue-600 dark:text-blue-400 font-medium hover:underline cursor-pointer;
+}
+
+/* Modality badge */
+.ph-modality-badge {
+  @apply inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-xs font-semibold bg-blue-50 text-blue-700 dark:bg-blue-950/40 dark:text-blue-300;
+}
+
+/* Copy button */
+.ph-copy-btn {
+  @apply text-muted-foreground hover:text-foreground cursor-pointer transition-colors;
+}
+
+/* Address empty state */
+.ph-address-empty {
+  @apply flex items-center justify-center py-6 text-sm text-muted-foreground;
+}
+
+.ph-address-empty__link {
+  @apply text-blue-600 dark:text-blue-400 font-medium hover:underline cursor-pointer;
+}

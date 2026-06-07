@@ -88,9 +88,10 @@ export function AttachmentsTableRow({
   onDelete,
   onPreview,
 }: AttachmentsTableRowProps) {
-    const { id, filename, contentType, sizeInBytes, uploadedAt, patient } = attachment
-    const kind  = getFileKind(contentType)
-    const badge = TYPE_BADGE[kind]
+  const { id, filename, contentType, sizeInBytes, uploadedAt, patient } =
+    attachment
+  const kind = getFileKind(contentType)
+  const badge = TYPE_BADGE[kind]
 
   return (
     <TooltipProvider delayDuration={200}>
@@ -116,22 +117,24 @@ export function AttachmentsTableRow({
 
         {/* Name */}
         <TableCell>
-            <div className="flex items-center gap-3">
-                <DocThumb contentType={contentType} filename={filename} />
-                <div className="min-w-0">
-                    <Tooltip>
-                        <TooltipTrigger asChild>
-                            <p className="max-w-[180px] truncate text-[13.5px] font-semibold text-foreground leading-tight">
-                                {filename}
-                            </p>
-                        </TooltipTrigger>
-                        <TooltipContent side="top" className="text-xs">{filename}</TooltipContent>
-                    </Tooltip>
-                    <p className="text-[11px] text-muted-foreground mt-0.5 font-medium">
-                        {formatFileSize(sizeInBytes)}
-                    </p>
-                </div>
+          <div className="flex items-center gap-3">
+            <DocThumb contentType={contentType} filename={filename} />
+            <div className="min-w-0">
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <p className="max-w-[180px] truncate text-[13.5px] font-semibold text-foreground leading-tight">
+                    {filename}
+                  </p>
+                </TooltipTrigger>
+                <TooltipContent side="top" className="text-xs">
+                  {filename}
+                </TooltipContent>
+              </Tooltip>
+              <p className="text-[11px] text-muted-foreground mt-0.5 font-medium">
+                {formatFileSize(sizeInBytes)}
+              </p>
             </div>
+          </div>
         </TableCell>
 
         {/* Patient */}
@@ -157,9 +160,9 @@ export function AttachmentsTableRow({
 
         {/* Size */}
         <TableCell>
-            <span className="font-mono text-[12.5px] font-medium text-muted-foreground tabular-nums">
-                {formatFileSize(sizeInBytes)}
-            </span>
+          <span className="font-mono text-[12.5px] font-medium text-muted-foreground tabular-nums">
+            {formatFileSize(sizeInBytes)}
+          </span>
         </TableCell>
 
         {/* Date */}

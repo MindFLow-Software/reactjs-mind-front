@@ -107,14 +107,17 @@ export function PatientsDetails({ patientId }: PatientsDetailsProps) {
 
   const { patient, meta } = data
   const patientFullName =
-    `${patient.firstName ?? ''} ${patient.lastName ?? ''}`.trim() ||
+    `${patient?.firstName ?? ''} ${patient?.lastName ?? ''}`.trim() ||
     'Paciente sem nome'
 
-  const totalFinished = patient.sessions.filter((session: SessionItem) =>
-    (FINISHED_SESSION_STATUSES as readonly string[]).includes(
-      session.status?.toUpperCase(),
-    ),
-  ).length
+  const finishedSessions =
+    patient?.sessions.filter((session: SessionItem) =>
+      (FINISHED_SESSION_STATUSES as readonly string[]).includes(
+        session.status?.toUpperCase(),
+      ),
+    ) ?? []
+
+  const totalFinished = finishedSessions.length
 
   return (
     <DialogContent
@@ -172,7 +175,7 @@ export function PatientsDetails({ patientId }: PatientsDetailsProps) {
                     CPF
                   </TableCell>
                   <TableCell className="text-right py-3">
-                    <DataField value={patient.cpf} mask="000.000.000-00" />
+                    <DataField value={patient?.cpf} mask="000.000.000-00" />
                   </TableCell>
                 </TableRow>
                 <TableRow>
@@ -180,7 +183,7 @@ export function PatientsDetails({ patientId }: PatientsDetailsProps) {
                     E-mail
                   </TableCell>
                   <TableCell className="text-right py-3 lowercase">
-                    <DataField value={patient.email} />
+                    <DataField value={patient?.email} />
                   </TableCell>
                 </TableRow>
                 <TableRow>
@@ -189,7 +192,7 @@ export function PatientsDetails({ patientId }: PatientsDetailsProps) {
                   </TableCell>
                   <TableCell className="text-right py-3 border-none">
                     <DataField
-                      value={patient.phoneNumber}
+                      value={patient?.phoneNumber}
                       mask="(00) 00000-0000"
                     />
                   </TableCell>
@@ -243,7 +246,7 @@ export function PatientsDetails({ patientId }: PatientsDetailsProps) {
                   </TableRow>
                 </TableHeader>
                 <TableBody>
-                  {patient.sessions.length > 0 ? (
+                  {patient?.sessions?.length ? (
                     patient.sessions.map((session: SessionItem) => {
                       const status = getSessionStatusLabel(session.status)
                       const isFinished = (

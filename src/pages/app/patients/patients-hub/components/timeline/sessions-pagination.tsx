@@ -1,5 +1,6 @@
 'use client'
 
+import { memo } from 'react'
 import {
   ChevronLeft,
   ChevronRight,
@@ -8,6 +9,7 @@ import {
 } from 'lucide-react'
 
 import { Button } from '@/components/ui/button'
+import './sessions-pagination.css'
 
 interface PaginationProps {
   pageIndex: number
@@ -16,7 +18,7 @@ interface PaginationProps {
   onPageChange: (pageIndex: number) => void
 }
 
-export function Pagination({
+export const Pagination = memo(function Pagination({
   pageIndex,
   totalCount,
   perPage,
@@ -28,58 +30,56 @@ export function Pagination({
   const isLastPage = pageIndex === pages - 1
 
   return (
-    <div className="flex items-center justify-between">
-      <span className="text-sm text-muted-foreground">
-        Total de {totalCount} Sessões
-      </span>
+    <div className="sp-root">
+      <span className="sp-total">Total de {totalCount} Sessões</span>
 
-      <div className="flex items-center gap-6 lg:gap-8">
-        <span className="text-sm text-muted-foreground font-medium">
+      <div className="sp-right">
+        <span className="sp-page-label">
           Página {pageIndex + 1} de {pages}
         </span>
 
-        <div className="flex items-center gap-2">
+        <div className="sp-buttons">
           <Button
             variant="outline"
-            className="h-8 w-8 p-0 cursor-pointer hover:bg-blue-50 hover:text-blue-600 transition-colors"
+            className="sp-btn"
             onClick={() => onPageChange(0)}
             disabled={isFirstPage}
           >
-            <ChevronsLeft className="h-4 w-4" />
+            <ChevronsLeft className="sp-btn-icon" />
             <span className="sr-only">Primeira página</span>
           </Button>
 
           <Button
             variant="outline"
-            className="h-8 w-8 p-0 cursor-pointer hover:bg-blue-50 hover:text-blue-600 transition-colors"
+            className="sp-btn"
             onClick={() => onPageChange(pageIndex - 1)}
             disabled={isFirstPage}
           >
-            <ChevronLeft className="h-4 w-4" />
+            <ChevronLeft className="sp-btn-icon" />
             <span className="sr-only">Página anterior</span>
           </Button>
 
           <Button
             variant="outline"
-            className="h-8 w-8 p-0 cursor-pointer hover:bg-blue-50 hover:text-blue-600 transition-colors"
+            className="sp-btn"
             onClick={() => onPageChange(pageIndex + 1)}
             disabled={isLastPage}
           >
-            <ChevronRight className="h-4 w-4" />
+            <ChevronRight className="sp-btn-icon" />
             <span className="sr-only">Próxima página</span>
           </Button>
 
           <Button
             variant="outline"
-            className="h-8 w-8 p-0 cursor-pointer hover:bg-blue-50 hover:text-blue-600 transition-colors"
+            className="sp-btn"
             onClick={() => onPageChange(pages - 1)}
             disabled={isLastPage}
           >
-            <ChevronsRight className="h-4 w-4" />
+            <ChevronsRight className="sp-btn-icon" />
             <span className="sr-only">Última página</span>
           </Button>
         </div>
       </div>
     </div>
   )
-}
+})

@@ -11,12 +11,12 @@ import { toast } from 'sonner'
 import { SessionPDFTemplate } from '@/utils/session-pdf-template'
 
 interface EvolutionViewerProps {
-    patientName: string
-    content: string
-    date: Date | string | null
-    diagnosis?: string
-    psychologist: { name: string; crp: string }
-    onBack: () => void
+  patientName: string
+  content: string
+  date: Date | string | null
+  diagnosis?: string
+  psychologist: { name: string; crp: string }
+  onBack: () => void
 }
 
 export function EvolutionViewer({

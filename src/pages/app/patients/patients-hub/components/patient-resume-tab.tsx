@@ -39,8 +39,9 @@ import {
 } from '@/components/ui/chart'
 import { cn } from '@/lib/utils'
 
-// ─── Mock data ────────────────────────────────────────────────
+import './patient-resume-tab.css'
 
+// ─── Mock data ────────────────────────────────────────────────
 const FREQUENCY_DATA = [
   { month: 'NOV', sessions: 1 },
   { month: 'DEZ', sessions: 3 },
@@ -66,7 +67,6 @@ const HUMOR_AVG = (
 ).toFixed(1)
 
 // ─── Chart configs ────────────────────────────────────────────
-
 const frequencyConfig = {
   sessions: { label: 'Sessões', color: '#3b82f6' },
 } satisfies ChartConfig
@@ -76,7 +76,6 @@ const humorConfig = {
 } satisfies ChartConfig
 
 // ─── Stat card ────────────────────────────────────────────────
-
 interface StatCardProps {
   icon: LucideIcon
   iconColor: string
@@ -105,7 +104,7 @@ function StatCard({
             iconColor,
           )}
         >
-          <Icon className="h-3 w-3" />
+          <Icon className="size-3" />
           {label}
         </p>
         <div
@@ -123,7 +122,6 @@ function StatCard({
 }
 
 // ─── Alert row ────────────────────────────────────────────────
-
 type AlertType = 'warning' | 'neutral' | 'ok'
 
 interface AlertRowProps {

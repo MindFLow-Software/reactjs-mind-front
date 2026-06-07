@@ -9,67 +9,98 @@ import {
   MessageSquare,
 } from 'lucide-react'
 import { cn } from '@/lib/utils'
+import { Fragment, type ReactElement } from 'react'
+import { useAnamnesisContext } from './anamnesis-context'
+import type { SaveStatus } from './anamnesis-context'
 
-interface AnamnesisToolbarProps {
-  onFormat: (marker: string) => void
-  onList: (prefix: string, numbered?: boolean) => void
-  saveStatus: 'synced' | 'pending' | 'draft'
+import './anamnesis-toolbar.css'
+
+const STATUS_LABEL: Record<SaveStatus, string> = {
+  synced: 'Salvo · há instantes',
+  pending: 'Sincronizando...',
+  draft: 'Rascunho local',
 }
 
-export function AnamnesisToolbar({
-  onFormat,
-  onList,
-  saveStatus,
-}: AnamnesisToolbarProps) {
+type ToolbarItem = {
+  id: number
+  icon: ReactElement
+  label: string
+  marker: string
+}
+
+const TOOLBAR_CONFIG: ToolbarItem[] = [
+  {
+    id: 1,
+    icon: <Bold className="size-3.5" />,
+    label: 'Negrito',
+    marker: '**',
+  },
+  {
+    id: 2,
+    icon: <Italic className="size-3.5" />,
+    label: 'Itálico',
+    marker: '*',
+  },
+  {
+    id: 3,
+    icon: <Underline className="size-3.5" />,
+    label: 'Sublinhado',
+    marker: '__',
+  },
+  { id: 4, icon: <List className="size-3.5" />, label: 'Lista', marker: '-' },
+  {
+    id: 5,
+    icon: <ListOrdered className="size-3.5" />,
+    label: 'Numerada',
+    marker: '1.',
+  },
+  {
+    id: 6,
+    icon: <Quote className="size-3.5" />,
+    label: 'Citação',
+    marker: '> ',
+  },
+  {
+    id: 7,
+    icon: <MessageSquare className="size-3.5" />,
+    label: 'Comentário',
+    marker: '// ',
+  },
+]
+
+export function AnamnesisToolbar() {
+  const { saveStatus, onFormat } = useAnamnesisContext()
+
   return (
-    <div className="flex items-center justify-between gap-2 rounded-xl border border-border/50 bg-muted/30 px-3 py-2">
-      <div className="flex flex-wrap items-center gap-1">
-        <ToolbarBtn onClick={() => onFormat('**')} label="Negrito">
-          <Bold className="h-3.5 w-3.5" />
-          <span className="text-xs">Negrito</span>
-        </ToolbarBtn>
-        <ToolbarBtn onClick={() => onFormat('*')} label="Itálico">
-          <Italic className="h-3.5 w-3.5" />
-          <span className="text-xs">Itálico</span>
-        </ToolbarBtn>
-        <ToolbarBtn onClick={() => onFormat('__')} label="Sublinhado">
-          <Underline className="h-3.5 w-3.5" />
-          <span className="text-xs">Sublinhado</span>
-        </ToolbarBtn>
-        <div className="mx-1 h-4 w-px bg-border/60" />
-        <ToolbarBtn onClick={() => onList('-')} label="Lista">
-          <List className="h-3.5 w-3.5" />
-          <span className="text-xs">Lista</span>
-        </ToolbarBtn>
-        <ToolbarBtn onClick={() => onList('1.', true)} label="Numerada">
-          <ListOrdered className="h-3.5 w-3.5" />
-          <span className="text-xs">Numerada</span>
-        </ToolbarBtn>
-        <div className="mx-1 h-4 w-px bg-border/60" />
-        <ToolbarBtn onClick={() => onFormat('> ')} label="Citação">
-          <Quote className="h-3.5 w-3.5" />
-          <span className="text-xs">Citação</span>
-        </ToolbarBtn>
-        <ToolbarBtn onClick={() => onFormat('// ')} label="Comentário">
-          <MessageSquare className="h-3.5 w-3.5" />
-          <span className="text-xs">Comentário</span>
-        </ToolbarBtn>
+    <div className="ph-anamnesis-toolbar">
+      <div className="ph-anamnesis-toolbar__buttons">
+        {TOOLBAR_CONFIG.map((item) => (
+          <Fragment key={item.id}>
+            <ToolbarBtn
+              onClick={() => onFormat(item.marker)}
+              label={item.label}
+            >
+              {item.icon}
+              <span className="ph-anamnesis-toolbar__btn-label">
+                {item.label}
+              </span>
+            </ToolbarBtn>
+            <div className="ph-anamnesis-toolbar__separator" />
+          </Fragment>
+        ))}
       </div>
 
-      {/* Save status */}
-      <div className="flex shrink-0 items-center gap-1.5">
+      <div className="ph-anamnesis-toolbar__status">
         <span
           className={cn(
-            'h-1.5 w-1.5 rounded-full',
-            saveStatus === 'synced' ? 'bg-emerald-500' : 'bg-amber-400',
+            'ph-anamnesis-toolbar__status-dot',
+            saveStatus === 'synced'
+              ? 'ph-anamnesis-toolbar__status-dot--synced'
+              : 'ph-anamnesis-toolbar__status-dot--pending',
           )}
         />
-        <span className="text-[11px] text-muted-foreground whitespace-nowrap">
-          {saveStatus === 'synced'
-            ? 'Salvo · há instantes'
-            : saveStatus === 'pending'
-              ? 'Sincronizando...'
-              : 'Rascunho local'}
+        <span className="ph-anamnesis-toolbar__status-label">
+          {STATUS_LABEL[saveStatus]}
         </span>
       </div>
     </div>
@@ -91,7 +122,7 @@ function ToolbarBtn({
       size="sm"
       onClick={onClick}
       aria-label={label}
-      className="h-7 gap-1 px-2 text-muted-foreground hover:text-foreground hover:bg-background/80 cursor-pointer"
+      className="ph-anamnesis-toolbar__btn"
     >
       {children}
     </Button>
