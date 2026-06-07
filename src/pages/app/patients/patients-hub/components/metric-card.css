@@ -1,3 +1,5 @@
+@reference "../../../../../global.css";
+
 /* Card shell */
 .ph-metric-card {
   @apply shadow-sm border-l-4 border-l-blue-500 bg-blue-50/5 transition-all hover:bg-blue-50/10;

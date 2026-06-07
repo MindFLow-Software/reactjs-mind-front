@@ -309,7 +309,7 @@ function SessionRow({
     <div className="pst-session-row">
       <span className={cn('pst-session-dot', dotColor)} />
 
-      <div className="pst-session-card">
+      <div className="pst-session-card group">
         <div className="pst-session-top-row">
           <div className="pst-session-meta">
             <span className="pst-session-date">{format(date, 'dd/MM')}</span>

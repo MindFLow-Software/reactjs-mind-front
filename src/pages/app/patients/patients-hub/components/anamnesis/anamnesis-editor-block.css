@@ -1,3 +1,5 @@
+@reference "../../../../../../global.css";
+
 /* Block shell */
 .ph-anamnesis-editor-block {
   @apply rounded-xl border bg-card transition-all duration-150 border-border/50;

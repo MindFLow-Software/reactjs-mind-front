@@ -1,3 +1,5 @@
+@reference "../../../../../global.css";
+
 /* Header shell */
 .ph-patient-details-header {
   @apply flex flex-col gap-5 pb-1;
@@ -48,7 +50,7 @@
 
 /* ID row */
 .ph-patient-details-header__id-row {
-  @apply group inline-flex items-center gap-1.5 text-xs text-muted-foreground;
+  @apply inline-flex items-center gap-1.5 text-xs text-muted-foreground;
 }
 
 .ph-patient-details-header__id-icon {

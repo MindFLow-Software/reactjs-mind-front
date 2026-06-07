@@ -1,3 +1,5 @@
+@reference "../../../../../../global.css";
+
 /* Dropzone root — default (idle) state */
 .ph-file-upload-zone {
   @apply flex cursor-pointer flex-col items-center gap-3 rounded-[10px] border-2 border-dashed p-[22px] text-center transition-all duration-150 border-border bg-muted/50 hover:border-blue-600 hover:bg-blue-50 dark:hover:bg-blue-950/30;

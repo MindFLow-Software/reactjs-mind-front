@@ -1,3 +1,5 @@
+@reference "../../../../../../global.css";
+
 /* Root */
 .ph-file-type-filter {
   @apply flex flex-wrap items-center justify-between gap-2;

@@ -1,3 +1,5 @@
+@reference "../../../../../../global.css";
+
 /* Root */
 .ph-anamnesis-header {
   @apply flex flex-wrap items-center justify-between gap-3;

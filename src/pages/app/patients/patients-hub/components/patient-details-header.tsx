@@ -69,7 +69,7 @@ export function PatientDetailsHeader({ patient }: PatientDetailsHeaderProps) {
               />
             </div>
 
-            <div className="ph-patient-details-header__id-row">
+            <div className="group ph-patient-details-header__id-row">
               <Copy className="ph-patient-details-header__id-icon" />
               <Tooltip>
                 <TooltipTrigger asChild>

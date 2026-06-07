@@ -1,3 +1,5 @@
+@reference "../../../../../../global.css";
+
 /* patient-sessions-timeline.css — pst- prefix */
 
 /* Empty state */
@@ -127,7 +129,7 @@
 }
 
 .pst-session-card {
-  @apply group rounded-xl border border-border/50 bg-card p-4 transition-shadow hover:shadow-sm;
+  @apply rounded-xl border border-border/50 bg-card p-4 transition-shadow hover:shadow-sm;
 }
 
 .pst-session-top-row {
