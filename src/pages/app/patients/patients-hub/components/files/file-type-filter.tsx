@@ -2,6 +2,8 @@ import { ArrowUpDown } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { cn } from '@/lib/utils'
 
+import './file-type-filter.css'
+
 export type FileTypeFilter = 'all' | 'pdf' | 'image' | 'audio'
 
 export function getFileType(mime: string): Exclude<FileTypeFilter, 'all'> {
@@ -30,8 +32,8 @@ export function FileTypeFilter({
   onFilterChange,
 }: FileTypeFilterProps) {
   return (
-    <div className="flex flex-wrap items-center justify-between gap-2">
-      <div className="flex flex-wrap gap-1.5">
+    <div className="ph-file-type-filter">
+      <div className="ph-file-type-filter__chips">
         {CHIPS.map((chip) => {
           const active = filter === chip.key
           return (
@@ -40,19 +42,15 @@ export function FileTypeFilter({
               type="button"
               onClick={() => onFilterChange(chip.key)}
               className={cn(
-                'inline-flex items-center gap-1.5 rounded-full border px-3 py-1 text-xs font-medium transition-colors cursor-pointer',
-                active
-                  ? 'border-blue-600 bg-blue-600 text-white'
-                  : 'border-border bg-transparent text-muted-foreground hover:bg-muted/60 hover:text-foreground',
+                'ph-file-type-filter__chip',
+                active && 'ph-file-type-filter__chip--active',
               )}
             >
               {chip.label}
               <span
                 className={cn(
-                  'rounded-full px-1.5 py-0.5 text-[10px] tabular-nums font-semibold',
-                  active
-                    ? 'bg-white/25 text-white'
-                    : 'bg-muted text-muted-foreground',
+                  'ph-file-type-filter__count',
+                  active && 'ph-file-type-filter__count--active',
                 )}
               >
                 {counts[chip.key]}
@@ -65,10 +63,10 @@ export function FileTypeFilter({
       <Button
         variant="outline"
         size="sm"
-        className="h-8 gap-1.5 text-xs text-muted-foreground font-medium cursor-default opacity-80"
+        className="ph-file-type-filter__sort-btn"
         tabIndex={-1}
       >
-        <ArrowUpDown className="h-3.5 w-3.5" />
+        <ArrowUpDown className="ph-file-type-filter__sort-icon" />
         Mais recentes
       </Button>
     </div>

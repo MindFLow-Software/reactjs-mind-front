@@ -47,16 +47,7 @@ export interface SessionItem {
   content: string | null
 }
 
-export interface PatientDetailsData {
-  id: string
-  firstName: string
-  lastName: string
-  cpf: string | null
-  email: string | null
-  profileImageUrl: string | null
-  phoneNumber: string | null
-  dateOfBirth: string | null
-  gender: Gender
+export interface PatientDetailsData extends Ipatient {
   sessions: SessionItem[]
 }
 

@@ -17,11 +17,17 @@ export class Normalizer {
   }
 
   static capitalize = (text: string | null | undefined): string => {
-    if (!text) return ''
+    if (!text || typeof text !== 'string') return ''
+
     return text
       .toLowerCase()
       .split(' ')
       .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
       .join(' ')
+  }
+
+  static toSnakeCase(value: string | null | undefined) {
+    if (!value || typeof value !== 'string') return ''
+    return value.replace(/\s/g, '_')
   }
 }

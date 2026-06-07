@@ -2,75 +2,102 @@ import { Button } from '@/components/ui/button'
 import { FileDown, Check, Copy, Loader2 } from 'lucide-react'
 import { cn } from '@/lib/utils'
 
+import './anamnesis-header.css'
+
+interface PdfState {
+  isExporting: boolean
+  exportedSuccessfully: boolean
+  isCopyDisabled: boolean
+}
+
 interface AnamnesisHeaderProps {
+  pdf: PdfState
+  copied: boolean
   onGeneratePDF: () => void
   onCopy: () => void
-  isExporting: boolean
-  isCopyDisabled: boolean
-  copied: boolean
-  pdfSuccess: boolean
+}
+
+function renderPdfButtonContent(
+  isExporting: boolean,
+  exportedSuccessfully: boolean,
+) {
+  if (isExporting) {
+    return (
+      <>
+        <Loader2 className="ph-anamnesis-header__btn-icon--spin" />
+        <span>Gerando...</span>
+      </>
+    )
+  }
+
+  if (exportedSuccessfully) {
+    return (
+      <>
+        <Check className="ph-anamnesis-header__btn-icon" />
+        <span>Baixado</span>
+      </>
+    )
+  }
+
+  return (
+    <>
+      <FileDown className="ph-anamnesis-header__btn-icon" />
+      <span>Gerar PDF</span>
+    </>
+  )
 }
 
 export function AnamnesisHeader({
+  pdf,
+  copied,
   onGeneratePDF,
   onCopy,
-  isExporting,
-  isCopyDisabled,
-  copied,
-  pdfSuccess,
 }: AnamnesisHeaderProps) {
   return (
-    <div className="flex flex-wrap items-center justify-between gap-3">
-      <div className="min-w-0">
-        <h2 className="text-xl font-semibold tracking-tight">Anamnese</h2>
-        <p className="text-muted-foreground text-sm">
+    <div className="ph-anamnesis-header">
+      <div className="ph-anamnesis-header__title-wrap">
+        <h2 className="ph-anamnesis-header__title">Anamnese</h2>
+        <p className="ph-anamnesis-header__subtitle">
           Blocos editáveis com salvamento automático e rascunho local.
         </p>
       </div>
 
-      <div className="flex items-center gap-2">
+      <div className="ph-anamnesis-header__actions">
         <Button
           type="button"
           size="sm"
           onClick={onGeneratePDF}
-          disabled={isExporting || isCopyDisabled}
+          disabled={pdf.isExporting || pdf.isCopyDisabled}
           className={cn(
-            'text-white transition-all duration-300 min-w-[110px] cursor-pointer',
-            pdfSuccess
-              ? 'bg-emerald-600 hover:bg-emerald-600'
-              : isExporting
-                ? 'bg-red-400'
-                : 'bg-red-500 hover:bg-red-600',
+            'ph-anamnesis-header__pdf-btn',
+            pdf.isExporting && 'ph-anamnesis-header__pdf-btn--exporting',
+            pdf.exportedSuccessfully && 'ph-anamnesis-header__pdf-btn--success',
           )}
         >
-          {isExporting ? (
-            <Loader2 className="mr-1 h-4 w-4 animate-spin" />
-          ) : pdfSuccess ? (
-            <Check className="mr-1 h-4 w-4" />
-          ) : (
-            <FileDown className="mr-1 h-4 w-4" />
-          )}
-
-          {isExporting ? 'Gerando...' : pdfSuccess ? 'Baixado' : 'Gerar PDF'}
+          {renderPdfButtonContent(pdf.isExporting, pdf.exportedSuccessfully)}
         </Button>
 
         <Button
           type="button"
           size="sm"
           onClick={onCopy}
+          disabled={pdf.isCopyDisabled}
           className={cn(
-            'transition-all duration-300 min-w-[130px] cursor-pointer',
-            copied
-              ? 'bg-emerald-600 text-white hover:bg-emerald-600'
-              : 'bg-blue-500 hover:bg-blue-600 text-white',
+            'ph-anamnesis-header__copy-btn',
+            copied && 'ph-anamnesis-header__copy-btn--copied',
           )}
         >
           {copied ? (
-            <Check className="mr-1 h-4 w-4" />
+            <>
+              <Check className="ph-anamnesis-header__btn-icon" />
+              Copiado
+            </>
           ) : (
-            <Copy className="mr-1 h-4 w-4" />
+            <>
+              <Copy className="ph-anamnesis-header__btn-icon" />
+              Copiar Anamnese
+            </>
           )}
-          {copied ? 'Copiado' : 'Copiar Anamnese'}
         </Button>
       </div>
     </div>

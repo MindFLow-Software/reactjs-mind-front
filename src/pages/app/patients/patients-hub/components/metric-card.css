@@ -1,0 +1,42 @@
+/* Card shell */
+.ph-metric-card {
+  @apply shadow-sm border-l-4 border-l-blue-500 bg-blue-50/5 transition-all hover:bg-blue-50/10;
+}
+
+.ph-metric-card__header {
+  @apply pb-2;
+}
+
+.ph-metric-card__title {
+  @apply text-[10px] uppercase text-muted-foreground flex items-center gap-2 font-bold tracking-wider;
+}
+
+.ph-metric-card__icon {
+  @apply size-3 text-blue-500;
+}
+
+/* Loading state */
+.ph-metric-card__skeleton-wrap {
+  @apply space-y-2;
+}
+
+.ph-metric-card__skeleton--value {
+  @apply h-8 w-20;
+}
+
+.ph-metric-card__skeleton--sub {
+  @apply h-3 w-32;
+}
+
+/* Content */
+.ph-metric-card__value {
+  @apply text-2xl font-bold tabular-nums;
+}
+
+.ph-metric-card__sub {
+  @apply text-[10px] text-muted-foreground mt-1;
+}
+
+.ph-metric-card__sub-value {
+  @apply font-medium text-foreground;
+}

@@ -1,29 +1,8 @@
 import { api } from '@/lib/axios'
-
-export interface SessionItem {
-  id: string
-  date: string
-  sessionDate: string
-  createdAt: string
-  theme: string
-  duration: string
-  status: 'Concluída' | 'Pendente'
-  content: string | null
-}
+import type { PatientDetailsData } from '@/types/patient'
 
 export interface GetPatientDetailsResponse {
-  patient: {
-    id: string
-    firstName: string
-    lastName: string
-    cpf: string | null
-    email: string | null
-    profileImageUrl: string | null
-    phoneNumber: string | null
-    dateOfBirth: string | null
-    gender: 'MASCULINE' | 'FEMININE' | 'OTHER'
-    sessions: SessionItem[]
-  }
+  patient: PatientDetailsData | null
   meta: {
     pageIndex: number
     perPage: number
@@ -33,9 +12,21 @@ export interface GetPatientDetailsResponse {
 }
 
 export async function getPatientDetails(
-  patientId: string,
+  patientId: string | undefined,
   pageIndex: number,
 ): Promise<GetPatientDetailsResponse> {
+  if (!patientId) {
+    return {
+      patient: null,
+      meta: {
+        pageIndex: 0,
+        perPage: 0,
+        totalCount: 0,
+        averageDuration: 0,
+      },
+    }
+  }
+
   const response = await api.get<GetPatientDetailsResponse>(
     `/patients/${patientId}/details`,
     {
@@ -43,11 +34,14 @@ export async function getPatientDetails(
     },
   )
 
+  const patient = (response.data.patient ?? {}) as PatientDetailsData
+  const sessions = response.data?.patient?.sessions ?? []
+
   return {
     ...response.data,
     patient: {
-      ...response.data.patient,
-      sessions: response.data.patient.sessions ?? [],
+      ...patient,
+      sessions,
     },
   }
 }

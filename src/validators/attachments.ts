@@ -34,17 +34,17 @@ export const uploadFormSchema = z.object({
 export type UploadFormData = z.infer<typeof uploadFormSchema>
 
 export const fetchAttachmentsQuerySchema = z.object({
-    page:      z.coerce.number().int().min(0).default(0),
-    filter:    z.string().optional(),
-    patientId: z.string().optional(),
-    from:      z.string().optional(),
-    to:        z.string().optional(),
+  page: z.coerce.number().int().min(0).default(0),
+  filter: z.string().optional(),
+  patientId: z.string().optional(),
+  from: z.string().optional(),
+  to: z.string().optional(),
 })
 
 export type FetchAttachmentsQuery = z.infer<typeof fetchAttachmentsQuerySchema>
 
 export const deleteAttachmentParamSchema = z.object({
-    id: z.uuid("ID inválido"),
+  id: z.uuid('ID inválido'),
 })
 
 export type DeleteAttachmentParam = z.infer<typeof deleteAttachmentParamSchema>

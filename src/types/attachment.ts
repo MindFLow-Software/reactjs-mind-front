@@ -15,8 +15,8 @@ export interface AttachmentListItem {
   fileUrl: string
   contentType: string
   sizeInBytes: number
-  uploadedAt:  string
-  patient:     { firstName: string; lastName: string } | null
+  uploadedAt: string
+  patient: { firstName: string; lastName: string } | null
 }
 
 export interface AttachmentListMeta {

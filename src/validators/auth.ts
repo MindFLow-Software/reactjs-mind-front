@@ -16,8 +16,8 @@ const passwordRegex =
   /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*])[A-Za-z\d!@#$%^&*]{8,30}$/
 
 export const signInSchema = z.object({
-    email:    z.email({ message: "E-mail inválido" }),
-    password: z.string().min(1, { message: "A senha é obrigatória" }),
+  email: z.email({ message: 'E-mail inválido' }),
+  password: z.string().min(1, { message: 'A senha é obrigatória' }),
 })
 
 export const signUpFormSchema = z.object({
@@ -41,38 +41,43 @@ export const signUpFormSchema = z.object({
 })
 
 export const patientSignUpSchema = z.object({
-    firstName:   z.string().min(1, "Nome é obrigatório"),
-    lastName:    z.string().min(1, "Sobrenome é obrigatório"),
-    email:       z.email("E-mail inválido"),
-    password:    z.string()
-        .min(8, "A senha deve conter, no mínimo, 8 caracteres")
-        .regex(/[a-z]/, "A senha deve conter letras minúsculas")
-        .regex(/[A-Z]/, "A senha deve conter letras maiúsculas")
-        .regex(/[0-9]/, "A senha deve conter números")
-        .regex(/[^A-Za-z0-9]/, "A senha deve conter caracteres especiais"),
-    phoneNumber: z.string().min(10, "Telefone inválido"),
-    cpf:         z.string().min(11, "CPF inválido"),
-    dateOfBirth: z.coerce.date().optional(),
-    gender:      z.enum(["MASCULINE", "FEMININE", "OTHER"], { message: "Selecione seu gênero" }),
+  firstName: z.string().min(1, 'Nome é obrigatório'),
+  lastName: z.string().min(1, 'Sobrenome é obrigatório'),
+  email: z.email('E-mail inválido'),
+  password: z
+    .string()
+    .min(8, 'A senha deve conter, no mínimo, 8 caracteres')
+    .regex(/[a-z]/, 'A senha deve conter letras minúsculas')
+    .regex(/[A-Z]/, 'A senha deve conter letras maiúsculas')
+    .regex(/[0-9]/, 'A senha deve conter números')
+    .regex(/[^A-Za-z0-9]/, 'A senha deve conter caracteres especiais'),
+  phoneNumber: z.string().min(10, 'Telefone inválido'),
+  cpf: z.string().min(11, 'CPF inválido'),
+  dateOfBirth: z.coerce.date().optional(),
+  gender: z.enum(['MASCULINE', 'FEMININE', 'OTHER'], {
+    message: 'Selecione seu gênero',
+  }),
 })
 
 export const completeRegistrationSchema = z.object({
-    crp:       z.string().min(4, "CRP é obrigatório"),
-    expertise: z.enum(
-        [
-          "CLINICAL",
-          "SOCIAL",
-          "INFANT",
-          "JURIDICAL",
-          "EDUCATIONAL",
-          "ORGANIZATIONAL",
-          "PSYCHOTHERAPIST",
-          "NEUROPSYCHOLOGY",
-          "OTHER",
-        ],
-        { error: "Selecione uma especialidade" }
-    ),
-    gender: z.enum(["MASCULINE", "FEMININE", "OTHER"], { error: "Selecione um gênero" }),
+  crp: z.string().min(4, 'CRP é obrigatório'),
+  expertise: z.enum(
+    [
+      'CLINICAL',
+      'SOCIAL',
+      'INFANT',
+      'JURIDICAL',
+      'EDUCATIONAL',
+      'ORGANIZATIONAL',
+      'PSYCHOTHERAPIST',
+      'NEUROPSYCHOLOGY',
+      'OTHER',
+    ],
+    { error: 'Selecione uma especialidade' },
+  ),
+  gender: z.enum(['MASCULINE', 'FEMININE', 'OTHER'], {
+    error: 'Selecione um gênero',
+  }),
 })
 
 export type SignInSchema = z.infer<typeof signInSchema>

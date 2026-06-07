@@ -1,0 +1,301 @@
+import {
+  createElement,
+  useCallback,
+  useEffect,
+  useMemo,
+  useReducer,
+  useRef,
+  useState,
+} from 'react'
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
+import { toast } from 'sonner'
+import { format } from 'date-fns'
+import { ptBR } from 'date-fns/locale'
+
+import {
+  getAnamnesis,
+  saveAnamnesis,
+  type AnamnesisData,
+} from '@/api/patients/anamnesis'
+import { AnamnesisPDFTemplate } from '@/utils/anamnesis-pdf-template'
+
+import type {
+  AnamnesisBlock,
+  AnamnesisDraft,
+} from '../components/anamnesis/anamnesis-types'
+import {
+  buildContentFromBlocks,
+  buildInitialBlocks,
+  createBlock,
+  normalizeBlocks,
+  toApiData,
+} from '../components/anamnesis/anamnesis-utils'
+import { ANAMNESIS_DRAFT_KEY_PREFIX } from '../constants'
+import { usePdfExport } from './use-pdf-export'
+import { copyToClipboard } from '@/utils/copy-to-clipboard'
+
+interface EditorState {
+  blocks: AnamnesisBlock[]
+  activeBlockId: string | null
+  hydrated: boolean
+  hasLocalDraft: boolean
+}
+
+type EditorAction =
+  | { type: 'HYDRATE'; blocks: AnamnesisBlock[]; hasLocalDraft: boolean }
+  | { type: 'SET_ACTIVE_BLOCK'; id: string | null }
+  | { type: 'UPDATE_BLOCK'; id: string; updates: Partial<AnamnesisBlock> }
+  | { type: 'ADD_BLOCK'; block: AnamnesisBlock }
+  | { type: 'DELETE_BLOCK'; id: string }
+  | { type: 'DISCARD_DRAFT'; blocks: AnamnesisBlock[] }
+  | { type: 'SET_HAS_LOCAL_DRAFT'; value: boolean }
+
+const INITIAL_EDITOR_STATE: EditorState = {
+  blocks: [],
+  activeBlockId: null,
+  hydrated: false,
+  hasLocalDraft: false,
+}
+
+function editorReducer(state: EditorState, action: EditorAction): EditorState {
+  switch (action.type) {
+    case 'HYDRATE':
+      return {
+        blocks: action.blocks,
+        activeBlockId: action.blocks[0]?.id ?? null,
+        hydrated: true,
+        hasLocalDraft: action.hasLocalDraft,
+      }
+    case 'SET_ACTIVE_BLOCK':
+      return { ...state, activeBlockId: action.id }
+    case 'UPDATE_BLOCK':
+      return {
+        ...state,
+        blocks: state.blocks.map((b) =>
+          b.id === action.id ? { ...b, ...action.updates } : b,
+        ),
+      }
+    case 'ADD_BLOCK':
+      return {
+        ...state,
+        blocks: [...state.blocks, action.block],
+        activeBlockId: action.block.id,
+      }
+    case 'DELETE_BLOCK':
+      return {
+        ...state,
+        blocks: state.blocks.filter((b) => b.id !== action.id),
+      }
+    case 'DISCARD_DRAFT':
+      return { ...state, blocks: action.blocks, hasLocalDraft: false }
+    case 'SET_HAS_LOCAL_DRAFT':
+      return { ...state, hasLocalDraft: action.value }
+  }
+}
+
+interface UseAnamnesisEditorOptions {
+  patientId: string
+  patientName?: string
+}
+
+interface UseAnamnesisEditorReturn {
+  blocks: AnamnesisBlock[]
+  activeBlockId: string | null
+  hasLocalDraft: boolean
+  hydrated: boolean
+  isPending: boolean
+  copied: boolean
+  isExporting: boolean
+  pdfExportedSuccessfully: boolean
+  content: string
+  setActiveBlockId: (id: string | null) => void
+  updateBlock: (id: string, updates: Partial<AnamnesisBlock>) => void
+  addBlock: () => void
+  deleteBlock: (id: string) => void
+  discardDraft: () => void
+  onCopy: () => Promise<void>
+  exportToPdf: () => Promise<void>
+}
+
+export function useAnamnesisEditor({
+  patientId,
+  patientName = '',
+}: UseAnamnesisEditorOptions): UseAnamnesisEditorReturn {
+  const queryClient = useQueryClient()
+
+  const [{ blocks, activeBlockId, hydrated, hasLocalDraft }, dispatch] =
+    useReducer(editorReducer, INITIAL_EDITOR_STATE)
+  const [copied, setCopied] = useState(false)
+
+  const lastPersistedHash = useRef('')
+  const serverBlocksRef = useRef<AnamnesisBlock[]>([])
+  const draftStorageKey = `${ANAMNESIS_DRAFT_KEY_PREFIX}${patientId}`
+
+  const { data } = useQuery({
+    queryKey: ['patient-hub', patientId, 'anamnesis'],
+    queryFn: () => getAnamnesis(patientId),
+  })
+
+  const { mutate, isPending } = useMutation({
+    mutationFn: (newData: AnamnesisData) => saveAnamnesis(patientId, newData),
+    onSuccess: async (_, vars) => {
+      lastPersistedHash.current = JSON.stringify(vars)
+      dispatch({ type: 'SET_HAS_LOCAL_DRAFT', value: false })
+      localStorage.removeItem(draftStorageKey)
+      await Promise.all([
+        queryClient.invalidateQueries({
+          queryKey: ['patient-hub', patientId, 'anamnesis'],
+        }),
+      ])
+    },
+    onError: () => toast.error('Erro ao sincronizar com o servidor.'),
+  })
+
+  const normalizedBlocks = useMemo(() => normalizeBlocks(blocks), [blocks])
+  const payload = useMemo(() => toApiData(normalizedBlocks), [normalizedBlocks])
+  const content = useMemo(
+    () => buildContentFromBlocks(normalizedBlocks),
+    [normalizedBlocks],
+  )
+  const payloadHash = JSON.stringify(payload)
+
+  // Data load + localStorage draft recovery
+  useEffect(() => {
+    if (!data) return
+
+    const serverBlocks = normalizeBlocks(buildInitialBlocks(data))
+    const serverHash = JSON.stringify(toApiData(serverBlocks))
+    lastPersistedHash.current = serverHash
+    serverBlocksRef.current = serverBlocks
+
+    let initial = serverBlocks
+    let hasLocalDraftValue = false
+
+    try {
+      const rawDraft = localStorage.getItem(draftStorageKey)
+      if (rawDraft) {
+        const parsed = JSON.parse(rawDraft) as AnamnesisDraft
+        const parsedBlocks = Array.isArray(parsed?.blocks)
+          ? parsed.blocks.map((b, i) => createBlock(b, i))
+          : []
+
+        if (parsedBlocks.length > 0) {
+          const draftHash = JSON.stringify(toApiData(parsedBlocks))
+          if (draftHash !== serverHash) {
+            initial = normalizeBlocks(parsedBlocks)
+            hasLocalDraftValue = true
+            toast.info('Rascunho local recuperado.')
+          }
+        }
+      }
+    } catch {
+      localStorage.removeItem(draftStorageKey)
+    }
+
+    dispatch({
+      type: 'HYDRATE',
+      blocks: initial,
+      hasLocalDraft: hasLocalDraftValue,
+    })
+  }, [data, draftStorageKey])
+
+  // Auto-save debounce + localStorage write
+  useEffect(() => {
+    if (!hydrated) return
+
+    const draft: AnamnesisDraft = {
+      blocks: normalizedBlocks,
+      updatedAt: Date.now(),
+    }
+
+    localStorage.setItem(draftStorageKey, JSON.stringify(draft))
+
+    if (payloadHash !== lastPersistedHash.current) {
+      dispatch({ type: 'SET_HAS_LOCAL_DRAFT', value: true })
+      const timer = setTimeout(() => mutate(payload), 1000)
+      return () => clearTimeout(timer)
+    }
+  }, [
+    payloadHash,
+    hydrated,
+    mutate,
+    payload,
+    normalizedBlocks,
+    draftStorageKey,
+  ])
+
+  const {
+    isExporting,
+    pdfExportedSuccessfully,
+    exportToPdf: exportPdfDoc,
+  } = usePdfExport({
+    receivedFilename: `Anamnese-${patientName?.replace(/\s+/g, '-') ?? patientId}.pdf`,
+  })
+
+  const setActiveBlockId = useCallback((id: string | null) => {
+    dispatch({ type: 'SET_ACTIVE_BLOCK', id })
+  }, [])
+
+  const updateBlock = useCallback(
+    (id: string, updates: Partial<AnamnesisBlock>) => {
+      dispatch({ type: 'UPDATE_BLOCK', id, updates })
+    },
+    [],
+  )
+
+  const addBlock = useCallback(() => {
+    const block: AnamnesisBlock = {
+      id: crypto.randomUUID(),
+      title: 'Nova Seção',
+      content: '',
+    }
+    dispatch({ type: 'ADD_BLOCK', block })
+  }, [])
+
+  const deleteBlock = useCallback((id: string) => {
+    dispatch({ type: 'DELETE_BLOCK', id })
+  }, [])
+
+  const discardDraft = useCallback(() => {
+    localStorage.removeItem(draftStorageKey)
+    dispatch({ type: 'DISCARD_DRAFT', blocks: serverBlocksRef.current })
+  }, [draftStorageKey])
+
+  const onCopy = useCallback(async () => {
+    copyToClipboard(content)
+    setCopied(true)
+  }, [content])
+
+  const exportToPdf = useCallback(async () => {
+    if (!content.trim()) return
+    const generatedAt = format(new Date(), "dd/MM/yyyy 'às' HH:mm", {
+      locale: ptBR,
+    })
+    await exportPdfDoc(
+      createElement(AnamnesisPDFTemplate, {
+        patientName,
+        content,
+        generatedAt,
+      }),
+    )
+  }, [content, exportPdfDoc, patientName])
+
+  return {
+    blocks: normalizedBlocks,
+    activeBlockId,
+    hasLocalDraft,
+    hydrated,
+    isPending,
+    copied,
+    isExporting,
+    pdfExportedSuccessfully,
+    content,
+    setActiveBlockId,
+    updateBlock,
+    addBlock,
+    deleteBlock,
+    discardDraft,
+    onCopy,
+    exportToPdf,
+  }
+}

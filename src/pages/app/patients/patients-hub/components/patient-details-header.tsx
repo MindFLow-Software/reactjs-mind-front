@@ -1,28 +1,28 @@
 'use client'
 
+import { cn } from '@/lib/utils'
 import { Copy } from 'lucide-react'
 import { useMemo } from 'react'
 
-import { StatusBadge } from '@/components/ui/status-badge'
 import {
   Tooltip,
   TooltipContent,
   TooltipProvider,
   TooltipTrigger,
 } from '@/components/ui/tooltip'
+import { Button } from '@/components/ui/button'
 import { UserAvatar } from '@/components/user-avatar'
-import { cn } from '@/lib/utils'
-import type { PatientStatus } from '@/types/patient'
+import { StatusBadge } from '@/components/ui/status-badge'
+
+import './patient-details-header.css'
+import type { Ipatient } from '@/types/patient'
+import { copyToClipboard } from '@/utils/copy-to-clipboard'
 
 interface PatientDetailsHeaderProps {
-  patient: {
-    id: string
-    firstName: string
-    lastName: string
-    status: PatientStatus
-    isActive: boolean
-    profileImageUrl: string | null
-  }
+  patient: Pick<
+    Ipatient,
+    'id' | 'firstName' | 'lastName' | 'status' | 'isActive' | 'profileImageUrl'
+  >
 }
 
 export function PatientDetailsHeader({ patient }: PatientDetailsHeaderProps) {
@@ -30,56 +30,56 @@ export function PatientDetailsHeader({ patient }: PatientDetailsHeaderProps) {
     () => patient.id.substring(0, 10).toUpperCase(),
     [patient.id],
   )
+
   const fullName = `${patient.firstName} ${patient.lastName}`
   const isPatientActive = patient.isActive
 
-  const handleCopyId = () => {
-    navigator.clipboard.writeText(patient.id)
-  }
-
   return (
     <TooltipProvider delayDuration={200}>
-      <header className="flex flex-col gap-5 pb-1">
-        <div className="flex items-center gap-4">
-          <div className="relative shrink-0">
+      <header className="ph-patient-details-header">
+        <div className="ph-patient-details-header__row">
+          <div className="ph-patient-details-header__avatar-wrap">
             <UserAvatar
               src={patient.profileImageUrl}
               name={fullName}
-              className="h-16 w-16 border-2 border-background shadow-md ring-1 ring-border"
+              className="ph-patient-details-header__avatar"
             />
 
             <span
               className={cn(
-                'absolute -bottom-0.5 -right-0.5 flex h-4.5 w-4.5 items-center justify-center rounded-full border-2 border-background',
-                isPatientActive ? 'bg-emerald-500' : 'bg-zinc-500',
+                'ph-patient-details-header__status-dot',
+                isPatientActive
+                  ? 'ph-patient-details-header__status-dot--active'
+                  : 'ph-patient-details-header__status-dot--inactive',
               )}
             >
               {isPatientActive && (
-                <span className="h-1.5 w-1.5 rounded-full bg-emerald-200 animate-pulse" />
+                <span className="ph-patient-details-header__status-pulse" />
               )}
             </span>
           </div>
 
-          <div className="flex min-w-0 flex-col gap-1.5">
-            <div className="flex flex-wrap items-center gap-2.5">
-              <h1 className="truncate text-xl font-bold tracking-tight text-foreground sm:text-2xl">
-                {fullName}
-              </h1>
+          <div className="ph-patient-details-header__info">
+            <div className="ph-patient-details-header__name-row">
+              <h1 className="ph-patient-details-header__name">{fullName}</h1>
 
-              <StatusBadge status={isPatientActive ? 'ACTIVE' : 'BLOCKED'} size="md" />
+              <StatusBadge
+                status={isPatientActive ? 'ACTIVE' : 'BLOCKED'}
+                size="md"
+              />
             </div>
 
-            <div className="group inline-flex items-center gap-1.5 text-xs text-muted-foreground">
-              <Copy className="h-3 w-3 opacity-50 group-hover:opacity-100" />
-
+            <div className="ph-patient-details-header__id-row">
+              <Copy className="ph-patient-details-header__id-icon" />
               <Tooltip>
                 <TooltipTrigger asChild>
-                  <button
-                    onClick={handleCopyId}
-                    className="cursor-pointer font-mono text-[11px] tracking-wide bg-muted/50 px-1.5 py-0.5 rounded transition-colors hover:text-primary"
+                  <Button
+                    variant="ghost"
+                    onClick={() => copyToClipboard(shortId)}
+                    className="ph-patient-details-header__id-btn"
                   >
                     ID: {shortId}
-                  </button>
+                  </Button>
                 </TooltipTrigger>
                 <TooltipContent side="bottom" className="text-xs">
                   Copiar ID completo

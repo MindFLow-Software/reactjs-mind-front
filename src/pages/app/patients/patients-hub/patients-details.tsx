@@ -103,17 +103,18 @@ export default function PatientDetails() {
     data: result,
     isLoading,
     isError,
+    refetch,
   } = useQuery({
     queryKey: ['patient-details', id, pageIndex],
-    queryFn: () => getPatientDetails(id!, pageIndex),
+    queryFn: () => getPatientDetails(id, pageIndex),
     enabled: !!id,
-    staleTime: 1000 * 60 * 5,
+    // staleTime: 1000 * 60 * 5,
   })
 
   const patientData = useMemo(() => result?.patient, [result])
   const meta = useMemo(() => result?.meta, [result])
 
-  const isPatientActive = false
+  const isPatientActive = Boolean(patientData?.isActive)
 
   const patientFullName = useMemo(
     () =>
@@ -131,13 +132,26 @@ export default function PatientDetails() {
     )
   }, [location.state])
 
+  const queueIndex = useMemo(() => {
+    if (!id || patientQueue.length === 0) return -1
+    return patientQueue.indexOf(id)
+  }, [id, patientQueue])
+
+  const prevPatientId = queueIndex > 0 ? patientQueue[queueIndex - 1] : null
+  const nextPatientId =
+    queueIndex >= 0 && queueIndex < patientQueue.length - 1
+      ? patientQueue[queueIndex + 1]
+      : null
+
   useEffect(() => {
     if (cameFromRecords) {
       setTitle('Prontuarios de Pacientes', '/patients-records')
     } else {
       setTitle('Cadastro de Pacientes', '/patients-list')
     }
+
     if (patientFullName) setSubtitle(patientFullName)
+
     return () => setSubtitle(undefined)
   }, [cameFromRecords, patientFullName, setTitle, setSubtitle])
 
@@ -165,17 +179,6 @@ export default function PatientDetails() {
     }
   }, [id])
 
-  const queueIndex = useMemo(() => {
-    if (!id || patientQueue.length === 0) return -1
-    return patientQueue.indexOf(id)
-  }, [id, patientQueue])
-
-  const prevPatientId = queueIndex > 0 ? patientQueue[queueIndex - 1] : null
-  const nextPatientId =
-    queueIndex >= 0 && queueIndex < patientQueue.length - 1
-      ? patientQueue[queueIndex + 1]
-      : null
-
   if (isError) {
     return (
       <div className="flex flex-col items-center justify-center h-[400px] gap-4">
@@ -188,11 +191,7 @@ export default function PatientDetails() {
             Verifique a conexao ou o ID informado.
           </p>
         </div>
-        <Button
-          variant="outline"
-          size="sm"
-          onClick={() => window.location.reload()}
-        >
+        <Button variant="outline" size="sm" onClick={() => refetch()}>
           Tentar novamente
         </Button>
       </div>

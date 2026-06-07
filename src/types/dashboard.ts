@@ -3,13 +3,13 @@ import type { Gender } from '@/types/patient'
 export type AgeRange = '0-17' | '18-25' | '26-35' | '36-50' | '51+'
 
 export interface AgeRangeItem {
-  range:    AgeRange
-  count:    number
+  range: AgeRange
+  count: number
 }
 
 export interface GenderItem {
   gender: Gender
-  count:  number
+  count: number
 }
 
 export interface NewPatientsItem {

@@ -2,7 +2,7 @@
  * Formata CPF progressivamente (XXX.XXX.XXX-XX)
  * Bloqueia em 11 dígitos numéricos.
  */
-export function formatCPF(raw: string): string {
+export function formatCPF(raw: string | null | undefined): string {
   if (!raw) return ''
 
   // Remove tudo que não é dígito e limita a 11 números

@@ -48,7 +48,6 @@ const styles = StyleSheet.create({
   },
 })
 
-// 🟢 Interface padronizada para aceitar propriedades simples
 export interface SessionPDFProps {
   psychologist: { name: string; crp?: string | null }
   patientName: string
