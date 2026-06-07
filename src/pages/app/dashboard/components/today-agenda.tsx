@@ -1,21 +1,23 @@
-'use client'
-
 import { useMemo } from 'react'
-import { useQuery } from '@tanstack/react-query'
-import { format, startOfDay, endOfDay } from 'date-fns'
+import { format } from 'date-fns'
 import { ptBR } from 'date-fns/locale'
 import { CalendarDays, ArrowRight } from 'lucide-react'
 import { Link } from 'react-router-dom'
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
+import { Card, CardContent, CardHeader } from '@/components/ui/card'
 import { Skeleton } from '@/components/ui/skeleton'
 import { cn } from '@/lib/utils'
-import { fetchAppointments } from '@/api/appointments/fetch-appointments'
-import type { Appointment } from '@/api/appointments/fetch-appointments'
+import type { Appointment } from '@/types/appointment'
 import { AppointmentStatus } from '@/types/appointment'
+import { useTodayAppointments } from '../hooks/use-today-appointments'
+import { formatTime } from '../helpers'
 
 const STATUS_CONFIG: Record<string, { label: string; className: string }> = {
   [AppointmentStatus.FINISHED]: {
     label: 'Concluída',
+    className: 'bg-muted text-muted-foreground',
+  },
+  [AppointmentStatus.DONE]: {
+    label: 'Finalizada',
     className: 'bg-muted text-muted-foreground',
   },
   [AppointmentStatus.SCHEDULED]: {
@@ -43,10 +45,16 @@ const STATUS_CONFIG: Record<string, { label: string; className: string }> = {
   },
 }
 
-function AgendaRow({ appt }: { appt: Appointment }) {
+interface AgendaRowProps {
+  appt: Appointment
+}
+
+function AgendaRow({ appt }: AgendaRowProps) {
   const time = format(new Date(appt.scheduledAt), 'HH:mm')
-  const duration = '50 min'
-  const patientName = `${appt.patient.firstName} ${appt.patient.lastName}`
+  const duration = appt.durationInMin != null ? formatTime(appt.durationInMin) : '—'
+  const patientName = appt.patient
+    ? `${appt.patient.firstName} ${appt.patient.lastName}`
+    : 'Paciente não informado'
   const status = STATUS_CONFIG[appt.status] ?? {
     label: 'Aguardando',
     className:
@@ -91,51 +99,38 @@ export function TodayAgenda() {
     [],
   )
 
-  const { data, isLoading } = useQuery({
-    queryKey: ['dashboard', 'today-agenda'],
-    queryFn: () => fetchAppointments({ perPage: 200, orderBy: 'asc' }),
-    staleTime: 5 * 60 * 1000,
-    gcTime: 10 * 60 * 1000,
-  })
-
-  const todayAppointments = useMemo(() => {
-    if (!data?.appointments) return []
-    const todayStart = startOfDay(new Date())
-    const todayEnd = endOfDay(new Date())
-    return data.appointments
-      .filter((a) => {
-        const d = new Date(a.scheduledAt)
-        return d >= todayStart && d <= todayEnd
-      })
-      .sort(
-        (a, b) =>
-          new Date(a.scheduledAt).getTime() - new Date(b.scheduledAt).getTime(),
-      )
-  }, [data])
+  const { appointments: todayAppointments, isLoading } = useTodayAppointments()
 
   return (
-    <Card className="border-border bg-card shadow-sm rounded-2xl flex flex-col h-full">
-      <CardHeader className="pb-0 px-5 pt-5">
+    <Card className="border-border bg-card shadow-sm rounded-xl flex flex-col h-full">
+      <CardHeader className="pb-4 px-5 border-b border-border">
         <div className="flex items-center justify-between">
-          <CardTitle className="text-base font-semibold text-foreground">
-            Agenda de hoje
-          </CardTitle>
+          <div className="flex items-center gap-3">
+            <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-blue-500/10 ring-1 ring-blue-500/20">
+              <CalendarDays className="size-4 text-blue-600" />
+            </div>
+            <div>
+              <p className="text-base font-semibold text-foreground leading-tight">
+                Agenda de hoje
+              </p>
+              <p className="mt-0.5 text-xs text-muted-foreground">
+                {isLoading
+                  ? '...'
+                  : `${todayLabel} · ${todayAppointments.length} ${todayAppointments.length === 1 ? 'sessão' : 'sessões'}`}
+              </p>
+            </div>
+          </div>
           <Link
             to="/appointments"
-            className="flex items-center gap-1 text-xs text-muted-foreground hover:text-foreground transition-colors"
+            className="flex items-center gap-1 text-xs text-muted-foreground hover:text-foreground transition-colors shrink-0"
           >
             Ver tudo
             <ArrowRight className="size-3" />
           </Link>
         </div>
-        <p className="mt-0.5 text-xs text-muted-foreground">
-          {isLoading
-            ? '...'
-            : `${todayLabel} · ${todayAppointments.length} ${todayAppointments.length === 1 ? 'sessão' : 'sessões'}`}
-        </p>
       </CardHeader>
 
-      <CardContent className="flex-1 px-5 pt-3 pb-5">
+      <CardContent className="flex-1 flex flex-col px-5 pt-4 pb-5">
         {isLoading ? (
           <div className="space-y-3 pt-2">
             {[...Array(4)].map((_, i) => (
@@ -150,8 +145,8 @@ export function TodayAgenda() {
             ))}
           </div>
         ) : todayAppointments.length === 0 ? (
-          <div className="flex flex-col items-center justify-center gap-2 py-10 text-center">
-            <div className="flex h-10 w-10 items-center justify-center rounded-full bg-muted/50">
+          <div className="flex flex-1 flex-col items-center justify-center gap-2 text-center">
+            <div className="flex h-10 w-10 items-center justify-center rounded-full bg-muted/30">
               <CalendarDays className="size-5 text-muted-foreground/50" />
             </div>
             <p className="text-sm font-medium text-foreground">

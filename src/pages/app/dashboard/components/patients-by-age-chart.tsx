@@ -1,6 +1,10 @@
 import * as React from 'react'
 import { Users, AlertCircle, RefreshCcw } from 'lucide-react'
-import { Card, CardContent, CardHeader } from '@/components/ui/card'
+import {
+  Card,
+  CardContent,
+  CardHeader,
+} from '@/components/ui/card'
 import { Skeleton } from '@/components/ui/skeleton'
 import { useDashboardData } from '../hooks/use-dashboard-data'
 

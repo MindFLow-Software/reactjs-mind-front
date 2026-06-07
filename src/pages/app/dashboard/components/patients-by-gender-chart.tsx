@@ -1,7 +1,11 @@
 import * as React from 'react'
 import { Cell, Label, Pie, PieChart } from 'recharts'
 import { Loader2, Users, AlertCircle, RefreshCcw } from 'lucide-react'
-import { Card, CardContent, CardHeader } from '@/components/ui/card'
+import {
+  Card,
+  CardContent,
+  CardHeader,
+} from '@/components/ui/card'
 import {
   ChartContainer,
   ChartTooltip,
@@ -174,10 +178,7 @@ export const PatientsByGenderChart = React.memo(
                       : 0
 
                   return (
-                    <div
-                      key={item.gender}
-                      className="flex items-center gap-2.5"
-                    >
+                    <div key={item.gender} className="flex items-center gap-2.5">
                       <div
                         className="h-2.5 w-2.5 shrink-0 rounded-full"
                         style={{ backgroundColor: color }}

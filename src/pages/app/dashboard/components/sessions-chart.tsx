@@ -1,11 +1,8 @@
-'use client'
-
 import * as React from 'react'
 import { Bar, BarChart, CartesianGrid, XAxis, YAxis } from 'recharts'
-import { useQuery } from '@tanstack/react-query'
-import { format, subDays, startOfDay, endOfDay } from 'date-fns'
+import { format } from 'date-fns'
 import { ptBR } from 'date-fns/locale'
-import { CalendarOff, Loader2, RefreshCcw, AlertCircle } from 'lucide-react'
+import { CalendarOff, Loader2, RefreshCcw, AlertCircle, ChartLine } from 'lucide-react'
 
 import {
   Card,
@@ -20,8 +17,8 @@ import {
   ChartTooltipContent,
   type ChartConfig,
 } from '@/components/ui/chart'
-import { getDailySessionsMetrics } from '@/api/metrics/get-daily-sessions-metrics'
-import type { DashboardPeriod } from './dashboard-header'
+import { type DashboardPeriod } from '../constants'
+import { useSessionsBar } from '../hooks/use-sessions-bar'
 
 interface SessionsBarChartProps {
   period: DashboardPeriod
@@ -34,77 +31,42 @@ const chartConfig = {
   },
 } satisfies ChartConfig
 
-const PERIOD_DAYS: Record<DashboardPeriod, number> = {
-  '7d': 7,
-  '30d': 30,
-  '90d': 90,
-  year: 365,
-}
-
 const LEGEND = [
-  { key: 'concluidas', label: 'Concluídas', color: 'bg-green-500' },
-  { key: 'remarcadas', label: 'Remarcadas', color: 'bg-yellow-400' },
-  { key: 'canceladas', label: 'Canceladas', color: 'bg-red-500' },
-]
+  { key: 'completed', label: 'Concluídas', color: 'bg-green-500' },
+] as const
 
 export const SessionsBarChart = React.memo(function SessionsBarChart({
   period,
 }: SessionsBarChartProps) {
-  const { startDateToFetch, endDateToFetch, subtitleLabel } =
-    React.useMemo(() => {
-      const ref = new Date()
-      const days = PERIOD_DAYS[period]
-      const label = period === 'year' ? 'Último ano' : `Últimos ${days} dias`
-      return {
-        startDateToFetch: startOfDay(subDays(ref, days)),
-        endDateToFetch: endOfDay(ref),
-        subtitleLabel: label,
-      }
-    }, [period])
+  const { data: chartData, subtitleLabel, isLoading, isError, refetch } =
+    useSessionsBar(period)
 
-  const { data, isLoading, isError, refetch } = useQuery({
-    queryKey: [
-      'daily-sessions-bar',
-      startDateToFetch.toISOString(),
-      endDateToFetch.toISOString(),
-    ],
-    queryFn: () =>
-      getDailySessionsMetrics(
-        startDateToFetch.toISOString(),
-        endDateToFetch.toISOString(),
-      ),
-    enabled: true,
-    staleTime: 5 * 60 * 1000,
-    gcTime: 10 * 60 * 1000,
-  })
-
-  const { chartData, isEmpty } = React.useMemo(() => {
-    const sessions = data || []
-    const total = sessions.reduce((acc, d) => acc + d.count, 0)
-    return {
-      chartData: sessions,
-      isEmpty: sessions.length === 0 || total === 0,
-    }
-  }, [data])
+  const isEmpty = React.useMemo(() => {
+    const total = chartData.reduce((acc, d) => acc + d.count, 0)
+    return chartData.length === 0 || total === 0
+  }, [chartData])
 
   return (
-    <Card className="border-border bg-card shadow-sm rounded-2xl overflow-hidden">
-      <CardHeader className="px-6 pt-5 pb-4 border-b border-border">
-        <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
-          <div>
-            <CardTitle className="text-base font-semibold text-foreground">
-              Volume de sessões
-            </CardTitle>
-            <CardDescription className="mt-0.5 text-xs text-muted-foreground">
-              {subtitleLabel} · sessões concluídas, canceladas e remarcadas
-            </CardDescription>
+    <Card className="border-border bg-card shadow-sm rounded-xl overflow-hidden">
+      <CardHeader className="px-6 pb-4 border-b border-border">
+        <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+          <div className="flex items-center gap-3">
+            <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-emerald-500/10 ring-1 ring-emerald-500/20">
+              <ChartLine className="size-4 text-emerald-600" />
+            </div>
+            <div>
+              <CardTitle className="text-base font-semibold text-foreground leading-tight">
+                Volume de sessões
+              </CardTitle>
+              <CardDescription className="mt-0.5 text-xs text-muted-foreground">
+                {subtitleLabel} · sessões concluídas, canceladas e remarcadas
+              </CardDescription>
+            </div>
           </div>
           <div className="flex items-center gap-3 self-start">
             {LEGEND.map(({ key, label, color }) => (
               <div key={key} className="flex items-center gap-1.5">
-                <span
-                  className={`inline-block h-2 w-2 rounded-full ${color}`}
-                />
+                <span className={`inline-block h-2 w-2 rounded-full ${color}`} />
                 <span className="text-xs text-muted-foreground">{label}</span>
               </div>
             ))}
@@ -133,16 +95,12 @@ export const SessionsBarChart = React.memo(function SessionsBarChart({
             </button>
           </div>
         ) : isEmpty ? (
-          <div className="flex h-[250px] flex-col items-center justify-center text-center">
-            <div className="mb-3 flex h-12 w-12 items-center justify-center rounded-full bg-muted/30">
-              <CalendarOff className="h-5 w-5 text-muted-foreground/50" />
+          <div className="flex h-[250px] flex-col items-center justify-center gap-2 text-center">
+            <div className="flex h-10 w-10 items-center justify-center rounded-full bg-muted/30">
+              <CalendarOff className="size-5 text-muted-foreground/50" />
             </div>
-            <p className="text-sm font-medium text-foreground">
-              Nenhuma sessão
-            </p>
-            <p className="mt-1 text-xs text-muted-foreground">
-              Sem atendimentos neste período
-            </p>
+            <p className="text-sm font-medium text-foreground">Nenhuma sessão</p>
+            <p className="text-xs text-muted-foreground">Sem atendimentos neste período</p>
           </div>
         ) : (
           <ChartContainer
