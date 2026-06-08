@@ -14,6 +14,8 @@ import {
 } from '@/components/ui/chart'
 import { useDashboardData } from '../hooks/use-dashboard-data'
 
+type ContentState = 'loading' | 'error' | 'empty' | 'data'
+
 const GENDER_TRANSLATIONS: Record<string, string> = {
   FEMININE: 'Feminino',
   MASCULINE: 'Masculino',
@@ -53,8 +55,6 @@ export const PatientsByGenderChart = React.memo(
     }, [dashboard])
 
     const patientLabel = totalPatients === 1 ? 'PACIENTE' : 'PACIENTES'
-
-    type ContentState = 'loading' | 'error' | 'empty' | 'data'
 
     const contentState: ContentState = isLoading
       ? 'loading'

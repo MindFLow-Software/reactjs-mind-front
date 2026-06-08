@@ -8,6 +8,8 @@ import {
 import { Skeleton } from '@/components/ui/skeleton'
 import { useDashboardData } from '../hooks/use-dashboard-data'
 
+type ContentState = 'loading' | 'error' | 'empty' | 'data'
+
 interface AgeStats {
   range: string
   count: number
@@ -31,8 +33,6 @@ export const PatientsByAgeChart = React.memo(function PatientsByAgeChart() {
   )
 
   const isEmpty = data.length === 0 || data.every((d) => d.count === 0)
-
-  type ContentState = 'loading' | 'error' | 'empty' | 'data'
 
   const contentState: ContentState = isLoading
     ? 'loading'
