@@ -11,6 +11,7 @@ export interface StatusPillOption {
 export interface PatientsMetrics {
   activeCount: number
   archivedCount: number
+  newPatientsCount: number
   isLoading: boolean
 }
 

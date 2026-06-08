@@ -130,6 +130,7 @@ export function PatientsList() {
   const {
     activeCount,
     archivedCount,
+    newPatientsCount,
     isLoading: loadingMetrics,
   } = usePatientsMetrics()
 
@@ -182,6 +183,15 @@ export function PatientsList() {
               </MetricCard.Icon>
               <MetricCard.Value>{archivedCount}</MetricCard.Value>
               <MetricCard.Label>Arquivados</MetricCard.Label>
+            </MetricCard>
+
+            <MetricCard isLoading={loadingMetrics}>
+              <MetricCard.Icon bg="bg-violet-500/10">
+                <UserRoundPlus className="size-5 text-violet-600" />
+              </MetricCard.Icon>
+              <MetricCard.Value>{newPatientsCount}</MetricCard.Value>
+              <MetricCard.Label>Novos (30 dias)</MetricCard.Label>
+              <MetricCard.Trend direction="up">24%</MetricCard.Trend>
             </MetricCard>
           </div>
 
