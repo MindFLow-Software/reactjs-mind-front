@@ -15,7 +15,7 @@ export async function createPatients(
     ...data,
     cpf: data.cpf ? data.cpf.replace(/\D/g, '') : undefined,
     phoneNumber: data.phoneNumber?.replace(/\D/g, '') || undefined,
-    email: data.email,
+    email: data.email || undefined,
     cep: data.cep?.replace(/\D/g, '') || undefined,
     dateOfBirth:
       data.dateOfBirth instanceof Date

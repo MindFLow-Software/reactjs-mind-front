@@ -19,7 +19,7 @@ export const patientSchema = z.object({
     .min(1, 'Sobrenome é obrigatório')
     .regex(/^[A-Za-zÀ-ÖØ-öø-ÿ\s'-]+$/, 'Apenas letras são permitidas'),
   phoneNumber: z.string().optional(),
-  email: z.email('E-mail inválido').optional().or(z.literal('')),
+  email: z.string().email('E-mail inválido').optional().or(z.literal('')),
   dateOfBirth: z
     .date()
     .nullable()
