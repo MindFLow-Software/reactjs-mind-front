@@ -1,10 +1,5 @@
 import { api } from '@/lib/axios'
-import type {
-  Gender,
-  Ipatient,
-  IsessionVolume,
-  PatientStatus,
-} from '@/types/patient'
+import type { Gender, Ipatient, IsessionVolume } from '@/types/patient'
 import type { PaginationMeta } from '@/types/pagination'
 
 export interface IgetPatientsQueryParams {
@@ -12,7 +7,8 @@ export interface IgetPatientsQueryParams {
   perPage?: number
   filter?: string
   gender?: Gender | null
-  status?: PatientStatus | null
+  isActive?: boolean
+  orderBy?: string
   order?: 'asc' | 'desc'
   sessionVolume?: IsessionVolume | null
 }
@@ -27,7 +23,8 @@ export async function getPatients({
   perPage,
   filter,
   gender,
-  status,
+  isActive,
+  orderBy,
   order,
   sessionVolume,
 }: IgetPatientsQueryParams): Promise<GetPatientsResponse> {
@@ -35,8 +32,9 @@ export async function getPatients({
     pageIndex,
     perPage,
     filter,
-    status,
+    isActive,
     gender,
+    orderBy,
     order,
     sessionVolume,
   }
