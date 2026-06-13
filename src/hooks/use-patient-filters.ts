@@ -11,11 +11,10 @@ const VALID_GENDERS = Object.values(Gender)
 export type PatientSortOrder = 'asc' | 'desc'
 export type PatientSortBy =
   | 'name'
-  | 'status'
-  | 'contact'
-  | 'lastSession'
   | 'age'
   | 'gender'
+  | 'status'
+  | 'lastSession'
 
 export function usePatientFilters() {
   const [searchParams, setSearchParams] = useSearchParams()
@@ -40,7 +39,9 @@ export function usePatientFilters() {
     ? (rawGender as Gender)
     : null
 
-  const sortBy = (searchParams.get('sortBy') ?? 'name') as PatientSortBy
+  const sortBy = (searchParams.get('sortBy') ?? undefined) as
+    | PatientSortBy
+    | undefined
   const order = (searchParams.get('order') ?? 'asc') as PatientSortOrder
 
   const filters = {

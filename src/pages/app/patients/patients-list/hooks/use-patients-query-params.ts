@@ -1,24 +1,35 @@
 import { usePatientFilters } from '@/hooks/use-patient-filters'
-import type { PatientStatus, Gender } from '@/types/patient'
+import type { PatientSortBy } from '@/hooks/use-patient-filters'
+import type { Gender } from '@/types/patient'
+
+const STATUS_TO_IS_ACTIVE: Record<string, boolean> = {
+  ACTIVE: true,
+  BLOCKED: false,
+}
 
 export interface IpatientsQueryParams {
   pageIndex: number
   perPage: number
   filter?: string
-  status?: PatientStatus | null
+  isActive?: boolean
   gender?: Gender | null
+  orderBy?: PatientSortBy
   order: 'asc' | 'desc'
 }
 
 export function usePatientsQueryParams(): IpatientsQueryParams {
   const { filters } = usePatientFilters()
 
+  const isActive =
+    filters.status != null ? STATUS_TO_IS_ACTIVE[filters.status] : undefined
+
   return {
     pageIndex: filters.pageIndex,
     perPage: filters.perPage,
-    order: filters.order,
     filter: filters.filter,
-    status: filters.status,
+    isActive,
     gender: filters.gender,
+    orderBy: filters.sortBy,
+    order: filters.order,
   }
 }
