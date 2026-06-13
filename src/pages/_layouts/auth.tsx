@@ -1,7 +1,17 @@
+import { useLayoutEffect } from 'react'
 import { Outlet } from 'react-router-dom'
 import { AuthLeftPanel } from '@/pages/auth/components/auth-left-panel'
 
 export function AuthLayout() {
+  useLayoutEffect(() => {
+    const root = document.documentElement
+    const wasDark = root.classList.contains('dark')
+    root.classList.remove('dark')
+    return () => {
+      if (wasDark) root.classList.add('dark')
+    }
+  }, [])
+
   return (
     <div className="grid min-h-screen grid-cols-1 md:grid-cols-[45%_55%]">
       <AuthLeftPanel />

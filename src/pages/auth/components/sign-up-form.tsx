@@ -47,8 +47,11 @@ const maxDateForPro = new Date(
   today.getDate(),
 )
 
-// eslint-disable-next-line
-const MaskedInput = IMaskMixin(({ inputRef, ...props }: any) => (
+interface MaskedInputBaseProps extends React.ComponentProps<'input'> {
+  inputRef: React.Ref<HTMLInputElement>
+}
+
+const MaskedInput = IMaskMixin(({ inputRef, ...props }: MaskedInputBaseProps) => (
   <Input ref={inputRef} {...props} />
 ))
 
@@ -175,6 +178,17 @@ function PasswordStrength({ value }: { value: string }) {
   )
 }
 
+const FIELD_VALIDATION_FALLBACK: Record<string, string> = {
+  firstName: 'Nome obrigatório.',
+  lastName: 'Sobrenome obrigatório.',
+  email: 'E-mail inválido.',
+  password: 'Senha inválida.',
+  phoneNumber: 'Telefone inválido.',
+  cpf: 'CPF inválido.',
+  dateOfBirth: 'Data de nascimento inválida.',
+  gender: 'Gênero obrigatório.',
+}
+
 export function SignUpForm({
   className,
   ...props
@@ -193,7 +207,14 @@ export function SignUpForm({
     formState: { isSubmitting, errors },
   } = useForm<SignUpFormData>({
     resolver: zodResolver(signUpFormSchema),
-    defaultValues: { password: '' },
+    defaultValues: {
+      firstName: '',
+      lastName: '',
+      email: '',
+      password: '',
+      phoneNumber: '',
+      cpf: '',
+    },
   })
 
   const passwordValue = watch('password', '')
@@ -214,13 +235,13 @@ export function SignUpForm({
     [],
   )
 
-  async function handleSignUp(data: SignUpFormData) {
+  const handleSignUp = useCallback(
+    async (data: SignUpFormData) => {
     try {
       await registerPsychologistFn({
         ...data,
         phoneNumber: data.phoneNumber.replace(/\D/g, ''),
         cpf: data.cpf.replace(/\D/g, ''),
-        role: 'PSYCHOLOGIST',
       })
       toast.success('Psicólogo cadastrado com sucesso!')
       navigate('/sign-in')
@@ -230,17 +251,46 @@ export function SignUpForm({
         return
       }
 
-      if (err.apiCode === 'EMAIL_ALREADY_IN_USE') {
-        setError('email', { type: 'manual', message: 'E-mail já cadastrado' })
-        toast.error('E-mail já cadastrado')
+      const body = err.response?.data as {
+        message?: string
+        errors?: { properties?: Record<string, { errors: string[] }> }
+      } | undefined
+
+      if (body?.message === 'EMAIL_ALREADY_EXISTS') {
+        setError('email', { type: 'server', message: 'E-mail já cadastrado.' })
         return
       }
 
-      // CPF: ApiErrorCode não inclui código específico para CPF (OQ-1 aberto no spec.md).
-      // O fallback exibe a mensagem humanizada do envelope.
+      if (body?.message === 'CPF_ALREADY_EXISTS') {
+        setError('cpf', { type: 'server', message: 'CPF já cadastrado.' })
+        return
+      }
+
+      if (body?.message === 'INVALID_BIRTH_DATE') {
+        setError('dateOfBirth', { type: 'server', message: 'Data de nascimento inválida.' })
+        return
+      }
+
+      if (body?.message === 'Validation failed') {
+        const properties = body.errors?.properties ?? {}
+        for (const [field, value] of Object.entries(properties)) {
+          const msgs = value?.errors ?? []
+          if (msgs.length > 0) {
+            setError(field as keyof SignUpFormData, {
+              type: 'server',
+              message: FIELD_VALIDATION_FALLBACK[field] ?? msgs[0],
+            })
+          }
+        }
+        toast.error('Preencha corretamente os campos destacados.')
+        return
+      }
+
       toast.error(err.message || 'Erro ao realizar cadastro')
     }
-  }
+  },
+    [registerPsychologistFn, navigate, setError],
+  )
 
   const onInvalid = () =>
     toast.error('Preencha corretamente os campos destacados.')
@@ -293,14 +343,17 @@ export function SignUpForm({
           <Controller
             control={control}
             name="phoneNumber"
-            render={({ field: { ref, ...fieldProps } }) => (
+            render={({ field }) => (
               <MaskedInput
-                {...fieldProps}
-                inputRef={ref}
+                name={field.name}
+                value={field.value}
+                inputRef={field.ref}
                 mask="(00) 00000-0000"
                 placeholder="(99) 99999-9999"
                 type="tel"
                 autoComplete="tel"
+                onAccept={(value: string) => field.onChange(value)}
+                onBlur={field.onBlur}
                 className={cn(
                   'tabular-nums',
                   errors.phoneNumber && 'border-red-500',
@@ -313,13 +366,16 @@ export function SignUpForm({
           <Controller
             control={control}
             name="cpf"
-            render={({ field: { ref, ...fieldProps } }) => (
+            render={({ field }) => (
               <MaskedInput
-                {...fieldProps}
-                inputRef={ref}
+                name={field.name}
+                value={field.value}
+                inputRef={field.ref}
                 mask="000.000.000-00"
                 placeholder="123.456.789-00"
                 autoComplete="off"
+                onAccept={(value: string) => field.onChange(value)}
+                onBlur={field.onBlur}
                 className={cn('tabular-nums', errors.cpf && 'border-red-500')}
               />
             )}

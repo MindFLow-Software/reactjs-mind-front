@@ -1,6 +1,7 @@
 import { useEffect, useRef } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { toast } from 'sonner'
+import { AxiosError } from 'axios'
 import { getProfile } from '@/api/psychologists/get-profile'
 import { api } from '@/lib/axios'
 
@@ -44,16 +45,15 @@ export function GoogleOAuthSuccess() {
         localStorage.setItem('isAuthenticated', 'true')
         localStorage.setItem('user', JSON.stringify(profile))
         navigate('/dashboard', { replace: true })
-        // eslint-disable-next-line
-      } catch (error: any) {
-        const status = error?.response?.status
-
-        if (status === 400 || status === 404) {
-          navigate('/complete-registration', { replace: true })
-          return
+      } catch (error: unknown) {
+        if (error instanceof AxiosError) {
+          const status = error.response?.status
+          if (status === 400 || status === 404) {
+            navigate('/complete-registration', { replace: true })
+            return
+          }
         }
-
-        toast.error('Nao foi possivel completar o login. Tente novamente.')
+        toast.error('Não foi possível completar o login. Tente novamente.')
         navigate('/sign-in', { replace: true })
       }
     }
@@ -64,7 +64,7 @@ export function GoogleOAuthSuccess() {
   return (
     <div className="flex min-h-svh items-center justify-center">
       <div className="flex flex-col items-center gap-2">
-        <div className="h-8 w-8 animate-spin rounded-full border-4 border-blue-700 border-t-transparent" />
+        <div className="h-8 w-8 animate-spin rounded-full border-4 border-blue-600 border-t-transparent" />
         <p className="text-sm text-muted-foreground">Finalizando login...</p>
       </div>
     </div>

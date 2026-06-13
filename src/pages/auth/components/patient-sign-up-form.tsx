@@ -1,5 +1,3 @@
-'use client'
-
 import type React from 'react'
 import { useForm, type Resolver } from 'react-hook-form'
 import { toast } from 'sonner'
@@ -18,6 +16,7 @@ import {
   EyeOff,
 } from 'lucide-react'
 import { useState, useCallback } from 'react'
+import { AxiosError } from 'axios'
 
 import { cn } from '@/lib/utils'
 import { Button } from '@/components/ui/button'
@@ -65,16 +64,19 @@ export function PatientSignUpForm({
         await registerPatient(data)
         toast.success('Cadastro realizado! Agora você pode fazer login.')
         navigate('/sign-in')
-        // eslint-disable-next-line
-      } catch (error: any) {
-        const errorMessage = error?.message || 'Erro ao criar conta.'
-        toast.error(errorMessage)
+      } catch (error: unknown) {
+        const message =
+          error instanceof AxiosError ? error.message : 'Erro ao criar conta.'
+        toast.error(message)
       }
     },
     [registerPatient, navigate],
   )
 
-  const togglePasswordVisibility = () => setShowPassword(!showPassword)
+  const togglePasswordVisibility = useCallback(
+    () => setShowPassword((p) => !p),
+    [],
+  )
 
   return (
     <form
