@@ -162,7 +162,7 @@ export function PatientsList() {
           <div className="pl-metrics-grid">
             <MetricCard isLoading={isLoading}>
               <MetricCard.Icon bg="bg-blue-500/10">
-                <UsersRound className="size-5 text-blue-600" />
+                <UsersRound className="size-6 text-blue-600" />
               </MetricCard.Icon>
               <MetricCard.Value>{meta.totalCount}</MetricCard.Value>
               <MetricCard.Label>Total de pacientes</MetricCard.Label>
@@ -170,7 +170,7 @@ export function PatientsList() {
 
             <MetricCard isLoading={loadingMetrics}>
               <MetricCard.Icon bg="bg-emerald-500/10">
-                <Activity className="size-5 text-emerald-600" />
+                <Activity className="size-6 text-emerald-600" />
               </MetricCard.Icon>
               <MetricCard.Value>{activeCount}</MetricCard.Value>
               <MetricCard.Label>Ativos</MetricCard.Label>
@@ -179,7 +179,7 @@ export function PatientsList() {
 
             <MetricCard isLoading={loadingMetrics}>
               <MetricCard.Icon bg="bg-red-500/10">
-                <Clock className="size-5 text-red-500" />
+                <Clock className="size-6 text-red-500" />
               </MetricCard.Icon>
               <MetricCard.Value>{archivedCount}</MetricCard.Value>
               <MetricCard.Label>Arquivados</MetricCard.Label>
@@ -187,7 +187,7 @@ export function PatientsList() {
 
             <MetricCard isLoading={loadingMetrics}>
               <MetricCard.Icon bg="bg-violet-500/10">
-                <UserRoundPlus className="size-5 text-violet-600" />
+                <UserRoundPlus className="size-6 text-violet-600" />
               </MetricCard.Icon>
               <MetricCard.Value>{newPatientsCount}</MetricCard.Value>
               <MetricCard.Label>Novos (30 dias)</MetricCard.Label>
@@ -220,14 +220,14 @@ export function PatientsList() {
                   isLoading={isLoading}
                   perPage={filters.perPage}
                   hasActiveFilters={filtersActive}
-                  sort={{
-                    by: filters.sortBy,
-                    order: filters.order,
-                    onSort: setSort,
-                  }}
+                  sort={
+                    filters.sortBy
+                      ? { by: filters.sortBy, order: filters.order, onSort: setSort }
+                      : undefined
+                  }
                   onClearFilters={clearFilters}
                   onRegister={() =>
-                    setRegisterModalData({ isOpen: true, isEditing: true })
+                    setRegisterModalData({ isOpen: true, isEditing: false })
                   }
                 />
               </PatientsDataBlock.Content>

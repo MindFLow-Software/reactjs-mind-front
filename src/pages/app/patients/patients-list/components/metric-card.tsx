@@ -68,11 +68,11 @@ function MetricCardRoot({
     <MetricCardContext.Provider value={{ isLoading }}>
       <Card
         className={cn(
-          'rounded-md border bg-card px-5 py-4 shadow-sm',
+          'rounded-md border bg-card px-6 py-5 shadow-sm',
           className,
         )}
       >
-        <CardContent className="relative grid grid-cols-[40px_1fr] gap-x-4 gap-y-0.5 items-start px-0">
+        <CardContent className="relative grid grid-cols-[48px_1fr] gap-x-4 gap-y-1 items-start px-0">
           {children}
         </CardContent>
       </Card>
@@ -84,7 +84,7 @@ function MetricCardIcon({ bg, children }: MetricCardIconProps) {
   return (
     <div
       className={cn(
-        'flex size-10 shrink-0 items-center justify-center rounded-full row-span-2',
+        'flex size-12 shrink-0 items-center justify-center rounded-full row-span-2',
         bg,
       )}
     >
@@ -96,10 +96,10 @@ function MetricCardIcon({ bg, children }: MetricCardIconProps) {
 function MetricCardValue({ children }: MetricCardValueProps) {
   const { isLoading } = useContext(MetricCardContext)
 
-  if (isLoading) return <Skeleton className="h-7 w-12" />
+  if (isLoading) return <Skeleton className="h-8 w-14" />
 
   return (
-    <CardTitle className="text-2xl font-bold tabular-nums leading-none">
+    <CardTitle className="text-3xl font-bold tabular-nums leading-none">
       {children}
     </CardTitle>
   )
@@ -107,7 +107,7 @@ function MetricCardValue({ children }: MetricCardValueProps) {
 
 function MetricCardLabel({ children }: MetricCardLabelProps) {
   return (
-    <CardDescription className="text-xs text-muted-foreground font-medium">
+    <CardDescription className="text-sm text-muted-foreground font-medium">
       {children}
     </CardDescription>
   )

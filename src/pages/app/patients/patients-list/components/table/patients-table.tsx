@@ -198,12 +198,9 @@ export function PatientsTable({
               sort={sort}
               className="w-[120px]"
             />
-            <SortableHead
-              column="contact"
-              label="Contato"
-              sort={sort}
-              className="min-w-[200px]"
-            />
+            <TableHead className={cn(COL_HEAD, 'min-w-[200px]')}>
+              Contato
+            </TableHead>
             <SortableHead
               column="lastSession"
               label="Última Sessão"

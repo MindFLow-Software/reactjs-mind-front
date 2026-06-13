@@ -121,6 +121,7 @@ export const PatientsTableRow = memo(function PatientsTableRow({
         queryClient.invalidateQueries({ queryKey: ['patient', id] }),
         queryClient.invalidateQueries({ queryKey: ['patient-details', id] }),
         queryClient.invalidateQueries({ queryKey: ['patients-metrics'] }),
+        queryClient.invalidateQueries({ queryKey: ['dashboard'] }),
       ])
     },
   })
@@ -358,6 +359,7 @@ export const PatientsTableRow = memo(function PatientsTableRow({
           {isEditOpen && (
             <RegisterPatients
               patientId={patient.id}
+              isEditing
               onSuccess={() => setIsEditOpen(false)}
             />
           )}
