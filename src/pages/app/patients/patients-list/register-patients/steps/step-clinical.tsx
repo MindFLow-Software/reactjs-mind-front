@@ -1,3 +1,4 @@
+import { useCallback } from 'react'
 import { useFormContext } from 'react-hook-form'
 import { Activity, FileText } from 'lucide-react'
 import { Input } from '@/components/ui/input'
@@ -29,15 +30,15 @@ const FREQUENCY_OPTIONS = ['Semanal', 'Quinzenal', 'Mensal', 'Sob demanda']
 export function StepClinical() {
   const { control } = useFormContext<PatientFormData>()
 
-  function handlePriceChange(
-    value: string,
-    fieldOnChange: (v: string) => void,
-  ) {
-    fieldOnChange(value.replace(/[^\d,]/g, ''))
-  }
+  const handlePriceChange = useCallback(
+    (value: string, fieldOnChange: (v: string) => void) => {
+      fieldOnChange(value.replace(/[^\d,]/g, ''))
+    },
+    [],
+  )
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-4">
       {/* Atendimento */}
       <div>
         <SectionTitle icon={Activity} label="Atendimento" />

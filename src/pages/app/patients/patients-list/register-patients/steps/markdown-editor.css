@@ -27,9 +27,10 @@
   }
 
   .rp-md-editor__textarea {
-    @apply w-full resize-none overflow-hidden bg-card p-3 font-mono
+    @apply w-full resize-none overflow-y-auto bg-card p-3 font-mono
            text-[13px] leading-relaxed text-foreground outline-none
-           placeholder:font-sans placeholder:text-muted-foreground min-h-[160px];
+           placeholder:font-sans placeholder:text-muted-foreground
+           min-h-[120px] max-h-[220px];
   }
 
   .rp-md-editor__preview {

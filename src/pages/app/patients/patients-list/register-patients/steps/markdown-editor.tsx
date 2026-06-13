@@ -29,7 +29,7 @@ export function MarkdownEditor({ value, onChange }: MarkdownEditorProps) {
     const textarea = ref.current
     if (!textarea) return
     textarea.style.height = 'auto'
-    textarea.style.height = `${textarea.scrollHeight}px`
+    textarea.style.height = `${Math.min(textarea.scrollHeight, 220)}px`
   }, [value])
 
   function insertInline(prefix: string, suffix: string, placeholder: string) {

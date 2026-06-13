@@ -12,6 +12,7 @@ import {
   ChevronRight,
   Check,
   UserPlus,
+  UserPen,
 } from 'lucide-react'
 
 import { DialogContent, DialogTitle } from '@/components/ui/dialog'
@@ -72,7 +73,10 @@ export function RegisterPatients({
     avatarFile,
     files,
     onSuccess: () => {
-      if (!isEditMode) methods.reset()
+      if (!isEditMode) {
+        methods.reset()
+        goToStep(1)
+      }
       clearFiles()
       setAvatarFile(null)
       onSuccess?.()
@@ -140,7 +144,11 @@ export function RegisterPatients({
     <DialogContent className="rp-modal">
       <DialogTitle className="rp-modal-header">
         <div className="rp-modal-icon-box">
-          <UserPlus className="text-blue-600" />
+          {isEditMode ? (
+            <UserPen className="text-blue-600" />
+          ) : (
+            <UserPlus className="text-blue-600" />
+          )}
         </div>
         <div className="flex-1 space-y-2">
           <h2 className="rp-modal-title">
@@ -171,7 +179,7 @@ export function RegisterPatients({
               <span className={cn('rp-modal-tab-badge', stepClassName)}>
                 {step.id}
               </span>
-              <span className="hidden sm:block">{step.label}</span>
+              <span>{step.label}</span>
               {step.required && (
                 <span className="ml-0.5 text-[11px] text-red-600">*</span>
               )}

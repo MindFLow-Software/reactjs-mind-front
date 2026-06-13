@@ -2,7 +2,7 @@
 
 @layer components {
   .rp-clinical-grid {
-    @apply grid grid-cols-2 gap-x-3.5 gap-y-4;
+    @apply grid grid-cols-1 sm:grid-cols-2 gap-x-3.5 gap-y-4;
   }
 
   .rp-price-prefix {

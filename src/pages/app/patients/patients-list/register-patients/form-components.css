@@ -60,8 +60,8 @@
   }
 
   .rp-modal-tab {
-    @apply -mb-px flex cursor-pointer items-center gap-[7px] border-b-2
-           px-[14px] py-[10px] text-[13px] font-semibold transition-colors duration-[120ms];
+    @apply -mb-px flex flex-1 cursor-pointer items-center justify-center gap-[7px] border-b-2
+           px-3 py-[10px] text-[13px] font-semibold transition-colors duration-[120ms];
   }
 
   .rp-modal-tab--active { @apply border-blue-600 text-blue-600; }
