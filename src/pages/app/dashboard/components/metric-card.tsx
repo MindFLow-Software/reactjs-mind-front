@@ -37,7 +37,7 @@ interface MetricCardRootProps {
 
 function MetricCardRoot({ accentColor, header, state, children }: MetricCardRootProps) {
   return (
-    <Card className="relative overflow-hidden rounded-lg border border-border bg-card p-5 shadow-sm">
+    <Card className="relative overflow-hidden rounded-lg bg-card p-5">
       <div
         className={cn(
           'absolute inset-x-0 top-0 h-1 rounded-t-xl bg-gradient-to-r',

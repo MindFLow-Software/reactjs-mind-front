@@ -56,7 +56,7 @@ export function TransactionsValueChart() {
   }
 
   return (
-    <Card className="col-span-6 border shadow-sm bg-card rounded-xl overflow-hidden">
+    <Card className="col-span-6 bg-card rounded-xl overflow-hidden">
       <CardHeader className="flex flex-col items-stretch border-b !p-0 sm:flex-row">
         <div className="flex flex-1 flex-col justify-center gap-1 px-6 py-4 sm:py-6">
           <CardTitle className="text-sm font-bold uppercase tracking-widest text-muted-foreground">

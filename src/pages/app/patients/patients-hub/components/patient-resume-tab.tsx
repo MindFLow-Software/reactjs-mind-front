@@ -96,7 +96,7 @@ function StatCard({
   valueClassName,
 }: StatCardProps) {
   return (
-    <Card className={cn('shadow-sm border-l-4', borderColor)}>
+    <Card className={cn('border-l-4', borderColor)}>
       <CardContent className="pt-5 pb-4">
         <p
           className={cn(
@@ -266,7 +266,7 @@ export function PatientResumeTab(_props: PatientResumeTabProps) {
 
       {/* ── Charts ── */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-3">
-        <Card className="shadow-sm">
+        <Card>
           <CardHeader className="pb-2">
             <div className="flex items-start justify-between">
               <div>
@@ -325,7 +325,7 @@ export function PatientResumeTab(_props: PatientResumeTabProps) {
           </CardContent>
         </Card>
 
-        <Card className="shadow-sm">
+        <Card>
           <CardHeader className="pb-2">
             <div className="flex items-start justify-between gap-3">
               <div>
@@ -393,7 +393,7 @@ export function PatientResumeTab(_props: PatientResumeTabProps) {
 
       {/* ── Bottom row ── */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-3">
-        <Card className="shadow-sm">
+        <Card>
           <CardHeader className="pb-3">
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-2.5">
@@ -442,7 +442,7 @@ export function PatientResumeTab(_props: PatientResumeTabProps) {
           </CardContent>
         </Card>
 
-        <Card className="shadow-sm">
+        <Card>
           <CardHeader className="pb-3">
             <div className="flex items-center gap-2.5">
               <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-amber-50 dark:bg-amber-950/30">

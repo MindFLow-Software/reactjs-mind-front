@@ -115,7 +115,7 @@ export function AppointmentAddForm({
   const isPending = isStarting || isFinishing
 
   return (
-    <Card className="border-0 shadow-sm">
+    <Card>
       <CardHeader className="pb-4">
         <CardTitle className="text-lg font-semibold flex items-center gap-2.5">
           {isSessionActive ? (
