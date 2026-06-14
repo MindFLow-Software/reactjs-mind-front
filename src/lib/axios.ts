@@ -27,8 +27,8 @@ function isErrorEnvelope(body: unknown): body is ApiErrorEnvelope {
   return (
     typeof body === 'object' &&
     body !== null &&
-    (body as ApiErrorEnvelope).success === false &&
-    typeof (body as ApiErrorEnvelope).error?.code === 'string'
+    typeof (body as ApiErrorEnvelope).error?.code === 'string' &&
+    typeof (body as ApiErrorEnvelope).error?.message === 'string'
   )
 }
 

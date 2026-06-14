@@ -17,6 +17,7 @@ export type ApiErrorCode =
   | 'OAUTH_MISSING_EMAIL'
   | 'OAUTH_PROVIDER_CONFLICT'
   | 'PATIENT_ALREADY_EXISTS'
+  | 'UNIQUE_CONSTRAINT_VIOLATION'
   | 'INTERNAL_SERVER_ERROR'
   | 'BAD_REQUEST'
   | 'UNAUTHORIZED'
@@ -35,8 +36,8 @@ export interface ApiSuccessEnvelope<T = unknown> {
 }
 
 export interface ApiErrorEnvelope {
-  success: false
-  statusCode: number
+  success?: false
+  statusCode?: number
   error: {
     code: ApiErrorCode
     message: string
