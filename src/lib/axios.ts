@@ -1,5 +1,9 @@
 import axios from 'axios'
-import type { ApiSuccessEnvelope, ApiErrorEnvelope } from '@/types/api'
+import type { ApiErrorCode, ApiSuccessEnvelope, ApiErrorEnvelope } from '@/types/api'
+
+const API_ERROR_MESSAGES_PT: Partial<Record<ApiErrorCode, string>> = {
+  PATIENT_ALREADY_EXISTS: 'Já existe um paciente com este CPF.',
+}
 
 export const api = axios.create({
   baseURL: import.meta.env.VITE_API_URL,
@@ -45,7 +49,8 @@ api.interceptors.response.use(
 
     if (axios.isAxiosError(error) && isErrorEnvelope(error.response?.data)) {
       const envelope = error.response!.data as ApiErrorEnvelope
-      error.message = envelope.error.message
+      error.message =
+        API_ERROR_MESSAGES_PT[envelope.error.code] ?? envelope.error.message
       error.apiCode = envelope.error.code
     }
 
