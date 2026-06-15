@@ -22,14 +22,14 @@ import {
 } from '@/components/ui/sidebar'
 import {
   getProfile,
-  type GetProfileResponse,
+  type GetMeResponse,
 } from '@/api/psychologists/get-profile'
 import { TeamSwitcher } from './team-switcher'
 import { NavMain } from './nav-main'
 import { NavUser } from './nav-user'
 
 export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
-  const { data: profile, isLoading } = useQuery<GetProfileResponse | null>({
+  const { data: profile, isLoading } = useQuery<GetMeResponse | null>({
     queryKey: ['psychologist-profile'],
     queryFn: getProfile,
     retry: false,
@@ -37,13 +37,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
   })
 
   const filteredNavMain = React.useMemo(() => {
-    const roleValue =
-      typeof profile?.role === 'object' && profile?.role !== null
-        ? (profile.role as { name: string }).name
-        : profile?.role
-
-    const userRole = String(roleValue).toUpperCase()
-    const isSuperAdmin = userRole === 'SUPER_ADMIN'
+    const isSuperAdmin = profile?.platformRole === 'ADMIN'
 
     // 1. Itens que AMBOS veem (mas com URLs diferentes no dashboard)
     const baseNav = [
@@ -162,12 +156,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
       email: '...',
     }
 
-    const roleValue =
-      typeof profile?.role === 'object' && profile?.role !== null
-        ? (profile.role as { name: string }).name
-        : profile?.role
-
-    const isRoot = String(roleValue).toUpperCase() === 'SUPER_ADMIN'
+    const isRoot = profile?.platformRole === 'ADMIN'
 
     return [
       {

@@ -116,9 +116,11 @@ function FieldRow({
 }
 
 export function PatientInfo({ patient }: PatientInfoProps) {
-  const age = Time.calculateAge(patient?.dateOfBirth)
+  const age = Time.calculateAge(
+    patient?.dateOfBirth ? new Date(patient.dateOfBirth) : null,
+  )
   const dateOfBirth = patient?.dateOfBirth
-    ? Time.toBrazilianFormat(patient.dateOfBirth)
+    ? Time.toBrazilianFormat(new Date(patient.dateOfBirth))
     : null
 
   const cpf = formatCPF(patient?.cpf)

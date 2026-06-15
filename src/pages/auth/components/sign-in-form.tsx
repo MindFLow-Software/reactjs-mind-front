@@ -65,20 +65,14 @@ export const SignInForm = memo(function SignInForm({
   const handleSignIn = useCallback(
     async (data: SignInSchema) => {
       try {
-        const response = await authenticate(data)
-        const user = response.user
+        await authenticate(data)
 
         localStorage.setItem('isAuthenticated', 'true')
-        localStorage.setItem('user', JSON.stringify(user))
-
-        const userType = user.type
 
         toast.success('Login realizado com sucesso!', { duration: 2000 })
 
         setTimeout(() => {
-          navigate(userType === 'ADMIN' ? '/admin-dashboard' : '/dashboard', {
-            replace: true,
-          })
+          navigate('/dashboard', { replace: true })
         }, 100)
       } catch (error) {
         const errorMessage = Sanitize.responseError(error)

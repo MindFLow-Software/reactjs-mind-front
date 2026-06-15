@@ -7,7 +7,7 @@ import { toast } from 'sonner'
 import { api } from '@/lib/axios'
 import { updatePsychologist } from '@/api/psychologists/update-psychologist'
 import { UserAvatar } from '@/components/user-avatar'
-import type { GetProfileResponse } from '@/api/psychologists/get-profile'
+import type { GetMeResponse } from '@/api/psychologists/get-profile'
 
 interface AvatarUploadProps {
   currentImage?: string | null
@@ -39,7 +39,7 @@ export function PsychologistAvatarUpload({
     onSuccess: async (newPhotoId) => {
       const queryKey = ['psychologist-profile']
 
-      queryClient.setQueryData<GetProfileResponse>(queryKey, (oldData) => {
+      queryClient.setQueryData<GetMeResponse>(queryKey, (oldData) => {
         if (!oldData) return oldData
         return { ...oldData, profileImageUrl: newPhotoId }
       })

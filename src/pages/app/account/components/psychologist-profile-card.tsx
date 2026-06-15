@@ -4,8 +4,9 @@ import { useState } from 'react'
 import { useQuery } from '@tanstack/react-query'
 import {
   getProfile,
-  type GetProfileResponse,
+  type GetMeResponse,
 } from '@/api/psychologists/get-profile'
+import type { UpdatePsychologistBody } from '@/api/psychologists/update-psychologist'
 import { PsychologistAvatarUpload } from './psychologist-avatar-upload'
 import { Skeleton } from '@/components/ui/skeleton'
 import {
@@ -24,7 +25,7 @@ import { Dialog, DialogTrigger } from '@/components/ui/dialog'
 import { EditPsychologistProfile } from './edit-psychologist-dialog'
 
 interface PsychologistProfileCardProps {
-  psychologist?: GetProfileResponse
+  psychologist?: GetMeResponse
 }
 
 export function PsychologistProfileCard({
@@ -32,7 +33,7 @@ export function PsychologistProfileCard({
 }: PsychologistProfileCardProps = {}) {
   const [isEditOpen, setIsEditOpen] = useState(false)
 
-  const { data: profile, isLoading } = useQuery<GetProfileResponse>({
+  const { data: profile, isLoading } = useQuery<GetMeResponse>({
     queryKey: ['psychologist-profile'],
     queryFn: getProfile,
     initialData,
@@ -70,15 +71,16 @@ export function PsychologistProfileCard({
     const isFemale = gender === 'FEMALE'
     const suffix = isFemale ? 'a' : 'o'
 
-    if (profile.role === 'PSYCHOLOGIST') {
+    if (profile.psychologistProfile) {
       return `Psicólog${suffix}`
     }
 
-    return ROLE_TRANSLATIONS[profile.role] || profile.role
+    return ROLE_TRANSLATIONS[profile.platformRole] || profile.platformRole
   })()
 
+  const expertise = profile.psychologistProfile?.expertise ?? ''
   const translatedExpertise =
-    EXPERTISE_TRANSLATIONS[profile.expertise] || profile.expertise
+    EXPERTISE_TRANSLATIONS[expertise] || expertise || 'Não informado'
 
   return (
     <div className="bg-card rounded-2xl border border-border shadow-sm overflow-hidden">
@@ -175,7 +177,7 @@ export function PsychologistProfileCard({
                 CRP
               </span>
               <span className="text-sm font-semibold truncate block">
-                {profile.crp || 'Não informado'}
+                {profile.psychologistProfile?.crp || 'Não informado'}
               </span>
             </div>
           </div>
@@ -202,7 +204,14 @@ export function PsychologistProfileCard({
               </button>
             </DialogTrigger>
             <EditPsychologistProfile
-              psychologist={profile}
+              psychologist={{
+                firstName: profile.firstName,
+                lastName: profile.lastName,
+                email: profile.email ?? '',
+                phoneNumber: profile.phoneNumber ?? '',
+                crp: profile.psychologistProfile?.crp ?? null,
+                expertise: profile.psychologistProfile?.expertise as UpdatePsychologistBody['expertise'],
+              }}
               onClose={() => setIsEditOpen(false)}
             />
           </Dialog>

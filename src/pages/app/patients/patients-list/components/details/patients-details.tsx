@@ -147,7 +147,7 @@ export function PatientsDetails({ patientId }: PatientsDetailsProps) {
             name: profile
               ? `${profile.firstName} ${profile.lastName}`
               : 'Psicólogo Responsável',
-            crp: profile?.crp || 'Não informado',
+            crp: profile?.psychologistProfile?.crp || 'Não informado',
           }}
           onBack={() => setSelectedSession(null)}
         />
