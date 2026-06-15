@@ -2,16 +2,6 @@ import { z } from 'zod'
 import { isValidCPF } from '@/utils/validate-cpf'
 
 const today = new Date()
-const minBirthDate = new Date(
-  today.getFullYear() - 120,
-  today.getMonth(),
-  today.getDate(),
-)
-const maxBirthDate = new Date(
-  today.getFullYear() - 18,
-  today.getMonth(),
-  today.getDate(),
-)
 
 // Only [!@#$%^&*] — backend rejects other special chars with 400
 const psychologistPasswordRegex =
@@ -37,7 +27,7 @@ const timeSchema = z
     'Formato de hora inválido — use HH:mm (ex: 09:00)',
   )
 
-export const createPsychologistSchema = z.object({
+export const createUserSchema = z.object({
   firstName: z.string().min(1, 'Obrigatório'),
   lastName: z.string().min(1, 'Obrigatório'),
   email: z.string().email('E-mail inválido'),
@@ -49,17 +39,30 @@ export const createPsychologistSchema = z.object({
       psychologistPasswordRegex,
       'Senha deve conter letra minúscula, maiúscula, número e especial (!@#$%^&*)',
     ),
-  phoneNumber: z.string().min(1, 'Obrigatório'),
-  dateOfBirth: z
-    .date({ message: 'Obrigatório' })
-    .refine((d) => d >= minBirthDate, { message: 'Data inválida.' })
-    .refine((d) => d <= maxBirthDate, { message: 'Necessário ter 18+ anos.' }),
-  cpf: z.string().min(11, 'CPF incompleto').refine(isValidCPF, 'CPF inválido'),
   gender: z.enum(['OTHER', 'FEMININE', 'MASCULINE'], {
     message: 'Obrigatório',
   }),
-  crp: z.string().optional(),
-  profileImageUrl: z.string().optional(),
+  dateOfBirth: z
+    .date()
+    .refine((d) => d <= today, { message: 'Data não pode ser no futuro.' })
+    .optional(),
+  cpf: z
+    .string()
+    .min(11, 'CPF incompleto')
+    .refine(isValidCPF, 'CPF inválido')
+    .optional(),
+})
+
+export const createPsychologistProfileSchema = z.object({
+  crp: z.string().min(1, 'CRP é obrigatório'),
+  expertise: expertiseSchema,
+  professionalBio: z.string().optional(),
+})
+
+export const createPracticeContextSchema = z.object({
+  contextType: z.enum(['INDIVIDUAL', 'CLINIC'], { message: 'Obrigatório' }),
+  consultationFee: z.number().int().positive().optional(),
+  nickname: z.string().optional(),
 })
 
 // gender, cpf, dateOfBirth are NOT updatable via this endpoint
@@ -111,7 +114,9 @@ export const newPsychologistsCountQuerySchema = z.object({
     .optional(),
 })
 
-export type CreatePsychologistData = z.infer<typeof createPsychologistSchema>
+export type CreateUserData = z.infer<typeof createUserSchema>
+export type CreatePsychologistProfileData = z.infer<typeof createPsychologistProfileSchema>
+export type CreatePracticeContextData = z.infer<typeof createPracticeContextSchema>
 export type UpdatePsychologistData = z.infer<typeof updatePsychologistSchema>
 export type FetchPsychologistsQuery = z.infer<
   typeof fetchPsychologistsQuerySchema

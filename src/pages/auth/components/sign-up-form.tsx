@@ -1,6 +1,7 @@
 import { useCallback, useState, useEffect, type ChangeEvent } from 'react'
 import { useForm, Controller } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
+import { z } from 'zod'
 import { toast } from 'sonner'
 import { useNavigate, Link } from 'react-router-dom'
 import { useMutation } from '@tanstack/react-query'
@@ -18,6 +19,7 @@ import axios from 'axios'
 import { cn } from '@/lib/utils'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
+import { Textarea } from '@/components/ui/textarea'
 import {
   Select,
   SelectContent,
@@ -31,9 +33,42 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from '@/components/ui/popover'
-import { registerPsychologist } from '@/api/psychologists/create-user'
-import { signUpFormSchema, type SignUpFormData } from '@/validators/auth'
+import { createUser } from '@/api/auth/create-user'
+import { signIn } from '@/api/auth/sign-in'
+import { createPsychologistProfile } from '@/api/auth/create-psychologist-profile'
+import { createPracticeContext } from '@/api/auth/create-practice-context'
+import {
+  createUserSchema,
+  createPsychologistProfileSchema,
+  createPracticeContextSchema,
+} from '@/validators/psychologists'
+import {
+  CONTEXT_TYPE_OPTIONS,
+  EXPERTISE_OPTIONS,
+} from '@/pages/auth/profiles/constants'
 import { GoogleAuthButton } from './google-auth-button'
+
+const signUpSchema = createUserSchema
+  .extend(createPsychologistProfileSchema.shape)
+  .extend(createPracticeContextSchema.shape)
+  .extend({
+    phoneNumber: z.string().optional(),
+    consultationFee: z
+      .string()
+      .optional()
+      .refine((v) => !v || (!Number.isNaN(Number(v)) && Number(v) > 0), {
+        message: 'Valor inválido',
+      }),
+  })
+
+type SignUpData = z.infer<typeof signUpSchema>
+
+function toISODate(date: Date): string {
+  const y = date.getFullYear()
+  const m = String(date.getMonth() + 1).padStart(2, '0')
+  const d = String(date.getDate()).padStart(2, '0')
+  return `${y}-${m}-${d}`
+}
 
 const today = new Date()
 const minDate = new Date(
@@ -178,17 +213,6 @@ function PasswordStrength({ value }: { value: string }) {
   )
 }
 
-const FIELD_VALIDATION_FALLBACK: Record<string, string> = {
-  firstName: 'Nome obrigatório.',
-  lastName: 'Sobrenome obrigatório.',
-  email: 'E-mail inválido.',
-  password: 'Senha inválida.',
-  phoneNumber: 'Telefone inválido.',
-  cpf: 'CPF inválido.',
-  dateOfBirth: 'Data de nascimento inválida.',
-  gender: 'Gênero obrigatório.',
-}
-
 export function SignUpForm({
   className,
   ...props
@@ -204,9 +228,9 @@ export function SignUpForm({
     control,
     setError,
     watch,
-    formState: { isSubmitting, errors },
-  } = useForm<SignUpFormData>({
-    resolver: zodResolver(signUpFormSchema),
+    formState: { errors },
+  } = useForm<SignUpData>({
+    resolver: zodResolver(signUpSchema),
     defaultValues: {
       firstName: '',
       lastName: '',
@@ -214,6 +238,11 @@ export function SignUpForm({
       password: '',
       phoneNumber: '',
       cpf: '',
+      crp: '',
+      professionalBio: '',
+      contextType: 'INDIVIDUAL',
+      consultationFee: '',
+      nickname: '',
     },
   })
 
@@ -226,8 +255,32 @@ export function SignUpForm({
     }
   }, [dobFieldValue])
 
-  const { mutateAsync: registerPsychologistFn } = useMutation({
-    mutationFn: registerPsychologist,
+  const { mutateAsync, isPending } = useMutation({
+    mutationFn: async (data: SignUpData) => {
+      await createUser({
+        firstName: data.firstName,
+        lastName: data.lastName,
+        email: data.email,
+        password: data.password,
+        gender: data.gender,
+        phoneNumber: data.phoneNumber?.replace(/\D/g, '') || undefined,
+        cpf: data.cpf?.replace(/\D/g, '') || undefined,
+        dateOfBirth: data.dateOfBirth ? toISODate(data.dateOfBirth) : undefined,
+      })
+      await signIn({ email: data.email, password: data.password })
+      await createPsychologistProfile({
+        crp: data.crp,
+        expertise: data.expertise,
+        professionalBio: data.professionalBio?.trim() || null,
+      })
+      await createPracticeContext({
+        contextType: data.contextType,
+        consultationFee: data.consultationFee
+          ? Math.round(Number(data.consultationFee) * 100)
+          : null,
+        nickname: data.nickname?.trim() || null,
+      })
+    },
   })
 
   const togglePasswordVisibility = useCallback(
@@ -236,60 +289,42 @@ export function SignUpForm({
   )
 
   const handleSignUp = useCallback(
-    async (data: SignUpFormData) => {
-    try {
-      await registerPsychologistFn({
-        ...data,
-        phoneNumber: data.phoneNumber.replace(/\D/g, ''),
-        cpf: data.cpf.replace(/\D/g, ''),
-      })
-      toast.success('Psicólogo cadastrado com sucesso!')
-      navigate('/sign-in')
-    } catch (err: unknown) {
-      if (!axios.isAxiosError(err)) {
-        toast.error('Erro ao realizar cadastro')
-        return
-      }
-
-      const body = err.response?.data as {
-        message?: string
-        errors?: { properties?: Record<string, { errors: string[] }> }
-      } | undefined
-
-      if (body?.message === 'EMAIL_ALREADY_EXISTS') {
-        setError('email', { type: 'server', message: 'E-mail já cadastrado.' })
-        return
-      }
-
-      if (body?.message === 'CPF_ALREADY_EXISTS') {
-        setError('cpf', { type: 'server', message: 'CPF já cadastrado.' })
-        return
-      }
-
-      if (body?.message === 'INVALID_BIRTH_DATE') {
-        setError('dateOfBirth', { type: 'server', message: 'Data de nascimento inválida.' })
-        return
-      }
-
-      if (body?.message === 'Validation failed') {
-        const properties = body.errors?.properties ?? {}
-        for (const [field, value] of Object.entries(properties)) {
-          const msgs = value?.errors ?? []
-          if (msgs.length > 0) {
-            setError(field as keyof SignUpFormData, {
-              type: 'server',
-              message: FIELD_VALIDATION_FALLBACK[field] ?? msgs[0],
-            })
-          }
+    async (data: SignUpData) => {
+      try {
+        await mutateAsync(data)
+        toast.success('Conta criada com sucesso!')
+        navigate('/profiles')
+      } catch (err: unknown) {
+        if (!axios.isAxiosError(err)) {
+          toast.error('Erro ao realizar cadastro')
+          return
         }
-        toast.error('Preencha corretamente os campos destacados.')
-        return
-      }
 
-      toast.error(err.message || 'Erro ao realizar cadastro')
-    }
-  },
-    [registerPsychologistFn, navigate, setError],
+        if (err.apiCode === 'EMAIL_ALREADY_EXISTS') {
+          setError('email', {
+            type: 'server',
+            message: 'E-mail já cadastrado.',
+          })
+          return
+        }
+
+        if (err.apiCode === 'CPF_ALREADY_EXISTS') {
+          setError('cpf', { type: 'server', message: 'CPF já cadastrado.' })
+          return
+        }
+
+        if (
+          err.apiCode === 'CRP_ALREADY_IN_USE' ||
+          err.apiCode === 'CRP_ALREADY_EXISTS'
+        ) {
+          setError('crp', { type: 'server', message: 'CRP já cadastrado.' })
+          return
+        }
+
+        toast.error(err.message || 'Erro ao realizar cadastro')
+      }
+    },
+    [mutateAsync, navigate, setError],
   )
 
   const onInvalid = () =>
@@ -526,13 +561,123 @@ export function SignUpForm({
         <PasswordStrength value={passwordValue} />
       </FieldWrap>
 
+      {/* ── Dados Profissionais ── */}
+      <SectionHeading>Dados Profissionais</SectionHeading>
+
+      <FieldRow>
+        <FieldWrap label="CRP" error={errors.crp?.message}>
+          <Input
+            {...register('crp')}
+            placeholder="06/123456"
+            autoComplete="off"
+            aria-invalid={!!errors.crp}
+            className={cn(errors.crp && 'border-red-500')}
+          />
+        </FieldWrap>
+        <FieldWrap label="Área de atuação" error={errors.expertise?.message}>
+          <Controller
+            name="expertise"
+            control={control}
+            render={({ field }) => (
+              <Select value={field.value} onValueChange={field.onChange}>
+                <SelectTrigger className="w-full cursor-pointer">
+                  <SelectValue placeholder="Selecione" />
+                </SelectTrigger>
+                <SelectContent>
+                  {EXPERTISE_OPTIONS.map((option) => (
+                    <SelectItem
+                      key={option.value}
+                      value={option.value}
+                      className="cursor-pointer"
+                    >
+                      {option.label}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            )}
+          />
+        </FieldWrap>
+      </FieldRow>
+
+      <FieldWrap
+        label="Bio profissional (opcional)"
+        error={errors.professionalBio?.message}
+      >
+        <Textarea
+          {...register('professionalBio')}
+          placeholder="Conte um pouco sobre sua atuação"
+          className={cn(errors.professionalBio && 'border-red-500')}
+        />
+      </FieldWrap>
+
+      {/* ── Contexto de Atendimento ── */}
+      <SectionHeading>Contexto de Atendimento</SectionHeading>
+
+      <FieldRow>
+        <FieldWrap
+          label="Tipo de atendimento"
+          error={errors.contextType?.message}
+        >
+          <Controller
+            name="contextType"
+            control={control}
+            render={({ field }) => (
+              <Select value={field.value} onValueChange={field.onChange}>
+                <SelectTrigger className="w-full cursor-pointer">
+                  <SelectValue placeholder="Selecione" />
+                </SelectTrigger>
+                <SelectContent>
+                  {CONTEXT_TYPE_OPTIONS.map((option) => (
+                    <SelectItem
+                      key={option.value}
+                      value={option.value}
+                      className="cursor-pointer"
+                    >
+                      {option.label}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            )}
+          />
+        </FieldWrap>
+        <FieldWrap
+          label="Valor da sessão (R$, opcional)"
+          error={errors.consultationFee?.message}
+        >
+          <Input
+            inputMode="decimal"
+            {...register('consultationFee')}
+            placeholder="150.00"
+            aria-invalid={!!errors.consultationFee}
+            className={cn(
+              'tabular-nums',
+              errors.consultationFee && 'border-red-500',
+            )}
+          />
+        </FieldWrap>
+      </FieldRow>
+
+      <FieldWrap
+        label="Apelido do contexto (opcional)"
+        error={errors.nickname?.message}
+      >
+        <Input
+          {...register('nickname')}
+          placeholder="Consultório centro"
+          autoComplete="off"
+          className={cn(errors.nickname && 'border-red-500')}
+        />
+      </FieldWrap>
+
       {/* Submit */}
       <Button
-        disabled={isSubmitting}
+        disabled={isPending}
         className="w-full mt-1 bg-blue-600 hover:bg-blue-700 active:scale-[0.98] transition-all duration-200 font-medium text-white cursor-pointer"
         type="submit"
       >
-        {isSubmitting ? (
+        {isPending ? (
           <>
             <Loader2 className="mr-2 h-4 w-4 animate-spin" /> Criando conta…
           </>

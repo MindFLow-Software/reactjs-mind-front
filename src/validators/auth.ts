@@ -7,11 +7,6 @@ const minDate = new Date(
   today.getMonth(),
   today.getDate(),
 )
-const maxDateForPro = new Date(
-  today.getFullYear() - 18,
-  today.getMonth(),
-  today.getDate(),
-)
 const passwordRegex =
   /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*])[A-Za-z\d!@#$%^&*]{8,30}$/
 
@@ -33,7 +28,7 @@ export const signUpFormSchema = z.object({
   dateOfBirth: z
     .date({ message: 'Obrigatório' })
     .refine((d) => d >= minDate, { message: 'Data inválida.' })
-    .refine((d) => d <= maxDateForPro, { message: 'Necessário ter 18+ anos.' }),
+    .refine((d) => d <= today, { message: 'Data não pode ser no futuro.' }),
   cpf: z.string().min(11, 'CPF incompleto').refine(isValidCPF, 'CPF inválido'),
   gender: z.enum(['MASCULINE', 'FEMININE', 'OTHER'], {
     message: 'Obrigatório',
@@ -59,30 +54,6 @@ export const patientSignUpSchema = z.object({
   }),
 })
 
-export const completeRegistrationSchema = z.object({
-  crp: z.string().min(4, 'CRP é obrigatório'),
-  expertise: z.enum(
-    [
-      'CLINICAL',
-      'SOCIAL',
-      'INFANT',
-      'JURIDICAL',
-      'EDUCATIONAL',
-      'ORGANIZATIONAL',
-      'PSYCHOTHERAPIST',
-      'NEUROPSYCHOLOGY',
-      'OTHER',
-    ],
-    { error: 'Selecione uma especialidade' },
-  ),
-  gender: z.enum(['MASCULINE', 'FEMININE', 'OTHER'], {
-    error: 'Selecione um gênero',
-  }),
-})
-
 export type SignInSchema = z.infer<typeof signInSchema>
 export type SignUpFormData = z.infer<typeof signUpFormSchema>
 export type PatientSignUpSchema = z.infer<typeof patientSignUpSchema>
-export type CompleteRegistrationSchema = z.infer<
-  typeof completeRegistrationSchema
->

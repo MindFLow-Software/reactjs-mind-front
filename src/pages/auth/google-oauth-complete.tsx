@@ -7,10 +7,9 @@ import { AxiosError } from 'axios'
 
 import { completeGoogleRegistration } from '@/api/auth/complete-google-registration'
 import { getProfile } from '@/api/psychologists/get-profile'
-import type { CompleteRegistrationSchema } from '@/validators/auth'
 import type { Expertise } from '@/types/expertise'
 import type { Gender } from '@/types/enum-gender'
-import { CompleteRegistrationForm } from './components/complete-registration-form'
+import { CompleteRegistrationForm, type CompleteRegistrationSchema } from './components/complete-registration-form'
 
 export function GoogleOAuthComplete() {
   const navigate = useNavigate()
