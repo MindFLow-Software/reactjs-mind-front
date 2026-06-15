@@ -23,7 +23,7 @@ export const createUserSchema = z.object({
   }),
   dateOfBirth: z
     .date()
-    .refine((date) => Time.isFuture(date), {
+    .refine((date) => !Time.isFuture(new Date(date)), {
       message: 'Data não pode ser no futuro.',
     })
     .optional(),

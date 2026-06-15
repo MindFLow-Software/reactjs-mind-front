@@ -1,5 +1,13 @@
 import { ptBR } from 'date-fns/locale'
-import { differenceInYears, format, isFuture, isValid, startOfDay } from 'date-fns'
+import {
+  differenceInYears,
+  format,
+  isAfter,
+  isFuture,
+  isValid,
+  startOfDay,
+} from 'date-fns'
+import { Normalizer } from './normalizer'
 
 export class Time {
   static now() {
@@ -39,7 +47,53 @@ export class Time {
   }
 
   static isFuture(date: Date | null | undefined) {
+    console.log('date: ', date)
     if (!date) return false
     return isFuture(date)
+  }
+
+  static textToDate(value: string, minDate: Date) {
+    const digits = Normalizer.digits(value).slice(0, 8)
+    let inputValue = digits
+
+    if (digits.length > 2) {
+      inputValue = `${digits.slice(0, 2)}/${digits.slice(2)}`
+    }
+
+    if (digits.length > 4) {
+      inputValue = `${digits.slice(0, 2)}/${digits.slice(2, 4)}/${digits.slice(4)}`
+    }
+
+    if (inputValue.length !== 10) {
+      return { inputValue, date: null }
+    }
+
+    const [day, month, year] = inputValue.split('/').map(Number)
+
+    const date = new Date(year, month - 1, day)
+
+    const isValidDate =
+      date.getFullYear() === year &&
+      date.getMonth() === month - 1 &&
+      date.getDate() === day
+
+    const isAfterMinDate = isAfter(date, minDate)
+
+    if (!isValidDate || !isAfterMinDate) {
+      return { inputValue: '', date: null }
+    }
+
+    return { inputValue, date }
+  }
+
+  static dateToText(date: Date | undefined, minDate: Date) {
+    if (!date) return ''
+    if (!isValid(date)) return ''
+
+    const year = date.getFullYear()
+    if (year <= minDate.getFullYear()) return ''
+    if (year <= minDate.getFullYear()) return ''
+
+    return format(date, 'dd/MM/yyyy')
   }
 }

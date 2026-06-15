@@ -1,4 +1,4 @@
-import { useCallback, useState, type ChangeEvent } from 'react'
+import { useCallback, useState } from 'react'
 
 import {
   Eye,
@@ -121,9 +121,8 @@ function SectionHeading({ children }: { children: React.ReactNode }) {
 export function SignUpForm() {
   const navigate = useNavigate()
 
-  const [showPassword, setShowPassword] = useState(false)
-  const [calendarOpen, setCalendarOpen] = useState(false)
   const [dobInputValue, setDobInputValue] = useState('')
+  const [showPassword, setShowPassword] = useState(false)
 
   const {
     watch,
@@ -310,72 +309,59 @@ export function SignUpForm() {
           <Controller
             name="dateOfBirth"
             control={control}
-            render={({ field }) => {
-              const handleInputChange = (e: ChangeEvent<HTMLInputElement>) => {
-                let val = e.target.value.replace(/\D/g, '')
-                if (val.length > 2) val = val.slice(0, 2) + '/' + val.slice(2)
-                if (val.length > 5)
-                  val = val.slice(0, 5) + '/' + val.slice(5, 9)
-                setDobInputValue(val)
-                if (val.length === 10) {
-                  const [day, month, year] = val.split('/').map(Number)
-                  const date = new Date(year, month - 1, day)
-                  if (
-                    !isNaN(date.getTime()) &&
-                    date.getFullYear() === year &&
-                    year >= minDate.getFullYear()
-                  ) {
-                    field.onChange(date)
-                  }
-                }
-              }
-              return (
-                <Popover open={calendarOpen} onOpenChange={setCalendarOpen}>
-                  <div className="relative">
-                    <Input
-                      placeholder="DD/MM/AAAA"
-                      value={dobInputValue}
-                      onChange={handleInputChange}
-                      maxLength={10}
-                      autoComplete="bday"
-                      aria-invalid={!!errors.dateOfBirth}
-                      className={cn(
-                        'pr-9 tabular-nums',
-                        errors.dateOfBirth && 'border-red-500',
-                      )}
-                    />
-                    <PopoverTrigger asChild>
-                      <button
-                        type="button"
-                        className="
+            render={({ field }) => (
+              <Popover>
+                <div className="relative">
+                  <Input
+                    placeholder="DD/MM/AAAA"
+                    value={dobInputValue}
+                    onChange={(e) => {
+                      const { date, inputValue } = Time.textToDate(
+                        e.target.value,
+                        minDate,
+                      )
+                      setDobInputValue(inputValue)
+                      field.onChange(date)
+                    }}
+                    maxLength={10}
+                    autoComplete="bday"
+                    aria-invalid={!!errors.dateOfBirth}
+                    className={cn(
+                      'pr-9 tabular-nums',
+                      errors.dateOfBirth && 'border-red-500',
+                    )}
+                  />
+                  <PopoverTrigger asChild>
+                    <button
+                      type="button"
+                      className="
                           absolute right-0 top-0 h-full px-2.5
                           text-muted-foreground hover:text-blue-600 cursor-pointer flex
                           items-center outline-none rounded-r-md transition-colors
                         "
-                      >
-                        <CalendarIcon className="size-3.5" />
-                      </button>
-                    </PopoverTrigger>
-                  </div>
-                  <PopoverContent
-                    className="w-auto overflow-hidden p-0"
-                    align="start"
-                    sideOffset={6}
-                  >
-                    <Calendar
-                      mode="single"
-                      selected={field.value}
-                      captionLayout="dropdown"
-                      startMonth={minDate}
-                      onSelect={(date) => {
-                        field.onChange(date)
-                        setCalendarOpen(false)
-                      }}
-                    />
-                  </PopoverContent>
-                </Popover>
-              )
-            }}
+                    >
+                      <CalendarIcon className="size-3.5" />
+                    </button>
+                  </PopoverTrigger>
+                </div>
+                <PopoverContent
+                  className="w-auto overflow-hidden p-0"
+                  align="start"
+                  sideOffset={6}
+                >
+                  <Calendar
+                    mode="single"
+                    selected={field.value}
+                    captionLayout="dropdown"
+                    startMonth={minDate}
+                    onSelect={(date) => {
+                      field.onChange(date)
+                      setDobInputValue(Time.dateToText(date, minDate))
+                    }}
+                  />
+                </PopoverContent>
+              </Popover>
+            )}
           />
         </FieldWrap>
 
