@@ -43,11 +43,11 @@ export async function uploadAttachment(
 
 export async function uploadAvatar(
   file: File,
-  patientProfileId: string,
+  patientProfileId?: string,
 ): Promise<UploadAttachmentResponse> {
   const formData = new FormData()
   formData.append('file', file)
-  formData.append('patientProfileId', patientProfileId)
+  if (patientProfileId) formData.append('patientProfileId', patientProfileId)
   formData.append('type', 'AVATAR')
 
   const { data } = await api.post<UploadAttachmentResponse>(
