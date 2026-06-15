@@ -13,15 +13,15 @@ import { Dashboard } from './pages/app/dashboard/dashboard'
 import { NotFound } from './pages/404'
 import { SignIn } from './pages/auth/sign-in'
 import { SignUp } from './pages/auth/sign-up'
-import { CompleteRegistration } from './pages/auth/complete-registration'
 import { GoogleOAuthSuccess } from './pages/auth/google-oauth-success'
 import { GoogleOAuthComplete } from './pages/auth/google-oauth-complete'
+import { ProfilesPage } from './pages/auth/profiles/profiles-page'
+import { PatientDashboard } from './pages/app/patient-dashboard/patient-dashboard'
 import { AppointmentsRoom } from './pages/app/video-room/appoinmets-room'
 import { AppointmentsList } from './pages/app/appointment/appointment-list/appointment-list'
 import { MockPsychologistProfilePage } from './pages/app/account/account'
 import { LandingPage } from './pages/landing-page/landing-page'
 import { DashboardFinance } from './pages/app/finance/dashboard-finance'
-import { AdminApprovalsPage } from './pages/app/admin/approvals/approvals'
 import { AvailabilityPage } from './pages/app/appointment/availability-page/availability-page'
 import { SuggestionPage } from './pages/app/suggestion/suggestion-page'
 import { AdminDashboard } from './pages/app/admin/dashboard/admin-dashboard'
@@ -30,6 +30,7 @@ import { SuggestionsManagement } from './pages/app/admin/suggestions/suggestions
 import { PatientDocuments } from './pages/app/patients/patients-docs/patients-docs'
 import PatientDetails from './pages/app/patients/patients-hub/patients-details'
 import PatientsRecords from './pages/app/patients/patients-records/patients-records'
+import { useActivePracticeContextStore } from './store/use-active-practice-context-store'
 
 const authLoader = async () => {
   const isAuthenticated = localStorage.getItem('isAuthenticated') === 'true'
@@ -55,6 +56,21 @@ const adminLoader = async () => {
   } catch {
     return redirect('/sign-in')
   }
+}
+
+const practiceContextGuard = () => {
+  if (useActivePracticeContextStore.getState().activePracticeContextId === null) {
+    return redirect('/profiles')
+  }
+  return null
+}
+
+// Patient mode clears the practice context; a non-null context means the user is in psychologist mode
+const patientDashboardGuard = () => {
+  if (useActivePracticeContextStore.getState().activePracticeContextId !== null) {
+    return redirect('/profiles')
+  }
+  return null
 }
 
 interface ProtectedRouteProps {
@@ -97,10 +113,27 @@ export const router = createBrowserRouter([
       { path: '/auth/google/success', element: <GoogleOAuthSuccess /> },
       { path: '/auth/google/complete', element: <GoogleOAuthComplete /> },
       { path: '/google-oauth-success', element: <GoogleOAuthSuccess /> },
-      { path: '/google-oauth-complete', element: <GoogleOAuthComplete /> },
+      { path: '/google-oauth-complete', loader: () => redirect('/sign-in') },
     ],
   },
-  { path: '/complete-registration', element: <CompleteRegistration /> },
+  { path: '/complete-registration', loader: () => redirect('/sign-in') },
+  {
+    path: '/profiles',
+    element: (
+      <ProtectedRoute>
+        <ProfilesPage />
+      </ProtectedRoute>
+    ),
+  },
+  {
+    path: '/patient-dashboard',
+    loader: patientDashboardGuard,
+    element: (
+      <ProtectedRoute>
+        <PatientDashboard />
+      </ProtectedRoute>
+    ),
+  },
   {
     element: (
       <ProtectedRoute>
@@ -109,7 +142,7 @@ export const router = createBrowserRouter([
     ),
     loader: authLoader,
     children: [
-      { path: '/dashboard', element: <Dashboard /> },
+      { path: '/dashboard', loader: practiceContextGuard, element: <Dashboard /> },
       { path: '/dashboard-finance', element: <DashboardFinance /> },
       { path: '/patients-list', element: <PatientsList /> },
       { path: '/patients-records', element: <PatientsRecords /> },
@@ -119,15 +152,7 @@ export const router = createBrowserRouter([
       { path: '/appointment', element: <AppointmentsList /> },
       { path: '/availability', element: <AvailabilityPage /> },
       { path: '/account', element: <MockPsychologistProfilePage /> },
-      {
-        path: '/approvals',
-        loader: adminLoader,
-        element: (
-          <ProtectedRoute>
-            <AdminApprovalsPage />
-          </ProtectedRoute>
-        ),
-      },
+      { path: '/approvals', loader: () => redirect('/admin-dashboard') },
       {
         path: '/admin-dashboard',
         loader: adminLoader,
