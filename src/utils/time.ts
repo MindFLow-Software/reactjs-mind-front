@@ -11,7 +11,7 @@ export class Time {
     return format(date, 'dd-MM-yyyy', { locale: ptBR })
   }
 
-  static toAmericanFormat(date: Date) {
+  static toAmericanFormat(date: Date | null | undefined) {
     if (!date || !isValid(date)) return
     return format(new Date(), 'yyyy-MM-dd')
   }

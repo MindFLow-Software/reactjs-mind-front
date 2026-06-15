@@ -4,7 +4,7 @@ import { isValidCPF } from '@/utils/validate-cpf'
 const today = new Date()
 
 // Only [!@#$%^&*] — backend rejects other special chars with 400
-const psychologistPasswordRegex =
+const passwordRegex =
   /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*])[A-Za-z\d!@#$%^&*]{8,30}$/
 
 const expertiseSchema = z.enum([
@@ -30,13 +30,13 @@ const timeSchema = z
 export const createUserSchema = z.object({
   firstName: z.string().min(1, 'Obrigatório'),
   lastName: z.string().min(1, 'Obrigatório'),
-  email: z.string().email('E-mail inválido'),
+  email: z.email('E-mail inválido'),
   password: z
     .string()
     .min(8, 'Mínimo 8 caracteres')
     .max(30, 'Máximo 30 caracteres')
     .regex(
-      psychologistPasswordRegex,
+      passwordRegex,
       'Senha deve conter letra minúscula, maiúscula, número e especial (!@#$%^&*)',
     ),
   gender: z.enum(['OTHER', 'FEMININE', 'MASCULINE'], {
@@ -51,6 +51,7 @@ export const createUserSchema = z.object({
     .min(11, 'CPF incompleto')
     .refine(isValidCPF, 'CPF inválido')
     .optional(),
+  phoneNumber: z.string().optional(),
 })
 
 export const createPsychologistProfileSchema = z.object({

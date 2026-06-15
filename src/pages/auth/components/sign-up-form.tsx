@@ -1,95 +1,66 @@
-import { useCallback, useState, useEffect, type ChangeEvent } from 'react'
-import { useForm, Controller } from 'react-hook-form'
-import { zodResolver } from '@hookform/resolvers/zod'
-import { z } from 'zod'
-import { toast } from 'sonner'
-import { useNavigate, Link } from 'react-router-dom'
-import { useMutation } from '@tanstack/react-query'
+import { useCallback, useState, type ChangeEvent } from 'react'
+
 import {
   Eye,
-  EyeOff,
-  CalendarIcon,
-  Loader2,
   Mars,
   Users,
   Venus,
+  EyeOff,
+  Loader2,
+  CalendarIcon,
 } from 'lucide-react'
-import { IMaskMixin } from 'react-imask'
+
+import { useMutation } from '@tanstack/react-query'
+import { useNavigate, Link } from 'react-router-dom'
+import { useForm, Controller } from 'react-hook-form'
+
+import { z } from 'zod'
 import axios from 'axios'
 import { cn } from '@/lib/utils'
-import { Button } from '@/components/ui/button'
-import { Input } from '@/components/ui/input'
-import { Textarea } from '@/components/ui/textarea'
+import { toast } from 'sonner'
+import { zodResolver } from '@hookform/resolvers/zod'
+
 import {
   Select,
-  SelectContent,
   SelectItem,
-  SelectTrigger,
   SelectValue,
+  SelectTrigger,
+  SelectContent,
 } from '@/components/ui/select'
-import { Calendar } from '@/components/ui/calendar'
+
 import {
   Popover,
-  PopoverContent,
   PopoverTrigger,
+  PopoverContent,
 } from '@/components/ui/popover'
-import { createUser } from '@/api/auth/create-user'
-import { signIn } from '@/api/auth/sign-in'
-import { createPsychologistProfile } from '@/api/auth/create-psychologist-profile'
-import { createPracticeContext } from '@/api/auth/create-practice-context'
+
 import {
-  createUserSchema,
-  createPsychologistProfileSchema,
-  createPracticeContextSchema,
-} from '@/validators/psychologists'
-import {
-  CONTEXT_TYPE_OPTIONS,
-  EXPERTISE_OPTIONS,
-} from '@/pages/auth/profiles/constants'
+  Field,
+  FieldError,
+  FieldGroup,
+  FieldLabel,
+} from '@/components/ui/field'
+
+import { Input } from '@/components/ui/input'
+import { Button } from '@/components/ui/button'
+import { Calendar } from '@/components/ui/calendar'
+import { MaskedInput } from '@/components/maked-input'
 import { GoogleAuthButton } from './google-auth-button'
 
-const signUpSchema = createUserSchema
-  .extend(createPsychologistProfileSchema.shape)
-  .extend(createPracticeContextSchema.shape)
-  .extend({
-    phoneNumber: z.string().optional(),
-    consultationFee: z
-      .string()
-      .optional()
-      .refine((v) => !v || (!Number.isNaN(Number(v)) && Number(v) > 0), {
-        message: 'Valor inválido',
-      }),
-  })
+import { Time } from '@/utils/time'
+import { signIn } from '@/api/auth/sign-in'
+import { Normalizer } from '@/utils/normalizer'
+import { createUser } from '@/api/auth/create-user'
+import { createUserSchema } from '@/validators/psychologists'
+import { PASSWORD_STRENGTH_LEVELS } from '../constants'
 
-type SignUpData = z.infer<typeof signUpSchema>
-
-function toISODate(date: Date): string {
-  const y = date.getFullYear()
-  const m = String(date.getMonth() + 1).padStart(2, '0')
-  const d = String(date.getDate()).padStart(2, '0')
-  return `${y}-${m}-${d}`
-}
+type SignUpData = z.infer<typeof createUserSchema>
 
 const today = new Date()
 const minDate = new Date(
   today.getFullYear() - 120,
   today.getMonth(),
   today.getDate(),
-)
-const maxDateForPro = new Date(
-  today.getFullYear() - 18,
-  today.getMonth(),
-  today.getDate(),
-)
-
-interface MaskedInputBaseProps extends React.ComponentProps<'input'> {
-  inputRef: React.Ref<HTMLInputElement>
-}
-
-const MaskedInput = IMaskMixin(
-  ({ inputRef, ...props }: MaskedInputBaseProps) => (
-    <Input ref={inputRef} {...props} />
-  ),
 )
 
 function FieldRow({
@@ -100,7 +71,9 @@ function FieldRow({
   className?: string
 }) {
   return (
-    <div className={cn('grid grid-cols-2 gap-3', className)}>{children}</div>
+    <FieldGroup className={cn('grid grid-cols-2 gap-3', className)}>
+      {children}
+    </FieldGroup>
   )
 }
 
@@ -116,18 +89,20 @@ function FieldWrap({
   className?: string
 }) {
   return (
-    <div className={cn('flex flex-col gap-1', className)}>
-      <label
+    <Field className={cn('flex flex-col gap-1', className)}>
+      <FieldLabel
         className={cn(
           'text-xs font-medium text-foreground/70',
           error && 'text-red-500',
         )}
       >
         {label}
-      </label>
+      </FieldLabel>
       {children}
-      {error && <p className="text-[10px] text-red-500 font-medium">{error}</p>}
-    </div>
+      {error && (
+        <FieldError className="text-[10px] font-medium">{error}</FieldError>
+      )}
+    </Field>
   )
 }
 
@@ -144,56 +119,37 @@ function SectionHeading({ children }: { children: React.ReactNode }) {
 }
 
 function PasswordStrength({ value }: { value: string }) {
-  const checks = [
-    value.length >= 8 && value.length <= 30,
-    /[A-Z]/.test(value),
-    /[a-z]/.test(value),
-    /\d/.test(value),
-    /[!@#$%^&*]/.test(value),
-  ]
-  const score = checks.filter(Boolean).length
+  const getPasswordStrength = (value: string) => {
+    const checks = [
+      value.length >= 8 && value.length <= 30,
+      /[A-Z]/.test(value),
+      /[a-z]/.test(value),
+      /\d/.test(value),
+      /[!@#$%^&*]/.test(value),
+    ]
 
-  const barColor =
-    score <= 1
-      ? 'bg-red-500'
-      : score <= 2
-        ? 'bg-orange-400'
-        : score <= 3
-          ? 'bg-yellow-500'
-          : score <= 4
-            ? 'bg-blue-500'
-            : 'bg-green-500'
+    const score = checks.filter(Boolean).length
 
-  const label =
-    score === 0
-      ? ''
-      : score <= 1
-        ? 'Fraca'
-        : score <= 2
-          ? 'Razoável'
-          : score <= 3
-            ? 'Boa'
-            : score <= 4
-              ? 'Forte'
-              : 'Muito forte'
+    const strength = PASSWORD_STRENGTH_LEVELS.find(
+      (level) => score <= level.maxScore,
+    )
 
-  const labelColor =
-    score <= 1
-      ? 'text-red-500'
-      : score <= 2
-        ? 'text-orange-500'
-        : score <= 3
-          ? 'text-yellow-600'
-          : score <= 4
-            ? 'text-blue-600'
-            : 'text-green-600'
+    return {
+      score,
+      barColor: strength?.barColor ?? 'bg-muted',
+      labelColor: strength?.labelColor ?? 'text-muted-foreground',
+      label: score === 0 ? '' : (strength?.label ?? ''),
+    }
+  }
+
+  const { score, barColor, labelColor, label } = getPasswordStrength(value)
 
   if (!value) return null
 
   return (
     <div className="mt-1 space-y-1">
       <div className="flex gap-0.5">
-        {[1, 2, 3, 4, 5].map((i) => (
+        {Array.from({ length: PASSWORD_STRENGTH_LEVELS.length }).map((_, i) => (
           <div
             key={i}
             className={cn(
@@ -215,24 +171,21 @@ function PasswordStrength({ value }: { value: string }) {
   )
 }
 
-export function SignUpForm({
-  className,
-  ...props
-}: React.ComponentProps<'form'>) {
+export function SignUpForm() {
   const navigate = useNavigate()
+
   const [showPassword, setShowPassword] = useState(false)
   const [calendarOpen, setCalendarOpen] = useState(false)
   const [dobInputValue, setDobInputValue] = useState('')
 
   const {
+    watch,
+    control,
     register,
     handleSubmit,
-    control,
-    setError,
-    watch,
     formState: { errors },
   } = useForm<SignUpData>({
-    resolver: zodResolver(signUpSchema),
+    resolver: zodResolver(createUserSchema),
     defaultValues: {
       firstName: '',
       lastName: '',
@@ -240,22 +193,10 @@ export function SignUpForm({
       password: '',
       phoneNumber: '',
       cpf: '',
-      crp: '',
-      professionalBio: '',
-      contextType: 'INDIVIDUAL',
-      consultationFee: '',
-      nickname: '',
     },
   })
 
-  const passwordValue = watch('password', '')
-  const dobFieldValue = watch('dateOfBirth')
-
-  useEffect(() => {
-    if (dobFieldValue instanceof Date && !isNaN(dobFieldValue.getTime())) {
-      setDobInputValue(dobFieldValue.toLocaleDateString('pt-BR'))
-    }
-  }, [dobFieldValue])
+  const passwordValue = watch('password')
 
   const { mutateAsync, isPending } = useMutation({
     mutationFn: async (data: SignUpData) => {
@@ -265,23 +206,51 @@ export function SignUpForm({
         email: data.email,
         password: data.password,
         gender: data.gender,
-        phoneNumber: data.phoneNumber?.replace(/\D/g, '') || undefined,
-        cpf: data.cpf?.replace(/\D/g, '') || undefined,
-        dateOfBirth: data.dateOfBirth ? toISODate(data.dateOfBirth) : undefined,
+        phoneNumber: Normalizer.digits(data.phoneNumber),
+        cpf: Normalizer.digits(data.cpf),
+        dateOfBirth: Time.toAmericanFormat(data.dateOfBirth),
       })
       await signIn({ email: data.email, password: data.password })
-      await createPsychologistProfile({
-        crp: data.crp,
-        expertise: data.expertise,
-        professionalBio: data.professionalBio?.trim() || null,
-      })
-      await createPracticeContext({
-        contextType: data.contextType,
-        consultationFee: data.consultationFee
-          ? Math.round(Number(data.consultationFee) * 100)
-          : null,
-        nickname: data.nickname?.trim() || null,
-      })
+    },
+    onSuccess: () => {
+      navigate('/profiles')
+    },
+    onError: (error) => {
+      let errorMessage = 'Erro ao realizar cadastro.'
+
+      if (axios.isAxiosError(error)) {
+        errorMessage = error.response?.data?.message
+      } else {
+        errorMessage = (error as Error)?.message
+      }
+
+      // if (!axios.isAxiosError(err)) {
+      //   toast.error('Erro ao realizar cadastro')
+      //   return
+      // }
+
+      // if (err.apiCode === 'EMAIL_ALREADY_EXISTS') {
+      //   setError('email', {
+      //     type: 'server',
+      //     message: 'E-mail já cadastrado.',
+      //   })
+      //   return
+      // }
+
+      // if (err.apiCode === 'CPF_ALREADY_EXISTS') {
+      //   setError('cpf', { type: 'server', message: 'CPF já cadastrado.' })
+      //   return
+      // }
+
+      // if (
+      //   err.apiCode === 'CRP_ALREADY_IN_USE' ||
+      //   err.apiCode === 'CRP_ALREADY_EXISTS'
+      // ) {
+      //   setError('crp', { type: 'server', message: 'CRP já cadastrado.' })
+      //   return
+      // }
+
+      toast.error(errorMessage)
     },
   })
 
@@ -292,41 +261,10 @@ export function SignUpForm({
 
   const handleSignUp = useCallback(
     async (data: SignUpData) => {
-      try {
-        await mutateAsync(data)
-        toast.success('Conta criada com sucesso!')
-        navigate('/profiles')
-      } catch (err: unknown) {
-        if (!axios.isAxiosError(err)) {
-          toast.error('Erro ao realizar cadastro')
-          return
-        }
-
-        if (err.apiCode === 'EMAIL_ALREADY_EXISTS') {
-          setError('email', {
-            type: 'server',
-            message: 'E-mail já cadastrado.',
-          })
-          return
-        }
-
-        if (err.apiCode === 'CPF_ALREADY_EXISTS') {
-          setError('cpf', { type: 'server', message: 'CPF já cadastrado.' })
-          return
-        }
-
-        if (
-          err.apiCode === 'CRP_ALREADY_IN_USE' ||
-          err.apiCode === 'CRP_ALREADY_EXISTS'
-        ) {
-          setError('crp', { type: 'server', message: 'CRP já cadastrado.' })
-          return
-        }
-
-        toast.error(err.message || 'Erro ao realizar cadastro')
-      }
+      await mutateAsync(data)
+      toast.success('Conta criada com sucesso!')
     },
-    [mutateAsync, navigate, setError],
+    [mutateAsync],
   )
 
   const onInvalid = () =>
@@ -335,8 +273,7 @@ export function SignUpForm({
   return (
     <form
       onSubmit={handleSubmit(handleSignUp, onInvalid)}
-      className={cn('flex flex-col gap-3', className)}
-      {...props}
+      className="flex flex-col gap-3"
     >
       {/* Google */}
       <GoogleAuthButton />
@@ -465,7 +402,11 @@ export function SignUpForm({
                     <PopoverTrigger asChild>
                       <button
                         type="button"
-                        className="absolute right-0 top-0 h-full px-2.5 text-muted-foreground hover:text-blue-600 cursor-pointer flex items-center outline-none rounded-r-md transition-colors"
+                        className="
+                          absolute right-0 top-0 h-full px-2.5
+                          text-muted-foreground hover:text-blue-600 cursor-pointer flex
+                          items-center outline-none rounded-r-md transition-colors
+                        "
                       >
                         <CalendarIcon className="size-3.5" />
                       </button>
@@ -480,8 +421,7 @@ export function SignUpForm({
                       mode="single"
                       selected={field.value}
                       captionLayout="dropdown"
-                      fromYear={minDate.getFullYear()}
-                      toYear={maxDateForPro.getFullYear()}
+                      startMonth={minDate}
                       onSelect={(date) => {
                         field.onChange(date)
                         setCalendarOpen(false)
@@ -506,17 +446,17 @@ export function SignUpForm({
                 <SelectContent>
                   <SelectItem value="FEMININE" className="cursor-pointer">
                     <div className="flex items-center gap-2">
-                      <Venus className="h-3.5 w-3.5 text-rose-500" /> Feminino
+                      <Venus className="size-3.5 text-rose-500" /> Feminino
                     </div>
                   </SelectItem>
                   <SelectItem value="MASCULINE" className="cursor-pointer">
                     <div className="flex items-center gap-2">
-                      <Mars className="h-3.5 w-3.5 text-blue-500" /> Masculino
+                      <Mars className="size-3.5 text-blue-500" /> Masculino
                     </div>
                   </SelectItem>
                   <SelectItem value="OTHER" className="cursor-pointer">
                     <div className="flex items-center gap-2">
-                      <Users className="h-3.5 w-3.5 text-violet-500" /> Outro
+                      <Users className="size-3.5 text-violet-500" /> Outro
                     </div>
                   </SelectItem>
                 </SelectContent>
@@ -554,7 +494,10 @@ export function SignUpForm({
           <button
             type="button"
             onClick={togglePasswordVisibility}
-            className="absolute right-2.5 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground cursor-pointer transition-colors outline-none rounded-sm"
+            className="
+              absolute right-2.5 top-1/2 -translate-y-1/2 text-muted-foreground
+              hover:text-foreground cursor-pointer transition-colors outline-none rounded-sm
+            "
             aria-label={showPassword ? 'Ocultar senha' : 'Mostrar senha'}
           >
             {showPassword ? <EyeOff size={15} /> : <Eye size={15} />}
@@ -564,9 +507,9 @@ export function SignUpForm({
       </FieldWrap>
 
       {/* ── Dados Profissionais ── */}
-      <SectionHeading>Dados Profissionais</SectionHeading>
+      {/* <SectionHeading>Dados Profissionais</SectionHeading> */}
 
-      <FieldRow>
+      {/* <FieldRow>
         <FieldWrap label="CRP" error={errors.crp?.message}>
           <Input
             {...register('crp')}
@@ -611,10 +554,10 @@ export function SignUpForm({
           placeholder="Conte um pouco sobre sua atuação"
           className={cn(errors.professionalBio && 'border-red-500')}
         />
-      </FieldWrap>
+      </FieldWrap> */}
 
       {/* ── Contexto de Atendimento ── */}
-      <SectionHeading>Contexto de Atendimento</SectionHeading>
+      {/* <SectionHeading>Contexto de Atendimento</SectionHeading>
 
       <FieldRow>
         <FieldWrap
@@ -659,9 +602,9 @@ export function SignUpForm({
             )}
           />
         </FieldWrap>
-      </FieldRow>
+      </FieldRow> */}
 
-      <FieldWrap
+      {/* <FieldWrap
         label="Apelido do contexto (opcional)"
         error={errors.nickname?.message}
       >
@@ -671,17 +614,20 @@ export function SignUpForm({
           autoComplete="off"
           className={cn(errors.nickname && 'border-red-500')}
         />
-      </FieldWrap>
+      </FieldWrap> */}
 
       {/* Submit */}
       <Button
-        disabled={isPending}
-        className="w-full mt-1 bg-blue-600 hover:bg-blue-700 active:scale-[0.98] transition-all duration-200 font-medium text-white cursor-pointer"
         type="submit"
+        disabled={isPending}
+        className="
+          w-full mt-1 bg-blue-600 hover:bg-blue-700 active:scale-[0.98]
+          transition-all duration-200 font-medium text-white cursor-pointer
+        "
       >
         {isPending ? (
           <>
-            <Loader2 className="mr-2 h-4 w-4 animate-spin" /> Criando conta…
+            <Loader2 className="mr-2 size-4 animate-spin" /> Criando conta…
           </>
         ) : (
           'Criar conta'
@@ -691,19 +637,19 @@ export function SignUpForm({
       {/* Footer */}
       <p className="text-center text-xs text-muted-foreground leading-relaxed">
         Ao continuar você aceita os{' '}
-        <a
-          href="#"
+        <Link
+          to="#"
           className="underline underline-offset-4 hover:text-foreground"
         >
           termos
-        </a>{' '}
+        </Link>{' '}
         e a{' '}
-        <a
-          href="#"
+        <Link
+          to="#"
           className="underline underline-offset-4 hover:text-foreground"
         >
           privacidade
-        </a>
+        </Link>
         .{' · '}
         <Link
           to="/sign-in"
