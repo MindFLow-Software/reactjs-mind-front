@@ -21,6 +21,7 @@ export function useImagePreview(
   const [file, setFile] = useState<File | null>(null)
   const [isLoading, setIsLoading] = useState(false)
   const createdUrls = useRef<string[]>([])
+  const loadGen = useRef(0)
 
   useEffect(() => {
     const urls = createdUrls.current
@@ -30,13 +31,16 @@ export function useImagePreview(
   }, [])
 
   const onFileSelected = useCallback((f: File) => {
+    loadGen.current++
     const url = URL.createObjectURL(f)
     createdUrls.current.push(url)
+    setIsLoading(false)
     setPreviewUrl(url)
     setFile(f)
   }, [])
 
   const clear = useCallback(() => {
+    loadGen.current++
     setPreviewUrl(null)
     setFile(null)
   }, [])
@@ -51,16 +55,18 @@ export function useImagePreview(
         setPreviewUrl(url)
         return
       }
+      const gen = ++loadGen.current
       try {
         setIsLoading(true)
         const blob = await fetchBlob(url)
+        if (gen !== loadGen.current) return
         const objectUrl = URL.createObjectURL(blob)
         createdUrls.current.push(objectUrl)
         setPreviewUrl(objectUrl)
       } catch {
-        setPreviewUrl(null)
+        if (gen === loadGen.current) setPreviewUrl(null)
       } finally {
-        setIsLoading(false)
+        if (gen === loadGen.current) setIsLoading(false)
       }
     },
     [fetchBlob],
