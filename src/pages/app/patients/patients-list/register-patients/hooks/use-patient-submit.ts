@@ -79,9 +79,15 @@ export function usePatientSubmit({
   const isSubmitting = isCreating || isUpdating || isUploading
 
   async function submit(data: PatientFormData) {
+    const { zipCode, street, neighborhood, city, state, ...rest } = data
     const shared = {
-      ...data,
-      dateOfBirth: data?.dateOfBirth ?? undefined,
+      ...rest,
+      dateOfBirth: data.dateOfBirth ?? undefined,
+      cep: zipCode,
+      logradouro: street,
+      bairro: neighborhood,
+      cidade: city,
+      uf: state,
     }
 
     try {
@@ -93,18 +99,18 @@ export function usePatientSubmit({
 
       const targetId = isEditMode ? patientId! : response.id
 
-      // The correct would be the uploads BEFORE the patient create/update
-      // and if some of them throws error, stops the flow
       if (avatarFile) {
         try {
           await uploadAvatar(avatarFile, targetId)
+          await Promise.all([
+            queryClient.invalidateQueries({ queryKey: ['patients'] }),
+            queryClient.invalidateQueries({ queryKey: ['patient', targetId] }),
+          ])
         } catch {
           console.warn('Avatar upload failed — patient saved without avatar')
         }
       }
 
-      // The correct would be the uploads BEFORE the patient create/update
-      // and if some of them throws error, stops the flow
       for (const file of files) await uploadAttachment(file, targetId)
 
       return response

@@ -69,9 +69,16 @@ export interface CreatePatientBody {
   gender?: Gender
   cep?: string
   logradouro?: string
+  number?: string
+  complement?: string
   bairro?: string
   cidade?: string
   uf?: string
+  modality?: string
+  frequency?: string
+  price?: string
+  source?: string
+  notes?: string
 }
 
 export type CreatePatientResponse = Ipatient
@@ -79,6 +86,7 @@ export type CreatePatientResponse = Ipatient
 export interface UpdatePatientBody {
   firstName?: string
   lastName?: string
+  email?: string
   phoneNumber?: string
   dateOfBirth?: string
   cpf?: string
@@ -87,9 +95,16 @@ export interface UpdatePatientBody {
   attachmentIds?: string[]
   cep?: string | null
   logradouro?: string | null
+  number?: string | null
+  complement?: string | null
   bairro?: string | null
   cidade?: string | null
   uf?: string | null
+  modality?: string
+  frequency?: string
+  price?: string
+  source?: string
+  notes?: string
 }
 
 // POST /invites/:hash/register — senha: mín. 8 chars, maiúscula, minúscula, número, especial
