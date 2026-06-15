@@ -40,10 +40,8 @@ import {
 import { Calendar } from '@/components/ui/calendar'
 import { Label } from '@/components/ui/label'
 
-import {
-  registerAppointment,
-  type RegisterAppointmentRequest,
-} from '@/api/appointments/create-appointment'
+import { registerAppointment } from '@/api/appointments/create-appointment'
+import type { RegisterAppointmentRequest } from '@/types/appointment'
 import { getPatients } from '@/api/patients/get-patients'
 
 const MAX_NOTE_LENGTH = 200
@@ -188,7 +186,7 @@ export function RegisterAppointment({
       finalDate.setHours(Number(h), Number(m), 0, 0)
 
       const payload: RegisterAppointmentRequest = {
-        patientId: selectedPatient,
+        patientProfileId: selectedPatient,
         diagnosis: diagnosis.trim(),
         notes: notes.trim() || undefined,
         scheduledAt: finalDate,

@@ -7,11 +7,10 @@ export const appointmentStatusSchema = z.enum([
   'CANCELED',
   'NOT_ATTEND',
   'RESCHEDULED',
-  'DONE',
 ])
 
 export const createAppointmentSchema = z.object({
-  patientId: z.string().uuid('ID do paciente inválido'),
+  patientProfileId: z.string().uuid('ID do paciente inválido'),
   diagnosis: z.string().min(1, 'Diagnóstico é obrigatório'),
   content: z.string().optional(),
   scheduledAt: z.string().min(1, 'Data é obrigatória'),
@@ -35,8 +34,9 @@ export const fetchAppointmentsByPsychologistQuerySchema = z.object({
 })
 
 export const getAvailableSlotsQuerySchema = z.object({
-  psychologistId: z.string().uuid('ID do psicólogo inválido'),
-  date: z.string().min(1, 'Data é obrigatória'),
+  psychologistPracticeContextId: z.string().uuid('ID do contexto inválido'),
+  startDate: z.string(),
+  endDate: z.string(),
 })
 
 // z.string().datetime() requires full ISO 8601 with timezone — e.g. "2026-06-01T14:00:00.000Z"

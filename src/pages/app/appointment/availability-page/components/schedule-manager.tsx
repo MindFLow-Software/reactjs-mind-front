@@ -1,8 +1,9 @@
 'use client'
 
 import { useState, useEffect } from 'react'
-import { api } from '@/lib/axios'
+import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { toast } from 'sonner'
+import { setAvailability } from '@/api/availability/set-availability'
 import { AvailabilityDayRow } from './availability-day-row'
 
 interface ScheduleManagerProps {
@@ -24,6 +25,19 @@ const DAYS_OF_WEEK = [
 ]
 
 export function ScheduleManager({ defaultData }: ScheduleManagerProps) {
+  const queryClient = useQueryClient()
+
+  const { mutate: saveAvailability, isPending } = useMutation({
+    mutationFn: setAvailability,
+    onSuccess: () => {
+      toast.success('Agenda salva com sucesso!')
+      queryClient.invalidateQueries({ queryKey: ['availability'] })
+    },
+    onError: () => {
+      toast.error('Erro ao salvar agenda')
+    },
+  })
+
   const [schedule, setSchedule] = useState<
     Record<number, { startTime: string; endTime: string }[]>
   >({
@@ -91,7 +105,7 @@ export function ScheduleManager({ defaultData }: ScheduleManagerProps) {
     })
   }
 
-  const handleSave = async () => {
+  const handleSave = () => {
     const allSlots = Object.entries(schedule).flatMap(([day, slots]) =>
       slots.map((s) => ({
         dayOfWeek: Number(day),
@@ -104,12 +118,7 @@ export function ScheduleManager({ defaultData }: ScheduleManagerProps) {
       return toast.error('Adicione pelo menos um horário')
     }
 
-    try {
-      await api.post('/availabilities', { slots: allSlots })
-      toast.success('Agenda salva com sucesso!')
-    } catch (err) {
-      toast.error('Erro ao salvar agenda')
-    }
+    saveAvailability(allSlots)
   }
 
   return (
@@ -125,9 +134,10 @@ export function ScheduleManager({ defaultData }: ScheduleManagerProps) {
         </div>
         <button
           onClick={handleSave}
-          className="w-full sm:w-auto bg-emerald-600 hover:bg-emerald-700 text-white px-6 py-2.5 rounded-xl font-bold text-xs uppercase tracking-widest shadow-lg shadow-emerald-900/20 transition-all active:scale-95 cursor-pointer"
+          disabled={isPending}
+          className="w-full sm:w-auto bg-emerald-600 hover:bg-emerald-700 text-white px-6 py-2.5 rounded-xl font-bold text-xs uppercase tracking-widest shadow-lg shadow-emerald-900/20 transition-all active:scale-95 cursor-pointer disabled:opacity-60 disabled:cursor-not-allowed disabled:active:scale-100"
         >
-          Salvar Agenda
+          {isPending ? 'Salvando...' : 'Salvar Agenda'}
         </button>
       </div>
 
