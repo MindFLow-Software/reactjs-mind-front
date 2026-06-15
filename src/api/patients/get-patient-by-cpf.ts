@@ -1,5 +1,5 @@
 import { api } from '@/lib/axios'
-import type { Expertise, PatientRole } from '@/types/expertise'
+import type { Expertise } from '@/types/expertise'
 import type { Gender } from '@/types/enum-gender'
 export interface Patient {
   id: string
@@ -10,7 +10,7 @@ export interface Patient {
   profileImageUrl?: string
   dateOfBirth: string
   cpf: string
-  role: PatientRole
+  role: string
   gender: Gender
   expertise: Expertise
   isActive?: boolean

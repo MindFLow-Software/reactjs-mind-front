@@ -11,5 +11,3 @@ export const Expertise = {
 } as const
 export type Expertise = (typeof Expertise)[keyof typeof Expertise]
 
-export type PsychologistRole = 'PSYCHOLOGIST' | 'PATIENT'
-export type PatientRole = 'PATIENT'

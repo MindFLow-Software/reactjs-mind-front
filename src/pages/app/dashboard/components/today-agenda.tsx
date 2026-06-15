@@ -16,10 +16,6 @@ const STATUS_CONFIG: Record<string, { label: string; className: string }> = {
     label: 'Concluída',
     className: 'bg-muted text-muted-foreground',
   },
-  [AppointmentStatus.DONE]: {
-    label: 'Finalizada',
-    className: 'bg-muted text-muted-foreground',
-  },
   [AppointmentStatus.SCHEDULED]: {
     label: 'Confirmada',
     className:

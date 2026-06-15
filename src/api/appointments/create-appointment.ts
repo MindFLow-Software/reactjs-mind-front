@@ -1,6 +1,5 @@
 import { api } from '@/lib/axios'
-
-export type AppointmentStatus = 'SCHEDULED' | 'DONE' | 'CANCELLED' | 'PENDING'
+import type { AppointmentStatus } from '@/types/appointment'
 
 export interface RegisterAppointmentRequest {
   patientId: string

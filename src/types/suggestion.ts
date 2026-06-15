@@ -22,7 +22,7 @@ export type SuggestionStatus =
 
 export interface SuggestionHTTP {
   id: string
-  psychologistId: string
+  psychologistProfileId: string
   psychologistName: string | null
   title: string
   description: string

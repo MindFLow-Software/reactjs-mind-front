@@ -1,6 +1,6 @@
 import { api } from '@/lib/axios'
 import type { Gender } from '@/types/enum-gender'
-import type { Expertise, PsychologistRole } from '@/types/expertise'
+import type { Expertise } from '@/types/expertise'
 
 export interface GetProfileResponse {
   id: string
@@ -10,7 +10,7 @@ export interface GetProfileResponse {
   phoneNumber: string
   cpf: string
   dateOfBirth: string
-  role: PsychologistRole
+  role: string
   gender: Gender
   expertise: Expertise
   isActive: boolean

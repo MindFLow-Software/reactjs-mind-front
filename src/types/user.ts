@@ -1,16 +1,16 @@
-export type UserType = 'PATIENT' | 'PSYCHOLOGIST' | 'ADMIN' | 'DEV' | 'CLINIC'
+export type PlatformRole = 'USER' | 'ADMIN' | 'SUPPORT'
 
 export interface Iuser {
   id: string
   firstName: string
   lastName: string
   email: string | null
+  cpf: string | null
   phoneNumber: string | null
   profileImageUrl: string | null
-  type: UserType
-  cpf: string | null
-  dateOfBirth: Date | null
-  addressId: string | null
-  createdAt: Date
-  updatedAt: Date
+  dateOfBirth: string | null
+  isActive: boolean
+  gender: string
+  platformRole: PlatformRole
+  createdAt: string
 }

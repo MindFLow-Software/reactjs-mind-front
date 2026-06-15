@@ -1,5 +1,6 @@
 import axios from 'axios'
 import type { ApiSuccessEnvelope, ApiErrorEnvelope } from '@/types/api'
+import { useActivePracticeContextStore } from '@/store/use-active-practice-context-store'
 
 export const api = axios.create({
   baseURL: import.meta.env.VITE_API_URL,
@@ -32,6 +33,16 @@ function isErrorEnvelope(body: unknown): body is ApiErrorEnvelope {
   )
 }
 
+api.interceptors.request.use((config) => {
+  const { activePracticeContextId } =
+    useActivePracticeContextStore.getState()
+  if (activePracticeContextId) {
+    config.headers['x-psychologist-practice-context-id'] =
+      activePracticeContextId
+  }
+  return config
+})
+
 api.interceptors.response.use(
   (response) => {
     if (response.status === 204 || response.data == null) return response
@@ -52,6 +63,7 @@ api.interceptors.response.use(
     if (error.response.status === 401) {
       localStorage.removeItem('isAuthenticated')
       localStorage.removeItem('user')
+      useActivePracticeContextStore.getState().clearActivePracticeContextId()
       const currentPath = window.location.pathname
       const shouldRedirect = !SKIP_REDIRECT_PATHS.some((p) =>
         currentPath.startsWith(p),

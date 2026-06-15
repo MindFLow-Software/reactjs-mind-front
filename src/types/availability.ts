@@ -1,8 +1,10 @@
 export interface AvailabilityHTTP {
   id: string
-  psychologistId: string
+  psychologistPracticeContextId: string
   dayOfWeek: number
   startTime: string
   endTime: string
   isActive: boolean
 }
+
+export type PsychologistAvailability = AvailabilityHTTP
