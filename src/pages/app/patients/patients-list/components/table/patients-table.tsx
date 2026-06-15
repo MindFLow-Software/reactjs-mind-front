@@ -13,6 +13,7 @@ import {
   TableHeader,
   TableRow,
 } from '@/components/ui/table'
+import { Card } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { Checkbox } from '@/components/ui/checkbox'
 import { PatientsTableRow } from './patients-table-row'
@@ -178,7 +179,7 @@ export function PatientsTable({
   const colSpan = 8
 
   return (
-    <div className="rounded-xl border bg-background shadow-sm overflow-hidden">
+    <Card className="overflow-hidden p-0">
       <Table>
         <TableHeader>
           <TableRow className="bg-muted/30 hover:bg-muted/30">
@@ -238,6 +239,6 @@ export function PatientsTable({
           />
         </TableBody>
       </Table>
-    </div>
+    </Card>
   )
 }

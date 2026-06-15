@@ -131,6 +131,7 @@ export function StepContactAddress({
                     onChange={(e) => {
                       field.onChange(handleCepChange(e.target.value))
                     }}
+                    onBlur={field.onBlur}
                     ref={field.ref}
                     placeholder="00000-000"
                     inputMode="numeric"
