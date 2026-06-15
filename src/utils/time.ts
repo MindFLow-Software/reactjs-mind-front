@@ -1,5 +1,5 @@
 import { ptBR } from 'date-fns/locale'
-import { differenceInYears, format, isValid, startOfDay } from 'date-fns'
+import { differenceInYears, format, isFuture, isValid, startOfDay } from 'date-fns'
 
 export class Time {
   static now() {
@@ -36,5 +36,10 @@ export class Time {
     })
 
     return dateFormatted
+  }
+
+  static isFuture(date: Date | null | undefined) {
+    if (!date) return false
+    return isFuture(date)
   }
 }

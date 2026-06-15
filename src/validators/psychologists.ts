@@ -1,11 +1,4 @@
 import { z } from 'zod'
-import { isValidCPF } from '@/utils/validate-cpf'
-
-const today = new Date()
-
-// Only [!@#$%^&*] — backend rejects other special chars with 400
-const passwordRegex =
-  /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*])[A-Za-z\d!@#$%^&*]{8,30}$/
 
 const expertiseSchema = z.enum([
   'OTHER',
@@ -26,33 +19,6 @@ const timeSchema = z
     /^([0-1]?[0-9]|2[0-3]):[0-5][0-9]$/,
     'Formato de hora inválido — use HH:mm (ex: 09:00)',
   )
-
-export const createUserSchema = z.object({
-  firstName: z.string().min(1, 'Obrigatório'),
-  lastName: z.string().min(1, 'Obrigatório'),
-  email: z.email('E-mail inválido'),
-  password: z
-    .string()
-    .min(8, 'Mínimo 8 caracteres')
-    .max(30, 'Máximo 30 caracteres')
-    .regex(
-      passwordRegex,
-      'Senha deve conter letra minúscula, maiúscula, número e especial (!@#$%^&*)',
-    ),
-  gender: z.enum(['OTHER', 'FEMININE', 'MASCULINE'], {
-    message: 'Obrigatório',
-  }),
-  dateOfBirth: z
-    .date()
-    .refine((d) => d <= today, { message: 'Data não pode ser no futuro.' })
-    .optional(),
-  cpf: z
-    .string()
-    .min(11, 'CPF incompleto')
-    .refine(isValidCPF, 'CPF inválido')
-    .optional(),
-  phoneNumber: z.string().optional(),
-})
 
 export const createPsychologistProfileSchema = z.object({
   crp: z.string().min(1, 'CRP é obrigatório'),
@@ -115,7 +81,6 @@ export const newPsychologistsCountQuerySchema = z.object({
     .optional(),
 })
 
-export type CreateUserData = z.infer<typeof createUserSchema>
 export type CreatePsychologistProfileData = z.infer<
   typeof createPsychologistProfileSchema
 >
