@@ -33,18 +33,7 @@ export const patientSchema = z.object({
     .or(z.literal(''))
     .refine((v) => !v || isValidCPF(v), { message: 'CPF inválido' }),
   gender: z.enum(['FEMININE', 'MASCULINE', 'OTHER']),
-  zipCode: z.string().optional().or(z.literal('')),
-  street: z.string().optional().or(z.literal('')),
-  number: z.string().optional().or(z.literal('')),
-  neighborhood: z.string().optional().or(z.literal('')),
-  complement: z.string().optional().or(z.literal('')),
-  city: z.string().optional().or(z.literal('')),
-  state: z.string().max(2).optional().or(z.literal('')),
-  modality: z.enum(['ONLINE', 'PRESENCIAL', 'HIBRIDO']).optional(),
-  frequency: z.string().optional(),
-  price: z.string().optional(),
-  source: z.string().optional(),
-  notes: z.string().optional(),
+  profileImageUrl: z.string().optional(),
 })
 
 export const updatePatientSchema = z.object({

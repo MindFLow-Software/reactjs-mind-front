@@ -247,7 +247,6 @@ export default function PatientDetails() {
                   patient={{
                     ...patientData,
                     isActive: isPatientActive,
-                    status: isPatientActive ? 'ACTIVE' : 'BLOCKED',
                   }}
                 />
               </div>

@@ -2,7 +2,7 @@ import type React from 'react'
 import { useForm, type Resolver } from 'react-hook-form'
 import { toast } from 'sonner'
 import { zodResolver } from '@hookform/resolvers/zod'
-import { useNavigate, Link } from 'react-router-dom'
+import { useNavigate, useParams, Link } from 'react-router-dom'
 import { useMutation } from '@tanstack/react-query'
 import {
   Loader2,
@@ -29,18 +29,33 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select'
-import { api } from '@/lib/axios'
+import { createUser } from '@/api/auth/create-user'
+import { signIn } from '@/api/auth/sign-in'
+import { createPatientProfile } from '@/api/auth/create-patient-profile'
+import { getInviteDetails } from '@/api/invites/get-invite-details'
+import { useActivePracticeContextStore } from '@/store/use-active-practice-context-store'
 import {
   patientSignUpSchema,
   type PatientSignUpSchema,
 } from '@/validators/auth'
 import { Gender } from '@/types/patient'
 
+function toISODate(date: Date): string {
+  const year = date.getFullYear()
+  const month = String(date.getMonth() + 1).padStart(2, '0')
+  const day = String(date.getDate()).padStart(2, '0')
+  return `${year}-${month}-${day}`
+}
+
 export function PatientSignUpForm({
   className,
   ...props
 }: React.ComponentProps<'form'>) {
   const navigate = useNavigate()
+  const { hash } = useParams<{ hash: string }>()
+  const clearActivePracticeContextId = useActivePracticeContextStore(
+    (state) => state.clearActivePracticeContextId,
+  )
   const [showPassword, setShowPassword] = useState(false)
 
   const {
@@ -54,7 +69,22 @@ export function PatientSignUpForm({
 
   const { mutateAsync: registerPatient } = useMutation({
     mutationFn: async (data: PatientSignUpSchema) => {
-      await api.post('/patients/public', data)
+      if (!hash) throw new Error('Convite inválido ou ausente.')
+
+      await createUser({
+        firstName: data.firstName,
+        lastName: data.lastName,
+        email: data.email,
+        password: data.password,
+        gender: data.gender,
+        phoneNumber: data.phoneNumber?.replace(/\D/g, '') || undefined,
+        cpf: data.cpf?.replace(/\D/g, '') || undefined,
+        dateOfBirth: data.dateOfBirth ? toISODate(data.dateOfBirth) : undefined,
+      })
+      await signIn({ email: data.email, password: data.password })
+
+      const { psychologistPracticeContextId } = await getInviteDetails(hash)
+      await createPatientProfile({ psychologistPracticeContextId })
     },
   })
 
@@ -62,15 +92,16 @@ export function PatientSignUpForm({
     async (data: PatientSignUpSchema) => {
       try {
         await registerPatient(data)
-        toast.success('Cadastro realizado! Agora você pode fazer login.')
-        navigate('/sign-in')
+        clearActivePracticeContextId()
+        toast.success('Cadastro realizado!')
+        navigate('/patient-dashboard')
       } catch (error: unknown) {
         const message =
           error instanceof AxiosError ? error.message : 'Erro ao criar conta.'
         toast.error(message)
       }
     },
-    [registerPatient, navigate],
+    [registerPatient, clearActivePracticeContextId, navigate],
   )
 
   const togglePasswordVisibility = useCallback(

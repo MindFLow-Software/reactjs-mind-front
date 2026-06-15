@@ -2,7 +2,6 @@ import './form-components.css'
 import { useEffect, useState } from 'react'
 import { useForm } from 'react-hook-form'
 import { useFileSelection } from '@/hooks/use-file-selection'
-import { useCepLookup } from '@/hooks/use-cep-lookup'
 import { usePatientFormSteps } from './hooks/use-patient-form-steps'
 import { usePatientSubmit } from './hooks/use-patient-submit'
 import { zodResolver } from '@hookform/resolvers/zod'
@@ -64,10 +63,6 @@ export function RegisterPatients({
     isLastStep,
   } = usePatientFormSteps({ trigger: methods.trigger })
 
-  const { onCepChange, isCepLoading } = useCepLookup({
-    setValue: methods.setValue,
-  })
-
   const { submit, isSubmitting } = usePatientSubmit({
     patientId,
     avatarFile,
@@ -115,12 +110,7 @@ export function RegisterPatients({
         )
       }
       case 2: {
-        return (
-          <StepContactAddress
-            onCepChange={onCepChange}
-            isCepLoading={isCepLoading}
-          />
-        )
+        return <StepContactAddress />
       }
       case 3: {
         return <StepClinical />

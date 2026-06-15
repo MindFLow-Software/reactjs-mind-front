@@ -1,5 +1,3 @@
-import type { Iuser } from './user'
-
 export const Gender = {
   OTHER: 'OTHER',
   FEMININE: 'FEMININE',
@@ -8,22 +6,22 @@ export const Gender = {
 
 export type Gender = (typeof Gender)[keyof typeof Gender]
 
-export type PatientStatus = 'ACTIVE' | 'REJECTED' | 'PENDING' | 'BLOCKED'
-
-export interface Ipatient extends Iuser {
+export interface Ipatient {
   id: string
-  name: string
-  gender: Gender
-  lastSessionAt: string | null
+  userId: string
+  psychologistPracticeContextId: string
   isActive: boolean
-  status: PatientStatus
-  zipCode: string | null
-  street: string | null
-  number: string
-  complement: string | null
-  neighborhood: string | null
-  city: string | null
-  state: string | null
+  archivedAt: string | null
+  createdAt: string
+  firstName: string
+  lastName: string
+  email: string | null
+  phoneNumber: string | null
+  cpf: string | null
+  gender: Gender
+  dateOfBirth: string | null
+  profileImageUrl: string | null
+  lastSessionAt: string | null
 }
 
 export interface AddressByCepResponse {
@@ -74,7 +72,7 @@ export interface CreatePatientBody {
   uf?: string
 }
 
-export type CreatePatientResponse = Ipatient
+export type CreatePatientResponse = { message: string, patientId: string }
 
 export interface UpdatePatientBody {
   firstName?: string
@@ -105,6 +103,13 @@ export interface RegisterPatientBody {
 }
 
 export type RegisterPatientViaInviteBody = RegisterPatientBody
-export type RegisterPatientViaInviteResponse = { message: string }
+export type RegisterPatientViaInviteResponse = {
+  patientId: string
+  userId: string
+  firstName: string
+  lastName: string
+  email: string
+  psychologistPracticeContextId: string
+}
 
 export type IsessionVolume = 'high' | 'low' | 'all'

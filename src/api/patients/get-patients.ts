@@ -41,16 +41,8 @@ export async function getPatients({
 
   const response = await api.get<GetPatientsResponse>('/patients', { params })
 
-  const patients = response.data.patients.map((patient) => ({
-    ...patient,
-    name:
-      patient.name ??
-      `${patient.firstName} ${patient.lastName}`.trim() ??
-      'Paciente sem nome',
-  }))
-
   return {
-    patients,
+    patients: response.data.patients,
     meta: response.data.meta,
   }
 }

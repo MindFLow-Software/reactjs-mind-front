@@ -21,7 +21,7 @@ import { copyToClipboard } from '@/utils/copy-to-clipboard'
 interface PatientDetailsHeaderProps {
   patient: Pick<
     Ipatient,
-    'id' | 'firstName' | 'lastName' | 'status' | 'isActive' | 'profileImageUrl'
+    'id' | 'firstName' | 'lastName' | 'isActive' | 'profileImageUrl'
   >
 }
 

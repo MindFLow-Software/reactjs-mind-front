@@ -1,5 +1,7 @@
-import type { PatientStatus, Ipatient } from '@/types/patient'
+import type { Ipatient } from '@/types/patient'
 import type { PaginationMeta } from '@/types/pagination'
+
+type PatientStatus = 'ACTIVE' | 'REJECTED' | 'PENDING' | 'BLOCKED'
 
 export interface StatusPillOption {
   value: PatientStatus | null

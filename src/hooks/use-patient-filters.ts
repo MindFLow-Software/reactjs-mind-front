@@ -3,7 +3,8 @@ import { useCallback } from 'react'
 import { useSearchParams } from 'react-router-dom'
 
 import { Gender } from '@/types/patient'
-import type { PatientStatus } from '@/types/patient'
+
+type PatientStatus = 'ACTIVE' | 'REJECTED' | 'PENDING' | 'BLOCKED'
 
 const VALID_STATUSES = ['ACTIVE', 'REJECTED', 'PENDING', 'BLOCKED'] as const
 const VALID_GENDERS = Object.values(Gender)

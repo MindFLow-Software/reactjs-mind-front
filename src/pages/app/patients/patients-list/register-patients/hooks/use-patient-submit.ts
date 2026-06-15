@@ -29,7 +29,7 @@ export function usePatientSubmit({
   const { mutateAsync: createFn, isPending: isCreating } = useMutation({
     mutationFn: createPatients,
     onSuccess: async (response) => {
-      const targetId = isEditMode ? patientId! : response.id
+      const targetId = isEditMode ? patientId! : response.patientId
 
       await Promise.all([
         queryClient.invalidateQueries({ queryKey: ['patients'] }),
@@ -87,14 +87,16 @@ export function usePatientSubmit({
     try {
       setIsUploading(true)
 
-      const response = isEditMode
-        ? await updateFn({ ...shared, id: patientId! })
-        : await createFn(shared)
+      let targetId: string
 
-      const targetId = isEditMode ? patientId! : response.id
+      if (isEditMode) {
+        await updateFn({ ...shared, id: patientId! })
+        targetId = patientId!
+      } else {
+        const response = await createFn(shared)
+        targetId = response.patientId
+      }
 
-      // The correct would be the uploads BEFORE the patient create/update
-      // and if some of them throws error, stops the flow
       if (avatarFile) {
         try {
           await uploadAvatar(avatarFile, targetId)
@@ -103,11 +105,7 @@ export function usePatientSubmit({
         }
       }
 
-      // The correct would be the uploads BEFORE the patient create/update
-      // and if some of them throws error, stops the flow
       for (const file of files) await uploadAttachment(file, targetId)
-
-      return response
     } finally {
       setIsUploading(false)
     }
