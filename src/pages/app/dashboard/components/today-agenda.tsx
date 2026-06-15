@@ -47,7 +47,8 @@ interface AgendaRowProps {
 
 function AgendaRow({ appt }: AgendaRowProps) {
   const time = format(new Date(appt.scheduledAt), 'HH:mm')
-  const duration = appt.durationInMin != null ? formatTime(appt.durationInMin) : '—'
+  const duration =
+    appt.durationInMin != null ? formatTime(appt.durationInMin) : '—'
   const patientName = appt.patient
     ? `${appt.patient.firstName} ${appt.patient.lastName}`
     : 'Paciente não informado'

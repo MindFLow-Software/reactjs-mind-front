@@ -18,7 +18,10 @@ export const MonthPatientsAmountCard = memo(function MonthPatientsAmountCard({
   return (
     <MetricCard
       accentColor="violet"
-      header={{ label: 'Sessões no mês', icon: <CalendarCheck className="size-4 text-violet-500" /> }}
+      header={{
+        label: 'Sessões no mês',
+        icon: <CalendarCheck className="size-4 text-violet-500" />,
+      }}
       state={{ isLoading, isError, onRetry: refetch }}
     >
       <MetricCard.Value>{count.toLocaleString('pt-BR')}</MetricCard.Value>

@@ -9,7 +9,10 @@ interface PatientProfileCardProps {
   onSelect: () => void
 }
 
-function PatientProfileCardBase({ profile, onSelect }: PatientProfileCardProps) {
+function PatientProfileCardBase({
+  profile,
+  onSelect,
+}: PatientProfileCardProps) {
   const handleKeyDown = useCallback(
     (event: KeyboardEvent<HTMLDivElement>) => {
       if (event.key === 'Enter' || event.key === ' ') {

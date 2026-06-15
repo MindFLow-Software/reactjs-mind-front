@@ -1,4 +1,10 @@
-import { AlertCircle, RefreshCcw, TrendingDown, TrendingUp, Minus } from 'lucide-react'
+import {
+  AlertCircle,
+  RefreshCcw,
+  TrendingDown,
+  TrendingUp,
+  Minus,
+} from 'lucide-react'
 import { Card } from '@/components/ui/card'
 import { Skeleton } from '@/components/ui/skeleton'
 import { cn } from '@/lib/utils'
@@ -35,7 +41,12 @@ interface MetricCardRootProps {
   children: React.ReactNode
 }
 
-function MetricCardRoot({ accentColor, header, state, children }: MetricCardRootProps) {
+function MetricCardRoot({
+  accentColor,
+  header,
+  state,
+  children,
+}: MetricCardRootProps) {
   return (
     <Card className="relative overflow-hidden rounded-lg border border-border bg-card p-5 shadow-sm">
       <div
@@ -45,10 +56,17 @@ function MetricCardRoot({ accentColor, header, state, children }: MetricCardRoot
         )}
       />
       <div className="flex items-center gap-3">
-        <div className={cn('flex h-9 w-9 shrink-0 items-center justify-center rounded-full ring-1', ICON_RING[accentColor])}>
+        <div
+          className={cn(
+            'flex h-9 w-9 shrink-0 items-center justify-center rounded-full ring-1',
+            ICON_RING[accentColor],
+          )}
+        >
           {header.icon}
         </div>
-        <p className="text-sm font-semibold text-foreground leading-tight">{header.label}</p>
+        <p className="text-sm font-semibold text-foreground leading-tight">
+          {header.label}
+        </p>
       </div>
       <div className="mt-3">
         {state.isLoading ? (
@@ -81,7 +99,9 @@ function MetricCardRoot({ accentColor, header, state, children }: MetricCardRoot
 
 function MetricCardValue({ children }: { children: React.ReactNode }) {
   return (
-    <p className="text-4xl font-bold tabular-nums text-foreground">{children}</p>
+    <p className="text-4xl font-bold tabular-nums text-foreground">
+      {children}
+    </p>
   )
 }
 
@@ -126,7 +146,10 @@ function MetricCardProgress({ value, atGoal, label }: MetricCardProgressProps) {
     <>
       <div className="mt-2 flex items-center gap-1.5">
         <Minus
-          className={cn('size-3', atGoal ? 'text-green-500' : 'text-muted-foreground')}
+          className={cn(
+            'size-3',
+            atGoal ? 'text-green-500' : 'text-muted-foreground',
+          )}
         />
         <span className="text-xs text-muted-foreground">{label}</span>
       </div>

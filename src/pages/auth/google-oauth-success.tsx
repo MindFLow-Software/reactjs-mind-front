@@ -49,7 +49,7 @@ export function GoogleOAuthSuccess() {
         if (error instanceof AxiosError) {
           const status = error.response?.status
           if (status === 400 || status === 404) {
-            navigate('/complete-registration', { replace: true })
+            navigate('/sign-in', { replace: true })
             return
           }
         }

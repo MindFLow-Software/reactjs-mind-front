@@ -34,8 +34,7 @@ function isErrorEnvelope(body: unknown): body is ApiErrorEnvelope {
 }
 
 api.interceptors.request.use((config) => {
-  const { activePracticeContextId } =
-    useActivePracticeContextStore.getState()
+  const { activePracticeContextId } = useActivePracticeContextStore.getState()
   if (activePracticeContextId) {
     config.headers['x-psychologist-practice-context-id'] =
       activePracticeContextId

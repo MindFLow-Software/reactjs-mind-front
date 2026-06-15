@@ -10,12 +10,7 @@ const VALID_STATUSES = ['ACTIVE', 'REJECTED', 'PENDING', 'BLOCKED'] as const
 const VALID_GENDERS = Object.values(Gender)
 
 export type PatientSortOrder = 'asc' | 'desc'
-export type PatientSortBy =
-  | 'name'
-  | 'age'
-  | 'gender'
-  | 'status'
-  | 'lastSession'
+export type PatientSortBy = 'name' | 'age' | 'gender' | 'status' | 'lastSession'
 
 export function usePatientFilters() {
   const [searchParams, setSearchParams] = useSearchParams()

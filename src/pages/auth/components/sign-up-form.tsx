@@ -86,9 +86,11 @@ interface MaskedInputBaseProps extends React.ComponentProps<'input'> {
   inputRef: React.Ref<HTMLInputElement>
 }
 
-const MaskedInput = IMaskMixin(({ inputRef, ...props }: MaskedInputBaseProps) => (
-  <Input ref={inputRef} {...props} />
-))
+const MaskedInput = IMaskMixin(
+  ({ inputRef, ...props }: MaskedInputBaseProps) => (
+    <Input ref={inputRef} {...props} />
+  ),
+)
 
 function FieldRow({
   children,

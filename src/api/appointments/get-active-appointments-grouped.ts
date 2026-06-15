@@ -3,7 +3,7 @@ import type { AppointmentStatus } from '@/types/appointment'
 
 export interface ActiveAppointment {
   id: string
-  patientId: string
+  patientProfileId: string
   patientName: string
   diagnosis: string
   scheduledAt: string

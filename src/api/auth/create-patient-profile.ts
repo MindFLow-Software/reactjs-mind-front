@@ -7,6 +7,9 @@ export interface CreatePatientProfileBody {
 export async function createPatientProfile(
   body: CreatePatientProfileBody,
 ): Promise<{ patientId: string }> {
-  const response = await api.post<{ patientId: string }>('/patient/profile', body)
+  const response = await api.post<{ patientId: string }>(
+    '/patient/profile',
+    body,
+  )
   return response.data
 }

@@ -14,14 +14,16 @@ export const TotalWorkHoursCard = memo(function TotalWorkHoursCard({
   startDate,
   endDate,
 }: TotalWorkHoursCardProps) {
-  const { totalMinutes, progressPct, atGoal, isLoading, isError } = useWorkHours(
-    { startDate, endDate },
-  )
+  const { totalMinutes, progressPct, atGoal, isLoading, isError } =
+    useWorkHours({ startDate, endDate })
 
   return (
     <MetricCard
       accentColor="emerald"
-      header={{ label: 'Horas atendidas', icon: <Clock className="size-4 text-emerald-500" /> }}
+      header={{
+        label: 'Horas atendidas',
+        icon: <Clock className="size-4 text-emerald-500" />,
+      }}
       state={{ isLoading, isError }}
     >
       <MetricCard.Value>

@@ -24,8 +24,8 @@ export interface AppointmentItem {
 
 export interface Appointment {
   id: string
-  patientId: string
-  psychologistId: string
+  patientProfileId: string
+  psychologistPracticeContextId: string
   diagnosis: string
   notes?: string | null
   scheduledAt: string

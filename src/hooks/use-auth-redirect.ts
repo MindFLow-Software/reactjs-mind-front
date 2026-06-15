@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { api } from '@/lib/axios'
+import { getProfile } from '@/api/psychologists/get-profile'
 
 export function useAuthRedirect(): { isChecking: boolean } {
   const navigate = useNavigate()
@@ -11,27 +11,17 @@ export function useAuthRedirect(): { isChecking: boolean } {
 
     async function checkAuthentication() {
       try {
-        const response = await api.get('/me')
-        const user = response.data?.authenticatedUser
+        const profile = await getProfile()
 
         if (!isMounted) return
 
-        if (user) {
-          localStorage.setItem('isAuthenticated', 'true')
-          localStorage.setItem('user', JSON.stringify(user))
-        }
+        localStorage.setItem('isAuthenticated', 'true')
+        localStorage.setItem('user', JSON.stringify(profile))
 
-        const roleValue =
-          typeof user?.role === 'object' && user?.role !== null
-            ? user.role.name
-            : user?.role
-        const role = String(roleValue ?? '')
-          .trim()
-          .toUpperCase()
-
-        navigate(role === 'SUPER_ADMIN' ? '/admin-dashboard' : '/dashboard', {
-          replace: true,
-        })
+        navigate(
+          profile.platformRole === 'ADMIN' ? '/admin-dashboard' : '/profiles',
+          { replace: true },
+        )
       } catch {
         if (isMounted) {
           localStorage.removeItem('isAuthenticated')

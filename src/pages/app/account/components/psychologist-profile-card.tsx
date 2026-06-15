@@ -2,10 +2,7 @@
 
 import { useState } from 'react'
 import { useQuery } from '@tanstack/react-query'
-import {
-  getProfile,
-  type GetMeResponse,
-} from '@/api/psychologists/get-profile'
+import { getProfile, type GetMeResponse } from '@/api/psychologists/get-profile'
 import type { UpdatePsychologistBody } from '@/api/psychologists/update-psychologist'
 import { PsychologistAvatarUpload } from './psychologist-avatar-upload'
 import { Skeleton } from '@/components/ui/skeleton'
@@ -210,7 +207,8 @@ export function PsychologistProfileCard({
                 email: profile.email ?? '',
                 phoneNumber: profile.phoneNumber ?? '',
                 crp: profile.psychologistProfile?.crp ?? null,
-                expertise: profile.psychologistProfile?.expertise as UpdatePsychologistBody['expertise'],
+                expertise: profile.psychologistProfile
+                  ?.expertise as UpdatePsychologistBody['expertise'],
               }}
               onClose={() => setIsEditOpen(false)}
             />

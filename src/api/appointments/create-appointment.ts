@@ -1,5 +1,8 @@
 import { api } from '@/lib/axios'
-import type { AppointmentItem, RegisterAppointmentRequest } from '@/types/appointment'
+import type {
+  AppointmentItem,
+  RegisterAppointmentRequest,
+} from '@/types/appointment'
 
 interface RegisterAppointmentResponse {
   message: string

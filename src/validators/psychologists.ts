@@ -115,8 +115,12 @@ export const newPsychologistsCountQuerySchema = z.object({
 })
 
 export type CreateUserData = z.infer<typeof createUserSchema>
-export type CreatePsychologistProfileData = z.infer<typeof createPsychologistProfileSchema>
-export type CreatePracticeContextData = z.infer<typeof createPracticeContextSchema>
+export type CreatePsychologistProfileData = z.infer<
+  typeof createPsychologistProfileSchema
+>
+export type CreatePracticeContextData = z.infer<
+  typeof createPracticeContextSchema
+>
 export type UpdatePsychologistData = z.infer<typeof updatePsychologistSchema>
 export type FetchPsychologistsQuery = z.infer<
   typeof fetchPsychologistsQuerySchema

@@ -1,4 +1,4 @@
-﻿import { useState, useEffect, lazy, Suspense } from 'react'
+import { useState, useEffect, lazy, Suspense } from 'react'
 import { Helmet } from 'react-helmet-async'
 import { subDays } from 'date-fns'
 

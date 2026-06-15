@@ -59,7 +59,9 @@ const adminLoader = async () => {
 }
 
 const practiceContextGuard = () => {
-  if (useActivePracticeContextStore.getState().activePracticeContextId === null) {
+  if (
+    useActivePracticeContextStore.getState().activePracticeContextId === null
+  ) {
     return redirect('/profiles')
   }
   return null
@@ -67,7 +69,9 @@ const practiceContextGuard = () => {
 
 // Patient mode clears the practice context; a non-null context means the user is in psychologist mode
 const patientDashboardGuard = () => {
-  if (useActivePracticeContextStore.getState().activePracticeContextId !== null) {
+  if (
+    useActivePracticeContextStore.getState().activePracticeContextId !== null
+  ) {
     return redirect('/profiles')
   }
   return null
@@ -142,7 +146,11 @@ export const router = createBrowserRouter([
     ),
     loader: authLoader,
     children: [
-      { path: '/dashboard', loader: practiceContextGuard, element: <Dashboard /> },
+      {
+        path: '/dashboard',
+        loader: practiceContextGuard,
+        element: <Dashboard />,
+      },
       { path: '/dashboard-finance', element: <DashboardFinance /> },
       { path: '/patients-list', element: <PatientsList /> },
       { path: '/patients-records', element: <PatientsRecords /> },

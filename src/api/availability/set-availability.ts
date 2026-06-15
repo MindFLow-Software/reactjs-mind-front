@@ -6,6 +6,8 @@ export interface AvailabilitySlot {
   endTime: string
 }
 
-export async function setAvailability(slots: AvailabilitySlot[]): Promise<void> {
+export async function setAvailability(
+  slots: AvailabilitySlot[],
+): Promise<void> {
   await api.post('/availabilities', { slots })
 }

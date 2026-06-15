@@ -154,7 +154,11 @@ export function CreatePsychologistSubFlow({
                 <FormItem>
                   <FormLabel>CRP</FormLabel>
                   <FormControl>
-                    <Input placeholder="06/123456" autoComplete="off" {...field} />
+                    <Input
+                      placeholder="06/123456"
+                      autoComplete="off"
+                      {...field}
+                    />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -167,10 +171,7 @@ export function CreatePsychologistSubFlow({
               render={({ field }) => (
                 <FormItem>
                   <FormLabel>Área de atuação</FormLabel>
-                  <Select
-                    value={field.value}
-                    onValueChange={field.onChange}
-                  >
+                  <Select value={field.value} onValueChange={field.onChange}>
                     <FormControl>
                       <SelectTrigger className="w-full">
                         <SelectValue placeholder="Selecione" />

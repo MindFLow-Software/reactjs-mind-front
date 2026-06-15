@@ -10,4 +10,3 @@ export const Expertise = {
   NEUROPSYCHOLOGY: 'NEUROPSYCHOLOGY',
 } as const
 export type Expertise = (typeof Expertise)[keyof typeof Expertise]
-

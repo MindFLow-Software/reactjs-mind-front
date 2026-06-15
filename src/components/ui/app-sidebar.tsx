@@ -20,10 +20,7 @@ import {
   SidebarHeader,
   SidebarRail,
 } from '@/components/ui/sidebar'
-import {
-  getProfile,
-  type GetMeResponse,
-} from '@/api/psychologists/get-profile'
+import { getProfile, type GetMeResponse } from '@/api/psychologists/get-profile'
 import { TeamSwitcher } from './team-switcher'
 import { NavMain } from './nav-main'
 import { NavUser } from './nav-user'
@@ -109,10 +106,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
         title: 'Administração',
         url: '#',
         icon: ShieldCheck,
-        items: [
-          { title: 'Solicitações', url: '/approvals' },
-          { title: 'Visão Geral Admin', url: '/admin-dashboard' },
-        ],
+        items: [{ title: 'Visão Geral Admin', url: '/admin-dashboard' }],
       })
 
       baseNav.push({

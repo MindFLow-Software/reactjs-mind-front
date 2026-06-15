@@ -72,7 +72,7 @@ export interface CreatePatientBody {
   uf?: string
 }
 
-export type CreatePatientResponse = { message: string, patientId: string }
+export type CreatePatientResponse = { message: string; patientId: string }
 
 export interface UpdatePatientBody {
   firstName?: string
