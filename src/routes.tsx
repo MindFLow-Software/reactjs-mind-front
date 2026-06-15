@@ -5,7 +5,7 @@ import {
   Navigate,
   useLocation,
 } from 'react-router-dom'
-import { api } from './lib/axios'
+import { getProfile } from './api/psychologists/get-profile'
 import { AppLayout } from './pages/_layouts/app'
 import { AuthLayout } from './pages/_layouts/auth'
 import { PatientsList } from './pages/app/patients/patients-list/patients-list'
@@ -31,67 +31,42 @@ import { PatientDocuments } from './pages/app/patients/patients-docs/patients-do
 import PatientDetails from './pages/app/patients/patients-hub/patients-details'
 import PatientsRecords from './pages/app/patients/patients-records/patients-records'
 
-const getUser = () => {
-  const userData = localStorage.getItem('user')
-  if (!userData || userData === 'undefined' || userData === 'null') return null
-
-  try {
-    const user = JSON.parse(userData)
-    const roleValue =
-      typeof user.role === 'object' && user.role !== null
-        ? user.role.name
-        : user.role
-
-    return {
-      ...user,
-      role: roleValue ? String(roleValue).trim().toUpperCase() : undefined,
-    }
-  } catch {
-    return null
-  }
-}
-
 const authLoader = async () => {
   const isAuthenticated = localStorage.getItem('isAuthenticated') === 'true'
   if (isAuthenticated) return null
 
   // Sem flag local — pode ser login via Google OAuth (cookie já setado pelo backend)
   try {
-    // eslint-disable-next-line
-    const response = await api.get<{ psychologist: any }>('/psychologist/me')
-    const psychologist = response.data.psychologist
+    const profile = await getProfile()
     localStorage.setItem('isAuthenticated', 'true')
-    localStorage.setItem('user', JSON.stringify(psychologist))
+    if (profile.platformRole === 'ADMIN') return redirect('/admin-dashboard')
+    if (profile.platformRole === 'USER') return redirect('/profiles')
     return null
   } catch {
     return redirect('/sign-in')
   }
 }
 
-const adminLoader = () => {
-  const user = getUser()
-  if (!user || user.role !== 'SUPER_ADMIN') {
-    return redirect('/dashboard')
+const adminLoader = async () => {
+  try {
+    const profile = await getProfile()
+    if (profile.platformRole !== 'ADMIN') return redirect('/dashboard')
+    return null
+  } catch {
+    return redirect('/sign-in')
   }
-  return null
 }
 
 interface ProtectedRouteProps {
   children: React.ReactNode
-  allowedRole?: string
 }
 
-const ProtectedRoute = ({ children, allowedRole }: ProtectedRouteProps) => {
+const ProtectedRoute = ({ children }: ProtectedRouteProps) => {
   const isAuthenticated = localStorage.getItem('isAuthenticated') === 'true'
-  const user = getUser()
   const location = useLocation()
 
   if (!isAuthenticated) {
     return <Navigate to="/sign-in" state={{ from: location }} replace />
-  }
-
-  if (allowedRole && user?.role !== allowedRole) {
-    return <Navigate to="/dashboard" replace />
   }
 
   return <>{children}</>
@@ -148,7 +123,7 @@ export const router = createBrowserRouter([
         path: '/approvals',
         loader: adminLoader,
         element: (
-          <ProtectedRoute allowedRole="SUPER_ADMIN">
+          <ProtectedRoute>
             <AdminApprovalsPage />
           </ProtectedRoute>
         ),
@@ -157,7 +132,7 @@ export const router = createBrowserRouter([
         path: '/admin-dashboard',
         loader: adminLoader,
         element: (
-          <ProtectedRoute allowedRole="SUPER_ADMIN">
+          <ProtectedRoute>
             <AdminDashboard />
           </ProtectedRoute>
         ),
@@ -166,15 +141,16 @@ export const router = createBrowserRouter([
         path: '/admin-suggestions',
         loader: adminLoader,
         element: (
-          <ProtectedRoute allowedRole="SUPER_ADMIN">
+          <ProtectedRoute>
             <AdminSuggestionsPage />
           </ProtectedRoute>
         ),
       },
       {
         path: '/menagement-suggestions',
+        loader: adminLoader,
         element: (
-          <ProtectedRoute allowedRole="SUPER_ADMIN">
+          <ProtectedRoute>
             <SuggestionsManagement />
           </ProtectedRoute>
         ),
