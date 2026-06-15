@@ -11,6 +11,7 @@ import { AuthLayout } from './pages/_layouts/auth'
 import { PatientsList } from './pages/app/patients/patients-list/patients-list'
 import { Dashboard } from './pages/app/dashboard/dashboard'
 import { NotFound } from './pages/404'
+import { AppErrorBoundary } from './pages/app-error-boundary'
 import { SignIn } from './pages/auth/sign-in'
 import { SignUp } from './pages/auth/sign-up'
 import { CompleteRegistration } from './pages/auth/complete-registration'
@@ -133,6 +134,7 @@ export const router = createBrowserRouter([
       </ProtectedRoute>
     ),
     loader: authLoader,
+    errorElement: <AppErrorBoundary />,
     children: [
       { path: '/dashboard', element: <Dashboard /> },
       { path: '/dashboard-finance', element: <DashboardFinance /> },
