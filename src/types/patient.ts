@@ -67,13 +67,13 @@ export interface CreatePatientBody {
   dateOfBirth?: string
   cpf?: string
   gender?: Gender
-  cep?: string
-  logradouro?: string
+  zipCode?: string
+  street?: string
   number?: string
   complement?: string
-  bairro?: string
-  cidade?: string
-  uf?: string
+  neighborhood?: string
+  city?: string
+  state?: string
   modality?: string
   frequency?: string
   price?: string
@@ -93,13 +93,13 @@ export interface UpdatePatientBody {
   gender?: Gender
   profileImageUrl?: string
   attachmentIds?: string[]
-  cep?: string | null
-  logradouro?: string | null
+  zipCode?: string | null
+  street?: string | null
   number?: string | null
   complement?: string | null
-  bairro?: string | null
-  cidade?: string | null
-  uf?: string | null
+  neighborhood?: string | null
+  city?: string | null
+  state?: string | null
   modality?: string
   frequency?: string
   price?: string

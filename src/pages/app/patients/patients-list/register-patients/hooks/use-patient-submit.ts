@@ -79,15 +79,9 @@ export function usePatientSubmit({
   const isSubmitting = isCreating || isUpdating || isUploading
 
   async function submit(data: PatientFormData) {
-    const { zipCode, street, neighborhood, city, state, ...rest } = data
     const shared = {
-      ...rest,
+      ...data,
       dateOfBirth: data.dateOfBirth ?? undefined,
-      cep: zipCode,
-      logradouro: street,
-      bairro: neighborhood,
-      cidade: city,
-      uf: state,
     }
 
     try {
