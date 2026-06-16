@@ -1,4 +1,4 @@
-import { useState, type ChangeEvent } from 'react'
+import { useState, useEffect, type ChangeEvent } from 'react'
 import { useFormContext, useWatch } from 'react-hook-form'
 import { parse as dateParse, isValid as dateIsValid, format } from 'date-fns'
 import { Check, Shield, UserRound } from 'lucide-react'
@@ -39,6 +39,13 @@ export function StepBasicData({ onAvatarSelect, patient }: StepBasicDataProps) {
 
   const cpfValue = useWatch({ control, name: 'cpf' })
   const dateOfBirth = useWatch({ control, name: 'dateOfBirth' })
+
+  useEffect(() => {
+    if (dateOfBirth instanceof Date) {
+      const formatted = format(dateOfBirth, 'dd/MM/yyyy')
+      setBirthInput((prev) => (prev !== formatted ? formatted : prev))
+    }
+  }, [dateOfBirth])
   const cpfDigits = Normalizer.digits(cpfValue ?? '')
   const age = dateOfBirth ? formatAGE(dateOfBirth) : null
 
