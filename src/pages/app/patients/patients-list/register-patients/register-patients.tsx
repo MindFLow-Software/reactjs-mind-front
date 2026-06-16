@@ -1,5 +1,5 @@
 import './form-components.css'
-import { useEffect, useState } from 'react'
+import { useMemo, useState } from 'react'
 import { useForm } from 'react-hook-form'
 import { useFileSelection } from '@/hooks/use-file-selection'
 import { useCepLookup } from '@/hooks/use-cep-lookup'
@@ -44,9 +44,15 @@ export function RegisterPatients({
   const isEditMode = Boolean(isEditing)
   const { patient } = usePatient(patientId)
 
+  const patientDefaults = useMemo(
+    () => buildPatientDefaults(patient),
+    [patient],
+  )
+
   const methods = useForm<PatientFormData>({
     resolver: zodResolver(patientSchema),
     mode: 'onTouched',
+    values: patientDefaults,
   })
 
   const [avatarFile, setAvatarFile] = useState<File | null>(null)
@@ -84,12 +90,6 @@ export function RegisterPatients({
   })
 
   const isEditLoading = Boolean(patientId) && !patient
-
-  useEffect(() => {
-    const patientDefaults = buildPatientDefaults(patient)
-    methods.reset(patientDefaults)
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [patient])
 
   const findSubimtLabel = (): string => {
     if (isSubmitting) return 'Salvando…'
