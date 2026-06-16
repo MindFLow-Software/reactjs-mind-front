@@ -1,4 +1,4 @@
-import { memo, useCallback, type KeyboardEvent } from 'react'
+import { memo, useCallback } from 'react'
 import { Building2, ChevronRight, Stethoscope } from 'lucide-react'
 import { Card } from '@/components/ui/card'
 import { cn } from '@/lib/utils'
@@ -19,16 +19,6 @@ function PracticeContextCardBase({
     [context.id, onSelect],
   )
 
-  const handleKeyDown = useCallback(
-    (event: KeyboardEvent<HTMLDivElement>) => {
-      if (event.key === 'Enter' || event.key === ' ') {
-        event.preventDefault()
-        onSelect(context.id)
-      }
-    },
-    [context.id, onSelect],
-  )
-
   const fee = formatConsultationFee(context.consultationFee)
   const isClinic = context.contextType === 'CLINIC'
   const typeLabel = CONTEXT_TYPE_LABELS[context.contextType] ?? 'Atendimento'
@@ -39,11 +29,10 @@ function PracticeContextCardBase({
       role="button"
       tabIndex={0}
       onClick={handleClick}
-      onKeyDown={handleKeyDown}
       className={cn(
         'cursor-pointer gap-3 py-5 transition-all',
         'hover:-translate-y-0.5 hover:shadow-lg',
-        'focus-visible:border-blue-600 focus-visible:outline-none focus-visible:ring-[3px] focus-visible:ring-blue-600/[.18]',
+        'focus-visible:border-blue-600 focus-visible:outline-none focus-visible:ring-[3px] focus-visible:ring-blue-600/18',
       )}
     >
       <div className="flex items-center gap-3 px-5">

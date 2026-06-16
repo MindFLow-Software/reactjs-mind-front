@@ -1,4 +1,4 @@
-import { memo, useCallback, type KeyboardEvent } from 'react'
+import { memo } from 'react'
 import { ChevronRight, CircleUserRound } from 'lucide-react'
 import { Card } from '@/components/ui/card'
 import { cn } from '@/lib/utils'
@@ -13,16 +13,6 @@ function PatientProfileCardBase({
   profile,
   onSelect,
 }: PatientProfileCardProps) {
-  const handleKeyDown = useCallback(
-    (event: KeyboardEvent<HTMLDivElement>) => {
-      if (event.key === 'Enter' || event.key === ' ') {
-        event.preventDefault()
-        onSelect()
-      }
-    },
-    [onSelect],
-  )
-
   const subtitle = profile.psychologistPracticeContextId
     ? 'Vinculado a um psicólogo'
     : 'Perfil independente'
@@ -32,11 +22,10 @@ function PatientProfileCardBase({
       role="button"
       tabIndex={0}
       onClick={onSelect}
-      onKeyDown={handleKeyDown}
       className={cn(
         'cursor-pointer gap-3 py-5 transition-all',
         'hover:-translate-y-0.5 hover:shadow-lg',
-        'focus-visible:border-blue-600 focus-visible:outline-none focus-visible:ring-[3px] focus-visible:ring-blue-600/[.18]',
+        'focus-visible:border-blue-600 focus-visible:outline-none focus-visible:ring-[3px] focus-visible:ring-blue-600/18',
       )}
     >
       <div className="flex items-center gap-3 px-5">

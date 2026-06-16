@@ -1,21 +1,33 @@
-import { useCallback, useState, type ReactNode } from 'react'
+import { useCallback, type ReactNode } from 'react'
 import { Navigate, useNavigate } from 'react-router-dom'
-import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
-import axios from 'axios'
-import { toast } from 'sonner'
-import { Briefcase, Loader2, Plus, UserRound } from 'lucide-react'
+import { useQuery } from '@tanstack/react-query'
+import {
+  ArrowRight,
+  Brain,
+  Briefcase,
+  HeartPulse,
+  Loader2,
+  Plus,
+  UserRound,
+} from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { getProfile } from '@/api/psychologists/get-profile'
-import { createPatientProfile } from '@/api/auth/create-patient-profile'
 import { useActivePracticeContextStore } from '@/store/use-active-practice-context-store'
 import { PracticeContextCard } from './components/practice-context-card'
 import { PatientProfileCard } from './components/patient-profile-card'
-import { CreatePsychologistSubFlow } from './components/create-psychologist-sub-flow'
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardFooter,
+  CardHeader,
+  CardTitle,
+} from '@/components/ui/card'
 
 function ProfilesShell({ children }: { children: ReactNode }) {
   return (
     <div className="flex min-h-screen w-full flex-col items-center justify-center bg-gray-50 px-4 py-10">
-      <div className="w-full max-w-3xl">{children}</div>
+      <div className="w-full max-w-4xl">{children}</div>
     </div>
   )
 }
@@ -42,14 +54,14 @@ function ProfileSection({
 
 export function ProfilesPage() {
   const navigate = useNavigate()
-  const queryClient = useQueryClient()
+
   const setActivePracticeContextId = useActivePracticeContextStore(
     (state) => state.setActivePracticeContextId,
   )
+
   const clearActivePracticeContextId = useActivePracticeContextStore(
     (state) => state.clearActivePracticeContextId,
   )
-  const [subFlowOpen, setSubFlowOpen] = useState(false)
 
   const {
     data: me,
@@ -57,8 +69,8 @@ export function ProfilesPage() {
     isError,
   } = useQuery({ queryKey: ['me'], queryFn: getProfile })
 
-  const { mutateAsync: createPatientFn, isPending: isCreatingPatient } =
-    useMutation({ mutationFn: createPatientProfile })
+  // const { mutateAsync: createPatientFn, isPending: isCreatingPatient } =
+  //   useMutation({ mutationFn: createPatientProfile })
 
   const handleSelectContext = useCallback(
     (id: string) => {
@@ -73,30 +85,34 @@ export function ProfilesPage() {
     navigate('/patient-dashboard')
   }, [clearActivePracticeContextId, navigate])
 
-  const handleCreatePatient = useCallback(async () => {
-    try {
-      clearActivePracticeContextId()
-      await createPatientFn({ psychologistPracticeContextId: null })
-      await queryClient.invalidateQueries({ queryKey: ['me'] })
-      navigate('/patient-dashboard')
-    } catch (error) {
-      toast.error(
-        axios.isAxiosError(error)
-          ? error.message
-          : 'Erro ao criar perfil de paciente.',
-      )
-    }
-  }, [createPatientFn, clearActivePracticeContextId, queryClient, navigate])
+  // const handleCreatePatient = useCallback(async () => {
+  //   try {
+  //     clearActivePracticeContextId()
+  //     await createPatientFn({ psychologistPracticeContextId: null })
+  //     await queryClient.invalidateQueries({ queryKey: ['me'] })
+  //     navigate('/patient-dashboard')
+  //   } catch (error) {
+  //     toast.error(
+  //       axios.isAxiosError(error)
+  //         ? error.message
+  //         : 'Erro ao criar perfil de paciente.',
+  //     )
+  //   }
+  // }, [createPatientFn, clearActivePracticeContextId, queryClient, navigate])
 
-  const handleOpenSubFlow = useCallback(() => setSubFlowOpen(true), [])
+  // const handleCreatePsychologistProfile = useCallback(
+  //   (contextId: string) => {
+  //     setActivePracticeContextId(contextId)
+  //     navigate('/dashboard')
+  //   },
+  //   [setActivePracticeContextId, navigate],
+  // )
 
-  const handlePsychologistCreated = useCallback(
-    (contextId: string) => {
-      setActivePracticeContextId(contextId)
-      navigate('/dashboard')
-    },
-    [setActivePracticeContextId, navigate],
-  )
+  const handleRedirectToCreateProfile = (type: 'psychologist' | 'pacient') => {
+    navigate(`/onboarding/${type}`)
+  }
+
+  const hasPsychologistProfile = Boolean(me?.psychologistProfile)
 
   if (isLoading) {
     return (
@@ -133,6 +149,87 @@ export function ProfilesPage() {
         </p>
       </header>
 
+      <div className="flex gap-4 mb-4">
+        <Card className="relative max-w-1/2 p-4 gap-1">
+          <div className="absolute left-0 top-0 h-1 w-full bg-blue-500" />
+          <CardHeader className="p-0">
+            <div className="flex items-center justify-center p-3 w-fit rounded-md text-white bg-blue-500/75">
+              <Brain size={24} />
+            </div>
+            <span className="mt-2 text-sm font-medium text-muted-foreground">
+              Para profissionais licenciados
+            </span>
+          </CardHeader>
+          <CardContent className="p-0 space-y-3 mb-8">
+            <CardTitle className="text-xl">Perfil de psicólogo</CardTitle>
+            <CardDescription className="text-xs">
+              Crie sua identidade profissional uma única vez — depois adicione
+              quantos contextos de prática precisar (consultório particular,
+              clínicas).
+            </CardDescription>
+            <ul className="space-y-2 flex-1">
+              <li className="text-sm">- CRP e credenciais (pagamento único)</li>
+              <li className="text-sm">
+                - Adicione vários espaços de trabalho posteriormente
+              </li>
+              <li className="text-sm">
+                - Ferramentas para prática calma e focada
+              </li>
+            </ul>
+          </CardContent>
+          <CardFooter className="p-0 mt-auto">
+            <Button
+              type="button"
+              variant="outline"
+              onClick={() => handleRedirectToCreateProfile('psychologist')}
+              className="justify-between bg-transparent border-none flex-1"
+            >
+              Criar perfil de psicólogo
+              <div className="flex items-center justify-center p-3 w-fit rounded-full bg-neutral-200">
+                <ArrowRight className="size-4" />
+              </div>
+            </Button>
+          </CardFooter>
+        </Card>
+
+        <Card className="relative max-w-1/2 p-4 gap-1">
+          <div className="absolute left-0 top-0 h-1 w-full bg-emerald-500" />
+          <CardHeader className="p-0">
+            <div className="flex items-center justify-center p-3 w-fit rounded-md text-white bg-emerald-500/75">
+              <HeartPulse size={24} />
+            </div>
+            <span className="mt-2 text-sm font-medium text-muted-foreground">
+              Para o seu bem-estar
+            </span>
+          </CardHeader>
+          <CardContent className="p-0 space-y-3 mb-8">
+            <CardTitle className="text-xl">Perfil de paciente</CardTitle>
+            <CardDescription className="text-xs">
+              Encontre o psicólogo certo, acompanhe sua jornada de saúde mental
+              e cuide de si mesmo com carinho.
+            </CardDescription>
+            <ul className="space-y-2 flex-1">
+              <li className="text-sm">- Encontre seu psicólogo</li>
+              <li className="text-sm">- Acompanhe sua jornada</li>
+              <li className="text-sm">- Reflexões pessoais</li>
+            </ul>
+          </CardContent>
+          <CardFooter className="p-0 mt-auto">
+            <Button
+              type="button"
+              variant="outline"
+              onClick={() => handleRedirectToCreateProfile('pacient')}
+              className="justify-between bg-transparent border-none flex-1"
+            >
+              Criar perfil de paciente
+              <div className="flex items-center justify-center p-3 w-fit rounded-full bg-neutral-200">
+                <ArrowRight className="size-4" />
+              </div>
+            </Button>
+          </CardFooter>
+        </Card>
+      </div>
+
       {me.practiceContexts.length > 0 && (
         <ProfileSection
           title="Contextos de atendimento"
@@ -163,36 +260,20 @@ export function ProfilesPage() {
         </ProfileSection>
       )}
 
-      <div className="flex flex-col gap-3 sm:flex-row">
-        <Button
-          type="button"
-          variant="outline"
-          onClick={handleOpenSubFlow}
-          className="flex-1"
-        >
-          <Plus className="size-4" /> Criar perfil de psicólogo
-        </Button>
-        <Button
-          type="button"
-          variant="outline"
-          onClick={handleCreatePatient}
-          disabled={isCreatingPatient}
-          className="flex-1"
-        >
-          {isCreatingPatient ? (
-            <Loader2 className="size-4 animate-spin" />
-          ) : (
-            <Plus className="size-4" />
-          )}{' '}
-          Criar perfil de paciente
-        </Button>
-      </div>
+      {hasPsychologistProfile && (
+        <div>
+          <Button className="gap-2">
+            <Plus />
+            Adicionar Contexto de atuação
+          </Button>
+        </div>
+      )}
 
-      <CreatePsychologistSubFlow
+      {/* <CreatePsychologistProfile
         open={subFlowOpen}
         onOpenChange={setSubFlowOpen}
-        onCreated={handlePsychologistCreated}
-      />
+        onCreated={handleCreatePsychologistProfile}
+      /> */}
     </ProfilesShell>
   )
 }

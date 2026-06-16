@@ -31,6 +31,7 @@ import { PatientDocuments } from './pages/app/patients/patients-docs/patients-do
 import PatientDetails from './pages/app/patients/patients-hub/patients-details'
 import PatientsRecords from './pages/app/patients/patients-records/patients-records'
 import { useActivePracticeContextStore } from './store/use-active-practice-context-store'
+import { PsychologistOnboarding } from './pages/auth/onboarding/psychologist/psychologist-onboarding'
 
 const authLoader = async () => {
   const isAuthenticated = localStorage.getItem('isAuthenticated') === 'true'
@@ -195,5 +196,9 @@ export const router = createBrowserRouter([
   {
     path: '*',
     element: <NotFound />,
+  },
+  {
+    path: '/onboarding/psychologist',
+    element: <PsychologistOnboarding />,
   },
 ])

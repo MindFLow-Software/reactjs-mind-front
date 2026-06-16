@@ -20,12 +20,6 @@ const timeSchema = z
     'Formato de hora inválido — use HH:mm (ex: 09:00)',
   )
 
-export const createPsychologistProfileSchema = z.object({
-  crp: z.string().min(1, 'CRP é obrigatório'),
-  expertise: expertiseSchema,
-  professionalBio: z.string().optional(),
-})
-
 export const createPracticeContextSchema = z.object({
   contextType: z.enum(['INDIVIDUAL', 'CLINIC'], { message: 'Obrigatório' }),
   consultationFee: z.number().int().positive().optional(),
@@ -67,23 +61,18 @@ export const setAvailabilitySchema = z.object({
 // from/to require full ISO 8601 with timezone — "2026-05-01T00:00:00.000Z"
 // If both are omitted, backend defaults to the last 30 days
 export const newPsychologistsCountQuerySchema = z.object({
-  from: z
-    .string()
+  from: z.iso
     .datetime({
       message: 'Use ISO 8601 com timezone (ex: 2026-05-01T00:00:00.000Z)',
     })
     .optional(),
-  to: z
-    .string()
+  to: z.iso
     .datetime({
       message: 'Use ISO 8601 com timezone (ex: 2026-05-31T23:59:59.999Z)',
     })
     .optional(),
 })
 
-export type CreatePsychologistProfileData = z.infer<
-  typeof createPsychologistProfileSchema
->
 export type CreatePracticeContextData = z.infer<
   typeof createPracticeContextSchema
 >

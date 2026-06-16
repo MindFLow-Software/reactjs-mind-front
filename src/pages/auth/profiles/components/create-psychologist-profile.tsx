@@ -1,134 +1,125 @@
 import { useCallback } from 'react'
-import { useForm } from 'react-hook-form'
-import { zodResolver } from '@hookform/resolvers/zod'
+
+import { Loader2 } from 'lucide-react'
+import { useForm, type Resolver } from 'react-hook-form'
 import { useMutation, useQueryClient } from '@tanstack/react-query'
+
 import { z } from 'zod'
 import axios from 'axios'
 import { toast } from 'sonner'
-import { Loader2 } from 'lucide-react'
-import { Button } from '@/components/ui/button'
+import { zodResolver } from '@hookform/resolvers/zod'
+
 import {
   Dialog,
+  DialogTitle,
+  DialogHeader,
+  DialogFooter,
   DialogContent,
   DialogDescription,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
 } from '@/components/ui/dialog'
+
 import {
   Form,
-  FormControl,
-  FormField,
   FormItem,
   FormLabel,
+  FormField,
   FormMessage,
+  FormControl,
 } from '@/components/ui/form'
-import { Input } from '@/components/ui/input'
+
 import {
   Select,
-  SelectContent,
   SelectItem,
-  SelectTrigger,
   SelectValue,
+  SelectTrigger,
+  SelectContent,
 } from '@/components/ui/select'
+
+import { Input } from '@/components/ui/input'
+import { Button } from '@/components/ui/button'
 import { Textarea } from '@/components/ui/textarea'
-import { createPracticeContext } from '@/api/auth/create-practice-context'
+
+// import { createPracticeContext } from '@/api/auth/create-practice-context'
 import { createPsychologistProfile } from '@/api/auth/create-psychologist-profile'
+import { createPsychologistProfileSchema } from '@/validators/psychologist-profile'
 import { CONTEXT_TYPE_OPTIONS, EXPERTISE_OPTIONS } from '../constants'
 
-const subFlowSchema = z.object({
-  crp: z.string().min(1, 'Obrigatório'),
-  expertise: z.enum([
-    'CLINICAL',
-    'PSYCHOTHERAPIST',
-    'NEUROPSYCHOLOGY',
-    'INFANT',
-    'SOCIAL',
-    'JURIDICAL',
-    'EDUCATIONAL',
-    'ORGANIZATIONAL',
-    'OTHER',
-  ]),
-  professionalBio: z.string().optional(),
-  contextType: z.enum(['INDIVIDUAL', 'CLINIC']),
-  consultationFee: z
-    .string()
-    .optional()
-    .refine((v) => !v || (!Number.isNaN(Number(v)) && Number(v) > 0), {
-      message: 'Valor inválido',
-    }),
-  nickname: z.string().optional(),
-})
+type IcreatePsychologistProfile = z.infer<
+  typeof createPsychologistProfileSchema
+>
 
-type SubFlowData = z.infer<typeof subFlowSchema>
-
-interface CreatePsychologistSubFlowProps {
+interface createPsychologistProfileProps {
   open: boolean
   onOpenChange: (open: boolean) => void
   onCreated: (contextId: string) => void
 }
 
-export function CreatePsychologistSubFlow({
+export function CreatePsychologistProfile({
   open,
   onOpenChange,
-  onCreated,
-}: CreatePsychologistSubFlowProps) {
+  // onCreated,
+}: createPsychologistProfileProps) {
   const queryClient = useQueryClient()
 
-  const form = useForm<SubFlowData>({
-    resolver: zodResolver(subFlowSchema),
-    mode: 'onTouched',
+  const form = useForm<IcreatePsychologistProfile>({
+    resolver: zodResolver(
+      createPsychologistProfileSchema,
+    ) as Resolver<IcreatePsychologistProfile>,
     defaultValues: {
       crp: '',
       professionalBio: '',
       contextType: 'INDIVIDUAL',
       consultationFee: '',
       nickname: '',
+      expertise: 'CLINICAL',
     },
   })
 
+  const { control, setError, handleSubmit } = form
+
   const { mutateAsync, isPending } = useMutation({
-    mutationFn: async (data: SubFlowData) => {
+    mutationFn: async (data: IcreatePsychologistProfile) => {
       await createPsychologistProfile({
         crp: data.crp,
         expertise: data.expertise,
-        professionalBio: data.professionalBio?.trim() || null,
+        professionalBio: data.professionalBio || null,
       })
-      return createPracticeContext({
-        contextType: data.contextType,
-        consultationFee: data.consultationFee
-          ? Math.round(Number(data.consultationFee) * 100)
-          : null,
-        nickname: data.nickname?.trim() || null,
-      })
+      // return createPracticeContext({
+      //   contextType: data.contextType,
+      //   consultationFee: data.consultationFee
+      //     ? Math.round(Number(data.consultationFee) * 100)
+      //     : null,
+      //   nickname: data.nickname || null,
+      // })
+    },
+    onSuccess: async () => {
+      await queryClient.invalidateQueries({ queryKey: ['me'] })
+      // onCreated(context.id)
+    },
+    onError: (error) => {
+      if (axios.isAxiosError(error)) {
+        if (
+          error.apiCode === 'CRP_ALREADY_IN_USE' ||
+          error.apiCode === 'CRP_ALREADY_EXISTS'
+        ) {
+          setError('crp', {
+            type: 'server',
+            message: 'CRP já cadastrado.',
+          })
+          return
+        }
+        toast.error(error.message || 'Erro ao criar perfil de psicólogo.')
+        return
+      }
+      toast.error('Erro ao criar perfil de psicólogo.')
     },
   })
 
   const onSubmit = useCallback(
-    async (data: SubFlowData) => {
-      try {
-        const context = await mutateAsync(data)
-        await queryClient.invalidateQueries({ queryKey: ['me'] })
-        onCreated(context.id)
-      } catch (error) {
-        if (axios.isAxiosError(error)) {
-          if (
-            error.apiCode === 'CRP_ALREADY_IN_USE' ||
-            error.apiCode === 'CRP_ALREADY_EXISTS'
-          ) {
-            form.setError('crp', {
-              type: 'server',
-              message: 'CRP já cadastrado.',
-            })
-            return
-          }
-          toast.error(error.message || 'Erro ao criar perfil de psicólogo.')
-          return
-        }
-        toast.error('Erro ao criar perfil de psicólogo.')
-      }
+    async (data: IcreatePsychologistProfile) => {
+      await mutateAsync(data)
     },
-    [mutateAsync, queryClient, onCreated, form],
+    [mutateAsync],
   )
 
   return (
@@ -144,11 +135,11 @@ export function CreatePsychologistSubFlow({
 
         <Form {...form}>
           <form
-            onSubmit={form.handleSubmit(onSubmit)}
+            onSubmit={handleSubmit(onSubmit)}
             className="flex flex-col gap-4"
           >
             <FormField
-              control={form.control}
+              control={control}
               name="crp"
               render={({ field }) => (
                 <FormItem>
@@ -166,7 +157,7 @@ export function CreatePsychologistSubFlow({
             />
 
             <FormField
-              control={form.control}
+              control={control}
               name="expertise"
               render={({ field }) => (
                 <FormItem>
@@ -191,7 +182,7 @@ export function CreatePsychologistSubFlow({
             />
 
             <FormField
-              control={form.control}
+              control={control}
               name="professionalBio"
               render={({ field }) => (
                 <FormItem>
@@ -208,7 +199,7 @@ export function CreatePsychologistSubFlow({
             />
 
             <FormField
-              control={form.control}
+              control={control}
               name="contextType"
               render={({ field }) => (
                 <FormItem>
@@ -233,7 +224,7 @@ export function CreatePsychologistSubFlow({
             />
 
             <FormField
-              control={form.control}
+              control={control}
               name="consultationFee"
               render={({ field }) => (
                 <FormItem>
@@ -251,7 +242,7 @@ export function CreatePsychologistSubFlow({
             />
 
             <FormField
-              control={form.control}
+              control={control}
               name="nickname"
               render={({ field }) => (
                 <FormItem>
