@@ -31,7 +31,12 @@ import { Normalizer } from '@/utils/normalizer'
 import { getProfileByCrp } from '@/api/psychologists/get-profile-by-crp'
 import { Expertise, translatedExpertise } from '@/types/expertise'
 import { createPsychologistProfileSchema } from '@/validators/psychologist-profile'
-import { Honorific, Languages, translatedLanguages, type PsychologistProfile } from '@/types/psychologist'
+import {
+  Honorific,
+  Languages,
+  translatedLanguages,
+  type PsychologistProfile,
+} from '@/types/psychologist'
 
 type IcreatePsychologistProfile = z.infer<
   typeof createPsychologistProfileSchema
@@ -62,7 +67,10 @@ export function ProfessionalIdentityFormStep() {
       return
     }
 
-    setValue('languages', selectedLanguages.filter((lang) => lang !== language))
+    setValue(
+      'languages',
+      selectedLanguages.filter((lang) => lang !== language),
+    )
   }
 
   useEffect(() => {
@@ -77,14 +85,16 @@ export function ProfessionalIdentityFormStep() {
       <FieldSet className="flex flex-col gap-4">
         <FieldGroup className="flex flex-row items-start gap-2">
           <Controller
-            name="nickname"
+            name="professionalName"
             control={control}
             render={({ field }) => (
               <Field className="gap-1 flex-1">
-                <FieldLabel htmlFor="nickname">Nome Profissional</FieldLabel>
+                <FieldLabel htmlFor="professionalName">
+                  Nome Profissional
+                </FieldLabel>
                 <Input
                   {...field}
-                  id="nickname"
+                  id="professionalName"
                   placeholder="Seu nome profissional"
                 />
               </Field>
@@ -98,13 +108,15 @@ export function ProfessionalIdentityFormStep() {
                 <FieldLabel htmlFor="honorific">Honorífico(a)</FieldLabel>
                 <Select onValueChange={field.onChange}>
                   <SelectTrigger>
-                    <SelectValue id='honorific' placeholder="Honorífico(a)" />
+                    <SelectValue id="honorific" placeholder="Honorífico(a)" />
                   </SelectTrigger>
                   <SelectContent>
                     <SelectGroup>
                       <SelectLabel>Selecione seu título</SelectLabel>
                       <SelectItem value={Honorific.MASC_DR}>Dr.</SelectItem>
-                      <SelectItem value={Honorific.FEMININE_DR}>Dra.</SelectItem>
+                      <SelectItem value={Honorific.FEMININE_DR}>
+                        Dra.
+                      </SelectItem>
                       <SelectItem value={Honorific.MSC}>MSc.</SelectItem>
                       <SelectItem value={Honorific.PHD}>PhD</SelectItem>
                     </SelectGroup>
@@ -172,7 +184,9 @@ export function ProfessionalIdentityFormStep() {
                       <Badge
                         key={expertise}
                         variant="outline"
-                        onClick={() => {field.onChange(expertise)}}
+                        onClick={() => {
+                          field.onChange(expertise)
+                        }}
                         className={`
                           px-2 py-1 cursor-pointer
                           ${selectedExpertise === expertise && 'bg-violet-200 border border-violet-500 text-violet-500'}

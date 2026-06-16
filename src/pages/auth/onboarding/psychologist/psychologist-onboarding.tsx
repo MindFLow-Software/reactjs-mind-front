@@ -18,11 +18,11 @@ import {
 import { Button } from '@/components/ui/button'
 
 import { Expertise } from '@/types/expertise'
+import { getProfile } from '@/api/psychologists/get-profile'
 import { ContextType, Honorific } from '@/types/psychologist'
 import { createPsychologistProfile } from '@/api/auth/create-psychologist-profile'
 import { ProfessionalIdentityFormStep } from './steps/professional-identity-form-step'
 import { createPsychologistProfileSchema } from '@/validators/psychologist-profile'
-import { getProfile } from '@/api/psychologists/get-profile'
 
 type IcreatePsychologistProfile = z.infer<
   typeof createPsychologistProfileSchema
@@ -52,7 +52,6 @@ export function PsychologistOnboarding() {
       contextType: ContextType.INDIVIDUAL,
       crp: '',
       expertise: Expertise.CLINICAL,
-      nickname: '',
       honorific: Honorific.MASC_DR,
       languages: [],
       professionalBio: '',
