@@ -107,6 +107,12 @@ export function usePatientSubmit({
 
       for (const file of files) await uploadAttachment(file, targetId)
 
+      if (files.length > 0) {
+        await queryClient.invalidateQueries({
+          queryKey: ['attachments', targetId],
+        })
+      }
+
       return response
     } finally {
       setIsUploading(false)
