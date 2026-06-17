@@ -1,5 +1,3 @@
-import { useEffect } from 'react'
-import { useQuery } from '@tanstack/react-query'
 import { Controller, useFormContext } from 'react-hook-form'
 
 import z from 'zod'
@@ -27,16 +25,9 @@ import { Badge } from '@/components/ui/badge'
 import { Textarea } from '@/components/ui/textarea'
 import { MaskedInput } from '@/components/maked-input'
 
-import { Normalizer } from '@/utils/normalizer'
-import { getProfileByCrp } from '@/api/psychologists/get-profile-by-crp'
 import { Expertise, translatedExpertise } from '@/types/expertise'
 import { createPsychologistProfileSchema } from '@/validators/psychologist-profile'
-import {
-  Honorific,
-  Languages,
-  translatedLanguages,
-  type PsychologistProfile,
-} from '@/types/psychologist'
+import { Honorific, Languages, translatedLanguages } from '@/types/psychologist'
 
 type IcreatePsychologistProfile = z.infer<
   typeof createPsychologistProfileSchema
@@ -46,18 +37,8 @@ export function ProfessionalIdentityFormStep() {
   const { watch, control, setValue } =
     useFormContext<IcreatePsychologistProfile>()
 
-  const crp = watch('crp')
   const selectedExpertise = watch('expertise')
   const selectedLanguages = watch('languages')
-
-  const { data: psychologistProfile } = useQuery<PsychologistProfile>({
-    queryKey: ['psychologist-profile', crp],
-    queryFn: async () => {
-      return getProfileByCrp(crp)
-    },
-    retry: 2,
-    enabled: Normalizer.digits(crp).length >= 8,
-  })
 
   const handleToggleLanguage = (language: Languages) => {
     const alreadyAdded = selectedLanguages.includes(language)
@@ -72,13 +53,6 @@ export function ProfessionalIdentityFormStep() {
       selectedLanguages.filter((lang) => lang !== language),
     )
   }
-
-  useEffect(() => {
-    if (!psychologistProfile) return
-
-    setValue('professionalBio', psychologistProfile.professionalBio ?? '')
-    setValue('expertise', psychologistProfile.expertise)
-  }, [setValue, psychologistProfile])
 
   return (
     <div>

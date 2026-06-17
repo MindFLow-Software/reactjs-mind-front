@@ -18,8 +18,8 @@ import {
 import { Button } from '@/components/ui/button'
 
 import { Expertise } from '@/types/expertise'
+import { Honorific } from '@/types/psychologist'
 import { getProfile } from '@/api/psychologists/get-profile'
-import { ContextType, Honorific } from '@/types/psychologist'
 import { createPsychologistProfile } from '@/api/auth/create-psychologist-profile'
 import { ProfessionalIdentityFormStep } from './steps/professional-identity-form-step'
 import { createPsychologistProfileSchema } from '@/validators/psychologist-profile'
@@ -49,7 +49,6 @@ export function PsychologistOnboarding() {
     ) as Resolver<IcreatePsychologistProfile>,
     defaultValues: {
       professionalName: '',
-      contextType: ContextType.INDIVIDUAL,
       crp: '',
       expertise: Expertise.CLINICAL,
       honorific: Honorific.MASC_DR,
@@ -119,7 +118,7 @@ export function PsychologistOnboarding() {
 
   return (
     <main className="flex gap-8 mx-auto max-w-7xl mt-4">
-      <aside className="flex flex-col gap-8 max-w-72">
+      <aside className="flex flex-col gap-6 max-w-72">
         <Link
           to="/profiles"
           className="text-xs flex items-center gap-1 cursor-pointer text-black"
@@ -134,7 +133,7 @@ export function PsychologistOnboarding() {
             simples.
           </p>
         </header>
-        <div className="flex flex-col gap-3 mt-4">
+        <div className="flex flex-col gap-3">
           {STEPS.map((step) => (
             <Button
               key={step.order}
