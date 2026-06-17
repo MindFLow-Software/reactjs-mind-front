@@ -35,6 +35,15 @@ export interface PsychologistProfile {
   createdAt: string
 }
 
+export interface CreatePsychologistProfileBody {
+  crp: string
+  expertise: string
+  professionalBio?: string | null
+  professionalName: string
+  honorific: Honorific
+  languages: Languages[]
+}
+
 export enum ContextType {
   'CLINIC' = 'CLINIC',
   'INDIVIDUAL' = 'INDIVIDUAL',
@@ -50,14 +59,6 @@ export interface PsychologistPracticeContext {
   nickname: string | null
   isActive: boolean
   createdAt: string
-}
-
-export interface CreatePsychologistProfileBody {
-  crp: string
-  expertise: string
-  professionalBio?: string | null
-  honorific?: Honorific
-  languages?: Languages[]
 }
 
 export interface CreatePracticeContextBody {

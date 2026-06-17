@@ -11,5 +11,5 @@ export const createPsychologistProfileSchema = z.object({
   expertise: z.enum(Expertise).default(Expertise.CLINICAL),
   professionalBio: z.string().optional(),
   languages: z.array(z.enum(Languages)).default([]),
-  honorific: z.enum(Honorific).default(Honorific.MASC_DR).optional(),
+  honorific: z.enum(Honorific).default(Honorific.MASC_DR),
 })
