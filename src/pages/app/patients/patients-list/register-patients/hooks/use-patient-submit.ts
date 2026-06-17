@@ -38,7 +38,6 @@ export function usePatientSubmit({
         queryClient.invalidateQueries({ queryKey: ['patients-metrics'] }),
       ])
 
-      onSuccess?.()
       toast.success('Paciente cadastrado!')
     },
     onError: (error) => {
@@ -63,7 +62,6 @@ export function usePatientSubmit({
         queryClient.invalidateQueries({ queryKey: ['patients-metrics'] }),
       ])
 
-      onSuccess?.()
       toast.success('Paciente atualizado!')
     },
     onError: (error) => {
@@ -112,6 +110,8 @@ export function usePatientSubmit({
           queryKey: ['attachments', targetId],
         })
       }
+
+      onSuccess?.()
 
       return response
     } finally {
