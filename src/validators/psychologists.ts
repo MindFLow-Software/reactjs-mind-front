@@ -20,19 +20,13 @@ const timeSchema = z
     'Formato de hora inválido — use HH:mm (ex: 09:00)',
   )
 
-export const createPracticeContextSchema = z.object({
-  contextType: z.enum(['INDIVIDUAL', 'CLINIC'], { message: 'Obrigatório' }),
-  consultationFee: z.number().int().positive().optional(),
-  nickname: z.string().optional(),
-})
-
 // gender, cpf, dateOfBirth are NOT updatable via this endpoint
 export const updatePsychologistSchema = z.object({
   firstName: z.string().optional(),
   lastName: z.string().optional(),
   email: z.preprocess(
     (v) => (v === '' ? undefined : v),
-    z.string().email('E-mail inválido').optional(),
+    z.email('E-mail inválido').optional(),
   ),
   phoneNumber: z.string().optional(),
   crp: z.string().optional(),
@@ -73,9 +67,6 @@ export const newPsychologistsCountQuerySchema = z.object({
     .optional(),
 })
 
-export type CreatePracticeContextData = z.infer<
-  typeof createPracticeContextSchema
->
 export type UpdatePsychologistData = z.infer<typeof updatePsychologistSchema>
 export type FetchPsychologistsQuery = z.infer<
   typeof fetchPsychologistsQuerySchema

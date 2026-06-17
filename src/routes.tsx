@@ -31,7 +31,8 @@ import { PatientDocuments } from './pages/app/patients/patients-docs/patients-do
 import PatientDetails from './pages/app/patients/patients-hub/patients-details'
 import PatientsRecords from './pages/app/patients/patients-records/patients-records'
 import { useActivePracticeContextStore } from './store/use-active-practice-context-store'
-import { PsychologistOnboarding } from './pages/auth/onboarding/psychologist/psychologist-onboarding'
+import { PsychologistOnboardingPage } from './pages/auth/onboarding/psychologist/psychologist-onboarding'
+import { PracticeContextPage } from './pages/auth/practice-context/practice-context-page'
 
 const authLoader = async () => {
   const isAuthenticated = localStorage.getItem('isAuthenticated') === 'true'
@@ -131,6 +132,14 @@ export const router = createBrowserRouter([
     ),
   },
   {
+    path: '/onboarding/psychologist',
+    element: <PsychologistOnboardingPage />,
+  },
+  {
+    path: '/profiles/context',
+    element: <PracticeContextPage />,
+  },
+  {
     path: '/patient-dashboard',
     loader: patientDashboardGuard,
     element: (
@@ -196,9 +205,5 @@ export const router = createBrowserRouter([
   {
     path: '*',
     element: <NotFound />,
-  },
-  {
-    path: '/onboarding/psychologist',
-    element: <PsychologistOnboarding />,
   },
 ])

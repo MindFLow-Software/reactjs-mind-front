@@ -49,6 +49,18 @@ export enum ContextType {
   'INDIVIDUAL' = 'INDIVIDUAL',
 }
 
+export enum SessionFormat {
+  'ONLINE' = 'ONLINE',
+  'HYBRID' = 'HYBRID',
+  'IN_PERSON' = 'IN_PERSON',
+}
+
+export const translatedSessionFormat = {
+  ONLINE: 'Online',
+  HYBRID: 'Híbrido',
+  IN_PERSON: 'Presencial',
+}
+
 export interface PsychologistPracticeContext {
   id: string
   psychologistProfileId: string
@@ -57,6 +69,7 @@ export interface PsychologistPracticeContext {
   clinicBranchId: string | null
   consultationFee: number | null
   nickname: string | null
+  sessionFormat: SessionFormat
   isActive: boolean
   createdAt: string
 }

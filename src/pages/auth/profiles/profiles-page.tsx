@@ -112,6 +112,10 @@ export function ProfilesPage() {
     navigate(`/onboarding/${type}`)
   }
 
+  const handleRedirectToCreateContext = () => {
+    navigate('/profiles/context')
+  }
+
   const hasPsychologistProfile = Boolean(me?.psychologistProfile)
 
   if (isLoading) {
@@ -262,18 +266,12 @@ export function ProfilesPage() {
 
       {hasPsychologistProfile && (
         <div>
-          <Button className="gap-2">
+          <Button className="gap-2" onClick={handleRedirectToCreateContext}>
             <Plus />
             Adicionar Contexto de atuação
           </Button>
         </div>
       )}
-
-      {/* <CreatePsychologistProfile
-        open={subFlowOpen}
-        onOpenChange={setSubFlowOpen}
-        onCreated={handleCreatePsychologistProfile}
-      /> */}
     </ProfilesShell>
   )
 }

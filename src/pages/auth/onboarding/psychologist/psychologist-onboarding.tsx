@@ -35,7 +35,7 @@ const STEPS = [
   },
 ]
 
-export function PsychologistOnboarding() {
+export function PsychologistOnboardingPage() {
   const navigate = useNavigate()
 
   const { data: me } = useQuery({
@@ -112,7 +112,7 @@ export function PsychologistOnboarding() {
     [me],
   )
 
-  if (alreadyHasPsychologistProfile) return navigate('/profiles')
+  if (alreadyHasPsychologistProfile) navigate('/profiles')
 
   const isDisabled = isCreatingPsychologistProfile
 
