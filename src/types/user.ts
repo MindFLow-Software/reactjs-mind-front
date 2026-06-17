@@ -1,4 +1,8 @@
-export type PlatformRole = 'USER' | 'ADMIN' | 'SUPPORT'
+export enum PlatformRole {
+  'USER' = 'USER',
+  'ADMIN' = 'ADMIN',
+  'SUPPORT' = 'SUPPORT',
+}
 
 export interface Iuser {
   id: string

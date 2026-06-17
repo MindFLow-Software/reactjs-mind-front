@@ -1,6 +1,6 @@
 import { Helmet } from 'react-helmet-async'
 import { BrainIcon } from '@phosphor-icons/react'
-import { useAuthRedirect } from '@/hooks/use-auth-redirect'
+import { useAuth } from '@/hooks/use-auth'
 import { SignInForm } from './components/sign-in-form'
 
 function BrandedLoader() {
@@ -14,7 +14,7 @@ function BrandedLoader() {
 }
 
 export function SignIn() {
-  const { isChecking } = useAuthRedirect()
+  const { isChecking } = useAuth()
 
   if (isChecking) return <BrandedLoader />
 

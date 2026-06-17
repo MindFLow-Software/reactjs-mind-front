@@ -1,7 +1,7 @@
-import type { GetMeResponse } from '@/api/psychologists/get-profile'
+import type { IgetMeResponse } from '@/api/psychologists/get-profile'
 
-export type PracticeContextMe = GetMeResponse['practiceContexts'][number]
-export type PatientProfileMe = GetMeResponse['patientProfiles'][number]
+export type PracticeContextMe = IgetMeResponse['practiceContexts'][number]
+export type PatientProfileMe = IgetMeResponse['patientProfiles'][number]
 
 export const EXPERTISE_OPTIONS = [
   { value: 'CLINICAL', label: 'Clínica' },

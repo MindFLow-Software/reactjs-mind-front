@@ -1,30 +1,36 @@
 import { api } from '@/lib/axios'
+
+import type {
+  PsychologistProfile,
+  PsychologistPracticeContext,
+} from '@/types/psychologist'
 import type { PlatformRole } from '@/types/user'
+import type { IpatientProfile } from '@/types/patient-profile'
 
-interface PsychologistProfileMeShape {
-  id: string
-  crp: string
-  expertise: string
-  professionalBio: string | null
-  status: string
-  isActive: boolean
-}
+// interface PsychologistProfileMeShape {
+//   id: string
+//   crp: string
+//   expertise: string
+//   professionalBio: string | null
+//   status: string
+//   isActive: boolean
+// }
 
-interface PracticeContextMeShape {
-  id: string
-  contextType: string
-  clinicId: string | null
-  clinicBranchId: string | null
-  consultationFee: number | null
-  nickname: string | null
-  isActive: boolean
-}
+// interface PracticeContextMeShape {
+//   id: string
+//   contextType: string
+//   clinicId: string | null
+//   clinicBranchId: string | null
+//   consultationFee: number | null
+//   nickname: string | null
+//   isActive: boolean
+// }
 
-interface PatientProfileMeShape {
-  id: string
-  psychologistPracticeContextId: string | null
-  isActive: boolean
-}
+// interface PatientProfileMeShape {
+//   id: string
+//   psychologistPracticeContextId: string | null
+//   isActive: boolean
+// }
 
 interface ClinicMemberContextShape {
   id: string
@@ -33,7 +39,7 @@ interface ClinicMemberContextShape {
   memberRole: string
 }
 
-export interface GetMeResponse {
+export interface IgetMeResponse {
   id: string
   firstName: string
   lastName: string
@@ -46,13 +52,13 @@ export interface GetMeResponse {
   isActive: boolean
   platformRole: PlatformRole
   createdAt: string
-  psychologistProfile: PsychologistProfileMeShape | null
-  practiceContexts: PracticeContextMeShape[]
-  patientProfiles: PatientProfileMeShape[]
+  psychologistProfile: PsychologistProfile | null
+  practiceContexts: PsychologistPracticeContext[]
+  patientProfiles: IpatientProfile[]
   clinicMemberContexts: ClinicMemberContextShape[]
 }
 
-export async function getProfile(): Promise<GetMeResponse> {
-  const response = await api.get<GetMeResponse>('/me')
+export async function getProfile(): Promise<IgetMeResponse> {
+  const response = await api.get<IgetMeResponse>('/me')
   return response.data
 }

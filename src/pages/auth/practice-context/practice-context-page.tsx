@@ -1,4 +1,9 @@
+import { useState } from 'react'
+import { useNavigate } from 'react-router-dom'
+import { useMutation } from '@tanstack/react-query'
 import { ArrowRight, Briefcase, Building2 } from 'lucide-react'
+
+import { toast } from 'sonner'
 
 import {
   Card,
@@ -11,13 +16,19 @@ import {
 
 import { Button } from '@/components/ui/button'
 
-import { ContextType, Honorific } from '@/types/psychologist'
-import { ActivePsychologistProfileBadge } from '../components/active-psychologist-profile-badge'
-import { useState } from 'react'
-import { CreateIndividualContext } from './components/create-individual-context'
+import {
+  ContextType,
+  type CreatePracticeContextBody,
+} from '@/types/psychologist'
+
 import { CreateClinicContext } from './components/create-clinic-context'
+import { createPracticeContext } from '@/api/auth/create-practice-context'
+import { CreateIndividualContext } from './components/create-individual-context'
+import { ActivePsychologistProfileBadge } from '../components/active-psychologist-profile-badge'
 
 export function PracticeContextPage() {
+  const navigate = useNavigate()
+
   const [practiceContext, setPracticeContext] = useState<ContextType | null>(
     null,
   )
@@ -30,13 +41,41 @@ export function PracticeContextPage() {
     setPracticeContext(null)
   }
 
+  const { mutateAsync } = useMutation({
+    mutationKey: ['create-psychologist-practice-context'],
+    mutationFn: createPracticeContext,
+    onSuccess: () => {
+      toast.success('Contexto de atuação criado')
+      navigate('/profiles')
+    },
+    onError: () => {
+      toast.error('Erro ao criar contexto de atuação')
+    },
+  })
+
+  const handleCreatePracticeContext = async (
+    data: CreatePracticeContextBody,
+  ) => {
+    await mutateAsync(data)
+  }
+
   const renderPracticeContextForm = () => {
     switch (practiceContext) {
       case ContextType.INDIVIDUAL: {
-        return <CreateIndividualContext onGoBack={handleGoBack} />
+        return (
+          <CreateIndividualContext
+            onGoBack={handleGoBack}
+            onCreatPracticeContext={handleCreatePracticeContext}
+          />
+        )
       }
       case ContextType.CLINIC: {
-        return <CreateClinicContext onGoBack={handleGoBack} />
+        return (
+          <CreateClinicContext
+            onGoBack={handleGoBack}
+            onCreatPracticeContext={handleCreatePracticeContext}
+          />
+        )
       }
     }
   }
@@ -58,11 +97,7 @@ export function PracticeContextPage() {
             </p>
           </div>
         </header>
-        <ActivePsychologistProfileBadge
-          crp="06/123456"
-          name="Helena Vasconcelos"
-          honorific={Honorific.FEMININE_DR}
-        />
+        <ActivePsychologistProfileBadge />
       </div>
       <main className="w-full max-w-4xl">
         {!practiceContext ? (
@@ -75,7 +110,7 @@ export function PracticeContextPage() {
                 </div>
               </CardHeader>
               <CardContent className="p-0 space-y-3">
-                <CardTitle className="text-xl">INDIVIDUAL</CardTitle>
+                <CardTitle className="text-xl">INDIVIDUAL / PRIVADO</CardTitle>
                 <CardDescription className="text-xs">
                   Você conduz suas próprias sessões.
                 </CardDescription>

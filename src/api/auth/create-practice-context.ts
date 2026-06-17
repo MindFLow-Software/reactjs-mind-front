@@ -8,7 +8,7 @@ export async function createPracticeContext(
   body: CreatePracticeContextBody,
 ): Promise<PsychologistPracticeContext> {
   const response = await api.post<PsychologistPracticeContext>(
-    '/psychologist/practice-contexts',
+    '/psychologist/practice-context',
     body,
   )
   return response.data

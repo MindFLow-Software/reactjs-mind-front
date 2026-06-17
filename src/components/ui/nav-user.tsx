@@ -17,7 +17,7 @@ import { useNavigate, Link } from 'react-router-dom'
 import { toast } from 'sonner'
 
 import { signOut } from '@/api/auth/sign-out'
-import { getProfile, type GetMeResponse } from '@/api/psychologists/get-profile'
+import { getProfile, type IgetMeResponse } from '@/api/psychologists/get-profile'
 import { useTheme } from '../theme/theme-provider'
 
 import {
@@ -52,7 +52,7 @@ export function NavUser() {
     data: profile,
     isLoading,
     isError,
-  } = useQuery<GetMeResponse | null>({
+  } = useQuery<IgetMeResponse | null>({
     queryKey: ['user-profile'],
     queryFn: getProfile,
     retry: false,

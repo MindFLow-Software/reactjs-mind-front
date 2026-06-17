@@ -8,6 +8,7 @@ import {
   ContextType,
   SessionFormat,
   translatedSessionFormat,
+  type CreatePracticeContextBody,
 } from '@/types/psychologist'
 
 import {
@@ -16,7 +17,14 @@ import {
   FieldLabel,
   FieldGroup,
   FieldDescription,
+  FieldError,
 } from '@/components/ui/field'
+
+import {
+  InputGroup,
+  InputGroupAddon,
+  InputGroupInput,
+} from '@/components/ui/input-group'
 
 import { Input } from '@/components/ui/input'
 import { Badge } from '@/components/ui/badge'
@@ -30,10 +38,12 @@ import {
 
 type IcreateIndividualContext = {
   onGoBack: () => void
+  onCreatPracticeContext: (data: CreatePracticeContextBody) => void
 }
 
 export function CreateIndividualContext({
   onGoBack,
+  onCreatPracticeContext,
 }: IcreateIndividualContext) {
   const methods = useForm<IcreatePsychologistPracticeContext>({
     resolver: zodResolver(
@@ -44,10 +54,17 @@ export function CreateIndividualContext({
       contextType: ContextType.INDIVIDUAL,
       sessionFormat: SessionFormat.ONLINE,
       consultationFee: 0,
+      openFrom: undefined,
+      closeAt: undefined,
     },
   })
 
-  const { watch, control } = methods
+  const {
+    watch,
+    control,
+    handleSubmit,
+    formState: { errors },
+  } = methods
 
   const selectedSessionFormat = watch('sessionFormat')
 
@@ -75,92 +92,137 @@ export function CreateIndividualContext({
           </div>
         </CardHeader>
         <Form {...methods}>
-          <CardContent className="p-0">
-            <FieldSet className="flex flex-col gap-4">
-              <FieldGroup className="flex flex-row items-start gap-2">
-                <Controller
-                  name="nickname"
-                  control={control}
-                  render={({ field }) => (
-                    <Field className="gap-1 flex-1">
-                      <FieldLabel htmlFor="nickname">Apelido</FieldLabel>
-                      <Input
-                        {...field}
-                        id="nickname"
-                        placeholder="Digite seu apelido"
-                      />
-                      <FieldDescription className="text-xs">
-                        Apresentado aos seus pacientes.
-                      </FieldDescription>
-                    </Field>
-                  )}
-                />
-                <Controller
-                  name="consultationFee"
-                  control={control}
-                  render={({ field }) => (
-                    <Field className="max-w-40 gap-1">
-                      <FieldLabel htmlFor="consultationFee">
-                        Valor da consulta (BRL)
-                      </FieldLabel>
-                      <div className="relative">
-                        <span className="absolute top-[9px] left-2 text-sm">
-                          R$
-                        </span>
+          <form
+            className="flex flex-col gap-4"
+            onSubmit={handleSubmit(onCreatPracticeContext)}
+          >
+            <CardContent className="p-0">
+              <FieldSet className="flex flex-col gap-4">
+                <FieldGroup className="flex flex-row items-start gap-2">
+                  <Controller
+                    name="nickname"
+                    control={control}
+                    render={({ field }) => (
+                      <Field className="gap-1 flex-1">
+                        <FieldLabel htmlFor="nickname">Apelido</FieldLabel>
                         <Input
                           {...field}
-                          className="pl-8"
-                          id="consultationFee"
-                          placeholder="Valor da consulta"
+                          id="nickname"
+                          placeholder="Digite seu apelido"
                         />
-                      </div>
-                    </Field>
-                  )}
-                />
-              </FieldGroup>
+                        {errors.nickname && (
+                          <FieldError>{errors.nickname.message}</FieldError>
+                        )}
+                        <FieldDescription className="text-xs">
+                          Apresentado aos seus pacientes.
+                        </FieldDescription>
+                      </Field>
+                    )}
+                  />
+                  <Controller
+                    name="consultationFee"
+                    control={control}
+                    render={({ field }) => (
+                      <Field className="max-w-40 gap-1">
+                        <FieldLabel htmlFor="consultationFee">
+                          Valor da consulta (BRL)
+                        </FieldLabel>
+                        <InputGroup className="max-w-xs">
+                          <InputGroupInput
+                            {...field}
+                            className="pl-8"
+                            id="consultationFee"
+                            placeholder="Valor da consulta"
+                          />
+                          <InputGroupAddon>R$</InputGroupAddon>
+                        </InputGroup>
+                        {errors.consultationFee && (
+                          <FieldError>
+                            {errors.consultationFee.message}
+                          </FieldError>
+                        )}
+                      </Field>
+                    )}
+                  />
+                </FieldGroup>
 
-              <FieldGroup>
-                <Controller
-                  name="sessionFormat"
-                  control={control}
-                  render={({ field }) => (
-                    <Field>
-                      <FieldLabel>Formato da sessão</FieldLabel>
-                      <div className="flex gap-2">
-                        {Object.values(SessionFormat).map((format) => {
-                          return (
-                            <Badge
-                              key={format}
-                              variant="outline"
-                              onClick={() => {
-                                field.onChange(format)
-                              }}
-                              className={`
+                <FieldGroup>
+                  <Controller
+                    name="sessionFormat"
+                    control={control}
+                    render={({ field }) => (
+                      <Field className="gap-1">
+                        <FieldLabel>Formato da sessão</FieldLabel>
+                        <div className="flex gap-2">
+                          {Object.values(SessionFormat).map((format) => {
+                            return (
+                              <Badge
+                                key={format}
+                                variant="outline"
+                                onClick={() => {
+                                  field.onChange(format)
+                                }}
+                                className={`
                                 flex-1 py-3 cursor-pointer rounded-sm
                                 ${selectedSessionFormat === format && 'bg-violet-200 border border-violet-500 text-violet-500'}
                               `}
-                            >
-                              {translatedSessionFormat[format]}
-                            </Badge>
-                          )
-                        })}
-                      </div>
-                    </Field>
-                  )}
-                />
-              </FieldGroup>
-            </FieldSet>
-          </CardContent>
-          <CardFooter className="justify-end p-0">
-            <Button
-              type="submit"
-              variant="outline"
-              className="items-center gap-2"
-            >
-              Finalizar
-              <CircleCheck size={16} className="text-green-600" />
-            </Button>
-          </CardFooter>
+                              >
+                                {translatedSessionFormat[format]}
+                              </Badge>
+                            )
+                          })}
+                        </div>
+                        {errors.sessionFormat && (
+                          <FieldError>
+                            {errors.sessionFormat.message}
+                          </FieldError>
+                        )}
+                      </Field>
+                    )}
+                  />
+                </FieldGroup>
+
+                <FieldGroup className="flex flex-row items-start gap-4">
+                  <Controller
+                    name="openFrom"
+                    control={control}
+                    render={({ field }) => (
+                      <Field className="gap-1">
+                        <FieldLabel>Horário de abertura</FieldLabel>
+                        <Input {...field} type="time" defaultValue="08:00" />
+                        {errors.openFrom && (
+                          <FieldError>{errors.openFrom.message}</FieldError>
+                        )}
+                      </Field>
+                    )}
+                  />
+                  <Controller
+                    name="closeAt"
+                    control={control}
+                    render={({ field }) => (
+                      <Field className="gap-1">
+                        <FieldLabel>Horário de fechamento</FieldLabel>
+                        <Input {...field} type="time" defaultValue="18:00" />
+                        {errors.closeAt && (
+                          <FieldError>{errors.closeAt.message}</FieldError>
+                        )}
+                      </Field>
+                    )}
+                  />
+                </FieldGroup>
+              </FieldSet>
+            </CardContent>
+            <CardFooter className="justify-end p-0">
+              <Button
+                type="submit"
+                variant="outline"
+                className="items-center gap-2"
+              >
+                Finalizar
+                <CircleCheck size={16} className="text-green-600" />
+              </Button>
+            </CardFooter>
+          </form>
         </Form>
       </Card>
     </div>

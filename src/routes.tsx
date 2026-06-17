@@ -1,11 +1,5 @@
-import {
-  createBrowserRouter,
-  Outlet,
-  redirect,
-  Navigate,
-  useLocation,
-} from 'react-router-dom'
-import { getProfile } from './api/psychologists/get-profile'
+import { createBrowserRouter, Outlet, redirect } from 'react-router-dom'
+// import { getProfile } from './api/psychologists/get-profile'
 import { AppLayout } from './pages/_layouts/app'
 import { AuthLayout } from './pages/_layouts/auth'
 import { PatientsList } from './pages/app/patients/patients-list/patients-list'
@@ -33,31 +27,36 @@ import PatientsRecords from './pages/app/patients/patients-records/patients-reco
 import { useActivePracticeContextStore } from './store/use-active-practice-context-store'
 import { PsychologistOnboardingPage } from './pages/auth/onboarding/psychologist/psychologist-onboarding'
 import { PracticeContextPage } from './pages/auth/practice-context/practice-context-page'
+import { ProtectedRoute } from './components/auth/protected-route'
+import { useAuth } from './hooks/use-auth'
+import { PlatformRole } from './types/user'
 
-const authLoader = async () => {
-  const isAuthenticated = localStorage.getItem('isAuthenticated') === 'true'
-  if (isAuthenticated) return null
+// const authLoader = async () => {
+//   const isAuthenticated = localStorage.getItem('isAuthenticated') === 'true'
+//   if (isAuthenticated) return null
 
-  // Sem flag local — pode ser login via Google OAuth (cookie já setado pelo backend)
-  try {
-    const profile = await getProfile()
-    localStorage.setItem('isAuthenticated', 'true')
-    if (profile.platformRole === 'ADMIN') return redirect('/admin-dashboard')
-    if (profile.platformRole === 'USER') return redirect('/profiles')
-    return null
-  } catch {
-    return redirect('/sign-in')
-  }
-}
+//   // Sem flag local — pode ser login via Google OAuth (cookie já setado pelo backend)
+//   try {
+//     const profile = await getProfile()
+//     localStorage.setItem('isAuthenticated', 'true')
+//     if (profile.platformRole === 'ADMIN') return redirect('/admin-dashboard')
+//     if (profile.platformRole === 'USER') return redirect('/profiles')
+//     return null
+//   } catch {
+//     return redirect('/sign-in')
+//   }
+// }
 
 const adminLoader = async () => {
-  try {
-    const profile = await getProfile()
-    if (profile.platformRole !== 'ADMIN') return redirect('/dashboard')
-    return null
-  } catch {
-    return redirect('/sign-in')
-  }
+  // try {
+  const { profile } = useAuth()
+
+  if (profile?.platformRole !== PlatformRole.ADMIN)
+    return redirect('/dashboard')
+
+  // } catch {
+  //   return redirect('/sign-in')
+  // }
 }
 
 const practiceContextGuard = () => {
@@ -77,21 +76,6 @@ const patientDashboardGuard = () => {
     return redirect('/profiles')
   }
   return null
-}
-
-interface ProtectedRouteProps {
-  children: React.ReactNode
-}
-
-const ProtectedRoute = ({ children }: ProtectedRouteProps) => {
-  const isAuthenticated = localStorage.getItem('isAuthenticated') === 'true'
-  const location = useLocation()
-
-  if (!isAuthenticated) {
-    return <Navigate to="/sign-in" state={{ from: location }} replace />
-  }
-
-  return <>{children}</>
 }
 
 function LandingLayout() {
@@ -122,7 +106,7 @@ export const router = createBrowserRouter([
       { path: '/google-oauth-complete', loader: () => redirect('/sign-in') },
     ],
   },
-  { path: '/complete-registration', loader: () => redirect('/sign-in') },
+  // { path: '/complete-registration', loader: () => redirect('/sign-in') },
   {
     path: '/profiles',
     element: (
@@ -133,13 +117,23 @@ export const router = createBrowserRouter([
   },
   {
     path: '/onboarding/psychologist',
-    element: <PsychologistOnboardingPage />,
+    element: (
+      <ProtectedRoute>
+        <PsychologistOnboardingPage />
+      </ProtectedRoute>
+    ),
   },
   {
     path: '/profiles/context',
-    element: <PracticeContextPage />,
+    element: (
+      <ProtectedRoute>
+        <PracticeContextPage />
+      </ProtectedRoute>
+    ),
   },
   {
+    // TODO: patient-dashboard is going to be same /dashboard route,
+    // and a switch case inside the page to render the correct component
     path: '/patient-dashboard',
     loader: patientDashboardGuard,
     element: (
@@ -154,7 +148,7 @@ export const router = createBrowserRouter([
         <AppLayout />
       </ProtectedRoute>
     ),
-    loader: authLoader,
+    // loader: authLoader,
     children: [
       {
         path: '/dashboard',

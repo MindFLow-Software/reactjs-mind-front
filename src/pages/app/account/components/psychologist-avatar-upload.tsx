@@ -6,7 +6,7 @@ import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { toast } from 'sonner'
 import { uploadAvatar } from '@/api/attachments/attachments'
 import { UserAvatar } from '@/components/user-avatar'
-import type { GetMeResponse } from '@/api/psychologists/get-profile'
+import type { IgetMeResponse } from '@/api/psychologists/get-profile'
 
 interface AvatarUploadProps {
   currentImage?: string | null
@@ -29,7 +29,7 @@ export function PsychologistAvatarUpload({
     onSuccess: async (newPhotoUrl) => {
       const queryKey = ['psychologist-profile']
 
-      queryClient.setQueryData<GetMeResponse>(queryKey, (oldData) => {
+      queryClient.setQueryData<IgetMeResponse>(queryKey, (oldData) => {
         if (!oldData) return oldData
         return { ...oldData, profileImageUrl: newPhotoUrl }
       })
@@ -60,7 +60,7 @@ export function PsychologistAvatarUpload({
       setPreviewUrl(objectUrl)
       try {
         await uploadPhoto(file)
-      } catch {}
+      } catch { }
     }
   }
 
