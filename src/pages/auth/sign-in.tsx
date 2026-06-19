@@ -6,17 +6,17 @@ import { SignInForm } from './components/sign-in-form'
 function BrandedLoader() {
   return (
     <div className="flex min-h-svh flex-col items-center justify-center gap-4 bg-gray-50">
-      <BrainIcon className="h-10 w-10 text-blue-600" weight="duotone" />
-      <div className="h-8 w-8 animate-spin rounded-full border-4 border-blue-600 border-t-transparent" />
+      <BrainIcon className="size-10 text-blue-600" weight="duotone" />
+      <div className="size-8 animate-spin rounded-full border-4 border-blue-600 border-t-transparent" />
       <p className="text-sm text-gray-400">Verificando acesso...</p>
     </div>
   )
 }
 
 export function SignIn() {
-  const { isChecking } = useAuth()
+  const { isPending } = useAuth()
 
-  if (isChecking) return <BrandedLoader />
+  if (isPending) return <BrandedLoader />
 
   return (
     <>

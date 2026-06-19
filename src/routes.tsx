@@ -28,8 +28,8 @@ import { useActivePracticeContextStore } from './store/use-active-practice-conte
 import { PsychologistOnboardingPage } from './pages/auth/onboarding/psychologist/psychologist-onboarding'
 import { PracticeContextPage } from './pages/auth/practice-context/practice-context-page'
 import { ProtectedRoute } from './components/auth/protected-route'
-import { useAuth } from './hooks/use-auth'
-import { PlatformRole } from './types/user'
+import { AdminRoute } from './components/auth/admin-route'
+import { ClaimAccountPage } from './pages/auth/claim-account'
 
 // const authLoader = async () => {
 //   const isAuthenticated = localStorage.getItem('isAuthenticated') === 'true'
@@ -46,18 +46,6 @@ import { PlatformRole } from './types/user'
 //     return redirect('/sign-in')
 //   }
 // }
-
-const adminLoader = async () => {
-  // try {
-  const { profile } = useAuth()
-
-  if (profile?.platformRole !== PlatformRole.ADMIN)
-    return redirect('/dashboard')
-
-  // } catch {
-  //   return redirect('/sign-in')
-  // }
-}
 
 const practiceContextGuard = () => {
   if (
@@ -103,6 +91,7 @@ export const router = createBrowserRouter([
       { path: '/auth/google/success', element: <GoogleOAuthSuccess /> },
       { path: '/auth/google/complete', element: <GoogleOAuthComplete /> },
       { path: '/google-oauth-success', element: <GoogleOAuthSuccess /> },
+      { path: '/claim-account', element: <ClaimAccountPage /> },
       { path: '/google-oauth-complete', loader: () => redirect('/sign-in') },
     ],
   },
@@ -167,28 +156,31 @@ export const router = createBrowserRouter([
       { path: '/approvals', loader: () => redirect('/admin-dashboard') },
       {
         path: '/admin-dashboard',
-        loader: adminLoader,
         element: (
           <ProtectedRoute>
-            <AdminDashboard />
+            <AdminRoute>
+              <AdminDashboard />
+            </AdminRoute>
           </ProtectedRoute>
         ),
       },
       {
         path: '/admin-suggestions',
-        loader: adminLoader,
         element: (
           <ProtectedRoute>
-            <AdminSuggestionsPage />
+            <AdminRoute>
+              <AdminSuggestionsPage />
+            </AdminRoute>
           </ProtectedRoute>
         ),
       },
       {
         path: '/menagement-suggestions',
-        loader: adminLoader,
         element: (
           <ProtectedRoute>
-            <SuggestionsManagement />
+            <AdminRoute>
+              <SuggestionsManagement />
+            </AdminRoute>
           </ProtectedRoute>
         ),
       },

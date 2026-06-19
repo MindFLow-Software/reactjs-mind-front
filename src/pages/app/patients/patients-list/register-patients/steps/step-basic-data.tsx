@@ -38,8 +38,9 @@ export function StepBasicData({ onAvatarSelect, patient }: StepBasicDataProps) {
   })
 
   const cpfValue = useWatch({ control, name: 'cpf' })
-  const dateOfBirth = useWatch({ control, name: 'dateOfBirth' })
   const cpfDigits = Normalizer.digits(cpfValue ?? '')
+
+  const dateOfBirth = useWatch({ control, name: 'dateOfBirth' })
   const age = dateOfBirth ? formatAGE(dateOfBirth) : null
 
   const initials = patient
