@@ -222,7 +222,7 @@ export const SignInForm = memo(function SignInForm({
               to="/claim-account"
               className="font-semibold text-blue-600 hover:text-blue-700 underline-offset-4 hover:underline transition-colors"
             >
-              Reivindicar conta
+              Finalizar Cadastro
             </Link>
           </p>
         </motion.div>

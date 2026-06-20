@@ -52,7 +52,7 @@ export function ClaimAccountPage() {
           <div className="flex items-center justify-center p-2 rounded-md w-fit bg-gradient-to-br from-[#16306b] to-[#194ac5]">
             <Lock size={24} className="text-white" />
           </div>
-          <CardTitle className="text-xl m-0">Reivindicar Conta</CardTitle>
+          <CardTitle className="text-xl m-0">Finalizar Cadastro</CardTitle>
         </div>
         <CardDescription className="text-sm">
           Se você já foi cadastrado por um psicólogo anteriormente, podemos
