@@ -16,7 +16,7 @@ import {
   getAnamnesis,
   saveAnamnesis,
   type AnamnesisData,
-} from '@/api/patients/anamnesis'
+} from '@/api/patient-profiles/anamnesis'
 import { AnamnesisPDFTemplate } from '@/utils/anamnesis-pdf-template'
 
 import type {

@@ -10,7 +10,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select'
-import { getPatientsWithAttachments } from '@/api/patients/patient-with-attachment'
+import { getPatientsWithAttachments } from '@/api/patient-profiles/patient-with-attachment'
 import { DatePickerWithRange } from '../date-picker-with-range'
 import { type DateRange } from 'react-day-picker'
 import { PatientsSearchInput } from '../../../components/patients-search-input'
