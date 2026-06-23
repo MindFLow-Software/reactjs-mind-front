@@ -40,9 +40,12 @@ export async function fetchPatientProfiles({
     sessionVolume,
   }
 
-  const response = await api.get<IgetPatientProfilesResponse>('/patients', {
-    params,
-  })
+  const response = await api.get<IgetPatientProfilesResponse>(
+    '/patient-profiles',
+    {
+      params,
+    },
+  )
 
   return {
     patients: response.data.patients,

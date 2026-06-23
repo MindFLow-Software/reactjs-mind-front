@@ -33,7 +33,7 @@ export async function getPatientProfileDetails(
   }
 
   const response = await api.get<IgetPatientProfileDetailsResponse>(
-    `/patients/${patientId}/details`,
+    `/patient-profiles/${patientId}/details`,
     {
       params: { pageIndex },
     },

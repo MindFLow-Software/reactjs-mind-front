@@ -9,7 +9,7 @@ export async function getPatientProfileById(
   patientId: string,
 ): Promise<IgetPatientProfileByIdResponse> {
   const response = await api.get<IgetPatientProfileByIdResponse>(
-    `/patients/${patientId}`,
+    `/patient-profiles/${patientId}`,
   )
   const patient = response.data.patient
 
