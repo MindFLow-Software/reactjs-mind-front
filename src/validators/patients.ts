@@ -1,5 +1,6 @@
 import { z } from 'zod'
 import { isValidCPF } from '@/utils/validate-cpf'
+import { Gender } from '@/types/patient'
 
 const cpfField = z.preprocess(
   (v) => (v === '' ? undefined : v),
@@ -32,7 +33,7 @@ export const patientSchema = z.object({
     .optional()
     .or(z.literal(''))
     .refine((v) => !v || isValidCPF(v), { message: 'CPF inválido' }),
-  gender: z.enum(['FEMININE', 'MASCULINE', 'OTHER']),
+  gender: z.enum(Gender),
   profileImageUrl: z.string().optional(),
 })
 
@@ -76,7 +77,7 @@ export const newPatientsStatsQuerySchema = z.object({
 export const registerPatientViaInviteSchema = z.object({
   firstName: z.string().min(1, 'Nome é obrigatório'),
   lastName: z.string().min(1, 'Sobrenome é obrigatório'),
-  email: z.string().email('E-mail inválido'),
+  email: z.email('E-mail inválido'),
   password: z
     .string()
     .min(8, 'A senha deve conter, no mínimo, 8 caracteres')
@@ -84,7 +85,7 @@ export const registerPatientViaInviteSchema = z.object({
     .regex(/[A-Z]/, 'A senha deve conter letras maiúsculas')
     .regex(/[0-9]/, 'A senha deve conter números')
     .regex(/[^A-Za-z0-9]/, 'A senha deve conter caracteres especiais'),
-  gender: z.enum(['FEMININE', 'MASCULINE', 'OTHER'], {
+  gender: z.enum(Gender, {
     message: 'Selecione seu gênero',
   }),
   phoneNumber: z.string().optional(),

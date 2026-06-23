@@ -1,27 +1,7 @@
-export const Gender = {
-  OTHER: 'OTHER',
-  FEMININE: 'FEMININE',
-  MASCULINE: 'MASCULINE',
-} as const
-
-export type Gender = (typeof Gender)[keyof typeof Gender]
-
-export interface Ipatient {
-  id: string
-  userId: string
-  psychologistPracticeContextId: string
-  isActive: boolean
-  archivedAt: string | null
-  createdAt: string
-  firstName: string
-  lastName: string
-  email: string | null
-  phoneNumber: string | null
-  cpf: string | null
-  gender: Gender
-  dateOfBirth: string | null
-  profileImageUrl: string | null
-  lastSessionAt: string | null
+export enum Gender {
+  OTHER = 'OTHER',
+  FEMININE = 'FEMININE',
+  MASCULINE = 'MASCULINE',
 }
 
 export interface AddressByCepResponse {
@@ -34,6 +14,7 @@ export interface AddressByCepResponse {
   complement: string | null
 }
 
+// TODO: move session to its own type file (session.ts)
 export interface SessionItem {
   id: string
   date: string
@@ -43,10 +24,6 @@ export interface SessionItem {
   duration: string
   status: 'Concluída' | 'Pendente'
   content: string | null
-}
-
-export interface PatientDetailsData extends Ipatient {
-  sessions: SessionItem[]
 }
 
 export interface PatientDetailsMeta {

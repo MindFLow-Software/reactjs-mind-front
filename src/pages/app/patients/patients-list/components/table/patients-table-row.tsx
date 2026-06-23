@@ -16,8 +16,8 @@ import {
 } from 'lucide-react'
 import { memo, useCallback, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { togglePatientStatus } from '@/api/patients/toggle-patient-status'
-import type { GetPatientsResponse } from '@/api/patients/get-patients'
+import { togglePatientProfileStatus } from '@/api/patient-profiles/toggle-patient-profile-status'
+import type { IgetPatientProfilesResponse } from '@/api/patient-profiles/fetch-patient-profiles'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { Checkbox } from '@/components/ui/checkbox'
@@ -45,12 +45,12 @@ import { RegisterPatients } from '../../register-patients/register-patients'
 import { DeletePatientDialog } from '../dialogs/delete-patient-dialog'
 import { PatientsDetails } from '../details/patients-details'
 import { PatientStatusDialog } from '@/components/patient-status-dialog'
-import type { Ipatient } from '@/types/patient'
 
 import { GENDER_CONFIG } from '@/utils/gender-config'
+import type { IpatientProfile } from '@/types/patient-profile'
 
 interface PatientsTableRowProps {
-  patient: Ipatient
+  patient: IpatientProfile
 }
 
 export const PatientsTableRow = memo(function PatientsTableRow({
@@ -86,14 +86,14 @@ export const PatientsTableRow = memo(function PatientsTableRow({
   const fullName = `${firstName} ${lastName}`
 
   const { mutateAsync: toggleStatusFn, isPending: isUpdating } = useMutation({
-    mutationFn: () => togglePatientStatus(id),
+    mutationFn: () => togglePatientProfileStatus(id),
     onMutate: async () => {
       await queryClient.cancelQueries({ queryKey: ['patients'] })
-      const snapshot = queryClient.getQueriesData<GetPatientsResponse>({
+      const snapshot = queryClient.getQueriesData<IgetPatientProfilesResponse>({
         queryKey: ['patients'],
         exact: false,
       })
-      queryClient.setQueriesData<GetPatientsResponse>(
+      queryClient.setQueriesData<IgetPatientProfilesResponse>(
         { queryKey: ['patients'], exact: false },
         (old) => {
           if (!old) return old
@@ -143,9 +143,9 @@ export const PatientsTableRow = memo(function PatientsTableRow({
 
   const lastSessionRelative = lastSessionAt
     ? formatDistanceToNow(new Date(lastSessionAt), {
-        addSuffix: true,
-        locale: ptBR,
-      })
+      addSuffix: true,
+      locale: ptBR,
+    })
     : null
 
   const lastSessionExact = lastSessionAt

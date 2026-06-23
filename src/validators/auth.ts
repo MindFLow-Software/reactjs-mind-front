@@ -1,5 +1,6 @@
 import { z } from 'zod'
 import { isValidCPF } from '@/utils/validate-cpf'
+import { Gender } from '@/types/patient'
 
 const today = new Date()
 const minDate = new Date(
@@ -49,7 +50,7 @@ export const patientSignUpSchema = z.object({
   phoneNumber: z.string().min(10, 'Telefone inválido'),
   cpf: z.string().min(11, 'CPF inválido'),
   dateOfBirth: z.coerce.date().optional(),
-  gender: z.enum(['MASCULINE', 'FEMININE', 'OTHER'], {
+  gender: z.enum(Gender, {
     message: 'Selecione seu gênero',
   }),
 })

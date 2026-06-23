@@ -22,8 +22,8 @@ import {
 import { EXPERTISE_TRANSLATIONS } from '@/utils/mappers'
 import { cn } from '@/lib/utils'
 import type { Expertise } from '@/types/expertise'
-import type { Gender } from '@/types/enum-gender'
 import { z } from 'zod'
+import { Gender } from '@/types/patient'
 
 const completeRegistrationSchema = z.object({
   crp: z.string().min(4, 'CRP é obrigatório'),
@@ -66,17 +66,17 @@ const GENDER_OPTIONS: {
   icon: React.ReactNode
 }[] = [
   {
-    value: 'FEMININE',
+    value: Gender.FEMININE,
     label: 'Feminino',
     icon: <Venus className="h-4 w-4 text-rose-500" />,
   },
   {
-    value: 'MASCULINE',
+    value: Gender.MASCULINE,
     label: 'Masculino',
     icon: <Mars className="h-4 w-4 text-blue-500" />,
   },
   {
-    value: 'OTHER',
+    value: Gender.OTHER,
     label: 'Prefiro não informar',
     icon: <Users className="h-4 w-4 text-violet-500" />,
   },

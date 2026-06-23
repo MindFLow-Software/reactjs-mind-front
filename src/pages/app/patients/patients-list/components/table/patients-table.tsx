@@ -17,12 +17,12 @@ import { Button } from '@/components/ui/button'
 import { Checkbox } from '@/components/ui/checkbox'
 import { PatientsTableRow } from './patients-table-row'
 import { PatientsTableLoading } from './loading'
-import type { Ipatient } from '@/types/patient'
 import type {
   PatientSortBy,
   PatientSortOrder,
 } from '@/hooks/use-patient-filters'
 import { cn } from '@/lib/utils'
+import type { IpatientProfile } from '@/types/patient-profile'
 
 export interface SortState {
   by: PatientSortBy
@@ -31,7 +31,7 @@ export interface SortState {
 }
 
 interface PatientsTableProps {
-  patients: Ipatient[]
+  patients: IpatientProfile[]
   isLoading: boolean
   perPage?: number
   hasActiveFilters?: boolean
@@ -90,7 +90,7 @@ function SortableHead({ column, label, sort, className }: SortableHeadProps) {
 
 interface TableBodyContentProps {
   isLoading: boolean
-  patients: Ipatient[]
+  patients: IpatientProfile[]
   perPage: number
   colSpan: number
   hasActiveFilters?: boolean

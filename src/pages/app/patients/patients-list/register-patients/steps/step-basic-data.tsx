@@ -16,17 +16,17 @@ import { formatAGE } from '@/utils/formatAGE'
 import { formatDateInput } from '@/utils/formatDateInput'
 
 import { Normalizer } from '@/utils/normalizer'
-import type { Ipatient } from '@/types/patient'
 import type { PatientFormData } from '@/validators/patients'
 import './step-basic-data.css'
 import { GENDER_OPTIONS } from '../constants'
 import { SectionTitle } from './section-title'
 import { PillRadio } from './pill-radio'
 import { PatientAvatarUpload } from './patient-avatar-upload'
+import type { IpatientProfile } from '@/types/patient-profile'
 
 interface StepBasicDataProps {
   onAvatarSelect: (f: File | null) => void
-  patient: Ipatient | null
+  patient: IpatientProfile | null
 }
 
 export function StepBasicData({ onAvatarSelect, patient }: StepBasicDataProps) {

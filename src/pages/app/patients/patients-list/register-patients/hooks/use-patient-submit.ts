@@ -4,8 +4,8 @@ import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { toast } from 'sonner'
 import { AxiosError } from 'axios'
 
-import { createPatients } from '@/api/patients/create-patient'
-import { updatePatients } from '@/api/patients/update-patient'
+import { createPatientProfile } from '@/api/patient-profiles/create-patient-profile'
+import { updatePatientProfileById } from '@/api/patient-profiles/update-patient-profile-by-id'
 import type { PatientFormData } from '@/validators/patients'
 import { uploadAttachment, uploadAvatar } from '@/api/attachments/attachments'
 
@@ -27,7 +27,7 @@ export function usePatientSubmit({
   const [isUploading, setIsUploading] = useState(false)
 
   const { mutateAsync: createFn, isPending: isCreating } = useMutation({
-    mutationFn: createPatients,
+    mutationFn: createPatientProfile,
     onSuccess: async (response) => {
       const targetId = isEditMode ? patientId! : response.patientId
 
@@ -52,7 +52,7 @@ export function usePatientSubmit({
   })
 
   const { mutateAsync: updateFn, isPending: isUpdating } = useMutation({
-    mutationFn: updatePatients,
+    mutationFn: updatePatientProfileById,
     onSuccess: async (response) => {
       const targetId = isEditMode ? patientId! : response.id
 

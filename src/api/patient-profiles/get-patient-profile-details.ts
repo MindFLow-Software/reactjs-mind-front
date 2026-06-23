@@ -1,8 +1,13 @@
 import { api } from '@/lib/axios'
-import type { PatientDetailsData } from '@/types/patient'
+import type { SessionItem } from '@/types/patient'
+import type { IpatientProfile } from '@/types/patient-profile'
 
-export interface GetPatientDetailsResponse {
-  patient: PatientDetailsData | null
+type IextendedPatientProfile = IpatientProfile & {
+  sessions: SessionItem[]
+}
+
+export interface IgetPatientProfileDetailsResponse {
+  patient: IextendedPatientProfile | null
   meta: {
     pageIndex: number
     perPage: number
@@ -11,10 +16,10 @@ export interface GetPatientDetailsResponse {
   }
 }
 
-export async function getPatientDetails(
+export async function getPatientProfileDetails(
   patientId: string | undefined,
   pageIndex: number,
-): Promise<GetPatientDetailsResponse> {
+): Promise<IgetPatientProfileDetailsResponse> {
   if (!patientId) {
     return {
       patient: null,
@@ -27,21 +32,17 @@ export async function getPatientDetails(
     }
   }
 
-  const response = await api.get<GetPatientDetailsResponse>(
+  const response = await api.get<IgetPatientProfileDetailsResponse>(
     `/patients/${patientId}/details`,
     {
       params: { pageIndex },
     },
   )
 
-  const patient = (response.data.patient ?? {}) as PatientDetailsData
-  const sessions = response.data?.patient?.sessions ?? []
+  const patient = response.data?.patient
 
   return {
     ...response.data,
-    patient: {
-      ...patient,
-      sessions,
-    },
+    patient,
   }
 }

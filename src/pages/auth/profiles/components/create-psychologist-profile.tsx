@@ -42,7 +42,9 @@ import { Textarea } from '@/components/ui/textarea'
 // import { createPracticeContext } from '@/api/auth/create-practice-context'
 import { createPsychologistProfile } from '@/api/auth/create-psychologist-profile'
 import { createPsychologistProfileSchema } from '@/validators/psychologist-profile'
-import { CONTEXT_TYPE_OPTIONS, EXPERTISE_OPTIONS } from '../constants'
+import { EXPERTISE_OPTIONS } from '../constants'
+import { Expertise } from '@/types/expertise'
+import { Honorific } from '@/types/psychologist'
 
 type IcreatePsychologistProfile = z.infer<
   typeof createPsychologistProfileSchema
@@ -67,11 +69,11 @@ export function CreatePsychologistProfile({
     ) as Resolver<IcreatePsychologistProfile>,
     defaultValues: {
       crp: '',
+      languages: [],
       professionalBio: '',
-      contextType: 'INDIVIDUAL',
-      consultationFee: '',
-      nickname: '',
-      expertise: 'CLINICAL',
+      professionalName: '',
+      honorific: Honorific.MASC_DR,
+      expertise: Expertise.CLINICAL,
     },
   })
 
@@ -81,7 +83,10 @@ export function CreatePsychologistProfile({
     mutationFn: async (data: IcreatePsychologistProfile) => {
       await createPsychologistProfile({
         crp: data.crp,
+        languages: data.languages,
         expertise: data.expertise,
+        honorific: data?.honorific,
+        professionalName: data?.professionalName,
         professionalBio: data.professionalBio || null,
       })
       // return createPracticeContext({
@@ -198,7 +203,7 @@ export function CreatePsychologistProfile({
               )}
             />
 
-            <FormField
+            {/* <FormField
               control={control}
               name="contextType"
               render={({ field }) => (
@@ -253,7 +258,7 @@ export function CreatePsychologistProfile({
                   <FormMessage />
                 </FormItem>
               )}
-            />
+            /> */}
 
             <DialogFooter>
               <Button

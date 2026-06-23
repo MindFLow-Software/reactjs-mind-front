@@ -2,6 +2,7 @@ import z from 'zod'
 
 import { Time } from '@/utils/time'
 import { isValidCPF } from '@/utils/validate-cpf'
+import { Gender } from '@/types/patient'
 
 const passwordRegex =
   /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*])[A-Za-z\d!@#$%^&*]{8,30}$/
@@ -18,7 +19,7 @@ export const createUserSchema = z.object({
       passwordRegex,
       'Senha deve conter letra minúscula, maiúscula, número e especial (!@#$%^&*)',
     ),
-  gender: z.enum(['OTHER', 'FEMININE', 'MASCULINE'], {
+  gender: z.enum(Gender, {
     message: 'Obrigatório',
   }),
   dateOfBirth: z

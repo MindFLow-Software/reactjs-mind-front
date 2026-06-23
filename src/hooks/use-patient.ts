@@ -1,9 +1,9 @@
 import { useQuery } from '@tanstack/react-query'
-import type { Ipatient } from '@/types/patient'
-import { getPatientById } from '@/api/patients/get-patient-by-id'
+import { getPatientProfileById } from '@/api/patient-profiles/get-patient-profile-by-id'
+import type { IpatientProfile } from '@/types/patient-profile'
 
 type IusePatient = {
-  patient: Ipatient | null
+  patient: IpatientProfile | null
 }
 
 export const usePatient = (patientId: string | undefined): IusePatient => {
@@ -13,7 +13,7 @@ export const usePatient = (patientId: string | undefined): IusePatient => {
 
   const { data } = useQuery({
     queryKey: ['patient', patientId],
-    queryFn: () => getPatientById(patientId),
+    queryFn: () => getPatientProfileById(patientId),
     enabled: Boolean(patientId),
   })
 

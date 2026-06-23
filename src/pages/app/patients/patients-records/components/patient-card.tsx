@@ -4,10 +4,10 @@ import { ptBR } from 'date-fns/locale'
 
 import { Card, CardContent } from '@/components/ui/card'
 import { UserAvatar } from '@/components/user-avatar'
-import type { Ipatient } from '@/types/patient'
+import type { IpatientProfile } from '@/types/patient-profile'
 
 interface PatientCardProps {
-  patient: Ipatient
+  patient: IpatientProfile
   onOpen: (id: string) => void
 }
 

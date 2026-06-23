@@ -15,12 +15,12 @@ import { UserAvatar } from '@/components/user-avatar'
 import { StatusBadge } from '@/components/ui/status-badge'
 
 import './patient-details-header.css'
-import type { Ipatient } from '@/types/patient'
 import { copyToClipboard } from '@/utils/copy-to-clipboard'
+import type { IpatientProfile } from '@/types/patient-profile'
 
 interface PatientDetailsHeaderProps {
   patient: Pick<
-    Ipatient,
+    IpatientProfile,
     'id' | 'firstName' | 'lastName' | 'isActive' | 'profileImageUrl'
   >
 }

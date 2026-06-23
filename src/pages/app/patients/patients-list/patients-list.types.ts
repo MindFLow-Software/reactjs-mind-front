@@ -1,5 +1,5 @@
-import type { Ipatient } from '@/types/patient'
 import type { PaginationMeta } from '@/types/pagination'
+import type { IpatientProfile } from '@/types/patient-profile'
 
 type PatientStatus = 'ACTIVE' | 'REJECTED' | 'PENDING' | 'BLOCKED'
 
@@ -18,7 +18,7 @@ export interface PatientsMetrics {
 }
 
 export interface PatientsListQueryResult {
-  patients: Ipatient[]
+  patients: IpatientProfile[]
   meta: PaginationMeta
   isLoading: boolean
   isFetching: boolean

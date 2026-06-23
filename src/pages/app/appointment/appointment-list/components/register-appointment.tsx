@@ -42,7 +42,7 @@ import { Label } from '@/components/ui/label'
 
 import { registerAppointment } from '@/api/appointments/create-appointment'
 import type { RegisterAppointmentRequest } from '@/types/appointment'
-import { getPatients } from '@/api/patients/get-patients'
+import { fetchPatientProfiles } from '@/api/patient-profiles/fetch-patient-profiles'
 
 const MAX_NOTE_LENGTH = 200
 
@@ -76,10 +76,10 @@ export function RegisterAppointment({
   }, [initialDate])
 
   useEffect(() => {
-    const fetchPatients = async () => {
+    const fetchProfiles = async () => {
       setIsLoadingPatients(true)
       try {
-        const data = await getPatients({
+        const data = await fetchPatientProfiles({
           pageIndex: 0,
           perPage: 1000,
         })
@@ -98,7 +98,7 @@ export function RegisterAppointment({
         setIsLoadingPatients(false)
       }
     }
-    fetchPatients()
+    fetchProfiles()
   }, [])
 
   const { mutateAsync: registerAppointmentFn, isPending } = useMutation({
@@ -195,7 +195,7 @@ export function RegisterAppointment({
 
       try {
         await registerAppointmentFn(payload)
-      } catch {}
+      } catch { }
     },
     [selectedPatient, date, time, diagnosis, notes, registerAppointmentFn],
   )

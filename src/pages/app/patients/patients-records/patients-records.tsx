@@ -7,9 +7,9 @@ import { ClipboardList } from 'lucide-react'
 import { Helmet } from 'react-helmet-async'
 
 import {
-  getPatients,
+  fetchPatientProfiles,
   type IgetPatientsQueryParams,
-} from '@/api/patients/get-patients'
+} from '@/api/patient-profiles/fetch-patient-profiles'
 import { useHeaderStore } from '@/hooks/use-header-store'
 import { PatientsDataBlock } from '../components/patients-data-block'
 import { PatientsPageShell } from '../components/patients-page-shell'
@@ -45,7 +45,7 @@ export default function PatientsRecords() {
       gender /*, sessionOrder */,
     ],
     queryFn: () =>
-      getPatients({
+      fetchPatientProfiles({
         pageIndex: 0,
         perPage: 100,
         filter: debouncedSearch || undefined,

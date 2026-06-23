@@ -1,7 +1,7 @@
 import { useQuery } from '@tanstack/react-query'
-import { getPatients } from '@/api/patients/get-patients'
-import { getAmountPatientsCard } from '@/api/patients/get-amount-patients-card'
-import { getDashboardMetrics } from '@/api/patients/get-dashboard-metrics'
+import { fetchPatientProfiles } from '@/api/patient-profiles/fetch-patient-profiles'
+import { getActivePatientProfilesAmount } from '@/api/patient-profiles/get-active-patient-profiles-amount'
+import { getDashboardMetrics } from '@/api/patient-profiles/get-dashboard-metrics'
 import type { PatientsMetrics } from '../patients-list.types'
 
 export function usePatientsMetrics(): PatientsMetrics {
@@ -10,8 +10,8 @@ export function usePatientsMetrics(): PatientsMetrics {
     queryFn: async () => {
       const [dashboard, archived, newPatients] = await Promise.all([
         getDashboardMetrics(),
-        getPatients({ pageIndex: 0, perPage: 1, isActive: false }),
-        getAmountPatientsCard(),
+        fetchPatientProfiles({ pageIndex: 0, perPage: 1, isActive: false }),
+        getActivePatientProfilesAmount(),
       ])
       return {
         activeCount: dashboard.activePatients,

@@ -1,8 +1,8 @@
 import { useMemo } from 'react'
 import { useQueries } from '@tanstack/react-query'
 import { subDays, startOfDay, endOfDay } from 'date-fns'
-import { getDashboardMetrics } from '@/api/patients/get-dashboard-metrics'
-import { getAmountPatientsChart } from '@/api/patients/get-amount-patients-chart'
+import { getDashboardMetrics } from '@/api/patient-profiles/get-dashboard-metrics'
+import { getNewPatientProfilesAmount } from '@/api/patient-profiles/get-new-patient-profiles-amount'
 import { QUERY_STALE_TIME, QUERY_GC_TIME } from '../constants'
 
 export interface UsePatientsAmountReturn {
@@ -26,7 +26,7 @@ export function usePatientsAmount(): UsePatientsAmountReturn {
       {
         queryKey: ['dashboard', 'patients-recent-30d'],
         queryFn: () =>
-          getAmountPatientsChart({
+          getNewPatientProfilesAmount({
             startDate: startOfDay(subDays(now, 30)),
             endDate: endOfDay(now),
           }),

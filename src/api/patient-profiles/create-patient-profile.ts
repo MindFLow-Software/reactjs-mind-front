@@ -1,15 +1,13 @@
 import { api } from '@/lib/axios'
 import type { CreatePatientBody, CreatePatientResponse } from '@/types/patient'
 
-export type { CreatePatientBody, CreatePatientResponse } from '@/types/patient'
-
-export interface CreatePatientsInput
+export interface IcreatePatientProfileInput
   extends Omit<CreatePatientBody, 'dateOfBirth'> {
   dateOfBirth?: Date | string | null
 }
 
-export async function createPatients(
-  data: CreatePatientsInput,
+export async function createPatientProfile(
+  data: IcreatePatientProfileInput,
 ): Promise<CreatePatientResponse> {
   const formattedData: CreatePatientBody = {
     ...data,
@@ -24,7 +22,7 @@ export async function createPatients(
   }
 
   const response = await api.post<CreatePatientResponse>(
-    '/patient',
+    '/patient-profiles',
     formattedData,
   )
   return response.data
