@@ -2,7 +2,10 @@
 
 import { useState } from 'react'
 import { useQuery } from '@tanstack/react-query'
-import { getProfile, type IgetMeResponse } from '@/api/psychologists/get-profile'
+import {
+  getProfile,
+  type IgetMeResponse,
+} from '@/api/psychologists/get-profile'
 import type { UpdatePsychologistBody } from '@/api/psychologists/update-psychologist'
 import { PsychologistAvatarUpload } from './psychologist-avatar-upload'
 import { Skeleton } from '@/components/ui/skeleton'

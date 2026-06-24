@@ -25,7 +25,8 @@ import { Badge } from '@/components/ui/badge'
 import { Textarea } from '@/components/ui/textarea'
 import { MaskedInput } from '@/components/maked-input'
 
-import { Expertise, translatedExpertise } from '@/types/expertise'
+import { Expertise } from '@/types/expertise'
+import { translatedExpertise } from '@/constants/translated-expertise'
 import { createPsychologistProfileSchema } from '@/validators/psychologist-profile'
 import { Honorific, Languages, translatedLanguages } from '@/types/psychologist'
 

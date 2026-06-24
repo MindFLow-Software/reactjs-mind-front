@@ -1,4 +1,5 @@
 import { api } from '@/lib/axios'
+import { Normalizer } from '@/utils/normalizer'
 import type { CreatePatientBody, CreatePatientResponse } from '@/types/patient'
 
 export interface IcreatePatientProfileInput
@@ -11,10 +12,10 @@ export async function createPatientProfile(
 ): Promise<CreatePatientResponse> {
   const formattedData: CreatePatientBody = {
     ...data,
-    cpf: data.cpf ? data.cpf.replace(/\D/g, '') : undefined,
-    phoneNumber: data.phoneNumber?.replace(/\D/g, '') || undefined,
-    email: data.email || undefined,
-    cep: data.cep?.replace(/\D/g, '') || undefined,
+    cpf: Normalizer.digits(data.cpf),
+    phoneNumber: Normalizer.digits(data.phoneNumber),
+    email: data.email,
+    cep: Normalizer.digits(data.cep),
     dateOfBirth:
       data.dateOfBirth instanceof Date
         ? data.dateOfBirth.toISOString()

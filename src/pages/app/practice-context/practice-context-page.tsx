@@ -24,7 +24,7 @@ import {
 import { CreateClinicContext } from './components/create-clinic-context'
 import { createPracticeContext } from '@/api/auth/create-practice-context'
 import { CreateIndividualContext } from './components/create-individual-context'
-import { ActivePsychologistProfileBadge } from '../components/active-psychologist-profile-badge'
+import { ActivePsychologistProfileBadge } from '@/pages/auth/components/active-psychologist-profile-badge'
 
 export function PracticeContextPage() {
   const navigate = useNavigate()

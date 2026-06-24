@@ -215,17 +215,6 @@ export const SignInForm = memo(function SignInForm({
             </Link>
           </p>
         </motion.div>
-        <motion.div {...animItem}>
-          <p className="text-center text-sm text-muted-foreground">
-            Já foi cadastrado por um psicólogo antes?{' '}
-            <Link
-              to="/claim-account"
-              className="font-semibold text-blue-600 hover:text-blue-700 underline-offset-4 hover:underline transition-colors"
-            >
-              Finalizar Cadastro
-            </Link>
-          </p>
-        </motion.div>
       </div>
     </motion.form>
   )

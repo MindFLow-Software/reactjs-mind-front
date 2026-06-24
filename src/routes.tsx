@@ -9,7 +9,7 @@ import { SignIn } from './pages/auth/sign-in'
 import { SignUp } from './pages/auth/sign-up'
 import { GoogleOAuthSuccess } from './pages/auth/google-oauth-success'
 import { GoogleOAuthComplete } from './pages/auth/google-oauth-complete'
-import { ProfilesPage } from './pages/auth/profiles/profiles-page'
+import { ProfilesPage } from './pages/app/profiles/profiles-page'
 import { PatientDashboard } from './pages/app/patient-dashboard/patient-dashboard'
 import { AppointmentsRoom } from './pages/app/video-room/appoinmets-room'
 import { AppointmentsList } from './pages/app/appointment/appointment-list/appointment-list'
@@ -24,28 +24,17 @@ import { SuggestionsManagement } from './pages/app/admin/suggestions/suggestions
 import { PatientDocuments } from './pages/app/patients/patients-docs/patients-docs'
 import PatientDetails from './pages/app/patients/patients-hub/patients-details'
 import PatientsRecords from './pages/app/patients/patients-records/patients-records'
-import { useActivePracticeContextStore } from './store/use-active-practice-context-store'
-import { PsychologistOnboardingPage } from './pages/auth/onboarding/psychologist/psychologist-onboarding'
-import { PracticeContextPage } from './pages/auth/practice-context/practice-context-page'
-import { ProtectedRoute } from './components/auth/protected-route'
-import { AdminRoute } from './components/auth/admin-route'
+
 import { ClaimAccountPage } from './pages/auth/claim-account'
+import { PracticeContextPage } from './pages/app/practice-context/practice-context-page'
+import { PsychologistOnboardingPage } from './pages/app/onboarding/psychologist/psychologist-onboarding'
+import { useActivePracticeContextStore } from './store/use-active-practice-context-store'
 
-// const authLoader = async () => {
-//   const isAuthenticated = localStorage.getItem('isAuthenticated') === 'true'
-//   if (isAuthenticated) return null
-
-//   // Sem flag local — pode ser login via Google OAuth (cookie já setado pelo backend)
-//   try {
-//     const profile = await getProfile()
-//     localStorage.setItem('isAuthenticated', 'true')
-//     if (profile.platformRole === 'ADMIN') return redirect('/admin-dashboard')
-//     if (profile.platformRole === 'USER') return redirect('/profiles')
-//     return null
-//   } catch {
-//     return redirect('/sign-in')
-//   }
-// }
+import { AdminRoute } from './components/auth/admin-route'
+import { ProtectedRoute } from './components/auth/protected-route'
+import { ValidatePatientInvitePage } from './pages/auth/invite/validate-patient-invite-page'
+import { RegisterViaPatientInvitePage } from './pages/auth/invite/register-via-patient-invite-page'
+import { PatientInviteReviewPage } from './pages/auth/invite/patient-invite-review-page'
 
 const practiceContextGuard = () => {
   if (
@@ -92,44 +81,37 @@ export const router = createBrowserRouter([
       { path: '/auth/google/complete', element: <GoogleOAuthComplete /> },
       { path: '/google-oauth-success', element: <GoogleOAuthSuccess /> },
       { path: '/claim-account', element: <ClaimAccountPage /> },
-      { path: '/google-oauth-complete', loader: () => redirect('/sign-in') },
+      {
+        path: '/patient/invite/:token',
+        element: <ValidatePatientInvitePage />,
+      },
+      {
+        path: '/patient/invite/:token/register',
+        element: <RegisterViaPatientInvitePage />,
+      },
+      {
+        path: '/patient/invite/:token/review',
+        element: <PatientInviteReviewPage />,
+      },
+      { path: '/google-oauth-complete', loader: () => redirect('/sign-in') }, // TODO: remove/replace this route
     ],
   },
-  // { path: '/complete-registration', loader: () => redirect('/sign-in') },
   {
-    path: '/profiles',
-    element: (
-      <ProtectedRoute>
-        <ProfilesPage />
-      </ProtectedRoute>
-    ),
-  },
-  {
-    path: '/onboarding/psychologist',
-    element: (
-      <ProtectedRoute>
-        <PsychologistOnboardingPage />
-      </ProtectedRoute>
-    ),
-  },
-  {
-    path: '/profiles/context',
-    element: (
-      <ProtectedRoute>
-        <PracticeContextPage />
-      </ProtectedRoute>
-    ),
-  },
-  {
-    // TODO: patient-dashboard is going to be same /dashboard route,
-    // and a switch case inside the page to render the correct component
-    path: '/patient-dashboard',
-    loader: patientDashboardGuard,
-    element: (
-      <ProtectedRoute>
-        <PatientDashboard />
-      </ProtectedRoute>
-    ),
+    element: <ProtectedRoute />,
+    children: [
+      {
+        path: '/profiles',
+        element: <ProfilesPage />,
+      },
+      {
+        path: '/onboarding/psychologist',
+        element: <PsychologistOnboardingPage />,
+      },
+      {
+        path: '/profiles/context',
+        element: <PracticeContextPage />,
+      },
+    ],
   },
   {
     element: (
@@ -137,7 +119,6 @@ export const router = createBrowserRouter([
         <AppLayout />
       </ProtectedRoute>
     ),
-    // loader: authLoader,
     children: [
       {
         path: '/dashboard',
@@ -157,35 +138,37 @@ export const router = createBrowserRouter([
       {
         path: '/admin-dashboard',
         element: (
-          <ProtectedRoute>
-            <AdminRoute>
-              <AdminDashboard />
-            </AdminRoute>
-          </ProtectedRoute>
+          <AdminRoute>
+            <AdminDashboard />
+          </AdminRoute>
         ),
       },
       {
         path: '/admin-suggestions',
         element: (
-          <ProtectedRoute>
-            <AdminRoute>
-              <AdminSuggestionsPage />
-            </AdminRoute>
-          </ProtectedRoute>
+          <AdminRoute>
+            <AdminSuggestionsPage />
+          </AdminRoute>
         ),
       },
       {
         path: '/menagement-suggestions',
         element: (
-          <ProtectedRoute>
-            <AdminRoute>
-              <SuggestionsManagement />
-            </AdminRoute>
-          </ProtectedRoute>
+          <AdminRoute>
+            <SuggestionsManagement />
+          </AdminRoute>
         ),
       },
 
       { path: '/suggestion', element: <SuggestionPage /> },
+
+      {
+        // TODO: patient-dashboard is going to be same /dashboard route,
+        // and a switch case inside the page to render the correct component
+        path: '/patient-dashboard',
+        loader: patientDashboardGuard,
+        element: <PatientDashboard />,
+      },
     ],
   },
   {

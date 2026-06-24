@@ -30,7 +30,7 @@ export function PasswordStrength({ value }: { value: string }) {
   if (!value) return null
 
   return (
-    <div className="mt-1 space-y-1">
+    <div className="mt-1 space-y-1 w-full">
       <div className="flex gap-0.5">
         {Array.from({ length: PASSWORD_STRENGTH_LEVELS.length }).map((_, i) => (
           <div

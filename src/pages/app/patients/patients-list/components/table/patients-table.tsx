@@ -70,6 +70,7 @@ interface SortableHeadProps {
 
 function SortableHead({ column, label, sort, className }: SortableHeadProps) {
   const active = sort?.by === column
+
   return (
     <TableHead className={cn(COL_HEAD, className)}>
       <button
@@ -108,7 +109,8 @@ function TableBodyContent({
   onRegister,
 }: TableBodyContentProps) {
   if (isLoading) return <PatientsTableLoading rows={perPage} />
-  if (patients.length > 0)
+
+  if (patients.length > 0) {
     return (
       <>
         {patients.map((patient) => (
@@ -116,6 +118,8 @@ function TableBodyContent({
         ))}
       </>
     )
+  }
+
   return (
     <TableRow>
       <TableCell colSpan={colSpan} className="py-20">

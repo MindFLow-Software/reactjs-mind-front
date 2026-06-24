@@ -48,6 +48,7 @@ import { PatientStatusDialog } from '@/components/patient-status-dialog'
 
 import { GENDER_CONFIG } from '@/utils/gender-config'
 import type { IpatientProfile } from '@/types/patient-profile'
+import { PatientStatusBadge } from './patient-status-badge'
 
 interface PatientsTableRowProps {
   patient: IpatientProfile
@@ -81,6 +82,7 @@ export const PatientsTableRow = memo(function PatientsTableRow({
     profileImageUrl,
     lastSessionAt,
     isActive,
+    status,
   } = patient
 
   const fullName = `${firstName} ${lastName}`
@@ -143,9 +145,9 @@ export const PatientsTableRow = memo(function PatientsTableRow({
 
   const lastSessionRelative = lastSessionAt
     ? formatDistanceToNow(new Date(lastSessionAt), {
-      addSuffix: true,
-      locale: ptBR,
-    })
+        addSuffix: true,
+        locale: ptBR,
+      })
     : null
 
   const lastSessionExact = lastSessionAt
@@ -188,16 +190,7 @@ export const PatientsTableRow = memo(function PatientsTableRow({
 
         {/* Status */}
         <TableCell className="w-[120px]">
-          <span
-            className={cn(
-              'inline-flex items-center gap-1.5 h-6 px-2.5 rounded-full text-[11px] font-semibold',
-              isActive
-                ? 'bg-emerald-100 text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-400'
-                : 'bg-red-100 text-red-700 dark:bg-red-900/30 dark:text-red-400',
-            )}
-          >
-            {isActive ? 'Ativo' : 'Arquivado'}
-          </span>
+          <PatientStatusBadge status={status} />
         </TableCell>
 
         {/* Contato: telefone + email */}

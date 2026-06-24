@@ -6,7 +6,7 @@ export interface IgetActivePatientProfilesAmount {
 
 export async function getActivePatientProfilesAmount(): Promise<IgetActivePatientProfilesAmount> {
   const response = await api.get<IgetActivePatientProfilesAmount>(
-    '/patient-profiles/active',
+    '/patient-profiles/metrics/active',
   )
 
   return response.data
