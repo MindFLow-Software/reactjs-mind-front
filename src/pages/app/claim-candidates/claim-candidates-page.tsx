@@ -19,6 +19,7 @@ import {
 import { Link } from 'react-router-dom'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
+import { translatedHonorific } from '@/constants/translated-honorific'
 
 export function ClaimCandidatesPage() {
   const { data } = useQuery({
@@ -43,7 +44,7 @@ export function ClaimCandidatesPage() {
 
   return (
     <div className="flex justify-center p-4">
-      <main className="flex flex-col gap-2 w-xl">
+      <main className="flex flex-col gap-2 w-2xl">
         <Link
           to="/profiles"
           className="text-xs flex items-center gap-1 cursor-pointer text-black mb-4"
@@ -77,10 +78,11 @@ export function ClaimCandidatesPage() {
             <div className="flex flex-col gap-4">
               {candidates.map(
                 ({ patientFirstName, patientLastName, ...candidate }) => {
-                  const fullName = `${patientFirstName} ${patientLastName}`
                   const initialLetters = patientFirstName
                     ?.slice(0, 1)
                     .concat(patientLastName?.slice(0, 1))
+                  const honorific =
+                    translatedHonorific[candidate.psychologistHonorific]
 
                   return (
                     <Card key={candidate.patientProfileId} className="gap-0">
@@ -91,7 +93,7 @@ export function ClaimCandidatesPage() {
                           </div>
                           <div>
                             <p className="text-sm capitalize font-medium">
-                              {candidate.psychologistDisplayName}
+                              {honorific} {candidate.psychologistDisplayName}
                             </p>
                             <p className="text-xs">
                               {candidate.psychologistCrp}
@@ -106,9 +108,9 @@ export function ClaimCandidatesPage() {
                           <p>Aguardando Confirmação</p>
                         </Badge>
                       </CardHeader>
-                      <CardContent className="flex col-span-3 justify-between border-b py-4">
+                      <CardContent className="flex col-span-4 justify-between border-b py-4">
                         <div>
-                          <p className="text-sm text-muted-foreground">
+                          <p className="text-xs text-muted-foreground">
                             PERFIL CRIADO EM
                           </p>
                           <p className="text-sm">
@@ -122,13 +124,19 @@ export function ClaimCandidatesPage() {
                           </p>
                         </div>
                         <div>
-                          <p className="text-sm text-muted-foreground">
+                          <p className="text-xs text-muted-foreground">
                             NOME CADASTRADO
                           </p>
-                          <p className="text-sm">{fullName}</p>
+                          <p className="text-sm">{patientFirstName}</p>
                         </div>
                         <div>
-                          <p className="text-sm text-muted-foreground">
+                          <p className="text-xs text-muted-foreground">
+                            Documento
+                          </p>
+                          <p className="text-sm">{candidate.patientCpf}</p>
+                        </div>
+                        <div>
+                          <p className="text-xs text-muted-foreground">
                             NASCIMENTO
                           </p>
                           <p className="text-sm">
