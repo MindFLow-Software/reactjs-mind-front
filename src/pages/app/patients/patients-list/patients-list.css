@@ -6,7 +6,7 @@
   }
 
   .pl-action-btn {
-    @apply flex h-9 cursor-pointer items-center gap-2 rounded-xl px-4 border border-border bg-background text-[13px] font-medium shadow-sm transition-all hover:bg-muted hover:-translate-y-px active:scale-[0.98];
+    @apply flex h-9 cursor-pointer items-pl-table-section gap-2 rounded-xl px-4 border border-border bg-background text-[13px] font-medium shadow-sm transition-all hover:bg-muted hover:-translate-y-px active:scale-[0.98];
   }
 
   .pl-primary-btn {

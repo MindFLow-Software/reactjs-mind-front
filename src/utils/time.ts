@@ -15,13 +15,13 @@ export class Time {
   }
 
   static toBrazilianFormat(date: Date) {
-    if (!date || !isValid(date)) return
-    return format(date, 'dd-MM-yyyy', { locale: ptBR })
+    // if (!date || !isValid(date)) return
+    return format(date, 'dd/MM/yyyy', { locale: ptBR })
   }
 
   static toAmericanFormat(date: Date | null | undefined) {
     if (!date || !isValid(date)) return
-    return format(new Date(), 'yyyy-MM-dd')
+    return format(new Date(), 'yyyy/MM/dd')
   }
 
   static calculateAge(date: Date | null | undefined) {

@@ -20,6 +20,8 @@ import { Link } from 'react-router-dom'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { translatedHonorific } from '@/constants/translated-honorific'
+import { isAxiosError } from 'axios'
+import { toast } from 'sonner'
 
 export function ClaimCandidatesPage() {
   const { data } = useQuery({
@@ -33,10 +35,16 @@ export function ClaimCandidatesPage() {
     mutationKey: ['create-patient-claim-request'],
     mutationFn: createClaimRequest,
     onSuccess: () => {},
-    onError: () => {},
+    onError: (error) => {
+      const errorMessage = isAxiosError(error)
+        ? error.response?.data?.error?.message
+        : error?.message
+
+      toast.error(errorMessage)
+    },
   })
 
-  const handleRequestBond = async (patientProfileId: string) => {
+  const handleCreateClaimRequest = async (patientProfileId: string) => {
     await mutateAsync(patientProfileId)
   }
 
@@ -67,15 +75,15 @@ export function ClaimCandidatesPage() {
               o vínculo.
             </CardDescription>
           </CardHeader>
-          <CardContent className="space-y-4">
+          <CardContent className="flex flex-col gap-4 items-center">
             <div className="flex items-center gap-2 w-fit border border-green-500 bg-green-100 rounded-md p-2">
-              <ShieldCheck className="text-green-800" />
+              <ShieldCheck className="text-green-800" size={16} />
               <p className="text-xs text-green-800">
                 Por segurança, seus dados completos serão liberados somente após
                 a aprovação do profissional.
               </p>
             </div>
-            <div className="flex flex-col gap-4">
+            <div className="flex flex-col gap-4 w-full">
               {candidates.map(
                 ({ patientFirstName, patientLastName, ...candidate }) => {
                   const initialLetters = patientFirstName
@@ -85,7 +93,10 @@ export function ClaimCandidatesPage() {
                     translatedHonorific[candidate.psychologistHonorific]
 
                   return (
-                    <Card key={candidate.patientProfileId} className="gap-0">
+                    <Card
+                      key={candidate.patientProfileId}
+                      className="gap-0 w-full"
+                    >
                       <CardHeader className="flex justify-between border-b">
                         <div className="flex items-start gap-2">
                           <div className="flex items-center justify-center text-sm p-2 rounded-full bg-blue-200">
@@ -153,7 +164,7 @@ export function ClaimCandidatesPage() {
                           disabled={isDisabled}
                           className="p-2 text-xs"
                           onClick={() =>
-                            handleRequestBond(candidate.patientProfileId)
+                            handleCreateClaimRequest(candidate.patientProfileId)
                           }
                         >
                           Socilitar Vínculo

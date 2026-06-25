@@ -36,6 +36,7 @@ import { ValidatePatientInvitePage } from './pages/auth/invite/validate-patient-
 import { RegisterViaPatientInvitePage } from './pages/auth/invite/register-via-patient-invite-page'
 import { PatientInviteReviewPage } from './pages/auth/invite/patient-invite-review-page'
 import { ClaimCandidatesPage } from './pages/app/claim-candidates/claim-candidates-page'
+import { ClaimProfileRequestsPage } from './pages/app/claim-profile-requests/claim-profile-requests-page'
 
 const practiceContextGuard = () => {
   if (
@@ -166,6 +167,11 @@ export const router = createBrowserRouter([
       },
 
       { path: '/suggestion', element: <SuggestionPage /> },
+
+      {
+        path: '/patient-profiles/claim-requests',
+        element: <ClaimProfileRequestsPage />,
+      },
 
       {
         // TODO: patient-dashboard is going to be same /dashboard route,
