@@ -1,28 +1,31 @@
 import { useCallback, type ReactNode } from 'react'
-import { Navigate, useNavigate } from 'react-router-dom'
 import { useQuery } from '@tanstack/react-query'
+import { Navigate, useNavigate } from 'react-router-dom'
 import {
-  ArrowRight,
-  Brain,
-  Briefcase,
-  HeartPulse,
-  Loader2,
   Plus,
+  Brain,
+  Loader2,
+  Briefcase,
   UserRound,
+  HeartPulse,
+  ArrowRight,
 } from 'lucide-react'
-import { Button } from '@/components/ui/button'
+
 import { getProfile } from '@/api/psychologists/get-profile'
 import { useActivePracticeContextStore } from '@/store/use-active-practice-context-store'
-import { PracticeContextCard } from './components/practice-context-card'
-import { PatientProfileCard } from './components/patient-profile-card'
+
 import {
   Card,
+  CardTitle,
+  CardHeader,
+  CardFooter,
   CardContent,
   CardDescription,
-  CardFooter,
-  CardHeader,
-  CardTitle,
 } from '@/components/ui/card'
+
+import { Button } from '@/components/ui/button'
+import { PatientProfileCard } from './components/patient-profile-card'
+import { PracticeContextCard } from './components/practice-context-card'
 
 function ProfilesShell({ children }: { children: ReactNode }) {
   return (
@@ -69,9 +72,6 @@ export function ProfilesPage() {
     isError,
   } = useQuery({ queryKey: ['me'], queryFn: getProfile })
 
-  // const { mutateAsync: createPatientFn, isPending: isCreatingPatient } =
-  //   useMutation({ mutationFn: createPatientProfile })
-
   const handleSelectContext = useCallback(
     (id: string) => {
       setActivePracticeContextId(id)
@@ -85,35 +85,16 @@ export function ProfilesPage() {
     navigate('/patient-dashboard')
   }, [clearActivePracticeContextId, navigate])
 
-  // const handleCreatePatient = useCallback(async () => {
-  //   try {
-  //     clearActivePracticeContextId()
-  //     await createPatientFn({ psychologistPracticeContextId: null })
-  //     await queryClient.invalidateQueries({ queryKey: ['me'] })
-  //     navigate('/patient-dashboard')
-  //   } catch (error) {
-  //     toast.error(
-  //       axios.isAxiosError(error)
-  //         ? error.message
-  //         : 'Erro ao criar perfil de paciente.',
-  //     )
-  //   }
-  // }, [createPatientFn, clearActivePracticeContextId, queryClient, navigate])
-
-  // const handleCreatePsychologistProfile = useCallback(
-  //   (contextId: string) => {
-  //     setActivePracticeContextId(contextId)
-  //     navigate('/dashboard')
-  //   },
-  //   [setActivePracticeContextId, navigate],
-  // )
-
   const handleRedirectToCreateProfile = (type: 'psychologist' | 'pacient') => {
     navigate(`/onboarding/${type}`)
   }
 
   const handleRedirectToCreateContext = () => {
     navigate('/profiles/context')
+  }
+
+  const handleRedirectClaimCandidates = () => {
+    navigate('/profiles/claim-candidates')
   }
 
   const hasPsychologistProfile = Boolean(me?.psychologistProfile)
@@ -263,6 +244,13 @@ export function ProfilesPage() {
           ))}
         </ProfileSection>
       )}
+
+      <ProfileSection
+        title="Possíveis vínculos"
+        icon={<UserRound className="size-4 text-violet-600" />}
+      >
+        <Button onClick={handleRedirectClaimCandidates}>Ver candidatos</Button>
+      </ProfileSection>
 
       {hasPsychologistProfile && (
         <div>

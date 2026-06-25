@@ -35,6 +35,7 @@ import { ProtectedRoute } from './components/auth/protected-route'
 import { ValidatePatientInvitePage } from './pages/auth/invite/validate-patient-invite-page'
 import { RegisterViaPatientInvitePage } from './pages/auth/invite/register-via-patient-invite-page'
 import { PatientInviteReviewPage } from './pages/auth/invite/patient-invite-review-page'
+import { ClaimCandidatesPage } from './pages/app/claim-candidates/claim-candidates-page'
 
 const practiceContextGuard = () => {
   if (
@@ -110,6 +111,10 @@ export const router = createBrowserRouter([
       {
         path: '/profiles/context',
         element: <PracticeContextPage />,
+      },
+      {
+        path: '/profiles/claim-candidates',
+        element: <ClaimCandidatesPage />,
       },
     ],
   },
