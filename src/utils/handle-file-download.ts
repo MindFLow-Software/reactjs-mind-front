@@ -9,7 +9,7 @@ export async function handleFileDownload(fileKey: string, filename: string) {
 
     // Cria o arquivo na memória do navegador
     const blob = new Blob([response.data], {
-      type: response.headers['content-type'] || 'application/octet-stream',
+      type: response.headers['content-type'] as string || 'application/octet-stream',
     })
 
     const url = window.URL.createObjectURL(blob)
