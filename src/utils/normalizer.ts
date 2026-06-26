@@ -26,7 +26,7 @@ export class Normalizer {
       .join(' ')
   }
 
-  static toSnakeCase(value: string | null | undefined) {
+  static toSnakeCase = (value: string | null | undefined): string => {
     if (!value || typeof value !== 'string') return ''
     return value.replace(/\s/g, '_')
   }
