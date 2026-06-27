@@ -7,31 +7,6 @@ import type {
 import type { PlatformRole } from '@/types/user'
 import type { IpatientProfile } from '@/types/patient-profile'
 
-// interface PsychologistProfileMeShape {
-//   id: string
-//   crp: string
-//   expertise: string
-//   professionalBio: string | null
-//   status: string
-//   isActive: boolean
-// }
-
-// interface PracticeContextMeShape {
-//   id: string
-//   contextType: string
-//   clinicId: string | null
-//   clinicBranchId: string | null
-//   consultationFee: number | null
-//   nickname: string | null
-//   isActive: boolean
-// }
-
-// interface PatientProfileMeShape {
-//   id: string
-//   psychologistPracticeContextId: string | null
-//   isActive: boolean
-// }
-
 interface ClinicMemberContextShape {
   id: string
   clinicId: string

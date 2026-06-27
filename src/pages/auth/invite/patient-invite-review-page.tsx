@@ -7,7 +7,7 @@ import { toast } from 'sonner'
 import { format } from 'date-fns'
 
 import { validatePatientInvite } from '@/api/patient-profiles/validate-patient-invite'
-import { submitPatientInviteResponse } from '@/api/patient-profiles/accept-patient-invite'
+import { submitPatientInviteResponse } from '@/api/patient-profiles/submit-patient-invite-response'
 
 import {
   Card,
