@@ -3,7 +3,7 @@ import { ArrowLeft, ArrowRight, Brain, Sparkles } from 'lucide-react'
 
 import { zodResolver } from '@hookform/resolvers/zod'
 
-import { createPatientProfileByAccessCodeSchema, type IcreatePatientProfileByAccessCode } from '@/validators/patient-profile'
+import { createPatientProfileByAccessCodeSchema } from '@/validators/patient-profile'
 
 import {
   Card,
@@ -29,21 +29,14 @@ export function PatientOnboardingPage() {
 
   const {
     control,
-    handleSubmit,
   } = methods
 
-  const { mutateAsync } = useMutation({
+  const {} = useMutation({
     mutationKey: ['create-patient-profile-or-link-by-access-code'],
     mutationFn: async () => {},
     onSuccess: () => {},
     onError: () => {},
   })
-
-  const handleCreatePatientProfileOrLinkByAccessCode = async (
-    data: IcreatePatientProfileByAccessCode,
-  ) => {
-    await mutateAsync()
-  }
 
   return (
     <main className="flex gap-8 mx-auto max-w-7xl mt-4">
