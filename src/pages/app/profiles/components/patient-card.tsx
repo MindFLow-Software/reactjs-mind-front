@@ -26,7 +26,7 @@ function PatientCardBase() {
       />
       <ProfileCard.Content>
         <div>
-          <h2 className="text-2xl font-bold text-foreground">
+          <h2 className="text-xl font-bold text-foreground">
             Criar perfil de paciente
           </h2>
           <p className="mt-1 text-sm text-muted-foreground">
