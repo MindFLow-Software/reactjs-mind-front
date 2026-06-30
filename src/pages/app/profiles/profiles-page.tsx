@@ -1,57 +1,21 @@
 import { useCallback, type ReactNode } from 'react'
 import { useQuery } from '@tanstack/react-query'
 import { Navigate, useNavigate } from 'react-router-dom'
-import {
-  Plus,
-  Brain,
-  Loader2,
-  Briefcase,
-  UserRound,
-  HeartPulse,
-  ArrowRight,
-} from 'lucide-react'
+import { Loader2 } from 'lucide-react'
 
 import { getProfile } from '@/api/psychologists/get-profile'
 import { useActivePracticeContextStore } from '@/store/use-active-practice-context-store'
 
-import {
-  Card,
-  CardTitle,
-  CardHeader,
-  CardFooter,
-  CardContent,
-  CardDescription,
-} from '@/components/ui/card'
-
-import { Button } from '@/components/ui/button'
-import { PatientProfileCard } from './components/patient-profile-card'
-import { PracticeContextCard } from './components/practice-context-card'
+import { PsychologistCard } from './components/psychologist-card'
+import { PatientCard } from './components/patient-card'
+import { PsychologistProfileSection } from './components/psychologist-profile-section'
+import './profiles-page.css'
 
 function ProfilesShell({ children }: { children: ReactNode }) {
   return (
-    <div className="flex min-h-screen w-full flex-col items-center justify-center bg-gray-50 px-4 py-10">
+    <div className="flex min-h-screen w-full flex-col items-center justify-center bg-background px-4 py-10">
       <div className="w-full max-w-4xl">{children}</div>
     </div>
-  )
-}
-
-function ProfileSection({
-  title,
-  icon,
-  children,
-}: {
-  title: string
-  icon: ReactNode
-  children: ReactNode
-}) {
-  return (
-    <section className="mb-8">
-      <div className="mb-3 flex items-center gap-2 text-sm font-semibold text-foreground/80">
-        {icon}
-        <span>{title}</span>
-      </div>
-      <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">{children}</div>
-    </section>
   )
 }
 
@@ -60,10 +24,6 @@ export function ProfilesPage() {
 
   const setActivePracticeContextId = useActivePracticeContextStore(
     (state) => state.setActivePracticeContextId,
-  )
-
-  const clearActivePracticeContextId = useActivePracticeContextStore(
-    (state) => state.clearActivePracticeContextId,
   )
 
   const {
@@ -80,24 +40,28 @@ export function ProfilesPage() {
     [setActivePracticeContextId, navigate],
   )
 
-  const handleSelectPatient = useCallback(() => {
-    clearActivePracticeContextId()
-    navigate('/patient-dashboard')
-  }, [clearActivePracticeContextId, navigate])
+  const handleEnterPsychologistProfile = useCallback(() => {
+    if (!me) return
+    const { practiceContexts } = me
+    if (practiceContexts.length === 1) {
+      setActivePracticeContextId(practiceContexts[0].id)
+      navigate('/dashboard')
+    } else {
+      navigate('/profiles/context')
+    }
+  }, [me, navigate, setActivePracticeContextId])
 
-  const handleRedirectToCreateProfile = (type: 'psychologist' | 'patient') => {
-    navigate(`/onboarding/${type}`)
-  }
-
-  const handleRedirectToCreateContext = () => {
+  const handleAddContext = useCallback(() => {
     navigate('/profiles/context')
-  }
+  }, [navigate])
 
-  const handleRedirectClaimCandidates = () => {
-    navigate('/profiles/claim-candidates')
-  }
+  const handleCreatePsychologistProfile = useCallback(() => {
+    navigate('/onboarding/psychologist')
+  }, [navigate])
 
-  const hasPsychologistProfile = Boolean(me?.psychologistProfile)
+  const handleCreatePatientProfile = useCallback(() => {
+    navigate('/onboarding/patient')
+  }, [navigate])
 
   if (isLoading) {
     return (
@@ -125,140 +89,57 @@ export function ProfilesPage() {
 
   return (
     <ProfilesShell>
-      <header className="mb-8 text-center">
-        <h1 className="text-2xl font-bold text-foreground">
+      <div className="pp-greeting">
+        <h1 className="pp-greeting-title text-foreground">
           Olá, {me.firstName}
         </h1>
-        <p className="mt-1 text-sm text-muted-foreground">
-          Escolha um perfil para continuar ou crie um novo.
+        <p className="pp-greeting-subtitle text-muted-foreground">
+          Escolha como deseja usar a plataforma ou continue em um perfil já
+          existente.
         </p>
-      </header>
-
-      <div className="flex gap-4 mb-4">
-        <Card className="relative max-w-1/2 p-4 gap-1">
-          <div className="absolute left-0 top-0 h-1 w-full bg-blue-500" />
-          <CardHeader className="p-0">
-            <div className="flex items-center justify-center p-3 w-fit rounded-md text-white bg-blue-500/75">
-              <Brain size={24} />
-            </div>
-            <span className="mt-2 text-sm font-medium text-muted-foreground">
-              Para profissionais licenciados
-            </span>
-          </CardHeader>
-          <CardContent className="p-0 space-y-3 mb-8">
-            <CardTitle className="text-xl">Perfil de psicólogo</CardTitle>
-            <CardDescription className="text-xs">
-              Crie sua identidade profissional uma única vez — depois adicione
-              quantos contextos de prática precisar (consultório particular,
-              clínicas).
-            </CardDescription>
-            <ul className="space-y-2 flex-1">
-              <li className="text-sm">- CRP e credenciais (pagamento único)</li>
-              <li className="text-sm">
-                - Adicione vários espaços de trabalho posteriormente
-              </li>
-              <li className="text-sm">
-                - Ferramentas para prática calma e focada
-              </li>
-            </ul>
-          </CardContent>
-          <CardFooter className="p-0 mt-auto">
-            <Button
-              type="button"
-              variant="outline"
-              onClick={() => handleRedirectToCreateProfile('psychologist')}
-              className="justify-between bg-transparent border-none flex-1"
-            >
-              Criar perfil de psicólogo
-              <div className="flex items-center justify-center p-3 w-fit rounded-full bg-neutral-200">
-                <ArrowRight className="size-4" />
-              </div>
-            </Button>
-          </CardFooter>
-        </Card>
-
-        <Card className="relative max-w-1/2 p-4 gap-1">
-          <div className="absolute left-0 top-0 h-1 w-full bg-emerald-500" />
-          <CardHeader className="p-0">
-            <div className="flex items-center justify-center p-3 w-fit rounded-md text-white bg-emerald-500/75">
-              <HeartPulse size={24} />
-            </div>
-            <span className="mt-2 text-sm font-medium text-muted-foreground">
-              Para o seu bem-estar
-            </span>
-          </CardHeader>
-          <CardContent className="p-0 space-y-3 mb-8">
-            <CardTitle className="text-xl">Perfil de paciente</CardTitle>
-            <CardDescription className="text-xs">
-              Encontre o psicólogo certo, acompanhe sua jornada de saúde mental
-              e cuide de si mesmo com carinho.
-            </CardDescription>
-            <ul className="space-y-2 flex-1">
-              <li className="text-sm">- Encontre seu psicólogo</li>
-              <li className="text-sm">- Acompanhe sua jornada</li>
-              <li className="text-sm">- Reflexões pessoais</li>
-            </ul>
-          </CardContent>
-          <CardFooter className="p-0 mt-auto">
-            <Button
-              type="button"
-              variant="outline"
-              onClick={() => handleRedirectToCreateProfile('patient')}
-              className="justify-between bg-transparent border-none flex-1"
-            >
-              Criar perfil de paciente
-              <div className="flex items-center justify-center p-3 w-fit rounded-full bg-neutral-200">
-                <ArrowRight className="size-4" />
-              </div>
-            </Button>
-          </CardFooter>
-        </Card>
+        <p className="pp-greeting-hint text-muted-foreground">
+          Você pode usar a plataforma como psicólogo, paciente ou ambos.
+        </p>
       </div>
 
-      {me.practiceContexts.length > 0 && (
-        <ProfileSection
-          title="Contextos de atendimento"
-          icon={<Briefcase className="size-4 text-blue-600" />}
-        >
-          {me.practiceContexts.map((context) => (
-            <PracticeContextCard
-              key={context.id}
-              context={context}
-              onSelect={handleSelectContext}
-            />
-          ))}
-        </ProfileSection>
-      )}
+      <div className="pp-header">
+        <span className="pp-eyebrow text-muted-foreground">COMEÇAR</span>
+        <h1 className="pp-title text-foreground">
+          Começar ou adicionar novo perfil
+        </h1>
+        <p className="pp-subtitle text-muted-foreground">
+          Crie um perfil novo ou adicione um novo contexto de atuação.
+        </p>
+      </div>
 
-      {me.patientProfiles.length > 0 && (
-        <ProfileSection
-          title="Perfis de paciente"
-          icon={<UserRound className="size-4 text-violet-600" />}
-        >
-          {me.patientProfiles.map((profile) => (
-            <PatientProfileCard
-              key={profile.id}
-              profile={profile}
-              onSelect={handleSelectPatient}
-            />
-          ))}
-        </ProfileSection>
-      )}
+      <div className="pp-grid">
+        <PsychologistCard
+          profile={me.psychologistProfile}
+          practiceContexts={me.practiceContexts}
+          firstName={me.firstName}
+          lastName={me.lastName}
+          isActive={me.isActive}
+          onEnter={handleEnterPsychologistProfile}
+          onAddContext={handleAddContext}
+          onCreateProfile={handleCreatePsychologistProfile}
+        />
+        <PatientCard
+          existingCount={me.patientProfiles.length}
+          onCreateProfile={handleCreatePatientProfile}
+        />
+      </div>
 
-      <ProfileSection
-        title="Possíveis vínculos"
-        icon={<UserRound className="size-4 text-violet-600" />}
-      >
-        <Button onClick={handleRedirectClaimCandidates}>Ver candidatos</Button>
-      </ProfileSection>
-
-      {hasPsychologistProfile && (
-        <div>
-          <Button className="gap-2" onClick={handleRedirectToCreateContext}>
-            <Plus />
-            Adicionar Contexto de atuação
-          </Button>
-        </div>
+      {me.psychologistProfile && (
+        <PsychologistProfileSection
+          profile={me.psychologistProfile}
+          practiceContexts={me.practiceContexts}
+          firstName={me.firstName}
+          lastName={me.lastName}
+          isActive={me.isActive}
+          onEnter={handleEnterPsychologistProfile}
+          onAddContext={handleAddContext}
+          onSelectContext={handleSelectContext}
+        />
       )}
     </ProfilesShell>
   )
