@@ -85,7 +85,7 @@ export function ProfilesPage() {
     navigate('/patient-dashboard')
   }, [clearActivePracticeContextId, navigate])
 
-  const handleRedirectToCreateProfile = (type: 'psychologist' | 'pacient') => {
+  const handleRedirectToCreateProfile = (type: 'psychologist' | 'patient') => {
     navigate(`/onboarding/${type}`)
   }
 
@@ -203,7 +203,7 @@ export function ProfilesPage() {
             <Button
               type="button"
               variant="outline"
-              onClick={() => handleRedirectToCreateProfile('pacient')}
+              onClick={() => handleRedirectToCreateProfile('patient')}
               className="justify-between bg-transparent border-none flex-1"
             >
               Criar perfil de paciente

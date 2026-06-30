@@ -37,6 +37,7 @@ import { RegisterViaPatientInvitePage } from './pages/auth/invite/register-via-p
 import { PatientInviteReviewPage } from './pages/auth/invite/patient-invite-review-page'
 import { ClaimCandidatesPage } from './pages/app/claim-candidates/claim-candidates-page'
 import { ClaimProfileRequestsPage } from './pages/app/claim-profile-requests/claim-profile-requests-page'
+import { PatientOnboardingPage } from './pages/app/onboarding/patient/patient-onboarding'
 
 const practiceContextGuard = () => {
   if (
@@ -108,6 +109,10 @@ export const router = createBrowserRouter([
       {
         path: '/onboarding/psychologist',
         element: <PsychologistOnboardingPage />,
+      },
+      {
+        path: '/onboarding/patient',
+        element: <PatientOnboardingPage />,
       },
       {
         path: '/profiles/context',
