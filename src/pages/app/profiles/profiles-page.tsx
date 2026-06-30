@@ -1,67 +1,22 @@
-import { useCallback, type ReactNode } from 'react'
-import { useQuery } from '@tanstack/react-query'
-import { Navigate, useNavigate } from 'react-router-dom'
+import { type ReactNode } from 'react'
+import { Navigate } from 'react-router-dom'
 import { Loader2 } from 'lucide-react'
 
-import { getProfile } from '@/api/psychologists/get-profile'
-import { useActivePracticeContextStore } from '@/store/use-active-practice-context-store'
+import { useAuth } from '@/hooks/use-auth'
 
-import { PsychologistCard } from './components/psychologist-card'
 import { PatientCard } from './components/patient-card'
-import { PsychologistProfileSection } from './components/psychologist-profile-section'
+import { PsychologistCard } from './components/psychologist-card'
+import { ProfileSectionHeader } from './components/profile-section-header'
+import { PsychologistPracticeContextsSection } from './components/psychologist-practice-contexts-section'
 import { PatientProfileSection } from './components/patient-profile-section'
-import './profiles-page.css'
+import { PatientProfilePossibleCandidatesSection } from './components/patient-profile-possible-candidates-section'
 
 function ProfilesShell({ children }: { children: ReactNode }) {
-  return (
-    <div className="flex min-h-screen w-full flex-col items-center justify-center bg-background px-4 py-10">
-      <div className="w-full max-w-6xl">{children}</div>
-    </div>
-  )
-}
-
-export function ProfilesPage() {
-  const navigate = useNavigate()
-
-  const setActivePracticeContextId = useActivePracticeContextStore(
-    (state) => state.setActivePracticeContextId,
-  )
-
   const {
-    data: me,
-    isLoading,
     isError,
-  } = useQuery({ queryKey: ['me'], queryFn: getProfile })
-
-  const handleEnterPsychologistProfile = useCallback(() => {
-    if (!me) return
-    const { practiceContexts } = me
-    if (practiceContexts.length === 1) {
-      setActivePracticeContextId(practiceContexts[0].id)
-      navigate('/dashboard')
-    } else {
-      navigate('/profiles/context')
-    }
-  }, [me, navigate, setActivePracticeContextId])
-
-  const handleAddContext = useCallback(() => {
-    navigate('/profiles/context')
-  }, [navigate])
-
-  const handleCreatePsychologistProfile = useCallback(() => {
-    navigate('/onboarding/psychologist')
-  }, [navigate])
-
-  const handleCreatePatientProfile = useCallback(() => {
-    navigate('/onboarding/patient')
-  }, [navigate])
-
-  const handleEnterPatientProfile = useCallback(
-    (_id: string) => {
-      navigate('/patient-dashboard')
-    },
-    [navigate],
-  )
+    profile: me,
+    isPending: isLoading,
+  } = useAuth()
 
   if (isLoading) {
     return (
@@ -88,63 +43,46 @@ export function ProfilesPage() {
   }
 
   return (
-    <ProfilesShell>
-      <div className="pp-greeting">
-        <h1 className="pp-greeting-title text-foreground">
+    <div className="min-h-screen w-full bg-background py-10">
+      <header className="text-center mb-8">
+        <h1 className="text-4xl text-foreground">
           Olá, {me.firstName}
         </h1>
-        <p className="pp-greeting-subtitle text-muted-foreground">
+        <p className="text-sm text-muted-foreground">
           Escolha como deseja usar a plataforma ou continue em um perfil já
           existente.
         </p>
-        <p className="pp-greeting-hint text-muted-foreground">
+        <p className="text-sm text-muted-foreground">
           Você pode usar a plataforma como psicólogo, paciente ou ambos.
         </p>
-      </div>
+      </header>
 
-      <div className="pp-header">
-        <span className="pp-eyebrow text-muted-foreground">COMEÇAR</span>
-        <h1 className="pp-title text-foreground">
-          Começar ou adicionar novo perfil
-        </h1>
-        <p className="pp-subtitle text-muted-foreground">
-          Crie um perfil novo ou adicione um novo contexto de atuação.
-        </p>
-      </div>
+      <main className="mx-auto flex flex-col justify-center items-center gap-8 w-full max-w-4xl">
+        {children}
+      </main>
+    </div>
+  )
+}
 
-      <div className="pp-grid">
-        <PsychologistCard
-          profile={me.psychologistProfile}
-          practiceContexts={me.practiceContexts}
-          firstName={me.firstName}
-          lastName={me.lastName}
-          isActive={me.isActive}
-          onEnter={handleEnterPsychologistProfile}
-          onAddContext={handleAddContext}
-          onCreateProfile={handleCreatePsychologistProfile}
+export function ProfilesPage() {
+  return (
+    <ProfilesShell>
+      <section className="w-full">
+        <ProfileSectionHeader
+          section="começar"
+          title="Começar ou adicionar novo perfil"
+          label="Crie um perfil novo ou adicione um novo contexto de atuação."
         />
-        <PatientCard
-          existingCount={me.patientProfiles.length}
-          onCreateProfile={handleCreatePatientProfile}
-        />
-      </div>
 
-      {me.psychologistProfile && (
-        <PsychologistProfileSection
-          profile={me.psychologistProfile}
-          practiceContexts={me.practiceContexts}
-          firstName={me.firstName}
-          lastName={me.lastName}
-          isActive={me.isActive}
-          onEnter={handleEnterPsychologistProfile}
-          onAddContext={handleAddContext}
-        />
-      )}
+        <div className="flex justify-center gap-4">
+          <PsychologistCard />
+          <PatientCard />
+        </div>
+      </section>
 
-      <PatientProfileSection
-        profiles={me.patientProfiles}
-        onEnter={handleEnterPatientProfile}
-      />
+      <PsychologistPracticeContextsSection />
+      <PatientProfileSection />
+      <PatientProfilePossibleCandidatesSection />
     </ProfilesShell>
   )
 }

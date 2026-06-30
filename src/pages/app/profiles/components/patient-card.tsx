@@ -1,29 +1,30 @@
 import { memo } from 'react'
+import { useNavigate } from 'react-router-dom'
 import { HeartPulse, ArrowRight } from 'lucide-react'
-import { Card } from '@/components/ui/card'
+
+import { useAuth } from '@/hooks/use-auth'
+
 import { Button } from '@/components/ui/button'
-import './patient-card.css'
+import { ProfileCard } from './profile-card'
 
-interface PatientCardProps {
-  existingCount: number
-  onCreateProfile: () => void
-}
+function PatientCardBase() {
+  const navigate = useNavigate()
+  const { profile: me } = useAuth()
 
-function PatientCardBase({ existingCount, onCreateProfile }: PatientCardProps) {
+  const existingCount = me?.patientProfiles.length ?? 0
+
+  const handleCreatePatientProfile = () => {
+    navigate('/onboarding/patient')
+  }
+
   return (
-    <Card className="overflow-hidden p-0">
-      <div className="pat-card">
-        <div className="absolute inset-x-0 top-0 h-1.5 bg-teal-600" />
-
-        <div className="pat-eyebrow mt-3">
-          <div className="flex size-10 shrink-0 items-center justify-center rounded-full bg-teal-50 text-teal-600 dark:bg-teal-950/30 dark:text-teal-400">
-            <HeartPulse className="size-5" />
-          </div>
-          <span className="text-xs font-semibold uppercase tracking-widest text-muted-foreground">
-            Para o seu cuidado
-          </span>
-        </div>
-
+    <ProfileCard.Root>
+      <ProfileCard.Header
+        variant="secondary"
+        icon={<HeartPulse />}
+        label="Para o seu cuidado"
+      />
+      <ProfileCard.Content>
         <div>
           <h2 className="text-2xl font-bold text-foreground">
             Criar perfil de paciente
@@ -34,16 +35,16 @@ function PatientCardBase({ existingCount, onCreateProfile }: PatientCardProps) {
           </p>
         </div>
 
-        <ul className="pat-features">
-          <li className="pat-feature-item text-muted-foreground">
+        <ul className="space-y-2">
+          <li className="flex gap-2 text-sm text-muted-foreground">
             <span className="mt-1.5 size-1.5 shrink-0 rounded-full bg-teal-500" />
             Acompanhe consultas
           </li>
-          <li className="pat-feature-item text-muted-foreground">
+          <li className="flex gap-2 text-sm text-muted-foreground">
             <span className="mt-1.5 size-1.5 shrink-0 rounded-full bg-teal-500" />
             Veja informações dos atendimentos
           </li>
-          <li className="pat-feature-item text-muted-foreground">
+          <li className="flex gap-2 text-sm text-muted-foreground">
             <span className="mt-1.5 size-1.5 shrink-0 rounded-full bg-teal-500" />
             Organize sua jornada de saúde mental
           </li>
@@ -56,18 +57,18 @@ function PatientCardBase({ existingCount, onCreateProfile }: PatientCardProps) {
             {existingCount === 1 ? '' : 's'}.
           </p>
         )}
+      </ProfileCard.Content>
 
-        <div className="pat-actions">
-          <Button
-            className="w-full bg-teal-600 text-white hover:bg-teal-700 dark:hover:bg-teal-950/30"
-            onClick={onCreateProfile}
-          >
-            Criar perfil de paciente
-            <ArrowRight className="ml-2 size-4" />
-          </Button>
-        </div>
-      </div>
-    </Card>
+      <ProfileCard.Footer>
+        <Button
+          className="flex items-center gap-2 w-full bg-teal-600 text-white hover:bg-teal-700 dark:hover:bg-teal-950/30"
+          onClick={handleCreatePatientProfile}
+        >
+          Criar perfil de paciente
+          <ArrowRight size={16} />
+        </Button>
+      </ProfileCard.Footer>
+    </ProfileCard.Root>
   )
 }
 
