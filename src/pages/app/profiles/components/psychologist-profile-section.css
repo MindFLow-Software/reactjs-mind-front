@@ -87,7 +87,11 @@
 }
 
 .pps-contexts-header {
-  margin-bottom: 0.75rem;
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 1rem;
+  margin-bottom: 1.25rem;
 }
 
 .pps-contexts-eyebrow {
@@ -96,6 +100,18 @@
   font-weight: 600;
   text-transform: uppercase;
   letter-spacing: 0.1em;
+}
+
+.pps-contexts-title {
+  font-size: 1.5rem;
+  font-weight: 700;
+  margin-top: 0.125rem;
+}
+
+.pps-contexts-subtitle {
+  font-size: 0.875rem;
+  margin-top: 0.25rem;
+  max-width: 42rem;
 }
 
 .pps-contexts-grid {

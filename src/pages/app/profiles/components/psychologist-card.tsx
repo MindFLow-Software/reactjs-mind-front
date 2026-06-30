@@ -1,5 +1,5 @@
 import { memo } from 'react'
-import { Brain, ArrowRight, Plus } from 'lucide-react'
+import { Brain, ArrowRight } from 'lucide-react'
 import { Card } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { cn } from '@/lib/utils'
@@ -81,10 +81,6 @@ function renderPsychologistContent(props: PsychologistCardProps) {
             >
               Entrar no perfil de psicólogo
               <ArrowRight className="ml-2 size-4" />
-            </Button>
-            <Button variant="outline" className="w-full" onClick={onAddContext}>
-              <Plus className="mr-2 size-4" />
-              Adicionar contexto
             </Button>
           </div>
         </>

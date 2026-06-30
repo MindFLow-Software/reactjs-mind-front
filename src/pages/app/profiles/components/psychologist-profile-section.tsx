@@ -8,7 +8,6 @@ import { cn } from '@/lib/utils'
 import { getActivePatientProfilesAmount } from '@/api/patient-profiles/get-active-patient-profiles-amount'
 import type { PsychologistProfile } from '@/types/psychologist'
 import type { PracticeContextMe } from '../constants'
-import { PracticeContextCard } from './practice-context-card'
 import './psychologist-profile-section.css'
 
 interface PsychologistProfileSectionProps {
@@ -19,7 +18,6 @@ interface PsychologistProfileSectionProps {
   isActive: boolean
   onEnter: () => void
   onAddContext: () => void
-  onSelectContext: (id: string) => void
 }
 
 interface StatProps {
@@ -49,7 +47,6 @@ export function PsychologistProfileSection({
   isActive,
   onEnter,
   onAddContext,
-  onSelectContext,
 }: PsychologistProfileSectionProps) {
   const { data: metricsData, isLoading: isLoadingMetrics } = useQuery({
     queryKey: ['patients-metrics-active'],
@@ -114,7 +111,7 @@ export function PsychologistProfileSection({
             <div className="pps-card-right">
               <Stat label="CONTEXTOS" value={practiceContexts.length} />
               <Stat
-                label="PACIENTES"
+                label="PACIENTES ATIVOS"
                 value={metricsData?.amount}
                 isLoading={isLoadingMetrics}
               />
@@ -128,7 +125,7 @@ export function PsychologistProfileSection({
               className="bg-blue-600 text-white hover:bg-blue-700 dark:hover:bg-blue-950/30"
               onClick={onEnter}
             >
-              Entrar no perfil de psicólogo
+              Acessar contexto
               <ArrowRight className="ml-2 size-4" />
             </Button>
             <Button variant="outline" onClick={onAddContext}>
@@ -139,24 +136,6 @@ export function PsychologistProfileSection({
         </Card>
       </div>
 
-      {practiceContexts.length > 0 && (
-        <div>
-          <div className="pps-contexts-header">
-            <span className="pps-contexts-eyebrow text-muted-foreground">
-              CONTEXTOS
-            </span>
-          </div>
-          <div className="pps-contexts-grid">
-            {practiceContexts.map((context) => (
-              <PracticeContextCard
-                key={context.id}
-                context={context}
-                onSelect={onSelectContext}
-              />
-            ))}
-          </div>
-        </div>
-      )}
     </div>
   )
 }

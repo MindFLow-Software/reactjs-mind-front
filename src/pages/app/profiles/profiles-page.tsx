@@ -9,12 +9,13 @@ import { useActivePracticeContextStore } from '@/store/use-active-practice-conte
 import { PsychologistCard } from './components/psychologist-card'
 import { PatientCard } from './components/patient-card'
 import { PsychologistProfileSection } from './components/psychologist-profile-section'
+import { PatientProfileSection } from './components/patient-profile-section'
 import './profiles-page.css'
 
 function ProfilesShell({ children }: { children: ReactNode }) {
   return (
     <div className="flex min-h-screen w-full flex-col items-center justify-center bg-background px-4 py-10">
-      <div className="w-full max-w-4xl">{children}</div>
+      <div className="w-full max-w-6xl">{children}</div>
     </div>
   )
 }
@@ -31,14 +32,6 @@ export function ProfilesPage() {
     isLoading,
     isError,
   } = useQuery({ queryKey: ['me'], queryFn: getProfile })
-
-  const handleSelectContext = useCallback(
-    (id: string) => {
-      setActivePracticeContextId(id)
-      navigate('/dashboard')
-    },
-    [setActivePracticeContextId, navigate],
-  )
 
   const handleEnterPsychologistProfile = useCallback(() => {
     if (!me) return
@@ -62,6 +55,13 @@ export function ProfilesPage() {
   const handleCreatePatientProfile = useCallback(() => {
     navigate('/onboarding/patient')
   }, [navigate])
+
+  const handleEnterPatientProfile = useCallback(
+    (_id: string) => {
+      navigate('/patient-dashboard')
+    },
+    [navigate],
+  )
 
   if (isLoading) {
     return (
@@ -138,9 +138,13 @@ export function ProfilesPage() {
           isActive={me.isActive}
           onEnter={handleEnterPsychologistProfile}
           onAddContext={handleAddContext}
-          onSelectContext={handleSelectContext}
         />
       )}
+
+      <PatientProfileSection
+        profiles={me.patientProfiles}
+        onEnter={handleEnterPatientProfile}
+      />
     </ProfilesShell>
   )
 }
