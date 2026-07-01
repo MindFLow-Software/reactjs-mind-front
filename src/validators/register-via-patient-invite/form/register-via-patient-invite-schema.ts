@@ -1,4 +1,3 @@
-// import { isValidCPF } from '@/utils/validate-cpf'
 import z from 'zod'
 
 const passwordRegex =
@@ -11,7 +10,6 @@ export const registerViaPatientInviteSchema = z.object({
     error: 'Email inválido',
   }),
   cpf: z.string().optional(),
-  // .refine((value) => value && isValidCPF(value)),
   password: z
     .string()
     .min(8, 'Mínimo 8 caracteres')
@@ -22,6 +20,6 @@ export const registerViaPatientInviteSchema = z.object({
     ),
 })
 
-export type IregisterViaPatientInvite = z.infer<
+export type RegisterViaPatientInviteData = z.infer<
   typeof registerViaPatientInviteSchema
 >

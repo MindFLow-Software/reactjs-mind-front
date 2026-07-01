@@ -4,4 +4,4 @@ export const claimAccountSchema = z.object({
   email: z.email().min(1, 'Obrigatório'),
 })
 
-export type IclaimAccount = z.infer<typeof claimAccountSchema>
+export type ClaimAccountData = z.infer<typeof claimAccountSchema>

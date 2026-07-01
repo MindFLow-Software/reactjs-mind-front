@@ -4,7 +4,7 @@ import { useDropzone } from 'react-dropzone'
 import { toast } from 'sonner'
 
 import { uploadAttachment } from '@/api/attachments/attachments'
-import { uploadFileSchema } from '@/validators/attachments'
+import { uploadFileSchema } from '@/validators/attachments/form/upload-attachment-schema'
 import { cn } from '@/lib/utils'
 
 import './file-upload-zone.css'

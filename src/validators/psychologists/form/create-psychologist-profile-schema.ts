@@ -13,3 +13,7 @@ export const createPsychologistProfileSchema = z.object({
   languages: z.array(z.enum(Languages)).default([]),
   honorific: z.enum(Honorific).default(Honorific.MASC_DR),
 })
+
+export type CreatePsychologistProfileData = z.infer<
+  typeof createPsychologistProfileSchema
+>

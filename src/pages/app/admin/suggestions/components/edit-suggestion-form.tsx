@@ -27,7 +27,7 @@ import { DialogHeader, DialogTitle, DialogFooter } from '@/components/ui/dialog'
 import {
   editSuggestionSchema,
   type EditSuggestionSchema,
-} from '@/validators/suggestions'
+} from '@/validators/suggestions/form/edit-suggestion-schema'
 
 const editSchema = editSuggestionSchema
 type EditSchema = EditSuggestionSchema

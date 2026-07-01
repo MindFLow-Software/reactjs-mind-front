@@ -33,8 +33,8 @@ import { Card, CardContent, CardFooter, CardHeader } from '@/components/ui/card'
 
 import {
   createPsychologistPracticeContextSchema,
-  type IcreatePsychologistPracticeContext,
-} from '@/validators/psychologist-context'
+  type CreatePsychologistPracticeContextData,
+} from '@/validators/psychologists/form/create-practice-context-schema'
 import { TitleIcon } from '@/components/title-icon'
 
 type IcreateIndividualContext = {
@@ -46,10 +46,10 @@ export function CreateIndividualContext({
   onGoBack,
   onCreatPracticeContext,
 }: IcreateIndividualContext) {
-  const methods = useForm<IcreatePsychologistPracticeContext>({
+  const methods = useForm<CreatePsychologistPracticeContextData>({
     resolver: zodResolver(
       createPsychologistPracticeContextSchema,
-    ) as Resolver<IcreatePsychologistPracticeContext>,
+    ) as Resolver<CreatePsychologistPracticeContextData>,
     defaultValues: {
       nickname: '',
       contextType: ContextType.INDIVIDUAL,

@@ -22,7 +22,7 @@ import { Honorific } from '@/types/psychologist'
 import { getProfile } from '@/api/psychologists/get-profile'
 import { createPsychologistProfile } from '@/api/auth/create-psychologist-profile'
 import { ProfessionalIdentityFormStep } from './steps/professional-identity-form-step'
-import { createPsychologistProfileSchema } from '@/validators/psychologist-profile'
+import { createPsychologistProfileSchema } from '@/validators/psychologists/form/create-psychologist-profile-schema'
 
 type IcreatePsychologistProfile = z.infer<
   typeof createPsychologistProfileSchema

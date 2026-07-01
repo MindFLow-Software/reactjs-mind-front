@@ -3,7 +3,7 @@ import { ArrowLeft, ArrowRight, Brain, Sparkles } from 'lucide-react'
 
 import { zodResolver } from '@hookform/resolvers/zod'
 
-import { createPatientProfileByAccessCodeSchema } from '@/validators/patient-profile'
+import { createPatientProfileByAccessCodeSchema } from '@/validators/patient-profile/form/create-patient-profile-by-access-code-schema'
 
 import {
   Card,

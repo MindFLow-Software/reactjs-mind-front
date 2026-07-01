@@ -27,7 +27,7 @@ import { MaskedInput } from '@/components/maked-input'
 
 import { Expertise } from '@/types/expertise'
 import { translatedExpertise } from '@/constants/translated-expertise'
-import { createPsychologistProfileSchema } from '@/validators/psychologist-profile'
+import { createPsychologistProfileSchema } from '@/validators/psychologists/form/create-psychologist-profile-schema'
 import { Honorific, Languages, translatedLanguages } from '@/types/psychologist'
 
 type IcreatePsychologistProfile = z.infer<

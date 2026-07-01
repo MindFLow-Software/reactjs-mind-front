@@ -1,8 +1,8 @@
 import z from 'zod'
 
-import { Time } from '@/utils/time'
-import { isValidCPF } from '@/utils/validate-cpf'
 import { Gender } from '@/types/patient'
+import { cpfSchema } from '@/validators/shared/cpf-schema'
+import { dateOfBirthSchema } from '@/validators/shared/date-of-birth-schema'
 
 const passwordRegex =
   /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*_])[A-Za-z\d!@#$%^&*_]{8,30}$/
@@ -22,16 +22,9 @@ export const createUserSchema = z.object({
   gender: z.enum(Gender, {
     message: 'Obrigatório',
   }),
-  dateOfBirth: z
-    .date()
-    .refine((date) => !Time.isFuture(new Date(date)), {
-      message: 'Data não pode ser no futuro.',
-    })
-    .optional(),
-  cpf: z
-    .string()
-    .min(11, 'CPF incompleto')
-    .refine(isValidCPF, 'CPF inválido')
-    .optional(),
+  dateOfBirth: dateOfBirthSchema.optional(),
+  cpf: cpfSchema.optional(),
   phoneNumber: z.string().optional(),
 })
+
+export type CreateUserData = z.infer<typeof createUserSchema>

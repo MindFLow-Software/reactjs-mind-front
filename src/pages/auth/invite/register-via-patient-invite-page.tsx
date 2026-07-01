@@ -36,8 +36,8 @@ import { PasswordStrength } from '@/components/password-strength'
 
 import {
   registerViaPatientInviteSchema,
-  type IregisterViaPatientInvite,
-} from '@/validators/register-via-patient-invite'
+  type RegisterViaPatientInviteData,
+} from '@/validators/register-via-patient-invite/form/register-via-patient-invite-schema'
 import { signIn } from '@/api/auth/sign-in'
 
 type Iparams = {
@@ -50,7 +50,7 @@ export function RegisterViaPatientInvitePage() {
 
   const [showPassword, setShowPassword] = useState(false)
 
-  const methods = useForm<IregisterViaPatientInvite>({
+  const methods = useForm<RegisterViaPatientInviteData>({
     resolver: zodResolver(registerViaPatientInviteSchema),
     defaultValues: {
       firstName: '',
@@ -76,7 +76,7 @@ export function RegisterViaPatientInvitePage() {
 
   const { mutateAsync, isPending: isRegistering } = useMutation({
     mutationKey: ['register-via-patient-invite', token],
-    mutationFn: async (data: IregisterViaPatientInvite) => {
+    mutationFn: async (data: RegisterViaPatientInviteData) => {
       await registerViaPatientInvite(token, data)
     },
     onSuccess: async (_, { email, password }) => {
@@ -93,7 +93,7 @@ export function RegisterViaPatientInvitePage() {
   })
 
   const onRegisterViaPatientInvite = async (
-    data: IregisterViaPatientInvite,
+    data: RegisterViaPatientInviteData,
   ) => {
     await mutateAsync(data)
   }

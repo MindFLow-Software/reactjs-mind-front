@@ -19,11 +19,11 @@ import { Button } from '@/components/ui/button'
 import { Field, FieldGroup, FieldLabel, FieldSet } from '@/components/ui/field'
 import {
   claimAccountSchema,
-  type IclaimAccount,
-} from '@/validators/claim-account'
+  type ClaimAccountData,
+} from '@/validators/claim-account/form/claim-account-schema'
 
 export function ClaimAccountPage() {
-  const methods = useForm<IclaimAccount>({
+  const methods = useForm<ClaimAccountData>({
     resolver: zodResolver(claimAccountSchema),
     defaultValues: {
       email: '',
@@ -34,12 +34,12 @@ export function ClaimAccountPage() {
 
   const { mutateAsync, isPending: isSendingEmail } = useMutation({
     mutationKey: ['send-claim-account-email'],
-    mutationFn: async (data: IclaimAccount) => {
+    mutationFn: async (data: ClaimAccountData) => {
       console.log('data: ', data)
     },
   })
 
-  const handleSendClaimAccountEmail = async (data: IclaimAccount) => {
+  const handleSendClaimAccountEmail = async (data: ClaimAccountData) => {
     await mutateAsync(data)
   }
 

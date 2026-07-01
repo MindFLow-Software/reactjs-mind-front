@@ -52,7 +52,7 @@ import { Time } from '@/utils/time'
 import { signIn } from '@/api/auth/sign-in'
 import { Normalizer } from '@/utils/normalizer'
 import { createUser } from '@/api/auth/create-user'
-import { createUserSchema } from '@/validators/user'
+import { createUserSchema } from '@/validators/user/form/create-user-schema'
 
 type SignUpData = z.infer<typeof createUserSchema>
 

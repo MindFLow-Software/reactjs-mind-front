@@ -38,7 +38,7 @@ import { cn } from '@/lib/utils'
 import {
   createSuggestionSchema,
   type CreateSuggestionSchema,
-} from '@/validators/suggestions'
+} from '@/validators/suggestions/form/create-suggestion-schema'
 
 type CategoryValue = CreateSuggestionSchema['category']
 
