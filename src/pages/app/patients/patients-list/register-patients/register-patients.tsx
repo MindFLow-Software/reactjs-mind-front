@@ -1,8 +1,8 @@
 import './form-components.css'
-import { useEffect, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { useForm } from 'react-hook-form'
 import { useFileSelection } from '@/hooks/use-file-selection'
-import { usePatientFormSteps } from './hooks/use-patient-form-steps'
+import { useFormSteps } from '../../../../../hooks/use-form-steps'
 import { usePatientSubmit } from './hooks/use-patient-submit'
 import { zodResolver } from '@hookform/resolvers/zod'
 import {
@@ -14,45 +14,53 @@ import {
   UserPen,
 } from 'lucide-react'
 
-import { DialogContent, DialogTitle } from '@/components/ui/dialog'
+import { DialogClose, DialogContent, DialogFooter, DialogTitle } from '@/components/ui/dialog'
 import { Button } from '@/components/ui/button'
 import { Form } from '@/components/ui/form'
 import { cn } from '@/lib/utils'
 
 import { patientSchema, type PatientFormData } from '@/validators/patients'
 import { buildPatientDefaults } from './helpers'
-import { STEPS, MAX_DOC_FILES, MAX_DOC_SIZE } from './constants'
+import { STEPS, MAX_DOC_FILES, MAX_DOC_SIZE, type IRegisterPatientTabs } from './constants'
 import { StepBasicData } from './steps/step-basic-data'
 import { StepContactAddress } from './steps/step-contact-address'
-import { StepClinical } from './steps/step-clinical'
+// import { StepClinical } from './steps/step-clinical'
 import { AttachmentsList } from './steps/attachments-list'
 import { UploadZone } from './steps/upload-zone'
 import { usePatient } from '@/hooks/use-patient'
+import { getGroupedFields } from '@/utils/get-grouped-schema-fields'
 
-interface RegisterPatientsProps {
+interface IRegisterPatients {
   patientId?: string
   isEditing?: boolean
-  onSuccess?: () => void
 }
+
+type IgroupField = Record<IRegisterPatientTabs, string[]>
 
 export function RegisterPatients({
   patientId,
   isEditing,
-  onSuccess,
-}: RegisterPatientsProps) {
+}: IRegisterPatients) {
   const isEditMode = Boolean(isEditing)
   const { patient } = usePatient(patientId)
 
-  const methods = useForm<PatientFormData>({
-    resolver: zodResolver(patientSchema),
-    mode: 'onTouched',
-  })
-
+  const redirectedToError = useRef(false)
   const [avatarFile, setAvatarFile] = useState<File | null>(null)
+
   const { files, addFiles, removeFile, clearFiles } = useFileSelection({
     maxFiles: MAX_DOC_FILES,
     maxSizeBytes: MAX_DOC_SIZE,
   })
+
+  const methods = useForm<PatientFormData>({
+    resolver: zodResolver(patientSchema),
+  })
+
+  const {
+    reset,
+    handleSubmit,
+    formState: { errors },
+  } = methods
 
   const {
     step: currentStep,
@@ -61,49 +69,32 @@ export function RegisterPatients({
     goToStep,
     isFirstStep,
     isLastStep,
-  } = usePatientFormSteps({ trigger: methods.trigger })
+  } = useFormSteps()
 
   const { submit, isSubmitting } = usePatientSubmit({
     patientId,
     avatarFile,
     files,
     onSuccess: () => {
-      if (!isEditMode) {
-        methods.reset()
-        goToStep(1)
-      }
+      reset()
+      goToStep(1)
       clearFiles()
       setAvatarFile(null)
-      onSuccess?.()
     },
   })
 
   const isEditLoading = Boolean(patientId) && !patient
-
-  useEffect(() => {
-    const patientDefaults = buildPatientDefaults(patient)
-    methods.reset(patientDefaults)
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [patient])
-
-  const findSubimtLabel = (): string => {
-    if (isSubmitting) return 'Salvando…'
-    if (!isLastStep) return 'Continuar'
-
-    return isEditMode ? 'Salvar alterações' : 'Cadastrar paciente'
-  }
 
   const findStepClassName = (active: boolean, done: boolean): string => {
     if (active) return 'rp-modal-tab-badge--active'
     return done ? 'rp-modal-tab-badge--done' : 'rp-modal-tab-badge--pending'
   }
 
-  function renderStepContent(currentStepId: number) {
+  const renderStepContent = (currentStepId: number) => {
     switch (currentStepId) {
       case 1: {
         return (
           <StepBasicData
-            key={patient?.id ?? 'new'}
             onAvatarSelect={setAvatarFile}
             patient={patient}
           />
@@ -112,10 +103,10 @@ export function RegisterPatients({
       case 2: {
         return <StepContactAddress />
       }
+      // case 3: {
+      //   return <StepClinical />
+      // }
       case 3: {
-        return <StepClinical />
-      }
-      case 4: {
         return (
           <div className="space-y-5">
             {isEditMode && <AttachmentsList patientId={patient?.id ?? null} />}
@@ -130,8 +121,68 @@ export function RegisterPatients({
     }
   }
 
+  const renderButtonContent = () => {
+    if (isSubmitting) {
+      return (
+        <>
+          <Loader2 className="size-4 animate-spin" />
+          <span>Salvando…</span>
+        </>
+      )
+    }
+
+    if (!isLastStep) {
+      return (
+        <>
+          <span>Continuar</span>
+          <ChevronRight className="size-4" />
+        </>
+      )
+    }
+
+    return (
+      <>
+        <span>{isEditMode ? 'Salvar alterações' : 'Cadastrar paciente'}</span>
+        <Check className="size-4" />
+      </>
+    )
+  }
+
+  useEffect(() => {
+    (async () => {
+      if (errors && !redirectedToError.current) {
+        const firstErrorField = Object.keys(errors)[0]
+
+        const initialState: IgroupField = {
+          basicData: [],
+          contact: [],
+          documents: [],
+        }
+
+        const tabs = getGroupedFields<IRegisterPatientTabs>(initialState, patientSchema)
+
+        const tabWithError = tabs.find((tab) =>
+          tab.fields.includes(firstErrorField)
+        )
+
+        if (tabWithError) {
+          const stepWithError = STEPS.find(({ key }) => tabWithError.name === key)
+          if (stepWithError) goToStep(stepWithError.id)
+          redirectedToError.current = true
+        }
+      }
+    })()
+  }, [errors])
+
+  useEffect(() => {
+    if (!patient) return
+
+    const patientDefaults = buildPatientDefaults(patient)
+    methods.reset(patientDefaults)
+  }, [patient])
+
   return (
-    <DialogContent className="rp-modal">
+    <DialogContent className="rp-modal" onPointerDownOutside={(e) => e.preventDefault()}>
       <DialogTitle className="rp-modal-header">
         <div className="rp-modal-icon-box">
           {isEditMode ? (
@@ -153,7 +204,6 @@ export function RegisterPatients({
       </DialogTitle>
 
       <div className="rp-modal-stepper">
-        {/* ToDo: improve STEPS format, if applicable */}
         {STEPS.map((step) => {
           const active = currentStep === step.id
           const done = currentStep > step.id
@@ -181,16 +231,16 @@ export function RegisterPatients({
       <div className="rp-modal-progress-track">
         <div
           className="rp-modal-progress-fill"
-          style={{ width: `${(currentStep / 4) * 100}%` }}
+          style={{ width: `${(currentStep / STEPS.length) * 100}%` }}
         />
       </div>
 
       <Form {...methods}>
-        <div className="rp-modal-body">{renderStepContent(currentStep)}</div>
-      </Form>
+        <div className="rp-modal-body">
+          {renderStepContent(currentStep)}
+        </div>
 
-      <div className="rp-modal-footer">
-        <div className="flex items-center justify-end gap-2.5">
+        <DialogFooter className="rp-modal-footer">
           {!isFirstStep && (
             <Button
               type="button"
@@ -202,33 +252,27 @@ export function RegisterPatients({
               Voltar
             </Button>
           )}
+          <DialogClose>
+            <Button
+              type="button"
+              variant="outline"
+              className="rp-btn-secondary"
+            >
+              Cancelar
+            </Button>
+          </DialogClose>
           <Button
             type="button"
-            variant="outline"
-            onClick={() => onSuccess?.()}
-            className="rp-btn-secondary"
-          >
-            Cancelar
-          </Button>
-          <Button
-            type="button"
+            className="rp-btn-primary"
             disabled={isSubmitting || isEditLoading}
             onClick={
-              isLastStep ? () => methods.handleSubmit(submit)() : handleNext
+              isLastStep ? handleSubmit(submit) : handleNext
             }
-            className="rp-btn-primary"
           >
-            {isSubmitting && <Loader2 className="size-4 animate-spin" />}
-            {findSubimtLabel()}
-            {!isSubmitting &&
-              (isLastStep ? (
-                <Check className="size-4" />
-              ) : (
-                <ChevronRight className="size-4" />
-              ))}
+            {renderButtonContent()}
           </Button>
-        </div>
-      </div>
+        </DialogFooter>
+      </Form>
     </DialogContent>
   )
 }

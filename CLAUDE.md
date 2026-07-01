@@ -238,7 +238,7 @@ Patterns extracted from `src/pages/app/patients/patients-list/register-patients/
 
 ### Hook Composition
 
-- Each cross-cutting concern gets its own hook: `usePatientFormSteps` (navigation), `usePatientSubmit` (submission), `useCepLookup` (address lookup), `useFileSelection` (file state).
+- Each cross-cutting concern gets its own hook: `useFormSteps` (navigation), `usePatientSubmit` (submission), `useCepLookup` (address lookup), `useFileSelection` (file state).
 - Feature-local hooks live in a `hooks/` subfolder inside the feature directory, not in global `src/hooks/`.
 - Hook options and return shapes are always typed as explicit interfaces (`UsePatientFormStepsOptions`, `UsePatientFormStepsReturn`).
 - Hooks receive React Hook Form primitives (`trigger`, `setValue`) as options instead of owning the form instance — hooks augment the form, they do not create it.

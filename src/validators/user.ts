@@ -5,7 +5,7 @@ import { isValidCPF } from '@/utils/validate-cpf'
 import { Gender } from '@/types/patient'
 
 const passwordRegex =
-  /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*])[A-Za-z\d!@#$%^&*]{8,30}$/
+  /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*_])[A-Za-z\d!@#$%^&*_]{8,30}$/
 
 export const createUserSchema = z.object({
   firstName: z.string().min(1, 'Obrigatório'),

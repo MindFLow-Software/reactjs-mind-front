@@ -28,7 +28,7 @@ export function PsychologistCard() {
         icon={<Brain />}
         label="Para profissionais licenciados"
       />
-  
+
       <ProfileCard.Content>
         {hasPsychologistProfile ? (
           <>
@@ -120,7 +120,7 @@ export function PsychologistCard() {
           </Button>
         ) : (
           <Button
-            className="w-full bg-blue-600 text-white hover:bg-blue-700 dark:hover:bg-blue-950/30"
+            className="w-full bg-blue-600 text-white hover:bg-blue-700 hover:text-white dark:hover:bg-blue-950/30"
             onClick={handleCreatePsychologistProfile}
           >
             Criar perfil de psicólogo

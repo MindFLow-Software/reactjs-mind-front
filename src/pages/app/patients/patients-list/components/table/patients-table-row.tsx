@@ -353,7 +353,6 @@ export const PatientsTableRow = memo(function PatientsTableRow({
             <RegisterPatients
               patientId={patient.id}
               isEditing
-              onSuccess={() => setIsEditOpen(false)}
             />
           )}
         </Dialog>

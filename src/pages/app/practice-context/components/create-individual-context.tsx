@@ -35,6 +35,7 @@ import {
   createPsychologistPracticeContextSchema,
   type IcreatePsychologistPracticeContext,
 } from '@/validators/psychologist-context'
+import { TitleIcon } from '@/components/title-icon'
 
 type IcreateIndividualContext = {
   onGoBack: () => void
@@ -80,9 +81,9 @@ export function CreateIndividualContext({
       <Card className="p-4">
         <CardHeader className="p-0">
           <div className="flex items-center gap-2">
-            <div className="flex items-center justify-center p-3 w-fit rounded-md text-white bg-emerald-500/75">
-              <Briefcase size={20} />
-            </div>
+            <TitleIcon variant="primary">
+              <Briefcase />
+            </TitleIcon>
             <div>
               <h2 className="text-lg">Contexto Individual</h2>
               <p className="text-xs">

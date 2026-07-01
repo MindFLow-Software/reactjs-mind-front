@@ -56,13 +56,6 @@ import { createUserSchema } from '@/validators/user'
 
 type SignUpData = z.infer<typeof createUserSchema>
 
-const today = new Date()
-const minDate = new Date(
-  today.getFullYear() - 120,
-  today.getMonth(),
-  today.getDate(),
-)
-
 function FieldRow({
   children,
   className,
@@ -170,32 +163,6 @@ export function SignUpForm() {
       } else {
         errorMessage = (error as Error)?.message
       }
-
-      // if (!axios.isAxiosError(err)) {
-      //   toast.error('Erro ao realizar cadastro')
-      //   return
-      // }
-
-      // if (err.apiCode === 'EMAIL_ALREADY_EXISTS') {
-      //   setError('email', {
-      //     type: 'server',
-      //     message: 'E-mail já cadastrado.',
-      //   })
-      //   return
-      // }
-
-      // if (err.apiCode === 'CPF_ALREADY_EXISTS') {
-      //   setError('cpf', { type: 'server', message: 'CPF já cadastrado.' })
-      //   return
-      // }
-
-      // if (
-      //   err.apiCode === 'CRP_ALREADY_IN_USE' ||
-      //   err.apiCode === 'CRP_ALREADY_EXISTS'
-      // ) {
-      //   setError('crp', { type: 'server', message: 'CRP já cadastrado.' })
-      //   return
-      // }
 
       toast.error(errorMessage)
     },
@@ -316,10 +283,7 @@ export function SignUpForm() {
                     placeholder="DD/MM/AAAA"
                     value={dobInputValue}
                     onChange={(e) => {
-                      const { date, inputValue } = Time.textToDate(
-                        e.target.value,
-                        minDate,
-                      )
+                      const { date, inputValue } = Time.textToDate(e.target.value)
                       setDobInputValue(inputValue)
                       field.onChange(date)
                     }}
@@ -353,10 +317,10 @@ export function SignUpForm() {
                     mode="single"
                     selected={field.value}
                     captionLayout="dropdown"
-                    startMonth={minDate}
+                    startMonth={Time.minDate}
                     onSelect={(date) => {
                       field.onChange(date)
-                      setDobInputValue(Time.dateToText(date, minDate))
+                      setDobInputValue(Time.dateToText(date))
                     }}
                   />
                 </PopoverContent>
