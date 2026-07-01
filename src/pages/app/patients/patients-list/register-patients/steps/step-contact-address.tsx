@@ -12,11 +12,11 @@ import { cn } from '@/lib/utils'
 import { formatPhone } from '@/utils/formatPhone'
 
 import './step-contact-address.css'
-import type { PatientFormData } from '@/validators/patients'
+import type { CreatePatientFormData } from '@/validators/patients/form/create-patient-schema'
 import { SectionTitle } from './section-title'
 
 export function StepContactAddress() {
-  const { control } = useFormContext<PatientFormData>()
+  const { control } = useFormContext<CreatePatientFormData>()
 
   return (
     <div className="space-y-6">

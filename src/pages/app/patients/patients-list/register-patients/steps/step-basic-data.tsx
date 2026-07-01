@@ -18,7 +18,7 @@ import { Time } from '@/utils/time'
 import { Normalizer } from '@/utils/normalizer'
 import { GENDER_OPTIONS } from '../constants'
 import { formatDateInput } from '@/utils/formatDateInput'
-import type { PatientFormData } from '@/validators/patients'
+import type { CreatePatientFormData } from '@/validators/patients/form/create-patient-schema'
 import type { IPatientProfile } from '@/types/patient-profile'
 
 import './step-basic-data.css'
@@ -33,7 +33,7 @@ interface StepBasicDataProps {
 }
 
 export function StepBasicData({ onAvatarSelect, patient }: StepBasicDataProps) {
-  const { watch, control } = useFormContext<PatientFormData>()
+  const { watch, control } = useFormContext<CreatePatientFormData>()
 
   const [birthInput, setBirthInput] = useState<string>()
 

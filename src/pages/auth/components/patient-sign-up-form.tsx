@@ -37,7 +37,7 @@ import { useActivePracticeContextStore } from '@/store/use-active-practice-conte
 import {
   patientSignUpSchema,
   type PatientSignUpSchema,
-} from '@/validators/auth'
+} from '@/validators/auth/form/patient-sign-up-schema'
 import { Gender } from '@/types/patient'
 
 function toISODate(date: Date): string {

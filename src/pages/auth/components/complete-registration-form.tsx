@@ -22,33 +22,13 @@ import {
 import { EXPERTISE_TRANSLATIONS } from '@/utils/mappers'
 import { cn } from '@/lib/utils'
 import type { Expertise } from '@/types/expertise'
-import { z } from 'zod'
 import { Gender } from '@/types/patient'
+import {
+  completeRegistrationSchema,
+  type CompleteRegistrationSchema,
+} from '@/validators/auth/form/complete-registration-schema'
 
-const completeRegistrationSchema = z.object({
-  crp: z.string().min(4, 'CRP é obrigatório'),
-  expertise: z.enum(
-    [
-      'CLINICAL',
-      'SOCIAL',
-      'INFANT',
-      'JURIDICAL',
-      'EDUCATIONAL',
-      'ORGANIZATIONAL',
-      'PSYCHOTHERAPIST',
-      'NEUROPSYCHOLOGY',
-      'OTHER',
-    ],
-    { error: 'Selecione uma especialidade' },
-  ),
-  gender: z.enum(['MASCULINE', 'FEMININE', 'OTHER'], {
-    error: 'Selecione um gênero',
-  }),
-})
-
-export type CompleteRegistrationSchema = z.infer<
-  typeof completeRegistrationSchema
->
+export type { CompleteRegistrationSchema } from '@/validators/auth/form/complete-registration-schema'
 
 interface MaskedInputBaseProps extends React.ComponentProps<'input'> {
   inputRef: React.Ref<HTMLInputElement>

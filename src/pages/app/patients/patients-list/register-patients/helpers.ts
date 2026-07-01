@@ -2,11 +2,11 @@ import { Gender } from '@/types/enums'
 import type { IPatientProfile } from '@/types/patient-profile'
 import { formatCPF } from '@/utils/formatCPF'
 import { formatPhone } from '@/utils/formatPhone'
-import type { PatientFormData } from '@/validators/patients'
+import type { CreatePatientFormData } from '@/validators/patients/form/create-patient-schema'
 
 export function buildPatientDefaults(
   patient: IPatientProfile | null,
-): PatientFormData {
+): CreatePatientFormData {
   return {
     firstName: patient?.firstName ?? '',
     lastName: patient?.lastName ?? '',

@@ -6,7 +6,7 @@ import { AxiosError } from 'axios'
 
 import { createPatientProfile } from '@/api/patient-profiles/create-patient-profile'
 import { updatePatientProfileById } from '@/api/patient-profiles/update-patient-profile-by-id'
-import type { PatientFormData } from '@/validators/patients'
+import type { CreatePatientFormData } from '@/validators/patients/form/create-patient-schema'
 import { uploadAttachment, uploadAvatar } from '@/api/attachments/attachments'
 
 interface UsePatientSubmitOptions {
@@ -76,7 +76,7 @@ export function usePatientSubmit({
 
   const isSubmitting = isCreating || isUpdating || isUploading
 
-  async function submit(data: PatientFormData) {
+  async function submit(data: CreatePatientFormData) {
     const shared = {
       ...data,
       dateOfBirth: data.dateOfBirth ?? undefined,

@@ -19,7 +19,7 @@ import { Button } from '@/components/ui/button'
 import { Form } from '@/components/ui/form'
 import { cn } from '@/lib/utils'
 
-import { patientSchema, type PatientFormData } from '@/validators/patients'
+import { createPatientSchema, type CreatePatientFormData } from '@/validators/patients/form/create-patient-schema'
 import { buildPatientDefaults } from './helpers'
 import { STEPS, MAX_DOC_FILES, MAX_DOC_SIZE, type IRegisterPatientTabs } from './constants'
 import { StepBasicData } from './steps/step-basic-data'
@@ -52,8 +52,8 @@ export function RegisterPatients({
     maxSizeBytes: MAX_DOC_SIZE,
   })
 
-  const methods = useForm<PatientFormData>({
-    resolver: zodResolver(patientSchema),
+  const methods = useForm<CreatePatientFormData>({
+    resolver: zodResolver(createPatientSchema),
   })
 
   const {
@@ -159,7 +159,7 @@ export function RegisterPatients({
           documents: [],
         }
 
-        const tabs = getGroupedFields<IRegisterPatientTabs>(initialState, patientSchema)
+        const tabs = getGroupedFields<IRegisterPatientTabs>(initialState, createPatientSchema)
 
         const tabWithError = tabs.find((tab) =>
           tab.fields.includes(firstErrorField)

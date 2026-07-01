@@ -12,17 +12,13 @@ import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 
-import z from 'zod'
 import { signIn } from '@/api/auth/sign-in'
 import { Sanitize } from '@/utils/Sanitizer'
 import { GoogleAuthButton } from './google-auth-button'
-
-const signInSchema = z.object({
-  email: z.email({ message: 'E-mail inválido' }),
-  password: z.string().min(1, { message: 'A senha é obrigatória' }),
-})
-
-type SignInSchema = z.infer<typeof signInSchema>
+import {
+  signInSchema,
+  type SignInFormData,
+} from '@/validators/auth/form/sign-in-schema'
 
 const containerVariants: Variants = {
   hidden: {},
@@ -52,7 +48,7 @@ export const SignInForm = memo(function SignInForm({
     register,
     handleSubmit,
     formState: { isSubmitting, errors },
-  } = useForm<SignInSchema>({
+  } = useForm<SignInFormData>({
     resolver: zodResolver(signInSchema),
     defaultValues: {
       email: searchParams.get('email') ?? '',
@@ -65,7 +61,7 @@ export const SignInForm = memo(function SignInForm({
   })
 
   const handleSignIn = useCallback(
-    async (data: SignInSchema) => {
+    async (data: SignInFormData) => {
       try {
         await authenticate(data)
 
