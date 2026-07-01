@@ -1,7 +1,11 @@
-export enum Gender {
-  OTHER = 'OTHER',
-  FEMININE = 'FEMININE',
-  MASCULINE = 'MASCULINE',
+import { Gender } from '@/types/enums'
+import type { IPatientProfile } from '@/types/patient-profile'
+
+export { Gender } from '@/types/enums'
+
+export type IPatient = IPatientProfile & {
+  name: string
+  lastSessionAt: string | null
 }
 
 export interface AddressByCepResponse {

@@ -1,12 +1,12 @@
 import { api } from '@/lib/axios'
 import type {
-  AppointmentItem,
+  IAppointment,
   RegisterAppointmentRequest,
 } from '@/types/appointment'
 
 interface RegisterAppointmentResponse {
   message: string
-  appointment: AppointmentItem
+  appointment: IAppointment
 }
 
 export async function registerAppointment(

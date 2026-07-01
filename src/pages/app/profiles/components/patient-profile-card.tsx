@@ -1,4 +1,10 @@
-import { ArrowRight, BadgeCheck, CalendarClock, Stethoscope, User } from 'lucide-react'
+import {
+  ArrowRight,
+  BadgeCheck,
+  CalendarClock,
+  Stethoscope,
+  User,
+} from 'lucide-react'
 
 import {
   Card,
@@ -13,22 +19,20 @@ import { Button } from '@/components/ui/button'
 import { TitleIcon } from '@/components/title-icon'
 import { ActiveBadge } from '@/components/active-badge'
 
-import type { IpatientProfile } from '@/types/patient-profile'
+import { PatientProfileStatus } from '@/types/enums'
+import type { IPatientProfile } from '@/types/patient-profile'
 
 interface IPatientProfileCard {
-  profile: IpatientProfile
+  profile: IPatientProfile
   onSelect: (profileId: string) => void
 }
 
-export function PatientProfileCard({
-  profile,
-  onSelect,
-}: IPatientProfileCard) {
+export function PatientProfileCard({ profile, onSelect }: IPatientProfileCard) {
   const isLinked = Boolean(profile.psychologistPracticeContextId)
   const subtitle = isLinked ? 'Vinculado a um psicólogo' : 'Perfil independente'
 
   const fullName = `${profile.firstName} ${profile.lastName}`
-  
+
   return (
     <Card className="flex flex-col gap-0 overflow-hidden p-0 max-w-1/2 w-full">
       <CardHeader className="flex items-start gap-3 py-4">
@@ -44,18 +48,24 @@ export function PatientProfileCard({
           </CardDescription>
         </div>
 
-        <ActiveBadge isActive={profile.isActive} />
+        <ActiveBadge
+          isActive={profile.status === PatientProfileStatus.ACTIVE}
+        />
       </CardHeader>
 
       <CardContent>
         <ul className="flex flex-col gap-3">
           <li className="flex items-center gap-2">
             <Stethoscope size={16} className="text-teal-600" />
-            <span className="text-xs text-muted-foreground">Dra. Ana Souza</span>
+            <span className="text-xs text-muted-foreground">
+              Dra. Ana Souza
+            </span>
           </li>
           <li className="flex items-center gap-2">
             <CalendarClock size={16} className="text-teal-600" />
-            <span className="text-xs text-muted-foreground">Próxima sessão: Quarta-feira, 14:00</span>
+            <span className="text-xs text-muted-foreground">
+              Próxima sessão: Quarta-feira, 14:00
+            </span>
           </li>
         </ul>
       </CardContent>

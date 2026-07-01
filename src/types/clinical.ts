@@ -1,30 +1,39 @@
-export interface Anamnesis {
-  patientProfileId: string | null
+import type { IAttachment } from './attachment'
+
+export const DocumentType = {
+  RG: 'RG',
+  CPF: 'CPF',
+  CNH: 'CNH',
+  OTHER: 'OTHER',
+} as const
+export type DocumentType = (typeof DocumentType)[keyof typeof DocumentType]
+
+export interface IAnamnesis {
+  id: string
+  patientId: string
   content: Record<string, unknown>
-  updatedAt: string
-}
-
-export interface Document {
-  id: string
-  patientProfileId: string
-  attachmentId: string | null
-  type: 'RG' | 'CPF' | 'CNH' | 'OTHER'
   createdAt: string
 }
 
-export interface MedicalRecord {
+export interface IDocument {
   id: string
   patientProfileId: string
-  attachmentId: string | null
+  type: DocumentType
+  attachment: IAttachment | null
+  createdAt: string
+}
+
+export interface IMedicalRecord {
+  id: string
+  patientProfileId: string
   content: string | null
+  attachment: IAttachment | null
   createdAt: string
-  updatedAt: string
 }
 
-export interface Observation {
+export interface IObservation {
   id: string
   patientProfileId: string
   content: string
   createdAt: string
-  updatedAt: string
 }

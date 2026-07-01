@@ -15,7 +15,10 @@ import { TitleIcon } from '@/components/title-icon'
 import { ActiveBadge } from '@/components/active-badge'
 
 import { Currency } from '@/utils/currency'
-import { ContextType, type PsychologistPracticeContext } from '@/types/psychologist'
+import {
+  ContextType,
+  type IPsychologistPracticeContext,
+} from '@/types/psychologist'
 
 const CONTEXT_TYPE_LABELS = {
   INDIVIDUAL: 'Atendimento individual',
@@ -23,7 +26,7 @@ const CONTEXT_TYPE_LABELS = {
 }
 
 interface PracticeContextCardProps {
-  context: PsychologistPracticeContext
+  context: IPsychologistPracticeContext
   onSelect: (id: string) => void
 }
 
@@ -54,7 +57,9 @@ export function PracticeContextCard({
 
         <div className="min-w-0 flex-1">
           <CardTitle className="text-sm text-foreground">{title}</CardTitle>
-          <CardDescription className="text-sm text-muted-foreground">{typeLabel}</CardDescription>
+          <CardDescription className="text-sm text-muted-foreground">
+            {typeLabel}
+          </CardDescription>
         </div>
 
         <ActiveBadge isActive={context.isActive} />
@@ -64,8 +69,7 @@ export function PracticeContextCard({
         <CardDescription className="mb-4">
           {isClinic
             ? 'Atuação vinculada à clínica com agenda compartilhada.'
-            : 'Espaço de atendimento particular com gestão própria.'
-          }
+            : 'Espaço de atendimento particular com gestão própria.'}
         </CardDescription>
         <div className="grid grid-cols-2 rounded-md bg-muted/50 p-4">
           <div>

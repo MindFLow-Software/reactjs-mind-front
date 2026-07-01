@@ -1,16 +1,8 @@
-export const AppointmentStatus = {
-  SCHEDULED: 'SCHEDULED',
-  ATTENDING: 'ATTENDING',
-  FINISHED: 'FINISHED',
-  CANCELED: 'CANCELED',
-  NOT_ATTEND: 'NOT_ATTEND',
-  RESCHEDULED: 'RESCHEDULED',
-} as const
+import type { AppointmentStatus } from '@/types/enums'
 
-export type AppointmentStatus =
-  (typeof AppointmentStatus)[keyof typeof AppointmentStatus]
+export type { AppointmentStatus }
 
-export interface AppointmentItem {
+export interface IAppointment {
   id: string
   patientProfileId: string | null
   psychologistPracticeContextId: string | null
@@ -22,25 +14,15 @@ export interface AppointmentItem {
   createdAt: string
 }
 
-export interface Appointment {
-  id: string
-  patientProfileId: string
-  psychologistPracticeContextId: string
-  diagnosis: string
-  notes?: string | null
-  scheduledAt: string
-  startedAt?: string | null
-  endedAt?: string | null
-  status: AppointmentStatus
-  durationInMin?: number | null
+export interface IAppointmentWithNames extends IAppointment {
   patient: {
     firstName: string
     lastName: string
-  }
+  } | null
   psychologist: {
     firstName: string
     lastName: string
-  }
+  } | null
 }
 
 export interface RegisterAppointmentRequest {
@@ -50,22 +32,28 @@ export interface RegisterAppointmentRequest {
   scheduledAt: Date
   startedAt?: Date
   endedAt?: Date
-  status: string
+  status: AppointmentStatus
 }
 
 export interface RegisterAppointmentResponse {
   message: string
-  appointment: Appointment
+  appointment: IAppointment
 }
 
-export interface AppointmentSession {
+export interface IAppointmentSession {
   id: string
   appointmentId: string
-  createdAt: string
+  startedAt: string
+  endedAt: string | null
+  durationInMin: number | null
+  meetingLink: string | null
+  notes: string | null
 }
 
-export interface SessionParticipant {
-  id: string
-  sessionId: string
-  userId: string
+export interface ISessionParticipant {
+  participantType: 'PSYCHOLOGIST' | 'PATIENT' | null
+  psychologistPracticeContextId: string | null
+  patientProfileId: string | null
+  joinedAt: string
+  leftAt: string | null
 }

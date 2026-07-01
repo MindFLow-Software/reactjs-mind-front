@@ -1,11 +1,13 @@
 import { api } from '@/lib/axios'
 import type { UpdatePatientBody } from '@/types/patient'
-import type { IpatientProfile } from '@/types/patient-profile'
+import type { IPatientProfile } from '@/types/patient-profile'
 
 export type { UpdatePatientBody } from '@/types/patient'
 
-export interface UpdatePatientData
-  extends Omit<UpdatePatientBody, 'dateOfBirth'> {
+export interface UpdatePatientData extends Omit<
+  UpdatePatientBody,
+  'dateOfBirth'
+> {
   id: string
   dateOfBirth?: Date | string
 }
@@ -13,7 +15,7 @@ export interface UpdatePatientData
 export async function updatePatientProfileById({
   id,
   ...data
-}: UpdatePatientData): Promise<IpatientProfile> {
+}: UpdatePatientData): Promise<IPatientProfile> {
   const formattedData: UpdatePatientBody = {
     ...data,
     dateOfBirth:
@@ -32,7 +34,7 @@ export async function updatePatientProfileById({
     ),
   )
 
-  const response = await api.put<IpatientProfile>(
+  const response = await api.put<IPatientProfile>(
     `/patient-profiles/${id}`,
     payload,
   )

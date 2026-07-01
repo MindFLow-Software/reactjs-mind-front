@@ -23,7 +23,7 @@ import type {
   PatientSortOrder,
 } from '@/hooks/use-patient-filters'
 import { cn } from '@/lib/utils'
-import type { IpatientProfile } from '@/types/patient-profile'
+import type { IPatient } from '@/types/patient'
 
 export interface SortState {
   by: PatientSortBy
@@ -32,7 +32,7 @@ export interface SortState {
 }
 
 interface PatientsTableProps {
-  patients: IpatientProfile[]
+  patients: IPatient[]
   isLoading: boolean
   perPage?: number
   hasActiveFilters?: boolean
@@ -94,7 +94,7 @@ function SortableHead({ column, label, sort, className }: SortableHeadProps) {
 
 interface TableBodyContentProps {
   isLoading: boolean
-  patients: IpatientProfile[]
+  patients: IPatient[]
   perPage: number
   hasActiveFilters?: boolean
   onClearFilters?: () => void
@@ -176,7 +176,6 @@ export function PatientsTable({
   onClearFilters,
   onRegister,
 }: PatientsTableProps) {
-
   return (
     <Card className="overflow-hidden p-0">
       <Table>

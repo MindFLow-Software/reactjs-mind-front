@@ -1,7 +1,7 @@
 import { Navigate } from 'react-router-dom'
 
 import { useAuth } from '@/hooks/use-auth'
-import { PlatformRole } from '@/types/user'
+import { PlatformRole } from '@/types/enums'
 
 export function AdminRoute({ children }: { children: React.ReactNode }) {
   const { profile } = useAuth()

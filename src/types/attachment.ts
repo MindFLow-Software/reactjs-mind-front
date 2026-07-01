@@ -1,3 +1,13 @@
+export interface IAttachment {
+  id: string
+  uploadedBy: string
+  filename: string
+  contentType: string
+  sizeInBytes: number
+  fileUrl: string
+  uploadedAt: string
+}
+
 // GET /attachments/patient/:patientId
 export interface AttachmentPatientItem {
   id: string
@@ -9,13 +19,10 @@ export interface AttachmentPatientItem {
 }
 
 // GET /attachments (paginado)
-export interface AttachmentListItem {
-  id: string
-  filename: string
-  fileUrl: string
-  contentType: string
-  sizeInBytes: number
-  uploadedAt: string
+export type AttachmentListItem = Pick<
+  IAttachment,
+  'id' | 'filename' | 'fileUrl' | 'contentType' | 'sizeInBytes' | 'uploadedAt'
+> & {
   patient: { firstName: string; lastName: string } | null
 }
 

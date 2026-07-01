@@ -1,15 +1,38 @@
-export interface Clinic {
+export interface IClinic {
   id: string
+  legalName: string
+  tradeName: string | null
+  cnpj: string
+  email: string | null
+  phoneNumber: string | null
+  website: string | null
+  bannerUrl: string | null
+  logoUrl: string | null
+  isActive: boolean
+  responsibleMemberId: string | null
+  createdAt: string
+  updatedAt: string
 }
 
-export interface ClinicBranch {
-  id: string
+export interface IClinicBranch extends IClinic {
+  clinicId: string
 }
 
-export interface ClinicMember {
+export interface IClinicMember {
   id: string
+  userId: string
+  clinicId: string | null
+  branchId: string | null
+  memberRole: string
+  createdAt: string
+  updatedAt: string
 }
 
-export interface ClinicPsychologist {
+export interface IClinicPsychologist {
   id: string
+  psychologistProfileId: string
+  practiceContextId: string
+  clinicId: string | null
+  branchId: string | null
+  createdAt: string
 }

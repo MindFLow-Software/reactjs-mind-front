@@ -1,38 +1,29 @@
-export enum ClaimRequestStatus {
-  PENDING = 'PENDING',
-  APPROVED = 'APPROVED',
-  REJECTED = 'REJECTED',
-}
+import type { ClaimRequestStatus } from '@/types/enums'
 
-export type IpatientProfileClaimRequest = {
+export { ClaimRequestStatus } from '@/types/enums'
+
+export interface IPatientProfileClaimRequest {
   id: string
-  patientProfileId: string
-  requesterUserId: string
   status: ClaimRequestStatus
-  approvedAt: Date | null
-  rejectedAt: Date | null
-  requestedCpf: string | null
   reviewedById: string | null
-  requestedAt: Date
+  requestedAt: string
+  approvedAt: string | null
+  rejectedAt: string | null
+  patientProfileId: string
+  requestedCpf: string | null
+  requesterUserId: string
   requesterFirstName: string
   requesterLastName: string
-  requesterDateOfBirth: string
-  requesterEmail: string | null
-  createdAt: Date | null
-  updatedAt: Date | null
+  requesterEmail: string
+  requesterDateOfBirth: string | null
+  createdAt: string
+  updatedAt: string
 }
 
-export type IpatientProfileClaimRequestWithRequester = IpatientProfileClaimRequest & {
-  requesterFirstName: string
-  requesterLastName: string
-  requesterDateOfBirth: Date | null
-  requesterEmail: string | null
-}
-
-export type IcompletePatientProfileClaimRequest = IpatientProfileClaimRequestWithRequester & {
+export type IPatientProfileClaimRequestDetail = IPatientProfileClaimRequest & {
   patientProfileFirstName: string
   patientProfileLastName: string
-  patientProfileDateOfBirth: string
+  patientProfileDateOfBirth: string | null
   patientProfileEmail: string | null
   patientProfileCpf: string | null
 }

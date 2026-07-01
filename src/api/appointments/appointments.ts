@@ -1,5 +1,6 @@
 import { api } from '@/lib/axios'
-import type { Appointment, AppointmentStatus } from '@/types/appointment'
+import type { IAppointment } from '@/types/appointment'
+import type { AppointmentStatus } from '@/types/enums'
 
 export interface RegisterAppointmentRequest {
   patientId: string
@@ -14,7 +15,7 @@ export interface RegisterAppointmentRequest {
 
 export interface RegisterAppointmentResponse {
   message: string
-  appointment: Appointment
+  appointment: IAppointment
 }
 
 export async function registerAppointment(
@@ -45,7 +46,7 @@ export interface FetchAppointmentsParams {
 }
 
 export interface FetchAppointmentsResponse {
-  appointments: Appointment[]
+  appointments: IAppointment[]
 }
 
 export async function fetchAppointments(

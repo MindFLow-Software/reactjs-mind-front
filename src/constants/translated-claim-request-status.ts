@@ -1,4 +1,4 @@
-import { ClaimRequestStatus } from "@/types/patient-profile-claim-request";
+import { ClaimRequestStatus } from '@/types/enums'
 
 export const translatedClaimRequestStatus = {
   [ClaimRequestStatus.APPROVED]: 'Aprovado',

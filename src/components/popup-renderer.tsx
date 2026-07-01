@@ -1,8 +1,9 @@
-import { markPopupAsViewed, type Popup } from '@/api/popups/popups'
+import { markPopupAsViewed } from '@/api/popups/popups'
+import type { IPopup } from '@/types/popup'
 import { WelcomeModal } from './popups/welcome-modal'
 
 interface PopupRendererProps {
-  popup: Popup
+  popup: IPopup
   onClose: () => void
 }
 

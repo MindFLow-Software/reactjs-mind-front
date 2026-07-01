@@ -4,11 +4,11 @@ import { useState, useEffect } from 'react'
 import { X, ChevronRight } from 'lucide-react'
 import { Brain } from '@phosphor-icons/react'
 import { Button } from '@/components/ui/button'
-import type { Popup } from '@/api/popups/popups'
+import type { IPopup } from '@/types/popup'
 import { cn } from '@/lib/utils'
 
 interface WelcomeModalProps {
-  popup: Popup
+  popup: IPopup
   onClose: (action: string) => void
 }
 

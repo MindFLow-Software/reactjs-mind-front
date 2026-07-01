@@ -12,7 +12,7 @@ import {
 import { format } from 'date-fns'
 import { ptBR } from 'date-fns/locale'
 import { cn } from '@/lib/utils'
-import type { Suggestion } from '@/api/suggestions/get-suggestions'
+import type { ISuggestion } from '@/types/suggestion'
 import {
   Dialog,
   DialogContent,
@@ -22,7 +22,7 @@ import {
 } from '@/components/ui/dialog'
 
 interface RoadmapCardProps {
-  item: Suggestion
+  item: ISuggestion
   onStatusChange: (id: string, status: string) => void
   isUpdating: boolean
 }

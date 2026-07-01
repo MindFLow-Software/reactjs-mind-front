@@ -1,10 +1,6 @@
 import { useCallback, useEffect, useState } from 'react'
 import { useQuery } from '@tanstack/react-query'
-import {
-  Calendar,
-  ShieldCheck,
-  ClipboardCheck,
-} from 'lucide-react'
+import { Calendar, ShieldCheck, ClipboardCheck } from 'lucide-react'
 
 import { Time } from '@/utils/time'
 import { useAuth } from '@/hooks/use-auth'
@@ -24,7 +20,11 @@ import { Drawer } from '@/components/ui/drawer'
 import { Button } from '@/components/ui/button'
 import { UserAvatar } from '@/components/user-avatar'
 import { Card, CardContent } from '@/components/ui/card'
-import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip'
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipTrigger,
+} from '@/components/ui/tooltip'
 
 import { ClaimRequestStatusBadge } from './components/claim-request-status-badge'
 import { ReviewClaimRequestDrawer } from './components/review-claim-request-drawer'
@@ -33,7 +33,9 @@ export function ClaimProfileRequestsPage() {
   const { profile } = useAuth()
   const { setTitle } = useHeaderStore()
 
-  const [isReviewClaimRequestOpen, setIsReviewClaimRequestOpen] = useState<string | null>(null)
+  const [isReviewClaimRequestOpen, setIsReviewClaimRequestOpen] = useState<
+    string | null
+  >(null)
 
   const { data } = useQuery({
     queryKey: ['claim-profile-requests'],
@@ -46,9 +48,12 @@ export function ClaimProfileRequestsPage() {
     ? translatedHonorific[profile.psychologistProfile.honorific]
     : ''
 
-  const handleOpenReviewClaimRequestDrawer = useCallback((claimRequestId: string) => {
-    setIsReviewClaimRequestOpen(claimRequestId)
-  }, [])
+  const handleOpenReviewClaimRequestDrawer = useCallback(
+    (claimRequestId: string) => {
+      setIsReviewClaimRequestOpen(claimRequestId)
+    },
+    [],
+  )
 
   useEffect(() => {
     setTitle('solicitações de vínculo')
@@ -127,7 +132,9 @@ export function ClaimProfileRequestsPage() {
                   </TableCell>
                   <TableCell>
                     <div className="flex flex-col">
-                      <span className="font-medium">{request.requestedCpf}</span>
+                      <span className="font-medium">
+                        {request.requestedCpf}
+                      </span>
                       <span className="text-xs text-muted-foreground">
                         {request?.requesterDateOfBirth
                           ? request?.requesterDateOfBirth
@@ -141,7 +148,7 @@ export function ClaimProfileRequestsPage() {
                         <Calendar size={14} />
                         <span>
                           {request.createdAt &&
-                            Time.toBrazilianFormat(request.createdAt)}
+                            Time.toBrazilianFormat(new Date(request.createdAt))}
                         </span>
                       </div>
                     </div>
@@ -155,7 +162,9 @@ export function ClaimProfileRequestsPage() {
                         <Button
                           size="icon"
                           variant="outline"
-                          onClick={() => handleOpenReviewClaimRequestDrawer(request.id)}
+                          onClick={() =>
+                            handleOpenReviewClaimRequestDrawer(request.id)
+                          }
                         >
                           <ClipboardCheck size={16} />
                         </Button>

@@ -34,9 +34,13 @@ export function ValidatePatientInvitePage() {
 
   const formattedExpiresAt =
     validatedInvite &&
-    format(validatedInvite.expiresAt, "dd 'de' MMMM 'de' yyyy 'às' HH:mm", {
-      locale: ptBR,
-    })
+    format(
+      new Date(validatedInvite.expiresAt),
+      "dd 'de' MMMM 'de' yyyy 'às' HH:mm",
+      {
+        locale: ptBR,
+      },
+    )
 
   const handleRedirectToNextStep = () => {
     const userHasAccount = Boolean(validatedInvite?.userHasAccount)

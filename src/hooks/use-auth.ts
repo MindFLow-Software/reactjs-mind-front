@@ -1,13 +1,11 @@
 import { useQuery } from '@tanstack/react-query'
 
-import {
-  getProfile,
-  type IgetMeResponse,
-} from '@/api/psychologists/get-profile'
+import { getProfile } from '@/api/psychologists/get-profile'
+import type { IMeResponse } from '@/types/me'
 
 type IuseAuth = {
   isError: boolean
-  profile: IgetMeResponse | undefined
+  profile: IMeResponse | undefined
   isPending: boolean
   isAuthenticated: boolean
 }

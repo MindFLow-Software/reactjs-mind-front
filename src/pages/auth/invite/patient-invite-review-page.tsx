@@ -37,9 +37,13 @@ export function PatientInviteReviewPage() {
 
   const formattedExpiresAt =
     validatedInvite &&
-    format(validatedInvite.expiresAt, "dd 'de' MMMM 'de' yyyy 'às' HH:mm", {
-      locale: ptBR,
-    })
+    format(
+      new Date(validatedInvite.expiresAt),
+      "dd 'de' MMMM 'de' yyyy 'às' HH:mm",
+      {
+        locale: ptBR,
+      },
+    )
 
   const { mutateAsync } = useMutation({
     mutationKey: ['submit-patient-invite-response', token],

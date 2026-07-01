@@ -47,11 +47,12 @@ import { PatientsDetails } from '../details/patients-details'
 import { PatientStatusDialog } from '@/components/patient-status-dialog'
 
 import { GENDER_CONFIG } from '@/utils/gender-config'
-import type { IpatientProfile } from '@/types/patient-profile'
+import type { IPatient } from '@/types/patient'
+import { PatientProfileStatus } from '@/types/enums'
 import { PatientStatusBadge } from './patient-status-badge'
 
 interface PatientsTableRowProps {
-  patient: IpatientProfile
+  patient: IPatient
 }
 
 export const PatientsTableRow = memo(function PatientsTableRow({
@@ -81,9 +82,10 @@ export const PatientsTableRow = memo(function PatientsTableRow({
     gender,
     profileImageUrl,
     lastSessionAt,
-    isActive,
     status,
   } = patient
+
+  const isActive = status === PatientProfileStatus.ACTIVE
 
   const fullName = `${firstName} ${lastName}`
 
@@ -103,7 +105,7 @@ export const PatientsTableRow = memo(function PatientsTableRow({
           return {
             ...old,
             patients: old.patients.map((p) =>
-              p.id === id ? { ...p, isActive: false } : p,
+              p.id === id ? { ...p, status: PatientProfileStatus.INACTIVE } : p,
             ),
           }
         },
@@ -349,12 +351,7 @@ export const PatientsTableRow = memo(function PatientsTableRow({
         </Dialog>
 
         <Dialog open={isEditOpen} onOpenChange={setIsEditOpen}>
-          {isEditOpen && (
-            <RegisterPatients
-              patientId={patient.id}
-              isEditing
-            />
-          )}
+          {isEditOpen && <RegisterPatients patientId={patient.id} isEditing />}
         </Dialog>
 
         <Dialog open={isDeleteOpen} onOpenChange={setIsDeleteOpen}>

@@ -1,17 +1,10 @@
 import { api } from '@/lib/axios'
-
-type IvalidateInviteResponse = {
-  psychologistCrp: string
-  patientFirstName: string
-  psychologistDisplayName: string
-  expiresAt: Date
-  userHasAccount?: boolean
-}
+import type { IPatientInviteMetadata } from '@/types/invite'
 
 export const validatePatientInvite = async (
   token: string | undefined,
-): Promise<IvalidateInviteResponse> => {
-  const response = await api.get<IvalidateInviteResponse>(
+): Promise<IPatientInviteMetadata> => {
+  const response = await api.get<IPatientInviteMetadata>(
     `/patient-profiles/invites/${token}`,
   )
 

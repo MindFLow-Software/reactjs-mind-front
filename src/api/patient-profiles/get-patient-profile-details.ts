@@ -1,8 +1,8 @@
 import { api } from '@/lib/axios'
 import type { SessionItem } from '@/types/patient'
-import type { IpatientProfile } from '@/types/patient-profile'
+import type { IPatientProfile } from '@/types/patient-profile'
 
-type IextendedPatientProfile = IpatientProfile & {
+type IextendedPatientProfile = IPatientProfile & {
   sessions: SessionItem[]
 }
 

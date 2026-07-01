@@ -4,12 +4,12 @@ import { useEffect, useState, useCallback, useMemo, memo } from 'react'
 import { createPortal } from 'react-dom'
 import { X, Trophy, Star, Zap, Crown } from 'lucide-react'
 import { cn } from '@/lib/utils'
-import type { Popup } from '@/api/popups/popups'
+import type { IPopup } from '@/types/popup'
 
 export type AchievementVariant = 'bronze' | 'silver' | 'gold' | 'platinum'
 
 interface AchievementToastProps {
-  popup: Popup
+  popup: IPopup
   onClose: (action: string) => void
   duration?: number
 }

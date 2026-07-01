@@ -4,7 +4,7 @@ import type React from 'react'
 import { useMemo, useState } from 'react'
 import { ChevronDown } from 'lucide-react'
 import { cn } from '@/lib/utils'
-import type { Suggestion } from '@/api/suggestions/get-suggestions'
+import type { ISuggestion } from '@/types/suggestion'
 import { toggleSuggestionLike } from '@/api/suggestions/toggle-suggestion-like'
 import { getProfile } from '@/api/psychologists/get-profile'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
@@ -16,7 +16,7 @@ interface SuggestionColumnProps {
   title: string
   icon: React.ReactNode
   badgeClass: string
-  suggestions?: Suggestion[]
+  suggestions?: ISuggestion[]
   isLoading: boolean
 }
 
@@ -46,11 +46,11 @@ export function SuggestionColumn({
     mutationFn: (suggestionId: string) => toggleSuggestionLike(suggestionId),
     onMutate: async (suggestionId) => {
       await queryClient.cancelQueries({ queryKey: ['suggestions'] })
-      const previousQueries = queryClient.getQueriesData<Suggestion[]>({
+      const previousQueries = queryClient.getQueriesData<ISuggestion[]>({
         queryKey: ['suggestions'],
       })
 
-      queryClient.setQueriesData<Suggestion[]>(
+      queryClient.setQueriesData<ISuggestion[]>(
         { queryKey: ['suggestions'] },
         (old) => {
           return old?.map((suggestion) => {

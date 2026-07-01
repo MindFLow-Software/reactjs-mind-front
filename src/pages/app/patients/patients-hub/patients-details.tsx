@@ -25,6 +25,7 @@ import {
 } from '@/components/ui/dropdown-menu'
 
 import { getPatientProfileDetails } from '@/api/patient-profiles/get-patient-profile-details'
+import { PatientProfileStatus } from '@/types/enums'
 import { PatientDetailsHeader } from './components/patient-details-header'
 import { useHeaderStore } from '@/store/use-header-store'
 import { PatientInfo } from './components/patient-info'
@@ -113,8 +114,6 @@ export default function PatientDetails() {
 
   const patientData = useMemo(() => result?.patient, [result])
   const meta = useMemo(() => result?.meta, [result])
-
-  const isPatientActive = Boolean(patientData?.isActive)
 
   const patientFullName = useMemo(
     () =>
@@ -246,7 +245,8 @@ export default function PatientDetails() {
                 <PatientDetailsHeader
                   patient={{
                     ...patientData,
-                    isActive: isPatientActive,
+                    status:
+                      patientData?.status ?? PatientProfileStatus.INACTIVE,
                   }}
                 />
               </div>

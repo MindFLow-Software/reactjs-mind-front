@@ -2,11 +2,11 @@
 
 import { ChevronUp, Check } from 'lucide-react'
 import { cn } from '@/lib/utils'
-import type { Suggestion } from '@/api/suggestions/get-suggestions'
+import type { ISuggestion } from '@/types/suggestion'
 import { Dialog, DialogTrigger } from '@/components/ui/dialog'
 import { SuggestionDetailModalContent } from '@/components/suggestion-detail-modal'
 
-type CategoryKey = Suggestion['category']
+type CategoryKey = ISuggestion['category']
 
 const CATEGORY_CONFIG: Record<
   CategoryKey,
@@ -56,7 +56,7 @@ const CATEGORY_CONFIG: Record<
 }
 
 interface SuggestionCardProps {
-  item: Suggestion
+  item: ISuggestion
   userId?: string
   onLike: (id: string) => void
 }
@@ -66,7 +66,7 @@ export function SuggestionCard({ item, userId, onLike }: SuggestionCardProps) {
   const isImplemented = item.status === 'IMPLEMENTED'
   const cat = CATEGORY_CONFIG[item.category]
 
-  const initials = item.psychologistName
+  const initials = (item.psychologistName ?? '')
     .split(' ')
     .slice(0, 2)
     .map((n) => n[0] ?? '')

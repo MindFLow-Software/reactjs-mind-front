@@ -24,12 +24,12 @@ import { format, formatDistanceToNow } from 'date-fns'
 import { ptBR } from 'date-fns/locale'
 import { toast } from 'sonner'
 import { cn } from '@/lib/utils'
-import type { Suggestion } from '@/api/suggestions/get-suggestions'
+import type { ISuggestion } from '@/types/suggestion'
 import { DialogPortal, DialogOverlay } from '@/components/ui/dialog'
 import { Textarea } from '@/components/ui/textarea'
 
-type SuggestionStatus = Suggestion['status']
-type CategoryKey = Suggestion['category']
+type SuggestionStatus = ISuggestion['status']
+type CategoryKey = ISuggestion['category']
 
 const CATEGORY_CONFIG: Record<
   CategoryKey,
@@ -169,7 +169,7 @@ const TIMELINE_CONFIG: Record<
 }
 
 interface SuggestionDetailModalContentProps {
-  item: Suggestion
+  item: ISuggestion
   userId?: string
   onLike: (id: string) => void
 }
@@ -195,7 +195,7 @@ export function SuggestionDetailModalContent({
   const statusCfg = STATUS_CONFIG[item.status]
   const timelineCfg = TIMELINE_CONFIG[item.status]
 
-  const initials = item.psychologistName
+  const initials = (item.psychologistName ?? '')
     .split(' ')
     .slice(0, 2)
     .map((n) => n[0] ?? '')

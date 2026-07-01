@@ -4,7 +4,7 @@ export const PlanInterval = {
 } as const
 export type PlanInterval = (typeof PlanInterval)[keyof typeof PlanInterval]
 
-export interface SubscriptionPlanHTTP {
+export interface ISubscriptionPlan {
   id: string
   name: string
   description: string[]

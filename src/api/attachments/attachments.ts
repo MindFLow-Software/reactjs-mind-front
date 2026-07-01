@@ -1,7 +1,5 @@
 import { api } from '@/lib/axios'
 
-// ToDo: fonte única da verdade, deve haver um único tipo Iattachment
-// não ter multiplas tipagens para a mesma entidade
 import type {
   AttachmentPatientItem,
   AttachmentListItem,
@@ -10,8 +8,6 @@ import type {
   FetchAllAttachmentsParams,
 } from '@/types/attachment'
 
-// ToDo: fonte única da verdade, deve haver um único tipo Iattachment
-// não ter multiplas tipagens para a mesma entidade
 export type {
   AttachmentPatientItem,
   AttachmentListItem,

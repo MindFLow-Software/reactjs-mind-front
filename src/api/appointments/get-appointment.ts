@@ -1,28 +1,17 @@
 import { api } from '@/lib/axios'
-import type { AppointmentStatus } from '@/types/appointment'
+import type { IAppointment } from '@/types/appointment'
 
-export interface Appointment {
-  id: string
-  patientProfileId: string
-  psychologistPracticeContextId: string
-  diagnosis: string
-  notes?: string | null
-  scheduledAt: string
-  status: AppointmentStatus
+export interface Appointment extends IAppointment {
   patientName: string
   patient: {
     firstName: string
     lastName: string
   } | null
 
-  // 🟢 Campos adicionados para compatibilidade com o Calendário (Frontend)
+  // Campos adicionados para compatibilidade com o Calendário (Frontend)
   start?: Date
   end?: Date
   title?: string
-
-  // 🟢 Assinatura de índice para permitir propriedades dinâmicas exigidas pelo Big Calendar
-  // eslint-disable-next-line
-  [key: string]: any
 }
 
 export interface GetAppointmentsRequest {

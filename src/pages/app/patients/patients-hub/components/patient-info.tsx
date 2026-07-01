@@ -21,13 +21,13 @@ import './patient-info.css'
 import { Time } from '@/utils/time'
 import { formatCPF } from '@/utils/formatCPF'
 import { formatPhone } from '@/utils/formatPhone'
-import type { Gender } from '@/types/patient'
+import type { Gender } from '@/types/enums'
 import { copyToClipboard } from '@/utils/copy-to-clipboard'
-import type { IpatientProfile } from '@/types/patient-profile'
+import type { IPatientProfile } from '@/types/patient-profile'
 
 interface PatientInfoProps {
   patient: Pick<
-    IpatientProfile,
+    IPatientProfile,
     'dateOfBirth' | 'cpf' | 'email' | 'phoneNumber' | 'gender'
   >
 }

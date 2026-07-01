@@ -1,13 +1,13 @@
 import { api } from '@/lib/axios'
 import type {
   CreatePracticeContextBody,
-  PsychologistPracticeContext,
+  IPsychologistPracticeContext,
 } from '@/types/psychologist'
 
 export async function createPracticeContext(
   body: CreatePracticeContextBody,
-): Promise<PsychologistPracticeContext> {
-  const response = await api.post<PsychologistPracticeContext>(
+): Promise<IPsychologistPracticeContext> {
+  const response = await api.post<IPsychologistPracticeContext>(
     '/psychologist/practice-context',
     body,
   )

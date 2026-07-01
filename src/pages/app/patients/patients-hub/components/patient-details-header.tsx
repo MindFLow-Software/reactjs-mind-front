@@ -16,12 +16,13 @@ import { StatusBadge } from '@/components/ui/status-badge'
 
 import './patient-details-header.css'
 import { copyToClipboard } from '@/utils/copy-to-clipboard'
-import type { IpatientProfile } from '@/types/patient-profile'
+import { PatientProfileStatus } from '@/types/enums'
+import type { IPatientProfile } from '@/types/patient-profile'
 
 interface PatientDetailsHeaderProps {
   patient: Pick<
-    IpatientProfile,
-    'id' | 'firstName' | 'lastName' | 'isActive' | 'profileImageUrl'
+    IPatientProfile,
+    'id' | 'firstName' | 'lastName' | 'status' | 'profileImageUrl'
   >
 }
 
@@ -32,7 +33,7 @@ export function PatientDetailsHeader({ patient }: PatientDetailsHeaderProps) {
   )
 
   const fullName = `${patient.firstName} ${patient.lastName}`
-  const isPatientActive = patient.isActive
+  const isPatientActive = patient.status === PatientProfileStatus.ACTIVE
 
   return (
     <TooltipProvider delayDuration={200}>

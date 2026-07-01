@@ -19,7 +19,7 @@ import { Normalizer } from '@/utils/normalizer'
 import { GENDER_OPTIONS } from '../constants'
 import { formatDateInput } from '@/utils/formatDateInput'
 import type { PatientFormData } from '@/validators/patients'
-import type { IpatientProfile } from '@/types/patient-profile'
+import type { IPatientProfile } from '@/types/patient-profile'
 
 import './step-basic-data.css'
 import { SectionTitle } from './section-title'
@@ -29,7 +29,7 @@ import { MaskedInput } from '@/components/maked-input'
 
 interface StepBasicDataProps {
   onAvatarSelect: (f: File | null) => void
-  patient: IpatientProfile | null
+  patient: IPatientProfile | null
 }
 
 export function StepBasicData({ onAvatarSelect, patient }: StepBasicDataProps) {
@@ -63,9 +63,7 @@ export function StepBasicData({ onAvatarSelect, patient }: StepBasicDataProps) {
   useEffect(() => {
     if (!dateOfBirth) return
 
-    setBirthInput(
-      Time.toBrazilianFormat(dateOfBirth)
-    )
+    setBirthInput(Time.toBrazilianFormat(dateOfBirth))
   }, [dateOfBirth])
 
   return (
@@ -163,7 +161,8 @@ export function StepBasicData({ onAvatarSelect, patient }: StepBasicDataProps) {
                         'tabular-nums',
                         cpfDigits.length >= 11 && !fieldState.invalid
                           ? 'border-emerald-500 pr-9'
-                          : fieldState.invalid && 'border-red-600 focus-visible:ring-red-600/20',
+                          : fieldState.invalid &&
+                              'border-red-600 focus-visible:ring-red-600/20',
                       )}
                     />
                   </FormControl>

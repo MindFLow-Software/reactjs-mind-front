@@ -1,12 +1,12 @@
 import { create } from 'zustand'
 import { persist, createJSONStorage } from 'zustand/middleware'
 import { useActivePracticeContextStore } from '@/store/use-active-practice-context-store'
-import type { Iuser } from '@/types/user'
+import type { IUser } from '@/types/user'
 
 interface ISessionState {
   isAuthenticated: boolean
-  user: Iuser | null
-  setSession: (user: Iuser) => void
+  user: IUser | null
+  setSession: (user: IUser) => void
   clearSession: () => void
 }
 

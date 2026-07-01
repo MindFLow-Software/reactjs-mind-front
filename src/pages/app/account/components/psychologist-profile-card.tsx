@@ -2,10 +2,8 @@
 
 import { useState } from 'react'
 import { useQuery } from '@tanstack/react-query'
-import {
-  getProfile,
-  type IgetMeResponse,
-} from '@/api/psychologists/get-profile'
+import { getProfile } from '@/api/psychologists/get-profile'
+import type { IMeResponse } from '@/types/me'
 import type { UpdatePsychologistBody } from '@/api/psychologists/update-psychologist'
 import { PsychologistAvatarUpload } from './psychologist-avatar-upload'
 import { Skeleton } from '@/components/ui/skeleton'
@@ -25,7 +23,7 @@ import { Dialog, DialogTrigger } from '@/components/ui/dialog'
 import { EditPsychologistProfile } from './edit-psychologist-dialog'
 
 interface PsychologistProfileCardProps {
-  psychologist?: IgetMeResponse
+  psychologist?: IMeResponse
 }
 
 export function PsychologistProfileCard({
@@ -33,7 +31,7 @@ export function PsychologistProfileCard({
 }: PsychologistProfileCardProps = {}) {
   const [isEditOpen, setIsEditOpen] = useState(false)
 
-  const { data: profile, isLoading } = useQuery<IgetMeResponse>({
+  const { data: profile, isLoading } = useQuery<IMeResponse>({
     queryKey: ['psychologist-profile'],
     queryFn: getProfile,
     initialData,

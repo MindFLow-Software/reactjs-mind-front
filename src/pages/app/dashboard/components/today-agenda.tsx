@@ -6,8 +6,8 @@ import { Link } from 'react-router-dom'
 import { Card, CardContent, CardHeader } from '@/components/ui/card'
 import { Skeleton } from '@/components/ui/skeleton'
 import { cn } from '@/lib/utils'
-import type { Appointment } from '@/types/appointment'
-import { AppointmentStatus } from '@/types/appointment'
+import type { IAppointmentWithNames } from '@/types/appointment'
+import { AppointmentStatus } from '@/types/enums'
 import { useTodayAppointments } from '../hooks/use-today-appointments'
 import { formatTime } from '../helpers'
 
@@ -42,7 +42,7 @@ const STATUS_CONFIG: Record<string, { label: string; className: string }> = {
 }
 
 interface AgendaRowProps {
-  appt: Appointment
+  appt: IAppointmentWithNames
 }
 
 function AgendaRow({ appt }: AgendaRowProps) {
