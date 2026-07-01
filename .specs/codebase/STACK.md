@@ -1,5 +1,23 @@
 # Stack — MindFlush Frontend
 
+## Mandatory Stack Decisions
+
+These choices are mandatory during the refactor:
+
+- Server state: TanStack React Query only. Do not add SWR usage.
+- HTTP: Axios through `api` from `@/lib/axios` only.
+- Forms: React Hook Form + Zod only.
+- Validation: Zod schemas in the required validator folder structure.
+- Global client state: Zustand only.
+- UI: shadcn/ui primitives first.
+- Icons: Lucide for new or touched UI. Phosphor is legacy.
+- Styling: Tailwind CSS v4 through CSS files using `@reference`, `@layer`, and `@apply`.
+- Toasts: Sonner for backend success/error guidance.
+
+Do not introduce another state, form, validation, styling, or HTTP library without explicit approval.
+
+---
+
 ## Core
 
 | Camada | Tecnologia | Versão |

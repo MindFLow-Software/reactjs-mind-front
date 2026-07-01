@@ -1,514 +1,151 @@
-# 03 — Mudanças das Features e Impacto no Frontend
+# 03 - Mudanças das Features e Impacto no Frontend
 
-> Este documento descreve o que mudou com as duas features principais e como o frontend deve se adaptar.  
-> Tudo aqui foi verificado no código real. Divergências entre spec e código estão explicitadas.
-
----
-
-## Visão geral
-
-Dois refactorings foram aplicados ao backend:
-
-1. **DER Alignment Refactor** — alinhamento do schema ao DER oficial. Criou novas entidades (`PsychologistPracticeContext`, `PatientProfile`, entidades clínicas), removeu discriminadores monolíticos e separou identidade de perfil profissional.
-
-2. **Auth / Profile / Context Refactor** — separou o registro em etapas independentes, criou `PracticeContextGuard` centralizado, moveu `consultationFee` para `PracticeContext` e tornou `PatientProfile.psychologistPracticeContextId` nullable.
+> Este documento resume como o frontend deve se adaptar ao backend atual.
+> Para payloads completos, consulte `01-entities-and-types.md` e `02-routes.md`.
 
 ---
 
-## Antes vs depois — principais mudanças
+## Visão Geral
 
-| Aspecto | Antes | Depois |
+O backend atual separa identidade, perfis clínicos e contexto de atuação:
+
+```text
+User
+  -> Account[]
+  -> PsychologistProfile?
+       -> PsychologistPracticeContext[]
+  -> PatientProfile[]
+  -> ClinicMember[]
+```
+
+Consequências práticas:
+
+- `platformRole` não define se o usuário é paciente ou psicólogo.
+- Um usuário pode ser paciente e psicólogo ao mesmo tempo.
+- `PatientProfile` é a entidade de paciente usada nas rotas clínicas.
+- A maior parte do dashboard do psicólogo depende de `x-psychologist-practice-context-id`.
+- Rotas sem `@Public()` exigem login por guard global, mesmo quando o controller não declara `@UseGuards`.
+
+---
+
+## Antes vs Agora
+
+| Área | Contrato antigo/documentado antes | Backend atual |
 |---|---|---|
-| Criação de psicólogo | `POST /psychologist` (tudo em uma rota) | `POST /user` + `POST /psychologist/profile` + `POST /psychologist/practice-contexts` |
-| Criação de paciente (self) | Não existia | `POST /patient/profile` |
-| Vínculo paciente-psicólogo | Via `userId` direto | Via `PatientProfile.psychologistPracticeContextId` (nullable) |
-| `consultationFee` | Em `PsychologistProfile` | Em `PsychologistPracticeContext` |
-| Contexto de prática | Não existia | `PsychologistPracticeContext` (INDIVIDUAL ou CLINIC) |
-| Validação de contexto | 25 controllers faziam validação manual por header | `PracticeContextGuard` centralizado |
-| `PatientProfile.contextId` | Obrigatório | **Nullable** (paciente autônomo possível) |
-| Entidades clínicas | Não existiam | `Clinic`, `ClinicBranch`, `ClinicMember`, `ClinicPsychologist` |
+| Criar psicólogo | `POST /psychologist` | `POST /user` + `POST /psychologist/profile` + `POST /psychologist/practice-context` |
+| Criar contexto | `/psychologist/practice-contexts` | `/psychologist/practice-context` |
+| Perfil de paciente próprio | `POST /patient/profile` | `POST /me/patient-profiles` |
+| Criar paciente pelo psicólogo | `POST /patient` | `POST /patient-profiles` |
+| Listar pacientes | `/patients` ou `/patients/stats/*` | `/patient-profiles` e `/patient-profiles/metrics/*` |
+| Busca de psicólogo | `/psychologists/search` | `/psychologist/profile/search` |
+| Registration link | `/invites/:hash` | `/registration-links/:hash` e `/patient-profiles/registration-links/:hash/register` |
+| Convite por token | Não consolidado | `/patient-profiles/invites/:token` |
+| Billing | `{ subscriptionPlanId, amount }` | Dados de paciente/cobrança + URLs de retorno |
+| Ver planos | Tratado como público nos docs antigos | Autenticado globalmente |
+| Sign-out | Tratado como público nos docs antigos | Não público; exige access token e refresh token |
 
 ---
 
-## Modelo de relacionamento atual
+## Fluxo de Auth Recomendado
 
-```mermaid
-erDiagram
-    User ||--o| PsychologistProfile : "tem 0..1"
-    User ||--o{ PatientProfile : "tem N"
-    User ||--o{ Account : "tem N"
-    User ||--o{ ClinicMember : "é membro de N clínicas"
-    
-    PsychologistProfile ||--o{ PsychologistPracticeContext : "tem N contextos"
-    
-    PsychologistPracticeContext ||--o{ PatientProfile : "atende N pacientes"
-    PsychologistPracticeContext ||--o{ Appointment : "tem N agendamentos"
-    PsychologistPracticeContext ||--o{ PsychologistAvailability : "tem N disponibilidades"
-    PsychologistPracticeContext ||--o{ Payment : "tem N pagamentos"
-    PsychologistPracticeContext }o--o| Clinic : "pertence a 0..1 clínica"
-    PsychologistPracticeContext }o--o| ClinicBranch : "pertence a 0..1 filial"
-    
-    PatientProfile ||--o{ Appointment : "tem N"
-    PatientProfile ||--o{ Document : "tem N"
-    PatientProfile ||--o{ MedicalRecord : "tem N"
-    PatientProfile ||--o{ Observation : "tem N"
-    PatientProfile ||--o| Anamnesis : "tem 0..1"
-    
-    Appointment ||--o| AppointmentSession : "tem 0..1"
-    AppointmentSession ||--o{ SessionParticipant : "tem N"
-    
-    Clinic ||--o{ ClinicBranch : "tem N"
-    Clinic ||--o{ ClinicMember : "tem N"
-    Clinic ||--o{ ClinicPsychologist : "tem N"
+```text
+1. POST /session
+   - resposta crua, sem envelope
+   - backend seta access_token e refresh_token
+
+2. GET /me
+   - resposta envelopada
+   - usar para montar o estado real do usuário
+
+3. Se access token expirar:
+   POST /session/refresh
+   - resposta crua, sem envelope
+   - usa refresh_token em cookie
+
+4. Logout:
+   POST /sign-out
+   - enviar cookies atuais; rota não é @Public
 ```
 
----
-
-## Mudanças no modelo de identidade
-
-### Antes (monolítico)
-
-```
-User { type: UserType, ...psichologistFields, ...patientFields }
-```
-
-### Depois (separado)
-
-```
-User { platformRole: PlatformRole } 
-  → PsychologistProfile (0..1)
-    → PsychologistPracticeContext (N)
-  → PatientProfile (N, cada um linked a 1 contexto ou null)
-  → ClinicMember (N)
-```
-
-**O que isso significa para o frontend:**
-- `platformRole` serve para identificar `ADMIN`/`SUPPORT`. Para tudo mais, use os perfis.
-- Um único usuário pode ser simultaneamente paciente E psicólogo.
-- Um psicólogo pode ter múltiplos contextos de prática (ex: consultório próprio + clínica).
-- Um paciente pode estar vinculado a diferentes psicólogos via diferentes `PatientProfile`s.
+O frontend deve sempre chamar `GET /me` depois de login/refresh quando precisar de perfil, contexto, paciente ou clínica. `POST /session` não retorna esses dados.
 
 ---
 
-## Mudanças em User
+## Estado de Usuário no Frontend
 
-| Campo | Mudança |
-|---|---|
-| `platformRole` | **Novo** — substitui `UserType` (legado removido) |
-| `email` | Passou a ser nullable (permite OAuth sem email) |
-| Campos de psicólogo | **Removidos** do User — agora em `PsychologistProfile` |
-| Campos de paciente | **Removidos** do User — agora em `PatientProfile` |
-
----
-
-## Mudanças em Account
-
-| Campo | Mudança |
-|---|---|
-| `status` | ✅ `ACTIVE` no registro (T29 + fix do fluxo de credenciais) — sem aprovação. `Account.create` default `ACTIVE`; `POST /user`, OAuth e invite-link gravam `ACTIVE` |
-| `isActive` | ✅ `true` no registro (credenciais/OAuth/invite gravam conta ativa) |
-| `provider` | Passou a aceitar múltiplos providers por usuário |
-| `status` retornado em `POST /session` | **Novo** — frontend pode checar imediatamente após login |
-
----
-
-## Mudanças em PsychologistProfile
-
-| Campo | Mudança |
-|---|---|
-| `consultationFee` | **Removido** — movido para `PsychologistPracticeContext` |
-| `status` | ✅ `ACTIVE` por default (T29) — sem aprovação admin |
-| `professionalBio` | ✅ Exposto em `GET /me` (no `psychologistProfile`) |
-
----
-
-## Mudanças em PsychologistPracticeContext
-
-**Entidade nova.** Não existia antes.
-
-| Campo | Observação |
-|---|---|
-| `consultationFee` | **Movido de Profile** — em centavos |
-| `nickname` | **Novo** — identificador amigável |
-| `contextType` | `INDIVIDUAL` ou `CLINIC` |
-| `clinicId` / `clinicBranchId` | Nullable — obrigatório se `CLINIC` |
-
----
-
-## Mudanças em PatientProfile
-
-**Entidade nova (substituiu campos em User/Patient legado).**
-
-| Campo | Observação |
-|---|---|
-| `psychologistPracticeContextId` | **Nullable** — paciente pode existir sem vínculo |
-| `archivedAt` | Novo campo para arquivamento soft |
-
----
-
-## Mudanças na autenticação
-
-### Fluxo de login
-
-```mermaid
-flowchart TD
-    A[POST /session\nemail + password] --> B[200 OK\n+ cookies access_token, refresh_token]
-    B --> E[Chamar GET /me]
-    A -.->|403 se conta BLOCKED ou desativada| F[Mostrar erro]
-    
-    E --> G{psychologistProfile?}
-    G -->|null| H{patientProfiles.length > 0?}
-    H -->|0| I[Novo usuário\nEscolher fluxo]
-    H -->|> 0| J[Dashboard paciente]
-    G -->|não null| K{practiceContexts?}
-    K -->|vazio| L[POST /psychologist/practice-contexts]
-    K -->|não vazio| M[Selecionar contexto ativo\nArmazenar ID no frontend]
-    M --> N[Enviar header nas próximas requests]
-```
-
-### Payload JWT atual
+Shape recomendado:
 
 ```ts
-{
-  sub: string,          // users.id
-  email: string,
-  provider: string,     // 'credentials' | 'google' | 'linkedin'
-  profileImageUrl: string | null
-}
-```
-
-> **Nota:** O payload **não contém** `platformRole`, `psychologistProfileId`, ou qualquer dado de perfil. Use `GET /me` para obter essas informações.
-
----
-
-## Mudanças no GET /me
-
-### O que retorna hoje
-
-```mermaid
-flowchart LR
-    A[GET /me] --> B[GetAuthenticatedUserUseCase]
-    B --> C[PsychologistProfileRepository.findByUserId]
-    C --> D{profile?}
-    D -->|sim| E[PracticeContextRepository.findManyByProfileId]
-    D -->|não| F[practiceContexts = left empty]
-    E --> G[PatientProfileRepository.findManyByUserId]
-    G --> G2[ClinicMemberRepository.findManyByUserId]
-    G2 --> H[UserPresenter.toHTTP\nclinicMemberContexts = memberships reais]
-    H --> I[Resposta]
-```
-
-### Campos em GET /me (✅ todos expostos — T27)
-
-| Campo | Está no banco? | Aparece em GET /me? |
-|---|---|---|
-| `psychologistProfile.professionalBio` | ✅ | ✅ Incluído |
-| `practiceContexts[].consultationFee` | ✅ | ✅ Incluído |
-| `practiceContexts[].nickname` | ✅ | ✅ Incluído |
-| `clinicMemberContexts` | ✅ | ✅ Memberships reais via `ClinicMemberRepository` |
-
----
-
-## Fluxo de seleção de perfil
-
-```mermaid
-flowchart TD
-    A[GET /me] --> B{psychologistProfile?}
-    B -->|null| C{patientProfiles?}
-    C -->|vazio| D[Tela: escolher perfil\nou criar conta]
-    C -->|não vazio| E[Dashboard paciente\ncom lista de perfis]
-    
-    B -->|não null| H{practiceContexts?}
-    H -->|vazio| I[POST /psychologist/practice-contexts\ncontexto INDIVIDUAL]
-    H -->|um| J[Usar esse contexto automaticamente\narmazenar ID]
-    H -->|mais de um| K[Tela: selecionar contexto]
-    
-    J --> L[Enviar x-psychologist-practice-context-id\nem toda requisição]
-    K --> L
-```
-
----
-
-## Fluxo de criação de conta base
-
-```mermaid
-flowchart TD
-    A[Formulário de registro] --> B[POST /user\nemail + password + dados básicos]
-    B --> C{status retorno?}
-    C -->|201| D[Conta criada ACTIVE\nisActive=true — sem aprovação]
-    C -->|409| E[email ou CPF duplicado]
-    C -->|400| F[validação Zod falhou]
-    
-    D --> G[POST /session\nfazer login]
-    G --> J[Pode prosseguir imediatamente\ncriar perfil de psicólogo ou paciente]
-```
-
-> ✅ **Self-service sem aprovação:** Um usuário recém-registrado via `POST /user` recebe conta `ACTIVE` e pode logar e criar perfil de psicólogo (`POST /psychologist/profile`) ou paciente (`POST /patient/profile`) de imediato. O `AccountStatusGuard` só bloqueia contas `BLOCKED` ou desativadas (`isActive=false`).
-
----
-
-## Fluxo de criação de perfil de psicólogo
-
-```mermaid
-flowchart TD
-    A[POST /psychologist/profile\ncredenciais + JWT] --> B[AccountStatusGuard]
-    B --> C{account ACTIVE?}
-    C -->|não \(BLOCKED/desativada\)| D[403 Forbidden]
-    C -->|sim| E[CreatePsychologistProfileUseCase]
-    E --> F{CRP já existe?}
-    F -->|sim| G[409 CRP_ALREADY_EXISTS]
-    F -->|não| H[Cria perfil com status=ACTIVE]
-    H --> I[Resposta 201\nstatus=ACTIVE]
-    I --> M[OK — pode criar contextos imediatamente]
-```
-
-> ✅ **Sem dupla aprovação:** A conta nasce `ACTIVE` e o `PsychologistProfile` é criado já `ACTIVE`. Não há etapa de aprovação manual — o psicólogo segue direto para criar contextos de atuação. (O `AccountStatusGuard` ainda bloqueia perfis `BLOCKED`/desativados e planos expirados.)
-
----
-
-## Fluxo de criação de contexto de atuação
-
-```mermaid
-flowchart TD
-    A[POST /psychologist/practice-contexts] --> B{contextType?}
-    B -->|INDIVIDUAL| C[Criar contexto individual\nclinicId = null]
-    B -->|CLINIC| D{clinicId fornecido?}
-    D -->|não| E[400 BAD_REQUEST\nPRACTICE_CONTEXT_REQUIRED]
-    D -->|sim| F[Buscar psychologistProfile\npor userId]
-    C --> G{perfil encontrado?}
-    F --> G
-    G -->|não| H[404 NOT_FOUND]
-    G -->|sim| I[Cria PracticeContext]
-    I --> J[201 com todos os campos\nincluindo consultationFee e nickname]
-```
-
----
-
-## Fluxo de criação de PatientProfile (self-service)
-
-```mermaid
-flowchart TD
-    A[POST /patient/profile] --> B{psychologistPracticeContextId?}
-    B -->|null fornecido| C[Cria perfil autônomo\nsem vínculo]
-    B -->|UUID fornecido| D[Valida contexto existe]
-    D --> E{contexto existe?}
-    E -->|não| F[Erro: contexto inválido]
-    E -->|sim| G[Verifica unicidade parcial:\nusuário já tem perfil neste contexto?]
-    G -->|sim| H[409 duplicata]
-    G -->|não| I[Cria PatientProfile]
-    C --> J[201 - PatientProfile criado]
-    I --> J
-```
-
----
-
-## Fluxo de seleção de contexto ativo e envio do header
-
-```mermaid
-flowchart TD
-    A[GET /me] --> B[Recebe practiceContexts: array]
-    B --> C{Quantos contextos?}
-    C -->|0| D[POST /psychologist/practice-contexts\nCriar primeiro contexto]
-    C -->|1| E[Usar automaticamente\narmazenar ID no estado]
-    C -->|> 1| F[Tela de seleção de contexto]
-    F --> E
-    E --> G[Todas as requisições para rotas\ncom PracticeContextGuard\nenviar header:\nx-psychologist-practice-context-id: ID]
-    
-    G --> H{Guard valida}
-    H -->|header ausente| I[400 BAD_REQUEST]
-    H -->|UUID inválido| J[400 BAD_REQUEST]
-    H -->|contexto não encontrado| K[404 NOT_FOUND]
-    H -->|contexto de outro usuário| L[403 FORBIDDEN]
-    H -->|OK| M[request.practiceContext disponível]
-```
-
----
-
-## Fluxo de paciente criado pelo psicólogo via POST /patient
-
-```mermaid
-flowchart TD
-    A[Psicólogo usa dashboard\npara cadastrar paciente] --> B[POST /patient\nBody: dados do paciente\nHeader: x-psychologist-practice-context-id]
-    B --> C[PermissionsGuard\nnão PracticeContextGuard]
-    C --> D[CreatePatientUseCase\nuserId = sub do psicólogo\ncontextId = header lido manualmente]
-    D --> E[Cria User + Account + PatientProfile]
-    E --> F{Retorno}
-    F --> G[201: message + patientId]
-    
-    G --> H[⚠️ patientId é PatientProfile.id\nnão User.id]
-```
-
----
-
-## Fluxo de convite (link de registro)
-
-```mermaid
-flowchart TD
-    A[Psicólogo gera link\nPOST /invites\ncom header de contexto] --> B[Link URL com hash]
-    B --> C[Paciente acessa URL no frontend]
-    C --> D[GET /invites/:hash\npúblico]
-    D --> E{Link válido e não expirado?}
-    E -->|não| F[404]
-    E -->|sim| G[Mostrar dados do psicólogo]
-    G --> H[Paciente preenche formulário]
-    H --> I[POST /invites/:hash/register\npúblico]
-    I --> J[RegisterPatientViaInviteLinkUseCase\nCria User + Account + PatientProfile\nvinculado ao contexto do psicólogo]
-    J --> K[201: patientId + userId + psychologistPracticeContextId]
-```
-
----
-
-## Fluxo de rotas com PracticeContextGuard
-
-```mermaid
-flowchart TD
-    A[Request com JWT] --> B[JwtAuthGuard\nalready ran]
-    B --> C[AccountStatusGuard\nalready ran]
-    C --> D[PracticeContextGuard\nverifica header]
-    D --> E{header presente?}
-    E -->|não| F[400 Missing required header]
-    E -->|sim| G{UUID válido?}
-    G -->|não| H[400 Invalid UUID]
-    G -->|sim| I[findActiveByIdForUser\ncontextId + user.sub]
-    I --> J{encontrou contexto?}
-    J -->|sim| K[request.practiceContext = contexto\nprossegue]
-    J -->|não| L[findById\ncontextId apenas]
-    L --> M{existe?}
-    M -->|não| N[404 PRACTICE_CONTEXT_NOT_FOUND]
-    M -->|sim| O[403 PRACTICE_CONTEXT_ACCESS_DENIED\ncontexto de outro usuário]
-```
-
----
-
-## Mudanças em appointments
-
-- `psychologistPracticeContextId` na tabela é nullable (antes era obrigatório via `userId` direto).
-- `patientProfileId` na tabela também é nullable.
-- ✅ Enum `AppointmentStatus` alinhado ao Prisma (T31) — `DONE` removido do domínio; use os 6 valores: `SCHEDULED`, `ATTENDING`, `FINISHED`, `CANCELED`, `NOT_ATTEND`, `RESCHEDULED`.
-- Todas as rotas de agendamento exigem `PracticeContextGuard` exceto `GET /appointments/context/:practiceContextId`.
-
----
-
-## Mudanças em documentos / prontuários / observações / anamnese
-
-- Todas as entidades (`Document`, `MedicalRecord`, `Observation`) são scoped por `PatientProfile`, não por `User`.
-- Rotas de documentos exigem `PracticeContextGuard`.
-- ✅ `AnamnesisController` usa `@UseGuards(JwtAuthGuard, PracticeContextGuard)` — isolamento por contexto.
-- O `:patientId` em `/patients/:patientId/anamnesis` é tratado como `patientProfileId` no código.
-
----
-
-## Mudanças em clínicas
-
-- Entidades `Clinic`, `ClinicBranch`, `ClinicMember`, `ClinicPsychologist` foram criadas (P2).
-- ✅ `GET /me` retorna `clinicMemberContexts` reais via `ClinicMemberRepository.findManyByUserId`.
-- Controllers de clínica estão registrados mas sem guards rigorosos de ownership.
-
----
-
-## Mudanças em billing
-
-- `consultationFee` saiu de `PsychologistProfile` e foi para `PsychologistPracticeContext`.
-- `AccountStatusGuard` verifica `Payment` ativo para psicólogos com contexto INDIVIDUAL.
-- `POST /billing` retorna URL de pagamento externo — incerto se cria `Payment` local.
-- Se não criar `Payment` local, o psicólogo ficará bloqueado mesmo após pagar.
-
----
-
-## Impacto no dashboard de paciente
-
-| Recurso | Status |
-|---|---|
-| Listar agendamentos | ⚠️ Não há rota de agendamentos para paciente — apenas para psicólogo |
-| Ver documentos próprios | ⚠️ Rotas exigem `PracticeContextGuard` (do psicólogo) |
-| Ver anamnese | ✅ Funciona via `GET /patients/:patientProfileId/anamnesis` |
-| Perfil de usuário | ✅ `GET /me` |
-
----
-
-## Impacto no dashboard de psicólogo
-
-| Recurso | Status |
-|---|---|
-| `consultationFee` | ✅ Em `POST /psychologist/practice-contexts` **e** em `GET /me` (por contexto) |
-| `nickname` do contexto | ✅ Em `POST /psychologist/practice-contexts` **e** em `GET /me` |
-| `professionalBio` | ✅ Em `POST /psychologist/profile` **e** em `GET /me` |
-| `clinicMemberContexts` | ✅ Memberships reais em `GET /me` (via `ClinicMemberRepository`) |
-| Agendamentos | ✅ Funciona com `PracticeContextGuard` |
-| Pacientes | ✅ `GET /patients` com header |
-| Dashboard data | ✅ `GET /dashboard` com `PracticeContextGuard` + header — escopado por practice context |
-
----
-
-## Impacto em cache / state management do frontend
-
-### O que armazenar após GET /me
-
-```ts
-interface FrontendUserState {
-  // Identidade
+type FrontendUserState = {
   id: string
   firstName: string
   lastName: string
-  email: string | null
+  email: string
+  cpf: string | null
+  phoneNumber: string | null
+  gender: 'OTHER' | 'FEMININE' | 'MASCULINE'
+  dateOfBirth: string | null
   profileImageUrl: string | null
-  platformRole: string
-  
-  // Perfil psicólogo
+  platformRole: 'USER' | 'ADMIN' | 'SUPPORT'
+
   psychologistProfile: {
     id: string
+    userId: string
     crp: string
     expertise: string
-    status: string     // verificar se ACTIVE antes de usar dashboard
+    honorific: string
+    professionalName: string
+    languages: string[]
+    professionalBio: string | null
+    status: string
     isActive: boolean
-    // ⚠️ professionalBio NÃO vem aqui — buscar separado se necessário
   } | null
-  
-  // Contextos de prática (⚠️ consultationFee e nickname NÃO vêm aqui)
+
   practiceContexts: Array<{
     id: string
-    contextType: string
+    psychologistProfileId: string
+    contextType: 'INDIVIDUAL' | 'CLINIC'
     clinicId: string | null
     clinicBranchId: string | null
+    consultationFee: number | null
+    nickname: string | null
     isActive: boolean
   }>
-  
-  // Contexto ativo selecionado pelo usuário (gerenciado pelo frontend)
-  activePracticeContextId: string | null
-  
-  // Perfis de paciente
+
   patientProfiles: Array<{
     id: string
+    userId: string | null
     psychologistPracticeContextId: string | null
-    isActive: boolean
+    firstName: string
+    lastName: string
+    email: string | null
+    cpf: string | null
+    phoneNumber: string | null
+    gender: string
+    dateOfBirth: string | null
+    profileImageUrl: string | null
+    status: 'ACTIVE' | 'INACTIVE' | 'ARCHIVED'
+    archivedAt: string | null
   }>
-  
-  // ⚠️ clinicMemberContexts sempre vem vazio — não usar
+
+  clinicMemberContexts: Array<{
+    id: string
+    clinicId: string | null
+    branchId: string | null
+    memberRole: string
+  }>
+
+  activePracticeContextId: string | null
 }
 ```
 
-### Quando invalidar o cache
-
-| Evento | Ação |
-|---|---|
-| Login (`POST /session`) | Chamar `GET /me` imediatamente após |
-| `POST /psychologist/profile` | Recarregar `GET /me` |
-| `POST /psychologist/practice-contexts` | Recarregar `GET /me` (ou atualizar `practiceContexts` local) |
-| `POST /patient/profile` | Recarregar `GET /me` (ou atualizar `patientProfiles` local) |
-| Troca de contexto ativo | Apenas atualizar `activePracticeContextId` local |
-| Logout | Limpar todo o estado |
-
----
-
-## Regras práticas para o frontend
-
-### Como decidir o papel do usuário
+Como decidir perfil:
 
 ```ts
-function getUserRole(meResponse: MeResponse) {
-  const isPsychologist = meResponse.psychologistProfile !== null
-  const isPatient = meResponse.patientProfiles.length > 0
-  
+function getRuntimeRole(state: FrontendUserState) {
+  const isPsychologist = state.psychologistProfile !== null
+  const isPatient = state.patientProfiles.length > 0
+
   if (isPsychologist && isPatient) return 'BOTH'
   if (isPsychologist) return 'PSYCHOLOGIST'
   if (isPatient) return 'PATIENT'
@@ -516,202 +153,380 @@ function getUserRole(meResponse: MeResponse) {
 }
 ```
 
-### Como enviar o contexto ativo
+---
+
+## Onboarding de Psicólogo
+
+Fluxo alinhado ao backend atual:
+
+```text
+1. POST /user
+2. POST /session
+3. GET /me
+4. POST /psychologist/profile
+5. POST /psychologist/practice-context
+6. GET /me novamente
+7. Selecionar practiceContexts[0].id como activePracticeContextId
+8. Enviar x-psychologist-practice-context-id nas rotas com contexto
+```
+
+Body de profile:
 
 ```ts
-// Em toda request para rota com PracticeContextGuard
+{
+  crp: string
+  expertise: Expertise
+  honorific?: Honorific
+  professionalName?: string
+  languages?: Languages[]
+  professionalBio?: string
+}
+```
+
+Body de contexto:
+
+```ts
+{
+  contextType: 'INDIVIDUAL' | 'CLINIC'
+  clinicId?: string
+  clinicBranchId?: string
+  consultationFee?: number // centavos
+  nickname?: string
+}
+```
+
+Se `contextType = CLINIC`, o use case exige `clinicId`.
+
+---
+
+## Seleção de Contexto Ativo
+
+Use `GET /me.data.practiceContexts`.
+
+```text
+0 contextos:
+  mostrar criação de contexto
+
+1 contexto:
+  selecionar automaticamente se isActive = true
+
+2+ contextos:
+  mostrar seletor
+```
+
+Ao chamar rotas com `PracticeContextGuard`, adicionar:
+
+```ts
 headers: {
   'x-psychologist-practice-context-id': activePracticeContextId
 }
 ```
 
-### Como tratar PatientProfile sem contexto
+Rotas críticas que exigem contexto:
 
-- `psychologistPracticeContextId: null` = paciente autônomo
-- Mostrar como "perfil geral" ou "conta independente"
-- Este perfil NÃO está vinculado a nenhum psicólogo específico
+- `/patient-profiles` `GET`
+- `/patient-profiles/:id` `GET`/`PUT`
+- `/patient-profiles/:id/archive`
+- `/patient-profiles/:id/status`
+- `/appointments` `GET`/`POST`
+- `/appointments/:id` `GET`/`PUT`/`DELETE`
+- `/appointments/:id/cancel`
+- `/appointments/:id/reschedule`
+- `/appointments/:appointmentId/start`
+- `/documents`, `/medical-records`, `/observations`
+- `/dashboard`
+- `/sessions/total-work-hours`
+- `/availabilities`
 
-### Status de conta e perfil
+---
 
-- ✅ Registro nasce `ACTIVE` (conta e `PsychologistProfile`) — sem aprovação manual. Não há estado `PENDING` no fluxo normal.
-- O `AccountStatusGuard` só retorna 403 quando: conta `BLOCKED`, conta desativada (`isActive=false`), perfil de psicólogo `BLOCKED`/desativado, ou plano (contexto INDIVIDUAL) expirado.
-- A mensagem de erro de plano expirado é tratada separadamente das de conta/perfil suspensos.
+## Pacientes
 
-### Como tratar respostas envelopadas
+Há dois fluxos diferentes.
+
+### Perfil próprio
+
+Use `POST /me/patient-profiles`.
 
 ```ts
-// Sucesso
-const response = await fetch('/me', ...)
-const { success, data, error } = await response.json()
-if (!success) {
-  throw new Error(error.code) // ex: 'PRACTICE_CONTEXT_NOT_FOUND'
-}
-// usar data
-
-// ⚠️ Exceção: POST /session e POST /session/refresh NÃO são envelopados
-const sessionResponse = await response.json()
-// Direto: sessionResponse.user, sessionResponse.message
-```
-
-### Como tratar erro 400 de Zod
-
-```json
 {
-  "success": false,
-  "statusCode": 400,
-  "data": null,
-  "error": {
-    "code": "BAD_REQUEST",
-    "message": "[ { path: ['email'], message: 'Invalid email' } ]"
-  }
+  psychologistPracticeContextId?: string | null
 }
 ```
 
-O `message` pode conter o array de erros do Zod serializado como string.
+Se `psychologistPracticeContextId = null`, o profile é autônomo.
 
-### Como tratar erro 403 do AccountStatusGuard
+### Paciente criado pelo psicólogo
 
-```json
+Use `POST /patient-profiles`.
+
+```ts
 {
-  "success": false,
-  "statusCode": 403,
-  "error": {
-    "code": "FORBIDDEN",
-    "message": "Sua conta foi permanentemente suspensa por violação dos termos de uso."
-  }
+  firstName: string
+  lastName: string
+  email?: string
+  phoneNumber?: string
+  profileImageUrl?: string
+  dateOfBirth?: Date
+  cpf?: string
+  gender?: Gender
+  zipCode?: string
+  street?: string
+  neighborhood?: string
+  city?: string
+  state?: string
 }
 ```
 
-> Mensagens possíveis: conta desativada, conta `BLOCKED`, perfil suspenso, ou plano expirado. **Não** há mais "conta em aprovação" no fluxo de registro (registro nasce `ACTIVE`).
+A rota lê o contexto via header manual, mas não usa `PracticeContextGuard`. O frontend deve enviar o header mesmo assim.
 
-Verificar `error.code === 'FORBIDDEN'` + a mensagem para distinguir de outros 403.
+Risco atual: por causa dos `.refine(...)` depois de `.optional()`, omitir `dateOfBirth` ou `cpf` pode falhar. Até corrigir backend, envie valores válidos quando usar essa rota.
 
-### Como tratar erros do PracticeContextGuard
+### Listagem
 
-| Situação | Status | Code |
-|---|---|---|
-| Header ausente | 400 | `BAD_REQUEST` |
-| UUID inválido | 400 | `BAD_REQUEST` |
-| Contexto não existe | 404 | `NOT_FOUND` |
-| Contexto de outro usuário | 403 | `FORBIDDEN` |
+Use `GET /patient-profiles` com header de contexto.
+
+O schema aceita filtros, mas o controller repassa apenas `pageIndex` e `perPage` ao use case atual. Não dependa de `filter`, `status`, `gender`, `order` ou `sessionVolume` até correção backend.
 
 ---
 
-## Fluxos recomendados (novo)
+## Convites e Vínculos de Paciente
 
-### Fluxo completo de onboarding de psicólogo
+### Convite por token
 
+Use para convidar um usuário a assumir um `PatientProfile` existente:
+
+```text
+GET  /patient-profiles/invites/:token
+POST /patient-profiles/invites/:token/register
+POST /patient-profiles/invites/:token/accept
+POST /patient-profiles/invites/:token/reject
 ```
-1. POST /user                        → Criar conta (status: ACTIVE, sem aprovação)
-2. POST /session                     → Login (funciona imediatamente)
-3. GET /me                           → Verificar estado atual
-4. POST /psychologist/profile        → Criar perfil (status: ACTIVE)
-5. POST /psychologist/practice-contexts → Criar contexto INDIVIDUAL
-6. Armazenar context.id localmente   → Usar em todas as requests
-7. POST /billing                     → Pagar assinatura
+
+### Código de acesso
+
+Fluxo:
+
+```text
+1. Psicólogo gera:
+   POST /patient-profiles/:patientProfileId/access-code
+
+2. Backend retorna:
+   { code, expiresAt, patientProfileId }
+
+3. Paciente autenticado reivindica:
+   POST /patient-profiles/access-code/claim
+   Body: { code }
 ```
 
-### Fluxo completo de onboarding de paciente (self-service)
+### Claim request
 
-```
-1. POST /user                        → Criar conta (status: ACTIVE, sem aprovação)
-2. POST /session                     → Login
-3. POST /patient/profile             → Criar perfil (com contextId=null)
-4. GET /me                           → Verificar patientProfiles
+Fluxo:
+
+```text
+1. Paciente autenticado lista candidatos:
+   GET /me/patient-profiles/claim-candidates
+
+2. Cria solicitação:
+   POST /patient-profiles/claim-requests
+   Body: { patientProfileId }
+
+3. Psicólogo lista/aprova/rejeita:
+   GET  /patient-profiles/claim-requests
+   GET  /patient-profiles/claim-requests/:id
+   POST /patient-profiles/claim-requests/:id/approve
+   POST /patient-profiles/claim-requests/:id/reject
 ```
 
 ---
 
-## Fluxos antes quebrados ou ambíguos — ✅ resolvidos
+## Agendamentos
 
-| Fluxo | Resolução |
+Rotas principais:
+
+```text
+GET    /appointments
+POST   /appointments
+GET    /appointments/:id
+PUT    /appointments/:id
+DELETE /appointments/:id
+PATCH  /appointments/:id/cancel
+PUT    /appointments/:id/reschedule
+POST   /appointments/:appointmentId/start
+POST   /sessions/:id/finish
+```
+
+Para buscar horários disponíveis:
+
+```ts
+GET /appointments/available-slots?psychologistPracticeContextId=<uuid>&date=<date>
+```
+
+Não use `startDate/endDate` nessa rota. O contrato real é `date`.
+
+A rota `PATCH /appointments/:id/start` existe, mas não usa `PracticeContextGuard`; ela só muda status para `ATTENDING`. Para iniciar sessão com isolamento por contexto, use `POST /appointments/:appointmentId/start`.
+
+---
+
+## Anamnese / Documentos / Prontuários / Observações
+
+Todos usam `PatientProfile.id`.
+
+Anamnese mantém path antigo:
+
+```text
+GET /patients/:patientId/anamnesis
+PUT /patients/:patientId/anamnesis
+```
+
+O nome do parâmetro é `patientId`, mas o valor deve ser `patientProfileId`.
+
+Documentos, prontuários e observações:
+
+```text
+POST /documents
+GET  /documents/patient-profile/:patientProfileId
+
+POST /medical-records
+GET  /medical-records/patient-profile/:patientProfileId
+
+POST /observations
+GET  /observations/patient-profile/:patientProfileId
+```
+
+Os presenters atuais retornam `attachment: null` em documentos e prontuários. Se o frontend precisa dos metadados do anexo, deve buscar em `/attachments/:id`/listas ou aguardar ajuste backend.
+
+---
+
+## Anexos e Avatar
+
+Upload:
+
+```text
+POST /attachments
+multipart/form-data
+file=<arquivo>
+patientId=<opcional>
+type=<opcional>
+```
+
+Regras:
+
+- JPG, PNG ou PDF.
+- Máximo 3 MB.
+- `GET /attachments/:id` é autenticado e retorna stream.
+- Para avatar, o backend atual só atualiza se `patientId` vier junto com `type=AVATAR`.
+- O backend grava `profileImageUrl = attachment.id`, não a URL do arquivo.
+
+Impacto no frontend:
+
+- Não assuma que `profileImageUrl` é URL absoluta.
+- Para exibir imagem quando vier id de anexo, use endpoint de stream ou normalize no frontend.
+
+---
+
+## Billing
+
+`POST /billing` não cria assinatura local. Ele cria uma cobrança externa no AbacatePay.
+
+Body:
+
+```ts
+{
+  patientEmail: string
+  patientTaxId: string
+  patientName: string
+  amountInCents: number
+  consultationDetails: string
+  frequency: 'ONE_TIME' | 'MULTIPLE_PAYMENTS'
+  methods: Array<'PIX' | 'CARD'>
+  returnUrl: string
+  completionUrl: string
+}
+```
+
+Impacto:
+
+- Não envie `subscriptionPlanId` nessa rota; o backend atual não aceita.
+- Não espere liberação de acesso por `Payment`; o `AccountStatusGuard` está com a verificação de payment comentada.
+- Se o produto precisar bloquear por plano, isso ainda precisa de implementação backend.
+
+---
+
+## Registration Links
+
+Rotas reais:
+
+```text
+POST /registration-links
+GET  /registration-links/:hash
+POST /patient-profiles/registration-links/:hash/register
+```
+
+Risco atual:
+
+- `POST /registration-links` não usa `PracticeContextGuard`.
+- O controller passa `user.sub` como `psychologistPracticeContextId`.
+- O use case e a leitura do link esperam id real de contexto.
+
+Impacto:
+
+- O link pode ser criado com contexto inválido e depois falhar como `REGISTRATION_LINK_ORPHAN`.
+- Para produção, prefira fluxo de convite por token/código até o backend corrigir a geração de registration link.
+
+---
+
+## Clínicas
+
+Rotas de clínica estão disponíveis e autenticadas:
+
+```text
+POST /clinics
+GET  /clinics/:id
+PATCH /clinics/:id/responsible
+
+POST /clinic-branches
+GET  /clinic-branches/clinic/:clinicId
+
+POST /clinic-members
+GET  /clinic-members/clinic/:clinicId
+
+POST /clinic-psychologists
+GET  /clinic-psychologists/clinic/:clinicId
+```
+
+Não há guard real de ownership/role nessas rotas além da autenticação. O frontend deve tratar como funcionalidade administrativa até o backend endurecer permissões.
+
+---
+
+## Cache e Invalidação
+
+| Evento | Ação recomendada |
 |---|---|
-| Auto-aprovação no registro | ✅ Registro nasce `ACTIVE` (T29 + fix do fluxo de credenciais) — sem aprovação manual |
-| Psicólogo acessar dashboard após registro | ✅ Sem bloqueio: conta e perfil `ACTIVE` de imediato |
-| `DELETE /patients/:id` | ✅ Migrada para `PatientProfileRepository` (stub deletado em T33) |
-| Rotas de métricas de pacientes (`/patients/stats/*`) | ✅ Migradas para `PatientProfileRepository` |
-| `GET /psychologists/:cpf|crp|email|id` | ✅ Colisão resolvida (T20); rotas `:cpf/:crp/:email` removidas (T33); use `search` |
-| `AnamnesisController` sem `PracticeContextGuard` | ✅ `PracticeContextGuard` aplicado |
-| `GET /me` e dados de clínica | ✅ `clinicMemberContexts` reais via `ClinicMemberRepository` |
-| Billing → Pagamento → Acesso | ⚠️ Em aberto — incerto se `POST /billing` cria `Payment` local (D20) |
+| Login | Chamar `GET /me` |
+| Refresh bem-sucedido | Manter sessão; chamar `GET /me` se houver suspeita de mudança de perfil |
+| `POST /psychologist/profile` | Invalidar `GET /me` |
+| `POST /psychologist/practice-context` | Invalidar `GET /me`; selecionar novo contexto |
+| `POST /me/patient-profiles` | Invalidar `GET /me` |
+| `POST /patient-profiles/access-code/claim` | Invalidar `GET /me` |
+| Aceitar/rejeitar convite | Invalidar `GET /me` |
+| Trocar contexto ativo | Atualizar apenas `activePracticeContextId` local |
+| Logout | Limpar estado e cookies locais se houver |
 
 ---
 
-## Divergências entre specs e código
+## Checklist de Migração do Frontend
 
-| # | Spec | Status |
-|---|---|---|
-| 1 | Fluxo self-service funciona sem aprovação | ✅ Resolvido — registro `ACTIVE`, guard não bloqueia novos usuários |
-| 2 | `GET /me` expõe `consultationFee`, `nickname`, `professionalBio` | ✅ Resolvido — todos expostos |
-| 3 | `clinicMemberContexts` populado | ✅ Resolvido — memberships reais |
-| 4 | `AppointmentStatus.DONE` | ✅ Resolvido — `DONE` removido (T31) |
-| 5 | `POST /psychologist` deprecado | ✅ Resolvido — rota removida (T33) |
-| 6 | `PatientProfile` partial unique index via SQL raw | ✅ Confirmado na migration |
-
----
-
-## Riscos de implementação
-
-| Risco | Severidade | Status |
-|---|---|---|
-| CORS sem `x-psychologist-practice-context-id` | — | ✅ Resolvido (T28) — header no `allowedHeaders` |
-| AccountStatusGuard duplo bloqueio | — | ✅ Resolvido — registro `ACTIVE`, sem aprovação |
-| `PrismaPatientRepository` stub | — | ✅ Resolvido (T33) — stub deletado, rotas migradas |
-| Billing sem Payment local | **ALTA** | ⚠️ Em aberto — confirmar se `POST /billing` cria `Payment` (D20) |
-| Colisão de rotas `/psychologists/:param` | — | ✅ Resolvido (T20/T33) |
-| `DONE` em AppointmentStatus | — | ✅ Resolvido (T31) — removido |
-| Anamnese sem PracticeContextGuard | — | ✅ Resolvido — guard aplicado |
-| `consultationFee`/`nickname` ausentes em `/me` | — | ✅ Resolvido — expostos em `/me` |
-
----
-
-## Checklist para o frontend
-
-### Autenticação
-
-- [ ] `POST /session` retorna objeto cru (sem envelope) — tratar separadamente
-- [ ] Tratar 403 de login apenas para conta `BLOCKED`/desativada (registro normal nasce `ACTIVE`)
-- [ ] Implementar refresh automático de token com `POST /session/refresh`
-- [ ] Enviar cookies com `credentials: 'include'` em todas as requests
-
-### Identificação de perfil
-
-- [ ] Usar `psychologistProfile !== null` para identificar psicólogo
-- [ ] Usar `patientProfiles.length > 0` para identificar paciente
-- [ ] Não usar `platformRole` para discriminar tipo de usuário
-- [ ] Armazenar `activePracticeContextId` no estado local do frontend
-
-### Context Guard
-
-- [ ] Adicionar `x-psychologist-practice-context-id` a todos os headers permitidos pelo CORS no backend (ou aguardar correção)
-- [ ] Tratar erro 400 por header ausente
-- [ ] Tratar erro 404 por contexto não encontrado
-- [ ] Tratar erro 403 por contexto de outro usuário
-
-### AccountStatusGuard
-
-- [ ] Tratar 403 de conta `BLOCKED`/desativada
-- [ ] Tratar 403 de perfil suspenso
-- [ ] Tratar 403 com mensagem de plano expirado
-
-### Campos em GET /me
-
-- [x] `professionalBio` — ✅ incluído no `psychologistProfile`
-- [x] `consultationFee`, `nickname` — ✅ incluídos por contexto em `practiceContexts`
-- [x] `clinicMemberContexts` — ✅ memberships reais
-
-### Rotas removidas (não usar)
-
-- [ ] `POST /psychologist`, `POST /auth/complete-registration` — removidas (T33), usar novo fluxo
-- [ ] `GET /psychologists/:cpf|:crp|:email`, `GET /patients/:name` — removidas; usar `GET /psychologists/search`
-- [ ] `GET /approvals`, `PATCH /approvals/:id/approve` — removidas (sem aprovação)
-
-> As rotas antes "stub/quebradas" (`DELETE /patients/:id`, `/patients/stats/*`, métricas) foram **reparadas** (T33).
-
-### Anamnese
-
-- [ ] Passar `patientProfile.id` (não `user.id`) no path `/patients/:patientId/anamnesis`
-
-### Pagamentos
-
-- [ ] Verificar se `POST /billing` criou `Payment` local antes de assumir acesso liberado
+- [ ] Tratar `POST /session` e `POST /session/refresh` como respostas sem envelope.
+- [ ] Tratar todas as rotas sem `@Public()` como autenticadas, incluindo `/plans` e `GET /suggestions`.
+- [ ] Trocar `/psychologist/practice-contexts` por `/psychologist/practice-context`.
+- [ ] Trocar `/patient/profile` por `/me/patient-profiles`.
+- [ ] Trocar `/patient` por `/patient-profiles`.
+- [ ] Trocar `/patients/stats/*` por `/patient-profiles/metrics/*`.
+- [ ] Trocar `/psychologists/search` por `/psychologist/profile/search`.
+- [ ] Usar `PatientProfile.id` em rotas clínicas.
+- [ ] Enviar `x-psychologist-practice-context-id` em todas as rotas com `PracticeContextGuard`.
+- [ ] Não depender de `Payment` local após `POST /billing`.
+- [ ] Não assumir que `profileImageUrl` é URL.
+- [ ] Não depender de filtros aceitos mas não repassados em `GET /patient-profiles`.
+- [ ] Não usar rotas removidas listadas em `02-routes.md`.

@@ -1,5 +1,39 @@
 # Integrations — MindFlush Frontend
 
+## Mandatory Integration Rules
+
+Backend integration is contract-first. Use current backend implementation and `docs/frontend-reference/*.md` as the source of truth.
+
+HTTP:
+
+- All HTTP calls use `api` from `@/lib/axios`.
+- No raw `fetch`, raw `axios`, or `api.*` calls outside `src/api`.
+- `src/lib/axios.ts` must use `env` from `@/env`, not direct `import.meta.env`.
+- Success envelope unwrapping and error extraction must be centralized.
+- Backend success/error messages must be exposed so mutation hooks can show them via Sonner.
+- Session endpoints may be envelope exceptions only if documented by backend references.
+
+React Query:
+
+- GET => `useQuery`.
+- POST/PUT/PATCH/DELETE => `useMutation`.
+- Query keys must be stable and typed.
+- Mutations must invalidate affected queries and display backend messages.
+
+Practice context:
+
+- Routes requiring practice context must send `x-psychologist-practice-context-id`.
+- The active practice context store must be the single source for this header.
+
+Known contract reconciliation points:
+
+- `/psychologist/practice-context` vs `/psychologist/practice-contexts`.
+- `/auth/complete-registration` and Google OAuth completion flow.
+- `/patient-profiles/*` vs current patient/profile routes.
+- Appointment status enum values.
+
+---
+
 ## Backend (NestJS REST API)
 
 - **Configuração**: `VITE_API_URL` em `.env`, validada via Zod em `src/env.ts`.

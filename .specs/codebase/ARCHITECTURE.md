@@ -4,6 +4,33 @@
 
 SPA client-side (Vite + React Router). Sem SSR. Autenticação via `localStorage`. Sidebar dinâmica por role.
 
+## Mandatory Refactor Architecture
+
+The target architecture is layered and contract-first:
+
+1. Backend contract and `docs/frontend-reference/*.md`.
+2. `src/types` backend-aligned entities/domains.
+3. `src/api/{domain}/{action}.ts` typed HTTP functions using `api`.
+4. `useQuery`/`useMutation` hooks for server-state consumption and mutation side effects.
+5. Page orchestrators that compose hooks and layout.
+6. Local/shared components built with shadcn/ui primitives and feature CSS.
+
+Forbidden architectural shortcuts:
+
+- Direct HTTP calls in pages/components/hooks.
+- Component-local remote data fetching with `useEffect`.
+- Entity or DTO definitions duplicated in feature files.
+- Form validation outside React Hook Form + Zod.
+- Global state outside Zustand.
+- Zustand stores in `src/utils`.
+- Prop drilling through components with more than 3 independent props.
+- Reusing creation modals/forms/schemas/hooks for editing through flags such as `isEditing`, `mode`, or `initialData`.
+- CSS embedded in TSX or pure feature CSS outside Tailwind `@layer`/`@apply`.
+
+`src/pages/app/profiles` is an inspiration for composition, but not a perfect target. It must still be corrected for CSS, effects, typing, and backend contract alignment.
+
+---
+
 ## Layouts
 
 Três layouts raiz em `src/pages/_layouts/`:

@@ -1,75 +1,199 @@
-# 02 — Inventário Completo de Rotas
+# 02 - Inventário Completo de Rotas
 
-> **Fonte primária:** controllers em `src/infra/http/controllers/`, módulos `HttpModule` e `AuthModule`.  
-> Confiabilidade: **ESTÁVEL** / **LEGADA** (deprecada mas registrada) / **QUEBRADA** (repositório stub) / **POTENCIALMENTE QUEBRADA**
+> Fonte primária: controllers registrados em `HttpModule`, `AuthModule`, guards globais em `AppModule` e validators Zod.
+> Esta lista considera controllers registrados nos módulos; arquivos soltos não registrados não entram no contrato.
 
 ---
 
-## Envelope global de resposta
+## Regras Globais
 
-Todas as rotas (exceto `POST /session` e `POST /session/refresh`) retornam:
+### Autenticação
+
+Todas as rotas sem `@Public()` exigem autenticação por causa dos guards globais:
+
+- `JwtAuthGuard`: lê `access_token` do cookie HTTP-only ou `Authorization: Bearer <jwt>`.
+- `AccountStatusGuard`: valida usuário, conta, status, perfil de psicólogo e blacklist.
+
+Rotas públicas reais:
+
+| Método | Path |
+|---|---|
+| `POST` | `/user` |
+| `POST` | `/session` |
+| `POST` | `/session/refresh` |
+| `GET` | `/auth/google` |
+| `GET` | `/auth/google/callback` |
+| `GET` | `/address/cep/:cep` |
+| `GET` | `/registration-links/:hash` |
+| `GET` | `/patient-profiles/invites/:token` |
+| `POST` | `/patient-profiles/invites/:token/register` |
+| `POST` | `/patient-profiles/registration-links/:hash/register` |
+
+`POST /sign-out` não está marcado com `@Public()`. Na implementação atual ele passa pelo `JwtAuthGuard` global e também pelo `JwtRefreshGuard` local.
+
+### Envelope
+
+Resposta padrão:
 
 ```json
 {
   "success": true,
   "statusCode": 200,
-  "data": { /* payload real */ },
-  "message": null,
-  "error": null
+  "data": {}
 }
 ```
 
-Erros:
+No objeto TypeScript, `message` e `error` são `undefined` quando ausentes; na serialização JSON esses campos podem ser omitidos. O frontend deve depender de `success`, `statusCode`, `data` e, em falhas, `error`.
 
-```json
-{
-  "success": false,
-  "statusCode": 400,
-  "data": null,
-  "message": null,
-  "error": {
-    "code": "NOME_DO_ERRO",
-    "message": "Descrição legível"
-  }
-}
+Exceções:
+
+- `POST /session`: JSON cru.
+- `POST /session/refresh`: JSON cru.
+- `GET /auth/google/callback`: redirect.
+- `GET /attachments/:id`: stream do arquivo.
+- Rotas `204`: sem payload útil.
+
+### Header de contexto
+
+Rotas marcadas com `Contexto = Sim` exigem:
+
+```http
+x-psychologist-practice-context-id: <uuid>
 ```
+
+Erros do `PracticeContextGuard`:
+
+| Situação | HTTP | Code |
+|---|---:|---|
+| Header ausente | 400 | `BAD_REQUEST` |
+| Header não UUID | 400 | `BAD_REQUEST` |
+| Contexto inexistente | 404 | `NOT_FOUND` |
+| Contexto de outro usuário | 403 | `FORBIDDEN` |
 
 ---
 
-## Headers importantes para o frontend
+## Inventário de Endpoints
 
-### x-psychologist-practice-context-id
+Legenda:
 
-- **O que é:** UUID do `PsychologistPracticeContext` ativo do psicólogo.
-- **Quando enviar:** Em toda rota com `PracticeContextGuard` (listadas abaixo com `🔑`).
-- **Formato:** UUID v4 válido.
-- **Erros se ausente:** `400 BAD_REQUEST — "Missing required header: x-psychologist-practice-context-id"`
-- **Erros se inválido (não UUID):** `400 BAD_REQUEST — "Invalid UUID in header: x-psychologist-practice-context-id"`
-- **Erros se contexto não existe:** `404 NOT_FOUND — "PRACTICE_CONTEXT_NOT_FOUND"`
-- **Erros se contexto não é do usuário:** `403 FORBIDDEN — "PRACTICE_CONTEXT_ACCESS_DENIED"`
+- `Público`: rota tem `@Public()`.
+- `Contexto`: rota usa `PracticeContextGuard`.
+- `Manual`: lê `x-psychologist-practice-context-id` manualmente, sem `PracticeContextGuard`.
+- Rotas com `Público = Não` exigem access token pela guarda global, mesmo quando não há guard local no controller.
 
-> ✅ **CORS (T28):** O header `x-psychologist-practice-context-id` está incluído em `allowedHeaders` (`abstract-environment.ts`). Configuração atual: `'Content-Type, Accept, Authorization, X-Requested-With, x-psychologist-practice-context-id'`. Preflight `OPTIONS` cross-origin com esse header é permitido.
-
-### Autenticação
-
-O `JwtAuthGuard` aceita o token de duas formas:
-1. **Cookie HTTP-only:** `access_token=<jwt>` (definido pelo backend no login)
-2. **Bearer token:** `Authorization: Bearer <jwt>`
-
-Tokens:
-- `access_token`: expira em **15 minutos**
-- `refresh_token`: expira em **7 dias** (cookie HTTP-only, usado em `POST /session/refresh`)
-
-### JWT Payload
-
-```ts
-{
-  sub: string        // users.id (UUID)
-  email: string
-  provider: string   // 'credentials' | 'google' | 'linkedin'
-  profileImageUrl: string | null
-}
-```
+| Método | Path | Público | Contexto | Observações |
+|---|---|---:|---:|---|
+| `GET` | `/address/cep/:cep` | Sim | Não | CEP com 8 dígitos; retorna endereço ViaCEP em `data` |
+| `GET` | `/address/:id` | Não | Não | Retorna `{ address }` |
+| `PUT` | `/address/:id` | Não | Não | Atualiza endereço; retorna `data: null` |
+| `POST` | `/user` | Sim | Não | Cria `User` + conta credentials `ACTIVE` |
+| `POST` | `/session` | Sim | Não | Login; resposta sem envelope |
+| `POST` | `/session/refresh` | Sim | Não | Usa cookie `refresh_token`; resposta sem envelope |
+| `POST` | `/sign-out` | Não | Não | Usa `JwtRefreshGuard`; exige também access token global |
+| `GET` | `/me` | Não | Não | Contexto autenticado completo |
+| `GET` | `/auth/google` | Sim | Não | Redirect para Google OAuth |
+| `GET` | `/auth/google/callback` | Sim | Não | Seta cookies e redireciona |
+| `POST` | `/psychologist/profile` | Não | Não | Cria profile do usuário autenticado |
+| `PATCH` | `/psychologist/profile` | Não | Não | Atualiza user + profile |
+| `GET` | `/psychologist/profile/search` | Não | Não | Busca por `cpf`, `crp` ou `email` |
+| `GET` | `/psychologist/profile/:id` | Não | Não | `id` = `PsychologistProfile.id` |
+| `DELETE` | `/psychologist/:psychologistProfileId` | Não | Não | Remove profile |
+| `GET` | `/psychologists` | Não | Não | Lista psicólogos |
+| `POST` | `/psychologist/practice-context` | Não | Não | Cria contexto; path singular |
+| `GET` | `/availabilities` | Não | Sim | Lista disponibilidade do contexto |
+| `POST` | `/availabilities` | Não | Sim | Substitui/cria slots de disponibilidade |
+| `GET` | `/admin/metrics/psychologists/total` | Não | Não | Métrica admin, sem role guard real |
+| `GET` | `/admin/metrics/psychologists/new` | Não | Não | Query `from`, `to` opcionais |
+| `GET` | `/admin/metrics/psychologists/age-range` | Não | Não | Métrica admin, sem role guard real |
+| `GET` | `/admin/metrics/psychologists/gender` | Não | Não | Métrica admin, sem role guard real |
+| `POST` | `/me/patient-profiles` | Não | Não | Cria perfil próprio vinculado ou não a contexto |
+| `GET` | `/me/patient-profiles/claim-candidates` | Não | Não | Candidatos a vínculo do usuário autenticado |
+| `GET` | `/patient-profiles` | Não | Sim | Lista pacientes do contexto |
+| `POST` | `/patient-profiles` | Não | Manual | Cria paciente pelo psicólogo; header lido manualmente |
+| `GET` | `/patient-profiles/with-attachments` | Não | Sim | Lista pacientes; attachments não são incluídos no presenter |
+| `GET` | `/patient-profiles/:id` | Não | Sim | Detalhe resumido do paciente |
+| `PUT` | `/patient-profiles/:id` | Não | Sim | Atualiza dados do paciente |
+| `DELETE` | `/patient-profiles/:id` | Não | Não | Remove profile por owner (`user.sub`) |
+| `PATCH` | `/patient-profiles/:id/archive` | Não | Sim | Arquiva profile |
+| `PATCH` | `/patient-profiles/:id/status` | Não | Sim | Implementação atual tem risco de não alterar status |
+| `GET` | `/patient-profiles/:id/details` | Não | Sim | Retorna paciente + sessões paginadas |
+| `GET` | `/patient-profiles/cpf/:cpf` | Não | Sim | Busca por CPF no contexto |
+| `GET` | `/patient-profiles/email/:email` | Não | Sim | Busca por email no contexto |
+| `GET` | `/patient-profiles/metrics/active` | Não | Sim | Total ativo no contexto |
+| `GET` | `/patient-profiles/metrics/new` | Não | Sim | Query `startDate`, `endDate` obrigatórias |
+| `GET` | `/patient-profiles/metrics/gender` | Não | Sim | Distribuição por gênero |
+| `GET` | `/patient-profiles/metrics/age` | Não | Sim | Distribuição por idade |
+| `GET` | `/patient-profiles/metrics/total` | Não | Não | Total por usuário autenticado |
+| `GET` | `/patient-profiles/invites/:token` | Sim | Não | Valida convite de profile |
+| `POST` | `/patient-profiles/invites/:token/register` | Sim | Não | Registra novo usuário via convite |
+| `POST` | `/patient-profiles/invites/:token/accept` | Não | Não | Usuário autenticado aceita convite |
+| `POST` | `/patient-profiles/invites/:token/reject` | Não | Não | Usuário autenticado rejeita convite |
+| `POST` | `/patient-profiles/registration-links/:hash/register` | Sim | Não | Registro via `RegistrationLink` |
+| `POST` | `/patient-profiles/:patientProfileId/access-code` | Não | Sim | Gera código cru de vínculo |
+| `POST` | `/patient-profiles/access-code/claim` | Não | Não | Usuário reivindica profile por código |
+| `POST` | `/patient-profiles/claim-requests` | Não | Não | Cria solicitação de vínculo |
+| `GET` | `/patient-profiles/claim-requests` | Não | Sim | Lista solicitações do contexto |
+| `GET` | `/patient-profiles/claim-requests/:id` | Não | Sim | Guard global autentica; local só tem `PracticeContextGuard` |
+| `POST` | `/patient-profiles/claim-requests/:id/approve` | Não | Sim | Aprova solicitação |
+| `POST` | `/patient-profiles/claim-requests/:id/reject` | Não | Sim | Rejeita solicitação |
+| `GET` | `/patients/:patientId/anamnesis` | Não | Sim | `patientId` = `patientProfileId` |
+| `PUT` | `/patients/:patientId/anamnesis` | Não | Sim | Body é JSON livre |
+| `POST` | `/appointments` | Não | Sim | Cria agendamento |
+| `GET` | `/appointments` | Não | Sim | Lista por contexto |
+| `GET` | `/appointments/:id` | Não | Sim | Busca por id no contexto |
+| `PUT` | `/appointments/:id` | Não | Sim | Atualiza campos parciais |
+| `DELETE` | `/appointments/:id` | Não | Sim | 204; regra de bloqueio tem risco |
+| `PATCH` | `/appointments/:id/cancel` | Não | Sim | Cancela |
+| `PUT` | `/appointments/:id/reschedule` | Não | Sim | Body `{ newDate }` |
+| `PATCH` | `/appointments/:id/start` | Não | Não | Inicia status sem contexto |
+| `POST` | `/appointments/:appointmentId/start` | Não | Sim | Cria sessão de atendimento |
+| `GET` | `/appointments/pending/:patientProfileId` | Não | Sim | Próximo agendamento pendente |
+| `GET` | `/appointments/context/:practiceContextId` | Não | Não | Recebe context id no path, sem ownership guard |
+| `GET` | `/appointments/available-slots` | Não | Não | Query `psychologistPracticeContextId`, `date` |
+| `GET` | `/appointments/active/grouped` | Não | Sim | Agrupa por `yyyy-MM-dd` |
+| `GET` | `/appointments/metrics/month-count` | Não | Sim | Query `startDate`, `endDate` opcionais |
+| `GET` | `/appointments/metrics/daily-count` | Não | Sim | Query `startDate`, `endDate` opcionais |
+| `POST` | `/sessions/:id/finish` | Não | Sim | Finaliza sessão |
+| `GET` | `/sessions/total-work-hours` | Não | Sim | Soma minutos finalizados |
+| `POST` | `/documents` | Não | Sim | Cria documento |
+| `GET` | `/documents/patient-profile/:patientProfileId` | Não | Sim | Lista documentos |
+| `POST` | `/medical-records` | Não | Sim | Cria prontuário |
+| `GET` | `/medical-records/patient-profile/:patientProfileId` | Não | Sim | Lista prontuários |
+| `POST` | `/observations` | Não | Sim | Cria observação |
+| `GET` | `/observations/patient-profile/:patientProfileId` | Não | Sim | Lista observações |
+| `POST` | `/attachments` | Não | Não | Multipart `file`; auth global |
+| `GET` | `/attachments` | Não | Não | Lista anexos |
+| `GET` | `/attachments/:id` | Não | Não | Stream autenticado |
+| `DELETE` | `/attachments/:id` | Não | Não | 204 |
+| `GET` | `/attachments/patient/:patientId` | Não | Não | `patientId` = `patientProfileId` |
+| `GET` | `/plans` | Não | Não | Autenticado globalmente, apesar de sem guard local |
+| `GET` | `/plans/:id` | Não | Não | Autenticado globalmente |
+| `POST` | `/subscription-plan` | Não | Não | Cria plano; sem role guard |
+| `DELETE` | `/subcription-plan/:planId` | Não | Não | Typo real: `subcription` |
+| `POST` | `/billing` | Não | Não | Cria cobrança externa AbacatePay |
+| `POST` | `/suggestions` | Não | Não | Multipart `files`; exige profile de psicólogo |
+| `GET` | `/suggestions` | Não | Não | Autenticado globalmente |
+| `PATCH` | `/suggestions/:id/like` | Não | Não | Exige profile de psicólogo |
+| `GET` | `/suggestions/ranking` | Não | Não | Ranking |
+| `GET` | `/admin/metrics/suggestions/total` | Não | Não | Sem role guard real |
+| `GET` | `/admin/metrics/suggestions/most-voted` | Não | Não | Sem role guard real |
+| `PATCH` | `/admin/suggestions/:id/status` | Não | Não | Sem role guard real |
+| `GET` | `/popups/active` | Não | Não | Exige profile de psicólogo |
+| `GET` | `/popups/unseen` | Não | Não | Exige profile de psicólogo |
+| `POST` | `/popups/:id/view` | Não | Não | Marca popup visto |
+| `GET` | `/dashboard` | Não | Sim | Dashboard do contexto |
+| `GET` | `/admin/metrics/patients/new` | Não | Não | Query `startDate`, `endDate` obrigatórias |
+| `POST` | `/registration-links` | Não | Não | Risco: usa `user.sub` como context id |
+| `GET` | `/registration-links/:hash` | Sim | Não | Busca metadata do link |
+| `POST` | `/clinics` | Não | Não | Cria clínica |
+| `GET` | `/clinics/:id` | Não | Não | Busca clínica |
+| `PATCH` | `/clinics/:id/responsible` | Não | Não | Define responsável |
+| `POST` | `/clinic-branches` | Não | Não | Cria filial |
+| `GET` | `/clinic-branches/clinic/:clinicId` | Não | Não | Lista filiais |
+| `POST` | `/clinic-members` | Não | Não | Adiciona membro |
+| `GET` | `/clinic-members/clinic/:clinicId` | Não | Não | Lista membros |
+| `POST` | `/clinic-psychologists` | Não | Não | Vincula psicólogo à clínica |
+| `GET` | `/clinic-psychologists/clinic/:clinicId` | Não | Não | Lista psicólogos da clínica |
 
 ---
 
@@ -77,12 +201,7 @@ Tokens:
 
 ### POST /session
 
-**Controller:** `AuthenticateController` (`auth.module.ts`)  
-**Use case:** `AuthenticateUseCase`  
-**Pública:** ✅ `@Public()`  
-**AccountStatusGuard:** Bypassed
-
-**Body:**
+Body:
 
 ```json
 {
@@ -91,7 +210,7 @@ Tokens:
 }
 ```
 
-**Resposta (sem envelope):**
+Resposta sem envelope:
 
 ```json
 {
@@ -100,244 +219,79 @@ Tokens:
     "id": "uuid",
     "firstName": "João",
     "lastName": "Silva",
-    "email": "user@example.com",
+    "email": "joao@example.com",
     "status": "ACTIVE",
     "profileImageUrl": null
   }
 }
 ```
 
-> ⚠️ `POST /session` **não retorna** perfis, contextos, ou informações além do status da conta.  
-> ⚠️ Retorna cru (sem envelope `{ success, data }`).  
-> O `status` retornado é o `AccountStatus` da conta. Contas novas são criadas `ACTIVE` (sem etapa de aprovação — T29).
-
-**Status codes:**
-- `200` — login bem-sucedido, cookies definidos
-- `401` — email ou senha incorretos
-- `400` — body inválido (Zod)
-
-**Cookies definidos:**
-- `access_token` (HTTP-only, 15min)
-- `refresh_token` (HTTP-only, 7d)
-
----
+Cookies definidos: `access_token` e `refresh_token`.
 
 ### POST /session/refresh
 
-**Controller:** `AuthenticateController`  
-**Use case:** `RefreshTokenUseCase`  
-**Pública:** ✅ (`@Public()` + `JwtRefreshGuard` — usa cookie `refresh_token`)
+Usa cookie `refresh_token`.
 
-**Body:** nenhum (usa cookie)
-
-**Resposta (sem envelope):**
+Resposta sem envelope:
 
 ```json
 {
   "message": "Tokens renovados com sucesso!",
   "user": {
     "id": "uuid",
-    "email": "user@example.com",
-    "role": "USER",
+    "email": "joao@example.com",
     "profileImageUrl": null
   }
 }
 ```
 
-**Status codes:**
-- `200` — tokens renovados, novos cookies definidos
-- `401` — refresh token inválido ou expirado
-
----
+O código tenta retornar `role`, mas o token service atual não assina `role`; em JSON essa chave pode não aparecer.
 
 ### POST /sign-out
 
-**Controller:** `SignOutController`  
-**Use case:** `SignOutUseCase`  
-**Pública:** ✅ (`@Public()` + `JwtRefreshGuard`)
-
-**Body:** nenhum
-
-**Resposta:** limpa cookies `access_token` e `refresh_token`
-
-**Status codes:** `200`
-
----
+Limpa cookies. Como `@Public()` está comentado, o frontend deve enviar cookies de access e refresh válidos.
 
 ### GET /me
 
-**Controller:** `GetAuthenticatedPsychologistController`  
-**Use case:** `GetAuthenticatedUserUseCase`  
-**Auth:** `JwtAuthGuard` + `AccountStatusGuard` (global)
-
-**Resposta (envelopada):**
-
-```json
-{
-  "success": true,
-  "statusCode": 200,
-  "data": {
-    "id": "uuid",
-    "firstName": "João",
-    "lastName": "Silva",
-    "email": "joao@example.com",
-    "cpf": null,
-    "phoneNumber": null,
-    "gender": "MASCULINE",
-    "dateOfBirth": null,
-    "profileImageUrl": null,
-    "isActive": true,
-    "platformRole": "USER",
-    "createdAt": "2026-01-01T00:00:00.000Z",
-    "psychologistProfile": {
-      "id": "uuid",
-      "crp": "06/12345",
-      "expertise": "CLINICAL",
-      "professionalBio": null,
-      "status": "ACTIVE",
-      "isActive": true
-    },
-    "practiceContexts": [
-      {
-        "id": "uuid",
-        "contextType": "INDIVIDUAL",
-        "clinicId": null,
-        "clinicBranchId": null,
-        "consultationFee": null,
-        "nickname": null,
-        "isActive": true
-      }
-    ],
-    "patientProfiles": [
-      {
-        "id": "uuid",
-        "psychologistPracticeContextId": null,
-        "isActive": true
-      }
-    ],
-    "clinicMemberContexts": [
-      {
-        "id": "uuid",
-        "clinicId": "uuid",
-        "branchId": null,
-        "memberRole": "OWNER"
-      }
-    ]
-  }
-}
-```
-
-> ✅ **`GET /me` completo (T27):**
-> - `psychologistProfile.professionalBio` — incluído
-> - `practiceContexts[].consultationFee` / `nickname` — incluídos
-> - `clinicMemberContexts` — reflete `ClinicMember` reais via `findManyByUserId` (não mais `[]`)
-
-**Status codes:**
-- `200` — sucesso
-- `401` — token inválido
-- `403` — conta desativada (`isActive=false`) ou `BLOCKED`, pagamento expirado, IP na blacklist
+Retorna o shape completo documentado em `01-entities-and-types.md`.
 
 ---
 
-### GET /invites/:hash (Buscar link de convite)
-
-**Controller:** `GetRegistrationLinkController`  
-**Use case:** `GetRegistrationLinkByHashUseCase`  
-**Pública:** ✅ `@Public()`
-
-**Path param:** `hash` (string)
-
-**Resposta (envelopada):**
-
-```json
-{
-  "success": true,
-  "statusCode": 200,
-  "data": {
-    "psychologistId": "uuid-do-psychologist-profile",
-    "psychologistName": "Dr. Nome",
-    "expiresAt": "2026-07-11T00:00:00.000Z"
-  }
-}
-```
-
-> Nome resolvido via `practice context → psychologist profile → user`. `psychologistId` é o id do `PsychologistProfile` dono do contexto.
-
-**Status codes:** `200`, `404` (link não encontrado ou expirado)
-
----
-
-### POST /invites (Gerar link de convite)
-
-**Controller:** `GenerateRegistrationLinkController`  
-**Use case:** `GenerateRegistrationLinkUseCase`  
-**Auth:** `JwtAuthGuard` + `AccountStatusGuard` + `PracticeContextGuard` 🔑
-
-**Header:** `x-psychologist-practice-context-id: <uuid>`
-
-**Resposta (envelopada):**
-
-```json
-{
-  "success": true,
-  "statusCode": 201,
-  "data": {
-    "qrCodeLink": "https://app.example.com/invite/abc123",
-    "hash": "abc123"
-  }
-}
-```
-
----
-
-## Usuário base
+## Usuário Base
 
 ### POST /user
 
-**Controller:** `CreateUserController`  
-**Use case:** `CreateUserUseCase`  
-**Pública:** ✅ `@Public()`
-
-**Body:**
+Body:
 
 ```json
 {
   "firstName": "João",
   "lastName": "Silva",
+  "socialName": "opcional, mas ignorado pelo use case",
   "email": "joao@example.com",
-  "password": "Senha@123",
-  "gender": "MASCULINE",
-  "phoneNumber": null,
+  "password": "Senha@123_",
+  "phoneNumber": "11999999999",
+  "profileImageUrl": null,
   "dateOfBirth": "1990-05-15",
-  "cpf": "123.456.789-09",
-  "profileImageUrl": null
+  "cpf": "12345678909",
+  "gender": "MASCULINE"
 }
 ```
 
-**Validação Zod:** `src/validators/user/controllers/create-user-schema.ts`
-- `password`: 8–30 chars, deve ter minúscula, maiúscula, número e especial `(!@#$%^&*)`
-- `gender`: `"MASCULINE" | "FEMININE" | "OTHER"`
-- `cpf`: opcional, validado pelo utilitário de CPF
-- `dateOfBirth`: opcional, não pode ser data futura
+Validações:
 
-**Resposta (envelopada):**
+- `password`: 8 a 30 caracteres, com minúscula, maiúscula, número e um dos caracteres `!@#$%^&*_`.
+- `dateOfBirth`: opcional; schema rejeita datas com mais de 120 anos, use case rejeita data futura.
+- `cpf`: opcional; quando presente, validado por CPF.
+- Cria conta credentials `ACTIVE`.
+
+Resposta envelopada:
 
 ```json
 {
-  "success": true,
-  "statusCode": 201,
-  "data": {
-    "message": "Usuário criado com sucesso."
-  }
+  "message": "Usuário criado com sucesso."
 }
 ```
-
-> ✅ A conta criada já nasce ativa (`ACTIVE`) — sem fluxo de aprovação (T29). O usuário pode criar perfil de psicólogo/paciente imediatamente. O `AccountStatusGuard` só bloqueia contas desativadas (`isActive=false`) ou `BLOCKED`.
-
-**Status codes:**
-- `201` — criado
-- `400` — body inválido ou data de nascimento futura
-- `409` — email ou CPF já existem (`EMAIL_ALREADY_EXISTS`, `CPF_ALREADY_EXISTS`)
 
 ---
 
@@ -345,61 +299,26 @@ Tokens:
 
 ### POST /psychologist/profile
 
-**Controller:** `CreatePsychologistProfileController`  
-**Use case:** `CreatePsychologistProfileUseCase`  
-**Auth:** `JwtAuthGuard` + `AccountStatusGuard` (global)
-
-> ✅ Acessível logo após o registro — a conta nasce `ACTIVE` (T29) e o `PsychologistProfile` é criado com `status = ACTIVE`. Não há aprovação admin.
-
-**Body:**
+Body:
 
 ```json
 {
-  "crp": "06/12345",
+  "crp": "0612345",
   "expertise": "CLINICAL",
-  "professionalBio": "Psicólogo clínico com 10 anos de experiência"
+  "honorific": "MASC_DR",
+  "professionalName": "Dr. João Silva",
+  "languages": ["PORTUGUESE"],
+  "professionalBio": "Texto opcional"
 }
 ```
 
-**Validação Zod (inline no controller):**
-- `crp`: string, min 1
-- `expertise`: enum `Expertise`
-- `professionalBio`: opcional
+Resposta `data`: `PsychologistProfileHTTP`.
 
-**Resposta (envelopada):**
+### POST /psychologist/practice-context
 
-```json
-{
-  "success": true,
-  "statusCode": 201,
-  "data": {
-    "id": "uuid",
-    "userId": "uuid",
-    "crp": "06/12345",
-    "expertise": "CLINICAL",
-    "professionalBio": "...",
-    "status": "ACTIVE",
-    "isActive": true,
-    "createdAt": "2026-06-11T00:00:00.000Z"
-  }
-}
-```
+Path real é singular: `/psychologist/practice-context`.
 
-**Status codes:**
-- `201` — criado
-- `400` — body inválido
-- `403` — conta desativada (`isActive=false`) ou `BLOCKED`
-- `409` — CRP já existe (`CRP_ALREADY_EXISTS`)
-
----
-
-### POST /psychologist/practice-contexts
-
-**Controller:** `CreatePsychologistPracticeContextController`  
-**Use case:** `CreatePsychologistPracticeContextUseCase`  
-**Auth:** `JwtAuthGuard` + `AccountStatusGuard`
-
-**Body:**
+Body:
 
 ```json
 {
@@ -407,676 +326,361 @@ Tokens:
   "clinicId": null,
   "clinicBranchId": null,
   "consultationFee": 15000,
-  "nickname": "Consultório Principal"
+  "nickname": "Consultório"
 }
 ```
 
-**Regras:**
-- `contextType = CLINIC` requer `clinicId`
-- `consultationFee` em centavos (15000 = R$ 150,00)
-- `nickname` opcional
+Resposta `data`: `PsychologistPracticeContextHTTP`.
 
-**Resposta (envelopada):**
+### GET /psychologist/profile/search
 
-```json
+Query:
+
+```ts
 {
-  "success": true,
-  "statusCode": 201,
-  "data": {
-    "id": "uuid",
-    "psychologistProfileId": "uuid",
-    "contextType": "INDIVIDUAL",
-    "clinicId": null,
-    "clinicBranchId": null,
-    "consultationFee": 15000,
-    "nickname": "Consultório Principal",
-    "isActive": true,
-    "createdAt": "2026-06-11T00:00:00.000Z"
-  }
+  cpf?: string
+  crp?: string
+  email?: string
 }
 ```
 
-**Status codes:**
-- `201` — criado
-- `400` — body inválido ou `contextType = CLINIC` sem `clinicId`
-- `403` — conta desativada (`isActive=false`) ou `BLOCKED`
-- `404` — perfil de psicólogo não encontrado para este usuário
+O use case valida parâmetros de busca; use exatamente um filtro.
 
----
-
-### POST /psychologist — ❌ REMOVIDA (T33)
-
-`CreatePsychologistController` + use case foram deletados. Use o fluxo novo: `POST /user` + `POST /psychologist/profile` + `POST /psychologist/practice-contexts`.
-
----
-
-### PATCH /psychologist/profile
-
-**Controller:** `UpdatePsychologistByIdController`  
-**Use case:** `UpdatePsychologistUseCase`  
-**Auth:** `JwtAuthGuard` + `AccountStatusGuard`  
-**Status:** ✅ Reparada (T22) — resolve o perfil via `findByUserId(user.sub)` (não trata `user.sub` como `psychologistId`); atualiza `User` (nome, email, telefone, imagem) + `PsychologistProfile` (crp, expertise) e salva ambos; resposta via `PsychologistPresenter.toHTTP`
-
-**Body:** campos opcionais — `firstName`, `lastName`, `email`, `phoneNumber`, `profileImageUrl` (em `User`); `crp`, `expertise` (em `PsychologistProfile`)
-
----
-
-### DELETE /psychologist/:psychologistId
-
-**Controller:** `DeletePsychologistController`  
-**Use case:** `DeletePsychologistUseCase`  
-**Status:** ✅ Reparada (T23) — `:psychologistId` = `psychologistProfile.id`; valida existência (404 se ausente) e remove **apenas** o `PsychologistProfile` via `PsychologistProfileRepository.delete` (nunca o `User`)
-
----
-
-### GET /psychologists (listar psicólogos)
-
-**Controller:** `FetchPsychologistController`  
-**Use case:** `FetchPsychologistUseCase`  
-**Query:** `pageIndex`, `perPage`  
-**Status:** ✅ Reparada (T21) — lista via `PsychologistProfileRepository.findMany()` + hidratação de `User`, paginada, serializada por `PsychologistPresenter.toHTTP`; mesma shape de `:id`/`search`
-
----
-
-### GET /psychologists/:id e GET /psychologists/search
-
-> ✅ **Colisão resolvida (T20)** — um único `PsychologistReadController` declara `@Get('search')` antes de `@Get(':id')`. Os 3 controllers por `:cpf`/`:crp`/`:email` foram removidos.
-
-| Rota | Handler | Use case | Status |
-|---|---|---|---|
-| `GET /psychologists/:id` | `PsychologistReadController.getById` | `GetPsychologistByIdUseCase` | ✅ Reparada — `:id` = `psychologistProfile.id`, resolve via `PsychologistProfile` + `User`, presenter `PsychologistPresenter.toHTTP`; 404 se ausente |
-| `GET /psychologists/search?cpf=\|crp=\|email=` | `PsychologistReadController.search` | `SearchPsychologistUseCase` | ✅ Nova — exatamente **um** filtro (`cpf`, `crp` ou `email`); 0 ou >1 filtro → 400; nenhum match → 404; mesma shape do `:id` |
-
----
-
-### GET /approvals + PATCH /approvals/:psychologistId/approve — ❌ REMOVIDAS (T33)
-
-A superfície de aprovação (`FetchPendingPsychologistsController`, `ApprovePsychologistController` + use cases) foi deletada. Não há fluxo de aprovação: o registro nasce `ACTIVE` (T29).
-
----
-
-### POST /availabilities (definir disponibilidade) 🔑
-
-**Controller:** `SetPsychologistAvailabilityController`  
-**Use case:** `SetPsychologistAvailabilityUseCase`  
-**Auth:** `JwtAuthGuard` + `PracticeContextGuard`  
-**Header obrigatório:** `x-psychologist-practice-context-id`
-
-**Body:**
+Resposta:
 
 ```json
 {
-  "slots": [
+  "psychologistProfile": { "...": "PsychologistProfileHTTP" }
+}
+```
+
+### GET /psychologists
+
+Query:
+
+```ts
+{
+  pageIndex?: number // default 0
+  perPage?: number   // default 10
+}
+```
+
+Resposta:
+
+```json
+{
+  "psychologists": [
     {
-      "dayOfWeek": 1,
-      "startTime": "09:00",
-      "endTime": "17:00",
-      "isActive": true
+      "id": "psychologistProfileId",
+      "userId": "userId",
+      "firstName": "João",
+      "lastName": "Silva",
+      "name": "João Silva",
+      "email": "joao@example.com",
+      "cpf": null,
+      "phoneNumber": null,
+      "profileImageUrl": null,
+      "dateOfBirth": null,
+      "gender": "MASCULINE",
+      "crp": "0612345",
+      "expertise": "CLINICAL",
+      "honorific": "MASC_DR",
+      "professionalName": "Dr. João Silva",
+      "languages": ["PORTUGUESE"],
+      "status": "ACTIVE",
+      "createdAt": "2026-01-01T00:00:00.000Z"
     }
   ]
 }
 ```
 
-**Resposta (envelopada):**
+---
+
+## Patient Profiles
+
+### POST /me/patient-profiles
+
+Cria perfil próprio para o usuário autenticado.
+
+Body:
 
 ```json
 {
-  "success": true,
-  "statusCode": 201,
-  "data": { "message": "Agenda atualizada com sucesso!" }
+  "psychologistPracticeContextId": "uuid-ou-null"
 }
 ```
 
----
+Resposta `data`: `PatientProfileHTTP`.
 
-### GET /availabilities 🔑
+### POST /patient-profiles
 
-**Controller:** `GetPsychologistAvailabilityController`  
-**Auth:** `JwtAuthGuard` + `PracticeContextGuard`  
-**Header obrigatório:** `x-psychologist-practice-context-id`
+Cria paciente pelo psicólogo.
 
-**Resposta (envelopada):**
+Header:
 
-```json
-{
-  "success": true,
-  "statusCode": 200,
-  "data": {
-    "availabilities": [
-      {
-        "id": "uuid",
-        "dayOfWeek": 1,
-        "startTime": "09:00",
-        "endTime": "17:00",
-        "isActive": true
-      }
-    ]
-  }
-}
+```http
+x-psychologist-practice-context-id: <uuid>
 ```
 
----
+Importante: esta rota não usa `PracticeContextGuard`; o header é lido manualmente e passado ao use case.
 
-### Métricas de psicólogos (admin)
-
-> ✅ Reparadas (T24) — todas via `PsychologistProfileRepository` + hidratação de `User` (não mais `PsychologistRepository` stub). Shapes preservadas.
-
-| Rota | Controller | Auth | Fonte / shape |
-|---|---|---|---|
-| `GET /admin/metrics/psychologists/total` | `GetTotalPsychologistsController` | `JwtAuthGuard` | `countDistinctUsers()` → `{ total }` (usuários distintos com perfil) |
-| `GET /admin/metrics/psychologists/new` | `GetNewPsychologistsCountController` | `JwtAuthGuard` | `findManyByCreatedAtRange` agrupado por dia → `{ date, newPsychologists }[]` |
-| `GET /admin/metrics/psychologists/age-range` | `GetPsychologistsAgeRangeController` | `JwtAuthGuard` | faixas de `User.dateOfBirth` via `findMany()` → `{ ageRange, count }[]` |
-| `GET /admin/metrics/psychologists/gender` | `GetPsychologistsGenderController` | `JwtAuthGuard` | `User.gender` via `findMany()` → `{ gender, count }[]` |
-
----
-
-## OAuth / Auth Completo
-
-### GET /auth/google
-
-**Controller:** `GoogleAuthController`  
-**Guard:** `GoogleAuthGuard`  
-**Pública:** ✅ — redireciona para Google OAuth
-
-### GET /auth/google/callback
-
-**Controller:** `GoogleAuthController`  
-**Retorna:** `{ message, user: { id, email, firstName, lastName, provider, profileImageUrl } }`
-
-### GET /auth/linkedin
-
-**Controller:** `LinkedInAuthController`  
-Análogo ao Google.
-
-### POST /auth/complete-registration — ❌ REMOVIDA (T33)
-
-`CompleteOAuthRegistrationController` + use case foram deletados. Use o fluxo novo: `POST /psychologist/profile` + `POST /psychologist/practice-contexts`.
-
----
-
-## Paciente
-
-### POST /patient/profile
-
-**Controller:** `CreatePatientProfileController`  
-**Use case:** `CreatePatientProfileUseCase`  
-**Auth:** `JwtAuthGuard` + `AccountStatusGuard`
-
-**Body:**
-
-```json
-{
-  "psychologistPracticeContextId": "uuid-do-contexto-ou-null"
-}
-```
-
-> `psychologistPracticeContextId` é nullable. Enviar `null` cria perfil autônomo.
-
-**Resposta (envelopada):**
-
-```json
-{
-  "success": true,
-  "statusCode": 201,
-  "data": {
-    "id": "uuid",
-    "userId": "uuid",
-    "psychologistPracticeContextId": null,
-    "isActive": true,
-    "archivedAt": null,
-    "createdAt": "2026-06-11T00:00:00.000Z"
-  }
-}
-```
-
-**Status codes:**
-- `201` — criado
-- `403` — conta desativada (`isActive=false`) ou `BLOCKED` (AccountStatusGuard)
-- `409` — usuário já tem perfil vinculado a este contexto
-
----
-
-### POST /patient (criação de paciente pelo psicólogo)
-
-**Controller:** `CreatePatientController`  
-**Use case:** `CreatePatientUseCase`  
-**Auth:** `JwtAuthGuard` + `PermissionsGuard` (não `PracticeContextGuard`)  
-**Header:** `x-psychologist-practice-context-id` (lido manualmente via `@Headers`)
-
-> ⚠️ **Diferença importante:** Esta rota usa `PermissionsGuard` (legado), não `PracticeContextGuard`. O header é lido manualmente — sem validação de UUID nem verificação de ownership pelo guard. Cabe ao use case validar.
-
-> ⚠️ O `patientId` retornado é o `patientProfile.id`, não o `user.id`.
-
-**Body:**
+Body:
 
 ```json
 {
   "firstName": "Maria",
   "lastName": "Santos",
-  "gender": "FEMININE",
-  "cpf": "987.654.321-00",
   "email": "maria@example.com",
   "phoneNumber": "11999999999",
+  "profileImageUrl": null,
   "dateOfBirth": "1995-03-20",
-  "profileImageUrl": null
-}
-```
-
-**Resposta (envelopada):**
-
-```json
-{
-  "success": true,
-  "statusCode": 201,
-  "data": {
-    "message": "Paciente criado com sucesso",
-    "patientId": "uuid-do-patient-profile"
-  }
-}
-```
-
----
-
-### GET /patients 🔑
-
-**Controller:** `FetchPatientsController`  
-**Use case:** `FetchPatientsUseCase`  
-**Auth:** `JwtAuthGuard` + `PracticeContextGuard`  
-**Header:** `x-psychologist-practice-context-id`
-
-**Query params:**
-- `pageIndex` (int, default 0)
-- `perPage` (int, default 10)
-
-**Resposta (envelopada):**
-
-```json
-{
-  "success": true,
-  "statusCode": 200,
-  "data": {
-    "patients": [...],
-    "meta": {
-      "pageIndex": 0,
-      "perPage": 10,
-      "totalCount": 42
-    }
-  }
-}
-```
-
----
-
-### GET /patients/:id 🔑
-
-**Controller:** `GetPatientByIdController`  
-**Auth:** `JwtAuthGuard` + `PracticeContextGuard`
-
----
-
-### GET /patients/cpf/:cpf 🔑
-
-**Controller:** `GetPatientByCpfController`  
-**Auth:** `JwtAuthGuard` + `PracticeContextGuard`
-
----
-
-### GET /patients/email/:email 🔑
-
-**Controller:** `GetPatientByEmailController`  
-**Auth:** `JwtAuthGuard` + `PracticeContextGuard`
-
----
-
-### PUT /patients/:id 🔑
-
-**Controller:** `UpdatePatientByIdController`  
-**Auth:** `JwtAuthGuard` + `PracticeContextGuard`
-
----
-
-### DELETE /patients/:id
-
-**Controller:** `DeletePatientController`  
-**Use case:** `DeletePatientUseCase`  
-**Auth:** `JwtAuthGuard`  
-**Status:** ✅ Reparada — `DeletePatientUseCase` usa `UserRepository` + `PatientProfileRepository.delete` (remove o `PatientProfile` por owner; repo stub deletado em T33)
-
----
-
-### PATCH /patients/:id/status 🔑
-
-**Controller:** `TogglePatientStatusController`  
-**Auth:** `JwtAuthGuard` + `PracticeContextGuard`
-
----
-
-### GET /patients/:id/details
-
-**Controller:** `GetPatientDetailsController`  
-**Auth:** sem guard local declarado  
-**Status:** ✅ Reparada — usa `UserRepository` + `PatientProfileRepository` (`findByIdAndPsychologistPracticeContextId`) + `AppointmentRepository`; repo stub deletado em T33
-
----
-
-### POST /invites/:hash/register (registrar paciente via link)
-
-**Controller:** `RegisterPatientViaInviteLinkController`  
-**Use case:** `RegisterPatientViaInviteLinkUseCase`  
-**Pública:** ✅ `@Public()`
-
-**Path param:** `hash` (string do link de convite)
-
-**Body:**
-
-```json
-{
-  "firstName": "Maria",
-  "lastName": "Santos",
-  "email": "maria@example.com",
-  "password": "Senha@123",
-  "dateOfBirth": "1995-03-20",
-  "cpf": null,
+  "cpf": "98765432100",
   "gender": "FEMININE",
-  "phoneNumber": null,
-  "profileImageUrl": null
+  "zipCode": "01310100",
+  "street": "Av. Paulista",
+  "neighborhood": "Bela Vista",
+  "city": "São Paulo",
+  "state": "SP"
 }
 ```
 
-**Resposta (envelopada):**
+Risco real: no schema atual, `cpf` e `dateOfBirth` foram marcados como opcionais antes de `.refine(...)`; omitir esses campos pode falhar na validação. Veja `04-known-divergences-and-risks.md`.
+
+Resposta:
 
 ```json
 {
-  "success": true,
-  "statusCode": 201,
-  "data": {
-    "patientId": "uuid-do-patient-profile",
-    "userId": "uuid",
+  "patientProfile": { "...": "PatientProfileHTTP" }
+}
+```
+
+### GET /patient-profiles
+
+Query aceita pelo schema:
+
+```ts
+{
+  pageIndex?: number
+  perPage?: number
+  filter?: string
+  status?: AccountStatus
+  gender?: Gender
+  order?: 'asc' | 'desc'
+  sessionVolume?: string
+}
+```
+
+Controller usa efetivamente `pageIndex` e `perPage`; outros filtros são aceitos pelo schema mas não são repassados ao use case atual.
+
+Resposta:
+
+```json
+{
+  "patients": ["PatientHTTP"],
+  "meta": {
+    "pageIndex": 0,
+    "perPage": 10,
+    "totalCount": 42
+  }
+}
+```
+
+### GET /patient-profiles/:id/details
+
+Query:
+
+```ts
+{
+  pageIndex?: number
+  perPage?: number
+}
+```
+
+Resposta:
+
+```json
+{
+  "patient": {
+    "id": "uuid",
     "firstName": "Maria",
     "lastName": "Santos",
+    "cpf": null,
     "email": "maria@example.com",
-    "psychologistPracticeContextId": "uuid-do-contexto"
-  }
+    "profileImageUrl": null,
+    "phoneNumber": null,
+    "dateOfBirth": null,
+    "gender": "FEMININE",
+    "sessions": [
+      {
+        "id": "uuid",
+        "date": "2026-01-01T00:00:00.000Z",
+        "sessionDate": "2026-01-01T00:00:00.000Z",
+        "createdAt": "2026-01-01T00:00:00.000Z",
+        "theme": "Diagnóstico",
+        "duration": 60,
+        "status": "FINISHED",
+        "content": "Notas"
+      }
+    ]
+  },
+  "meta": {}
 }
 ```
 
----
+### Convites e vínculo
 
-### Métricas de pacientes
-
-| Rota | Controller | Auth | Status |
-|---|---|---|---|
-| `GET /patients/stats/new` | `GetPatientsAmountController` | `JwtAuthGuard` | ⚠️ pode depender de repo legado |
-| `GET /patients/stats/gender` | `GetPatientsByGenderController` | `JwtAuthGuard` | ⚠️ pode depender de repo legado |
-| `GET /patients/stats/age` | `FetchPatientsByAgeController` | `JwtAuthGuard` | ⚠️ pode depender de repo legado |
-| `GET /patients/stats/card` | `GetPatientsAmountCardController` | `JwtAuthGuard` | ⚠️ pode depender de repo legado |
-| `GET /admin/metrics/patients/total` | `GetTotalPatientsController` | `JwtAuthGuard` | ⚠️ pode depender de repo legado |
-| `GET /admin/metrics/patients/new` | `GetAdminPatientsChartController` | `JwtAuthGuard` | ⚠️ pode depender de repo legado |
-| `GET /patients/filter/with-attachments` | `FetchPatientsWithAttachmentsController` | `JwtAuthGuard` | ⚠️ pode depender de repo legado |
+| Fluxo | Rotas |
+|---|---|
+| Validar convite por token | `GET /patient-profiles/invites/:token` |
+| Registrar novo usuário via token | `POST /patient-profiles/invites/:token/register` |
+| Aceitar convite com usuário existente | `POST /patient-profiles/invites/:token/accept` |
+| Rejeitar convite | `POST /patient-profiles/invites/:token/reject` |
+| Registro por registration link | `POST /patient-profiles/registration-links/:hash/register` |
+| Gerar código de acesso | `POST /patient-profiles/:patientProfileId/access-code` |
+| Reivindicar por código | `POST /patient-profiles/access-code/claim` |
+| Criar claim request | `POST /patient-profiles/claim-requests` |
+| Listar claim requests | `GET /patient-profiles/claim-requests` |
+| Detalhar claim request | `GET /patient-profiles/claim-requests/:id` |
+| Aprovar/rejeitar claim request | `POST /patient-profiles/claim-requests/:id/approve` / `reject` |
 
 ---
 
 ## Agendamentos
 
-### POST /appointments 🔑
+### POST /appointments
 
-**Controller:** `CreateAppointmentController`  
-**Auth:** `JwtAuthGuard` + `PracticeContextGuard`
-
-**Body:**
+Body:
 
 ```json
 {
   "patientProfileId": "uuid",
   "diagnosis": "Ansiedade",
-  "content": null,
-  "scheduledAt": "2026-07-01T10:00:00.000Z",
+  "content": "opcional",
+  "scheduledAt": "2026-07-15T10:00:00.000Z",
   "status": "SCHEDULED"
 }
 ```
 
-**Resposta (envelopada):**
+Resposta:
 
 ```json
 {
-  "success": true,
-  "statusCode": 201,
-  "data": {
-    "message": "Agendamento criado com sucesso",
-    "appointment": {
-      "id": "uuid",
-      "patientProfileId": "uuid",
-      "psychologistPracticeContextId": "uuid",
-      "diagnosis": "Ansiedade",
-      "content": null,
-      "scheduledAt": "2026-07-01T10:00:00.000Z",
-      "durationInMin": null,
-      "status": "SCHEDULED",
-      "createdAt": "2026-06-11T00:00:00.000Z"
-    }
-  }
+  "message": "Agendamento criado com sucesso",
+  "appointment": { "...": "AppointmentHTTP" }
 }
 ```
 
-**Erros:** `409 APPOINTMENT_CONFLICT`, `422 APPOINTMENT_DATE_IN_PAST`
+### GET /appointments
 
----
+Query:
 
-### GET /appointments 🔑
+```ts
+{
+  pageIndex?: number
+  perPage?: number
+  orderBy?: 'asc' | 'desc'
+  startDate?: Date
+  endDate?: Date
+  patientName?: string
+}
+```
 
-**Controller:** `FetchAppointmentsController`  
-**Auth:** `JwtAuthGuard` + `PracticeContextGuard`
+Resposta:
 
-**Query params:** `pageIndex`, `perPage`, `orderBy`, `startDate`, `endDate`, `patientName`
-
----
-
-### GET /appointments/context/:practiceContextId
-
-**Controller:** `FetchAppointmentsByPsychologistIdController`  
-**Auth:** `JwtAuthGuard` (sem `PracticeContextGuard`)
-
-**Path param:** `practiceContextId` (UUID)
-
-**Query params:** `pageIndex`, `perPage`, `orderBy`
-
----
-
-### GET /appointments/:id 🔑
-
-**Controller:** `GetAppointmentsController`  
-**Auth:** `JwtAuthGuard` + `PracticeContextGuard`
-
----
-
-### PUT /appointments/:id 🔑
-
-**Controller:** `UpdateAppointmentController`  
-**Auth:** `JwtAuthGuard` + `PracticeContextGuard`
-
----
-
-### DELETE /appointments/:id 🔑
-
-**Controller:** `DeleteAppointmentController`  
-**Auth:** `JwtAuthGuard` + `PracticeContextGuard`
-
-**Erros:** `422 APPOINTMENT_NOT_SCHEDULED` (não pode deletar sessão em andamento/finalizada)
-
----
-
-### PATCH /appointments/:id/start
-
-**Controller:** `StartAppointmentController`  
-**Auth:** `JwtAuthGuard` (sem PracticeContextGuard)
-
----
-
-### GET /appointments/pending/:patientProfileId 🔑
-
-**Controller:** `GetScheduledAppointmentController`  
-**Auth:** `JwtAuthGuard` + `PracticeContextGuard`
-
----
+```json
+{
+  "appointments": ["AppointmentHTTP"]
+}
+```
 
 ### GET /appointments/available-slots
 
-**Controller:** `GetAvailableSlotsController`  
-**Auth:** `JwtAuthGuard`
+Query real:
 
-**Query params:** `psychologistPracticeContextId` (UUID), `startDate` (Date), `endDate` (Date)
-
----
-
-### PUT /appointments/:id/reschedule 🔑
-
-**Controller:** `RescheduleAppointmentController`  
-**Auth:** `JwtAuthGuard` + `PracticeContextGuard`
-
-**Body:** `{ "newDate": "2026-07-15T10:00:00.000Z" }`
-
----
-
-### PATCH /appointments/:id/cancel 🔑
-
-**Controller:** `CancelAppointmentController`  
-**Auth:** `JwtAuthGuard` + `PracticeContextGuard`
-
----
-
-### GET /appointments/active/grouped 🔑
-
-**Controller:** `FetchActiveAppointmentsGroupedController`  
-**Auth:** `JwtAuthGuard` + `PracticeContextGuard`
-
----
-
-### POST /appointments/:appointmentId/start (iniciar sessão) 🔑
-
-**Controller:** `StartAppointmentSessionController`  
-**Auth:** `JwtAuthGuard` + `PracticeContextGuard`
-
-**Resposta:**
-
-```json
+```ts
 {
-  "success": true,
-  "statusCode": 201,
-  "data": {
-    "message": "Sessão iniciada!",
-    "sessionId": "uuid"
-  }
+  psychologistPracticeContextId: string
+  date: Date
 }
 ```
 
----
+Resposta:
 
-### POST /sessions/:id/finish 🔑
+```json
+{
+  "slots": ["09:00", "10:00"]
+}
+```
 
-**Controller:** `FinishAppointmentSessionController`  
-**Auth:** `JwtAuthGuard` + `PracticeContextGuard`
+Risco real: a implementação atual do loop pode não avançar em alguns branches. Veja `04-known-divergences-and-risks.md`.
 
-**Body:** `{ "content": "Notas da sessão..." }`
+### Sessão
 
----
-
-### Métricas de agendamentos 🔑
-
-| Rota | Controller |
-|---|---|
-| `GET /appointments/metrics/month-count` | `GetMonthlySessionsCountController` |
-| `GET /appointments/metrics/daily-count` | `GetDailySessionsMetricsController` |
-
-Ambas exigem `PracticeContextGuard`.
+| Método | Path | Body | Resposta |
+|---|---|---|---|
+| `PATCH` | `/appointments/:id/start` | nenhum | 204, só muda status |
+| `POST` | `/appointments/:appointmentId/start` | nenhum | `{ message, sessionId }` |
+| `POST` | `/sessions/:id/finish` | `{ content?: string }` | 200 com `data: null` |
 
 ---
 
 ## Anamnese
 
-### GET /patients/:patientId/anamnesis
+Path legado mantido:
 
-**Controller:** `AnamnesisController`  
-**Auth:** `JwtAuthGuard` + `PracticeContextGuard` 🔑 (header `x-psychologist-practice-context-id`)
+```http
+/patients/:patientId/anamnesis
+```
 
-> ⚠️ `patientId` no path é tratado como `patientProfileId`. Passe o `id` do `PatientProfile`, não o `id` do `User`.
-> O `PatientProfile` precisa pertencer ao contexto ativo (`findByIdAndPsychologistPracticeContextId`); caso contrário `404`.
+`patientId` é tratado como `PatientProfile.id`.
 
-**Resposta:**
+`GET` retorna:
 
 ```json
 {
-  "success": true,
-  "statusCode": 200,
-  "data": {
-    "anamnesis": {
-      "queixaPrincipal": "...",
-      "historico": "..."
-    }
+  "anamnesis": {
+    "id": "uuid",
+    "patientId": "patientProfileId",
+    "content": {},
+    "createdAt": "2026-01-01T00:00:00.000Z"
   }
 }
 ```
 
----
+ou:
 
-### PUT /patients/:patientId/anamnesis
+```json
+{ "anamnesis": null }
+```
 
-**Controller:** `AnamnesisController`  
-**Auth:** `JwtAuthGuard` + `PracticeContextGuard` 🔑 (header `x-psychologist-practice-context-id`)
-
-**Body:** qualquer JSON (estrutura livre)
-
-> Sobrescreve o conteúdo completo da anamnese. `PatientProfile` fora do contexto ativo → `404`.
+`PUT` aceita qualquer objeto JSON e sobrescreve o conteúdo.
 
 ---
 
 ## Documentos / Prontuários / Observações
 
-Todas as rotas usam `PracticeContextGuard` 🔑
+Todas exigem `PracticeContextGuard`.
 
-### POST /documents
+| Recurso | Criar | Listar |
+|---|---|---|
+| Documentos | `POST /documents` | `GET /documents/patient-profile/:patientProfileId` |
+| Prontuários | `POST /medical-records` | `GET /medical-records/patient-profile/:patientProfileId` |
+| Observações | `POST /observations` | `GET /observations/patient-profile/:patientProfileId` |
 
-**Body:**
+Bodies:
 
-```json
-{
-  "patientProfileId": "uuid",
-  "type": "RG",
-  "attachmentId": null
-}
+```ts
+// POST /documents
+{ patientProfileId: string, type: 'RG' | 'CPF' | 'CNH' | 'OTHER', attachmentId?: string | null }
+
+// POST /medical-records
+{ patientProfileId: string, content?: string | null, attachmentId?: string | null }
+
+// POST /observations
+{ patientProfileId: string, content: string }
 ```
 
-**Resposta:**
-
-```json
-{
-  "success": true,
-  "statusCode": 201,
-  "data": {
-    "message": "Documento criado com sucesso",
-    "document": {
-      "id": "uuid",
-      "patientProfileId": "uuid",
-      "type": "RG",
-      "attachment": null,
-      "createdAt": "..."
-    }
-  }
-}
-```
-
-### GET /documents/patient-profile/:patientProfileId 🔑
-
-### POST /medical-records 🔑
-
-**Body:** `{ patientProfileId, content, attachmentId }`
-
-### GET /medical-records/patient-profile/:patientProfileId 🔑
-
-### POST /observations 🔑
-
-**Body:** `{ patientProfileId, content }`
-
-### GET /observations/patient-profile/:patientProfileId 🔑
+Os controllers atuais passam `attachment: null` para os presenters de documentos e prontuários.
 
 ---
 
@@ -1084,112 +688,89 @@ Todas as rotas usam `PracticeContextGuard` 🔑
 
 ### POST /attachments
 
-**Controller:** `UploadAttachmentController`  
-**Auth:** `JwtAuthGuard`  
-**Content-Type:** `multipart/form-data`
+Content-Type: `multipart/form-data`.
 
-**Campos do form:**
-- `file` (obrigatório): arquivo JPG, PNG ou PDF, máx 3MB
-- `patientId` (opcional): UUID — se fornecido, vincula ao perfil do paciente
-- `type` (opcional): `"AVATAR"` atualiza `User.profileImageUrl`
+Campos:
 
-**Resposta:**
+- `file`: obrigatório.
+- `patientId`: opcional.
+- `type`: opcional.
+
+Validação:
+
+- MIME: `image/jpeg`, `image/jpg`, `image/png`, `application/pdf`.
+- Máximo: 3 MB.
+
+Resposta:
 
 ```json
 {
-  "success": true,
-  "statusCode": 201,
-  "data": {
-    "attachmentId": "uuid",
-    "url": "https://storage.example.com/arquivo.pdf"
-  }
+  "attachmentId": "uuid",
+  "url": "https://storage.example.com/file.pdf"
 }
 ```
 
-**Erros:** `413 FILE_TOO_LARGE`, `415 INVALID_ATTACHMENT_TYPE`
+Avatar:
 
----
-
-### GET /attachments/:id
-
-**Controller:** `GetAttachmentController`  
-**Auth:** sem guard local  
-**Resposta:** stream do arquivo (não envelopado)
-
----
-
-### DELETE /attachments/:id
-
-**Controller:** `DeleteAttachmentController`  
-**Auth:** `JwtAuthGuard`
-
----
-
-### GET /attachments/patient/:patientId
-
-**Controller:** `FetchPatientAttachmentsController`  
-**Auth:** `JwtAuthGuard`
-
----
+- Só atualiza usuário se `patientId` estiver presente e `type === "AVATAR"`.
+- Atualiza `profileImageUrl` com `attachment.id`, não com a URL.
 
 ### GET /attachments
 
-**Controller:** `FetchAllAttachmentsController`  
-**Auth:** `JwtAuthGuard`
+Query:
 
-**Query params:** `page`, `filter`, `from`, `to`
+```ts
+{
+  page?: string
+  filter?: string
+  patientId?: string
+  from?: string
+  to?: string
+}
+```
+
+`patientId` é aceito pelo schema, mas o controller não repassa ao use case atual.
 
 ---
 
 ## Billing / Planos
 
-### GET /plans
-
-**Controller:** `FetchSubscriptionPlanController`  
-**Auth:** sem guard local  
-**Status:** ESTÁVEL
-
-### POST /subscription-plan
-
-**Controller:** `CreateSubscriptionPlanController`  
-**Auth:** sem guard local
-
-**Body:** `{ name, description, priceInCents, interval }`
-
-### GET /plans/:id
-
-**Controller:** `GetSubscriptionPlanByIdController`  
-**Auth:** sem guard local
-
-### DELETE /subcription-plan/:planId
-
-> ⚠️ **Typo no path:** `subcription` (falta o `s`). Use exatamente este path.
-
-**Auth:** sem guard local
-
 ### POST /billing
 
-**Controller:** `CreateBillingController`  
-**Auth:** `JwtAuthGuard` (CurrentUser presente mas opcional)
-
-**Body:** `{ subscriptionPlanId, amount }`
-
-**Resposta:**
+Body real:
 
 ```json
 {
-  "success": true,
-  "statusCode": 201,
-  "data": {
-    "message": "Cobrança criada com sucesso!",
-    "billingUrl": "https://pagamento.exemplo.com/...",
-    "billingId": "ext_id_123",
-    "amount": 15000
-  }
+  "patientEmail": "paciente@example.com",
+  "patientTaxId": "12345678909",
+  "patientName": "Maria Santos",
+  "amountInCents": 15000,
+  "consultationDetails": "Sessão de psicologia",
+  "frequency": "ONE_TIME",
+  "methods": ["PIX", "CARD"],
+  "returnUrl": "https://app.example.com/return",
+  "completionUrl": "https://app.example.com/success"
 }
 ```
 
-> ⚠️ **Risco:** Não está confirmado que `POST /billing` cria um registro `Payment` no banco local. O `AccountStatusGuard` verifica `Payment.expiresAt` para liberar acesso. Se o billing externo não criar `Payment` local, o psicólogo ficará bloqueado mesmo tendo pago.
+Resposta:
+
+```json
+{
+  "message": "Cobrança criada com sucesso!",
+  "billingId": "external-id",
+  "billingUrl": "https://...",
+  "amount": 15000
+}
+```
+
+Não cria `Payment` local no fluxo atual.
+
+### Planos
+
+`GET /plans` e `GET /plans/:id` são autenticados globalmente. Não estão públicos.
+
+`DELETE /subcription-plan/:planId` mantém o typo `subcription`.
 
 ---
 
@@ -1197,259 +778,134 @@ Todas as rotas usam `PracticeContextGuard` 🔑
 
 ### POST /suggestions
 
-**Controller:** `CreateSuggestionController`  
-**Auth:** `JwtAuthGuard`  
-**Content-Type:** `multipart/form-data`
+Content-Type: `multipart/form-data`.
 
-**Campos:** `title`, `description`, `category` (enum), `files[]` (opcional)
+Campos:
 
-**Resposta:**
+```ts
+{
+  title: string      // min 5
+  description: string // min 10
+  category: SuggestionCategory
+  files?: File[]
+}
+```
+
+Resposta atual:
 
 ```json
 {
-  "success": true,
-  "statusCode": 201,
-  "data": {
-    "suggestion": {
-      "id": "uuid",
-      "psychologistProfileId": "uuid",
-      "title": "...",
-      "description": "...",
-      "category": "UI_UX",
-      "status": "PENDING",
-      "likes": [],
-      "likesCount": 0,
-      "attachments": [],
-      "createdAt": "..."
-    }
-  }
+  "message": "Suggestion sent successfully"
 }
 ```
 
 ### GET /suggestions
 
-**Auth:** sem guard local  
-**Query params:** `category`, `status`, `sortBy`, `search`
+Query:
 
-### PATCH /suggestions/:id/like
+```ts
+{
+  category?: SuggestionCategory
+  status?: SuggestionStatus | SuggestionStatus[]
+  sortBy?: 'recent' | 'most_voted'
+  search?: string
+}
+```
 
-**Auth:** `JwtAuthGuard`
-
-### GET /admin/metrics/suggestions/total
-
-**Auth:** `JwtAuthGuard`
-
-### GET /admin/metrics/suggestions/most-voted
-
-**Auth:** `JwtAuthGuard`
-
-### PATCH /admin/suggestions/:id/status
-
-**Auth:** `JwtAuthGuard`
-
-**Body:** `{ status?, title?, category?, description? }`
+O controller passa apenas `status[0]` ao use case.
 
 ---
 
 ## Popups
 
-### GET /popups/active
+| Método | Path | Resposta |
+|---|---|---|
+| `GET` | `/popups/active` | `{ popups }`, sem `internalName` |
+| `GET` | `/popups/unseen` | `{ popups }`, com `internalName` via presenter |
+| `POST` | `/popups/:id/view` | `{ success: true }` |
 
-**Controller:** `FetchActivePopupsController`  
-**Auth:** `JwtAuthGuard`
-
-### GET /popups/unseen
-
-**Controller:** `PopupsController` (rota dentro do controller genérico)  
-**Auth:** `JwtAuthGuard`
-
-### POST /popups/:popupId/view
-
-**Controller:** `MarkPopupAsViewedController`  
-**Auth:** `JwtAuthGuard`
-
-**Body:** `{ action: string }`
-
-### POST /popups/:id/view
-
-**Controller:** `PopupsController`  
-**Auth:** `JwtAuthGuard`
-
-> ⚠️ Há dois controllers registrando `POST /popups/:id/view` com nomes diferentes (`MarkPopupAsViewedController` e `PopupsController`). NestJS pode ter ambiguidade aqui — verificar qual prevalece na ordem do módulo.
+As rotas exigem `PsychologistProfile`; usuários sem profile recebem `PSYCHOLOGIST_PROFILE_NOT_FOUND`.
 
 ---
 
 ## Dashboard / Admin
 
-### GET /dashboard 🔑
+### GET /dashboard
 
-**Controller:** `GetDashboardDataController`  
-**Auth:** `JwtAuthGuard` + `PracticeContextGuard`  
-**Header obrigatório:** `x-psychologist-practice-context-id`
+Query:
 
-**Query params:** `startDate`, `endDate`
-
-> Dados isolados por practice context: total/gênero/idade vêm de `PatientProfile` ativos + `User` do contexto; `upcomingAppointments` e tendência (`newPatientsLast7Days`, via `PatientProfile.createdAt`) também escopados ao contexto. Não usa mais repos legados nem `user.sub` como contexto.
-
-### GET /sessions/total-work-hours 🔑
-
-**Controller:** `GetTotalWorkHoursController`  
-**Auth:** `JwtAuthGuard` + `PracticeContextGuard`  
-**Header obrigatório:** `x-psychologist-practice-context-id`
-
-**Query params:** `startDate`, `endDate` (opcionais)
-
-> `{ totalMinutes }` soma a duração das sessões finalizadas (`endedAt != null`) cujo `appointment` pertence ao practice context, opcionalmente filtradas pelo range.
-
-### GET /suggestions/ranking
-
-**Controller:** `GetRankingController`  
-**Auth:** `JwtAuthGuard`
-
-### GET /admin/metrics/patients/new
-
-**Controller:** `GetAdminPatientsChartController`  
-**Auth:** `JwtAuthGuard`
-
-**Query params:** `startDate`, `endDate`
-
----
-
-## Endereço
-
-### GET /address/:cep
-
-**Controller:** `GetAddressByCepController`  
-**Pública:** ✅ `@Public()`
-
-**Resposta:**
-
-```json
+```ts
 {
-  "success": true,
-  "statusCode": 200,
-  "data": {
-    "street": "Rua Exemplo",
-    "neighborhood": "Centro",
-    "city": "São Paulo",
-    "state": "SP",
-    "cep": "01310-100"
-  }
+  startDate?: Date
+  endDate?: Date
 }
 ```
 
-### GET /address/:id
+Resposta:
 
-**Controller:** `GetAddressByIdController`  
-**Auth:** `JwtAuthGuard`
-
-### PUT /address/:id
-
-**Controller:** `UpdateAddressByIdController`  
-**Auth:** `JwtAuthGuard`
-
-**Body:** campos opcionais de `Address`
-
----
-
-## Clínicas
-
-Todas as rotas de clínica usam `JwtAuthGuard`.
-
-### POST /clinics
-
-**Body:**
-
-```json
+```ts
 {
-  "legalName": "Clínica Saúde Mental Ltda.",
-  "tradeName": "ClínicaSM",
-  "cnpj": "12345678000195",
-  "email": "contato@clinica.com",
-  "phoneNumber": "11999999999",
-  "website": "https://clinica.com"
+  totalPatients: number
+  patientsByGender: Array<{ gender: Gender, count: number }>
+  patientsByAge: Array<{ range: '0-17' | '18-25' | '26-35' | '36-50' | '51+', count: number }>
+  upcomingAppointments: AppointmentHTTP[]
+  newPatientsLast7Days: Array<{ date: string, newPatients: number }>
 }
 ```
 
-**Resposta:**
+`newPatientsLast7Days` só é calculado se `startDate` e `endDate` forem enviados.
+
+### Métricas admin
+
+As rotas `/admin/...` exigem autenticação, mas não há guard real de role/admin no código atual.
+
+---
+
+## Registration Links
+
+### POST /registration-links
+
+Resposta:
 
 ```json
 {
-  "success": true,
-  "statusCode": 201,
-  "data": {
-    "clinic": {
-      "id": "uuid",
-      "legalName": "...",
-      "tradeName": "...",
-      "cnpj": "...",
-      "email": "...",
-      "phoneNumber": "...",
-      "isActive": true,
-      "responsibleMemberId": null,
-      "createdAt": "..."
-    }
-  }
+  "qrCodeLink": "https://frontend/invite/hash",
+  "hash": "hash"
 }
 ```
 
-### GET /clinics/:id
+Risco real: o controller chama o use case com `psychologistPracticeContextId: user.sub`; o use case espera id de `PsychologistPracticeContext`. Link gerado pode ficar órfão.
 
-### PATCH /clinics/:id/responsible
+### GET /registration-links/:hash
 
-**Body:** `{ "memberId": "uuid" }`
+Público. Resposta:
 
-### POST /clinic-branches
-
-**Body:** `{ clinicId, legalName, tradeName?, cnpj?, email?, ... }`
-
-### GET /clinic-branches/clinic/:clinicId
-
-### POST /clinic-members
-
-**Body:** `{ userId, clinicId, branchId?, memberRole? }`
-
-### GET /clinic-members/clinic/:clinicId
-
-### POST /clinic-psychologists
-
-**Body:** `{ psychologistProfileId, clinicId, branchId? }`
-
-### GET /clinic-psychologists/clinic/:clinicId
+```json
+{
+  "psychologistId": "psychologistProfileId",
+  "psychologistName": "João Silva",
+  "expiresAt": "2026-01-01T00:00:00.000Z"
+}
+```
 
 ---
 
-## Colisões e ambiguidades de rotas
+## Rotas Removidas / Não Registradas
 
-### GET /psychologists/:param — ✅ RESOLVIDO (T20)
+Não use estes paths no frontend:
 
-A colisão histórica de 4 handlers `@Get(':param')` foi eliminada. Agora um único `PsychologistReadController` declara, **na ordem**:
-
-```
-@Get('search')  → GET /psychologists/search?cpf=|crp=|email=   (SearchPsychologistUseCase)
-@Get(':id')     → GET /psychologists/:id                        (GetPsychologistByIdUseCase)
-```
-
-A precedência de handlers dentro de um mesmo controller é determinística (`search` declarado antes de `:id`), portanto `search` nunca é capturado por `:id`. Os controllers `GetPsychologistBy{Cpf,Crp,Email}Controller` e seus use cases foram desregistrados (remoção de arquivos legados em T33).
-
-**Para o frontend:** use `GET /psychologists/search?cpf=` / `?crp=` / `?email=` (exatamente um filtro) e `GET /psychologists/:id` (id = `psychologistProfile.id`).
-
-### POST /popups/:id/view — possível duplicação
-
-`MarkPopupAsViewedController` e `PopupsController` podem registrar handlers concorrentes para `POST /popups/:id/view`. Verificar comportamento em runtime.
-
-### AuthenticateController registrado em dois módulos
-
-`AuthenticateController` aparece tanto em `AuthModule.controllers` quanto em `HttpModule.controllers` (via importação). Em NestJS, registrar o mesmo controller em dois módulos geralmente resulta em apenas um par de handlers — mas pode causar instâncias duplicadas de providers. **Não é um bug crítico**, mas é um cheiro de código.
-
----
-
-## Legenda de confiabilidade
-
-| Símbolo | Significado |
+| Path antigo | Status atual |
 |---|---|
-| ✅ ESTÁVEL | Rota funcional, usa repositórios novos |
-| 🔑 | Requer header `x-psychologist-practice-context-id` |
-| ⚠️ LEGADA | Deprecada, ainda registrada, funcionamento incerto |
-| ❌ QUEBRADA | Repositório stub — lança erro imediatamente |
-| ⚠️ POTENCIALMENTE QUEBRADA | Pode chamar repositório legado dependendo do use case |
+| `POST /psychologist` | Não registrado |
+| `POST /auth/complete-registration` | Não registrado |
+| `GET /approvals` | Não registrado |
+| `PATCH /approvals/:id/approve` | Não registrado |
+| `GET /psychologists/search` | Não registrado; use `GET /psychologist/profile/search` |
+| `GET /psychologists/:cpf`, `:crp`, `:email` | Não registrados |
+| `POST /patient` | Não registrado; use `POST /patient-profiles` |
+| `POST /patient/profile` | Não registrado; use `POST /me/patient-profiles` |
+| `GET /patients/stats/*` | Não registrado; use `/patient-profiles/metrics/*` |
+| `GET /patients/filter/with-attachments` | Não registrado; use `/patient-profiles/with-attachments` |
+| `GET /invites/:hash` | Não registrado; use `/registration-links/:hash` ou `/patient-profiles/invites/:token` conforme o fluxo |
+| `POST /invites/:hash/register` | Não registrado; use `/patient-profiles/registration-links/:hash/register` |
+| `POST /psychologist/practice-contexts` | Não registrado; use `/psychologist/practice-context` |

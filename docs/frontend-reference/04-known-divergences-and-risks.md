@@ -1,149 +1,167 @@
-# 04 — Divergências Conhecidas e Riscos
+# 04 - Divergencias Conhecidas e Riscos
 
-> Consolidação objetiva de todas as divergências verificadas no código, com status de confirmação e impacto para o frontend.  
-> **Todas as afirmações foram verificadas no código real** (arquivo fonte citado).
-
----
-
-## Tabela de divergências
-
-| # | Descrição | Spec diz | Código faz | Status | Impacto | Severidade |
-|---|---|---|---|---|---|---|
-| D01 | `consultationFee` em Profile | Deve estar em `PracticeContext` | ✅ Está em `PracticeContext` | CONFIRMADO | Nenhum | — |
-| D02 | `GET /me` sem `consultationFee` | Deve expor `consultationFee` nos contextos | ✅ RESOLVIDO — `user-presenter.ts` expõe `consultationFee` por contexto | RESOLVIDO | — | **OK** |
-| D03 | `GET /me` sem `nickname` | Deve expor `nickname` nos contextos | ✅ RESOLVIDO — `user-presenter.ts` expõe `nickname` por contexto | RESOLVIDO | — | **OK** |
-| D04 | `GET /me` sem `professionalBio` | Deve expor bio no profile | ✅ RESOLVIDO — `user-presenter.ts` expõe `professionalBio` no profile | RESOLVIDO | — | **OK** |
-| D05 | `clinicMemberContexts` fixo | Deve retornar memberships reais | ✅ RESOLVIDO — `get-authenticated-user.controller.ts` busca memberships via `ClinicMemberRepository.findManyByUserId` | RESOLVIDO | — | **OK** |
-| D06 | `AppointmentStatus.DONE` | Enum completo com DONE | ✅ RESOLVIDO (T31) — `DONE` removido do enum de domínio; `isFinished()` e `StartAppointmentUseCase` usam só `FINISHED`; alinhado ao Prisma | RESOLVIDO | — | **OK** |
-| D07 | Fluxo self-service sem aprovação | Usuário recém-registrado pode criar perfil imediatamente | ✅ RESOLVIDO (T29) — conta e `PsychologistProfile` nascem `ACTIVE`; `AccountStatusGuard` só bloqueia `isActive=false` ou `account.status=BLOCKED`, não há mais `PENDING` no registro | RESOLVIDO | — | **OK** |
-| D08 | `PrismaPatientRepository` funcional | Implementação real | ✅ RESOLVIDO (T33) — repo stub deletado; rotas de paciente migradas para `PatientProfileRepository` + hidratação de `User` (P1) | RESOLVIDO | — | **OK** |
-| D09 | `PrismaPsychologistRepository` funcional | Implementação real | ✅ RESOLVIDO (T33) — repo stub deletado; rotas de psicólogo migradas para `PsychologistProfileRepository` + `User` (P1) | RESOLVIDO | — | **OK** |
-| D10 | CORS permite header customizado | Header `x-psychologist-practice-context-id` no CORS | ✅ RESOLVIDO (T28) — incluído em `allowedHeaders` | RESOLVIDO | Preflight cross-origin permitido | — |
-| D11 | `POST /session` sem perfis | Spec nova pede retorno de status | Retorna apenas `id, firstName, lastName, email, status, profileImageUrl` | CONFIRMADO | Frontend deve chamar `GET /me` após login | **MÉDIA** |
-| D12 | `PatientProfile.contextId` nullable | Deve ser nullable | ✅ Nullable no Prisma (`schema.prisma:291`) | CONFIRMADO | Nenhum | — |
-| D13 | Partial unique index em PatientProfile | Via SQL raw | Confirmado na migration (T01) | CONFIRMADO | Nenhum | — |
-| D14 | `POST /patient` usa header manual | Deve usar `PracticeContextGuard` | `create-patient.controller.ts:34` usa `@Headers` direto + `PermissionsGuard` | CONFIRMADO | Sem validação de UUID nem ownership | **MÉDIA** |
-| D15 | `POST /patient` retorna `patientId` | Deve ser `patientProfile.id` | ✅ Retorna `patientProfile.id` (`create-patient.controller.ts:62`) | CONFIRMADO | `patientId !== user.id` — documentar | **MÉDIA** |
-| D16 | `AnamnesisController` sem contexto guard | Deve usar `PracticeContextGuard` | ✅ RESOLVIDO — `anamnesis.controller.ts` usa `@UseGuards(JwtAuthGuard, PracticeContextGuard)` | RESOLVIDO | — | **OK** |
-| D17 | `patientId` em anamnesis = `patientProfileId` | Path usa `patientId` | Código trata como `patientProfileId` (`anamnesis.controller.ts:16`) | CONFIRMADO | Frontend deve passar `patientProfile.id` | **MÉDIA** |
-| D18 | Colisão de rotas `/psychologists/:param` | `:id` + `search` num único controller | ✅ Resolvido (T20) — `PsychologistReadController` declara `@Get('search')` antes de `@Get(':id')`; os 3 controllers `:cpf`/`:crp`/`:email` foram removidos | RESOLVIDO | — | **OK** |
-| D19 | `PrismaAppointmentSessionRepository` stub | Implementação real | ✅ Resolvido (T3) — `findById` real + `sumDurationByPracticeContext`; rotas de sessão reparadas (T17/T18) | RESOLVIDO | — | **OK** |
-| D20 | Billing externo cria `Payment` local | `POST /billing` deve registrar payment | `CreateBillingUseCase` retorna `billingUrl` — não confirmado que cria `Payment` | INCERTO | `AccountStatusGuard` pode bloquear psicólogo após pagamento | **ALTA** |
-| D21 | Colunas legadas no schema | ✅ RESOLVIDO (T30) — `psychologist_id`/`psychologistId`/`psychologist_name` removidos de `suggestions`, `payments`, `registration_links`, `psychologist_availabilities`; `as any` removido dos 4 repos (migração script-only `20260613120000_drop_legacy_psychologist_columns`, aprovação necessária para aplicar). `popups.psychologistId` (nullable) fora de escopo | RESOLVIDO | Inserts usam só os novos IDs | — |
-| D22 | `POST /psychologist` deprecado com warning | Deve emitir deprecation header | ✅ RESOLVIDO (T33) — `CreatePsychologistController`+UC deletados; rota legada removida (use `POST /psychologist/profile`) | RESOLVIDO | — | **OK** |
-| D23 | `POST /auth/complete-registration` deprecado | Deve emitir deprecation header | ✅ RESOLVIDO (T33) — `CompleteOAuthRegistrationController`+UC deletados; rota removida (use `POST /psychologist/profile`) | RESOLVIDO | — | **OK** |
-| D24 | CPF validation com campo ausente | `CPF.isValid(undefined)` retorna false | Validadores opcionais podem rejeitar ausência incorretamente | PRESUMIDO | Formulários com CPF opcional podem ter erro | **MÉDIA** |
-| D25 | `AuthenticateController` em dois módulos | Um único registro | Registrado em `auth.module.ts:55` E importado via `HttpModule` | CONFIRMADO | Duplicação de instância, não bug funcional | **BAIXA** |
+> Consolidacao objetiva das divergencias e riscos verificados no backend atual.
+> Este arquivo deve ser lido junto com `01-entities-and-types.md` e `02-routes.md`.
 
 ---
 
-## Repositórios legados — ✅ Removidos (T33)
+## Criterios
 
-Os repositórios stub `PrismaPatientRepository` e `PrismaPsychologistRepository` (que lançavam erro em qualquer chamada) foram **deletados**. Todas as rotas que dependiam deles foram migradas para os repositórios baseados em `User` + `PatientProfile`/`PsychologistProfile` nas fases P1.
+- "Confirmado" significa que o comportamento foi verificado na implementacao atual.
+- "Impacto frontend" descreve como a tela ou integracao deve se comportar enquanto o backend nao muda.
+- Rotas sem `@Public()` sao autenticadas por guards globais, mesmo quando o controller nao declara guard local.
+- `PatientProfile.id` e a referencia principal de paciente nas features clinicas.
 
-### Rotas de paciente — ✅ Reparadas
+---
 
-| Rota | Status |
+## Tabela de divergencias
+
+| # | Descricao | Backend atual | Impacto frontend | Severidade |
+|---|---|---|---|---|
+| D01 | `POST /session` e `POST /session/refresh` nao usam envelope global | Os controllers escrevem `res.json(...)`; a resposta nao vem em `{ data }` | Tratar login/refresh como excecao e chamar `GET /me` para obter perfis/contextos | Media |
+| D02 | `POST /sign-out` nao e publico | `@Public()` esta comentado; alem do `JwtRefreshGuard`, o guard global exige access token | Enviar access token/cookie e refresh token; nao tratar logout como chamada anonima | Media |
+| D03 | `GET /plans` e `GET /plans/:id` exigem autenticacao | Nao ha `@Public()`; guard global protege as rotas | Nao renderizar tela publica de planos usando essas rotas sem sessao | Media |
+| D04 | `AccountStatusGuard` nao bloqueia por pagamento/plano | Bloco de validacao de `Payment` esta comentado | Nao assumir liberacao/bloqueio de acesso apos `POST /billing` | Alta |
+| D05 | `POST /billing` nao cria `Payment` local | Use case cria cobranca externa no AbacatePay e retorna dados da cobranca | Fluxo de assinatura local ainda nao existe; tratar como link/cobranca externa | Alta |
+| D06 | `POST /registration-links` usa id errado de contexto | Controller passa `user.sub` como `psychologistPracticeContextId` e nao usa `PracticeContextGuard` | Link pode falhar depois como `REGISTRATION_LINK_ORPHAN`; preferir convite por token/codigo | Alta |
+| D07 | `POST /patient-profiles` nao usa `PracticeContextGuard` | Rota le `x-psychologist-practice-context-id` manualmente e `PermissionsGuard` nao tem metadata ativa | Enviar header mesmo assim; backend nao valida ownership no guard dessa rota | Media |
+| D08 | `PermissionsGuard` nao restringe `POST /patient-profiles` | Nao ha uso de `@Permissions(...)` nessa rota | Nao depender de permissao granular no frontend; restricao real e apenas auth global | Media |
+| D09 | Campos opcionais de paciente podem falhar quando omitidos | Schemas de create/update refinam `cpf` e `dateOfBirth` depois de `.optional()` | Enviar CPF/data validos quando usar esses campos; testar formulario sem opcionais antes de liberar | Media |
+| D10 | Toggle de status de paciente esta invertido | `activate()` define `INACTIVE` e `inactivate()` define `ACTIVE` | Evitar depender de `PATCH /patient-profiles/:id/status` ate correcao | Alta |
+| D11 | Filtros de `GET /patient-profiles` nao sao aplicados | Schema aceita filtros, mas controller repassa so `pageIndex` e `perPage` | Aplicar filtros no frontend ou aguardar ajuste backend | Media |
+| D12 | `GET /attachments` aceita `patientId`, mas controller nao repassa ao use case | Query schema tem `patientId`; chamada ignora o valor | Nao confiar em filtro server-side por paciente nessa rota | Media |
+| D13 | Avatar de paciente grava id de anexo em `profileImageUrl` | Upload `type=AVATAR` atualiza apenas se `patientId` vier junto e salva `attachment.id` | Normalizar imagem pelo endpoint de stream; nao assumir URL absoluta | Media |
+| D14 | Documentos e prontuarios retornam `attachment: null` | Controllers passam `attachment: null` aos presenters mesmo com `attachmentId` | Buscar anexo separadamente se a tela precisar dos metadados/arquivo | Media |
+| D15 | `Appointment.canDelete()` permite quase tudo | Condicao usa `!isInProgress() || !isFinished()` | Frontend nao deve apresentar essa regra como bloqueio confiavel | Media |
+| D16 | Calculo de slots disponiveis tem risco de loop/resultado incorreto | Loop pode dar `continue` antes de avancar slot e a condicao de slot passado parece invertida | Usar `GET /appointments/available-slots` com cautela e timeout no cliente | Alta |
+| D17 | `PATCH /appointments/:id/start` nao usa contexto | Rota existe sem `PracticeContextGuard`; `POST /appointments/:appointmentId/start` usa contexto | Preferir `POST /appointments/:appointmentId/start` para iniciar sessao | Media |
+| D18 | Metricas do dashboard podem ignorar identidade do `PatientProfile` | Algumas agregacoes usam dados de `User` vinculado e pulam perfis sem `userId` | Nao comparar metricas do dashboard com listagem total sem considerar essa diferenca | Media |
+| D19 | Popups podem registrar visualizacao com id de profile em campo de user | View recebe `psychologistProfile.id`, enquanto schema referencia `User` | Validar comportamento em producao antes de depender de "visto" como auditoria | Media |
+| D20 | Admin metrics nao tem guard de role | Rotas `/admin/metrics/psychologists/*` exigem auth, mas nao role ADMIN | Nao expor link no frontend para usuarios comuns; backend ainda precisa endurecer regra | Media |
+| D21 | Rotas de clinica nao tem ownership/role guard especifico | Controllers estao autenticados, mas nao validam papel dentro da clinica | Tratar UI de clinica como administrativa e evitar expor a usuarios indevidos | Media |
+| D22 | `GET /patient-profiles/claim-requests/:id` depende de contexto | Usa `PracticeContextGuard`; global auth tambem se aplica | Enviar `x-psychologist-practice-context-id` tambem no detalhe da solicitacao | Baixa |
+| D23 | Parametro `patientId` em anamnese e na pratica `patientProfileId` | Rotas continuam em `/patients/:patientId/anamnesis` | Passar `PatientProfile.id`, nao `User.id` | Media |
+| D24 | `Popup` ainda tem campo legado nullable `psychologistId` | Schema atual mantem `psychologistId` alem de `psychologistProfileId` | Ignorar `psychologistId` no frontend; usar dados retornados pelos endpoints | Baixa |
+
+---
+
+## Comportamentos que estao alinhados
+
+| Area | Estado atual |
 |---|---|
-| `DELETE /patients/:id` | ✅ Reparada — `PatientProfile` por owner |
-| `GET /patients/stats/new` | ✅ Reparada — via `PatientProfileRepository` |
-| `GET /patients/stats/gender` | ✅ Reparada — via `PatientProfileRepository` |
-| `GET /patients/stats/age` | ✅ Reparada — via `PatientProfileRepository` |
-| `GET /patients/stats/card` | ✅ Reparada — via `PatientProfileRepository` |
-| `GET /patients/:id/details` | ✅ Reparada — via `PatientProfileRepository` + `User` |
-| `GET /admin/metrics/patients/total` | ✅ Reparada — via `PatientProfileRepository` |
-| `GET /admin/metrics/patients/new` | ✅ Reparada — via `PatientProfileRepository` |
-| `GET /patients/filter/with-attachments` | ✅ Reparada — via `PatientProfileRepository` |
-| `GET /dashboard` | ✅ Reparada (T16) — escopada por practice context |
+| `consultationFee` | Fica em `PsychologistPracticeContext` e e exposto em `GET /me.data.practiceContexts[]` |
+| `nickname` | Fica em `PsychologistPracticeContext` e e exposto em `GET /me.data.practiceContexts[]` |
+| `professionalBio` | Fica em `PsychologistProfile` e e exposto em `GET /me.data.psychologistProfile` |
+| `clinicMemberContexts` | `GET /me` busca memberships reais via repositorio de clinic members |
+| `AppointmentStatus` | Enum atual usa `SCHEDULED`, `ATTENDING`, `FINISHED`, `CANCELED`, `NOT_ATTEND`, `RESCHEDULED`; nao ha `DONE` |
+| Aprovacao manual de conta | Nao existe fluxo de approvals ativo; conta/profile nascem ativos no registro normal |
+| CORS do header de contexto | `x-psychologist-practice-context-id` esta nos headers permitidos |
+| Repositorios legados stubados | Nao sao a base das rotas atuais de paciente/psicologo; o fluxo usa `PatientProfile` e `PsychologistProfile` |
 
-### Rotas de psicólogo — ✅ Reparadas
+---
 
-| Rota | Status |
+## Rotas removidas ou nao registradas
+
+Nao use estas rotas no frontend atual:
+
+| Rota antiga | Substituta real |
 |---|---|
-| `GET /psychologists` | ✅ Reparada (T21) — `PsychologistProfile.findMany()` + `User` |
-| `GET /psychologists/:id` | ✅ Reparada (T19/T20) — via `PsychologistProfile` + `User` |
-| `GET /psychologists/search?cpf=\|crp=\|email=` | ✅ Nova (T20) — substitui as 3 rotas `:cpf`/`:crp`/`:email` |
-| `DELETE /psychologist/:id` | ✅ Reparada (T23) — remove `PsychologistProfile` por id |
-| `PATCH /psychologist/profile` | ✅ Reparada (T22) — atualiza `User` + `PsychologistProfile` do usuário autenticado |
-| `GET /approvals` + `PATCH /approvals/:id/approve` | ✅ Removidas (T33) — superfície de aprovação deletada; registro nasce `ACTIVE` (T29), sem fluxo de aprovação |
-
-### PrismaAppointmentSessionRepository — ✅ Resolvido (T3)
-
-**Arquivo:** `src/infra/database/prisma/repositories/prisma-appointment-session-repository.ts`
-
-Implementação real: `findById` (com relação `appointment`) + `sumDurationByPracticeContext`. Rotas reparadas:
-- `GET /sessions/total-work-hours` — escopada por practice context (T17)
-- `POST /sessions/:id/finish` — opera sobre o repo real (T18)
+| `POST /psychologist` | `POST /psychologist/profile` |
+| `POST /auth/complete-registration` | `POST /psychologist/profile` apos OAuth/login |
+| `POST /psychologist/practice-contexts` | `POST /psychologist/practice-context` |
+| `POST /patient` | `POST /patient-profiles` |
+| `POST /patient/profile` | `POST /me/patient-profiles` |
+| `GET /patients/stats/*` | `GET /patient-profiles/metrics/*` |
+| `GET /patients/filter/with-attachments` | `GET /patient-profiles/with-attachments` |
+| `GET /patients/:id/details` | `GET /patient-profiles/:id/details` |
+| `GET /psychologists/search` | `GET /psychologist/profile/search` |
+| `GET /psychologists/:cpf` / `:crp` / `:email` | `GET /psychologist/profile/search?cpf=...&crp=...&email=...` |
+| `POST /invites` / `GET /invites/:hash` | `POST /registration-links` / `GET /registration-links/:hash` |
 
 ---
 
-## Comportamentos indefinidos
+## Regras praticas para o frontend
 
-### Colisão de rotas `/psychologists/:param` — ✅ Resolvida (T20/T33)
+### Auth e envelope
 
-A colisão histórica de 4 handlers `@Get(':param')` no mesmo prefixo foi eliminada. Um único `PsychologistReadController` declara `@Get('search')` antes de `@Get(':id')`, e os controllers `:cpf`/`:crp`/`:email` foram removidos (T33). Use `GET /psychologists/search?cpf=|crp=|email=` para busca e `GET /psychologists/:id` para detalhe.
+- Assuma envelope `{ data, message?, error? }` na maioria das rotas.
+- Excecoes confirmadas: `POST /session`, `POST /session/refresh`, redirects OAuth e streams de anexo.
+- Depois de login/refresh, use `GET /me` como fonte de verdade para perfis, contextos e memberships.
 
-### CPF validation com campo optional
+### Contexto de psicologo
 
-**Arquivo:** validadores de CPF nas schemas Zod
+- Use `GET /me.data.practiceContexts` para montar o seletor de contexto.
+- Envie `x-psychologist-practice-context-id` em todas as rotas documentadas com `PracticeContextGuard`.
+- Se a rota cria dado clinico mas ainda nao tem guard, como `POST /patient-profiles`, envie o header mesmo assim para compatibilidade.
 
-**Problema presumido:** `CPF.isValid(undefined)` retorna `false`, mas em campos opcionais (`.optional()`), o Zod passa `undefined` para o refinamento. Isso pode causar rejeição de CPF ausente como "CPF inválido" em vez de "CPF não fornecido".
+### Pacientes
 
-**Impacto:** Formulários onde CPF é opcional podem não funcionar corretamente.
+- Use `PatientProfile.id` em agendamentos, anamnese, documentos, prontuarios, observacoes, anexos e detalhes.
+- Nao use `User.id` como paciente salvo quando a rota espera `patientProfileId`.
+- Nao dependa de `status` toggle ate o backend corrigir a inversao.
 
-### create-patient-schema e validação de data
+### Planos e cobranca
 
-**Arquivo:** `src/validators/patients/controllers/create-patient-schema.ts`
+- `GET /plans` e autenticado.
+- `POST /billing` cria cobranca externa, nao assinatura local.
+- O frontend nao deve implementar controle de acesso baseado em `Payment` local porque o backend atual nao aplica essa regra.
 
-**Problema presumido:** A função `isFuture(date)` valida que a data está no futuro — em contexto de `dateOfBirth`, isso deveria ser invertido (`isPast` ou `!isFuture`). A spec menciona que `dateOfBirth` não pode ser futura, mas se o código usa `isFuture` como critério de validade (não de rejeição), pode aceitar datas futuras.
+### Arquivos
+
+- `POST /attachments` aceita multipart com `file`, `patientId` e `type`.
+- `GET /attachments/:id` retorna stream autenticado.
+- `profileImageUrl` pode ser id de anexo.
 
 ---
 
-## Decisões a tomar antes do frontend depender
+## Decisoes pendentes no backend antes de depender em producao
 
-| # | Decisão | Status |
+| # | Decisao | Motivo |
 |---|---|---|
-| B01 | Adicionar `x-psychologist-practice-context-id` ao `allowedHeaders` no CORS | ✅ Resolvido (T28) |
-| B02 | Definir fluxo de aprovação de conta e perfil (manual vs automático) | ✅ Resolvido — sem aprovação; registro nasce `ACTIVE` (T29) |
-| B03 | Confirmar se `POST /billing` cria `Payment` local | ⚠️ Em aberto (D20 incerto) |
-| B04 | Expor `consultationFee`, `nickname`, `professionalBio` em `GET /me` | ✅ Resolvido — expostos no `user-presenter` |
-| B05 | Popular `clinicMemberContexts` em `GET /me` | ✅ Resolvido — via `ClinicMemberRepository` |
-| B06 | Corrigir colisão de rotas `/psychologists/:param` | ✅ Resolvido (T20/T33) |
-| B07 | Remover ou substituir repositórios stubados | ✅ Resolvido (T33) — stubs deletados, rotas migradas |
-| B08 | Confirmar enum `AppointmentStatus.DONE` | ✅ Resolvido (T31) — `DONE` removido |
-| B09 | Definir estratégia para anamnese sem PracticeContextGuard | ✅ Resolvido — `PracticeContextGuard` aplicado |
+| B01 | Corrigir `POST /registration-links` para usar contexto real | Link atual pode ser criado com `psychologistPracticeContextId` invalido |
+| B02 | Definir fluxo real de assinatura/pagamento | `POST /billing` externo nao se conecta ao `AccountStatusGuard` |
+| B03 | Aplicar `PracticeContextGuard` em `POST /patient-profiles` | Hoje a rota valida contexto manualmente e de forma incompleta |
+| B04 | Corrigir schemas opcionais de paciente | Campos opcionais podem falhar quando omitidos |
+| B05 | Corrigir toggle de status de `PatientProfile` | Ativar/inativar esta invertido no dominio |
+| B06 | Corrigir slots disponiveis | Ha risco de loop e condicao invertida |
+| B07 | Endurecer guards de admin/clinica | Rotas autenticadas ainda nao validam papel de negocio |
+| B08 | Decidir formato de avatar | Hoje `profileImageUrl` pode guardar id de anexo, nao URL |
+| B09 | Repassar filtros aceitos nos controllers | `GET /patient-profiles` e `GET /attachments` aceitam filtros que nao chegam ao use case |
 
 ---
 
-## Sumário para o time de frontend
+## Sumario para o time de frontend
 
-### Use com confiança
+### Use com confianca
 
-- `POST /user` — criar conta
-- `POST /session`, `POST /session/refresh`, `POST /sign-out`
-- `GET /me` (com as limitações documentadas)
-- `POST /psychologist/profile`, `POST /psychologist/practice-contexts`
-- `POST /patient/profile`
-- `POST /appointments`, `GET /appointments`, `PUT /appointments`, `DELETE /appointments` (com PracticeContextGuard)
-- `POST /availabilities`, `GET /availabilities`
-- `POST /documents`, `GET /documents/...`, `POST /medical-records`, `POST /observations`
-- `POST /attachments`
-- `POST /clinics`, `GET /clinics/:id`
-- `POST /invites`, `GET /invites/:hash`, `POST /invites/:hash/register`
-- `GET /address/:cep`
-- `GET /plans`, `POST /billing`
+- `POST /user`
+- `POST /session`, tratando resposta sem envelope
+- `POST /session/refresh`, tratando resposta sem envelope
+- `GET /me`
+- `POST /psychologist/profile`
+- `PATCH /psychologist/profile`
+- `POST /psychologist/practice-context`
+- `GET /psychologists`
+- `GET /psychologist/profile/:id`
+- `GET /psychologist/profile/search`
+- `POST /me/patient-profiles`
+- Rotas clinicas com `PracticeContextGuard`, desde que o header de contexto seja enviado
+- `GET /address/cep/:cep`
 
 ### Use com cautela
 
-- `POST /patient` — PermissionsGuard legado + header manual `x-psychologist-practice-context-id`, não `PracticeContextGuard` (D14). Prefira `POST /patient/profile`
-- `GET /appointments/context/:practiceContextId` — sem `PracticeContextGuard`
+- `POST /patient-profiles` por falta de `PracticeContextGuard`
+- `PATCH /patient-profiles/:id/status` por inversao de status
+- `GET /appointments/available-slots` por risco de loop/resultado incorreto
+- `POST /registration-links` por contexto invalido
+- `POST /billing` porque nao cria assinatura local
+- `GET /plans` em tela publica, porque exige auth
+- Rotas de admin/clinica, porque ainda nao tem guard de papel/ownership
 
-### Removidas (não existem mais)
+### Nao use
 
-- `POST /psychologist` — ❌ removido (T33), use `POST /psychologist/profile`
-- `POST /auth/complete-registration` — ❌ removido (T33), use `POST /psychologist/profile`
-- `GET /approvals` + `PATCH /approvals/:id/approve` — ❌ removidos (T33), sem fluxo de aprovação
-- `GET /psychologists/:cpf|:crp|:email` — ❌ removidos (T20/T33), use `GET /psychologists/search?cpf=|crp=|email=`
-- `GET /patients/:name` — ❌ removido (T32)
-
-> As rotas antes marcadas como "quebradas (repositório stub)" — `DELETE /patients/:id`, `GET /patients/stats/*`, `GET /patients/:id/details`, métricas de paciente, `GET /psychologists`, `DELETE /psychologist/:id` — foram **reparadas** (stubs deletados em T33, migradas para os repositórios baseados em `Profile`). Veja a seção "Repositórios legados — Removidos".
+- Rotas antigas listadas em "Rotas removidas ou nao registradas"
+- Campos legados como `psychologistId` em `Popup`
+- `subscriptionPlanId` em `POST /billing`
+- `DONE` como status de appointment
+- `isActive` como campo HTTP de `PatientProfile`; use `status`
