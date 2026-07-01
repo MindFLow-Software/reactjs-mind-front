@@ -29,7 +29,7 @@ import {
   SelectValue,
 } from '@/components/ui/select'
 import { cn } from '@/lib/utils'
-import { useHeaderStore } from '@/hooks/use-header-store'
+import { useHeaderStore } from '@/store/use-header-store'
 import { getSuggestions } from '@/api/suggestions/get-suggestions'
 import { updateSuggestionStatus } from '@/api/suggestions/update-suggestion-status'
 import { RoadmapCard } from './components/roadmap-card'

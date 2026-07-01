@@ -1,13 +1,19 @@
 import axios from 'axios'
+import { env } from '@/env'
 import { useActivePracticeContextStore } from '@/store/use-active-practice-context-store'
-import type { ApiErrorCode, ApiSuccessEnvelope, ApiErrorEnvelope } from '@/types/api'
+import { useSessionStore } from '@/store/use-session-store'
+import type {
+  ApiErrorCode,
+  ApiSuccessEnvelope,
+  ApiErrorEnvelope,
+} from '@/types/api'
 
 const API_ERROR_MESSAGES_PT: Partial<Record<ApiErrorCode, string>> = {
   PATIENT_ALREADY_EXISTS: 'Já existe um paciente com este CPF.',
 }
 
 export const api = axios.create({
-  baseURL: import.meta.env.VITE_API_URL,
+  baseURL: env.VITE_API_URL,
   withCredentials: true,
 })
 
@@ -50,6 +56,7 @@ api.interceptors.response.use(
   (response) => {
     if (response.status === 204 || response.data == null) return response
     if (isSuccessEnvelope(response.data)) {
+      response.apiMessage = response.data.message ?? null
       response.data = response.data.data
     }
     return response
@@ -65,9 +72,7 @@ api.interceptors.response.use(
     }
 
     if (error.response.status === 401) {
-      localStorage.removeItem('isAuthenticated')
-      localStorage.removeItem('user')
-      useActivePracticeContextStore.getState().clearActivePracticeContextId()
+      useSessionStore.getState().clearSession()
       const currentPath = window.location.pathname
       const shouldRedirect = !SKIP_REDIRECT_PATHS.some((p) =>
         currentPath.startsWith(p),

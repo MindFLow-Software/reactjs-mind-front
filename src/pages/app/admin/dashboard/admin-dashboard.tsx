@@ -4,7 +4,7 @@ import { useState, useEffect } from 'react'
 import { Helmet } from 'react-helmet-async'
 import { subDays } from 'date-fns'
 
-import { useHeaderStore } from '@/hooks/use-header-store'
+import { useHeaderStore } from '@/store/use-header-store'
 import { TotalPsychologistsCard } from './components/total-psychologists-card'
 import { TotalPatientCard } from './components/total-patient-card'
 import { TotalSuggestionsCard } from './components/total-suggestions-card'

@@ -18,7 +18,7 @@ import {
 } from 'lucide-react'
 import { useQuery } from '@tanstack/react-query'
 
-import { useHeaderStore } from '@/hooks/use-header-store'
+import { useHeaderStore } from '@/store/use-header-store'
 import { useDebounce } from '@/hooks/use-debounce'
 import { getSuggestions } from '@/api/suggestions/get-suggestions'
 import { SuggestionColumn } from './components/board/suggestion-column'

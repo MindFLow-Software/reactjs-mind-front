@@ -4,7 +4,7 @@ import { useEffect } from 'react'
 import { Helmet } from 'react-helmet-async'
 import { LayoutGrid } from 'lucide-react'
 
-import { useHeaderStore } from '@/hooks/use-header-store'
+import { useHeaderStore } from '@/store/use-header-store'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 
 import { MostVotedSuggestionsCard } from './components/most-voted-suggestions-card'

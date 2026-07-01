@@ -1,6 +1,6 @@
 import { create } from 'zustand'
 
-type IheaderStore = {
+interface IHeaderStore {
   title: string
   titleHref?: string
   subtitle?: string
@@ -9,7 +9,7 @@ type IheaderStore = {
   setSubtitle: (newSubtitle?: string, href?: string) => void
 }
 
-export const useHeaderStore = create<IheaderStore>((set) => ({
+export const useHeaderStore = create<IHeaderStore>((set) => ({
   title: '',
   titleHref: undefined,
   subtitle: undefined,

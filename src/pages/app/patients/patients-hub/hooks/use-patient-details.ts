@@ -11,7 +11,7 @@ import {
   getPatientProfileDetails,
   type IgetPatientProfileDetailsResponse,
 } from '@/api/patient-profiles/get-patient-profile-details'
-import { useHeaderStore } from '@/hooks/use-header-store'
+import { useHeaderStore } from '@/store/use-header-store'
 import { PATIENT_QUEUE_SOURCE_KEY } from '../constants'
 
 interface UsePatientDetailsReturn {

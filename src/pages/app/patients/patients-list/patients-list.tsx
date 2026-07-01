@@ -29,7 +29,7 @@ import {
   formatPatientsShowing,
 } from './patients-list.helpers'
 
-import { useHeaderStore } from '@/hooks/use-header-store'
+import { useHeaderStore } from '@/store/use-header-store'
 import { usePatientFilters } from '@/hooks/use-patient-filters'
 import { usePatientsMetrics } from './hooks/use-patients-metrics'
 import { usePatientsListQuery } from './hooks/use-patients-list-query'

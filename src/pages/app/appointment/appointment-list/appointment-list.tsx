@@ -24,7 +24,7 @@ import {
 } from '@/api/appointments/get-appointment'
 import { rescheduleAppointment } from '@/api/appointments/reschedule-appointment'
 import { cancelAppointment } from '@/api/appointments/cancel-appointment'
-import { useHeaderStore } from '@/hooks/use-header-store'
+import { useHeaderStore } from '@/store/use-header-store'
 import { AppointmentsTableFilters } from './components/appointments-table-filters'
 
 export function AppointmentsList() {

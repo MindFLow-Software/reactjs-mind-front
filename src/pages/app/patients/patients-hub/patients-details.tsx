@@ -26,7 +26,7 @@ import {
 
 import { getPatientProfileDetails } from '@/api/patient-profiles/get-patient-profile-details'
 import { PatientDetailsHeader } from './components/patient-details-header'
-import { useHeaderStore } from '@/hooks/use-header-store'
+import { useHeaderStore } from '@/store/use-header-store'
 import { PatientInfo } from './components/patient-info'
 import { PatientSessionsTimeline } from './components/timeline/patient-sessions-timeline'
 import { AnamnesisForm } from './components/anamnesis/anamnesis-form'

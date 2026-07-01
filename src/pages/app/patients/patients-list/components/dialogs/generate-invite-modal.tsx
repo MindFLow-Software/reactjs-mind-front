@@ -14,7 +14,7 @@ import {
   DialogTitle,
 } from '@/components/ui/dialog'
 import { generateRegistrationLink } from '@/api/invites/generate-registration-link'
-import { useInviteStore } from '@/utils/use-invite-store'
+import { useInviteStore } from '@/store/use-invite-store'
 
 export function GenerateInviteModal() {
   const [loading, setLoading] = useState(false)

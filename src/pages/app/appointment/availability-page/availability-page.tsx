@@ -7,7 +7,7 @@ import { CalendarClock, Info, Loader2 } from 'lucide-react'
 
 import { toast } from 'sonner'
 import { getAvailability } from '@/api/availability/get-availability'
-import { useHeaderStore } from '@/hooks/use-header-store'
+import { useHeaderStore } from '@/store/use-header-store'
 import { ScheduleManager } from './components/schedule-manager'
 
 export function AvailabilityPage() {

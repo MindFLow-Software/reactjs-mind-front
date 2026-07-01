@@ -2,7 +2,7 @@
 
 import { Helmet } from 'react-helmet-async'
 
-import { useHeaderStore } from '@/hooks/use-header-store'
+import { useHeaderStore } from '@/store/use-header-store'
 import { PendingPaymentsCard } from './components/pending-payments-card'
 import { AverageTicketCard } from './components/average-ticket-card'
 import { useEffect } from 'react'

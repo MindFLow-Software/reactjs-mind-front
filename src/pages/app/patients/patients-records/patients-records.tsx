@@ -10,7 +10,7 @@ import {
   fetchPatientProfiles,
   type IgetPatientsQueryParams,
 } from '@/api/patient-profiles/fetch-patient-profiles'
-import { useHeaderStore } from '@/hooks/use-header-store'
+import { useHeaderStore } from '@/store/use-header-store'
 import { PatientsDataBlock } from '../components/patients-data-block'
 import { PatientsPageShell } from '../components/patients-page-shell'
 import { usePatientRecordsFilters } from '@/hooks/use-patient-records-filters'

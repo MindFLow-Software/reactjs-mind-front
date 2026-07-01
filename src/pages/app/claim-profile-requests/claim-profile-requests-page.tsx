@@ -8,7 +8,7 @@ import {
 
 import { Time } from '@/utils/time'
 import { useAuth } from '@/hooks/use-auth'
-import { useHeaderStore } from '@/hooks/use-header-store'
+import { useHeaderStore } from '@/store/use-header-store'
 import { translatedHonorific } from '@/constants/translated-honorific'
 import { fetchClaimProfileRequests } from '@/api/patient-profiles/fetch-claim-profile-requests'
 

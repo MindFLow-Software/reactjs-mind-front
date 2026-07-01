@@ -5,7 +5,7 @@ import { Helmet } from 'react-helmet-async'
 
 import { AppointmentAddForm } from './components/appointment-add-form'
 import { SessionTimer } from './components/SessionTimer'
-import { useHeaderStore } from '@/hooks/use-header-store'
+import { useHeaderStore } from '@/store/use-header-store'
 import { SessionNotesEditor } from './components/session-notes-editor'
 
 export function AppointmentsRoom() {

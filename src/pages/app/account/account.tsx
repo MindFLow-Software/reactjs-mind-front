@@ -5,7 +5,7 @@ import { Helmet } from 'react-helmet-async'
 import { useQuery } from '@tanstack/react-query'
 import { Loader2, RefreshCw } from 'lucide-react'
 
-import { useHeaderStore } from '@/hooks/use-header-store'
+import { useHeaderStore } from '@/store/use-header-store'
 import { getProfile } from '@/api/psychologists/get-profile'
 import { Button } from '@/components/ui/button'
 import { PsychologistProfileCard } from './components/psychologist-profile-card'

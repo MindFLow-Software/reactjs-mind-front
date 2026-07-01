@@ -2,7 +2,7 @@
 import { Helmet } from 'react-helmet-async'
 import { subDays } from 'date-fns'
 
-import { useHeaderStore } from '@/hooks/use-header-store'
+import { useHeaderStore } from '@/store/use-header-store'
 import { DashboardHeader } from './components/dashboard-header'
 import { type DashboardPeriod, PERIOD_DAYS } from './constants'
 import { MonthPatientsAmountCard } from './components/month-patients-amount-card'

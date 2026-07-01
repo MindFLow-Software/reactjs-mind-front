@@ -7,7 +7,7 @@ import { FolderOpen, Download, Upload } from 'lucide-react'
 import { toast } from 'sonner'
 
 import { PaginationDocsPatients } from '@/components/pagination-docs-patients'
-import { useHeaderStore } from '@/hooks/use-header-store'
+import { useHeaderStore } from '@/store/use-header-store'
 import {
   getAllAttachments,
   deleteAttachment,
