@@ -42,11 +42,18 @@ export interface CreatePatientBody {
   dateOfBirth?: string
   cpf?: string
   gender?: Gender
-  cep?: string
-  logradouro?: string
-  bairro?: string
-  cidade?: string
-  uf?: string
+  zipCode?: string
+  street?: string
+  number?: string
+  complement?: string
+  neighborhood?: string
+  city?: string
+  state?: string
+  modality?: string
+  frequency?: string
+  price?: string
+  source?: string
+  notes?: string
 }
 
 export type CreatePatientResponse = { message: string; patientId: string }
@@ -54,17 +61,25 @@ export type CreatePatientResponse = { message: string; patientId: string }
 export interface UpdatePatientBody {
   firstName?: string
   lastName?: string
+  email?: string
   phoneNumber?: string
   dateOfBirth?: string
   cpf?: string
   gender?: Gender
   profileImageUrl?: string
   attachmentIds?: string[]
-  cep?: string | null
-  logradouro?: string | null
-  bairro?: string | null
-  cidade?: string | null
-  uf?: string | null
+  zipCode?: string | null
+  street?: string | null
+  number?: string | null
+  complement?: string | null
+  neighborhood?: string | null
+  city?: string | null
+  state?: string | null
+  modality?: string
+  frequency?: string
+  price?: string
+  source?: string
+  notes?: string
 }
 
 // POST /invites/:hash/register — senha: mín. 8 chars, maiúscula, minúscula, número, especial

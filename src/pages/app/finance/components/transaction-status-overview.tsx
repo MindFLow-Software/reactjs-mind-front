@@ -77,7 +77,7 @@ export function TransactionStatusOverview({
   ].filter((item) => item.value > 0) // Remove categorias zeradas do gráfico
 
   return (
-    <Card className="rounded-xl border bg-card shadow-sm overflow-hidden flex flex-col h-full transition-all duration-300 hover:shadow-md">
+    <Card className="rounded-xl bg-card overflow-hidden flex flex-col h-full transition-all duration-300">
       <CardHeader className="p-6 pb-2">
         <div className="space-y-1">
           <CardTitle className="text-sm font-bold uppercase tracking-[0.15em] text-muted-foreground/70">

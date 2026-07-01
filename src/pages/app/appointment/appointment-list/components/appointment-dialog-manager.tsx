@@ -3,8 +3,8 @@
 import {
   Dialog,
   DialogContent,
-  DialogTitle,
   DialogDescription,
+  DialogTitle,
 } from '@/components/ui/dialog'
 import { EditAppointment } from './edit-appointment-dialog'
 import { RegisterAppointment } from './register-appointment'
@@ -78,37 +78,33 @@ export function AppointmentDialogManager({
       </Dialog>
 
       <Dialog open={states.cancel} onOpenChange={(v) => setStates('cancel', v)}>
-        <DialogContent className="p-0 border-none max-w-[400px] rounded-xl">
-          {appData && (
-            <CancelAppointmentDialog
-              patientName={appData.name}
-              onClose={() => setStates('cancel', false)}
-              onCancel={() => mutations.cancel(appData.id)}
-              isCancelling={false}
-            />
-          )}
-        </DialogContent>
+        {appData && (
+          <CancelAppointmentDialog
+            patientName={appData.name}
+            onClose={() => setStates('cancel', false)}
+            onCancel={() => mutations.cancel(appData.id)}
+            isCancelling={false}
+          />
+        )}
       </Dialog>
 
       <Dialog
         open={states.reschedule}
         onOpenChange={(v) => setStates('reschedule', v)}
       >
-        <DialogContent className="p-0 border-none max-w-md rounded-xl">
-          {appData && (
-            <RescheduleAppointmentDialog
-              patientName={appData.name}
-              onClose={() => setStates('reschedule', false)}
-              onReschedule={(date) =>
-                mutations.reschedule({
-                  appointmentId: appData.id,
-                  newDate: date,
-                })
-              }
-              isRescheduling={false}
-            />
-          )}
-        </DialogContent>
+        {appData && (
+          <RescheduleAppointmentDialog
+            patientName={appData.name}
+            onClose={() => setStates('reschedule', false)}
+            onReschedule={(date) =>
+              mutations.reschedule({
+                appointmentId: appData.id,
+                newDate: date,
+              })
+            }
+            isRescheduling={false}
+          />
+        )}
       </Dialog>
     </>
   )

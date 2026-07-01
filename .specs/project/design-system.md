@@ -37,7 +37,8 @@
 
 | Token | Hex | Uso |
 |---|---|---|
-| `--slate-50`  | `#f5f7fa` | Fundo da página, fundo do `<thead>`, fundo do footer de dialog, hover ghost |
+| `--page-bg`   | `#efefef` | **Fundo da página (body)** — cinza neutro que eleva cards brancos sem borda ou sombra pesada |
+| `--slate-50`  | `#f5f7fa` | Fundo do `<thead>`, fundo do footer de dialog, hover ghost |
 | `--slate-100` | `#eceff4` | Divisores leves, fundo de `<kbd>`, badge neutro, fundo de hover de close |
 | `--slate-200` | `#dde2ea` | Bordas de input, divisores de header/tabs, borda secundária de botão |
 | `--slate-300` | `#c3cad5` | Borda hover de input, borda de `.btn-secondary` |
@@ -191,7 +192,7 @@ Escala de 4px (`4, 8, 12, 16, 20, 24, 32, 40, 48`). Use múltiplos exatos. Nunca
 ```css
 --radius-sm: 4px;   /* checkbox, kbd, ações de linha, menu item, doc-thumb */
 --radius:    6px;   /* inputs, botões, chips, dropdowns */
---radius-lg: 10px;  /* cards, stats, page-icon, upload-zone */
+--radius-lg: 12px;  /* cards, stats, page-icon, upload-zone */
 12px                /* modal, drawer (não tokenizado, usar literal) */
 50%                 /* avatares, dots, badges-icon */
 999px               /* pills (badge, gender, .pill-choice) */
@@ -409,11 +410,38 @@ Indicador online: dot 9×9 `--success` com borda 2px `#fff`, position absolute r
 ### 10.4 Card
 
 ```
-.card       — bg #fff, border slate-200, radius 10px, overflow hidden
+.card       — bg #fff, border none, radius 12px (--radius-lg), overflow hidden
+              Elevação feita por contraste de cor com --page-bg (#efefef), não por borda ou sombra.
+              Usar --shadow-sm apenas quando o card flutua sobre outro card (ex: dropdown, popover interno).
 .card-head  — padding 14/18/12, border-bottom slate-100, flex gap 12
 .card-title — 15/700/title/slate-900
 .card-sub   — 12.5/slate-500/margin-top 1px
 ```
+
+**Gap entre cards:** 8–12px. Preferir 8px em layouts densos, 12px em layouts respirados. Nunca usar divisores visuais entre cards — o gap e o contraste de fundo são suficientes.
+
+#### 10.4.1 Divisores internos de card
+
+Separam seções distintas dentro do mesmo card (ex: header → body, bloco de valor → bloco de resumo).
+
+| Propriedade | Valor |
+|---|---|
+| Cor | `--slate-100` (`#eceff4`) — cinza quase invisível |
+| Espessura | `1px solid` |
+| Largura | `100%` — toca as bordas laterais do card sem padding extra |
+| Margem vertical | 0 — o próprio padding das seções cria a respiração |
+
+**Variantes:**
+
+| Uso | Classe Tailwind | Equivalente CSS |
+|---|---|---|
+| Divisor principal (header/body) | `border-b border-border/50` | `border-bottom: 1px solid oklch(0.90 0.002 247.84 / 0.5)` |
+| Divisor sutil (entre valores no mesmo bloco) | `border-b border-border/30` | mesmo token com 30% opacidade |
+
+**Regras:**
+- Nunca adicionar `padding-left` ou `padding-right` no divisor — ele deve ir de borda a borda do card.
+- Nunca usar `--border` em opacidade total (100%) para divisores internos — fica pesado demais.
+- Em dark mode, `border-border/50` já se adapta automaticamente via o token `--border` remapeado.
 
 ### 10.5 Stat (KPI strip)
 
@@ -586,6 +614,7 @@ Active (filtro aplicado): border `--primary`, ring 3px.
 11. [ ] Estados ARIA presentes em diálogos, botões icon-only, e tabs.
 12. [ ] Mensagens em pt-BR, verbos no infinitivo.
 13. [ ] Não inventou nova cor — usou apenas tokens da seção 2.
+14. [ ] Cards: `bg-white` sem borda, `border-radius: 12px`, sobre `--page-bg` (`#efefef`). Sombra pesada é proibida — contraste de fundo faz o trabalho.
 
 ---
 
@@ -620,8 +649,10 @@ Active (filtro aplicado): border `--primary`, ring 3px.
     /* Primary */
     --primary:var(--blue-500); --primary-hover:var(--blue-600);
     --ring:rgba(30,111,217,0.18);
+    /* Page background */
+    --page-bg:#efefef;
     /* Radii */
-    --radius:6px; --radius-sm:4px; --radius-lg:10px;
+    --radius:6px; --radius-sm:4px; --radius-lg:12px;
     /* Fonts */
     --font-body:'Inter',system-ui,sans-serif;
     --font-title:'Inter Tight','Inter',system-ui,sans-serif;
@@ -632,7 +663,7 @@ Active (filtro aplicado): border `--primary`, ring 3px.
     --shadow-lg:0 12px 32px rgba(15,52,100,.12);
   }
   *{box-sizing:border-box} html,body{margin:0;padding:0}
-  body{font-family:var(--font-body);background:var(--slate-50);color:var(--slate-800);font-size:14px;line-height:1.5;-webkit-font-smoothing:antialiased}
+  body{font-family:var(--font-body);background:var(--page-bg);color:var(--slate-800);font-size:14px;line-height:1.5;-webkit-font-smoothing:antialiased}
   button{font-family:inherit;cursor:pointer;border:0;background:none;color:inherit}
   input,select{font-family:inherit;font-size:14px}
   h1,h2,h3{font-family:var(--font-title);margin:0;letter-spacing:-.015em;color:var(--slate-900)}
@@ -678,7 +709,8 @@ Sobrescrever apenas o necessário dentro de `[data-theme="dark"]`:
 ```css
 [data-theme="dark"] {
   /* ===== Surfaces (semantic, não slate-X invertidos) ===== */
-  --bg:              #0b1220;   /* fundo da página (body) */
+  --page-bg:         #0b1220;   /* fundo da página (body) — mesmo que --bg no dark */
+  --bg:              #0b1220;   /* alias de compatibilidade */
   --surface:         #121a2b;   /* card, modal, drawer, sidebar */
   --surface-elevated:#1a2440;   /* dropdown, popover, tooltip dark já era preto */
   --surface-sunken:  #08101c;   /* thead da tabela, footers, áreas “rebaixadas” */
@@ -748,7 +780,7 @@ Sobrescrever apenas o necessário dentro de `[data-theme="dark"]`:
 
 | Elemento | Light | Dark |
 |---|---|---|
-| Body background | `--slate-50` (#f5f7fa) | `--bg` (#0b1220) |
+| Body background | `--page-bg` (#efefef) | `--page-bg` / `--bg` (#0b1220) |
 | Card / modal / drawer | `#fff` | `--surface` (#121a2b) |
 | Sidebar | `#fff` | `--surface` |
 | Topbar | `#fff` | `--surface` |
@@ -896,7 +928,7 @@ Quando o usuário **não** tem preferência salva e não há toggle, respeitar o
 
 | Use | Light | Dark |
 |---|---|---|
-| Background da página | `#f5f7fa` | `#0b1220` |
+| Background da página | `#efefef` (`--page-bg`) | `#0b1220` |
 | Card | `#fff` | `#121a2b` |
 | Card elevado / popover | `#fff` | `#1a2440` |
 | Texto principal | `#1f2532` | `#e0e5ee` |
@@ -927,5 +959,8 @@ Quando o usuário **não** tem preferência salva e não há toggle, respeitar o
 - Definida regra de uso de roxo em gráficos (série "Outros" → stroke purple-500, área purple-100 30%).
 - Definido avatar para pacientes "Outro": gradiente `purple-300 → purple-600`.
 - **Adicionada seção Dark Theme completa** (seção 17): superfícies semânticas, tokens invertidos, mapeamento por componente, ajustes para botões/inputs/gráficos, contraste AA verificado, snippet de ativação via `data-theme`.
+- **`--page-bg: #efefef`** introduzido como token dedicado para fundo da página. Separado do `--slate-50` para que cards brancos (`#fff`) se elevem por contraste de cor puro, sem borda ou sombra pesada.
+- **`--radius-lg` aumentado de 10px para 12px** — arredondamento médio, nem quadrado nem pill, alinhado ao padrão visual de cards modernos.
+- **Cards sem borda** (`border: none`): elevação feita exclusivamente pelo contraste `#fff` sobre `--page-bg`. `--shadow-sm` reservado para cards sobrepostos (popover dentro de card). Checklist item 14 adicionado.
 
 — fim do design-system.md —

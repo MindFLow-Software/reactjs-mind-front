@@ -26,6 +26,7 @@ export function useImagePreview(): UseImagePreviewReturn {
   const onSetPreview = useCallback((f: File) => {
     const url = URL.createObjectURL(f)
     createdUrls.current.push(url)
+    setIsLoading(false)
     setPreviewUrl(url)
     setFile(f)
   }, [])

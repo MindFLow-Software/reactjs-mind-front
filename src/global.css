@@ -122,8 +122,8 @@
   --text-link-weight: 500;
 
   /* Shadcn / Base Variables */
-  --radius: 0.85rem;
-  --background: oklch(0.96 0.002 247.84); 
+  --radius: 0.75rem;
+  --background: oklch(0.951 0 0);
   --foreground: oklch(0.21 0.006 285.885);
   --card: oklch(1 0 0);
   --card-foreground: oklch(0.21 0.006 285.885);
