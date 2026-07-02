@@ -9,6 +9,8 @@ import { Button } from '@/components/ui/button'
 import { PracticeContextCard } from './practice-context-card'
 import { ProfileSectionHeader } from './profile-section-header'
 
+import './psychologist-practice-contexts-section.css'
+
 export function PsychologistPracticeContextsSection() {
   const navigate = useNavigate()
   const { profile } = useAuth()
@@ -23,18 +25,21 @@ export function PsychologistPracticeContextsSection() {
     navigate('/profiles/context')
   }
 
-  const handleAccessPracticeContext = useCallback((contextId: string) => {
-    if (!contextId) return
+  const handleAccessPracticeContext = useCallback(
+    (contextId: string) => {
+      if (!contextId) return
 
-    setActivePracticeContextId(contextId)
-    navigate('/dashboard')
-  }, [])
+      setActivePracticeContextId(contextId)
+      navigate('/dashboard')
+    },
+    [navigate, setActivePracticeContextId],
+  )
 
   if (practiceContexts.length === 0) return null
 
   return (
     <section className="w-full">
-      <div className="flex items-start justify-between">
+      <div className="pf-section-header-row">
         <ProfileSectionHeader
           section="profissional"
           title="Seus contextos de atuação"
@@ -51,9 +56,10 @@ export function PsychologistPracticeContextsSection() {
         </Button>
       </div>
 
-      <div className="flex gap-4">
+      <div className="pf-cards-row">
         {practiceContexts?.map((context) => (
           <PracticeContextCard
+            key={context.id}
             context={context}
             onSelect={handleAccessPracticeContext}
           />

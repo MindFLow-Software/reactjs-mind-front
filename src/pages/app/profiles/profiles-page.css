@@ -1,0 +1,37 @@
+@reference "../../../global.css";
+
+@layer components {
+  .pf-layout {
+    @apply min-h-screen w-full bg-background py-10;
+  }
+
+  .pf-layout-header {
+    @apply text-center mb-8;
+  }
+
+  .pf-layout-greeting {
+    @apply text-4xl text-foreground;
+  }
+
+  .pf-layout-main {
+    @apply mx-auto flex flex-col justify-center items-center gap-8 w-full max-w-4xl;
+  }
+
+  .pf-loading-state {
+    @apply flex items-center justify-center py-20 text-muted-foreground;
+  }
+
+  .pf-error-state {
+    @apply py-20 text-center text-sm text-muted-foreground;
+  }
+
+  /* Section row — shared by psychologist-practice-contexts-section.tsx
+     and patient-profile-section.tsx */
+  .pf-section-header-row {
+    @apply flex items-start justify-between;
+  }
+
+  .pf-cards-row {
+    @apply flex gap-4;
+  }
+}

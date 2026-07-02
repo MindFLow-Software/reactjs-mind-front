@@ -1,0 +1,27 @@
+@reference "../../../../global.css";
+
+@layer components {
+  .pf-candidates-card {
+    @apply flex flex-col gap-4 overflow-hidden w-full px-0 shadow-none;
+    @apply bg-violet-100/75 border border-violet-200;
+    @apply dark:bg-violet-950/20 dark:border-violet-800;
+  }
+
+  .pf-candidates-header {
+    @apply flex items-start gap-3;
+  }
+
+  .pf-candidates-icon {
+    @apply bg-violet-200 text-violet-500;
+    @apply dark:bg-violet-950/40 dark:text-violet-400;
+  }
+
+  .pf-candidates-footer {
+    @apply flex items-baseline gap-4;
+  }
+
+  .pf-candidates-btn {
+    @apply flex items-center gap-2 bg-violet-500 hover:bg-violet-600;
+    @apply dark:hover:bg-violet-900;
+  }
+}

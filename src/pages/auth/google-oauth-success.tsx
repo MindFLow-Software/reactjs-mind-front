@@ -3,10 +3,13 @@ import { useNavigate } from 'react-router-dom'
 import { toast } from 'sonner'
 import { AxiosError } from 'axios'
 import { getProfile } from '@/api/psychologists/get-profile'
-import { api } from '@/lib/axios'
+import { refreshSession } from '@/api/auth/refresh-session'
+import { useSessionStore } from '@/store/use-session-store'
+import { BrandedLoader } from '@/components/branded-loader'
 
 export function GoogleOAuthSuccess() {
   const navigate = useNavigate()
+  const setSession = useSessionStore((state) => state.setSession)
   const called = useRef(false)
 
   useEffect(() => {
@@ -38,12 +41,11 @@ export function GoogleOAuthSuccess() {
         try {
           profile = await fetchProfileWithRetry()
         } catch {
-          await api.post('/session/refresh')
+          await refreshSession()
           profile = await fetchProfileWithRetry()
         }
 
-        localStorage.setItem('isAuthenticated', 'true')
-        localStorage.setItem('user', JSON.stringify(profile))
+        setSession(profile)
         navigate('/dashboard', { replace: true })
       } catch (error: unknown) {
         if (error instanceof AxiosError) {
@@ -59,14 +61,7 @@ export function GoogleOAuthSuccess() {
     }
 
     finishLogin()
-  }, [navigate])
+  }, [navigate, setSession])
 
-  return (
-    <div className="flex min-h-svh items-center justify-center">
-      <div className="flex flex-col items-center gap-2">
-        <div className="h-8 w-8 animate-spin rounded-full border-4 border-blue-600 border-t-transparent" />
-        <p className="text-sm text-muted-foreground">Finalizando login...</p>
-      </div>
-    </div>
-  )
+  return <BrandedLoader message="Finalizando login..." />
 }

@@ -1,0 +1,7 @@
+@reference "../../global.css";
+
+@layer components {
+  .signup-shell {
+    @apply w-full max-w-[520px];
+  }
+}

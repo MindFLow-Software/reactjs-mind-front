@@ -11,43 +11,19 @@ import { PsychologistPracticeContextsSection } from './components/psychologist-p
 import { PatientProfileSection } from './components/patient-profile-section'
 import { PatientProfilePossibleCandidatesSection } from './components/patient-profile-possible-candidates-section'
 
-function ProfilesShell({ children }: { children: ReactNode }) {
-  const {
-    isError,
-    profile: me,
-    isPending: isLoading,
-  } = useAuth()
+import './profiles-page.css'
 
-  if (isLoading) {
-    return (
-      <ProfilesShell>
-        <div className="flex items-center justify-center py-20 text-muted-foreground">
-          <Loader2 className="size-6 animate-spin" />
-        </div>
-      </ProfilesShell>
-    )
-  }
-
-  if (isError || !me) {
-    return (
-      <ProfilesShell>
-        <p className="py-20 text-center text-sm text-muted-foreground">
-          Não foi possível carregar seus perfis. Tente novamente.
-        </p>
-      </ProfilesShell>
-    )
-  }
-
-  if (me.platformRole === 'ADMIN') {
-    return <Navigate to="/admin-dashboard" replace />
-  }
-
+function ProfilesLayout({
+  children,
+  greeting = 'Olá',
+}: {
+  children: ReactNode
+  greeting?: string
+}) {
   return (
-    <div className="min-h-screen w-full bg-background py-10">
-      <header className="text-center mb-8">
-        <h1 className="text-4xl text-foreground">
-          Olá, {me.firstName}
-        </h1>
+    <div className="pf-layout">
+      <header className="pf-layout-header">
+        <h1 className="pf-layout-greeting">{greeting}</h1>
         <p className="text-sm text-muted-foreground">
           Escolha como deseja usar a plataforma ou continue em um perfil já
           existente.
@@ -57,10 +33,42 @@ function ProfilesShell({ children }: { children: ReactNode }) {
         </p>
       </header>
 
-      <main className="mx-auto flex flex-col justify-center items-center gap-8 w-full max-w-4xl">
-        {children}
-      </main>
+      <main className="pf-layout-main">{children}</main>
     </div>
+  )
+}
+
+function ProfilesShell({ children }: { children: ReactNode }) {
+  const { isError, profile: me, isPending: isLoading } = useAuth()
+
+  if (isLoading) {
+    return (
+      <ProfilesLayout>
+        <div className="pf-loading-state">
+          <Loader2 className="size-6 animate-spin" />
+        </div>
+      </ProfilesLayout>
+    )
+  }
+
+  if (isError || !me) {
+    return (
+      <ProfilesLayout>
+        <p className="pf-error-state">
+          Não foi possível carregar seus perfis. Tente novamente.
+        </p>
+      </ProfilesLayout>
+    )
+  }
+
+  if (me.platformRole === 'ADMIN') {
+    return <Navigate to="/admin-dashboard" replace />
+  }
+
+  return (
+    <ProfilesLayout greeting={`Olá, ${me.firstName}`}>
+      {children}
+    </ProfilesLayout>
   )
 }
 

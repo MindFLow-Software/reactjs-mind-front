@@ -1,0 +1,7 @@
+@reference "../../../../global.css";
+
+@layer components {
+  .pf-hint {
+    @apply mt-2 text-xs;
+  }
+}

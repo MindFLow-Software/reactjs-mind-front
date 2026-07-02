@@ -7,6 +7,8 @@ import { useAuth } from '@/hooks/use-auth'
 import { Button } from '@/components/ui/button'
 import { ProfileCard } from './profile-card'
 
+import './psychologist-card.css'
+
 export function PsychologistCard() {
   const navigate = useNavigate()
 
@@ -41,9 +43,9 @@ export function PsychologistCard() {
               </p>
             </div>
 
-            <div className="grid grid-cols-2 space-y-4 rounded-lg bg-muted/50 p-4">
+            <div className="pf-stat-grid">
               <div>
-                <p className="text-xs tracking-wider text-muted-foreground uppercase">status</p>
+                <p className="pf-stat-label">status</p>
                 <div className="flex items-center gap-1.5">
                   <span
                     className={cn(
@@ -58,24 +60,20 @@ export function PsychologistCard() {
               </div>
 
               <div>
-                <p className="text-xs tracking-wider text-muted-foreground uppercase">crp</p>
-                <p className="text-sm font-medium text-foreground">
-                  {me?.psychologistProfile!.crp}
-                </p>
+                <p className="pf-stat-label">crp</p>
+                <p className="pf-stat-value">{me?.psychologistProfile!.crp}</p>
               </div>
 
               <div>
-                <p className="text-xs tracking-wider text-muted-foreground uppercase">
-                  nome profissional
-                </p>
-                <p className="text-sm font-medium text-foreground">
+                <p className="pf-stat-label">nome profissional</p>
+                <p className="pf-stat-value">
                   {me?.psychologistProfile?.professionalName}
                 </p>
               </div>
 
               <div>
-                <p className="text-xs tracking-wider text-muted-foreground uppercase">contextos</p>
-                <p className="text-sm font-medium text-foreground">
+                <p className="pf-stat-label">contextos</p>
+                <p className="pf-stat-value">
                   {me?.practiceContexts.length} contexto(s)
                 </p>
               </div>
@@ -93,34 +91,37 @@ export function PsychologistCard() {
               </p>
             </div>
 
-            <ul className="space-y-2">
-              <li className="flex gap-2 text-sm text-muted-foreground">
-                <span className="mt-1.5 size-1.5 shrink-0 rounded-full bg-blue-500" />
+            <ul className="pf-feature-list">
+              <li className="pf-feature-item">
+                <span className="pf-feature-dot pf-feature-dot--primary" />
                 CRP e credenciais validados
               </li>
-              <li className="flex gap-2 text-sm text-muted-foreground">
-                <span className="mt-1.5 size-1.5 shrink-0 rounded-full bg-blue-500" />
+              <li className="pf-feature-item">
+                <span className="pf-feature-dot pf-feature-dot--primary" />
                 Adicione vários espaços de trabalho
               </li>
-              <li className="flex gap-2 text-sm text-muted-foreground">
-                <span className="mt-1.5 size-1.5 shrink-0 rounded-full bg-blue-500" />
+              <li className="pf-feature-item">
+                <span className="pf-feature-dot pf-feature-dot--primary" />
                 Ferramentas para prática focada
               </li>
             </ul>
           </>
-        )
-        }
-      </ProfileCard.Content >
+        )}
+      </ProfileCard.Content>
 
       <ProfileCard.Footer>
         {hasPsychologistProfile ? (
-          <Button className="w-full" variant="outline" onClick={handleAddContext}>
+          <Button
+            className="w-full"
+            variant="outline"
+            onClick={handleAddContext}
+          >
             <Plus className="mr-2 size-4" />
             Adicionar contexto
           </Button>
         ) : (
           <Button
-            className="w-full bg-blue-600 text-white hover:bg-blue-700 hover:text-white dark:hover:bg-blue-950/30"
+            className="pf-cta-btn pf-cta-btn--primary"
             onClick={handleCreatePsychologistProfile}
           >
             Criar perfil de psicólogo
@@ -128,6 +129,6 @@ export function PsychologistCard() {
           </Button>
         )}
       </ProfileCard.Footer>
-    </ProfileCard.Root >
+    </ProfileCard.Root>
   )
 }

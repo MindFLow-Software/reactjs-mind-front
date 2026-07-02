@@ -5,18 +5,17 @@ import { useAuth } from '@/hooks/use-auth'
 import { PatientProfileCard } from './patient-profile-card'
 import { ProfileSectionHeader } from './profile-section-header'
 
+import './patient-profile-section.css'
+
 export function PatientProfileSection() {
   const navigate = useNavigate()
   const { profile: me } = useAuth()
 
   const patientProfiles = me?.patientProfiles ?? []
 
-  const handleEnterPatientProfile = useCallback(
-    (_id: string) => {
-      navigate('/patient-dashboard')
-    },
-    [navigate],
-  )
+  const handleEnterPatientProfile = useCallback(() => {
+    navigate('/patient-dashboard')
+  }, [navigate])
 
   if (patientProfiles.length === 0) return null
 
@@ -28,7 +27,7 @@ export function PatientProfileSection() {
         label="Escolha um perfil para acompanhar atendimentos, informações e evolução."
       />
 
-      <div className="flex gap-4">
+      <div className="pf-cards-row">
         {patientProfiles.map((profile) => (
           <PatientProfileCard
             key={profile.id}

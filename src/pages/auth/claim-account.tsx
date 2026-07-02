@@ -21,6 +21,7 @@ import {
   claimAccountSchema,
   type ClaimAccountData,
 } from '@/validators/claim-account/form/claim-account-schema'
+import './claim-account.css'
 
 export function ClaimAccountPage() {
   const methods = useForm<ClaimAccountData>({
@@ -32,11 +33,13 @@ export function ClaimAccountPage() {
 
   const { control, handleSubmit } = methods
 
-  const { mutateAsync, isPending: isSendingEmail } = useMutation({
+  const { mutateAsync, isPending: isSendingEmail } = useMutation<
+    void,
+    Error,
+    ClaimAccountData
+  >({
     mutationKey: ['send-claim-account-email'],
-    mutationFn: async (data: ClaimAccountData) => {
-      console.log('data: ', data)
-    },
+    mutationFn: async () => {},
   })
 
   const handleSendClaimAccountEmail = async (data: ClaimAccountData) => {
@@ -49,7 +52,7 @@ export function ClaimAccountPage() {
     <Card className="w-full max-w-lg">
       <CardHeader className="gap-3">
         <div className="flex items-center gap-2">
-          <div className="flex items-center justify-center p-2 rounded-md w-fit bg-gradient-to-br from-[#16306b] to-[#194ac5]">
+          <div className="claim-icon-badge bg-linear-to-br from-[#16306b] to-[#194ac5]">
             <Lock size={24} className="text-white" />
           </div>
           <CardTitle className="text-xl m-0">Finalizar Cadastro</CardTitle>

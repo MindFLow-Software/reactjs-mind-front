@@ -20,6 +20,8 @@ import {
   type IPsychologistPracticeContext,
 } from '@/types/psychologist'
 
+import './practice-context-card.css'
+
 const CONTEXT_TYPE_LABELS = {
   INDIVIDUAL: 'Atendimento individual',
   CLINIC: 'Clínica',
@@ -45,8 +47,8 @@ export function PracticeContextCard({
   const title = context.nickname || typeLabel
 
   return (
-    <Card className="flex flex-col gap-0 overflow-hidden p-0 max-w-1/2 w-full">
-      <CardHeader className="flex items-start gap-3 py-4">
+    <Card className="pf-entity-card">
+      <CardHeader className="pf-entity-card-header">
         <TitleIcon variant="primary">
           {isClinic ? (
             <Building2 className="size-5" />
@@ -55,7 +57,7 @@ export function PracticeContextCard({
           )}
         </TitleIcon>
 
-        <div className="min-w-0 flex-1">
+        <div className="pf-entity-card-title-wrap">
           <CardTitle className="text-sm text-foreground">{title}</CardTitle>
           <CardDescription className="text-sm text-muted-foreground">
             {typeLabel}
@@ -71,27 +73,13 @@ export function PracticeContextCard({
             ? 'Atuação vinculada à clínica com agenda compartilhada.'
             : 'Espaço de atendimento particular com gestão própria.'}
         </CardDescription>
-        <div className="grid grid-cols-2 rounded-md bg-muted/50 p-4">
-          <div>
-            <p className="text-xs tracking-wider text-muted-foreground uppercase">
-              valor por sessão
-            </p>
-            <p className="mt-1 text-sm font-bold text-foreground">
-              {fee ?? '—'}
-            </p>
-          </div>
-          <div>
-            <p className="text-xs tracking-wider text-muted-foreground uppercase">
-              valor por sessão
-            </p>
-            <p className="mt-1 text-sm font-bold text-foreground">
-              {fee ?? '—'}
-            </p>
-          </div>
+        <div className="pf-stat-box">
+          <p className="pf-stat-label">valor por sessão</p>
+          <p className="mt-1 text-sm font-bold text-foreground">{fee ?? '—'}</p>
         </div>
       </CardContent>
 
-      <CardFooter className="py-4">
+      <CardFooter className="pf-entity-card-footer">
         <Button
           variant="outline"
           className="w-full justify-center gap-2 font-medium"

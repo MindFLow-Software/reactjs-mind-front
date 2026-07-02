@@ -1,10 +1,4 @@
-import {
-  ArrowRight,
-  BadgeCheck,
-  CalendarClock,
-  Stethoscope,
-  User,
-} from 'lucide-react'
+import { ArrowRight, BadgeCheck, CalendarClock, User } from 'lucide-react'
 
 import {
   Card,
@@ -19,8 +13,11 @@ import { Button } from '@/components/ui/button'
 import { TitleIcon } from '@/components/title-icon'
 import { ActiveBadge } from '@/components/active-badge'
 
+import { Time } from '@/utils/time'
 import { PatientProfileStatus } from '@/types/enums'
 import type { IPatientProfile } from '@/types/patient-profile'
+
+import './patient-profile-card.css'
 
 interface IPatientProfileCard {
   profile: IPatientProfile
@@ -34,13 +31,13 @@ export function PatientProfileCard({ profile, onSelect }: IPatientProfileCard) {
   const fullName = `${profile.firstName} ${profile.lastName}`
 
   return (
-    <Card className="flex flex-col gap-0 overflow-hidden p-0 max-w-1/2 w-full">
-      <CardHeader className="flex items-start gap-3 py-4">
+    <Card className="pf-entity-card">
+      <CardHeader className="pf-entity-card-header">
         <TitleIcon variant="secondary">
           <User />
         </TitleIcon>
 
-        <div className="min-w-0 flex-1">
+        <div className="pf-entity-card-title-wrap">
           <CardTitle className="text-sm text-foreground">{fullName}</CardTitle>
           <CardDescription className="flex items-center gap-1 text-sm text-muted-foreground">
             {subtitle}
@@ -54,27 +51,19 @@ export function PatientProfileCard({ profile, onSelect }: IPatientProfileCard) {
       </CardHeader>
 
       <CardContent>
-        <ul className="flex flex-col gap-3">
-          <li className="flex items-center gap-2">
-            <Stethoscope size={16} className="text-teal-600" />
-            <span className="text-xs text-muted-foreground">
-              Dra. Ana Souza
-            </span>
-          </li>
-          <li className="flex items-center gap-2">
-            <CalendarClock size={16} className="text-teal-600" />
-            <span className="text-xs text-muted-foreground">
-              Próxima sessão: Quarta-feira, 14:00
-            </span>
-          </li>
-        </ul>
+        <div className="flex items-center gap-2">
+          <CalendarClock size={16} className="text-teal-600" />
+          <span className="text-xs text-muted-foreground">
+            Paciente desde {Time.toBrazilianFormat(new Date(profile.createdAt))}
+          </span>
+        </div>
       </CardContent>
 
-      <CardFooter className="py-4">
+      <CardFooter className="pf-entity-card-footer">
         <Button
           variant="outline"
           onClick={() => onSelect(profile.id)}
-          className="flex items-center gap-2 w-full bg-teal-600 text-white hover:bg-teal-700 hover:text-white dark:hover:bg-teal-950/30"
+          className="pf-cta-btn pf-cta-btn--secondary"
         >
           Acessar Perfil
           <ArrowRight size={16} />

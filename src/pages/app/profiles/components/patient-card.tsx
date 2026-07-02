@@ -7,6 +7,8 @@ import { useAuth } from '@/hooks/use-auth'
 import { Button } from '@/components/ui/button'
 import { ProfileCard } from './profile-card'
 
+import './patient-card.css'
+
 function PatientCardBase() {
   const navigate = useNavigate()
   const { profile: me } = useAuth()
@@ -35,23 +37,23 @@ function PatientCardBase() {
           </p>
         </div>
 
-        <ul className="space-y-2">
-          <li className="flex gap-2 text-sm text-muted-foreground">
-            <span className="mt-1.5 size-1.5 shrink-0 rounded-full bg-teal-500" />
+        <ul className="pf-feature-list">
+          <li className="pf-feature-item">
+            <span className="pf-feature-dot pf-feature-dot--secondary" />
             Acompanhe consultas
           </li>
-          <li className="flex gap-2 text-sm text-muted-foreground">
-            <span className="mt-1.5 size-1.5 shrink-0 rounded-full bg-teal-500" />
+          <li className="pf-feature-item">
+            <span className="pf-feature-dot pf-feature-dot--secondary" />
             Veja informações dos atendimentos
           </li>
-          <li className="flex gap-2 text-sm text-muted-foreground">
-            <span className="mt-1.5 size-1.5 shrink-0 rounded-full bg-teal-500" />
+          <li className="pf-feature-item">
+            <span className="pf-feature-dot pf-feature-dot--secondary" />
             Organize sua jornada de saúde mental
           </li>
         </ul>
 
         {existingCount > 0 && (
-          <p className="pat-hint text-muted-foreground">
+          <p className="pf-hint text-muted-foreground">
             Você já possui {existingCount}{' '}
             {existingCount === 1 ? 'perfil' : 'perfis'} de paciente vinculado
             {existingCount === 1 ? '' : 's'}.
@@ -61,7 +63,7 @@ function PatientCardBase() {
 
       <ProfileCard.Footer>
         <Button
-          className="flex items-center gap-2 w-full bg-teal-600 text-white hover:bg-teal-700 dark:hover:bg-teal-950/30"
+          className="pf-cta-btn pf-cta-btn--secondary"
           onClick={handleCreatePatientProfile}
         >
           Criar perfil de paciente

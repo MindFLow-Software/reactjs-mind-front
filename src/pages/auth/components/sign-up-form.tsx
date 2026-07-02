@@ -14,8 +14,6 @@ import { useMutation } from '@tanstack/react-query'
 import { useNavigate, Link } from 'react-router-dom'
 import { useForm, Controller } from 'react-hook-form'
 
-import { z } from 'zod'
-import axios from 'axios'
 import { cn } from '@/lib/utils'
 import { toast } from 'sonner'
 import { zodResolver } from '@hookform/resolvers/zod'
@@ -52,9 +50,13 @@ import { Time } from '@/utils/time'
 import { signIn } from '@/api/auth/sign-in'
 import { Normalizer } from '@/utils/normalizer'
 import { createUser } from '@/api/auth/create-user'
-import { createUserSchema } from '@/validators/user/form/create-user-schema'
-
-type SignUpData = z.infer<typeof createUserSchema>
+import { getProfile } from '@/api/psychologists/get-profile'
+import { getApiErrorMessage } from '@/lib/get-api-error-message'
+import { useSessionStore } from '@/store/use-session-store'
+import {
+  createUserSchema,
+  type CreateUserData,
+} from '@/validators/user/form/create-user-schema'
 
 function FieldRow({
   children,
@@ -113,6 +115,7 @@ function SectionHeading({ children }: { children: React.ReactNode }) {
 
 export function SignUpForm() {
   const navigate = useNavigate()
+  const setSession = useSessionStore((state) => state.setSession)
 
   const [dobInputValue, setDobInputValue] = useState('')
   const [showPassword, setShowPassword] = useState(false)
@@ -123,7 +126,7 @@ export function SignUpForm() {
     register,
     handleSubmit,
     formState: { errors },
-  } = useForm<SignUpData>({
+  } = useForm<CreateUserData>({
     resolver: zodResolver(createUserSchema),
     defaultValues: {
       firstName: '',
@@ -138,7 +141,7 @@ export function SignUpForm() {
   const passwordValue = watch('password')
 
   const { mutateAsync, isPending } = useMutation({
-    mutationFn: async (data: SignUpData) => {
+    mutationFn: async (data: CreateUserData) => {
       await createUser({
         firstName: data.firstName,
         lastName: data.lastName,
@@ -150,21 +153,15 @@ export function SignUpForm() {
         dateOfBirth: Time.toAmericanFormat(data.dateOfBirth),
       })
       await signIn({ email: data.email, password: data.password })
+      return getProfile()
     },
-    onSuccess: () => {
+    onSuccess: (profile) => {
+      setSession(profile)
       toast.success('Conta criada com sucesso!')
       navigate('/profiles')
     },
     onError: (error) => {
-      let errorMessage = 'Erro ao realizar cadastro.'
-
-      if (axios.isAxiosError(error)) {
-        errorMessage = error.response?.data?.message
-      } else {
-        errorMessage = (error as Error)?.message
-      }
-
-      toast.error(errorMessage)
+      toast.error(getApiErrorMessage(error, 'Erro ao realizar cadastro.'))
     },
   })
 
@@ -174,7 +171,7 @@ export function SignUpForm() {
   )
 
   const handleSignUp = useCallback(
-    async (data: SignUpData) => {
+    async (data: CreateUserData) => {
       await mutateAsync(data)
     },
     [mutateAsync],
@@ -283,7 +280,9 @@ export function SignUpForm() {
                     placeholder="DD/MM/AAAA"
                     value={dobInputValue}
                     onChange={(e) => {
-                      const { date, inputValue } = Time.textToDate(e.target.value)
+                      const { date, inputValue } = Time.textToDate(
+                        e.target.value,
+                      )
                       setDobInputValue(inputValue)
                       field.onChange(date)
                     }}
@@ -400,116 +399,6 @@ export function SignUpForm() {
         </div>
         <PasswordStrength value={passwordValue} />
       </FieldWrap>
-
-      {/* ── Dados Profissionais ── */}
-      {/* <SectionHeading>Dados Profissionais</SectionHeading> */}
-
-      {/* <FieldRow>
-        <FieldWrap label="CRP" error={errors.crp?.message}>
-          <Input
-            {...register('crp')}
-            placeholder="06/123456"
-            autoComplete="off"
-            aria-invalid={!!errors.crp}
-            className={cn(errors.crp && 'border-red-500')}
-          />
-        </FieldWrap>
-        <FieldWrap label="Área de atuação" error={errors.expertise?.message}>
-          <Controller
-            name="expertise"
-            control={control}
-            render={({ field }) => (
-              <Select value={field.value} onValueChange={field.onChange}>
-                <SelectTrigger className="w-full cursor-pointer">
-                  <SelectValue placeholder="Selecione" />
-                </SelectTrigger>
-                <SelectContent>
-                  {EXPERTISE_OPTIONS.map((option) => (
-                    <SelectItem
-                      key={option.value}
-                      value={option.value}
-                      className="cursor-pointer"
-                    >
-                      {option.label}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-            )}
-          />
-        </FieldWrap>
-      </FieldRow>
-
-      <FieldWrap
-        label="Bio profissional (opcional)"
-        error={errors.professionalBio?.message}
-      >
-        <Textarea
-          {...register('professionalBio')}
-          placeholder="Conte um pouco sobre sua atuação"
-          className={cn(errors.professionalBio && 'border-red-500')}
-        />
-      </FieldWrap> */}
-
-      {/* ── Contexto de Atendimento ── */}
-      {/* <SectionHeading>Contexto de Atendimento</SectionHeading>
-
-      <FieldRow>
-        <FieldWrap
-          label="Tipo de atendimento"
-          error={errors.contextType?.message}
-        >
-          <Controller
-            name="contextType"
-            control={control}
-            render={({ field }) => (
-              <Select value={field.value} onValueChange={field.onChange}>
-                <SelectTrigger className="w-full cursor-pointer">
-                  <SelectValue placeholder="Selecione" />
-                </SelectTrigger>
-                <SelectContent>
-                  {CONTEXT_TYPE_OPTIONS.map((option) => (
-                    <SelectItem
-                      key={option.value}
-                      value={option.value}
-                      className="cursor-pointer"
-                    >
-                      {option.label}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-            )}
-          />
-        </FieldWrap>
-        <FieldWrap
-          label="Valor da sessão (R$, opcional)"
-          error={errors.consultationFee?.message}
-        >
-          <Input
-            inputMode="decimal"
-            {...register('consultationFee')}
-            placeholder="150.00"
-            aria-invalid={!!errors.consultationFee}
-            className={cn(
-              'tabular-nums',
-              errors.consultationFee && 'border-red-500',
-            )}
-          />
-        </FieldWrap>
-      </FieldRow> */}
-
-      {/* <FieldWrap
-        label="Apelido do contexto (opcional)"
-        error={errors.nickname?.message}
-      >
-        <Input
-          {...register('nickname')}
-          placeholder="Consultório centro"
-          autoComplete="off"
-          className={cn(errors.nickname && 'border-red-500')}
-        />
-      </FieldWrap> */}
 
       {/* Submit */}
       <Button
