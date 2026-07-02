@@ -20,9 +20,10 @@ export async function updatePatientProfileById({
       data.dateOfBirth instanceof Date
         ? data.dateOfBirth.toISOString()
         : data.dateOfBirth || undefined,
+    email: data.email || undefined,
     cpf: data.cpf || undefined,
     phoneNumber: data.phoneNumber?.replace(/\D/g, '') || undefined,
-    cep: data.cep?.replace(/\D/g, '') || undefined,
+    zipCode: data.zipCode?.replace(/\D/g, '') || undefined,
   }
 
   const payload = Object.fromEntries(

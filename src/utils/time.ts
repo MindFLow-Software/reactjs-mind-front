@@ -14,6 +14,14 @@ export class Time {
     return startOfDay(new Date())
   }
 
+  static today = new Date()
+
+  static minDate = new Date(
+    this.today.getFullYear() - 120,
+    this.today.getMonth(),
+    this.today.getDate(),
+  )
+
   static toBrazilianFormat(date: Date) {
     // if (!date || !isValid(date)) return
     return format(date, 'dd/MM/yyyy', { locale: ptBR })
@@ -52,7 +60,7 @@ export class Time {
     return isFuture(date)
   }
 
-  static textToDate(value: string, minDate: Date) {
+  static textToDate(value: string) {
     const digits = Normalizer.digits(value).slice(0, 8)
     let inputValue = digits
 
@@ -77,7 +85,7 @@ export class Time {
       date.getMonth() === month - 1 &&
       date.getDate() === day
 
-    const isAfterMinDate = isAfter(date, minDate)
+    const isAfterMinDate = isAfter(date, this.minDate)
 
     if (!isValidDate || !isAfterMinDate) {
       return { inputValue: '', date: null }
@@ -86,13 +94,13 @@ export class Time {
     return { inputValue, date }
   }
 
-  static dateToText(date: Date | undefined, minDate: Date) {
+  static dateToText(date: Date | undefined) {
     if (!date) return ''
     if (!isValid(date)) return ''
 
     const year = date.getFullYear()
-    if (year <= minDate.getFullYear()) return ''
-    if (year <= minDate.getFullYear()) return ''
+    if (year <= this.minDate.getFullYear()) return ''
+    if (year <= this.minDate.getFullYear()) return ''
 
     return format(date, 'dd/MM/yyyy')
   }

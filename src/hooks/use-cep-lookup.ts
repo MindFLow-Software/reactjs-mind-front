@@ -51,7 +51,6 @@ export function useCepLookup({
         setValue('state', address.state)
         setValue('number', address.number)
       } catch (error) {
-        // ToDo: adjust error handling
         if (error instanceof AxiosError && error.code === 'ERR_CANCELED') return
         const status =
           error instanceof AxiosError ? error.response?.status : null

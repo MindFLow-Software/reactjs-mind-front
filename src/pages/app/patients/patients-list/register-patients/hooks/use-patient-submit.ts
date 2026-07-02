@@ -38,7 +38,6 @@ export function usePatientSubmit({
         queryClient.invalidateQueries({ queryKey: ['patients-metrics'] }),
       ])
 
-      onSuccess?.()
       toast.success('Paciente cadastrado!')
     },
     onError: (error) => {
@@ -63,7 +62,6 @@ export function usePatientSubmit({
         queryClient.invalidateQueries({ queryKey: ['patients-metrics'] }),
       ])
 
-      onSuccess?.()
       toast.success('Paciente atualizado!')
     },
     onError: (error) => {
@@ -81,7 +79,7 @@ export function usePatientSubmit({
   async function submit(data: PatientFormData) {
     const shared = {
       ...data,
-      dateOfBirth: data?.dateOfBirth ?? undefined,
+      dateOfBirth: data.dateOfBirth ?? undefined,
     }
 
     try {
@@ -100,6 +98,10 @@ export function usePatientSubmit({
       if (avatarFile) {
         try {
           await uploadAvatar(avatarFile, targetId)
+          await Promise.all([
+            queryClient.invalidateQueries({ queryKey: ['patients'] }),
+            queryClient.invalidateQueries({ queryKey: ['patient', targetId] }),
+          ])
         } catch {
           console.warn('Avatar upload failed — patient saved without avatar')
         }

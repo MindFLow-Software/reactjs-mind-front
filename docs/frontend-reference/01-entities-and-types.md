@@ -1,564 +1,499 @@
-# 01 — Entidades e Tipos
+# 01 - Entidades e Tipos
 
-> **Fonte primária:** `prisma/schema.prisma` + código real dos repositórios, presenters e use cases.  
-> **Specs e design** foram usados apenas como contexto histórico; o código prevalece em qualquer divergência.
+> Fonte primária: `prisma/schema.prisma`, entidades de domínio, DTOs HTTP, presenters e guards do backend.
+> Specs históricas não prevalecem sobre o código implementado.
 
 ---
 
-## Índice de entidades
+## Índice de Entidades
 
-| Entidade | Tabela Prisma | Status |
+| Entidade | Tabela Prisma | Status para frontend |
 |---|---|---|
-| `User` | `users` | ✅ Atual |
-| `Account` | `accounts` | ✅ Atual |
-| `Address` | `addresses` | ✅ Atual |
-| `Blacklist` | `blacklist` | ✅ Atual |
-| `LoginAttempt` | `login_attempts` | ✅ Atual (interno) |
-| `PsychologistProfile` | `psychologist_profiles` | ✅ Atual |
-| `PsychologistPracticeContext` | `psychologist_practice_contexts` | ✅ Atual (nova feature) |
-| `PatientProfile` | `patient_profiles` | ✅ Atual (nova feature) |
-| `Appointment` | `appointments` | ✅ Atual |
-| `AppointmentSession` | `appointment_sessions` | ✅ Atual |
-| `SessionParticipant` | `session_participants` | ✅ Atual |
-| `PsychologistAvailability` | `psychologist_availabilities` | ⚠️ Migração parcial (coluna legada `psychologist_id`) |
-| `Anamnesis` | `anamnesis` | ✅ Atual |
-| `Document` | `documents` | ✅ Atual |
-| `MedicalRecord` | `medical_records` | ✅ Atual |
-| `Observation` | `observations` | ✅ Atual |
-| `Attachment` | `attachments` | ✅ Atual |
-| `RegistrationLink` | `registration_links` | ⚠️ Migração parcial (coluna legada `psychologist_id`) |
-| `Payment` | `payments` | ⚠️ Migração parcial (coluna legada `psychologist_id`) |
-| `SubscriptionPlan` | `subscription_plans` | ✅ Atual |
-| `Suggestion` | `suggestions` | ⚠️ Migração parcial (coluna legada `psychologist_id`) |
-| `Popup` | `popups` | ⚠️ Migração parcial (coluna legada `psychologist_id`) |
-| `PopupView` | `popup_views` | ✅ Atual |
-| `Clinic` | `clinics` | ✅ Atual (nova feature P2) |
-| `ClinicBranch` | `clinic_branches` | ✅ Atual (nova feature P2) |
-| `ClinicMember` | `clinic_members` | ✅ Atual (nova feature P2) |
-| `ClinicPsychologist` | `clinic_psychologists` | ✅ Atual (nova feature P2) |
-| `Patient` (legado) | — | ❌ Removido (T33) — substituído por `User` + `PatientProfile` |
-| `Psychologist` (legado) | — | ❌ Removido (T33) — substituído por `User` + `PsychologistProfile` + `PsychologistPracticeContext` |
+| `User` | `users` | Atual |
+| `Account` | `accounts` | Atual |
+| `Address` | `addresses` | Atual |
+| `Blacklist` | `blacklist` | Interna |
+| `LoginAttempt` | `login_attempts` | Interna |
+| `PsychologistProfile` | `psychologist_profiles` | Atual |
+| `PsychologistPracticeContext` | `psychologist_practice_contexts` | Atual |
+| `PatientProfile` | `patient_profiles` | Atual |
+| `PatientInvite` | `patient_invites` | Atual |
+| `PatientProfileClaimRequest` | `patient_profile_claim_requests` | Atual |
+| `PatientProfileAccessCode` | `patient_profile_access_codes` | Atual |
+| `Appointment` | `appointments` | Atual |
+| `AppointmentSession` | `appointment_sessions` | Atual |
+| `SessionParticipant` | `session_participants` | Atual |
+| `PsychologistAvailability` | `psychologist_availabilities` | Atual |
+| `Anamnesis` | `anamnesis` | Atual |
+| `Document` | `documents` | Atual |
+| `MedicalRecord` | `medical_records` | Atual |
+| `Observation` | `observations` | Atual |
+| `Attachment` | `attachments` | Atual |
+| `RegistrationLink` | `registration_links` | Atual, mas geração tem risco funcional |
+| `Payment` | `payments` | Modelo existe; `POST /billing` não persiste payment local |
+| `SubscriptionPlan` | `subscription_plans` | Atual |
+| `Suggestion` | `suggestions` | Atual |
+| `Popup` | `popups` | Atual |
+| `PopupView` | `popup_views` | Atual, mas view usa id de profile em algumas rotas |
+| `Clinic` | `clinics` | Atual |
+| `ClinicBranch` | `clinic_branches` | Atual |
+| `ClinicMember` | `clinic_members` | Atual |
+| `ClinicPsychologist` | `clinic_psychologists` | Atual |
 
 ---
 
 ## Enums
 
-### PlatformRole
-
 ```ts
-enum PlatformRole {
-  USER    // usuário padrão (paciente ou psicólogo ainda sem discriminação)
-  ADMIN   // administrador da plataforma
-  SUPPORT // suporte da plataforma
-}
-```
-
-> **Atenção para o frontend:** `platformRole` NÃO deve ser usado para decidir se um usuário é paciente ou psicólogo. Use a existência de `psychologistProfile` e `patientProfiles` retornados em `GET /me`.
-
-### AccountStatus
-
-```ts
-enum AccountStatus {
-  PENDING  // legado — não é mais o default de criação (sem aprovação)
-  ACTIVE   // estado padrão após criação via POST /user (T29)
-  REJECTED // rejeitado pelo admin
-  BLOCKED  // bloqueado por violação
-}
-```
-
-### Gender
-
-```ts
-enum Gender {
-  OTHER
-  FEMININE
-  MASCULINE
-}
-```
-
-### Expertise (especialidade do psicólogo)
-
-```ts
+enum PlatformRole { USER, ADMIN, SUPPORT }
+enum AccountStatus { PENDING, ACTIVE, REJECTED, BLOCKED }
+enum LoginAttemptTargetType { EMAIL, IP }
+enum Gender { OTHER, FEMININE, MASCULINE }
 enum Expertise {
-  OTHER
-  SOCIAL
-  INFANT
-  CLINICAL
-  JURIDICAL
-  EDUCATIONAL
-  ORGANIZATIONAL
-  PSYCHOTHERAPIST
+  OTHER,
+  SOCIAL,
+  INFANT,
+  CLINICAL,
+  JURIDICAL,
+  EDUCATIONAL,
+  ORGANIZATIONAL,
+  PSYCHOTHERAPIST,
   NEUROPSYCHOLOGY
 }
-```
-
-### AppointmentStatus
-
-```ts
-// No Prisma (schema.prisma):
+enum Honorific { MASC_DR, FEMININE_DR, MSC, PHD }
+enum Languages { PORTUGUESE, ENGLISH, SPANISH, SIGNS }
 enum AppointmentStatus {
-  SCHEDULED
-  ATTENDING
-  FINISHED
-  CANCELED
-  NOT_ATTEND
+  SCHEDULED,
+  ATTENDING,
+  FINISHED,
+  CANCELED,
+  NOT_ATTEND,
   RESCHEDULED
 }
-```
-
-> ✅ **Alinhado (T31):** O domínio e o Prisma compartilham os mesmos 6 valores. `DONE` foi removido do enum de domínio; `isFinished()` verifica apenas `FINISHED`. Use os 6 valores acima.
-
-### PracticeContextType
-
-```ts
-enum PracticeContextType {
-  INDIVIDUAL  // contexto próprio/autônomo do psicólogo
-  CLINIC      // contexto vinculado a uma clínica
-}
-```
-
-### MemberRole
-
-```ts
-enum MemberRole {
-  OWNER
-  MANAGER
-  SECRETARY
-  FINANCE
-}
-```
-
-### DocumentType
-
-```ts
-enum DocumentType {
-  RG
-  CPF
-  CNH
-  OTHER
-}
-```
-
-### ParticipantType
-
-```ts
-enum ParticipantType {
-  PSYCHOLOGIST
-  PATIENT
-}
-```
-
-### PaymentStatus / PaymentMethod / PaymentFrequency
-
-```ts
-enum PaymentStatus   { PAYED, PENDING, NOT_PAYED }
-enum PaymentMethod   { PIX, CREDIT_CARD }
+enum PracticeContextType { INDIVIDUAL, CLINIC }
+enum MemberRole { OWNER, MANAGER, SECRETARY, FINANCE }
+enum PatientProfileStatus { ACTIVE, INACTIVE, ARCHIVED }
+enum PatientInviteStatus { PENDING, ACCEPTED, REJECTED }
+enum ClaimRequestStatus { PENDING, APPROVED, REJECTED }
+enum PatientProfileAccessCodeStatus { PENDING, USED, CANCELLED, EXPIRED }
+enum DocumentType { RG, CPF, CNH, OTHER }
+enum ParticipantType { PSYCHOLOGIST, PATIENT }
+enum PlanInterval { MONTHLY, YEARLY }
+enum PaymentStatus { PAYED, PENDING, NOT_PAYED }
+enum PaymentMethod { PIX, CREDIT_CARD }
 enum PaymentFrequency { MONTHLY, YEARLY }
-enum PlanInterval    { MONTHLY, YEARLY }
-```
-
-### PopupStatus / PopupType
-
-```ts
 enum PopupStatus { DRAFT, ACTIVE, PAUSED, ARCHIVED }
-enum PopupType   { MODAL, SLIDE_IN, BAR, TOAST }
+enum PopupType { MODAL, SLIDE_IN, BAR, TOAST }
+enum SuggestionCategory {
+  UI_UX,
+  SCHEDULING,
+  REPORTS,
+  PRIVACY_LGPD,
+  INTEGRATIONS,
+  OTHERS
+}
+enum SuggestionStatus {
+  PENDING,
+  OPEN,
+  UNDER_REVIEW,
+  PLANNED,
+  IMPLEMENTED,
+  REJECTED
+}
 ```
 
-### SuggestionCategory / SuggestionStatus
+Notas importantes:
 
-```ts
-enum SuggestionCategory { UI_UX, SCHEDULING, REPORTS, PRIVACY_LGPD, INTEGRATIONS, OTHERS }
-enum SuggestionStatus   { PENDING, OPEN, UNDER_REVIEW, PLANNED, IMPLEMENTED, REJECTED }
-```
+- `PlatformRole` identifica papel de plataforma (`ADMIN`/`SUPPORT`). Não use para decidir se a pessoa é paciente ou psicóloga.
+- Para saber se o usuário é psicólogo, use `GET /me.data.psychologistProfile !== null`.
+- Para saber se o usuário é paciente, use `GET /me.data.patientProfiles.length > 0`.
+- `PatientProfileStatus` é independente de `AccountStatus`. Paciente não tem `isActive` exposto; use `status`.
+- `Honorific` usa os valores reais `MASC_DR`, `FEMININE_DR`, `MSC`, `PHD`.
 
 ---
 
-## Envelope global de resposta
+## Envelope Global
 
-**Toda resposta HTTP** é embrulhada pelo `TransformResponseInterceptor`:
+O interceptor global transforma retornos normais em:
 
 ```ts
-// Sucesso
 {
-  success: true,
-  statusCode: number,    // ex: 200, 201
-  data: T | null,        // payload real da rota
-  message: string | undefined,
+  success: true
+  statusCode: number
+  data: T | null
+  message: string | undefined
   error: undefined
 }
+```
 
-// Erro (domain ou HTTP)
+Erros são tratados pelo `DomainExceptionFilter`:
+
+```ts
 {
-  success: false,
-  statusCode: number,    // ex: 400, 403, 404, 409
-  data: null,
-  message: undefined,
+  success: false
+  statusCode: number
+  data: null
+  message: undefined
   error: {
-    code: string,        // ex: "CRP_ALREADY_EXISTS", "BAD_REQUEST"
-    message: string      // mensagem legível
+    code: string
+    message: string
   }
 }
 ```
 
-> **Exceção:** `POST /session` e `POST /session/refresh` usam `res.json(...).send()` diretamente (sem passar pelo interceptor). Eles retornam o objeto cru sem envelope.
+Exceções importantes:
+
+- `POST /session` e `POST /session/refresh` usam `res.json(...)` e retornam objeto cru, sem envelope.
+- `GET /auth/google/callback` redireciona.
+- `GET /attachments/:id` faz stream do arquivo e não retorna JSON envelopado.
+- Rotas com `@HttpCode(204)` devem ser tratadas como sem payload útil.
 
 ---
 
-## Entidades
+## Autenticação Efetiva
+
+`JwtAuthGuard` e `AccountStatusGuard` são globais via `APP_GUARD`. Portanto:
+
+- Toda rota sem `@Public()` exige `access_token` em cookie HTTP-only ou `Authorization: Bearer <jwt>`.
+- Toda rota sem `@Public()` também passa pelo `AccountStatusGuard`.
+- `AccountStatusGuard` bloqueia usuário inexistente, usuário `isActive=false`, conta inexistente, conta `BLOCKED`, conta diferente de `ACTIVE`, perfil de psicólogo não `ACTIVE` e IP em blacklist.
+- A validação de `Payment` está comentada no código atual. Hoje o guard não bloqueia por plano vencido.
+
+Payload do access token validado:
+
+```ts
+{
+  sub: string
+  email: string
+  provider: 'credentials' | 'google'
+  profileImageUrl?: string | null
+}
+```
+
+Cookies:
+
+- `access_token`: 15 minutos.
+- `refresh_token`: 7 dias.
+- Em produção: `secure: true`, `sameSite: 'none'`; em dev: `sameSite: 'lax'`.
 
 ---
 
-### User
+## Header de Contexto
 
-**O que representa:** Identidade base do usuário na plataforma. Toda pessoa — paciente, psicólogo ou admin — começa como `User`.
+Rotas com `PracticeContextGuard` exigem:
 
-**Tabela Prisma:** `users`
+```http
+x-psychologist-practice-context-id: <uuid>
+```
 
-**Fonte no código:**
-- `prisma/schema.prisma` (model User)
-- `src/core/domain/main/enterprise/entities/user.ts`
-- `src/infra/database/prisma/mappers/user.ts`
-- `src/infra/http/presenters/user-presenter.ts`
+Validações reais:
 
-#### Campos
+| Situação | HTTP | Código do envelope | Mensagem |
+|---|---:|---|---|
+| Header ausente | 400 | `BAD_REQUEST` | `Missing required header: x-psychologist-practice-context-id` |
+| Header não UUID | 400 | `BAD_REQUEST` | `Invalid UUID in header: x-psychologist-practice-context-id` |
+| Contexto inexistente | 404 | `NOT_FOUND` | `PRACTICE_CONTEXT_NOT_FOUND` |
+| Contexto de outro usuário | 403 | `FORBIDDEN` | `PRACTICE_CONTEXT_ACCESS_DENIED` |
 
-| Campo | Tipo TS | Tipo Prisma | Obrigatório | Nullable | Default | Observações |
-|---|---|---|---|---|---|---|
-| `id` | `string` (UUID) | `String @id @default(uuid())` | Sim | Não | auto | PK |
-| `firstName` | `string` | `String` | Sim | Não | — | — |
-| `lastName` | `string` | `String` | Sim | Não | — | — |
-| `email` | `string \| null` | `String? @unique` | Não | Sim | null | Único quando preenchido |
-| `phoneNumber` | `string \| null` | `String? @db.VarChar(20)` | Não | Sim | null | — |
-| `profileImageUrl` | `string \| null` | `String?` | Não | Sim | null | Pode ser atualizado via `POST /attachments` com `type=AVATAR` |
-| `dateOfBirth` | `Date \| null` | `DateTime?` | Não | Sim | null | Não pode ser data futura |
-| `cpf` | `string \| null` | `String? @unique @db.VarChar(14)` | Não | Sim | null | Normalizado para apenas dígitos |
-| `isActive` | `boolean` | `Boolean @default(true)` | Sim | Não | `true` | — |
-| `gender` | `Gender` | `Gender` | Sim | Não | — | Enum: OTHER, FEMININE, MASCULINE |
-| `platformRole` | `PlatformRole` | `PlatformRole @default(USER)` | Sim | Não | `USER` | Não usar para discriminar tipo de usuário |
-| `addressId` | `string \| null` | `String?` | Não | Sim | null | FK para `addresses` (um usuário pode ter vários endereços) |
-| `createdAt` | `Date` | `DateTime @default(now())` | Sim | Não | auto | — |
-| `updatedAt` | `Date` | `DateTime @updatedAt` | Sim | Não | auto | — |
+O CORS permite esse header em `allowedHeaders`.
 
-#### Relacionamentos
+---
 
-| Relação | Tipo | Cardinalidade |
-|---|---|---|
-| `accounts` | `Account[]` | 1 User → N Accounts |
-| `psychologistProfile` | `PsychologistProfile?` | 1 User → 0..1 PsychologistProfile |
-| `patientProfiles` | `PatientProfile[]` | 1 User → N PatientProfiles |
-| `clinicMembers` | `ClinicMember[]` | 1 User → N ClinicMembers |
-| `address` | `Address[]` | 1 User → N Addresses (via join table invertida) |
-| `blacklistEntries` | `Blacklist[]` | 1 User → N Blacklist |
-| `popupViews` | `PopupView[]` | 1 User → N PopupViews |
-| `uploadedByAttachment` | `Attachment[]` | 1 User → N Attachments |
+## User
 
-#### Shape exposto em `GET /me` (via `UserPresenter`)
+Tabela: `users`
+
+| Campo | Tipo HTTP | Prisma | Observação |
+|---|---|---|---|
+| `id` | `string` | `String @id @default(uuid())` | UUID |
+| `firstName` | `string` | `String` | Obrigatório |
+| `lastName` | `string` | `String` | Obrigatório |
+| `email` | `string` | `String @unique` | Obrigatório no schema atual |
+| `phoneNumber` | `string \| null` | `String?` | Opcional |
+| `profileImageUrl` | `string \| null` | `String?` | Pode receber id de anexo em fluxo de avatar |
+| `dateOfBirth` | `Date \| null` | `DateTime?` | Opcional |
+| `cpf` | `string \| null` | `String? @unique` | Normalizado para dígitos no cadastro |
+| `gender` | `Gender` | `Gender` | Obrigatório |
+| `isActive` | `boolean` | `Boolean @default(true)` | Guard bloqueia se `false` |
+| `platformRole` | `PlatformRole` | `PlatformRole @default(USER)` | Não define perfil clínico |
+| `addressId` | `string \| null` | `String?` | FK opcional |
+| `createdAt` | `Date` | `DateTime` | Exposto em `/me` |
+| `updatedAt` | `Date` | `DateTime` | Não exposto em `/me` |
+
+Shape em `GET /me`:
 
 ```ts
 {
   id: string
   firstName: string
   lastName: string
-  email: string | null
+  email: string
   cpf: string | null
   phoneNumber: string | null
-  gender: string            // valor do enum
+  gender: Gender
   dateOfBirth: Date | null
   profileImageUrl: string | null
   isActive: boolean
-  platformRole: string      // valor do enum
+  platformRole: PlatformRole
   createdAt: Date
-  psychologistProfile: { ... } | null   // ver seção PsychologistProfile
-  practiceContexts: Array<{ ... }>      // ver seção PsychologistPracticeContext
-  patientProfiles: Array<{ ... }>       // ver seção PatientProfile
-  clinicMemberContexts: Array<{ ... }>  // ✅ memberships reais via ClinicMemberRepository
+  psychologistProfile: PsychologistProfileHTTP | null
+  practiceContexts: PsychologistPracticeContextHTTP[]
+  patientProfiles: PatientProfileHTTP[]
+  clinicMemberContexts: Array<{
+    id: string
+    clinicId: string | null
+    branchId: string | null
+    memberRole: string
+  }>
 }
 ```
 
-#### Observações para o frontend
+---
 
-- `platformRole` serve apenas para identificar ADMIN/SUPPORT. Não use para distinguir paciente de psicólogo.
-- Para saber se o usuário é psicólogo: verifique se `psychologistProfile !== null`.
-- Para saber se o usuário é paciente: verifique se `patientProfiles.length > 0`.
-- Um usuário pode ser tanto psicólogo quanto paciente simultaneamente.
-- `clinicMemberContexts` reflete os memberships reais do usuário (via `ClinicMemberRepository`).
+## Account
+
+Tabela: `accounts`
+
+| Campo | Tipo | Observação |
+|---|---|---|
+| `provider` | `'credentials' \| 'google'` | LinkedIn não existe no código atual |
+| `email` | `string \| null` | Usado em credenciais |
+| `password` | `string \| null` | Hash bcrypt |
+| `hashedRefreshToken` | `string \| null` | Atualizado no login/refresh |
+| `isActive` | `boolean` | Prisma default `false`, entidade default `true` |
+| `status` | `AccountStatus` | Prisma default `PENDING`, entidade/cadastro usam `ACTIVE` |
+
+Cadastro via `POST /user` cria conta `credentials` com `status=ACTIVE` e `isActive=true`.
 
 ---
 
-### Account
+## PsychologistProfile
 
-**O que representa:** Conta de autenticação ligada a um `User`. Um usuário pode ter múltiplas contas (credentials + Google + LinkedIn).
+Tabela: `psychologist_profiles`
 
-**Tabela Prisma:** `accounts`
+| Campo | Tipo HTTP | Observação |
+|---|---|---|
+| `id` | `string` | UUID do profile |
+| `userId` | `string` | `User.id`, unique |
+| `crp` | `string` | Unique |
+| `expertise` | `Expertise` | Enum |
+| `honorific` | `Honorific` | Default `MASC_DR` |
+| `professionalName` | `string` | Default `''` se omitido |
+| `languages` | `Languages[]` | Default `[]` |
+| `professionalBio` | `string \| null` | Opcional |
+| `status` | `AccountStatus` | Entidade cria como `ACTIVE` |
+| `isActive` | `boolean` | Default `true` |
+| `createdAt` | `Date` | Exposto |
 
-**Fonte no código:**
-- `prisma/schema.prisma` (model Account)
-- `src/infra/database/prisma/repositories/prisma-account-repository.ts`
-
-#### Campos
-
-| Campo | Tipo TS | Tipo Prisma | Obrigatório | Nullable | Default |
-|---|---|---|---|---|---|
-| `id` | `string` | `String @id` | Sim | Não | uuid |
-| `userId` | `string` | `String` | Sim | Não | — |
-| `type` | `string` | `String` | Sim | Não | — |
-| `provider` | `string` | `String` | Sim | Não | — | `'credentials' \| 'google' \| 'linkedin'` |
-| `providerAccountId` | `string` | `String` | Sim | Não | — | — |
-| `email` | `string \| null` | `String?` | Não | Sim | null | — |
-| `password` | `string \| null` | `String?` | Não | Sim | null | Hash bcrypt |
-| `hashedRefreshToken` | `string \| null` | `String?` | Não | Sim | null | — |
-| `isActive` | `boolean` | `Boolean @default(false)` | Sim | Não | **`false`** | ⚠️ Default é `false` |
-| `status` | `AccountStatus` | `AccountStatus @default(PENDING)` | Sim | Não | **`PENDING`** | ⚠️ Default é `PENDING` |
-
-#### Observações para o frontend
-
-> ✅ **Sem aprovação (T29):** `Account.create` agora usa `status = ACTIVE` por default; novas contas via `POST /user` são criadas `ACTIVE` e acessam recursos autenticados imediatamente. O `@default(PENDING)` da coluna Prisma é apenas fallback — a aplicação grava `ACTIVE` explicitamente. Não há mais etapa de aprovação admin.
-
-- O `status` da conta é retornado em `POST /session` como `user.status` (normalmente `ACTIVE`).
-
----
-
-### Address
-
-**O que representa:** Endereço físico, podendo ser vinculado a um ou mais usuários.
-
-**Tabela Prisma:** `addresses`
-
-#### Campos
-
-| Campo | Tipo TS | Tipo Prisma | Obrigatório | Nullable |
-|---|---|---|---|---|
-| `id` | `string` | `String @id` | Sim | Não |
-| `zipCode` | `string` | `String` | Sim | Não |
-| `street` | `string \| null` | `String?` | Não | Sim |
-| `neighborhood` | `string \| null` | `String?` | Não | Sim |
-| `city` | `string \| null` | `String?` | Não | Sim |
-| `state` | `string \| null` | `String? @db.VarChar(2)` | Não | Sim | sigla UF |
-| `number` | `string \| null` | `String?` | Não | Sim |
-| `complement` | `string \| null` | `String?` | Não | Sim |
-| `createdAt` | `Date` | `DateTime @default(now())` | Sim | Não |
-| `updatedAt` | `Date` | `DateTime @updatedAt` | Sim | Não |
-
----
-
-### PsychologistProfile
-
-**O que representa:** Perfil profissional do psicólogo. Criado após registro de usuário, via `POST /psychologist/profile`.
-
-**Tabela Prisma:** `psychologist_profiles`
-
-**Fonte no código:**
-- `prisma/schema.prisma` (model PsychologistProfile)
-- `src/infra/http/presenters/psychologist-profile-presenter.ts`
-
-#### Campos
-
-| Campo | Tipo TS | Tipo Prisma | Obrigatório | Nullable | Default |
-|---|---|---|---|---|---|
-| `id` | `string` | `String @id` | Sim | Não | uuid |
-| `userId` | `string` | `String @unique` | Sim | Não | — |
-| `crp` | `string` | `String @unique @db.VarChar(10)` | Sim | Não | — |
-| `expertise` | `Expertise` | `Expertise` | Sim | Não | — |
-| `professionalBio` | `string \| null` | `String? @db.Text` | Não | Sim | null |
-| `status` | `AccountStatus` | `AccountStatus @default(PENDING)` | Sim | Não | **`PENDING`** |
-| `isActive` | `boolean` | `Boolean @default(true)` | Sim | Não | `true` |
-| `createdAt` | `Date` | `DateTime @default(now())` | Sim | Não | auto |
-| `updatedAt` | `Date` | `DateTime @updatedAt` | Sim | Não | auto |
-
-#### Shape exposto (via `PsychologistProfilePresenter`)
+Shape HTTP:
 
 ```ts
-// Endpoint: POST /psychologist/profile (resposta da criação)
-// Endpoint: PATCH /psychologist/profile (resposta da atualização)
 {
   id: string
   userId: string
   crp: string
   expertise: string
+  honorific: string
+  professionalName: string
+  languages: string[]
   professionalBio: string | null
-  status: string                   // 'ACTIVE' na criação (T29)
+  status: string
   isActive: boolean
   createdAt: Date
 }
 ```
 
-#### Shape em `GET /me` (via `UserPresenter`)
-
-```ts
-// ✅ professionalBio agora exposto em GET /me (T27)
-psychologistProfile: {
-  id: string
-  crp: string
-  expertise: string
-  professionalBio: string | null
-  status: string
-  isActive: boolean
-} | null
-```
-
-#### Observações para o frontend
-
-- Status padrão é `ACTIVE` (T29) — sem aprovação admin. `PsychologistProfile.create` usa `ACTIVE` por default.
-- `professionalBio` é retornado em `POST /psychologist/profile` e agora também em `GET /me` (T27).
-- Um usuário só pode ter **um** `PsychologistProfile` (FK `userId` é unique).
-
 ---
 
-### PsychologistPracticeContext
+## PsychologistPracticeContext
 
-**O que representa:** Contexto de atuação do psicólogo — pode ser individual (autônomo) ou vinculado a uma clínica. É a entidade central que conecta psicólogo → pacientes → agendamentos → pagamentos.
+Tabela: `psychologist_practice_contexts`
 
-**Tabela Prisma:** `psychologist_practice_contexts`
+| Campo | Tipo HTTP | Observação |
+|---|---|---|
+| `id` | `string` | UUID do contexto |
+| `psychologistProfileId` | `string` | Dono do contexto |
+| `contextType` | `INDIVIDUAL \| CLINIC` | Enum |
+| `clinicId` | `string \| null` | Opcional no schema; use case exige se CLINIC |
+| `clinicBranchId` | `string \| null` | Opcional |
+| `consultationFee` | `number \| null` | Em centavos |
+| `nickname` | `string \| null` | Opcional |
+| `isActive` | `boolean` | Guard só aceita contexto ativo |
+| `createdAt` | `Date` | Exposto |
 
-**Fonte no código:**
-- `prisma/schema.prisma` (model PsychologistPracticeContext)
-- `src/infra/http/presenters/psychologist-practice-context-presenter.ts`
-- `src/infra/auth/practice-context.guard.ts`
-
-#### Campos
-
-| Campo | Tipo TS | Tipo Prisma | Obrigatório | Nullable | Default |
-|---|---|---|---|---|---|
-| `id` | `string` | `String @id` | Sim | Não | uuid |
-| `psychologistProfileId` | `string` | `String` | Sim | Não | — |
-| `contextType` | `PracticeContextType` | `PracticeContextType` | Sim | Não | — |
-| `clinicId` | `string \| null` | `String?` | Não | Sim | null | Obrigatório se `contextType=CLINIC` |
-| `clinicBranchId` | `string \| null` | `String?` | Não | Sim | null | Opcional mesmo se CLINIC |
-| `consultationFee` | `number \| null` | `Int?` | Não | Sim | null | **Em centavos.** Movido de `PsychologistProfile` para cá. |
-| `nickname` | `string \| null` | `String?` | Não | Sim | null | Identificador amigável do contexto |
-| `isActive` | `boolean` | `Boolean @default(true)` | Sim | Não | `true` | — |
-| `createdAt` | `Date` | `DateTime @default(now())` | Sim | Não | auto | — |
-| `updatedAt` | `Date` | `DateTime @updatedAt` | Sim | Não | auto | — |
-
-#### Shape exposto (via `PsychologistPracticeContextPresenter`)
+Shape HTTP:
 
 ```ts
-// Endpoint: POST /psychologist/practice-contexts
 {
   id: string
   psychologistProfileId: string
-  contextType: string          // 'INDIVIDUAL' | 'CLINIC'
+  contextType: string
   clinicId: string | null
   clinicBranchId: string | null
-  consultationFee: number | null   // em centavos
+  consultationFee: number | null
   nickname: string | null
   isActive: boolean
   createdAt: Date
 }
 ```
 
-#### Shape em `GET /me` (via `UserPresenter`)
-
-```ts
-// ⚠️ Divergência: consultationFee e nickname NÃO aparecem em GET /me
-practiceContexts: Array<{
-  id: string
-  contextType: string
-  clinicId: string | null
-  clinicBranchId: string | null
-  isActive: boolean
-}>
-```
-
-#### Header obrigatório nas rotas protegidas
-
-Rotas com `PracticeContextGuard` exigem:
-```
-x-psychologist-practice-context-id: <UUID do contexto>
-```
-
-O guard valida que o contexto pertence ao usuário autenticado e o injeta em `request.practiceContext`.
-
-#### Observações para o frontend
-
-- `consultationFee` em **centavos** (não reais). Divida por 100 para exibir.
-- `GET /me` **não expõe** `consultationFee` nem `nickname`. Se precisar desses campos, use a resposta de `POST /psychologist/practice-contexts` ou implemente uma rota de busca específica.
-- O frontend deve armazenar localmente o `id` do contexto selecionado e enviá-lo como header `x-psychologist-practice-context-id` em todas as rotas que precisam de contexto.
-
 ---
 
-### PatientProfile
+## PatientProfile
 
-**O que representa:** Perfil de paciente. Um usuário pode ter múltiplos perfis de paciente (um por contexto de atendimento). O vínculo com um psicólogo é via `psychologistPracticeContextId`, que é **nullable**.
+Tabela: `patient_profiles`
 
-**Tabela Prisma:** `patient_profiles`
+`PatientProfile` guarda dados próprios de identidade do paciente. Não é apenas vínculo entre `User` e psicólogo.
 
-**Fonte no código:**
-- `prisma/schema.prisma` (model PatientProfile)
-- `src/infra/http/presenters/patient-profile-presenter.ts`
-- `src/core/domain/main/application/use-cases/patients/create-patient-profile.ts`
+| Campo | Tipo HTTP | Observação |
+|---|---|---|
+| `id` | `string` | UUID do profile |
+| `userId` | `string \| null` | Pode ser `null` |
+| `psychologistPracticeContextId` | `string \| null` | Pode ser `null` para perfil sem contexto |
+| `firstName` | `string` | Obrigatório |
+| `lastName` | `string` | Obrigatório |
+| `email` | `string \| null` | Opcional |
+| `cpf` | `string \| null` | Opcional |
+| `phoneNumber` | `string \| null` | Opcional |
+| `gender` | `Gender` | Default no domínio: `OTHER` |
+| `dateOfBirth` | `Date \| null` | Opcional |
+| `profileImageUrl` | `string \| null` | Opcional |
+| `status` | `PatientProfileStatus` | `ACTIVE`, `INACTIVE`, `ARCHIVED` |
+| `archivedAt` | `Date \| null` | Preenchido ao arquivar |
+| `createdAt` | `Date` | Exposto |
 
-#### Campos
-
-| Campo | Tipo TS | Tipo Prisma | Obrigatório | Nullable | Default |
-|---|---|---|---|---|---|
-| `id` | `string` | `String @id` | Sim | Não | uuid |
-| `userId` | `string` | `String` | Sim | Não | — |
-| `psychologistPracticeContextId` | `string \| null` | `String?` | Não | **Sim** | null | Paciente sem contexto = usuário autônomo |
-| `isActive` | `boolean` | `Boolean @default(true)` | Sim | Não | `true` | — |
-| `archivedAt` | `Date \| null` | `DateTime?` | Não | Sim | null | Preenchido ao arquivar |
-| `createdAt` | `Date` | `DateTime @default(now())` | Sim | Não | auto | — |
-| `updatedAt` | `Date` | `DateTime @updatedAt` | Sim | Não | auto | — |
-
-#### Unicidade parcial
-
-Há um índice parcial manual (criado via migration SQL) que garante:
-- Um usuário **não pode** ter dois perfis vinculados ao mesmo contexto.
-- Um usuário **pode** ter múltiplos perfis sem contexto (`psychologistPracticeContextId IS NULL`).
-
-#### Shape exposto (via `PatientProfilePresenter`)
+Shape HTTP:
 
 ```ts
-// Endpoint: POST /patient/profile
 {
   id: string
-  userId: string
+  userId: string | null
   psychologistPracticeContextId: string | null
-  isActive: boolean
+  firstName: string
+  lastName: string
+  email: string | null
+  cpf: string | null
+  phoneNumber: string | null
+  gender: string
+  dateOfBirth: Date | null
+  profileImageUrl: string | null
+  status: 'ACTIVE' | 'INACTIVE' | 'ARCHIVED'
   archivedAt: Date | null
   createdAt: Date
 }
 ```
 
-#### Shape em `GET /me`
+Shape de listagem via `PatientPresenter` adiciona:
 
 ```ts
-patientProfiles: Array<{
-  id: string
-  psychologistPracticeContextId: string | null
-  isActive: boolean
-}>
+{
+  name: string
+  lastSessionAt: null
+}
 ```
-
-#### Observações para o frontend
-
-- `psychologistPracticeContextId: null` significa que o usuário se registrou como paciente de forma autônoma (sem vínculo com psicólogo específico).
-- `POST /patient/profile` aceita `psychologistPracticeContextId` como nullable. Se omitido, usa `null`.
-- `POST /patient` (criação pelo psicólogo) usa o `contextId` do header, não do body.
 
 ---
 
-### Appointment
+## PatientInvite / Claim / Access Code
 
-**O que representa:** Consulta agendada entre paciente e psicólogo.
+### PatientInvite
 
-**Tabela Prisma:** `appointments`
+Tabela: `patient_invites`
 
-#### Campos
+Usado para convidar um usuário a assumir um `PatientProfile`.
 
-| Campo | Tipo TS | Tipo Prisma | Obrigatório | Nullable | Default |
-|---|---|---|---|---|---|
-| `id` | `string` | `String @id` | Sim | Não | uuid |
-| `patientProfileId` | `string \| null` | `String?` | Não | Sim | null |
-| `psychologistPracticeContextId` | `string \| null` | `String?` | Não | Sim | null |
-| `diagnosis` | `string` | `String` | Sim | Não | — |
-| `content` | `string \| null` | `String? @db.Text` | Não | Sim | null | Notas da sessão |
-| `scheduledAt` | `Date` | `DateTime @default(now())` | Sim | Não | now | — |
-| `status` | `AppointmentStatus` | `AppointmentStatus @default(SCHEDULED)` | Sim | Não | `SCHEDULED` | Valores: ver enum |
-| `createdAt` | `Date` | `DateTime @default(now())` | Sim | Não | auto | — |
-| `updatedAt` | `Date` | `DateTime @updatedAt` | Sim | Não | auto | — |
+| Campo | Tipo |
+|---|---|
+| `patientProfileId` | `string` |
+| `tokenHash` | `string` |
+| `email` | `string` |
+| `expiresAt` | `Date` |
+| `status` | `PENDING \| ACCEPTED \| REJECTED` |
+| `acceptedAt` / `rejectedAt` | `Date \| null` |
 
-#### Shape exposto (via `AppointmentPresenter`)
+Metadata pública de convite:
+
+```ts
+{
+  patientFirstName: string
+  psychologistCrp: string
+  psychologistDisplayName: string
+  expiresAt: Date
+  userHasAccount: boolean
+}
+```
+
+### PatientProfileClaimRequest
+
+Tabela: `patient_profile_claim_requests`
+
+Shape resumido:
+
+```ts
+{
+  id: string
+  status: 'PENDING' | 'APPROVED' | 'REJECTED'
+  reviewedById: string | null
+  requestedAt: Date
+  approvedAt: Date | null
+  rejectedAt: Date | null
+  patientProfileId: string
+  requestedCpf: string | null // mascarado no presenter
+  requesterUserId: string
+  requesterFirstName: string
+  requesterLastName: string
+  requesterEmail: string
+  requesterDateOfBirth: string | null // mascarado
+  createdAt: Date
+  updatedAt: Date
+}
+```
+
+Detalhe adiciona dados mascarados do paciente:
+
+```ts
+{
+  patientProfileFirstName: string
+  patientProfileLastName: string
+  patientProfileDateOfBirth: string | null
+  patientProfileEmail: string | null
+  patientProfileCpf: string | null
+}
+```
+
+### PatientProfileAccessCode
+
+Tabela: `patient_profile_access_codes`
+
+Usado pelo psicólogo para gerar código de vínculo. A rota retorna o código cru apenas no momento da geração:
+
+```ts
+{
+  code: string
+  expiresAt: Date
+  patientProfileId: string
+}
+```
+
+---
+
+## Appointment
+
+Tabela: `appointments`
+
+| Campo | Tipo HTTP |
+|---|---|
+| `id` | `string` |
+| `patientProfileId` | `string \| null` |
+| `psychologistPracticeContextId` | `string \| null` |
+| `diagnosis` | `string` |
+| `content` | `string \| null` |
+| `scheduledAt` | `Date` |
+| `durationInMin` | `number \| null` |
+| `status` | `AppointmentStatus` |
+| `createdAt` | `Date` |
+
+Shape HTTP:
 
 ```ts
 {
@@ -574,324 +509,307 @@ patientProfiles: Array<{
 }
 ```
 
-> ✅ **Alinhado (T31):** O enum `AppointmentStatus` no domínio TypeScript tem os mesmos 6 valores do Prisma (`DONE` removido). Use os 6 valores do schema.
+---
+
+## AppointmentSession / SessionParticipant
+
+`AppointmentSession`:
+
+| Campo | Tipo |
+|---|---|
+| `id` | `string` |
+| `appointmentId` | `string` |
+| `startedAt` | `Date` |
+| `endedAt` | `Date \| null` |
+| `durationInMin` | `number \| null` |
+| `meetingLink` | `string \| null` |
+| `notes` | `string \| null` |
+
+`SessionParticipant` permite participante psicólogo ou paciente:
+
+| Campo | Tipo |
+|---|---|
+| `participantType` | `PSYCHOLOGIST \| PATIENT \| null` |
+| `psychologistPracticeContextId` | `string \| null` |
+| `patientProfileId` | `string \| null` |
+| `joinedAt` / `leftAt` | `Date` / `Date \| null` |
 
 ---
 
-### AppointmentSession
-
-**O que representa:** Sessão ativa de uma consulta. Criada quando o psicólogo inicia a sessão.
-
-**Tabela Prisma:** `appointment_sessions`
-
-#### Campos
-
-| Campo | Tipo TS | Tipo Prisma | Nullable |
-|---|---|---|---|
-| `id` | `string` | `String @id` | Não |
-| `appointmentId` | `string` | `String @unique` | Não |
-| `startedAt` | `Date` | `DateTime @default(now())` | Não |
-| `endedAt` | `Date \| null` | `DateTime?` | Sim |
-| `durationInMin` | `number \| null` | `Int?` | Sim |
-| `meetingLink` | `string \| null` | `String?` | Sim |
-| `notes` | `string \| null` | `String? @db.Text` | Sim |
-
----
-
-### SessionParticipant
-
-**O que representa:** Participante de uma `AppointmentSession`. Polimórfico — pode ser psicólogo ou paciente.
-
-**Tabela Prisma:** `session_participants`
-
-#### Campos
-
-| Campo | Tipo TS | Tipo Prisma | Nullable |
-|---|---|---|---|
-| `id` | `string` | `String @id` | Não |
-| `sessionId` | `string` | `String` | Não |
-| `participantType` | `ParticipantType \| null` | `ParticipantType?` | Sim |
-| `psychologistPracticeContextId` | `string \| null` | `String?` | Sim |
-| `patientProfileId` | `string \| null` | `String?` | Sim |
-| `joinedAt` | `Date` | `DateTime @default(now())` | Não |
-| `leftAt` | `Date \| null` | `DateTime?` | Sim |
-
-> **Invariante:** Deve ter exatamente um de `psychologistPracticeContextId` ou `patientProfileId` preenchido — não ambos, não nenhum. A entidade de domínio valida isso e lança `InvalidSessionParticipantError` (HTTP 422) se violado.
-
----
-
-### PsychologistAvailability
-
-**O que representa:** Disponibilidade semanal do psicólogo por contexto de prática.
-
-**Tabela Prisma:** `psychologist_availabilities`
-
-> ✅ **Coluna legada removida (T30):** `psychologist_id` foi removido do schema Prisma. O repositório usa apenas `psychologistPracticeContextId`, sem `as any`. Migração destrutiva script-only (aprovação necessária) em `prisma/migrations/20260613120000_drop_legacy_psychologist_columns`.
-
-#### Campos
-
-| Campo | Tipo Prisma | Nullable | Observação |
-|---|---|---|---|
-| `id` | `String @id` | Não | — |
-| `psychologistId` | `String @map("psychologist_id")` | Não | **Legado** — string livre, não FK |
-| `psychologistPracticeContextId` | `String?` | **Sim** | Nova FK |
-| `dayOfWeek` | `Int` | Não | 0=Domingo, 6=Sábado |
-| `startTime` | `String` | Não | Formato `"HH:mm"` |
-| `endTime` | `String` | Não | Formato `"HH:mm"` |
-| `isActive` | `Boolean @default(true)` | Não | — |
-
----
+## Clinical Records
 
 ### Anamnesis
 
-**O que representa:** Ficha de anamnese (formulário de intake clínico) do paciente.
+Tabela: `anamnesis`
 
-**Tabela Prisma:** `anamnesis`
+Path usa `patientId`, mas o código trata como `patientProfileId`.
 
-> ⚠️ **Atenção:** O path `/patients/:patientId/anamnesis` usa `patientId` como parâmetro de rota, mas o código trata esse valor como `patientProfileId` (não `user.id`). O frontend deve passar o `id` do `PatientProfile`, não o `id` do `User`.
+Shape HTTP:
 
-#### Campos
+```ts
+{
+  id: string
+  patientId: string // patientProfileId
+  content: Record<string, unknown>
+  createdAt: Date
+}
+```
 
-| Campo | Tipo Prisma | Nullable |
-|---|---|---|
-| `id` | `String @id` | Não |
-| `patientProfileId` | `String? @unique` | **Sim** |
-| `content` | `Json` | Não |
-| `updatedAt` | `DateTime @updatedAt` | Não |
-
----
+`GET /patients/:patientId/anamnesis` retorna `{ anamnesis: AnamnesisHTTP | null }`.
 
 ### Document
 
-**O que representa:** Documento identificatório do paciente (RG, CPF, CNH, etc.) com anexo opcional.
+Shape HTTP:
 
-**Tabela Prisma:** `documents`
+```ts
+{
+  id: string
+  patientProfileId: string
+  type: string
+  attachment: AttachmentHTTP | null
+  createdAt: Date
+}
+```
 
-#### Campos
-
-| Campo | Tipo Prisma | Nullable |
-|---|---|---|
-| `id` | `String @id` | Não |
-| `patientProfileId` | `String` | Não |
-| `attachmentId` | `String? @unique` | Sim |
-| `type` | `DocumentType` | Não |
-| `createdAt` | `DateTime @default(now())` | Não |
-| `updatedAt` | `DateTime @updatedAt` | Não |
-
----
+O presenter atual recebe `attachment` como `null` nos controllers registrados.
 
 ### MedicalRecord
 
-**O que representa:** Prontuário médico do paciente, podendo ter conteúdo textual e/ou anexo.
+```ts
+{
+  id: string
+  patientProfileId: string
+  content: string | null
+  attachment: AttachmentHTTP | null
+  createdAt: Date
+}
+```
 
-**Tabela Prisma:** `medical_records`
-
-#### Campos
-
-| Campo | Tipo Prisma | Nullable |
-|---|---|---|
-| `id` | `String @id` | Não |
-| `patientProfileId` | `String` | Não |
-| `attachmentId` | `String? @unique` | Sim |
-| `content` | `String? @db.Text` | Sim |
-| `createdAt` | `DateTime @default(now())` | Não |
-| `updatedAt` | `DateTime @updatedAt` | Não |
-
----
+O presenter atual recebe `attachment` como `null` nos controllers registrados.
 
 ### Observation
 
-**O que representa:** Observação clínica do psicólogo sobre o paciente.
-
-**Tabela Prisma:** `observations`
-
-#### Campos
-
-| Campo | Tipo Prisma | Nullable |
-|---|---|---|
-| `id` | `String @id` | Não |
-| `patientProfileId` | `String` | Não |
-| `content` | `String @db.Text` | Não |
-| `createdAt` | `DateTime @default(now())` | Não |
-| `updatedAt` | `DateTime @updatedAt` | Não |
+```ts
+{
+  id: string
+  patientProfileId: string
+  content: string
+  createdAt: Date
+}
+```
 
 ---
 
-### Attachment
+## Attachment
 
-**O que representa:** Arquivo enviado para a plataforma (imagem, PDF). Pode ser vinculado a documentos, prontuários ou ser avatar de usuário.
+Tabela: `attachments`
 
-**Tabela Prisma:** `attachments`
+```ts
+{
+  id: string
+  uploadedBy: string
+  filename: string
+  contentType: string
+  sizeInBytes: number
+  fileUrl: string
+  uploadedAt: Date
+}
+```
 
-#### Campos
+Upload:
 
-| Campo | Tipo Prisma | Nullable |
-|---|---|---|
-| `id` | `String @id` | Não |
-| `uploaderId` | `String @map("uploader_id")` | Não |
-| `filename` | `String` | Não |
-| `sizeInBytes` | `Int @map("size_in_bytes")` | Não |
-| `contentType` | `String @map("content_type")` | Não |
-| `fileUrl` | `String @map("file_url")` | Não |
-| `deletedAt` | `DateTime?` | Sim |
-| `uploadedAt` | `DateTime @default(now())` | Não |
-| `createdAt` | `DateTime @default(now())` | Não |
-| `updatedAt` | `DateTime @updatedAt` | Não |
-
-> Tipos MIME aceitos: `image/jpeg`, `image/jpg`, `image/png`, `application/pdf`. Tamanho máximo: 3 MB.
-
-> Ao enviar `POST /attachments` com `type=AVATAR`, o backend atualiza `User.profileImageUrl` com a URL do arquivo.
-
----
-
-### RegistrationLink
-
-**O que representa:** Link de convite gerado pelo psicólogo para que pacientes se registrem.
-
-**Tabela Prisma:** `registration_links`
-
-> ⚠️ **Migração parcial:** Campo `psychologist_id` (String, não FK) ainda existe na tabela.
-
-#### Campos principais
-
-| Campo | Tipo Prisma | Nullable |
-|---|---|---|
-| `id` | `String @id` | Não |
-| `hash` | `String @unique` | Não |
-| `url` | `String` | Não |
-| `psychologistId` | `String` | Não | **Legado** |
-| `psychologistPracticeContextId` | `String?` | Sim |
-| `expiresAt` | `DateTime` | Não |
-| `createdAt` | `DateTime @default(now())` | Não |
+- Campo multipart obrigatório: `file`.
+- MIME aceito: `image/jpeg`, `image/jpg`, `image/png`, `application/pdf`.
+- Limite: 3 MB.
+- `type=AVATAR` só atualiza `User.profileImageUrl` se `patientId` também for enviado.
+- A atualização de avatar grava `attachment.id`, não `fileUrl`.
 
 ---
 
-### Payment
+## Billing / Plans
 
-**O que representa:** Pagamento de assinatura do psicólogo.
+`SubscriptionPlan`:
 
-**Tabela Prisma:** `payments`
+```ts
+{
+  id: string
+  name: string
+  description: string[]
+  priceInCents: number
+  interval: 'MONTHLY' | 'YEARLY'
+  createdAt: Date
+  updatedAt: Date
+}
+```
 
-> ⚠️ **Migração parcial:** Campo `psychologist_id` (String, não FK) ainda existe na tabela.  
-> ⚠️ **Risco:** O `AccountStatusGuard` valida pagamento ativo. Se o billing externo não criar um registro `Payment` no banco, o guard bloqueia o psicólogo mesmo com assinatura paga.
+`Payment` existe no schema, mas o fluxo atual de `POST /billing` só cria cobrança externa no AbacatePay e retorna:
 
-#### Campos principais
-
-| Campo | Tipo Prisma | Nullable | Default |
-|---|---|---|---|
-| `id` | `String @id` | Não | uuid |
-| `psychologistId` | `String` | Não | **Legado** |
-| `psychologistPracticeContextId` | `String?` | Sim | null |
-| `subscriptionPlanId` | `String` | Não | — |
-| `amount` | `Int` | Não | — |
-| `paidAt` | `DateTime?` | Sim | null |
-| `expiresAt` | `DateTime?` | Sim | null |
-| `externalId` | `String?` | Sim | null |
-| `status` | `PaymentStatus` | Não | `NOT_PAYED` |
-| `paymentMethod` | `PaymentMethod` | Não | `PIX` |
-| `paymentFrequency` | `PaymentFrequency` | Não | `MONTHLY` |
-
----
-
-### Clinic / ClinicBranch / ClinicMember / ClinicPsychologist
-
-**Status:** Entidades P2 — `clinicMemberContexts` em `GET /me` reflete memberships reais (via `ClinicMemberRepository.findManyByUserId`).
-
-#### Clinic — campos principais
-
-| Campo | Tipo Prisma | Nullable |
-|---|---|---|
-| `id` | `String @id` | Não |
-| `legalName` | `String` | Não |
-| `tradeName` | `String?` | Sim |
-| `cnpj` | `String @unique @db.VarChar(18)` | Não |
-| `email` | `String? @unique` | Sim |
-| `phoneNumber` | `String? @db.VarChar(20)` | Sim |
-| `isActive` | `Boolean @default(true)` | Não |
-| `responsibleMemberId` | `String?` | Sim |
-
-#### ClinicMember
-
-Vincula um `User` a uma `Clinic` ou `ClinicBranch` com um `MemberRole` (OWNER, MANAGER, SECRETARY, FINANCE).
-
-#### ClinicPsychologist
-
-Vincula um `PsychologistProfile` + `PsychologistPracticeContext` a uma clínica. A constraint `practiceContextId @unique` significa que um contexto só pode pertencer a uma clínica.
+```ts
+{
+  message: string
+  billingId: string
+  billingUrl: string
+  amount: number
+}
+```
 
 ---
 
-### Suggestion
+## Suggestions
 
-**Tabela Prisma:** `suggestions`
+Shape HTTP:
 
-> ⚠️ **Migração parcial:** Campo `psychologist_id` (String, não FK) ainda existe e é obrigatório na tabela.
+```ts
+{
+  id: string
+  psychologistProfileId: string
+  title: string
+  description: string
+  category: string
+  status: string
+  likes: string[]       // ids de PsychologistProfile
+  likesCount: number
+  attachments: string[] // URLs/chaves retornadas pelo uploader
+  createdAt: Date
+}
+```
 
-#### Campos relevantes
-
-| Campo | Tipo | Nullable |
-|---|---|---|
-| `psychologistProfileId` | `String?` | Sim — nova FK |
-| `psychologistId` | `String` | Não — **Legado**, obrigatório |
-| `likes` | `String[]` | Não — array de `psychologistProfileId` que curtiu |
-| `status` | `SuggestionStatus` | Não |
-
----
-
-### Popup / PopupView
-
-Popups são mensagens/banners para psicólogos. `PopupView` registra quando e que ação o usuário tomou.
-
-> ⚠️ **Migração parcial:** `Popup` tem campo `psychologistId` (String, legado) ainda presente.
+Criar e curtir sugestão exigem que o usuário autenticado tenha `PsychologistProfile`.
 
 ---
 
-## Erros de domínio e mapeamento HTTP
+## Popups
 
-| Classe de erro | HTTP | Código | Mensagem |
-|---|---|---|---|
-| `ResourceNotFoundError` | 404 | `RESOURCE_NOT_FOUND` | `"{resource} não encontrado"` |
-| `NotAllowedError` | 403 | `NOT_ALLOWED` | `"Ação não permitida"` |
-| `InactiveAccountError` | 403 | `INACTIVE_ACCOUNT` | `"Sua conta ainda não foi aprovada..."` |
-| `CRPAlreadyExistsError` | 409 | `CRP_ALREADY_EXISTS` | `"CRP já cadastrado"` |
-| `CrpAlreadyInUseError` | 409 | `CRP_ALREADY_IN_USE` | — |
-| `CnpjAlreadyInUseError` | 409 | `CNPJ_ALREADY_IN_USE` | — |
-| `PatientAlreadyLinkedError` | 409 | `PATIENT_ALREADY_LINKED` | — |
-| `PatientAlreadyExistsError` | 409 | `PATIENT_ALREADY_EXISTS` | — |
-| `PsychologistHasActivePatientsError` | 409 | `PSYCHOLOGIST_HAS_ACTIVE_PATIENTS` | — |
-| `PracticeContextNotFoundError` | 404 | `PRACTICE_CONTEXT_NOT_FOUND` | — |
-| `PracticeContextOwnershipError` | 403 | `PRACTICE_CONTEXT_OWNERSHIP` | — |
-| `PracticeContextRequiredError` | 400 | `PRACTICE_CONTEXT_REQUIRED` | — |
-| `AppointmentConflictError` | 409 | `APPOINTMENT_CONFLICT` | — |
-| `AppointmentDateInPastError` | 422 | `APPOINTMENT_DATE_IN_PAST` | — |
-| `AppointmentNotInProgressError` | 422 | `APPOINTMENT_NOT_IN_PROGRESS` | — |
-| `AppointmentNotScheduledError` | 422 | `APPOINTMENT_NOT_SCHEDULED` | — |
-| `InvalidSessionParticipantError` | 422 | `INVALID_SESSION_PARTICIPANT` | — |
-| `InvalidAttachmentTypeError` | 415 | `INVALID_ATTACHMENT_TYPE` | — |
-| `FileTooLargeError` | 413 | `FILE_TOO_LARGE` | `"O arquivo é muito grande. Max 3MB."` |
-| `InactivePatientError` | 422 | `INACTIVE_PATIENT` | — |
-| `InvalidStartTimeError` | 422 | `INVALID_START_TIME` | — |
-| `OAuthAlreadyLinkedError` | 409 | `OAUTH_ALREADY_LINKED` | — |
-| `OAuthEmailMismatchError` | 422 | `OAUTH_EMAIL_MISMATCH` | — |
-| `OAuthMissingEmailError` | 422 | `OAUTH_MISSING_EMAIL` | — |
-| `OAuthProviderConflictError` | 409 | `OAUTH_PROVIDER_CONFLICT` | — |
+`PopupPresenter`:
 
-Erros HTTP padrão (NestJS) são mapeados com `code = HttpStatus[status]` (ex: `BAD_REQUEST`, `FORBIDDEN`, `UNAUTHORIZED`).
+```ts
+{
+  id: string
+  internalName: string
+  title: string | null
+  body: string | null
+  imageUrl: string | null
+  ctaText: string | null
+  ctaUrl: string | null
+  type: string
+  styleConfig: unknown
+  triggerConfig: unknown
+  displayRules: unknown
+}
+```
+
+`GET /popups/active` monta resposta inline e não inclui `internalName`; `GET /popups/unseen` usa o presenter e inclui.
 
 ---
 
-## Diferenças entre modelo ideal das specs e código atual
+## Clinics
 
-| # | Spec / Design diz | Código atual faz | Impacto no frontend |
-|---|---|---|---|
-| 1 | `consultationFee` em `PsychologistPracticeContext` | ✅ Confirmado — está em `PracticeContext` | Não buscar de `PsychologistProfile` |
-| 2 | `GET /me` deve expor `consultationFee` e `nickname` dos contextos | ✅ Resolvido (T27) — incluídos em `practiceContexts[]` | Frontend recebe fee/nickname no `/me` |
-| 3 | `GET /me` deve expor `professionalBio` no profile | ✅ Resolvido (T27) | Frontend recebe bio no `/me` |
-| 4 | `GET /me` deve popular `clinicMemberContexts` | ✅ Resolvido (T27) — `ClinicMember` reais via `findManyByUserId` | Dados de clínica disponíveis em `/me` |
-| 5 | `PatientProfile.psychologistPracticeContextId` nullable | ✅ Confirmado | Tratar null como paciente autônomo |
-| 6 | `AppointmentStatus` padrão 6 valores | ✅ Resolvido (T31) — `DONE` removido do domínio, alinhado ao Prisma | Use os 6 valores do Prisma |
-| 7 | Fluxo self-service: `POST /user` → login → `POST /psychologist/profile` | ✅ Resolvido (T29) — conta criada `ACTIVE`, sem aprovação | Usuário cria perfil imediatamente após registro |
-| 8 | `PrismaPatientRepository` funcional | ✅ Resolvido (T33) — stub removido; rotas migradas para `PatientProfileRepository` | Rotas de paciente funcionam |
-| 9 | `PrismaPsychologistRepository` funcional | ✅ Resolvido (T33) — stub removido; rotas migradas para `PsychologistProfileRepository` | Rotas de psicólogo funcionam |
-| 10 | CORS permite `x-psychologist-practice-context-id` | ✅ Resolvido (T28) — header incluído em `allowedHeaders` | Preflight cross-origin permitido |
-| 11 | Billing externo cria `Payment` local | Incerto — `POST /billing` retorna URL mas não confirmado que cria `Payment` | `AccountStatusGuard` pode bloquear psicólogo com pagamento externo feito |
-| 12 | Colunas legadas removidas | ✅ Resolvido (T30) — `psychologist_id`/`psychologistId`/`psychologist_name` removidos de `suggestions`, `payments`, `registration_links`, `psychologist_availabilities`; `as any` removido dos 4 repos (migração script-only, aprovação necessária). `popups.psychologistId` (nullable) fora de escopo | Inserts usam só os novos IDs |
+### Clinic
+
+```ts
+{
+  id: string
+  legalName: string
+  tradeName: string | null
+  cnpj: string
+  email: string | null
+  phoneNumber: string | null
+  website: string | null
+  bannerUrl: string | null
+  logoUrl: string | null
+  isActive: boolean
+  responsibleMemberId: string | null
+  createdAt: Date
+  updatedAt: Date
+}
+```
+
+### ClinicBranch
+
+Mesmo shape de `Clinic`, com `clinicId`.
+
+### ClinicMember
+
+```ts
+{
+  id: string
+  userId: string
+  clinicId: string | null
+  branchId: string | null
+  memberRole: string
+  createdAt: Date
+  updatedAt: Date
+}
+```
+
+### ClinicPsychologist
+
+```ts
+{
+  id: string
+  psychologistProfileId: string
+  practiceContextId: string
+  clinicId: string | null
+  branchId: string | null
+  createdAt: Date
+}
+```
+
+---
+
+## Mapeamento de Erros de Domínio
+
+Principais códigos mapeados pelo `DomainExceptionFilter`:
+
+| Erro | HTTP | Code |
+|---|---:|---|
+| `InvalidCredentialsError` | 401 | `INVALID_CREDENTIALS` |
+| `UnauthorizedTokenError` | 401 | `UNAUTHORIZED` |
+| `InactiveAccountError` | 403 | `INACTIVE_ACCOUNT` |
+| `NotAllowedError` | 403 | `NOT_ALLOWED` |
+| `ResourceNotFoundError` | 404 | `RESOURCE_NOT_FOUND` |
+| `UserNotFoundError` | 404 | `USER_NOT_FOUND` |
+| `UserEmailAlreadyExistsError` | 409 | `USER_EMAIL_ALREADY_EXISTS` |
+| `UserCpfAlreadyExistsError` | 409 | `USER_CPF_ALREADY_EXISTS` |
+| `CRPAlreadyExistsError` | 409 | `CRP_ALREADY_EXISTS` |
+| `CrpAlreadyInUseError` | 409 | `CRP_ALREADY_IN_USE` |
+| `PsychologistProfileNotFoundError` | 404 | `PSYCHOLOGIST_PROFILE_NOT_FOUND` |
+| `PsychologistProfileAlreadyExistsError` | 409 | `PSYCHOLOGIST_PROFILE_ALREADY_EXISTS` |
+| `PracticeContextNotFoundError` | 404 | `PRACTICE_CONTEXT_NOT_FOUND` |
+| `PracticeContextOwnershipError` | 403 | `PRACTICE_CONTEXT_OWNERSHIP` |
+| `PracticeContextRequiredError` | 400 | `PRACTICE_CONTEXT_REQUIRED` |
+| `PracticeContextInactiveError` | 403 | `CONTEXT_INACTIVE` |
+| `PatientProfileNotFoundError` | 404 | `PATIENT_PROFILE_NOT_FOUND` |
+| `PatientProfileAlreadyExistsError` | 409 | `PATIENT_PROFILE_ALREADY_EXISTS` |
+| `PatientAlreadyLinkedError` | 409 | `PATIENT_ALREADY_LINKED` |
+| `PatientAlreadyExistsError` | 409 | `PATIENT_ALREADY_EXISTS` |
+| `PatientCpfAlreadyInContextError` | 409 | `PATIENT_CPF_ALREADY_IN_CONTEXT` |
+| `PatientEmailAlreadyInContextError` | 409 | `PATIENT_EMAIL_ALREADY_IN_CONTEXT` |
+| `PatientInviteInvalidError` | 401 | `PATIENT_INVITE_INVALID` |
+| `PatientInviteExpiredError` | 410 | `PATIENT_INVITE_EXPIRED` |
+| `PatientInviteAlreadyUsedError` | 409 | `PATIENT_INVITE_ALREADY_USED` |
+| `PatientCpfMismatchError` | 422 | `PATIENT_CPF_MISMATCH` |
+| `PatientProfileAccessCodeInvalidError` | 401 | `PATIENT_PROFILE_ACCESS_CODE_INVALID` |
+| `PatientProfileAccessCodeExpiredError` | 410 | `PATIENT_PROFILE_ACCESS_CODE_EXPIRED` |
+| `PatientProfileAccessCodeAlreadyUsedError` | 409 | `PATIENT_PROFILE_ACCESS_CODE_ALREADY_USED` |
+| `ClaimRequestAlreadyExistsError` | 409 | `CLAIM_REQUEST_ALREADY_EXISTS` |
+| `AppointmentConflictError` | 409 | `APPOINTMENT_CONFLICT` |
+| `AppointmentDateInPastError` | 422 | `APPOINTMENT_DATE_IN_PAST` |
+| `AppointmentNotInProgressError` | 422 | `APPOINTMENT_NOT_IN_PROGRESS` |
+| `AppointmentNotScheduledError` | 422 | `APPOINTMENT_NOT_SCHEDULED` |
+| `InvalidSessionParticipantError` | 422 | `INVALID_SESSION_PARTICIPANT` |
+| `InvalidAttachmentTypeError` | 415 | `INVALID_ATTACHMENT_TYPE` |
+| `FileTooLargeError` | 413 | `FILE_TOO_LARGE` |
+| `SuggestionNotFoundError` | 404 | `SUGGESTION_NOT_FOUND` |
+| `PopupNotFoundError` | 404 | `POPUP_NOT_FOUND` |
+| `ClinicNotFoundError` | 404 | `CLINIC_NOT_FOUND` |
+| `ClinicBranchNotFoundError` | 404 | `CLINIC_BRANCH_NOT_FOUND` |
+| `ClinicMemberAlreadyExistsError` | 409 | `CLINIC_MEMBER_ALREADY_EXISTS` |
+| `ClinicMemberNotFoundError` | 404 | `CLINIC_MEMBER_NOT_FOUND` |
+| `RegistrationLinkInvalidError` | 404 | `REGISTRATION_LINK_INVALID` |
+| `RegistrationLinkExpiredError` | 410 | `REGISTRATION_LINK_EXPIRED` |
+| `RegistrationLinkOrphanError` | 422 | `REGISTRATION_LINK_ORPHAN` |
+| `BillingValidationError` | 422 | `BILLING_VALIDATION` |
+| `InvalidSearchParametersError` | 400 | `INVALID_SEARCH_PARAMETERS` |
+
+Erros HTTP padrão usam `HttpStatus[status]`, por exemplo `BAD_REQUEST`, `UNAUTHORIZED`, `FORBIDDEN`, `NOT_FOUND`.

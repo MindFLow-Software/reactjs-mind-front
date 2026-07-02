@@ -1,8 +1,10 @@
-import { useState, type ChangeEvent } from 'react'
-import { useFormContext, useWatch } from 'react-hook-form'
-import { parse as dateParse, isValid as dateIsValid, format } from 'date-fns'
+import { useEffect, useState, type ChangeEvent } from 'react'
+import { useFormContext } from 'react-hook-form'
 import { Check, Shield, UserRound } from 'lucide-react'
-import { Input } from '@/components/ui/input'
+
+import { cn } from '@/lib/utils'
+import { parse as dateParse, isValid as dateIsValid } from 'date-fns'
+
 import {
   FormField,
   FormItem,
@@ -10,19 +12,20 @@ import {
   FormControl,
   FormMessage,
 } from '@/components/ui/form'
-import { cn } from '@/lib/utils'
-import { formatCPF } from '@/utils/formatCPF'
-import { formatAGE } from '@/utils/formatAGE'
-import { formatDateInput } from '@/utils/formatDateInput'
+import { Input } from '@/components/ui/input'
 
+import { Time } from '@/utils/time'
 import { Normalizer } from '@/utils/normalizer'
-import type { PatientFormData } from '@/validators/patients'
-import './step-basic-data.css'
 import { GENDER_OPTIONS } from '../constants'
+import { formatDateInput } from '@/utils/formatDateInput'
+import type { PatientFormData } from '@/validators/patients'
+import type { IpatientProfile } from '@/types/patient-profile'
+
+import './step-basic-data.css'
 import { SectionTitle } from './section-title'
 import { PillRadio } from './pill-radio'
 import { PatientAvatarUpload } from './patient-avatar-upload'
-import type { IpatientProfile } from '@/types/patient-profile'
+import { MaskedInput } from '@/components/maked-input'
 
 interface StepBasicDataProps {
   onAvatarSelect: (f: File | null) => void
@@ -30,22 +33,17 @@ interface StepBasicDataProps {
 }
 
 export function StepBasicData({ onAvatarSelect, patient }: StepBasicDataProps) {
-  const { control, getValues } = useFormContext<PatientFormData>()
+  const { watch, control } = useFormContext<PatientFormData>()
 
-  const [birthInput, setBirthInput] = useState(() => {
-    const d = getValues('dateOfBirth')
-    return d instanceof Date ? format(d, 'dd/MM/yyyy') : ''
-  })
+  const [birthInput, setBirthInput] = useState<string>()
 
-  const cpfValue = useWatch({ control, name: 'cpf' })
-  const cpfDigits = Normalizer.digits(cpfValue ?? '')
+  const cpfValue = watch('cpf')
+  const cpfDigits = Normalizer.digits(cpfValue)
 
-  const dateOfBirth = useWatch({ control, name: 'dateOfBirth' })
-  const age = dateOfBirth ? formatAGE(dateOfBirth) : null
+  const dateOfBirth = watch('dateOfBirth')
+  const age = Time.calculateAge(dateOfBirth)
 
-  const initials = patient
-    ? `${patient?.firstName[0] ?? ''}${patient?.lastName[0] ?? ''}`.toUpperCase()
-    : undefined
+  const fullName = patient ? `${patient.firstName} ${patient.lastName}` : null
 
   function handleBirthChange(
     e: ChangeEvent<HTMLInputElement>,
@@ -53,6 +51,7 @@ export function StepBasicData({ onAvatarSelect, patient }: StepBasicDataProps) {
   ) {
     const val = formatDateInput(e.target.value)
     setBirthInput(val)
+
     if (val.length === 10) {
       const d = dateParse(val, 'dd/MM/yyyy', new Date())
       fieldOnChange(dateIsValid(d) && d <= new Date() ? d : null)
@@ -61,12 +60,20 @@ export function StepBasicData({ onAvatarSelect, patient }: StepBasicDataProps) {
     }
   }
 
+  useEffect(() => {
+    if (!dateOfBirth) return
+
+    setBirthInput(
+      Time.toBrazilianFormat(dateOfBirth)
+    )
+  }, [dateOfBirth])
+
   return (
     <div className="space-y-5">
       <PatientAvatarUpload
+        fullName={fullName}
         onFileSelect={onAvatarSelect}
-        defaultValue={patient?.profileImageUrl}
-        initials={initials}
+        defaultUrl={patient?.profileImageUrl}
       />
 
       {/* Identificação */}
@@ -110,8 +117,8 @@ export function StepBasicData({ onAvatarSelect, patient }: StepBasicDataProps) {
                   <Input
                     {...field}
                     id="lastName"
-                    placeholder="Ex: Costa"
                     autoComplete="off"
+                    placeholder="Ex: Costa"
                     className={cn(
                       'patient-input',
                       fieldState.invalid &&
@@ -132,8 +139,8 @@ export function StepBasicData({ onAvatarSelect, patient }: StepBasicDataProps) {
         <div className="patient-form-grid-2">
           {/* CPF */}
           <FormField
-            control={control}
             name="cpf"
+            control={control}
             render={({ field, fieldState }) => (
               <FormItem>
                 <FormLabel className="flex items-center justify-between">
@@ -144,25 +151,19 @@ export function StepBasicData({ onAvatarSelect, patient }: StepBasicDataProps) {
                 </FormLabel>
                 <div className="relative">
                   <FormControl>
-                    <Input
+                    <MaskedInput
                       id="cpf"
-                      value={field.value ?? ''}
-                      onChange={(e) =>
-                        field.onChange(formatCPF(e.target.value))
-                      }
-                      onBlur={field.onBlur}
-                      ref={field.ref}
+                      {...field}
+                      inputRef={field.ref}
+                      mask="000.000.000-00"
                       placeholder="000.000.000-00"
-                      inputMode="numeric"
-                      autoComplete="off"
+                      onAccept={(value: string) => field.onChange(value)}
                       className={cn(
                         'patient-input',
                         'tabular-nums',
-                        cpfDigits.length === 11 &&
-                          !fieldState.invalid &&
-                          'border-emerald-500 pr-9',
-                        fieldState.invalid &&
-                          'border-red-600 focus-visible:ring-red-600/20',
+                        cpfDigits.length >= 11 && !fieldState.invalid
+                          ? 'border-emerald-500 pr-9'
+                          : fieldState.invalid && 'border-red-600 focus-visible:ring-red-600/20',
                       )}
                     />
                   </FormControl>
@@ -184,18 +185,15 @@ export function StepBasicData({ onAvatarSelect, patient }: StepBasicDataProps) {
                 <FormLabel>Nascimento</FormLabel>
                 <FormControl>
                   <Input
+                    maxLength={10}
                     value={birthInput}
                     onChange={(e) => handleBirthChange(e, field.onChange)}
                     placeholder="DD/MM/AAAA"
-                    maxLength={10}
                     inputMode="numeric"
-                    autoComplete="off"
                     className={cn('patient-input', 'tabular-nums')}
                   />
                 </FormControl>
-                {age !== null && (
-                  <p className="patient-value-hint">{age} anos</p>
-                )}
+                {age && <p className="patient-value-hint">{age} anos</p>}
                 <FormMessage />
               </FormItem>
             )}

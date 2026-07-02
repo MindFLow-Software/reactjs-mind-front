@@ -14,27 +14,39 @@ export const patientSchema = z.object({
   firstName: z
     .string()
     .min(1, 'Nome é obrigatório')
-    .regex(/^[A-Za-zÀ-ÖØ-öø-ÿ\s'-]+$/, 'Apenas letras são permitidas'),
+    .regex(/^[A-Za-zÀ-ÖØ-öø-ÿ\s'-]+$/, 'Apenas letras são permitidas')
+    .describe('basicData'),
   lastName: z
     .string()
     .min(1, 'Sobrenome é obrigatório')
-    .regex(/^[A-Za-zÀ-ÖØ-öø-ÿ\s'-]+$/, 'Apenas letras são permitidas'),
-  phoneNumber: z.string().optional(),
-  email: z.email('E-mail inválido').optional(),
+    .regex(/^[A-Za-zÀ-ÖØ-öø-ÿ\s'-]+$/, 'Apenas letras são permitidas')
+    .describe('basicData'),
+  phoneNumber: z
+    .string()
+    .optional()
+    .describe('contact'),
+  email: z
+    .email('E-mail inválido')
+    .optional()
+    .describe('contact'),
   dateOfBirth: z
     .date()
     .nullable()
     .optional()
     .refine((d) => !d || d <= new Date(), {
       message: 'Data de nascimento inválida',
-    }),
+    })
+    .describe('basicData'),
   cpf: z
     .string()
+    .refine((v) => !v || isValidCPF(v), { message: 'CPF inválido' })
     .optional()
-    .or(z.literal(''))
-    .refine((v) => !v || isValidCPF(v), { message: 'CPF inválido' }),
-  gender: z.enum(Gender),
-  profileImageUrl: z.string().optional(),
+    .describe('basicData'),
+  gender: z.enum(Gender).describe('basicData'),
+  profileImageUrl: z
+    .string()
+    .optional()
+    .describe('basicData'),
 })
 
 export const updatePatientSchema = z.object({

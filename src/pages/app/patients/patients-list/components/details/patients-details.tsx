@@ -100,6 +100,7 @@ export function PatientsDetails({ patientId }: PatientsDetailsProps) {
   if (isLoading || !data) {
     return (
       <DialogContent className="flex items-center justify-center p-20">
+        <DialogTitle className="sr-only">Carregando</DialogTitle>
         <Loader2 className="h-8 w-8 animate-spin text-primary" />
       </DialogContent>
     )

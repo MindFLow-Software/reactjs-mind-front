@@ -1,22 +1,16 @@
+import { api } from '@/lib/axios'
 import { useState, useEffect, useRef, useCallback } from 'react'
-
-interface UseImagePreviewOptions {
-  fetchBlob?: (url: string) => Promise<Blob>
-}
 
 interface UseImagePreviewReturn {
   previewUrl: string | null
   file: File | null
   isLoading: boolean
-  onFileSelected: (file: File) => void
+  onSetPreview: (file: File) => void
   clear: () => void
-  loadFromUrl: (url: string) => Promise<void>
+  loadFromUrl: (url?: string | null) => Promise<void>
 }
 
-export function useImagePreview(
-  options?: UseImagePreviewOptions,
-): UseImagePreviewReturn {
-  const { fetchBlob } = options ?? {}
+export function useImagePreview(): UseImagePreviewReturn {
   const [previewUrl, setPreviewUrl] = useState<string | null>(null)
   const [file, setFile] = useState<File | null>(null)
   const [isLoading, setIsLoading] = useState(false)
@@ -29,9 +23,10 @@ export function useImagePreview(
     }
   }, [])
 
-  const onFileSelected = useCallback((f: File) => {
+  const onSetPreview = useCallback((f: File) => {
     const url = URL.createObjectURL(f)
     createdUrls.current.push(url)
+    setIsLoading(false)
     setPreviewUrl(url)
     setFile(f)
   }, [])
@@ -42,19 +37,11 @@ export function useImagePreview(
   }, [])
 
   const loadFromUrl = useCallback(
-    async (url: string): Promise<void> => {
-      if (url.startsWith('data:')) {
-        setPreviewUrl(url)
-        return
-      }
-      if (!fetchBlob) {
-        setPreviewUrl(url)
-        return
-      }
+    async (url?: string | null): Promise<void> => {
       try {
         setIsLoading(true)
-        const blob = await fetchBlob(url)
-        const objectUrl = URL.createObjectURL(blob)
+        const blob = await api.get(`/attachments/${url}`, { responseType: 'blob' })
+        const objectUrl = URL.createObjectURL(blob.data)
         createdUrls.current.push(objectUrl)
         setPreviewUrl(objectUrl)
       } catch {
@@ -63,8 +50,8 @@ export function useImagePreview(
         setIsLoading(false)
       }
     },
-    [fetchBlob],
+    [],
   )
 
-  return { previewUrl, file, isLoading, onFileSelected, clear, loadFromUrl }
+  return { previewUrl, file, isLoading, onSetPreview, clear, loadFromUrl }
 }

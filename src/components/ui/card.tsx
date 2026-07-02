@@ -15,10 +15,8 @@ const Card = React.forwardRef<HTMLDivElement, CardProps>(
         'bg-card text-card-foreground',
         'flex flex-col gap-6',
         'relative overflow-hidden py-6',
-        'rounded-[20px]',
-        'shadow-md shadow-black/8',
-        'border',
-        'border-zinc/8 dark:border-white/8',
+        'rounded-lg',
+        'dark:border dark:border-white/5',
         className,
       )}
       {...props}

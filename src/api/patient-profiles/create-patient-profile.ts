@@ -15,7 +15,7 @@ export async function createPatientProfile(
     cpf: Normalizer.digits(data.cpf),
     phoneNumber: Normalizer.digits(data.phoneNumber),
     email: data.email,
-    cep: Normalizer.digits(data.cep),
+    // cep: Normalizer.digits(data.cep),
     dateOfBirth:
       data.dateOfBirth instanceof Date
         ? data.dateOfBirth.toISOString()

@@ -13,6 +13,7 @@ import {
   TableHeader,
   TableRow,
 } from '@/components/ui/table'
+import { Card } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { Checkbox } from '@/components/ui/checkbox'
 import { PatientsTableRow } from './patients-table-row'
@@ -47,10 +48,12 @@ function SortIcon({
   active: boolean
   order?: PatientSortOrder
 }) {
-  if (!active)
+  if (!active) {
     return (
       <ArrowUpDown className="ml-1.5 size-3 shrink-0 text-muted-foreground/50" />
     )
+  }
+
   return order === 'asc' ? (
     <ArrowUp className="ml-1.5 size-3 shrink-0 text-primary" />
   ) : (
@@ -93,7 +96,6 @@ interface TableBodyContentProps {
   isLoading: boolean
   patients: IpatientProfile[]
   perPage: number
-  colSpan: number
   hasActiveFilters?: boolean
   onClearFilters?: () => void
   onRegister?: () => void
@@ -103,7 +105,6 @@ function TableBodyContent({
   isLoading,
   patients,
   perPage,
-  colSpan,
   hasActiveFilters,
   onClearFilters,
   onRegister,
@@ -111,18 +112,14 @@ function TableBodyContent({
   if (isLoading) return <PatientsTableLoading rows={perPage} />
 
   if (patients.length > 0) {
-    return (
-      <>
-        {patients.map((patient) => (
-          <PatientsTableRow key={patient.id} patient={patient} />
-        ))}
-      </>
-    )
+    return patients.map((patient) => (
+      <PatientsTableRow key={patient.id} patient={patient} />
+    ))
   }
 
   return (
     <TableRow>
-      <TableCell colSpan={colSpan} className="py-20">
+      <TableCell colSpan={8} className="py-20">
         <div className="flex flex-col items-center justify-center gap-3 text-center">
           {hasActiveFilters ? (
             <>
@@ -179,10 +176,9 @@ export function PatientsTable({
   onClearFilters,
   onRegister,
 }: PatientsTableProps) {
-  const colSpan = 8
 
   return (
-    <div className="rounded-xl border bg-background shadow-sm overflow-hidden">
+    <Card className="overflow-hidden p-0">
       <Table>
         <TableHeader>
           <TableRow className="bg-muted/30 hover:bg-muted/30">
@@ -235,13 +231,12 @@ export function PatientsTable({
             isLoading={isLoading}
             patients={patients}
             perPage={perPage}
-            colSpan={colSpan}
             hasActiveFilters={hasActiveFilters}
             onClearFilters={onClearFilters}
             onRegister={onRegister}
           />
         </TableBody>
       </Table>
-    </div>
+    </Card>
   )
 }

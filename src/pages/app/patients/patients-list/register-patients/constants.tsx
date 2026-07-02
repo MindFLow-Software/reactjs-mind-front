@@ -2,32 +2,38 @@ import { Venus, Mars, Users, Video, Home } from 'lucide-react'
 
 type IstepId = 1 | 2 | 3 | 4
 
-export type Isteps = {
+export type IRegisterPatientTabs = 'basicData' | 'contact' | 'documents'
+
+export type ISteps = {
   id: IstepId
   label: string
   required: boolean
+  key: IRegisterPatientTabs
 }
 
-export const STEPS: Isteps[] = [
+export const STEPS: ISteps[] = [
   {
     id: 1 as const,
     label: 'Dados básicos',
     required: true,
+    key: 'basicData',
   },
   {
     id: 2 as const,
-    label: 'Contato & endereço',
+    label: 'Contato',
     required: false,
+    key: 'contact',
   },
+  // {
+  //   id: 3 as const,
+  //   label: 'Clínico',
+  //   required: false,
+  // },
   {
     id: 3 as const,
-    label: 'Clínico',
-    required: false,
-  },
-  {
-    id: 4 as const,
     label: 'Documentos',
     required: false,
+    key: 'documents',
   },
 ]
 
