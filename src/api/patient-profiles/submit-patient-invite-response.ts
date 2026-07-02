@@ -9,5 +9,5 @@ export const submitPatientInviteResponse = async ({
   token,
   action,
 }: IsubmitPatientInviteResponse): Promise<void> => {
-  await api.post(`patient-profiles/invites/${token}/${action}`)
+  await api.post(`/patient-profiles/invites/${token}/${action}`)
 }

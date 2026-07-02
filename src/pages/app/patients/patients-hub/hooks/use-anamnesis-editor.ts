@@ -12,11 +12,9 @@ import { toast } from 'sonner'
 import { format } from 'date-fns'
 import { ptBR } from 'date-fns/locale'
 
-import {
-  getAnamnesis,
-  saveAnamnesis,
-  type AnamnesisData,
-} from '@/api/patient-profiles/anamnesis'
+import { getAnamnesis } from '@/api/patient-profiles/get-anamnesis'
+import { saveAnamnesis } from '@/api/patient-profiles/save-anamnesis'
+import type { IAnamnesisContent } from '@/types/clinical'
 import { AnamnesisPDFTemplate } from '@/utils/anamnesis-pdf-template'
 
 import type {
@@ -137,7 +135,8 @@ export function useAnamnesisEditor({
   })
 
   const { mutate, isPending } = useMutation({
-    mutationFn: (newData: AnamnesisData) => saveAnamnesis(patientId, newData),
+    mutationFn: (newData: IAnamnesisContent) =>
+      saveAnamnesis(patientId, newData),
     onSuccess: async (_, vars) => {
       lastPersistedHash.current = JSON.stringify(vars)
       dispatch({ type: 'SET_HAS_LOCAL_DRAFT', value: false })

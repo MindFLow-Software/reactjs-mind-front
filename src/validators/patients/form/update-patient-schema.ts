@@ -7,17 +7,22 @@ const cpfField = z.preprocess(
 )
 
 export const updatePatientSchema = z.object({
-  firstName: z.string().optional(),
-  lastName: z.string().optional(),
-  email: z.preprocess(
-    (v) => (v === '' ? undefined : v),
-    z.email('E-mail inválido').optional(),
-  ),
-  phoneNumber: z.string().optional(),
-  dateOfBirth: z.date().nullable().optional(),
-  cpf: cpfField,
-  gender: z.enum(['FEMININE', 'MASCULINE', 'OTHER']).optional(),
-  profileImageUrl: z.string().optional(),
+  firstName: z.string().optional().describe('basicData'),
+  lastName: z.string().optional().describe('basicData'),
+  email: z
+    .preprocess(
+      (v) => (v === '' ? undefined : v),
+      z.email('E-mail inválido').optional(),
+    )
+    .describe('contact'),
+  phoneNumber: z.string().optional().describe('contact'),
+  dateOfBirth: z.date().nullable().optional().describe('basicData'),
+  cpf: cpfField.describe('basicData'),
+  gender: z
+    .enum(['FEMININE', 'MASCULINE', 'OTHER'])
+    .optional()
+    .describe('basicData'),
+  profileImageUrl: z.string().optional().describe('basicData'),
   attachmentIds: z.array(z.string()).optional(),
 })
 

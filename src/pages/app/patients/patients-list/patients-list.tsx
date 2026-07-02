@@ -36,7 +36,6 @@ import { usePatientsListQuery } from './hooks/use-patients-list-query'
 
 type IregisterModal = {
   isOpen: boolean
-  isEditing?: boolean
 }
 
 type IpageShellHeader = {
@@ -122,7 +121,6 @@ export function PatientsList() {
   const [isInviteOpen, setIsInviteOpen] = useState(false)
   const [registerModalData, setRegisterModalData] = useState<IregisterModal>({
     isOpen: false,
-    isEditing: false,
   })
 
   const { filters, setPage, setSort, clearFilters } = usePatientFilters()
@@ -230,9 +228,7 @@ export function PatientsList() {
                       : undefined
                   }
                   onClearFilters={clearFilters}
-                  onRegister={() =>
-                    setRegisterModalData({ isOpen: true, isEditing: false })
-                  }
+                  onRegister={() => setRegisterModalData({ isOpen: true })}
                 />
               </PatientsDataBlock.Content>
 
@@ -253,7 +249,7 @@ export function PatientsList() {
         open={registerModalData.isOpen}
         onOpenChange={() => setRegisterModalData({ isOpen: false })}
       >
-        <RegisterPatients isEditing={registerModalData.isEditing} />
+        <RegisterPatients />
       </Dialog>
 
       <Dialog open={isInviteOpen} onOpenChange={setIsInviteOpen}>

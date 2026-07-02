@@ -1,4 +1,3 @@
-import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { differenceInYears, format, formatDistanceToNow } from 'date-fns'
 import { ptBR } from 'date-fns/locale'
 import {
@@ -16,8 +15,6 @@ import {
 } from 'lucide-react'
 import { memo, useCallback, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { togglePatientProfileStatus } from '@/api/patient-profiles/toggle-patient-profile-status'
-import type { IgetPatientProfilesResponse } from '@/api/patient-profiles/fetch-patient-profiles'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { Checkbox } from '@/components/ui/checkbox'
@@ -41,10 +38,9 @@ import { cn } from '@/lib/utils'
 import { formatCPF } from '@/utils/formatCPF'
 import { formatPhone } from '@/utils/formatPhone'
 
-import { RegisterPatients } from '../../register-patients/register-patients'
-import { DeletePatientDialog } from '../dialogs/delete-patient-dialog'
+import { EditPatientModal } from '../dialogs/edit-patient-modal'
 import { PatientsDetails } from '../details/patients-details'
-import { PatientStatusDialog } from '@/components/patient-status-dialog'
+import { usePatientStatusGuard } from '../../hooks/use-patient-status-guard'
 
 import { GENDER_CONFIG } from '@/utils/gender-config'
 import type { IPatient } from '@/types/patient'
@@ -59,17 +55,14 @@ export const PatientsTableRow = memo(function PatientsTableRow({
   patient,
 }: PatientsTableRowProps) {
   const navigate = useNavigate()
-  const queryClient = useQueryClient()
 
   const [isDetailsOpen, setIsDetailsOpen] = useState(false)
   const [isEditOpen, setIsEditOpen] = useState(false)
-  const [isDeleteOpen, setIsDeleteOpen] = useState(false)
-  const [isReactivateOpen, setIsReactivateOpen] = useState(false)
 
   const handleOpenDetails = useCallback(() => setIsDetailsOpen(true), [])
   const handleOpenEdit = useCallback(() => setIsEditOpen(true), [])
-  const handleOpenDelete = useCallback(() => setIsDeleteOpen(true), [])
-  const handleOpenReactivate = useCallback(() => setIsReactivateOpen(true), [])
+
+  const { isToggleDisabled, disabledReason } = usePatientStatusGuard()
 
   const {
     id,
@@ -88,47 +81,6 @@ export const PatientsTableRow = memo(function PatientsTableRow({
   const isActive = status === PatientProfileStatus.ACTIVE
 
   const fullName = `${firstName} ${lastName}`
-
-  const { mutateAsync: toggleStatusFn, isPending: isUpdating } = useMutation({
-    mutationFn: () => togglePatientProfileStatus(id),
-    onMutate: async () => {
-      await queryClient.cancelQueries({ queryKey: ['patients'] })
-      const snapshot = queryClient.getQueriesData<IgetPatientProfilesResponse>({
-        queryKey: ['patients'],
-        exact: false,
-      })
-      queryClient.setQueriesData<IgetPatientProfilesResponse>(
-        { queryKey: ['patients'], exact: false },
-        (old) => {
-          if (!old) return old
-
-          return {
-            ...old,
-            patients: old.patients.map((p) =>
-              p.id === id ? { ...p, status: PatientProfileStatus.INACTIVE } : p,
-            ),
-          }
-        },
-      )
-      return { snapshot }
-    },
-    onError: (_err, _vars, context) => {
-      if (context?.snapshot) {
-        context.snapshot.forEach(([key, data]) => {
-          queryClient.setQueryData(key, data)
-        })
-      }
-    },
-    onSettled: () => {
-      Promise.all([
-        queryClient.invalidateQueries({ queryKey: ['patients'] }),
-        queryClient.invalidateQueries({ queryKey: ['patient', id] }),
-        queryClient.invalidateQueries({ queryKey: ['patient-details', id] }),
-        queryClient.invalidateQueries({ queryKey: ['patients-metrics'] }),
-        queryClient.invalidateQueries({ queryKey: ['dashboard'] }),
-      ])
-    },
-  })
 
   const handleNavigate = useCallback(() => {
     sessionStorage.removeItem('active_patient_queue')
@@ -325,21 +277,31 @@ export const PatientsTableRow = memo(function PatientsTableRow({
                   <Pencil className="mr-2 size-4" /> Editar
                 </DropdownMenuItem>
                 <DropdownMenuSeparator />
-                {isActive ? (
-                  <DropdownMenuItem
-                    onSelect={handleOpenDelete}
-                    className="cursor-pointer text-destructive focus:text-destructive"
-                  >
-                    <Archive className="mr-2 size-4" /> Arquivar paciente
-                  </DropdownMenuItem>
-                ) : (
-                  <DropdownMenuItem
-                    onSelect={handleOpenReactivate}
-                    className="cursor-pointer text-emerald-700 dark:text-emerald-400 focus:text-emerald-700 dark:focus:text-emerald-400"
-                  >
-                    <RotateCcw className="mr-2 size-4" /> Reativar paciente
-                  </DropdownMenuItem>
-                )}
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <div>
+                      {isActive ? (
+                        <DropdownMenuItem
+                          disabled={isToggleDisabled}
+                          className="cursor-pointer text-destructive focus:text-destructive"
+                        >
+                          <Archive className="mr-2 size-4" /> Arquivar paciente
+                        </DropdownMenuItem>
+                      ) : (
+                        <DropdownMenuItem
+                          disabled={isToggleDisabled}
+                          className="cursor-pointer text-emerald-700 dark:text-emerald-400 focus:text-emerald-700 dark:focus:text-emerald-400"
+                        >
+                          <RotateCcw className="mr-2 size-4" /> Reativar
+                          paciente
+                        </DropdownMenuItem>
+                      )}
+                    </div>
+                  </TooltipTrigger>
+                  <TooltipContent className="text-xs">
+                    {disabledReason}
+                  </TooltipContent>
+                </Tooltip>
               </DropdownMenuContent>
             </DropdownMenu>
           </div>
@@ -351,34 +313,7 @@ export const PatientsTableRow = memo(function PatientsTableRow({
         </Dialog>
 
         <Dialog open={isEditOpen} onOpenChange={setIsEditOpen}>
-          {isEditOpen && <RegisterPatients patientId={patient.id} isEditing />}
-        </Dialog>
-
-        <Dialog open={isDeleteOpen} onOpenChange={setIsDeleteOpen}>
-          {isDeleteOpen && (
-            <DeletePatientDialog
-              fullName={fullName}
-              isPending={isUpdating}
-              onClose={() => setIsDeleteOpen(false)}
-              onConfirm={async () => {
-                await toggleStatusFn()
-              }}
-            />
-          )}
-        </Dialog>
-
-        <Dialog open={isReactivateOpen} onOpenChange={setIsReactivateOpen}>
-          {isReactivateOpen && (
-            <PatientStatusDialog
-              mode="reactivate"
-              fullName={fullName}
-              isPending={isUpdating}
-              onClose={() => setIsReactivateOpen(false)}
-              onConfirm={async () => {
-                await toggleStatusFn()
-              }}
-            />
-          )}
+          {isEditOpen && <EditPatientModal patientId={patient.id} />}
         </Dialog>
       </TableRow>
     </TooltipProvider>

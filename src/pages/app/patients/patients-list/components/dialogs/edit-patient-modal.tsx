@@ -1,17 +1,19 @@
-import './form-components.css'
+import '../../register-patients/form-components.css'
 import { useEffect, useRef, useState } from 'react'
-import { useForm } from 'react-hook-form'
-import { useFileSelection } from '@/hooks/use-file-selection'
-import { useFormSteps } from '../../../../../hooks/use-form-steps'
-import { useCreatePatient } from './hooks/use-create-patient'
+import { useForm, type Resolver } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import {
   Loader2,
   ChevronLeft,
   ChevronRight,
   Check,
-  UserPlus,
+  UserPen,
 } from 'lucide-react'
+
+import { useFileSelection } from '@/hooks/use-file-selection'
+import { useFormSteps } from '@/hooks/use-form-steps'
+import { usePatient } from '@/hooks/use-patient'
+import { getGroupedFields } from '@/utils/get-grouped-schema-fields'
 
 import {
   DialogClose,
@@ -24,24 +26,31 @@ import { Form } from '@/components/ui/form'
 import { cn } from '@/lib/utils'
 
 import {
-  createPatientSchema,
-  type CreatePatientFormData,
-} from '@/validators/patients/form/create-patient-schema'
+  updatePatientSchema,
+  type UpdatePatientFormData,
+} from '@/validators/patients/form/update-patient-schema'
 import {
   STEPS,
   MAX_DOC_FILES,
   MAX_DOC_SIZE,
   type IRegisterPatientTabs,
-} from './constants'
-import { StepBasicData } from './steps/step-basic-data'
-import { StepContactAddress } from './steps/step-contact-address'
-// import { StepClinical } from './steps/step-clinical'
-import { UploadZone } from './steps/upload-zone'
-import { getGroupedFields } from '@/utils/get-grouped-schema-fields'
+} from '../../register-patients/constants'
+import { StepBasicData } from '../../register-patients/steps/step-basic-data'
+import { StepContactAddress } from '../../register-patients/steps/step-contact-address'
+import { AttachmentsList } from '../../register-patients/steps/attachments-list'
+import { UploadZone } from '../../register-patients/steps/upload-zone'
+import { useUpdatePatient } from '../../register-patients/hooks/use-update-patient'
+import { buildPatientUpdateDefaults } from './edit-patient-modal.helpers'
+
+interface EditPatientModalProps {
+  patientId: string
+}
 
 type IgroupField = Record<IRegisterPatientTabs, string[]>
 
-export function RegisterPatients() {
+export function EditPatientModal({ patientId }: EditPatientModalProps) {
+  const { patient } = usePatient(patientId)
+
   const redirectedToError = useRef(false)
   const [avatarFile, setAvatarFile] = useState<File | null>(null)
 
@@ -50,8 +59,10 @@ export function RegisterPatients() {
     maxSizeBytes: MAX_DOC_SIZE,
   })
 
-  const methods = useForm<CreatePatientFormData>({
-    resolver: zodResolver(createPatientSchema),
+  const methods = useForm<UpdatePatientFormData>({
+    resolver: zodResolver(
+      updatePatientSchema,
+    ) as Resolver<UpdatePatientFormData>,
   })
 
   const {
@@ -69,7 +80,8 @@ export function RegisterPatients() {
     isLastStep,
   } = useFormSteps()
 
-  const { submit, isSubmitting } = useCreatePatient({
+  const { submit, isSubmitting } = useUpdatePatient({
+    patientId,
     avatarFile,
     files,
     onSuccess: () => {
@@ -80,6 +92,8 @@ export function RegisterPatients() {
     },
   })
 
+  const isPatientLoading = !patient
+
   const findStepClassName = (active: boolean, done: boolean): string => {
     if (active) return 'rp-modal-tab-badge--active'
     return done ? 'rp-modal-tab-badge--done' : 'rp-modal-tab-badge--pending'
@@ -88,21 +102,23 @@ export function RegisterPatients() {
   const renderStepContent = (currentStepId: number) => {
     switch (currentStepId) {
       case 1: {
-        return <StepBasicData onAvatarSelect={setAvatarFile} patient={null} />
+        return (
+          <StepBasicData onAvatarSelect={setAvatarFile} patient={patient} />
+        )
       }
       case 2: {
         return <StepContactAddress />
       }
-      // case 3: {
-      //   return <StepClinical />
-      // }
       case 3: {
         return (
-          <UploadZone
-            selectedFiles={files}
-            onFilesChange={addFiles}
-            onRemoveFile={removeFile}
-          />
+          <div className="space-y-5">
+            <AttachmentsList patientId={patient?.id ?? null} />
+            <UploadZone
+              selectedFiles={files}
+              onFilesChange={addFiles}
+              onRemoveFile={removeFile}
+            />
+          </div>
         )
       }
     }
@@ -129,7 +145,7 @@ export function RegisterPatients() {
 
     return (
       <>
-        <span>Cadastrar paciente</span>
+        <span>Salvar alterações</span>
         <Check className="size-4" />
       </>
     )
@@ -148,7 +164,7 @@ export function RegisterPatients() {
 
         const tabs = getGroupedFields<IRegisterPatientTabs>(
           initialState,
-          createPatientSchema,
+          updatePatientSchema,
         )
 
         const tabWithError = tabs.find((tab) =>
@@ -166,6 +182,12 @@ export function RegisterPatients() {
     })()
   }, [errors])
 
+  useEffect(() => {
+    if (!patient) return
+
+    methods.reset(buildPatientUpdateDefaults(patient))
+  }, [patient])
+
   return (
     <DialogContent
       className="rp-modal"
@@ -173,13 +195,14 @@ export function RegisterPatients() {
     >
       <DialogTitle className="rp-modal-header">
         <div className="rp-modal-icon-box">
-          <UserPlus className="text-blue-600" />
+          <UserPen className="text-blue-600" />
         </div>
         <div className="flex-1 space-y-2">
-          <h2 className="rp-modal-title">Cadastrar paciente</h2>
+          <h2 className="rp-modal-title">Editar paciente</h2>
           <p className="rp-modal-subtitle">
-            Comece apenas com nome e contato — o resto pode ser preenchido
-            posteriormente.
+            {patient
+              ? `Atualize os dados de ${patient.firstName}. Mudanças salvam automaticamente ao avançar.`
+              : 'Carregando dados do paciente…'}
           </p>
         </div>
       </DialogTitle>
@@ -243,7 +266,7 @@ export function RegisterPatients() {
           <Button
             type="button"
             className="rp-btn-primary"
-            disabled={isSubmitting}
+            disabled={isSubmitting || isPatientLoading}
             onClick={isLastStep ? handleSubmit(submit) : handleNext}
           >
             {renderButtonContent()}

@@ -15,6 +15,13 @@ export interface IAnamnesis {
   createdAt: string
 }
 
+export interface IAnamnesisContent {
+  chiefComplaint: string
+  familyHistory: string
+  personalHistory: string
+  medicalHistory: string
+}
+
 export interface IDocument {
   id: string
   patientProfileId: string

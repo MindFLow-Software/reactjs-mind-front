@@ -86,26 +86,4 @@ export interface UpdatePatientBody {
   notes?: string
 }
 
-// POST /invites/:hash/register — senha: mín. 8 chars, maiúscula, minúscula, número, especial
-export interface RegisterPatientBody {
-  firstName: string
-  lastName: string
-  email: string
-  password: string
-  gender: Gender
-  phoneNumber?: string
-  dateOfBirth?: string
-  cpf?: string
-}
-
-export type RegisterPatientViaInviteBody = RegisterPatientBody
-export type RegisterPatientViaInviteResponse = {
-  patientId: string
-  userId: string
-  firstName: string
-  lastName: string
-  email: string
-  psychologistPracticeContextId: string
-}
-
 export type IsessionVolume = 'high' | 'low' | 'all'

@@ -1,6 +1,7 @@
 import { api } from '@/lib/axios'
 import type { UpdatePatientBody } from '@/types/patient'
 import type { IPatientProfile } from '@/types/patient-profile'
+import type { IMutationResult } from '@/types/api'
 
 export type { UpdatePatientBody } from '@/types/patient'
 
@@ -15,7 +16,7 @@ export interface UpdatePatientData extends Omit<
 export async function updatePatientProfileById({
   id,
   ...data
-}: UpdatePatientData): Promise<IPatientProfile> {
+}: UpdatePatientData): Promise<IMutationResult<IPatientProfile>> {
   const formattedData: UpdatePatientBody = {
     ...data,
     dateOfBirth:
@@ -38,5 +39,5 @@ export async function updatePatientProfileById({
     `/patient-profiles/${id}`,
     payload,
   )
-  return response.data
+  return { data: response.data, message: response.apiMessage ?? null }
 }
