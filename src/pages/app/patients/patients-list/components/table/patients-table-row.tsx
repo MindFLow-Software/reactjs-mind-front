@@ -16,8 +16,8 @@ import {
 } from 'lucide-react'
 import { memo, useCallback, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { togglePatientStatus } from '@/api/patients/toggle-patient-status'
-import type { GetPatientsResponse } from '@/api/patients/get-patients'
+import { togglePatientProfileStatus } from '@/api/patient-profiles/toggle-patient-profile-status'
+import type { IgetPatientProfilesResponse } from '@/api/patient-profiles/fetch-patient-profiles'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { Checkbox } from '@/components/ui/checkbox'
@@ -45,12 +45,13 @@ import { RegisterPatients } from '../../register-patients/register-patients'
 import { DeletePatientDialog } from '../dialogs/delete-patient-dialog'
 import { PatientsDetails } from '../details/patients-details'
 import { PatientStatusDialog } from '@/components/patient-status-dialog'
-import type { Ipatient } from '@/types/patient'
 
 import { GENDER_CONFIG } from '@/utils/gender-config'
+import type { IpatientProfile } from '@/types/patient-profile'
+import { PatientStatusBadge } from './patient-status-badge'
 
 interface PatientsTableRowProps {
-  patient: Ipatient
+  patient: IpatientProfile
 }
 
 export const PatientsTableRow = memo(function PatientsTableRow({
@@ -81,19 +82,20 @@ export const PatientsTableRow = memo(function PatientsTableRow({
     profileImageUrl,
     lastSessionAt,
     isActive,
+    status,
   } = patient
 
   const fullName = `${firstName} ${lastName}`
 
   const { mutateAsync: toggleStatusFn, isPending: isUpdating } = useMutation({
-    mutationFn: () => togglePatientStatus(id),
+    mutationFn: () => togglePatientProfileStatus(id),
     onMutate: async () => {
       await queryClient.cancelQueries({ queryKey: ['patients'] })
-      const snapshot = queryClient.getQueriesData<GetPatientsResponse>({
+      const snapshot = queryClient.getQueriesData<IgetPatientProfilesResponse>({
         queryKey: ['patients'],
         exact: false,
       })
-      queryClient.setQueriesData<GetPatientsResponse>(
+      queryClient.setQueriesData<IgetPatientProfilesResponse>(
         { queryKey: ['patients'], exact: false },
         (old) => {
           if (!old) return old
@@ -188,16 +190,7 @@ export const PatientsTableRow = memo(function PatientsTableRow({
 
         {/* Status */}
         <TableCell className="w-[120px]">
-          <span
-            className={cn(
-              'inline-flex items-center gap-1.5 h-6 px-2.5 rounded-full text-[11px] font-semibold',
-              isActive
-                ? 'bg-emerald-100 text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-400'
-                : 'bg-red-100 text-red-700 dark:bg-red-900/30 dark:text-red-400',
-            )}
-          >
-            {isActive ? 'Ativo' : 'Arquivado'}
-          </span>
+          <PatientStatusBadge status={status} />
         </TableCell>
 
         {/* Contato: telefone + email */}
@@ -360,7 +353,6 @@ export const PatientsTableRow = memo(function PatientsTableRow({
             <RegisterPatients
               patientId={patient.id}
               isEditing
-              onSuccess={() => setIsEditOpen(false)}
             />
           )}
         </Dialog>

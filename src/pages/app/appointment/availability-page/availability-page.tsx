@@ -1,46 +1,36 @@
 'use client'
 
-import { useEffect, useState } from 'react'
+import { useEffect } from 'react'
 import { Helmet } from 'react-helmet-async'
+import { useQuery } from '@tanstack/react-query'
 import { CalendarClock, Info, Loader2 } from 'lucide-react'
 
-import { api } from '@/lib/axios'
 import { toast } from 'sonner'
+import { getAvailability } from '@/api/availability/get-availability'
 import { useHeaderStore } from '@/hooks/use-header-store'
 import { ScheduleManager } from './components/schedule-manager'
-
-interface AvailabilityData {
-  dayOfWeek: number
-  startTime: string
-  endTime: string
-}
 
 export function AvailabilityPage() {
   const { setTitle } = useHeaderStore()
 
-  const [initialData, setInitialData] = useState<AvailabilityData[] | null>(
-    null,
-  )
-  const [isLoading, setIsLoading] = useState(true)
+  const {
+    data: initialData,
+    isLoading,
+    isError,
+  } = useQuery({
+    queryKey: ['availability'],
+    queryFn: getAvailability,
+  })
 
   useEffect(() => {
     setTitle('Horários de Atendimento')
   }, [setTitle])
 
   useEffect(() => {
-    async function fetchAvailability() {
-      try {
-        const response = await api.get('/availabilities')
-        setInitialData(response.data.availabilities)
-      } catch (error) {
-        toast.error('Não foi possível carregar sua agenda atual.')
-      } finally {
-        setIsLoading(false)
-      }
+    if (isError) {
+      toast.error('Não foi possível carregar sua agenda atual.')
     }
-
-    fetchAvailability()
-  }, [])
+  }, [isError])
 
   return (
     <>
@@ -86,7 +76,7 @@ export function AvailabilityPage() {
           </div>
         ) : (
           <div className="animate-in fade-in slide-in-from-bottom-4 duration-500">
-            <ScheduleManager defaultData={initialData || []} />
+            <ScheduleManager defaultData={initialData ?? []} />
           </div>
         )}
       </div>

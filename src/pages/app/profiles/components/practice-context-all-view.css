@@ -1,0 +1,102 @@
+@reference "../../../../global.css";
+
+@layer components {
+  .ca-shell {
+    @apply flex min-h-screen flex-col bg-background;
+  }
+
+  .ca-gutter {
+    padding-inline: clamp(24px, 7vw, 120px);
+  }
+
+  /* Topbar */
+  .ca-topbar {
+    @apply border-b border-border;
+  }
+
+  .ca-topbar-inner {
+    @apply flex h-16 items-center gap-4;
+  }
+
+  .ca-back {
+    @apply inline-flex cursor-pointer items-center gap-1 border-none bg-transparent p-0 text-[13.5px] font-semibold text-muted-foreground transition-colors duration-150;
+  }
+
+  .ca-back:hover {
+    @apply text-foreground;
+  }
+
+  .ca-back:hover .ca-back-icon {
+    @apply -translate-x-0.5;
+  }
+
+  .ca-back-icon {
+    @apply transition-transform duration-150 ease-out;
+  }
+
+  .ca-back:focus-visible {
+    @apply rounded outline-none ring-[3px] ring-ring;
+  }
+
+  .ca-topbar-count {
+    @apply ml-auto text-[12.5px] font-semibold tabular-nums whitespace-nowrap text-muted-foreground;
+  }
+
+  /* Header */
+  .ca-head {
+    @apply pt-[46px] pb-[30px];
+  }
+
+  .ca-eyebrow {
+    @apply block text-[11px] font-bold tracking-[0.14em] text-muted-foreground uppercase;
+  }
+
+  .ca-title {
+    @apply mt-3 text-[34px] leading-[1.05] font-extrabold tracking-[-0.025em] text-foreground;
+  }
+
+  .ca-subtitle {
+    @apply mt-3 max-w-[52ch] text-[15px] text-muted-foreground;
+  }
+
+  @media (max-width: 560px) {
+    .ca-title {
+      @apply text-[27px];
+    }
+  }
+
+  /* List */
+  .ca-list {
+    @apply flex-1 border-t border-border;
+  }
+
+  /* Add row */
+  .ca-row--add .ca-row-inner {
+    @apply py-6;
+  }
+
+  .ca-add-icon {
+    @apply flex size-[46px] shrink-0 items-center justify-center rounded-xl border-[1.5px] border-dashed border-border text-muted-foreground transition-colors duration-150;
+  }
+
+  .ca-row--add:hover .ca-add-icon {
+    @apply border-primary bg-primary text-primary-foreground;
+  }
+
+  .ca-add-title {
+    @apply text-[16px] font-bold text-foreground transition-colors duration-150;
+  }
+
+  .ca-row--add:hover .ca-add-title {
+    @apply text-primary;
+  }
+
+  .ca-add-sub {
+    @apply text-[13px] text-muted-foreground;
+  }
+
+  /* Footer */
+  .ca-foot {
+    @apply flex items-center gap-2 py-[26px] text-[12.5px] text-muted-foreground;
+  }
+}

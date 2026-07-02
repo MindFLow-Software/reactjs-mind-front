@@ -5,7 +5,7 @@ import { useQuery } from '@tanstack/react-query'
 import { Loader2, Timer, Eye, Info } from 'lucide-react'
 import { format, parseISO, isValid } from 'date-fns'
 import { ptBR } from 'date-fns/locale'
-import { getPatientDetails } from '@/api/patients/get-patient-details'
+import { getPatientProfileDetails } from '@/api/patient-profiles/get-patient-profile-details'
 import { usePsychologistProfile } from '@/hooks/use-psychologist-profile'
 import {
   getSessionStatusLabel,
@@ -91,7 +91,7 @@ export function PatientsDetails({ patientId }: PatientsDetailsProps) {
 
   const { data, isLoading } = useQuery({
     queryKey: ['patient-details', patientId, pageIndex],
-    queryFn: () => getPatientDetails(patientId, pageIndex),
+    queryFn: () => getPatientProfileDetails(patientId, pageIndex),
     enabled: !!patientId,
   })
 
@@ -148,7 +148,7 @@ export function PatientsDetails({ patientId }: PatientsDetailsProps) {
             name: profile
               ? `${profile.firstName} ${profile.lastName}`
               : 'Psicólogo Responsável',
-            crp: profile?.crp || 'Não informado',
+            crp: profile?.psychologistProfile?.crp || 'Não informado',
           }}
           onBack={() => setSelectedSession(null)}
         />
@@ -259,10 +259,10 @@ export function PatientsDetails({ patientId }: PatientsDetailsProps) {
                           <TableCell className="whitespace-nowrap tabular-nums text-xs">
                             {session.date && isValid(parseISO(session.date))
                               ? format(
-                                  parseISO(session.date),
-                                  'dd/MM/yy HH:mm',
-                                  { locale: ptBR },
-                                )
+                                parseISO(session.date),
+                                'dd/MM/yy HH:mm',
+                                { locale: ptBR },
+                              )
                               : '—'}
                           </TableCell>
                           <TableCell className="max-w-[180px] truncate italic text-muted-foreground text-xs">

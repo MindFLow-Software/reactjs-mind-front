@@ -1,30 +1,12 @@
 import { api } from '@/lib/axios'
+import type {
+  AppointmentItem,
+  RegisterAppointmentRequest,
+} from '@/types/appointment'
 
-export type AppointmentStatus = 'SCHEDULED' | 'DONE' | 'CANCELLED' | 'PENDING'
-
-export interface RegisterAppointmentRequest {
-  patientId: string
-  diagnosis: string
-  notes?: string
-  scheduledAt: Date
-  startedAt?: Date
-  endedAt?: Date
-  status: AppointmentStatus
-}
-
-export interface RegisterAppointmentResponse {
+interface RegisterAppointmentResponse {
   message: string
-  appointment: {
-    id: string
-    patientId: string
-    psychologistId: string
-    diagnosis: string
-    notes?: string
-    scheduledAt: string
-    startedAt?: string
-    endedAt?: string
-    status: AppointmentStatus
-  }
+  appointment: AppointmentItem
 }
 
 export async function registerAppointment(

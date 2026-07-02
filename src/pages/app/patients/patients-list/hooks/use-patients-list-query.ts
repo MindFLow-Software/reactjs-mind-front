@@ -1,5 +1,5 @@
 import { useQuery } from '@tanstack/react-query'
-import { getPatients } from '@/api/patients/get-patients'
+import { fetchPatientProfiles } from '@/api/patient-profiles/fetch-patient-profiles'
 import type { PatientsListQueryResult } from '../patients-list.types'
 import { usePatientsQueryParams } from './use-patients-query-params'
 
@@ -10,7 +10,7 @@ export function usePatientsListQuery(): PatientsListQueryResult {
 
   const { data, isLoading, isFetching } = useQuery({
     queryKey: ['patients', params],
-    queryFn: () => getPatients(params),
+    queryFn: () => fetchPatientProfiles(params),
     refetchOnWindowFocus: true,
   })
 

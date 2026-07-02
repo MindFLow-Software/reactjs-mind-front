@@ -19,8 +19,8 @@ export interface NewPatientsItem {
 
 export interface DashboardAppointmentItem {
   id: string
-  patientId: string | null
-  psychologistId: string | null
+  patientProfileId: string | null
+  psychologistPracticeContextId: string | null
   diagnosis: string
   content: string | null
   scheduledAt: string

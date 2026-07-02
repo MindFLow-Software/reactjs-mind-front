@@ -1,11 +1,11 @@
-import { Gender, type Ipatient } from '@/types/patient'
+import { Gender } from '@/types/patient'
+import type { IpatientProfile } from '@/types/patient-profile'
 import { formatCPF } from '@/utils/formatCPF'
-import { formatCEP } from '@/utils/formatCEP'
 import { formatPhone } from '@/utils/formatPhone'
 import type { PatientFormData } from '@/validators/patients'
 
 export function buildPatientDefaults(
-  patient: Ipatient | null,
+  patient: IpatientProfile | null,
 ): PatientFormData {
   return {
     firstName: patient?.firstName ?? '',
@@ -15,17 +15,6 @@ export function buildPatientDefaults(
     cpf: patient?.cpf ? formatCPF(patient.cpf) : '',
     gender: patient?.gender ?? Gender.OTHER,
     dateOfBirth: patient?.dateOfBirth ? new Date(patient.dateOfBirth) : null,
-    zipCode: formatCEP(patient?.zipCode) ?? '',
-    street: patient?.street ?? '',
-    number: patient?.number ?? '',
-    neighborhood: patient?.neighborhood ?? '',
-    complement: patient?.complement ?? '',
-    city: patient?.city ?? '',
-    state: patient?.state ?? '',
-    modality: 'ONLINE',
-    frequency: 'Semanal',
-    price: '',
-    source: '',
-    notes: '',
+    profileImageUrl: patient?.profileImageUrl ?? undefined,
   }
 }

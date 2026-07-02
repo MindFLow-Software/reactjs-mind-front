@@ -4,8 +4,8 @@ import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { toast } from 'sonner'
 import { AxiosError } from 'axios'
 
-import { createPatients } from '@/api/patients/create-patient'
-import { updatePatients } from '@/api/patients/update-patient'
+import { createPatientProfile } from '@/api/patient-profiles/create-patient-profile'
+import { updatePatientProfileById } from '@/api/patient-profiles/update-patient-profile-by-id'
 import type { PatientFormData } from '@/validators/patients'
 import { uploadAttachment, uploadAvatar } from '@/api/attachments/attachments'
 
@@ -27,9 +27,9 @@ export function usePatientSubmit({
   const [isUploading, setIsUploading] = useState(false)
 
   const { mutateAsync: createFn, isPending: isCreating } = useMutation({
-    mutationFn: createPatients,
+    mutationFn: createPatientProfile,
     onSuccess: async (response) => {
-      const targetId = isEditMode ? patientId! : response.id
+      const targetId = isEditMode ? patientId! : response.patientId
 
       await Promise.all([
         queryClient.invalidateQueries({ queryKey: ['patients'] }),
@@ -51,7 +51,7 @@ export function usePatientSubmit({
   })
 
   const { mutateAsync: updateFn, isPending: isUpdating } = useMutation({
-    mutationFn: updatePatients,
+    mutationFn: updatePatientProfileById,
     onSuccess: async (response) => {
       const targetId = isEditMode ? patientId! : response.id
 
@@ -85,11 +85,15 @@ export function usePatientSubmit({
     try {
       setIsUploading(true)
 
-      const response = isEditMode
-        ? await updateFn({ ...shared, id: patientId! })
-        : await createFn(shared)
+      let targetId: string
 
-      const targetId = isEditMode ? patientId! : response.id
+      if (isEditMode) {
+        await updateFn({ ...shared, id: patientId! })
+        targetId = patientId!
+      } else {
+        const response = await createFn(shared)
+        targetId = response.patientId
+      }
 
       if (avatarFile) {
         try {
@@ -104,16 +108,6 @@ export function usePatientSubmit({
       }
 
       for (const file of files) await uploadAttachment(file, targetId)
-
-      if (files.length > 0) {
-        await queryClient.invalidateQueries({
-          queryKey: ['attachments', targetId],
-        })
-      }
-
-      onSuccess?.()
-
-      return response
     } finally {
       setIsUploading(false)
     }

@@ -4,10 +4,10 @@ import { ptBR } from 'date-fns/locale'
 
 import { Card, CardContent } from '@/components/ui/card'
 import { UserAvatar } from '@/components/user-avatar'
-import type { Ipatient } from '@/types/patient'
+import type { IpatientProfile } from '@/types/patient-profile'
 
 interface PatientCardProps {
-  patient: Ipatient
+  patient: IpatientProfile
   onOpen: (id: string) => void
 }
 
@@ -21,14 +21,14 @@ export function PatientCard({ patient, onOpen }: PatientCardProps) {
         <div className="flex items-center gap-3">
           <UserAvatar
             src={patient.profileImageUrl}
-            name={patient.name}
+            name={`${patient.firstName} ${patient.lastName}`}
             size="lg"
             className="border-blue-100 shadow-sm"
           />
 
           <div className="flex flex-col">
             <span className="font-semibold text-sm group-hover:text-blue-600 transition-colors line-clamp-1">
-              {patient.name}
+              {`${patient.firstName} ${patient.lastName}`}
             </span>
             <div className="flex items-center gap-2 text-[10px] text-muted-foreground uppercase font-bold">
               <Clock className="size-3 text-blue-500/70" />

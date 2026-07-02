@@ -1,49 +1,39 @@
 'use client'
-
 import * as React from 'react'
+
+import { useAuth } from '@/hooks/use-auth'
+
 import {
-  GalleryVerticalEnd,
   Home,
-  Users2,
-  Wallet,
-  CalendarCheck,
-  ShieldCheck,
-  HeartPlus,
   Inbox,
+  Wallet,
+  Users2,
+  HeartPlus,
+  ShieldCheck,
+  CalendarCheck,
+  GalleryVerticalEnd,
 } from 'lucide-react'
-import { useQuery } from '@tanstack/react-query'
 
 import {
   Sidebar,
-  SidebarContent,
-  SidebarFooter,
-  SidebarHeader,
   SidebarRail,
+  SidebarHeader,
+  SidebarFooter,
+  SidebarContent,
 } from '@/components/ui/sidebar'
-import {
-  getProfile,
-  type GetProfileResponse,
-} from '@/api/psychologists/get-profile'
-import { TeamSwitcher } from './team-switcher'
+
 import { NavMain } from './nav-main'
 import { NavUser } from './nav-user'
+import { TeamSwitcher } from './team-switcher'
+import { useActivePracticeContextStore } from '@/store/use-active-practice-context-store'
 
 export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
-  const { data: profile, isLoading } = useQuery<GetProfileResponse | null>({
-    queryKey: ['psychologist-profile'],
-    queryFn: getProfile,
-    retry: false,
-    staleTime: 1000 * 60 * 5,
-  })
+  const { profile, isPending } = useAuth()
+  const { activePracticeContextId } = useActivePracticeContextStore()
 
   const filteredNavMain = React.useMemo(() => {
-    const roleValue =
-      typeof profile?.role === 'object' && profile?.role !== null
-        ? (profile.role as { name: string }).name
-        : profile?.role
-
-    const userRole = String(roleValue).toUpperCase()
-    const isSuperAdmin = userRole === 'SUPER_ADMIN'
+    const isAdmin = profile?.platformRole === 'ADMIN'
+    const isLoggedAsPsychologist = Boolean(activePracticeContextId)
 
     // 1. Itens que AMBOS veem (mas com URLs diferentes no dashboard)
     const baseNav = [
@@ -54,14 +44,14 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
         items: [
           {
             title: 'Dashboard',
-            url: isSuperAdmin ? '/admin-dashboard' : '/dashboard',
+            url: isAdmin ? '/admin-dashboard' : '/dashboard',
           },
         ],
       },
     ]
 
     // 2. Itens exclusivos do PSICÓLOGO
-    if (!isSuperAdmin) {
+    if (isLoggedAsPsychologist) {
       baseNav.push(
         {
           title: 'Pacientes',
@@ -71,6 +61,10 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
             { title: 'Cadastro de Pacientes', url: '/patients-list' },
             { title: 'Gestão de Documentos', url: '/patients-docs' },
             { title: 'Prontuários de Pacientes', url: '/patients-records' },
+            {
+              title: 'Solicitações de vínculo',
+              url: '/patient-profiles/claim-requests',
+            },
           ],
         },
         {
@@ -110,15 +104,12 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
     }
 
     // 3. Itens exclusivos do ADMIN
-    if (isSuperAdmin) {
+    if (isAdmin) {
       baseNav.push({
         title: 'Administração',
         url: '#',
         icon: ShieldCheck,
-        items: [
-          { title: 'Solicitações', url: '/approvals' },
-          { title: 'Visão Geral Admin', url: '/admin-dashboard' },
-        ],
+        items: [{ title: 'Visão Geral Admin', url: '/admin-dashboard' }],
       })
 
       baseNav.push({
@@ -153,7 +144,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
     }
 
     return baseNav
-  }, [profile])
+  }, [profile, activePracticeContextId])
 
   const teams = React.useMemo(() => {
     const baseProfile = profile || {
@@ -162,12 +153,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
       email: '...',
     }
 
-    const roleValue =
-      typeof profile?.role === 'object' && profile?.role !== null
-        ? (profile.role as { name: string }).name
-        : profile?.role
-
-    const isRoot = String(roleValue).toUpperCase() === 'SUPER_ADMIN'
+    const isRoot = profile?.platformRole === 'ADMIN'
 
     return [
       {
@@ -183,7 +169,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
   return (
     <Sidebar collapsible="icon" {...props}>
       <SidebarHeader>
-        <TeamSwitcher teams={teams} isLoading={isLoading} />
+        <TeamSwitcher teams={teams} isLoading={isPending} />
       </SidebarHeader>
 
       <SidebarContent>

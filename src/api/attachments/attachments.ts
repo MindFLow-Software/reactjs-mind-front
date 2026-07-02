@@ -28,11 +28,11 @@ export interface GetAllAttachmentsResponse {
 
 export async function uploadAttachment(
   file: File,
-  patientId: string,
+  patientProfileId: string,
 ): Promise<UploadAttachmentResponse> {
   const formData = new FormData()
   formData.append('file', file)
-  formData.append('patientId', patientId)
+  formData.append('patientProfileId', patientProfileId)
 
   const { data } = await api.post<UploadAttachmentResponse>(
     '/attachments',
@@ -43,11 +43,11 @@ export async function uploadAttachment(
 
 export async function uploadAvatar(
   file: File,
-  patientId: string,
+  patientProfileId?: string,
 ): Promise<UploadAttachmentResponse> {
   const formData = new FormData()
   formData.append('file', file)
-  formData.append('patientId', patientId)
+  if (patientProfileId) formData.append('patientProfileId', patientProfileId)
   formData.append('type', 'AVATAR')
 
   const { data } = await api.post<UploadAttachmentResponse>(

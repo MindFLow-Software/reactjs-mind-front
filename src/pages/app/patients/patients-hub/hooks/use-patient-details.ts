@@ -8,15 +8,15 @@ import {
 import { useLocation } from 'react-router-dom'
 import { useQuery } from '@tanstack/react-query'
 import {
-  getPatientDetails,
-  type GetPatientDetailsResponse,
-} from '@/api/patients/get-patient-details'
+  getPatientProfileDetails,
+  type IgetPatientProfileDetailsResponse,
+} from '@/api/patient-profiles/get-patient-profile-details'
 import { useHeaderStore } from '@/hooks/use-header-store'
 import { PATIENT_QUEUE_SOURCE_KEY } from '../constants'
 
 interface UsePatientDetailsReturn {
-  patient: GetPatientDetailsResponse['patient'] | null
-  meta: GetPatientDetailsResponse['meta'] | null
+  patient: IgetPatientProfileDetailsResponse['patient'] | null
+  meta: IgetPatientProfileDetailsResponse['meta'] | null
   isLoading: boolean
   isError: boolean
   pageIndex: number
@@ -30,7 +30,7 @@ export function usePatientDetails(patientId: string): UsePatientDetailsReturn {
 
   const { data, isLoading, isError } = useQuery({
     queryKey: ['patient-hub', patientId, 'details', pageIndex],
-    queryFn: () => getPatientDetails(patientId, pageIndex),
+    queryFn: () => getPatientProfileDetails(patientId, pageIndex),
     enabled: Boolean(patientId),
     staleTime: 1000 * 60 * 5,
   })

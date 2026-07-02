@@ -1,5 +1,55 @@
 # CLAUDE.md — MindFLush Frontend
 
+## Mandatory Frontend Refactor Rules
+
+These rules are non-negotiable for every frontend change. If an existing rule in this file or in `.specs/codebase/*.md` conflicts with this section, this section wins.
+
+Canonical documents:
+
+- Mandatory conventions: `.specs/codebase/CONVENTIONS.md`
+- Target structure: `.specs/codebase/STRUCTURE.md`
+- Architecture rules: `.specs/codebase/ARCHITECTURE.md`
+- Backend/API integration rules: `.specs/codebase/INTEGRATIONS.md`
+- Refactor audit map: `.specs/codebase/FRONTEND_REFACTOR_AUDIT.md`
+- Claude execution prompt: `.specs/codebase/CLAUDE_FRONTEND_REFACTOR_PROMPT.md`
+- Backend contract reference: `docs/frontend-reference/*.md`
+
+Source priority for contracts:
+
+1. Current backend implementation and `docs/frontend-reference/*.md`.
+2. `.specs/features/frontend-contract/*.md` only when it does not conflict with current backend references.
+3. Existing frontend code never overrides backend contracts.
+
+Required standards:
+
+- API calls live only in `src/api/{domain}/`, separated by domain and action.
+- Every API function imports and uses `api` from `@/lib/axios`. No raw `fetch`, no raw `axios`, no `api.*` calls inside pages/components/hooks.
+- Every API request/response is fully typed and aligned with backend entities. Reuse domain/entity types whenever possible.
+- Frontend entity/domain types must match backend entities exactly, except for explicitly documented UI-only view models.
+- Interfaces use `I` + PascalCase, for example `IUser`, `IPatient`, `IAppointmentResponse`.
+- GET requests are consumed through `useQuery`.
+- POST, PUT, PATCH, and DELETE requests are consumed through `useMutation`.
+- Every mutation success and error path displays backend-provided guidance/message through Sonner.
+- Zod schemas live in `src/validators/{domain}/{layer}/{action}-schema.ts`; each file exports exactly one schema.
+- Forms always use React Hook Form + Zod and are fully typed. No manual `FormData` or untyped form state for validated fields.
+- Prefer shadcn/ui primitives for tables, forms, dialogs, sheets, cards, empty states, alerts, skeletons, badges, and layout primitives.
+- Use Zustand for global client state. Do not place stores in `src/utils`.
+- Reusable API flows, filter logic, and cross-page logic become hooks. Shared hooks live in `src/hooks`; feature-only hooks live beside the page/feature.
+- Components receiving more than 3 props must be rewritten as composition or receive a grouped typed object when composition is not appropriate.
+- Never reuse a creation modal/form/schema/hook to perform editing. Create and edit flows must have separate modal components, submit logic, schemas, validators, and API hooks.
+- Components/pages must have their respective CSS file using Tailwind `@reference`, `@layer`, and `@apply`; no pure CSS blocks for feature styling.
+- Consolidate duplicated CSS/classes into a single CSS source when two or more places repeat the same styling.
+- Page directories contain only the page file, local components, local hooks, local styles, and feature-local constants/helpers.
+- Each `.tsx` file should expose one main function when possible. Compound composition is the allowed exception.
+- Shared constants live in `src/constants`.
+- Shared/reusable components live in `src/components`.
+- Use existing utilities in `src/utils` (`Isness`, `Sanitizer`, `Normalizer`, `Time`, formatters, mappers) as the single source of truth for validation, formatting, normalization, and guards.
+- No `any`, no duplicated entity definitions, no inline backend DTOs inside pages/components, no speculative abstractions.
+
+`src/pages/app/profiles` can be used as an inspiration for cleaner composition, but it is not exempt from these rules and still needs fixes called out in the refactor audit.
+
+---
+
 ## Communication Style
 
 Always use **caveman lite** mode: no filler, no hedging, no pleasantries. Keep articles and full sentences. Professional and direct.
@@ -238,7 +288,7 @@ Patterns extracted from `src/pages/app/patients/patients-list/register-patients/
 
 ### Hook Composition
 
-- Each cross-cutting concern gets its own hook: `usePatientFormSteps` (navigation), `usePatientSubmit` (submission), `useCepLookup` (address lookup), `useFileSelection` (file state).
+- Each cross-cutting concern gets its own hook: `useFormSteps` (navigation), `usePatientSubmit` (submission), `useCepLookup` (address lookup), `useFileSelection` (file state).
 - Feature-local hooks live in a `hooks/` subfolder inside the feature directory, not in global `src/hooks/`.
 - Hook options and return shapes are always typed as explicit interfaces (`UsePatientFormStepsOptions`, `UsePatientFormStepsReturn`).
 - Hooks receive React Hook Form primitives (`trigger`, `setValue`) as options instead of owning the form instance — hooks augment the form, they do not create it.

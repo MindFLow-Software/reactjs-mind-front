@@ -1,5 +1,50 @@
 # Structure — MindFlush Frontend
 
+## Mandatory Target Structure
+
+This section is the required target for the refactor. Older directory examples below are descriptive of the current project and must not override these rules.
+
+```
+src/
+  api/
+    {domain}/
+      {action}.ts              # one typed API function per action when possible
+  components/
+    ui/                        # shadcn primitives
+    ...                        # shared app components only
+  constants/                   # shared constants and query keys
+  hooks/                       # shared cross-page hooks
+  lib/                         # axios, react-query, cn, providers/config
+  pages/
+    app|auth|landing-page/
+      {page}/
+        {page}.tsx
+        {page}.css
+        components/            # local-only components
+        hooks/                 # local-only hooks
+        constants.ts           # local-only constants, if needed
+        helpers.ts             # local-only pure helpers, if needed
+  store/                       # global Zustand stores
+  types/                       # backend-aligned entities/domains
+  utils/                       # pure utilities only; no stores, no API calls
+  validators/
+    {domain}/
+      {layer}/
+        {action}-schema.ts     # exactly one schema per file
+```
+
+Hard boundaries:
+
+- Pages must not contain shared components that are reused elsewhere.
+- `src/components` must not contain page-specific components.
+- `src/utils` must not contain Zustand stores, API calls, or React components.
+- `src/api` must not contain React hooks or UI logic.
+- `src/hooks` must not contain API route implementations.
+- API route functions must not be called directly from pages/components if a query/mutation hook is required.
+- Every `.tsx` page/component that owns markup must have its CSS counterpart or use an explicitly shared CSS file documented in the feature.
+
+---
+
 ## Raiz do Projeto
 
 ```

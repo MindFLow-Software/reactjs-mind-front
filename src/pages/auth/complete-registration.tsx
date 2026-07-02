@@ -7,8 +7,10 @@ import { AxiosError } from 'axios'
 
 import { api } from '@/lib/axios'
 import { getProfile } from '@/api/psychologists/get-profile'
-import type { CompleteRegistrationSchema } from '@/validators/auth'
-import { CompleteRegistrationForm } from './components/complete-registration-form'
+import {
+  CompleteRegistrationForm,
+  type CompleteRegistrationSchema,
+} from './components/complete-registration-form'
 
 async function completeRegistration(data: CompleteRegistrationSchema) {
   const response = await api.post('/auth/complete-registration', {
@@ -57,7 +59,10 @@ export function CompleteRegistration() {
               psicólogo.
             </p>
           </div>
-          <CompleteRegistrationForm onSubmit={handleSubmit} isPending={isPending} />
+          <CompleteRegistrationForm
+            onSubmit={handleSubmit}
+            isPending={isPending}
+          />
         </div>
       </div>
     </>

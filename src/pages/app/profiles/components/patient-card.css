@@ -1,0 +1,7 @@
+@reference "../../../../global.css";
+
+@layer components {
+  .pat-feat-check {
+    @apply flex size-6 shrink-0 items-center justify-center rounded-[7px];
+  }
+}

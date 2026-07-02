@@ -19,7 +19,7 @@ import { toast } from 'sonner'
 import { signOut } from '@/api/auth/sign-out'
 import {
   getProfile,
-  type GetProfileResponse,
+  type IgetMeResponse,
 } from '@/api/psychologists/get-profile'
 import { useTheme } from '../theme/theme-provider'
 
@@ -55,7 +55,7 @@ export function NavUser() {
     data: profile,
     isLoading,
     isError,
-  } = useQuery<GetProfileResponse | null>({
+  } = useQuery<IgetMeResponse | null>({
     queryKey: ['user-profile'],
     queryFn: getProfile,
     retry: false,

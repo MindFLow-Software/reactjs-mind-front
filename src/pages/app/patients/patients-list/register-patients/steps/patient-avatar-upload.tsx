@@ -1,95 +1,33 @@
 import './patient-avatar-upload.css'
-import { useEffect, useRef, useState } from 'react'
-import { Camera, Loader2 } from 'lucide-react'
-import { api } from '@/lib/axios'
+import { useEffect, useMemo, useRef, type ChangeEvent } from 'react'
+import { Camera } from 'lucide-react'
 import { useImagePreview } from '@/hooks/use-image-preview'
+import { UserAvatar } from '@/components/user-avatar'
 
-const UUID_RE =
-  /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i
-
-interface AvatarContentProps {
-  isLoading: boolean
-  displayUrl: string | null
-  initials?: string
-}
-
-function AvatarContent({
-  isLoading,
-  displayUrl,
-  initials,
-}: AvatarContentProps) {
-  if (isLoading)
-    return (
-      <div className="flex h-full w-full items-center justify-center">
-        <Loader2 className="size-5 animate-spin text-white" />
-      </div>
-    )
-  if (displayUrl)
-    return (
-      <img
-        src={displayUrl}
-        alt="Avatar"
-        className="h-full w-full object-cover"
-      />
-    )
-  return (
-    <div className="flex h-full w-full items-center justify-center">
-      <span className="font-title text-[20px] font-bold text-white">
-        {initials || '+'}
-      </span>
-    </div>
-  )
-}
-
-function fetchAvatarBlob(url: string): Promise<Blob> {
-  return api
-    .get(`/attachments/${url}`, { responseType: 'blob' })
-    .then((r) => r.data as Blob)
-}
-
-interface PatientAvatarUploadProps {
+interface IPatientAvatarUpload {
   onFileSelect: (f: File | null) => void
-  defaultValue?: string | null
-  initials?: string
+  defaultUrl?: string | null
+  fullName: string | null
 }
 
 export function PatientAvatarUpload({
   onFileSelect,
-  defaultValue,
-  initials,
-}: PatientAvatarUploadProps) {
+  defaultUrl,
+  fullName,
+}: IPatientAvatarUpload) {
   const inputRef = useRef<HTMLInputElement>(null)
-  const { previewUrl, onFileSelected, clear, loadFromUrl, isLoading } =
-    useImagePreview({ fetchBlob: fetchAvatarBlob })
-  const [directUrl, setDirectUrl] = useState<string | null>(null)
+  const { previewUrl, onSetPreview, clear, loadFromUrl, isLoading } =
+    useImagePreview()
 
-  useEffect(() => {
-    if (!defaultValue) {
-      setDirectUrl(null)
-      clear()
-      return
-    }
-    if (
-      defaultValue.startsWith('http://') ||
-      defaultValue.startsWith('https://')
-    ) {
-      setDirectUrl(defaultValue)
-      clear()
-      return
-    }
-    setDirectUrl(null)
-    if (!defaultValue.startsWith('data:') && !UUID_RE.test(defaultValue)) {
-      clear()
-      return
-    }
-    // eslint-disable-next-line
-    void loadFromUrl(defaultValue)
-  }, [defaultValue, clear, loadFromUrl])
+  const displayUrl = previewUrl
 
-  const displayUrl = previewUrl ?? directUrl
+  function handleFile(e: ChangeEvent<HTMLInputElement>) {
+    if (!e.target.files) return
 
-  function handleFile(file: File) {
-    onFileSelected(file)
+    const files = e.target.files
+    const file = files?.[0]
+
+    onSetPreview(file)
     onFileSelect(file)
   }
 
@@ -98,6 +36,12 @@ export function PatientAvatarUpload({
     onFileSelect(null)
     if (inputRef.current) inputRef.current.value = ''
   }
+
+  useEffect(() => {
+    (async () => await loadFromUrl(defaultUrl))()
+  }, [defaultUrl, clear, loadFromUrl])
+
+  const avatarId = useMemo(() => String(Math.random() * 1000), [])
 
   return (
     <div className="rp-avatar-wrap">
@@ -110,13 +54,14 @@ export function PatientAvatarUpload({
         }}
         onClick={() => !isLoading && inputRef.current?.click()}
       >
-        <AvatarContent
-          isLoading={isLoading}
-          displayUrl={displayUrl}
-          initials={initials}
+        <UserAvatar
+          src={displayUrl}
+          name={fullName}
+          colorSeed={avatarId}
+          className="size-full"
         />
         <div
-          className="rp-avatar-overlay group-hover:opacity-100"
+          className="rp-avatar-overlay group-hover:opacity-100 pointer-events-none"
           style={{ background: 'rgba(15,52,100,0.55)' }}
         >
           <Camera className="size-[18px] text-white" />
@@ -129,8 +74,8 @@ export function PatientAvatarUpload({
         <div className="mt-0.5 flex items-center gap-2">
           <button
             type="button"
-            onClick={() => inputRef.current?.click()}
             className="rp-avatar-btn-upload"
+            onClick={() => inputRef.current?.click()}
           >
             Enviar foto
           </button>
@@ -152,12 +97,9 @@ export function PatientAvatarUpload({
       <input
         ref={inputRef}
         type="file"
-        accept="image/jpeg,image/png"
         className="hidden"
-        onChange={(e) => {
-          const f = e.target.files?.[0]
-          if (f) handleFile(f)
-        }}
+        onChange={handleFile}
+        accept="image/jpeg,image/png"
       />
     </div>
   )

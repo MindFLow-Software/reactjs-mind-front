@@ -20,7 +20,7 @@ import {
   SelectValue,
 } from '@/components/ui/select'
 import { cn } from '@/lib/utils'
-import { getPatientsWithAttachments } from '@/api/patients/patient-with-attachment'
+import { getPatientsWithAttachments } from '@/api/patient-profiles/patient-with-attachment'
 import { useUpload } from '@/hooks/use-upload'
 import { DropZone } from './drop-zone'
 import { FileList } from './file-list'

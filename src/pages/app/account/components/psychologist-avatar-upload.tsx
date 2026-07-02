@@ -4,10 +4,9 @@ import { useRef, useState } from 'react'
 import { Camera, Upload, Loader2 } from 'lucide-react'
 import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { toast } from 'sonner'
-import { api } from '@/lib/axios'
-import { updatePsychologist } from '@/api/psychologists/update-psychologist'
+import { uploadAvatar } from '@/api/attachments/attachments'
 import { UserAvatar } from '@/components/user-avatar'
-import type { GetProfileResponse } from '@/api/psychologists/get-profile'
+import type { IgetMeResponse } from '@/api/psychologists/get-profile'
 
 interface AvatarUploadProps {
   currentImage?: string | null
@@ -24,30 +23,21 @@ export function PsychologistAvatarUpload({
 
   const { mutateAsync: uploadPhoto, isPending } = useMutation({
     mutationFn: async (file: File) => {
-      const formData = new FormData()
-      formData.append('file', file)
-
-      const response = await api.post<{ attachmentId: string }>(
-        '/attachments',
-        formData,
-      )
-      const newPhotoId = response.data.attachmentId
-
-      await updatePsychologist({ profileImageUrl: newPhotoId })
-      return newPhotoId
+      const { url } = await uploadAvatar(file)
+      return url
     },
-    onSuccess: async (newPhotoId) => {
+    onSuccess: async (newPhotoUrl) => {
       const queryKey = ['psychologist-profile']
 
-      queryClient.setQueryData<GetProfileResponse>(queryKey, (oldData) => {
+      queryClient.setQueryData<IgetMeResponse>(queryKey, (oldData) => {
         if (!oldData) return oldData
-        return { ...oldData, profileImageUrl: newPhotoId }
+        return { ...oldData, profileImageUrl: newPhotoUrl }
       })
 
       const storedUser = localStorage.getItem('user')
       if (storedUser) {
         const userData = JSON.parse(storedUser)
-        userData.profileImageUrl = newPhotoId
+        userData.profileImageUrl = newPhotoUrl
         localStorage.setItem('user', JSON.stringify(userData))
       }
 

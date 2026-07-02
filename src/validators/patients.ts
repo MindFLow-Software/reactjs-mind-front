@@ -1,5 +1,6 @@
 import { z } from 'zod'
 import { isValidCPF } from '@/utils/validate-cpf'
+import { Gender } from '@/types/patient'
 
 const cpfField = z.preprocess(
   (v) => (v === '' ? undefined : v),
@@ -13,38 +14,39 @@ export const patientSchema = z.object({
   firstName: z
     .string()
     .min(1, 'Nome é obrigatório')
-    .regex(/^[A-Za-zÀ-ÖØ-öø-ÿ\s'-]+$/, 'Apenas letras são permitidas'),
+    .regex(/^[A-Za-zÀ-ÖØ-öø-ÿ\s'-]+$/, 'Apenas letras são permitidas')
+    .describe('basicData'),
   lastName: z
     .string()
     .min(1, 'Sobrenome é obrigatório')
-    .regex(/^[A-Za-zÀ-ÖØ-öø-ÿ\s'-]+$/, 'Apenas letras são permitidas'),
-  phoneNumber: z.string().optional(),
-  email: z.string().email('E-mail inválido').optional().or(z.literal('')),
+    .regex(/^[A-Za-zÀ-ÖØ-öø-ÿ\s'-]+$/, 'Apenas letras são permitidas')
+    .describe('basicData'),
+  phoneNumber: z
+    .string()
+    .optional()
+    .describe('contact'),
+  email: z
+    .email('E-mail inválido')
+    .optional()
+    .describe('contact'),
   dateOfBirth: z
     .date()
     .nullable()
     .optional()
     .refine((d) => !d || d <= new Date(), {
       message: 'Data de nascimento inválida',
-    }),
+    })
+    .describe('basicData'),
   cpf: z
     .string()
+    .refine((v) => !v || isValidCPF(v), { message: 'CPF inválido' })
     .optional()
-    .or(z.literal(''))
-    .refine((v) => !v || isValidCPF(v), { message: 'CPF inválido' }),
-  gender: z.enum(['FEMININE', 'MASCULINE', 'OTHER']),
-  zipCode: z.string().optional().or(z.literal('')),
-  street: z.string().optional().or(z.literal('')),
-  number: z.string().optional().or(z.literal('')),
-  neighborhood: z.string().optional().or(z.literal('')),
-  complement: z.string().optional().or(z.literal('')),
-  city: z.string().optional().or(z.literal('')),
-  state: z.string().max(2).optional().or(z.literal('')),
-  modality: z.enum(['ONLINE', 'PRESENCIAL', 'HIBRIDO']).optional(),
-  frequency: z.string().optional(),
-  price: z.string().optional(),
-  source: z.string().optional(),
-  notes: z.string().optional(),
+    .describe('basicData'),
+  gender: z.enum(Gender).describe('basicData'),
+  profileImageUrl: z
+    .string()
+    .optional()
+    .describe('basicData'),
 })
 
 export const updatePatientSchema = z.object({
@@ -52,7 +54,7 @@ export const updatePatientSchema = z.object({
   lastName: z.string().optional(),
   email: z.preprocess(
     (v) => (v === '' ? undefined : v),
-    z.string().email('E-mail inválido').optional(),
+    z.email('E-mail inválido').optional(),
   ),
   phoneNumber: z.string().optional(),
   dateOfBirth: z.date().nullable().optional(),
@@ -87,7 +89,7 @@ export const newPatientsStatsQuerySchema = z.object({
 export const registerPatientViaInviteSchema = z.object({
   firstName: z.string().min(1, 'Nome é obrigatório'),
   lastName: z.string().min(1, 'Sobrenome é obrigatório'),
-  email: z.string().email('E-mail inválido'),
+  email: z.email('E-mail inválido'),
   password: z
     .string()
     .min(8, 'A senha deve conter, no mínimo, 8 caracteres')
@@ -95,7 +97,7 @@ export const registerPatientViaInviteSchema = z.object({
     .regex(/[A-Z]/, 'A senha deve conter letras maiúsculas')
     .regex(/[0-9]/, 'A senha deve conter números')
     .regex(/[^A-Za-z0-9]/, 'A senha deve conter caracteres especiais'),
-  gender: z.enum(['FEMININE', 'MASCULINE', 'OTHER'], {
+  gender: z.enum(Gender, {
     message: 'Selecione seu gênero',
   }),
   phoneNumber: z.string().optional(),

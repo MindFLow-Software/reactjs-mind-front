@@ -35,7 +35,7 @@
   /* ── Modal — register-patients.tsx ──────────────────────────────── */
 
   .rp-modal {
-    @apply flex w-full max-w-[920px]! flex-col overflow-hidden gap-0! p-0! sm:rounded-xl max-h-[92vh];
+    @apply flex w-full max-w-[800px]! flex-col overflow-hidden gap-0! p-0! sm:rounded-xl max-h-[92vh];
   }
 
   .rp-modal-header {
@@ -80,7 +80,7 @@
   .rp-modal-progress-fill  { @apply h-full bg-blue-600 transition-[width] duration-300 ease-out; }
 
   .rp-modal-body   { @apply min-h-0 flex-1 overflow-y-auto px-[22px] py-5; }
-  .rp-modal-footer { @apply shrink-0 border-t border-border bg-muted/50 px-[22px] py-[14px]; }
+  .rp-modal-footer { @apply flex justify-end gap-2 shrink-0 border-t border-border bg-muted/50 px-[22px] py-[14px]; }
 
   .rp-btn-secondary {
     @apply flex cursor-pointer items-center gap-1 rounded-[6px] border border-border

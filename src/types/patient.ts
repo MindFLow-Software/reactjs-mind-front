@@ -1,29 +1,7 @@
-import type { Iuser } from './user'
-
-export const Gender = {
-  OTHER: 'OTHER',
-  FEMININE: 'FEMININE',
-  MASCULINE: 'MASCULINE',
-} as const
-
-export type Gender = (typeof Gender)[keyof typeof Gender]
-
-export type PatientStatus = 'ACTIVE' | 'REJECTED' | 'PENDING' | 'BLOCKED'
-
-export interface Ipatient extends Iuser {
-  id: string
-  name: string
-  gender: Gender
-  lastSessionAt: string | null
-  isActive: boolean
-  status: PatientStatus
-  zipCode: string | null
-  street: string | null
-  number: string
-  complement: string | null
-  neighborhood: string | null
-  city: string | null
-  state: string | null
+export enum Gender {
+  OTHER = 'OTHER',
+  FEMININE = 'FEMININE',
+  MASCULINE = 'MASCULINE',
 }
 
 export interface AddressByCepResponse {
@@ -36,6 +14,7 @@ export interface AddressByCepResponse {
   complement: string | null
 }
 
+// TODO: move session to its own type file (session.ts)
 export interface SessionItem {
   id: string
   date: string
@@ -45,10 +24,6 @@ export interface SessionItem {
   duration: string
   status: 'Concluída' | 'Pendente'
   content: string | null
-}
-
-export interface PatientDetailsData extends Ipatient {
-  sessions: SessionItem[]
 }
 
 export interface PatientDetailsMeta {
@@ -81,7 +56,7 @@ export interface CreatePatientBody {
   notes?: string
 }
 
-export type CreatePatientResponse = Ipatient
+export type CreatePatientResponse = { message: string; patientId: string }
 
 export interface UpdatePatientBody {
   firstName?: string
@@ -120,6 +95,13 @@ export interface RegisterPatientBody {
 }
 
 export type RegisterPatientViaInviteBody = RegisterPatientBody
-export type RegisterPatientViaInviteResponse = { message: string }
+export type RegisterPatientViaInviteResponse = {
+  patientId: string
+  userId: string
+  firstName: string
+  lastName: string
+  email: string
+  psychologistPracticeContextId: string
+}
 
 export type IsessionVolume = 'high' | 'low' | 'all'

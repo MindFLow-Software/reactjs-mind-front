@@ -18,12 +18,12 @@ import { Button } from '@/components/ui/button'
 import { Checkbox } from '@/components/ui/checkbox'
 import { PatientsTableRow } from './patients-table-row'
 import { PatientsTableLoading } from './loading'
-import type { Ipatient } from '@/types/patient'
 import type {
   PatientSortBy,
   PatientSortOrder,
 } from '@/hooks/use-patient-filters'
 import { cn } from '@/lib/utils'
+import type { IpatientProfile } from '@/types/patient-profile'
 
 export interface SortState {
   by: PatientSortBy
@@ -32,7 +32,7 @@ export interface SortState {
 }
 
 interface PatientsTableProps {
-  patients: Ipatient[]
+  patients: IpatientProfile[]
   isLoading: boolean
   perPage?: number
   hasActiveFilters?: boolean
@@ -48,10 +48,12 @@ function SortIcon({
   active: boolean
   order?: PatientSortOrder
 }) {
-  if (!active)
+  if (!active) {
     return (
       <ArrowUpDown className="ml-1.5 size-3 shrink-0 text-muted-foreground/50" />
     )
+  }
+
   return order === 'asc' ? (
     <ArrowUp className="ml-1.5 size-3 shrink-0 text-primary" />
   ) : (
@@ -71,6 +73,7 @@ interface SortableHeadProps {
 
 function SortableHead({ column, label, sort, className }: SortableHeadProps) {
   const active = sort?.by === column
+
   return (
     <TableHead className={cn(COL_HEAD, className)}>
       <button
@@ -91,9 +94,8 @@ function SortableHead({ column, label, sort, className }: SortableHeadProps) {
 
 interface TableBodyContentProps {
   isLoading: boolean
-  patients: Ipatient[]
+  patients: IpatientProfile[]
   perPage: number
-  colSpan: number
   hasActiveFilters?: boolean
   onClearFilters?: () => void
   onRegister?: () => void
@@ -103,23 +105,21 @@ function TableBodyContent({
   isLoading,
   patients,
   perPage,
-  colSpan,
   hasActiveFilters,
   onClearFilters,
   onRegister,
 }: TableBodyContentProps) {
   if (isLoading) return <PatientsTableLoading rows={perPage} />
-  if (patients.length > 0)
-    return (
-      <>
-        {patients.map((patient) => (
-          <PatientsTableRow key={patient.id} patient={patient} />
-        ))}
-      </>
-    )
+
+  if (patients.length > 0) {
+    return patients.map((patient) => (
+      <PatientsTableRow key={patient.id} patient={patient} />
+    ))
+  }
+
   return (
     <TableRow>
-      <TableCell colSpan={colSpan} className="py-20">
+      <TableCell colSpan={8} className="py-20">
         <div className="flex flex-col items-center justify-center gap-3 text-center">
           {hasActiveFilters ? (
             <>
@@ -176,7 +176,6 @@ export function PatientsTable({
   onClearFilters,
   onRegister,
 }: PatientsTableProps) {
-  const colSpan = 8
 
   return (
     <Card className="overflow-hidden p-0">
@@ -232,7 +231,6 @@ export function PatientsTable({
             isLoading={isLoading}
             patients={patients}
             perPage={perPage}
-            colSpan={colSpan}
             hasActiveFilters={hasActiveFilters}
             onClearFilters={onClearFilters}
             onRegister={onRegister}

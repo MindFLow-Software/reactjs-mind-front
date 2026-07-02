@@ -9,7 +9,10 @@ export const PatientsAmountCard = memo(function PatientsAmountCard() {
   return (
     <MetricCard
       accentColor="blue"
-      header={{ label: 'Pacientes ativos', icon: <Users className="size-4 text-blue-500" /> }}
+      header={{
+        label: 'Pacientes ativos',
+        icon: <Users className="size-4 text-blue-500" />,
+      }}
       state={{ isLoading, isError }}
     >
       <MetricCard.Value>{total.toLocaleString('pt-BR')}</MetricCard.Value>

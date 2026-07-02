@@ -1,20 +1,9 @@
 import { api } from '@/lib/axios'
-
-export const AppointmentStatus = {
-  SCHEDULED: 'SCHEDULED',
-  ATTENDING: 'ATTENDING',
-  FINISHED: 'FINISHED',
-  CANCELED: 'CANCELED',
-  NOT_ATTEND: 'NOT_ATTEND',
-  RESCHEDULED: 'RESCHEDULED',
-} as const
-
-export type AppointmentStatus =
-  (typeof AppointmentStatus)[keyof typeof AppointmentStatus]
+import type { AppointmentStatus } from '@/types/appointment'
 
 export interface ActiveAppointment {
   id: string
-  patientId: string
+  patientProfileId: string
   patientName: string
   diagnosis: string
   scheduledAt: string

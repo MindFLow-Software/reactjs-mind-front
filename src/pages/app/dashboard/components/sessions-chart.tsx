@@ -2,7 +2,13 @@ import * as React from 'react'
 import { Bar, BarChart, CartesianGrid, XAxis, YAxis } from 'recharts'
 import { format } from 'date-fns'
 import { ptBR } from 'date-fns/locale'
-import { CalendarOff, Loader2, RefreshCcw, AlertCircle, ChartLine } from 'lucide-react'
+import {
+  CalendarOff,
+  Loader2,
+  RefreshCcw,
+  AlertCircle,
+  ChartLine,
+} from 'lucide-react'
 
 import {
   Card,
@@ -38,8 +44,13 @@ const LEGEND = [
 export const SessionsBarChart = React.memo(function SessionsBarChart({
   period,
 }: SessionsBarChartProps) {
-  const { data: chartData, subtitleLabel, isLoading, isError, refetch } =
-    useSessionsBar(period)
+  const {
+    data: chartData,
+    subtitleLabel,
+    isLoading,
+    isError,
+    refetch,
+  } = useSessionsBar(period)
 
   const isEmpty = React.useMemo(() => {
     const total = chartData.reduce((acc, d) => acc + d.count, 0)
@@ -66,7 +77,9 @@ export const SessionsBarChart = React.memo(function SessionsBarChart({
           <div className="flex items-center gap-3 self-start">
             {LEGEND.map(({ key, label, color }) => (
               <div key={key} className="flex items-center gap-1.5">
-                <span className={`inline-block h-2 w-2 rounded-full ${color}`} />
+                <span
+                  className={`inline-block h-2 w-2 rounded-full ${color}`}
+                />
                 <span className="text-xs text-muted-foreground">{label}</span>
               </div>
             ))}
@@ -99,8 +112,12 @@ export const SessionsBarChart = React.memo(function SessionsBarChart({
             <div className="flex h-10 w-10 items-center justify-center rounded-full bg-muted/30">
               <CalendarOff className="size-5 text-muted-foreground/50" />
             </div>
-            <p className="text-sm font-medium text-foreground">Nenhuma sessão</p>
-            <p className="text-xs text-muted-foreground">Sem atendimentos neste período</p>
+            <p className="text-sm font-medium text-foreground">
+              Nenhuma sessão
+            </p>
+            <p className="text-xs text-muted-foreground">
+              Sem atendimentos neste período
+            </p>
           </div>
         ) : (
           <ChartContainer

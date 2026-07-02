@@ -1,0 +1,51 @@
+@reference "../../../global.css";
+
+@layer components {
+  .pp-shell {
+    @apply flex min-h-screen flex-col bg-background;
+  }
+
+  .pp-gutter {
+    padding-inline: clamp(24px, 7vw, 120px);
+  }
+
+  .pp-content {
+    @apply pt-10 pb-16;
+  }
+
+  .pp-hero {
+    @apply mb-[38px] text-center;
+  }
+
+  .pp-title {
+    @apply text-[30px] font-extrabold tracking-[-0.02em] text-foreground;
+  }
+
+  .pp-sub {
+    @apply mx-auto mt-2 max-w-[520px] text-[15px] text-muted-foreground;
+  }
+
+  .pp-section {
+    @apply mt-[38px];
+  }
+
+  .pp-grid {
+    @apply grid grid-cols-2 items-stretch gap-[18px];
+  }
+
+  @media (max-width: 760px) {
+    .pp-grid {
+      @apply grid-cols-1;
+    }
+  }
+
+  @media (max-width: 460px) {
+    .pp-content {
+      @apply pt-7 pb-12;
+    }
+
+    .pp-hero {
+      @apply mb-7;
+    }
+  }
+}

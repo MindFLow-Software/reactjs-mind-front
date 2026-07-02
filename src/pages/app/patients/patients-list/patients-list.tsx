@@ -222,7 +222,11 @@ export function PatientsList() {
                   hasActiveFilters={filtersActive}
                   sort={
                     filters.sortBy
-                      ? { by: filters.sortBy, order: filters.order, onSort: setSort }
+                      ? {
+                          by: filters.sortBy,
+                          order: filters.order,
+                          onSort: setSort,
+                        }
                       : undefined
                   }
                   onClearFilters={clearFilters}

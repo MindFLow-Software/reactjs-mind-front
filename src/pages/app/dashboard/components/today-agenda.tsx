@@ -16,10 +16,6 @@ const STATUS_CONFIG: Record<string, { label: string; className: string }> = {
     label: 'Concluída',
     className: 'bg-muted text-muted-foreground',
   },
-  [AppointmentStatus.DONE]: {
-    label: 'Finalizada',
-    className: 'bg-muted text-muted-foreground',
-  },
   [AppointmentStatus.SCHEDULED]: {
     label: 'Confirmada',
     className:
@@ -51,7 +47,8 @@ interface AgendaRowProps {
 
 function AgendaRow({ appt }: AgendaRowProps) {
   const time = format(new Date(appt.scheduledAt), 'HH:mm')
-  const duration = appt.durationInMin != null ? formatTime(appt.durationInMin) : '—'
+  const duration =
+    appt.durationInMin != null ? formatTime(appt.durationInMin) : '—'
   const patientName = appt.patient
     ? `${appt.patient.firstName} ${appt.patient.lastName}`
     : 'Paciente não informado'

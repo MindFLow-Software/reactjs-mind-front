@@ -16,12 +16,13 @@
 
 ## Blockers
 
-_(nenhum)_
+- **B1 (2026-06-14):** D20 — `POST /billing` contrato incerto: não está claro se `{ subscriptionPlanId, amount }` cria um registro local de `Payment` ou apenas aciona pagamento externo. `AccountStatusGuard` pode bloquear o psicólogo após pagamento externo sem registro local. **Não implementar MIG-60 (createBillingSchema) até resolução com o time de backend.**
 
 ## Todos
 
 - [x] Prints do design recebidos (2026-05-05) — detalhes visuais confirmados
 - [x] Confirmar endpoint today: não existe — usar `getActiveAppointmentsGrouped` ou filtrar client-side via `fetchAppointments`
+- [ ] **ATIVO (2026-06-14):** Migração Entity-Relation — 74 requisitos em 10 commits atômicos (spec em `.specs/features/entity-relation-migration/spec.md`, design em `.specs/features/entity-relation-migration/design.md`)
 - [ ] Multi-série no SessionsBarChart requer backend retornar count por status — implementado com serie única + legenda visual por ora
 - [ ] F10 Auth Redesign: implementar T1–T8 (spec em .specs/features/auth-redesign/)
 - [ ] F13 Patients List Redesign: implementar T1–T10 (spec em .specs/features/patients-list-redesign/)

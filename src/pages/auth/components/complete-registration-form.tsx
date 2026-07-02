@@ -13,37 +13,70 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select'
-import { Field, FieldGroup, FieldLabel, FieldError } from '@/components/ui/field'
+import {
+  Field,
+  FieldGroup,
+  FieldLabel,
+  FieldError,
+} from '@/components/ui/field'
 import { EXPERTISE_TRANSLATIONS } from '@/utils/mappers'
 import { cn } from '@/lib/utils'
 import type { Expertise } from '@/types/expertise'
-import type { Gender } from '@/types/enum-gender'
-import {
-  completeRegistrationSchema,
-  type CompleteRegistrationSchema,
-} from '@/validators/auth'
+import { z } from 'zod'
+import { Gender } from '@/types/patient'
+
+const completeRegistrationSchema = z.object({
+  crp: z.string().min(4, 'CRP é obrigatório'),
+  expertise: z.enum(
+    [
+      'CLINICAL',
+      'SOCIAL',
+      'INFANT',
+      'JURIDICAL',
+      'EDUCATIONAL',
+      'ORGANIZATIONAL',
+      'PSYCHOTHERAPIST',
+      'NEUROPSYCHOLOGY',
+      'OTHER',
+    ],
+    { error: 'Selecione uma especialidade' },
+  ),
+  gender: z.enum(['MASCULINE', 'FEMININE', 'OTHER'], {
+    error: 'Selecione um gênero',
+  }),
+})
+
+export type CompleteRegistrationSchema = z.infer<
+  typeof completeRegistrationSchema
+>
 
 interface MaskedInputBaseProps extends React.ComponentProps<'input'> {
   inputRef: React.Ref<HTMLInputElement>
 }
 
-const MaskedInput = IMaskMixin(({ inputRef, ...props }: MaskedInputBaseProps) => (
-  <Input ref={inputRef} {...props} />
-))
+const MaskedInput = IMaskMixin(
+  ({ inputRef, ...props }: MaskedInputBaseProps) => (
+    <Input ref={inputRef} {...props} />
+  ),
+)
 
-const GENDER_OPTIONS: { value: Gender; label: string; icon: React.ReactNode }[] = [
+const GENDER_OPTIONS: {
+  value: Gender
+  label: string
+  icon: React.ReactNode
+}[] = [
   {
-    value: 'FEMININE',
+    value: Gender.FEMININE,
     label: 'Feminino',
     icon: <Venus className="h-4 w-4 text-rose-500" />,
   },
   {
-    value: 'MASCULINE',
+    value: Gender.MASCULINE,
     label: 'Masculino',
     icon: <Mars className="h-4 w-4 text-blue-500" />,
   },
   {
-    value: 'OTHER',
+    value: Gender.OTHER,
     label: 'Prefiro não informar',
     icon: <Users className="h-4 w-4 text-violet-500" />,
   },
@@ -74,7 +107,10 @@ export function CompleteRegistrationForm({
   )
 
   return (
-    <form onSubmit={handleSubmit(handleFormSubmit)} className="flex flex-col gap-6">
+    <form
+      onSubmit={handleSubmit(handleFormSubmit)}
+      className="flex flex-col gap-6"
+    >
       <FieldGroup className="flex flex-col gap-4">
         <Field>
           <FieldLabel
@@ -116,17 +152,24 @@ export function CompleteRegistrationForm({
                 <SelectTrigger
                   className={cn(
                     'w-full cursor-pointer h-11',
-                    errors.expertise && 'border-red-500 focus-visible:ring-red-500',
+                    errors.expertise &&
+                      'border-red-500 focus-visible:ring-red-500',
                   )}
                 >
                   <SelectValue placeholder="Selecione sua especialidade" />
                 </SelectTrigger>
                 <SelectContent>
-                  {(Object.keys(EXPERTISE_TRANSLATIONS) as Expertise[]).map((key) => (
-                    <SelectItem key={key} value={key} className="cursor-pointer">
-                      {EXPERTISE_TRANSLATIONS[key]}
-                    </SelectItem>
-                  ))}
+                  {(Object.keys(EXPERTISE_TRANSLATIONS) as Expertise[]).map(
+                    (key) => (
+                      <SelectItem
+                        key={key}
+                        value={key}
+                        className="cursor-pointer"
+                      >
+                        {EXPERTISE_TRANSLATIONS[key]}
+                      </SelectItem>
+                    ),
+                  )}
                 </SelectContent>
               </Select>
             )}
@@ -146,14 +189,19 @@ export function CompleteRegistrationForm({
                 <SelectTrigger
                   className={cn(
                     'w-full cursor-pointer h-11',
-                    errors.gender && 'border-red-500 focus-visible:ring-red-500',
+                    errors.gender &&
+                      'border-red-500 focus-visible:ring-red-500',
                   )}
                 >
                   <SelectValue placeholder="Selecione seu gênero" />
                 </SelectTrigger>
                 <SelectContent>
                   {GENDER_OPTIONS.map(({ value, label, icon }) => (
-                    <SelectItem key={value} value={value} className="cursor-pointer">
+                    <SelectItem
+                      key={value}
+                      value={value}
+                      className="cursor-pointer"
+                    >
                       <div className="flex items-center gap-2">
                         {icon}
                         {label}

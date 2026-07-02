@@ -1,58 +1,39 @@
 import { api } from '@/lib/axios'
-import type { Gender } from '@/types/enum-gender'
-import type { Expertise, PsychologistRole } from '@/types/expertise'
 
-export interface GetProfileResponse {
+import type {
+  PsychologistProfile,
+  PsychologistPracticeContext,
+} from '@/types/psychologist'
+import type { PlatformRole } from '@/types/user'
+import type { IpatientProfile } from '@/types/patient-profile'
+
+interface ClinicMemberContextShape {
+  id: string
+  clinicId: string
+  branchId: string | null
+  memberRole: string
+}
+
+export interface IgetMeResponse {
   id: string
   firstName: string
   lastName: string
-  email: string
-  phoneNumber: string
-  cpf: string
-  dateOfBirth: string
-  role: PsychologistRole
-  gender: Gender
-  expertise: Expertise
-  isActive: boolean
+  email: string | null
+  cpf: string | null
+  phoneNumber: string | null
+  gender: string
+  dateOfBirth: string | null
   profileImageUrl: string | null
-  bannerImageUrl: string | null
-  crp: string | null
+  isActive: boolean
+  platformRole: PlatformRole
   createdAt: string
-  paymentId: string | null
-  planExpiresAt: Date | null
-  status: string
-  type: string
+  psychologistProfile: PsychologistProfile | null
+  practiceContexts: PsychologistPracticeContext[]
+  patientProfiles: IpatientProfile[]
+  clinicMemberContexts: ClinicMemberContextShape[]
 }
 
-export async function getProfile(): Promise<GetProfileResponse> {
-  const response = await api.get('/me')
-
-  const { authenticatedUser: raw }: { authenticatedUser: GetProfileResponse } =
-    response.data
-
-  const user: GetProfileResponse = {
-    id: raw.id,
-    firstName: raw.firstName,
-    lastName: raw.lastName,
-    email: raw.email,
-    phoneNumber: raw.phoneNumber,
-    cpf: raw.cpf,
-    dateOfBirth: raw.dateOfBirth,
-    role: raw.role,
-    gender: raw.gender,
-    expertise: raw.expertise,
-    isActive: raw.isActive,
-    crp: raw.crp,
-    profileImageUrl: raw.profileImageUrl ?? null,
-    bannerImageUrl: raw.bannerImageUrl ?? null,
-    createdAt: raw.createdAt,
-    paymentId: raw?.paymentId ?? null,
-    planExpiresAt: raw?.planExpiresAt ? new Date(raw.planExpiresAt) : null,
-    status: raw.status,
-    type: raw.type,
-  }
-
-  localStorage.setItem('user', JSON.stringify(user))
-
-  return user
+export async function getProfile(): Promise<IgetMeResponse> {
+  const response = await api.get<IgetMeResponse>('/me')
+  return response.data
 }

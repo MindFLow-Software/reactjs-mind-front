@@ -24,7 +24,7 @@ import {
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu'
 
-import { getPatientDetails } from '@/api/patients/get-patient-details'
+import { getPatientProfileDetails } from '@/api/patient-profiles/get-patient-profile-details'
 import { PatientDetailsHeader } from './components/patient-details-header'
 import { useHeaderStore } from '@/hooks/use-header-store'
 import { PatientInfo } from './components/patient-info'
@@ -106,7 +106,7 @@ export default function PatientDetails() {
     refetch,
   } = useQuery({
     queryKey: ['patient-details', id, pageIndex],
-    queryFn: () => getPatientDetails(id, pageIndex),
+    queryFn: () => getPatientProfileDetails(id, pageIndex),
     enabled: !!id,
     // staleTime: 1000 * 60 * 5,
   })
@@ -247,7 +247,6 @@ export default function PatientDetails() {
                   patient={{
                     ...patientData,
                     isActive: isPatientActive,
-                    status: isPatientActive ? 'ACTIVE' : 'BLOCKED',
                   }}
                 />
               </div>

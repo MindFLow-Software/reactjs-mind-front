@@ -28,6 +28,7 @@ const containerVariants: Variants = {
   hidden: {},
   visible: { transition: { staggerChildren: 0.05 } },
 }
+
 const itemVariants: Variants = {
   hidden: { opacity: 0, y: 8 },
   visible: {
@@ -41,10 +42,11 @@ export const SignInForm = memo(function SignInForm({
   className,
   ...props
 }: React.ComponentProps<'form'>) {
-  const [searchParams] = useSearchParams()
   const navigate = useNavigate()
-  const [showPassword, setShowPassword] = useState(false)
+  const [searchParams] = useSearchParams()
+
   const prefersReduced = useReducedMotion()
+  const [showPassword, setShowPassword] = useState(false)
 
   const {
     register,
@@ -65,20 +67,14 @@ export const SignInForm = memo(function SignInForm({
   const handleSignIn = useCallback(
     async (data: SignInSchema) => {
       try {
-        const response = await authenticate(data)
-        const user = response.user
+        await authenticate(data)
 
         localStorage.setItem('isAuthenticated', 'true')
-        localStorage.setItem('user', JSON.stringify(user))
-
-        const userType = user.type
 
         toast.success('Login realizado com sucesso!', { duration: 2000 })
 
         setTimeout(() => {
-          navigate(userType === 'ADMIN' ? '/admin-dashboard' : '/dashboard', {
-            replace: true,
-          })
+          navigate('/dashboard', { replace: true })
         }, 100)
       } catch (error) {
         const errorMessage = Sanitize.responseError(error)
@@ -207,17 +203,19 @@ export const SignInForm = memo(function SignInForm({
       </motion.div>
 
       {/* Sign-up link */}
-      <motion.div {...animItem}>
-        <p className="text-center text-sm text-muted-foreground">
-          Não tem uma conta?{' '}
-          <Link
-            to="/sign-up"
-            className="font-semibold text-blue-600 hover:text-blue-700 underline-offset-4 hover:underline transition-colors"
-          >
-            Criar conta
-          </Link>
-        </p>
-      </motion.div>
+      <div className="flex flex-col gap-2">
+        <motion.div {...animItem}>
+          <p className="text-center text-sm text-muted-foreground">
+            Não tem uma conta?{' '}
+            <Link
+              to="/sign-up"
+              className="font-semibold text-blue-600 hover:text-blue-700 underline-offset-4 hover:underline transition-colors"
+            >
+              Criar conta
+            </Link>
+          </p>
+        </motion.div>
+      </div>
     </motion.form>
   )
 })

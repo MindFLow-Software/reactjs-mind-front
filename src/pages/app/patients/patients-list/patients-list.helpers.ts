@@ -1,4 +1,4 @@
-import type { PatientStatus } from '@/types/patient'
+type PatientStatus = 'ACTIVE' | 'REJECTED' | 'PENDING' | 'BLOCKED'
 
 export function formatPatientsShowing(showing: number, total: number): string {
   return `Mostrando ${showing} de ${total} pacientes`

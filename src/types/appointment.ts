@@ -5,7 +5,6 @@ export const AppointmentStatus = {
   CANCELED: 'CANCELED',
   NOT_ATTEND: 'NOT_ATTEND',
   RESCHEDULED: 'RESCHEDULED',
-  DONE: 'DONE',
 } as const
 
 export type AppointmentStatus =
@@ -13,8 +12,8 @@ export type AppointmentStatus =
 
 export interface AppointmentItem {
   id: string
-  patientId: string | null
-  psychologistId: string | null
+  patientProfileId: string | null
+  psychologistPracticeContextId: string | null
   diagnosis: string
   content: string | null
   scheduledAt: string
@@ -25,8 +24,8 @@ export interface AppointmentItem {
 
 export interface Appointment {
   id: string
-  patientId: string
-  psychologistId: string
+  patientProfileId: string
+  psychologistPracticeContextId: string
   diagnosis: string
   notes?: string | null
   scheduledAt: string
@@ -45,8 +44,7 @@ export interface Appointment {
 }
 
 export interface RegisterAppointmentRequest {
-  patientId: string
-  psychologistId: string
+  patientProfileId: string
   diagnosis: string
   notes?: string
   scheduledAt: Date
@@ -58,4 +56,16 @@ export interface RegisterAppointmentRequest {
 export interface RegisterAppointmentResponse {
   message: string
   appointment: Appointment
+}
+
+export interface AppointmentSession {
+  id: string
+  appointmentId: string
+  createdAt: string
+}
+
+export interface SessionParticipant {
+  id: string
+  sessionId: string
+  userId: string
 }

@@ -1,5 +1,4 @@
 import { api } from '@/lib/axios'
-import type { Iuser } from '@/types/user'
 
 export interface SignInBody {
   email: string
@@ -10,8 +9,6 @@ export interface SignInResponse {
   message: string
   accessToken?: string
   token?: string
-  // ToDo: change userType to be Iuser
-  user: Iuser
 }
 
 export async function signIn({ email, password }: SignInBody) {
@@ -20,6 +17,5 @@ export async function signIn({ email, password }: SignInBody) {
     password,
   })
 
-  const data = response.data
-  return data
+  return response.data
 }
