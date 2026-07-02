@@ -1,28 +1,29 @@
 import { api } from '@/lib/axios'
 
-interface GetAvailableSlotsRequest {
+export interface GetAvailableSlotsRequest {
   psychologistPracticeContextId: string
-  startDate: string
-  endDate: string
+  date: string
 }
 
-interface GetAvailableSlotsResponse {
+export interface GetAvailableSlotsResponse {
   slots: string[]
 }
 
+// D16: backend slot calculation risks a hanging loop; guard with a client timeout.
+const AVAILABLE_SLOTS_TIMEOUT_MS = 8000
+
 export async function getAvailableSlots({
   psychologistPracticeContextId,
-  startDate,
-  endDate,
+  date,
 }: GetAvailableSlotsRequest) {
   const response = await api.get<GetAvailableSlotsResponse>(
     '/appointments/available-slots',
     {
       params: {
         psychologistPracticeContextId,
-        startDate,
-        endDate,
+        date,
       },
+      timeout: AVAILABLE_SLOTS_TIMEOUT_MS,
     },
   )
 

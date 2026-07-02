@@ -1,11 +1,10 @@
 'use client'
 
-import type React from 'react'
-import { useState, useEffect, useCallback } from 'react'
-import { useMutation, useQueryClient } from '@tanstack/react-query'
+import { useState } from 'react'
+import { useForm } from 'react-hook-form'
+import { zodResolver } from '@hookform/resolvers/zod'
 import { format } from 'date-fns'
 import { ptBR } from 'date-fns/locale'
-import { toast } from 'sonner'
 import {
   CalendarIcon,
   Clock,
@@ -14,7 +13,6 @@ import {
   Stethoscope,
   User,
 } from 'lucide-react'
-import { AxiosError } from 'axios'
 
 import {
   DialogContent,
@@ -38,169 +36,109 @@ import {
   PopoverTrigger,
 } from '@/components/ui/popover'
 import { Calendar } from '@/components/ui/calendar'
-import { Label } from '@/components/ui/label'
+import {
+  Form,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormControl,
+  FormMessage,
+} from '@/components/ui/form'
+import { cn } from '@/lib/utils'
 
-import { registerAppointment } from '@/api/appointments/create-appointment'
-import type { RegisterAppointmentRequest } from '@/types/appointment'
-import { fetchPatientProfiles } from '@/api/patient-profiles/fetch-patient-profiles'
+import {
+  createAppointmentSchema,
+  type CreateAppointmentData,
+} from '@/validators/appointments/form/create-appointment-schema'
+import { usePatientLookup } from '../hooks/use-patient-lookup'
+import { useRegisterAppointment } from '../hooks/use-register-appointment'
 
-const MAX_NOTE_LENGTH = 200
+import './register-appointment.css'
+
+const MAX_CONTENT_LENGTH = 200
 
 interface RegisterAppointmentProps {
   initialDate?: Date
   onSuccess?: () => void
 }
 
+function buildScheduledAt(date: Date | undefined, time: string): string {
+  if (!date || !time) return ''
+
+  const [hours, minutes] = time.split(':').map(Number)
+  const combined = new Date(date)
+  combined.setHours(hours, minutes, 0, 0)
+
+  return combined.toISOString()
+}
+
+function buildDefaultValues(initialDate?: Date): CreateAppointmentData {
+  const time = initialDate
+    ? `${String(initialDate.getHours()).padStart(2, '0')}:${String(
+        initialDate.getMinutes(),
+      ).padStart(2, '0')}`
+    : ''
+
+  return {
+    patientProfileId: '',
+    diagnosis: '',
+    content: '',
+    scheduledAt: buildScheduledAt(initialDate, time),
+    status: 'SCHEDULED',
+  }
+}
+
 export function RegisterAppointment({
   initialDate,
   onSuccess,
 }: RegisterAppointmentProps) {
-  const queryClient = useQueryClient()
+  const { patients, isLoading: isLoadingPatients } = usePatientLookup()
 
-  const [date, setDate] = useState<Date | undefined>()
-  const [time, setTime] = useState('')
+  const [pickerDate, setPickerDate] = useState<Date | undefined>(initialDate)
+  const [pickerTime, setPickerTime] = useState(() =>
+    initialDate
+      ? `${String(initialDate.getHours()).padStart(2, '0')}:${String(
+          initialDate.getMinutes(),
+        ).padStart(2, '0')}`
+      : '',
+  )
 
-  const [patients, setPatients] = useState<{ id: string; name: string }[]>([])
-  const [selectedPatient, setSelectedPatient] = useState('')
-  const [notes, setNotes] = useState('')
-  const [diagnosis, setDiagnosis] = useState('')
-  const [isLoadingPatients, setIsLoadingPatients] = useState(true)
-
-  useEffect(() => {
-    if (initialDate) {
-      setDate(initialDate)
-      const hours = String(initialDate.getHours()).padStart(2, '0')
-      const minutes = String(initialDate.getMinutes()).padStart(2, '0')
-      setTime(`${hours}:${minutes}`)
-    }
-  }, [initialDate])
-
-  useEffect(() => {
-    const fetchProfiles = async () => {
-      setIsLoadingPatients(true)
-      try {
-        const data = await fetchPatientProfiles({
-          pageIndex: 0,
-          perPage: 1000,
-        })
-
-        const formatted = data.patients.map((p) => ({
-          id: p.id,
-          name: `${p.firstName} ${p.lastName}`,
-        }))
-
-        setPatients(formatted)
-      } catch (error) {
-        console.error(error)
-        setPatients([])
-        toast.error('Erro ao carregar a lista de pacientes.')
-      } finally {
-        setIsLoadingPatients(false)
-      }
-    }
-    fetchProfiles()
-  }, [])
-
-  const { mutateAsync: registerAppointmentFn, isPending } = useMutation({
-    mutationFn: registerAppointment,
-    onSuccess: () => {
-      toast.success('Agendamento criado com sucesso!')
-      queryClient.invalidateQueries({ queryKey: ['appointments'] })
-      if (onSuccess) {
-        onSuccess()
-      }
-    },
-    onError: (error) => {
-      if (error instanceof AxiosError) {
-        const status = error.response?.status
-        const message = error.message
-
-        if (status === 409) {
-          return toast.error('Conflito de Horário', {
-            description:
-              message || 'Você já possui um agendamento para este horário.',
-          })
-        }
-
-        if (status === 400) {
-          if (message?.toLowerCase().includes('inativo')) {
-            return toast.error('Paciente Inativo', {
-              description: message,
-            })
-          }
-          return toast.error('Dados Inválidos', {
-            description:
-              message || 'Verifique as informações ou a data selecionada.',
-          })
-        }
-
-        if (status === 404) {
-          return toast.error('Não encontrado', {
-            description: message || 'Paciente não localizado.',
-          })
-        }
-      }
-
-      toast.error('Erro ao criar agendamento.')
-    },
+  const form = useForm<CreateAppointmentData>({
+    resolver: zodResolver(createAppointmentSchema),
+    mode: 'onTouched',
+    defaultValues: buildDefaultValues(initialDate),
   })
 
-  const handleTimeChange = useCallback(
-    (e: React.ChangeEvent<HTMLInputElement>) => {
-      const newTime = e.target.value
-      setTime(newTime)
-      if (date && newTime) {
-        const [h, m] = newTime.split(':')
-        const newDate = new Date(date)
-        newDate.setHours(Number(h))
-        newDate.setMinutes(Number(m))
-        setDate(newDate)
-      }
-    },
-    [date],
-  )
+  const {
+    control,
+    handleSubmit,
+    setValue,
+    watch,
+    formState: { isValid, errors },
+  } = form
 
-  const handleDateSelect = useCallback(
-    (selectedDate: Date | undefined) => {
-      if (selectedDate && time) {
-        const [h, m] = time.split(':')
-        selectedDate.setHours(Number(h))
-        selectedDate.setMinutes(Number(m))
-      }
-      setDate(selectedDate)
-    },
-    [time],
-  )
+  const { mutateAsync: registerAppointmentFn, isPending } =
+    useRegisterAppointment({ onSuccess })
 
-  const handleSubmit = useCallback(
-    async (e: React.FormEvent<HTMLFormElement>) => {
-      e.preventDefault()
+  const contentLength = watch('content')?.length ?? 0
 
-      if (!selectedPatient) return toast.error('Selecione um paciente.')
-      if (!date) return toast.error('Selecione uma data.')
-      if (!time) return toast.error('Selecione um horário.')
-      if (!diagnosis.trim()) return toast.error('Informe o diagnóstico.')
+  function handleDateSelect(selectedDate: Date | undefined) {
+    setPickerDate(selectedDate)
+    setValue('scheduledAt', buildScheduledAt(selectedDate, pickerTime), {
+      shouldValidate: true,
+    })
+  }
 
-      const finalDate = new Date(date)
-      const [h, m] = time.split(':')
-      finalDate.setHours(Number(h), Number(m), 0, 0)
+  function handleTimeChange(newTime: string) {
+    setPickerTime(newTime)
+    setValue('scheduledAt', buildScheduledAt(pickerDate, newTime), {
+      shouldValidate: true,
+    })
+  }
 
-      const payload: RegisterAppointmentRequest = {
-        patientProfileId: selectedPatient,
-        diagnosis: diagnosis.trim(),
-        notes: notes.trim() || undefined,
-        scheduledAt: finalDate,
-        status: 'SCHEDULED',
-      }
-
-      try {
-        await registerAppointmentFn(payload)
-      } catch { }
-    },
-    [selectedPatient, date, time, diagnosis, notes, registerAppointmentFn],
-  )
-
-  const isFormValid = selectedPatient && date && time && diagnosis.trim()
+  async function onSubmit(data: CreateAppointmentData) {
+    await registerAppointmentFn(data)
+  }
 
   return (
     <DialogContent className="max-h-[90vh] max-w-2xl overflow-y-auto">
@@ -213,166 +151,196 @@ export function RegisterAppointment({
         </DialogDescription>
       </DialogHeader>
 
-      <form onSubmit={handleSubmit} className="space-y-5 pt-2">
-        <div className="space-y-2">
-          <Label
-            htmlFor="patient"
-            className="text-sm font-medium flex items-center gap-2"
-          >
-            <User className="h-4 w-4 text-muted-foreground" />
-            Paciente
-          </Label>
-          <Select value={selectedPatient} onValueChange={setSelectedPatient}>
-            {/* Cursor pointer no gatilho do select */}
-            <SelectTrigger id="patient" className="h-11 w-full cursor-pointer">
-              <SelectValue
-                placeholder={
-                  isLoadingPatients ? 'Carregando...' : 'Selecione o paciente'
-                }
-              />
-            </SelectTrigger>
-            <SelectContent className="max-h-[280px]">
-              {isLoadingPatients ? (
-                <div className="flex items-center justify-center py-4">
-                  <Loader2 className="h-5 w-5 animate-spin text-muted-foreground" />
-                </div>
-              ) : patients.length > 0 ? (
-                patients.map((p) => (
-                  /* Cursor pointer nos itens do select */
-                  <SelectItem
-                    key={p.id}
-                    value={p.id}
-                    className="cursor-pointer"
-                  >
-                    {p.name}
-                  </SelectItem>
-                ))
-              ) : (
-                <div className="px-3 py-4 text-sm text-muted-foreground text-center">
-                  Nenhum paciente ativo encontrado
-                </div>
-              )}
-            </SelectContent>
-          </Select>
-        </div>
-
-        <div className="space-y-2">
-          <Label
-            htmlFor="diagnosis"
-            className="text-sm font-medium flex items-center gap-2"
-          >
-            <Stethoscope className="h-4 w-4 text-muted-foreground" />
-            Tema da Sessão
-          </Label>
-          <Input
-            id="diagnosis"
-            value={diagnosis}
-            onChange={(e) => setDiagnosis(e.target.value)}
-            placeholder="ex: Ansiedade generalizada"
-            maxLength={90}
-            className="h-11"
-          />
-        </div>
-
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-          <div className="space-y-2">
-            <Label className="text-sm font-medium flex items-center gap-2">
-              <CalendarIcon className="h-4 w-4 text-muted-foreground" />
-              Data
-            </Label>
-            <Popover>
-              {/* Cursor pointer no botão que abre o calendário */}
-              <PopoverTrigger asChild>
-                <Button
-                  variant="outline"
-                  className="h-11 w-full justify-start font-normal bg-transparent cursor-pointer"
-                >
-                  {date ? (
-                    format(date, "dd 'de' MMMM, yyyy", { locale: ptBR })
-                  ) : (
-                    <span>Selecione a data</span>
-                  )}
-                </Button>
-              </PopoverTrigger>
-              <PopoverContent className="w-auto p-0" align="start">
-                <Calendar
-                  mode="single"
-                  selected={date}
-                  onSelect={handleDateSelect}
-                  disabled={(date) =>
-                    date < new Date(new Date().setHours(0, 0, 0, 0))
-                  }
-                  locale={ptBR}
-                  initialFocus
-                />
-              </PopoverContent>
-            </Popover>
-          </div>
-
-          <div className="space-y-2">
-            <Label
-              htmlFor="time"
-              className="text-sm font-medium flex items-center gap-2"
-            >
-              <Clock className="h-4 w-4 text-muted-foreground" />
-              Horário
-            </Label>
-            {/* Cursor pointer no input de hora nativo */}
-            <Input
-              id="time"
-              type="time"
-              value={time}
-              onChange={handleTimeChange}
-              className="h-11 cursor-pointer"
-            />
-          </div>
-        </div>
-
-        <div className="space-y-2">
-          <Label
-            htmlFor="notes"
-            className="text-sm font-medium flex items-center gap-2"
-          >
-            <FileText className="h-4 w-4 text-muted-foreground" />
-            Notas{' '}
-            <span className="text-muted-foreground font-normal">
-              (opcional)
-            </span>
-          </Label>
-          <Textarea
-            id="notes"
-            placeholder="Adicione observações relevantes..."
-            value={notes}
-            onChange={(e) => setNotes(e.target.value)}
-            maxLength={MAX_NOTE_LENGTH}
-            rows={3}
-            className="resize-none"
-          />
-          <div className="flex justify-end text-xs text-muted-foreground">
-            <span>
-              {notes.length}/{MAX_NOTE_LENGTH}
-            </span>
-          </div>
-        </div>
-
-        <div className="pt-3">
-          {/* Cursor pointer no botão de submissão */}
-          <Button
-            type="submit"
-            className="h-11 w-full font-medium cursor-pointer"
-            disabled={isPending || !isFormValid}
-          >
-            {isPending ? (
-              <>
-                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                Criando agendamento...
-              </>
-            ) : (
-              'Criar Agendamento'
+      <Form {...form}>
+        <form onSubmit={handleSubmit(onSubmit)} className="space-y-5 pt-2">
+          <FormField
+            control={control}
+            name="patientProfileId"
+            render={({ field, fieldState }) => (
+              <FormItem>
+                <FormLabel className="ra-field-label">
+                  <User className="h-4 w-4 text-muted-foreground" />
+                  Paciente
+                </FormLabel>
+                <FormControl>
+                  <Select value={field.value} onValueChange={field.onChange}>
+                    <SelectTrigger
+                      id="patientProfileId"
+                      className={cn(
+                        'ra-input w-full',
+                        fieldState.invalid &&
+                          'border-red-600 focus-visible:ring-red-600/20',
+                      )}
+                    >
+                      <SelectValue
+                        placeholder={
+                          isLoadingPatients
+                            ? 'Carregando...'
+                            : 'Selecione o paciente'
+                        }
+                      />
+                    </SelectTrigger>
+                    <SelectContent className="max-h-[280px]">
+                      {isLoadingPatients ? (
+                        <div className="flex items-center justify-center py-4">
+                          <Loader2 className="h-5 w-5 animate-spin text-muted-foreground" />
+                        </div>
+                      ) : patients.length > 0 ? (
+                        patients.map((patient) => (
+                          <SelectItem
+                            key={patient.id}
+                            value={patient.id}
+                            className="cursor-pointer"
+                          >
+                            {patient.name}
+                          </SelectItem>
+                        ))
+                      ) : (
+                        <div className="px-3 py-4 text-sm text-muted-foreground text-center">
+                          Nenhum paciente ativo encontrado
+                        </div>
+                      )}
+                    </SelectContent>
+                  </Select>
+                </FormControl>
+                <FormMessage />
+              </FormItem>
             )}
-          </Button>
-        </div>
-      </form>
+          />
+
+          <FormField
+            control={control}
+            name="diagnosis"
+            render={({ field, fieldState }) => (
+              <FormItem>
+                <FormLabel className="ra-field-label">
+                  <Stethoscope className="h-4 w-4 text-muted-foreground" />
+                  Tema da Sessão
+                </FormLabel>
+                <FormControl>
+                  <Input
+                    {...field}
+                    id="diagnosis"
+                    placeholder="ex: Ansiedade generalizada"
+                    maxLength={90}
+                    className={cn(
+                      'ra-input',
+                      fieldState.invalid &&
+                        'border-red-600 focus-visible:ring-red-600/20',
+                    )}
+                  />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+
+          <div className="ra-grid-2">
+            <FormItem>
+              <FormLabel className="ra-field-label">
+                <CalendarIcon className="h-4 w-4 text-muted-foreground" />
+                Data
+              </FormLabel>
+              <Popover>
+                <PopoverTrigger asChild>
+                  <Button
+                    type="button"
+                    variant="outline"
+                    className="ra-input w-full justify-start font-normal bg-transparent cursor-pointer"
+                  >
+                    {pickerDate ? (
+                      format(pickerDate, "dd 'de' MMMM, yyyy", {
+                        locale: ptBR,
+                      })
+                    ) : (
+                      <span>Selecione a data</span>
+                    )}
+                  </Button>
+                </PopoverTrigger>
+                <PopoverContent className="w-auto p-0" align="start">
+                  <Calendar
+                    mode="single"
+                    selected={pickerDate}
+                    onSelect={handleDateSelect}
+                    disabled={(day) =>
+                      day < new Date(new Date().setHours(0, 0, 0, 0))
+                    }
+                    locale={ptBR}
+                    initialFocus
+                  />
+                </PopoverContent>
+              </Popover>
+            </FormItem>
+
+            <FormItem>
+              <FormLabel className="ra-field-label">
+                <Clock className="h-4 w-4 text-muted-foreground" />
+                Horário
+              </FormLabel>
+              <Input
+                id="time"
+                type="time"
+                value={pickerTime}
+                onChange={(e) => handleTimeChange(e.target.value)}
+                className="ra-input cursor-pointer"
+              />
+            </FormItem>
+            {errors.scheduledAt && (
+              <p className="ra-field-error col-span-2">
+                {errors.scheduledAt.message}
+              </p>
+            )}
+          </div>
+
+          <FormField
+            control={control}
+            name="content"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel className="ra-field-label">
+                  <FileText className="h-4 w-4 text-muted-foreground" />
+                  Notas{' '}
+                  <span className="text-muted-foreground font-normal">
+                    (opcional)
+                  </span>
+                </FormLabel>
+                <FormControl>
+                  <Textarea
+                    {...field}
+                    id="content"
+                    placeholder="Adicione observações relevantes..."
+                    maxLength={MAX_CONTENT_LENGTH}
+                    rows={3}
+                    className="resize-none"
+                  />
+                </FormControl>
+                <div className="flex justify-end text-xs text-muted-foreground">
+                  <span>
+                    {contentLength}/{MAX_CONTENT_LENGTH}
+                  </span>
+                </div>
+              </FormItem>
+            )}
+          />
+
+          <div className="pt-3">
+            <Button
+              type="submit"
+              className="h-11 w-full font-medium cursor-pointer"
+              disabled={isPending || !isValid}
+            >
+              {isPending ? (
+                <>
+                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                  Criando agendamento...
+                </>
+              ) : (
+                'Criar Agendamento'
+              )}
+            </Button>
+          </div>
+        </form>
+      </Form>
     </DialogContent>
   )
 }

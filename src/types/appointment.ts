@@ -25,16 +25,6 @@ export interface IAppointmentWithNames extends IAppointment {
   } | null
 }
 
-export interface RegisterAppointmentRequest {
-  patientProfileId: string
-  diagnosis: string
-  notes?: string
-  scheduledAt: Date
-  startedAt?: Date
-  endedAt?: Date
-  status: AppointmentStatus
-}
-
 export interface RegisterAppointmentResponse {
   message: string
   appointment: IAppointment

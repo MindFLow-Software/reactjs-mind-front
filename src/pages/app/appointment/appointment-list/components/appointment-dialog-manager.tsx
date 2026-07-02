@@ -1,110 +1,120 @@
 'use client'
 
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogTitle,
-} from '@/components/ui/dialog'
+import { Dialog, DialogContent } from '@/components/ui/dialog'
 import { EditAppointment } from './edit-appointment-dialog'
 import { RegisterAppointment } from './register-appointment'
 import { CancelAppointmentDialog } from './cancel-appointment-dialog'
 import { RescheduleAppointmentDialog } from './reschedule-appointment-dialog'
 
-interface AppointmentDialogManagerProps {
-  states: {
-    create: boolean
-    edit: boolean
-    cancel: boolean
-    reschedule: boolean
-  }
-  setStates: (key: string, value: boolean) => void
+import type { IAppointmentListItem } from '@/api/appointments/get-appointments'
+import type { RescheduleAppointmentRequest } from '@/api/appointments/reschedule-appointment'
+
+export interface AppointmentDialogManagerDialogs {
+  isCreateOpen: boolean
+  isEditOpen: boolean
+  isCancelOpen: boolean
+  isRescheduleOpen: boolean
+  onCreateOpenChange: (open: boolean) => void
+  onEditOpenChange: (open: boolean) => void
+  onCancelOpenChange: (open: boolean) => void
+  onRescheduleOpenChange: (open: boolean) => void
+}
+
+export interface AppointmentDialogManagerSelection {
   selectedDate?: Date
-  // eslint-disable-next-line
-  selectedAppointment: any | null
-  mutations: {
-    cancel: (id: string) => Promise<void>
-    reschedule: (data: {
-      appointmentId: string
-      newDate: Date
-    }) => Promise<void>
-  }
-  onSuccess: () => void
+  selectedAppointment: IAppointmentListItem | null
+}
+
+export interface AppointmentDialogManagerActions {
+  onCancel: (appointmentId: string) => Promise<unknown>
+  isCancelling: boolean
+  onReschedule: (data: RescheduleAppointmentRequest) => Promise<unknown>
+  isRescheduling: boolean
+}
+
+interface AppointmentDialogManagerProps {
+  dialogs: AppointmentDialogManagerDialogs
+  selection: AppointmentDialogManagerSelection
+  actions: AppointmentDialogManagerActions
 }
 
 export function AppointmentDialogManager({
-  states,
-  setStates,
-  selectedDate,
-  selectedAppointment,
-  mutations,
-  onSuccess,
+  dialogs,
+  selection,
+  actions,
 }: AppointmentDialogManagerProps) {
-  // Helper para extrair ID e Nome de forma segura
-  const appData = selectedAppointment
-    ? {
-        id: selectedAppointment.id || selectedAppointment.props?.id,
-        name: selectedAppointment.patientName || 'Paciente',
-      }
-    : null
+  const { selectedDate, selectedAppointment } = selection
+
+  async function handleCancel() {
+    if (!selectedAppointment) return
+    await actions.onCancel(selectedAppointment.id)
+    dialogs.onCancelOpenChange(false)
+    dialogs.onEditOpenChange(false)
+  }
+
+  async function handleReschedule(newDate: Date) {
+    if (!selectedAppointment) return
+    await actions.onReschedule({
+      appointmentId: selectedAppointment.id,
+      newDate,
+    })
+    dialogs.onRescheduleOpenChange(false)
+    dialogs.onEditOpenChange(false)
+  }
 
   return (
     <>
-      <Dialog open={states.create} onOpenChange={(v) => setStates('create', v)}>
+      <Dialog
+        open={dialogs.isCreateOpen}
+        onOpenChange={dialogs.onCreateOpenChange}
+      >
         <RegisterAppointment
           initialDate={selectedDate}
-          onSuccess={() => {
-            onSuccess()
-            setStates('create', false)
-          }}
+          onSuccess={() => dialogs.onCreateOpenChange(false)}
         />
       </Dialog>
 
-      <Dialog open={states.edit} onOpenChange={(v) => setStates('edit', v)}>
-        <DialogContent className="max-w-2xl p-0 overflow-hidden border-none shadow-2xl rounded-xl">
-          <DialogTitle className="sr-only">Detalhes</DialogTitle>
-          <DialogDescription className="sr-only">
-            Ações da sessão
-          </DialogDescription>
-          {selectedAppointment && (
-            <EditAppointment
-              appointment={selectedAppointment}
-              onClose={() => setStates('edit', false)}
-              onCancelTrigger={() => setStates('cancel', true)}
-              onRescheduleTrigger={() => setStates('reschedule', true)}
-            />
-          )}
-        </DialogContent>
-      </Dialog>
-
-      <Dialog open={states.cancel} onOpenChange={(v) => setStates('cancel', v)}>
-        {appData && (
-          <CancelAppointmentDialog
-            patientName={appData.name}
-            onClose={() => setStates('cancel', false)}
-            onCancel={() => mutations.cancel(appData.id)}
-            isCancelling={false}
+      <Dialog open={dialogs.isEditOpen} onOpenChange={dialogs.onEditOpenChange}>
+        {selectedAppointment && (
+          <EditAppointment
+            appointment={selectedAppointment}
+            onClose={() => dialogs.onEditOpenChange(false)}
+            onCancelTrigger={() => dialogs.onCancelOpenChange(true)}
+            onRescheduleTrigger={() => dialogs.onRescheduleOpenChange(true)}
           />
         )}
       </Dialog>
 
       <Dialog
-        open={states.reschedule}
-        onOpenChange={(v) => setStates('reschedule', v)}
+        open={dialogs.isCancelOpen}
+        onOpenChange={dialogs.onCancelOpenChange}
       >
-        {appData && (
-          <RescheduleAppointmentDialog
-            patientName={appData.name}
-            onClose={() => setStates('reschedule', false)}
-            onReschedule={(date) =>
-              mutations.reschedule({
-                appointmentId: appData.id,
-                newDate: date,
-              })
-            }
-            isRescheduling={false}
-          />
-        )}
+        <DialogContent className="p-0 border-none max-w-[400px] rounded-xl shadow-2xl bg-card">
+          {selectedAppointment && (
+            <CancelAppointmentDialog
+              patientName={selectedAppointment.patientName}
+              isCancelling={actions.isCancelling}
+              onClose={() => dialogs.onCancelOpenChange(false)}
+              onCancel={handleCancel}
+            />
+          )}
+        </DialogContent>
+      </Dialog>
+
+      <Dialog
+        open={dialogs.isRescheduleOpen}
+        onOpenChange={dialogs.onRescheduleOpenChange}
+      >
+        <DialogContent className="p-0 border-none max-w-md rounded-xl shadow-2xl bg-card">
+          {selectedAppointment && (
+            <RescheduleAppointmentDialog
+              patientName={selectedAppointment.patientName}
+              isRescheduling={actions.isRescheduling}
+              onClose={() => dialogs.onRescheduleOpenChange(false)}
+              onReschedule={handleReschedule}
+            />
+          )}
+        </DialogContent>
       </Dialog>
     </>
   )

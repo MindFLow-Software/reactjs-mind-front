@@ -1,7 +1,8 @@
 import { api } from '@/lib/axios'
 import type { IAppointment } from '@/types/appointment'
+import type { AppointmentStatus } from '@/types/enums'
 
-export interface Appointment extends IAppointment {
+export interface IAppointmentListItem extends IAppointment {
   patientName: string
   patient: {
     firstName: string
@@ -17,18 +18,13 @@ export interface Appointment extends IAppointment {
 export interface GetAppointmentsRequest {
   pageIndex?: number
   perPage?: number
-  status?: string | null
+  status?: AppointmentStatus | null
   orderBy?: 'asc' | 'desc'
   name?: string
 }
 
 export interface GetAppointmentsResponse {
-  appointments: Appointment[]
-  meta: {
-    pageIndex: number
-    perPage: number
-    totalCount: number
-  }
+  appointments: IAppointmentListItem[]
 }
 
 export async function getAppointments(

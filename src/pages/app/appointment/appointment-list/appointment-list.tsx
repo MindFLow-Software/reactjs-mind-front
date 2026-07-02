@@ -2,28 +2,21 @@
 
 import { useEffect, useMemo, useState } from 'react'
 import { Helmet } from 'react-helmet-async'
-import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
+import { useQueryClient } from '@tanstack/react-query'
 import { useSearchParams } from 'react-router-dom'
 import { z } from 'zod'
-import { toast } from 'sonner'
 import { format } from 'date-fns'
 
-import { Dialog, DialogContent } from '@/components/ui/dialog'
 import { Skeleton } from '@/components/ui/skeleton'
 
 import { CalendarView } from './components/calendar-view'
-import { EditAppointment } from './components/edit-appointment-dialog'
-import { RescheduleAppointmentDialog } from './components/reschedule-appointment-dialog'
-import { CancelAppointmentDialog } from './components/cancel-appointment-dialog'
-import { RegisterAppointment } from './components/register-appointment'
+import { AppointmentDialogManager } from './components/appointment-dialog-manager'
 
-import {
-  getAppointments,
-  type GetAppointmentsResponse,
-  type Appointment,
-} from '@/api/appointments/get-appointment'
-import { rescheduleAppointment } from '@/api/appointments/reschedule-appointment'
-import { cancelAppointment } from '@/api/appointments/cancel-appointment'
+import { type IAppointmentListItem } from '@/api/appointments/get-appointments'
+import { useAppointmentsList } from './hooks/use-appointments-list'
+import { useCancelAppointment } from './hooks/use-cancel-appointment'
+import { useRescheduleAppointment } from './hooks/use-reschedule-appointment'
+import type { AppointmentStatus } from '@/types/enums'
 import { useHeaderStore } from '@/store/use-header-store'
 import { AppointmentsTableFilters } from './components/appointments-table-filters'
 
@@ -40,7 +33,7 @@ export function AppointmentsList() {
 
   const [selectedDate, setSelectedDate] = useState<Date | undefined>()
   const [selectedAppointment, setSelectedAppointment] =
-    useState<Appointment | null>(null)
+    useState<IAppointmentListItem | null>(null)
 
   useEffect(() => {
     setTitle('Meus Agendamentos')
@@ -60,78 +53,40 @@ export function AppointmentsList() {
     data: result,
     isLoading,
     isError,
-  } = useQuery<GetAppointmentsResponse, Error>({
-    queryKey: ['appointments', 'calendar', pageIndex, status, name],
-    queryFn: () =>
-      getAppointments({
-        pageIndex,
-        perPage,
-        status: status === 'all' ? null : status,
-        name: name || undefined,
-      }),
-    staleTime: 1000 * 60 * 5,
-    placeholderData: (previousData) => previousData,
+  } = useAppointmentsList({
+    pageIndex,
+    perPage,
+    status: status === 'all' ? null : (status as AppointmentStatus | null),
+    name: name || undefined,
   })
 
-  // Tratamento de Dados (Memoizado como no PatientsList)
+  // Tratamento de Dados (visão de calendário: título + intervalo do evento)
   const appointments = useMemo(() => {
     if (!result?.appointments) return []
 
-    return result.appointments.map((app: Appointment) => {
-      // eslint-disable-next-line
-      const raw = (app as any).props || app
-      const p =
-        raw.patient?.props ||
-        raw.patient ||
-        // eslint-disable-next-line
-        (app as any).patient ||
-        // eslint-disable-next-line
-        (app as any).user
-
-      const firstName =
-        p?.firstName || p?.first_name || raw.patientFirstName || ''
-      const lastName = p?.lastName || p?.last_name || raw.patientLastName || ''
-      let pName = `${firstName} ${lastName}`.trim()
-      if (!pName || pName === 'null null') pName = raw.patientName || 'Paciente'
-
-      const startDate = new Date(raw.scheduledAt || raw.date)
-      const endDate = raw.endedAt
-        ? new Date(raw.endedAt)
+    return result.appointments.map((app: IAppointmentListItem) => {
+      const startDate = new Date(app.scheduledAt)
+      const endDate = app.durationInMin
+        ? new Date(startDate.getTime() + app.durationInMin * 60 * 1000)
         : new Date(startDate.getTime() + 60 * 60 * 1000)
 
       // Formatação para visão mensal: "11h Nome"
-      const displayTitle = `${format(startDate, "HH'h'")} ${pName}`
+      const displayTitle = `${format(startDate, "HH'h'")} ${app.patientName}`
 
       return {
         ...app,
         title: displayTitle,
         start: startDate,
         end: endDate,
-        patientName: pName,
       }
     })
   }, [result])
 
   // Mutações
-  const { mutateAsync: cancelFn, isPending: isCancelling } = useMutation({
-    mutationFn: cancelAppointment,
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['appointments'] })
-      setIsCancelOpen(false)
-      setIsEditOpen(false)
-      toast.success('Agendamento cancelado!')
-    },
-  })
-
-  const { mutateAsync: rescheduleFn, isPending: isRescheduling } = useMutation({
-    mutationFn: rescheduleAppointment,
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['appointments'] })
-      setIsRescheduleOpen(false)
-      setIsEditOpen(false)
-      toast.success('Agendamento remarcado!')
-    },
-  })
+  const { mutateAsync: cancelFn, isPending: isCancelling } =
+    useCancelAppointment()
+  const { mutateAsync: rescheduleFn, isPending: isRescheduling } =
+    useRescheduleAppointment()
 
   // Handlers
   const handleSelectSlot = (date: Date) => {
@@ -139,7 +94,7 @@ export function AppointmentsList() {
     setIsCreateOpen(true)
   }
 
-  const handleSelectEvent = (appointment: Appointment) => {
+  const handleSelectEvent = (appointment: IAppointmentListItem) => {
     setSelectedAppointment(appointment)
     setIsEditOpen(true)
   }
@@ -166,26 +121,6 @@ export function AppointmentsList() {
     <>
       <Helmet title="Agenda" />
 
-      <style
-        dangerouslySetInnerHTML={{
-          __html: `
-                .rbc-month-view .rbc-event {
-                    padding: 1px 6px !important;
-                    font-size: 11px !important;
-                    min-height: 18px !important;
-                    margin-bottom: 1px !important;
-                    border-radius: 4px !important;
-                    white-space: nowrap !important;
-                    overflow: hidden !important;
-                    text-overflow: ellipsis !important;
-                    display: block !important;
-                }
-                .rbc-event-label { display: none !important; }
-                .rbc-event-content { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-            `,
-        }}
-      />
-
       <div className="flex flex-col gap-5 mt-6 h-[calc(100vh-10rem)]">
         {/* Filtros e Botão Novo (Padrão PatientsTableFilters) */}
         <AppointmentsTableFilters
@@ -206,64 +141,25 @@ export function AppointmentsList() {
           )}
         </div>
 
-        {/* Camada de Modais */}
-        <Dialog open={isCreateOpen} onOpenChange={setIsCreateOpen}>
-          <RegisterAppointment
-            initialDate={selectedDate}
-            onSuccess={() => setIsCreateOpen(false)}
-          />
-        </Dialog>
-
-        <Dialog open={isEditOpen} onOpenChange={setIsEditOpen}>
-          {selectedAppointment && (
-            <EditAppointment
-              appointment={selectedAppointment}
-              onClose={() => setIsEditOpen(false)}
-              onCancelTrigger={() => setIsCancelOpen(true)}
-              onRescheduleTrigger={() => setIsRescheduleOpen(true)}
-            />
-          )}
-        </Dialog>
-
-        <Dialog open={isCancelOpen} onOpenChange={setIsCancelOpen}>
-          <DialogContent className="p-0 border-none max-w-[400px] rounded-xl shadow-2xl bg-card">
-            {selectedAppointment && (
-              <CancelAppointmentDialog
-                // eslint-disable-next-line
-                patientName={(selectedAppointment as any).patientName}
-                isCancelling={isCancelling}
-                onClose={() => setIsCancelOpen(false)}
-                onCancel={async () => {
-                  const id =
-                    selectedAppointment.id ||
-                    // eslint-disable-next-line
-                    (selectedAppointment as any).props?.id
-                  if (id) await cancelFn(id)
-                }}
-              />
-            )}
-          </DialogContent>
-        </Dialog>
-
-        <Dialog open={isRescheduleOpen} onOpenChange={setIsRescheduleOpen}>
-          <DialogContent className="p-0 border-none max-w-md rounded-xl shadow-2xl bg-card">
-            {selectedAppointment && (
-              <RescheduleAppointmentDialog
-                // eslint-disable-next-line
-                patientName={(selectedAppointment as any).patientName}
-                isRescheduling={isRescheduling}
-                onClose={() => setIsRescheduleOpen(false)}
-                onReschedule={async (newDate) => {
-                  const id =
-                    selectedAppointment.id ||
-                    // eslint-disable-next-line
-                    (selectedAppointment as any).props?.id
-                  if (id) await rescheduleFn({ appointmentId: id, newDate })
-                }}
-              />
-            )}
-          </DialogContent>
-        </Dialog>
+        <AppointmentDialogManager
+          dialogs={{
+            isCreateOpen,
+            isEditOpen,
+            isCancelOpen,
+            isRescheduleOpen,
+            onCreateOpenChange: setIsCreateOpen,
+            onEditOpenChange: setIsEditOpen,
+            onCancelOpenChange: setIsCancelOpen,
+            onRescheduleOpenChange: setIsRescheduleOpen,
+          }}
+          selection={{ selectedDate, selectedAppointment }}
+          actions={{
+            onCancel: cancelFn,
+            isCancelling,
+            onReschedule: rescheduleFn,
+            isRescheduling,
+          }}
+        />
       </div>
     </>
   )
