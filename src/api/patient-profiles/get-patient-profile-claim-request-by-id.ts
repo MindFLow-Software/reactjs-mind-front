@@ -1,15 +1,15 @@
-import { api } from "@/lib/axios"
-import type { IcompletePatientProfileClaimRequest } from "@/types/patient-profile-claim-request"
+import { api } from '@/lib/axios'
+import type { IcompletePatientProfileClaimRequest } from '@/types/patient-profile-claim-request'
 
 type IgetPatientProfileClaimRequestByIdResponse = {
   request: IcompletePatientProfileClaimRequest | null
 }
 
 export const getPatientProfileClaimRequestById = async (
-  claimRequestId: string | null
+  claimRequestId: string | null,
 ): Promise<IgetPatientProfileClaimRequestByIdResponse> => {
   const response = await api.get<IgetPatientProfileClaimRequestByIdResponse>(
-    `patient-profiles/claim-requests/${claimRequestId}`
+    `patient-profiles/claim-requests/${claimRequestId}`,
   )
   return response.data
 }

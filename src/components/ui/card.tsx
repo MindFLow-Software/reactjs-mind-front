@@ -17,7 +17,7 @@ const Card = React.forwardRef<HTMLDivElement, CardProps>(
         'relative overflow-hidden py-6',
         'rounded-[20px]',
         'shadow-md shadow-black/8',
-        'border border-b-[3px]',
+        'border',
         'border-zinc/8 dark:border-white/8',
         className,
       )}

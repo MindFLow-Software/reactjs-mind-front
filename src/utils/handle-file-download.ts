@@ -2,14 +2,14 @@ import { api } from '@/lib/axios'
 
 export async function handleFileDownload(fileKey: string, filename: string) {
   try {
-    // 🟢 OBRIGATÓRIO: responseType 'blob' para arquivos binários
     const response = await api.get(`/attachments/${fileKey}`, {
       responseType: 'blob',
     })
 
-    // Cria o arquivo na memória do navegador
     const blob = new Blob([response.data], {
-      type: response.headers['content-type'] as string || 'application/octet-stream',
+      type:
+        (response.headers['content-type'] as string) ||
+        'application/octet-stream',
     })
 
     const url = window.URL.createObjectURL(blob)

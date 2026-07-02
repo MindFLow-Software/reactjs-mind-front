@@ -22,17 +22,19 @@ export type IpatientProfileClaimRequest = {
   updatedAt: Date | null
 }
 
-export type IpatientProfileClaimRequestWithRequester = IpatientProfileClaimRequest & {
-  requesterFirstName: string
-  requesterLastName: string
-  requesterDateOfBirth: Date | null
-  requesterEmail: string | null
-}
+export type IpatientProfileClaimRequestWithRequester =
+  IpatientProfileClaimRequest & {
+    requesterFirstName: string
+    requesterLastName: string
+    requesterDateOfBirth: Date | null
+    requesterEmail: string | null
+  }
 
-export type IcompletePatientProfileClaimRequest = IpatientProfileClaimRequestWithRequester & {
-  patientProfileFirstName: string
-  patientProfileLastName: string
-  patientProfileDateOfBirth: string
-  patientProfileEmail: string | null
-  patientProfileCpf: string | null
-}
+export type IcompletePatientProfileClaimRequest =
+  IpatientProfileClaimRequestWithRequester & {
+    patientProfileFirstName: string
+    patientProfileLastName: string
+    patientProfileDateOfBirth: string
+    patientProfileEmail: string | null
+    patientProfileCpf: string | null
+  }

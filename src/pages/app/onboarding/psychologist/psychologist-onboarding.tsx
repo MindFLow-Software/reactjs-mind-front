@@ -129,8 +129,8 @@ export function PsychologistOnboardingPage() {
         <header>
           <h2 className="text-xl">Configurar como psicólogo</h2>
           <p className="text-sm">
-            Um processo de integração tranquilo e cuidadoso. {STEPS.length} passos
-            simples.
+            Um processo de integração tranquilo e cuidadoso. {STEPS.length}{' '}
+            passos simples.
           </p>
         </header>
         <div className="flex flex-col gap-3">

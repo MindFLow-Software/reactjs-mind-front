@@ -17,7 +17,10 @@ import { useNavigate, Link } from 'react-router-dom'
 import { toast } from 'sonner'
 
 import { signOut } from '@/api/auth/sign-out'
-import { getProfile, type IgetMeResponse } from '@/api/psychologists/get-profile'
+import {
+  getProfile,
+  type IgetMeResponse,
+} from '@/api/psychologists/get-profile'
 import { useTheme } from '../theme/theme-provider'
 
 import {

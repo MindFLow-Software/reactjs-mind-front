@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { useMutation } from '@tanstack/react-query'
+import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { ArrowRight, Briefcase, Building2 } from 'lucide-react'
 
 import { toast } from 'sonner'
@@ -28,6 +28,7 @@ import { ActivePsychologistProfileBadge } from '@/pages/auth/components/active-p
 
 export function PracticeContextPage() {
   const navigate = useNavigate()
+  const queryClient = useQueryClient()
 
   const [practiceContext, setPracticeContext] = useState<ContextType | null>(
     null,
@@ -44,7 +45,8 @@ export function PracticeContextPage() {
   const { mutateAsync } = useMutation({
     mutationKey: ['create-psychologist-practice-context'],
     mutationFn: createPracticeContext,
-    onSuccess: () => {
+    onSuccess: async () => {
+      await queryClient.invalidateQueries({ queryKey: ['profile'] })
       toast.success('Contexto de atuação criado')
       navigate('/profiles')
     },

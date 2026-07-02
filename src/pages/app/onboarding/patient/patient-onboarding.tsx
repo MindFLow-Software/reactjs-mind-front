@@ -24,12 +24,10 @@ export function PatientOnboardingPage() {
     resolver: zodResolver(createPatientProfileByAccessCodeSchema),
     defaultValues: {
       accessCode: '',
-    }
+    },
   })
 
-  const {
-    control,
-  } = methods
+  const { control } = methods
 
   const {} = useMutation({
     mutationKey: ['create-patient-profile-or-link-by-access-code'],
@@ -61,16 +59,14 @@ export function PatientOnboardingPage() {
           </CardTitle>
           <CardContent className="p-0">
             <CardDescription className="text-sm">
-              Preencha os dados da pessoa que utilizará este perfil.
-              As informações serão usadas para te identificar e organizar seus atendimentos,
-              consultas e histórico na plataforma.
+              Preencha os dados da pessoa que utilizará este perfil. As
+              informações serão usadas para te identificar e organizar seus
+              atendimentos, consultas e histórico na plataforma.
             </CardDescription>
           </CardContent>
         </Card>
       </aside>
-      <form
-        className="flex flex-1"
-      >
+      <form className="flex flex-1">
         <Card className="p-6 gap-2">
           <CardTitle className="flex items-center gap-2 text-2xl mb-0">
             <div className="flex items-center justify-center p-2 w-fit rounded-md text-white bg-blue-500/75">
@@ -79,8 +75,9 @@ export function PatientOnboardingPage() {
             Seu perfil de paciente
           </CardTitle>
           <CardDescription className="mt-0">
-            Seu psicólogo pode ter enviado um código para vincular seu perfil ao atendimento.
-            Caso tenha recebido esse código, informe-o abaixo. Caso contrário, você pode finalizar o cadastro normalmente.
+            Seu psicólogo pode ter enviado um código para vincular seu perfil ao
+            atendimento. Caso tenha recebido esse código, informe-o abaixo. Caso
+            contrário, você pode finalizar o cadastro normalmente.
           </CardDescription>
 
           <CardContent className="p-0 flex-1 mb-8">
@@ -91,10 +88,7 @@ export function PatientOnboardingPage() {
                 render={({ field }) => (
                   <Field className="gap-1">
                     <FieldLabel>Código de acesso</FieldLabel>
-                    <Input
-                      {...field}
-                      placeholder="XXXX-XXXX-XXXX-XXXX"
-                    />
+                    <Input {...field} placeholder="XXXX-XXXX-XXXX-XXXX" />
                   </Field>
                 )}
               />
@@ -103,7 +97,8 @@ export function PatientOnboardingPage() {
 
           <CardFooter className="flex justify-between px-0 py-5 border-t-[0.5px] border-t-black/25 mt-auto">
             <p className="text-sm">
-              Essas informações ajudam a identificar o paciente e vincular seus atendimentos.
+              Essas informações ajudam a identificar o paciente e vincular seus
+              atendimentos.
             </p>
             <Button type="submit" className="gap-2">
               Finalizar

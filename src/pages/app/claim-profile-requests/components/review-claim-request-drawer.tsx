@@ -49,7 +49,9 @@ export function ReviewClaimRequestDrawer({
     },
   })
 
-  const handleSubmitPatientProfileClaimRequest = async (action: 'approve' | 'reject') => {
+  const handleSubmitPatientProfileClaimRequest = async (
+    action: 'approve' | 'reject',
+  ) => {
     mutateAsync({ action, claimRequestId })
   }
 
@@ -67,7 +69,9 @@ export function ReviewClaimRequestDrawer({
             </div>
             Revisar solicitação
           </DrawerTitle>
-          <DrawerDescription>Compare os dados antes de aprovar o vínculo.</DrawerDescription>
+          <DrawerDescription>
+            Compare os dados antes de aprovar o vínculo.
+          </DrawerDescription>
         </div>
         <ClaimRequestStatusBadge status={status} />
       </DrawerHeader>
@@ -104,11 +108,14 @@ export function ReviewClaimRequestDrawer({
               </div>
               <Separator />
               <div className="flex flex-col">
-                <span className="capitalize tracking-wider text-sm">Nascimento</span>
-                <span className="text-sm">{request?.requesterDateOfBirth
-                  ? request?.requesterDateOfBirth
-                  : '--/--/----'
-                }</span>
+                <span className="capitalize tracking-wider text-sm">
+                  Nascimento
+                </span>
+                <span className="text-sm">
+                  {request?.requesterDateOfBirth
+                    ? request?.requesterDateOfBirth
+                    : '--/--/----'}
+                </span>
               </div>
               <Separator />
               <div className="flex flex-col">
@@ -128,7 +135,9 @@ export function ReviewClaimRequestDrawer({
             <CardContent className="flex flex-col gap-2 p-0">
               <div className="flex flex-col">
                 <span className="capitalize tracking-wider text-sm">Nome</span>
-                <span className="text-sm">{request?.patientProfileFirstName}</span>
+                <span className="text-sm">
+                  {request?.patientProfileFirstName}
+                </span>
               </div>
               <Separator />
               <div className="flex flex-col">
@@ -137,11 +146,14 @@ export function ReviewClaimRequestDrawer({
               </div>
               <Separator />
               <div className="flex flex-col">
-                <span className="capitalize tracking-wider text-sm">Nascimento</span>
-                <span className="text-sm">{request?.patientProfileDateOfBirth
-                  ? request?.patientProfileDateOfBirth
-                  : '--/--/----'
-                }</span>
+                <span className="capitalize tracking-wider text-sm">
+                  Nascimento
+                </span>
+                <span className="text-sm">
+                  {request?.patientProfileDateOfBirth
+                    ? request?.patientProfileDateOfBirth
+                    : '--/--/----'}
+                </span>
               </div>
               <Separator />
               <div className="flex flex-col">
@@ -169,7 +181,8 @@ export function ReviewClaimRequestDrawer({
           variant="outline"
           disabled={isDisabled}
           onClick={() => handleSubmitPatientProfileClaimRequest('approve')}
-          className="bg-green-700 hover:bg-green-800 text-white hover:text-white">
+          className="bg-green-700 hover:bg-green-800 text-white hover:text-white"
+        >
           Aprovar solicitação
         </Button>
       </DrawerFooter>
