@@ -16,7 +16,7 @@ import { Button } from '@/components/ui/button'
 import { Dialog } from '@/components/ui/dialog'
 import { Pagination } from '@/components/pagination'
 
-import { MetricCard } from './components/metric-card'
+import { MetricCard } from '@/components/metric-card'
 import { PatientsTable } from './components/table/patients-table'
 import { RegisterPatients } from './register-patients/register-patients'
 import { PatientsPageShell } from '../components/patients-page-shell'
@@ -238,6 +238,7 @@ export function PatientsList() {
                   totalCount={meta.totalCount}
                   perPage={meta.perPage}
                   onPageChange={setPage}
+                  totalLabel="Pacientes"
                 />
               </PatientsDataBlock.Footer>
             </PatientsDataBlock>

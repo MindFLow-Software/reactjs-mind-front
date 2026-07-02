@@ -4,7 +4,7 @@ import { Loader2 } from 'lucide-react'
 
 import { useAuth } from '@/hooks/use-auth'
 
-import { PatientCard } from './components/patient-card'
+import { CreatePatientProfileCard } from './components/create-patient-profile-card'
 import { PsychologistCard } from './components/psychologist-card'
 import { ProfileSectionHeader } from './components/profile-section-header'
 import { PsychologistPracticeContextsSection } from './components/psychologist-practice-contexts-section'
@@ -84,7 +84,7 @@ export function ProfilesPage() {
 
         <div className="flex justify-center gap-4">
           <PsychologistCard />
-          <PatientCard />
+          <CreatePatientProfileCard />
         </div>
       </section>
 

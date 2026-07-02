@@ -1,3 +1,4 @@
+import { memo } from 'react'
 import {
   ChevronLeft,
   ChevronRight,
@@ -12,13 +13,15 @@ interface PaginationProps {
   totalCount: number
   perPage: number
   onPageChange: (pageIndex: number) => void
+  totalLabel?: string
 }
 
-export function Pagination({
+export const Pagination = memo(function Pagination({
   pageIndex,
   perPage,
   totalCount,
   onPageChange,
+  totalLabel = 'registros',
 }: PaginationProps) {
   const pages = Math.ceil(totalCount / perPage) || 1
   const isFirstPage = pageIndex === 0
@@ -27,7 +30,7 @@ export function Pagination({
   return (
     <div className="flex items-center justify-between">
       <span className="text-sm text-muted-foreground">
-        Total de {totalCount} Pacientes
+        Total de {totalCount} {totalLabel}
       </span>
 
       <div className="flex items-center gap-6 lg:gap-8">
@@ -78,4 +81,4 @@ export function Pagination({
       </div>
     </div>
   )
-}
+})

@@ -7,9 +7,9 @@ import { useAuth } from '@/hooks/use-auth'
 import { Button } from '@/components/ui/button'
 import { ProfileCard } from './profile-card'
 
-import './patient-card.css'
+import './create-patient-profile-card.css'
 
-function PatientCardBase() {
+function CreatePatientProfileCardBase() {
   const navigate = useNavigate()
   const { profile: me } = useAuth()
 
@@ -74,4 +74,4 @@ function PatientCardBase() {
   )
 }
 
-export const PatientCard = memo(PatientCardBase)
+export const CreatePatientProfileCard = memo(CreatePatientProfileCardBase)

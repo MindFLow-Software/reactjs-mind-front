@@ -6,7 +6,7 @@ import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { FolderOpen, Download, Upload } from 'lucide-react'
 import { toast } from 'sonner'
 
-import { PaginationDocsPatients } from '@/components/pagination-docs-patients'
+import { Pagination } from '@/components/pagination'
 import { useHeaderStore } from '@/store/use-header-store'
 import {
   getAllAttachments,
@@ -176,11 +176,12 @@ export function PatientDocuments() {
 
               {meta.totalCount > 0 && (
                 <PatientsDataBlock.Footer>
-                  <PaginationDocsPatients
+                  <Pagination
                     pageIndex={meta.pageIndex}
                     totalCount={meta.totalCount}
                     perPage={meta.perPage}
                     onPageChange={filters.setPageIndex}
+                    totalLabel="documentos arquivados"
                   />
                 </PatientsDataBlock.Footer>
               )}
