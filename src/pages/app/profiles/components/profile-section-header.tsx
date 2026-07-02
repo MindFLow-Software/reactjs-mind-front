@@ -12,10 +12,12 @@ export function ProfileSectionHeader({
   return (
     <div className="space-y-1 mb-4">
       <div>
-        <span className="text-xs tracking-wider font-medium text-muted-foreground uppercase">{section}</span>
-        <h1 className="text-xl text-foreground">{title}</h1>
+        <span className="text-[11px] tracking-[.08em] font-bold text-muted-foreground uppercase">
+          {section}
+        </span>
+        <h2 className="text-[19px] font-bold text-foreground">{title}</h2>
       </div>
-      <p className="text-sm text-muted-foreground">{label}</p>
+      <p className="text-[13.5px] text-muted-foreground">{label}</p>
     </div>
   )
 }

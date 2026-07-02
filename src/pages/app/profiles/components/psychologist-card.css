@@ -1,0 +1,21 @@
+@reference "../../../../global.css";
+
+@layer components {
+  .psy-info-grid {
+    @apply grid grid-cols-2 gap-x-[14px] gap-y-[15px] rounded-[10px] border border-border bg-muted/50 px-4 py-[15px];
+  }
+
+  .psy-info-label {
+    @apply text-[10.5px] font-bold tracking-[0.06em] text-muted-foreground uppercase;
+  }
+
+  .psy-info-value {
+    @apply text-[14px] font-semibold tabular-nums text-foreground;
+  }
+
+  @media (max-width: 460px) {
+    .psy-info-grid {
+      @apply grid-cols-1;
+    }
+  }
+}

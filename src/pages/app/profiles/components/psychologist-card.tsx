@@ -1,133 +1,129 @@
-import { useNavigate } from 'react-router-dom'
+import './psychologist-card.css'
+
+import { memo } from 'react'
 import { ArrowRight, Brain, Plus } from 'lucide-react'
 
-import { cn } from '@/lib/utils'
-import { useAuth } from '@/hooks/use-auth'
-
 import { Button } from '@/components/ui/button'
+import type {
+  PsychologistProfile,
+  PsychologistPracticeContext,
+} from '@/types/psychologist'
+
 import { ProfileCard } from './profile-card'
 
-export function PsychologistCard() {
-  const navigate = useNavigate()
+interface PsychologistCardProps {
+  profile: PsychologistProfile | null
+  practiceContexts: PsychologistPracticeContext[]
+  onEnter: () => void
+  onAddContext: () => void
+  onCreateProfile: () => void
+}
 
-  const { profile: me } = useAuth()
+function renderPsychologistContent(props: PsychologistCardProps) {
+  const { profile, practiceContexts } = props
 
-  const handleCreatePsychologistProfile = () => {
-    navigate('/onboarding/psychologist')
+  switch (profile === null ? 'no-profile' : 'has-profile') {
+    case 'no-profile':
+      return (
+        <>
+          <div>
+            <h2 className="text-xl font-bold text-foreground">
+              Perfil de psicólogo
+            </h2>
+            <p className="mt-1 text-sm text-muted-foreground">
+              Crie sua identidade profissional uma única vez — depois adicione
+              quantos contextos de prática precisar.
+            </p>
+          </div>
+          <ul className="space-y-2">
+            <li className="flex gap-2 text-sm text-muted-foreground">
+              <span className="mt-1.5 size-1.5 shrink-0 rounded-full bg-primary" />
+              CRP e credenciais validados
+            </li>
+            <li className="flex gap-2 text-sm text-muted-foreground">
+              <span className="mt-1.5 size-1.5 shrink-0 rounded-full bg-primary" />
+              Adicione vários espaços de trabalho
+            </li>
+            <li className="flex gap-2 text-sm text-muted-foreground">
+              <span className="mt-1.5 size-1.5 shrink-0 rounded-full bg-primary" />
+              Ferramentas para prática focada
+            </li>
+          </ul>
+        </>
+      )
+
+    case 'has-profile':
+      return (
+        <>
+          <div>
+            <h2 className="text-xl font-bold text-foreground">
+              Perfil de psicólogo ativo
+            </h2>
+            <p className="mt-1 text-sm text-muted-foreground">
+              Seu perfil profissional já está configurado e pronto para uso.
+            </p>
+          </div>
+          <div className="psy-info-grid">
+            <div>
+              <p className="psy-info-label">CRP</p>
+              <p className="psy-info-value">{profile!.crp}</p>
+            </div>
+            <div>
+              <p className="psy-info-label">NOME PROFISSIONAL</p>
+              <p className="psy-info-value">{profile!.professionalName}</p>
+            </div>
+            <div>
+              <p className="psy-info-label">CONTEXTOS</p>
+              <p className="psy-info-value">
+                {practiceContexts.length} contexto(s)
+              </p>
+            </div>
+          </div>
+        </>
+      )
   }
+}
 
-  const handleAddContext = () => {
-    navigate('/profiles/context')
-  }
-
-  const hasPsychologistProfile = Boolean(me?.psychologistProfile)
+function PsychologistCardBase(props: PsychologistCardProps) {
+  const { profile, onEnter, onAddContext, onCreateProfile } = props
 
   return (
-    <ProfileCard.Root>
+    <ProfileCard variant="primary">
       <ProfileCard.Header
         icon={<Brain />}
         label="Para profissionais licenciados"
+        variant="primary"
       />
-  
       <ProfileCard.Content>
-        {hasPsychologistProfile ? (
-          <>
-            <div>
-              <h2 className="text-xl font-bold text-foreground">
-                Perfil de psicólogo ativo
-              </h2>
-              <p className="text-sm text-muted-foreground">
-                Seu perfil profissional já está configurado e pronto para uso.
-              </p>
-            </div>
-
-            <div className="grid grid-cols-2 space-y-4 rounded-lg bg-muted/50 p-4">
-              <div>
-                <p className="text-xs tracking-wider text-muted-foreground uppercase">status</p>
-                <div className="flex items-center gap-1.5">
-                  <span
-                    className={cn(
-                      'size-2 rounded-full',
-                      me?.isActive ? 'bg-green-500' : 'bg-red-400',
-                    )}
-                  />
-                  <span className="text-sm font-medium text-foreground">
-                    {me?.isActive ? 'Ativo' : 'Inativo'}
-                  </span>
-                </div>
-              </div>
-
-              <div>
-                <p className="text-xs tracking-wider text-muted-foreground uppercase">crp</p>
-                <p className="text-sm font-medium text-foreground">
-                  {me?.psychologistProfile!.crp}
-                </p>
-              </div>
-
-              <div>
-                <p className="text-xs tracking-wider text-muted-foreground uppercase">
-                  nome profissional
-                </p>
-                <p className="text-sm font-medium text-foreground">
-                  {me?.psychologistProfile?.professionalName}
-                </p>
-              </div>
-
-              <div>
-                <p className="text-xs tracking-wider text-muted-foreground uppercase">contextos</p>
-                <p className="text-sm font-medium text-foreground">
-                  {me?.practiceContexts.length} contexto(s)
-                </p>
-              </div>
-            </div>
-          </>
-        ) : (
-          <>
-            <div>
-              <h2 className="text-xl font-bold text-foreground">
-                Perfil de psicólogo
-              </h2>
-              <p className="mt-1 text-sm text-muted-foreground">
-                Crie sua identidade profissional uma única vez — depois adicione
-                quantos contextos de prática precisar.
-              </p>
-            </div>
-
-            <ul className="space-y-2">
-              <li className="flex gap-2 text-sm text-muted-foreground">
-                <span className="mt-1.5 size-1.5 shrink-0 rounded-full bg-blue-500" />
-                CRP e credenciais validados
-              </li>
-              <li className="flex gap-2 text-sm text-muted-foreground">
-                <span className="mt-1.5 size-1.5 shrink-0 rounded-full bg-blue-500" />
-                Adicione vários espaços de trabalho
-              </li>
-              <li className="flex gap-2 text-sm text-muted-foreground">
-                <span className="mt-1.5 size-1.5 shrink-0 rounded-full bg-blue-500" />
-                Ferramentas para prática focada
-              </li>
-            </ul>
-          </>
-        )
-        }
-      </ProfileCard.Content >
-
+        {renderPsychologistContent(props)}
+      </ProfileCard.Content>
       <ProfileCard.Footer>
-        {hasPsychologistProfile ? (
-          <Button className="w-full" variant="outline" onClick={handleAddContext}>
-            <Plus className="mr-2 size-4" />
-            Adicionar contexto
+        {profile === null ? (
+          <Button className="w-full group" onClick={onCreateProfile}>
+            Criar perfil de psicólogo
+            <ArrowRight
+              size={16}
+              className="group-hover:translate-x-[3px] transition-transform duration-150"
+            />
           </Button>
         ) : (
-          <Button
-            className="w-full bg-blue-600 text-white hover:bg-blue-700 dark:hover:bg-blue-950/30"
-            onClick={handleCreatePsychologistProfile}
-          >
-            Criar perfil de psicólogo
-            <ArrowRight className="ml-2 size-4" />
-          </Button>
+          <div className="flex gap-2 w-full">
+            <Button className="flex-1 group" onClick={onEnter}>
+              Entrar no perfil de psicólogo
+              <ArrowRight
+                size={16}
+                className="group-hover:translate-x-[3px] transition-transform duration-150"
+              />
+            </Button>
+            <Button variant="outline" onClick={onAddContext}>
+              <Plus size={16} />
+              Adicionar contexto
+            </Button>
+          </div>
         )}
       </ProfileCard.Footer>
-    </ProfileCard.Root >
+    </ProfileCard>
   )
 }
+
+export const PsychologistCard = memo(PsychologistCardBase)

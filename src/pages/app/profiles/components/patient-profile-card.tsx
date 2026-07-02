@@ -1,4 +1,10 @@
-import { ArrowRight, BadgeCheck, CalendarClock, Stethoscope, User } from 'lucide-react'
+import {
+  ArrowRight,
+  BadgeCheck,
+  CalendarClock,
+  Stethoscope,
+  User,
+} from 'lucide-react'
 
 import {
   Card,
@@ -20,15 +26,12 @@ interface IPatientProfileCard {
   onSelect: (profileId: string) => void
 }
 
-export function PatientProfileCard({
-  profile,
-  onSelect,
-}: IPatientProfileCard) {
+export function PatientProfileCard({ profile, onSelect }: IPatientProfileCard) {
   const isLinked = Boolean(profile.psychologistPracticeContextId)
   const subtitle = isLinked ? 'Vinculado a um psicólogo' : 'Perfil independente'
 
   const fullName = `${profile.firstName} ${profile.lastName}`
-  
+
   return (
     <Card className="flex flex-col gap-0 overflow-hidden p-0 max-w-1/2 w-full">
       <CardHeader className="flex items-start gap-3 py-4">
@@ -50,12 +53,16 @@ export function PatientProfileCard({
       <CardContent>
         <ul className="flex flex-col gap-3">
           <li className="flex items-center gap-2">
-            <Stethoscope size={16} className="text-teal-600" />
-            <span className="text-xs text-muted-foreground">Dra. Ana Souza</span>
+            <Stethoscope size={16} className="text-green-600" />
+            <span className="text-xs text-muted-foreground">
+              Dra. Ana Souza
+            </span>
           </li>
           <li className="flex items-center gap-2">
-            <CalendarClock size={16} className="text-teal-600" />
-            <span className="text-xs text-muted-foreground">Próxima sessão: Quarta-feira, 14:00</span>
+            <CalendarClock size={16} className="text-green-600" />
+            <span className="text-xs text-muted-foreground">
+              Próxima sessão: Quarta-feira, 14:00
+            </span>
           </li>
         </ul>
       </CardContent>
@@ -64,7 +71,7 @@ export function PatientProfileCard({
         <Button
           variant="outline"
           onClick={() => onSelect(profile.id)}
-          className="flex items-center gap-2 w-full bg-teal-600 text-white hover:bg-teal-700 hover:text-white dark:hover:bg-teal-950/30"
+          className="flex items-center gap-2 w-full bg-green-600 text-white hover:bg-green-700 hover:text-white dark:hover:bg-green-950/30"
         >
           Acessar Perfil
           <ArrowRight size={16} />

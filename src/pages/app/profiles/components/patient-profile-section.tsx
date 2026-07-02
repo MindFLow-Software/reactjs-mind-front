@@ -23,7 +23,7 @@ export function PatientProfileSection() {
   return (
     <section className="w-full">
       <ProfileSectionHeader
-        section="Pacientes"
+        section="pacientes"
         title="Seus perfis de paciente"
         label="Escolha um perfil para acompanhar atendimentos, informações e evolução."
       />

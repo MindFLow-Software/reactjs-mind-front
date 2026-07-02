@@ -1,0 +1,31 @@
+@reference "../../../../global.css";
+
+@layer components {
+  .ca-mono {
+    @apply flex shrink-0 items-center justify-center;
+  }
+
+  .ca-mono--blue {
+    @apply bg-linear-to-br from-primary to-primary/50;
+  }
+
+  .ca-mono--featured {
+    @apply size-[52px] rounded-[14px];
+  }
+
+  .ca-mono--list {
+    @apply size-12 rounded-[13px];
+  }
+
+  .ca-mono-text {
+    @apply select-none text-primary-foreground text-[18px] font-bold tracking-[0.03em];
+  }
+
+  .ca-mono--list .ca-mono-text {
+    @apply text-[15px];
+  }
+
+  .ca-mono-pip {
+    @apply absolute right-[-3px] bottom-[-3px] size-4 rounded-full border-[2.5px] border-card;
+  }
+}
