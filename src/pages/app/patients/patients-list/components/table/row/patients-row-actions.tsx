@@ -28,6 +28,7 @@ import {
 } from '@/components/ui/tooltip'
 import { PatientProfileStatus } from '@/types/enums'
 import type { IPatient } from '@/types/patient'
+import { usePatientQueueStore } from '@/store/use-patient-queue-store'
 
 import { EditPatientModal } from '../../dialogs/edit-patient-modal'
 import { PatientDetailsDialog } from '../../details/patient-details-dialog'
@@ -40,6 +41,7 @@ interface PatientsRowActionsProps {
 export function PatientsRowActions({ patient }: PatientsRowActionsProps) {
   const navigate = useNavigate()
   const { isToggleDisabled, disabledReason } = usePatientStatusGuard()
+  const clearQueue = usePatientQueueStore((state) => state.clearQueue)
 
   const [isDetailsOpen, setIsDetailsOpen] = useState(false)
   const [isEditOpen, setIsEditOpen] = useState(false)
@@ -52,11 +54,9 @@ export function PatientsRowActions({ patient }: PatientsRowActionsProps) {
   const handleOpenEdit = useCallback(() => setIsEditOpen(true), [])
 
   const handleNavigate = useCallback(() => {
-    sessionStorage.removeItem('active_patient_queue')
-    sessionStorage.removeItem('active_patient_queue_source')
-
+    clearQueue()
     navigate(`/patients/${id}/details`, { state: { from: 'patients-list' } })
-  }, [navigate, id])
+  }, [clearQueue, navigate, id])
 
   const handleScheduleSession = useCallback(() => {
     navigate(`/appointment?patientId=${id}`)

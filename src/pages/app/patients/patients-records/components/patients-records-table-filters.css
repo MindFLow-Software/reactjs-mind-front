@@ -1,0 +1,31 @@
+@reference "../../../../../global.css";
+
+@layer components {
+  .pr-flt-root {
+    @apply flex w-full flex-col gap-2 overflow-x-auto pb-2 lg:flex-row lg:items-center lg:overflow-visible lg:pb-0;
+  }
+
+  .pr-flt-group {
+    @apply flex min-w-max flex-col items-start gap-2 lg:min-w-0 lg:flex-row lg:items-center;
+  }
+
+  .pr-flt-selects {
+    @apply flex flex-row items-center gap-2;
+  }
+
+  .pr-flt-select {
+    @apply h-9 w-auto min-w-[150px] cursor-pointer border-muted-foreground/20 bg-background px-3 text-sm font-medium shadow-sm transition-all hover:border-primary/30;
+  }
+
+  .pr-flt-select-inner {
+    @apply flex items-center gap-2 whitespace-nowrap;
+  }
+
+  .pr-flt-option {
+    @apply flex items-center gap-2 whitespace-nowrap;
+  }
+
+  .pr-flt-clear {
+    @apply h-8 shrink-0 cursor-pointer gap-2 px-2 text-xs font-bold uppercase text-muted-foreground transition-colors hover:text-destructive;
+  }
+}

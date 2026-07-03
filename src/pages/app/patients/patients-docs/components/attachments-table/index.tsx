@@ -15,6 +15,7 @@ import { Checkbox } from '@/components/ui/checkbox'
 import { AttachmentsTableRow } from './attachments-table-row'
 import { BulkDeleteAction } from '../bulk-delete-action'
 import type { Attachment } from '@/api/attachments/attachments'
+import './attachments-table.css'
 
 interface AttachmentsTableProps {
   attachments: Attachment[]
@@ -60,7 +61,7 @@ export function AttachmentsTable({
   }, [selectedIds, onDelete])
 
   return (
-    <div className="space-y-3 w-full">
+    <div className="pd-tbl-root">
       {selectedIds.length > 0 && (
         <BulkDeleteAction
           selectedCount={selectedIds.length}
@@ -70,11 +71,11 @@ export function AttachmentsTable({
         />
       )}
 
-      <div className="rounded-xl border bg-background shadow-sm overflow-hidden w-full">
+      <div className="pd-tbl-wrap">
         <Table className="min-w-full">
           <TableHeader>
-            <TableRow className="bg-muted/30 hover:bg-muted/30 whitespace-nowrap">
-              <TableHead className="w-[42px] px-4">
+            <TableRow className="pd-tbl-head-row">
+              <TableHead className="pd-tbl-head-checkbox">
                 <Checkbox
                   checked={isAllSelected}
                   ref={(el) => {
@@ -88,22 +89,14 @@ export function AttachmentsTable({
                   className="cursor-pointer"
                 />
               </TableHead>
-              <TableHead className="text-[11px] uppercase tracking-[0.06em] font-semibold text-muted-foreground/80">
-                Nome
-              </TableHead>
-              <TableHead className="text-[11px] uppercase tracking-[0.06em] font-semibold text-muted-foreground/80 min-w-[180px]">
+              <TableHead className="pd-tbl-th">Nome</TableHead>
+              <TableHead className="pd-tbl-th min-w-[180px]">
                 Paciente
               </TableHead>
-              <TableHead className="text-[11px] uppercase tracking-[0.06em] font-semibold text-muted-foreground/80 w-[100px]">
-                Tamanho
-              </TableHead>
-              <TableHead className="text-[11px] uppercase tracking-[0.06em] font-semibold text-muted-foreground/80 w-[130px]">
-                Enviado em
-              </TableHead>
-              <TableHead className="text-[11px] uppercase tracking-[0.06em] font-semibold text-muted-foreground/80 w-[90px]">
-                Tipo
-              </TableHead>
-              <TableHead className="text-right pr-4 text-[11px] uppercase tracking-[0.06em] font-semibold text-muted-foreground/80 w-[110px]">
+              <TableHead className="pd-tbl-th w-[100px]">Tamanho</TableHead>
+              <TableHead className="pd-tbl-th w-[130px]">Enviado em</TableHead>
+              <TableHead className="pd-tbl-th w-[90px]">Tipo</TableHead>
+              <TableHead className="pd-tbl-th w-[110px] pr-4 text-right">
                 Ações
               </TableHead>
             </TableRow>
@@ -165,18 +158,15 @@ export function AttachmentsTable({
               ))
             ) : (
               <TableRow>
-                <TableCell
-                  colSpan={columnCount}
-                  className="text-center text-muted-foreground py-20"
-                >
-                  <div className="flex flex-col items-center justify-center gap-3">
-                    <div className="p-4 rounded-full bg-muted">
-                      <Paperclip className="h-9 w-9 text-muted-foreground/30" />
+                <TableCell colSpan={columnCount} className="pd-tbl-empty-cell">
+                  <div className="pd-tbl-empty">
+                    <div className="pd-tbl-empty-icon">
+                      <Paperclip className="size-9 text-muted-foreground/30" />
                     </div>
-                    <p className="text-sm font-medium text-muted-foreground">
+                    <p className="pd-tbl-empty-title">
                       Nenhum documento encontrado.
                     </p>
-                    <p className="text-xs text-muted-foreground/60">
+                    <p className="pd-tbl-empty-sub">
                       Ajuste os filtros ou envie um novo arquivo.
                     </p>
                   </div>

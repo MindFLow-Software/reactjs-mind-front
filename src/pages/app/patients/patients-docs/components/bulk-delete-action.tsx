@@ -13,6 +13,7 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from '@/components/ui/alert-dialog'
+import './bulk-delete-action.css'
 
 interface BulkDeleteActionProps {
   selectedCount: number
@@ -30,33 +31,31 @@ export function BulkDeleteAction({
   if (selectedCount === 0) return null
 
   return (
-    <div className="fixed bottom-6 left-1/2 -translate-x-1/2 z-50 animate-in fade-in slide-in-from-bottom-4 duration-300">
-      <div className="flex items-center gap-3 px-4 py-2.5 bg-foreground text-background rounded-xl shadow-2xl border border-border/10">
+    <div className="pd-bulk-wrap">
+      <div className="pd-bulk-bar">
         <button
           onClick={onClear}
-          className="flex items-center justify-center h-7 w-7 rounded-lg hover:bg-background/15 transition-colors cursor-pointer"
+          className="pd-bulk-clear"
           aria-label="Limpar seleção"
         >
-          <X className="h-4 w-4" />
+          <X className="size-4" />
         </button>
 
-        <div className="h-5 w-px bg-background/20" />
+        <div className="pd-bulk-divider" />
 
-        <span className="text-sm font-medium tabular-nums whitespace-nowrap">
+        <span className="pd-bulk-count">
           {selectedCount} {selectedCount === 1 ? 'selecionado' : 'selecionados'}
         </span>
 
-        <div className="h-5 w-px bg-background/20" />
+        <div className="pd-bulk-divider" />
 
         <Button
           variant="secondary"
           size="sm"
-          className="h-8 text-xs font-medium bg-background/15 text-background border-0 hover:bg-background/25 cursor-pointer"
-          onClick={() => {
-            /* download handler */
-          }}
+          disabled
+          className="pd-bulk-download"
         >
-          <Download className="h-3.5 w-3.5" />
+          <Download className="size-3.5" />
           Baixar
         </Button>
 
@@ -66,12 +65,12 @@ export function BulkDeleteAction({
               variant="destructive"
               size="sm"
               disabled={isDeleting}
-              className="h-8 text-xs font-medium cursor-pointer"
+              className="pd-bulk-delete-btn"
             >
               {isDeleting ? (
-                <Loader2 className="h-3.5 w-3.5 animate-spin" />
+                <Loader2 className="size-3.5 animate-spin" />
               ) : (
-                <Trash2 className="h-3.5 w-3.5" />
+                <Trash2 className="size-3.5" />
               )}
               Excluir
             </Button>
@@ -80,8 +79,8 @@ export function BulkDeleteAction({
           <AlertDialogContent>
             <AlertDialogHeader>
               <AlertDialogTitle className="flex items-center gap-2">
-                <div className="flex h-9 w-9 items-center justify-center rounded-full bg-destructive/10">
-                  <Trash2 className="h-4 w-4 text-destructive" />
+                <div className="pd-bulk-dialog-icon">
+                  <Trash2 className="size-4 text-destructive" />
                 </div>
                 Confirmar exclusão
               </AlertDialogTitle>

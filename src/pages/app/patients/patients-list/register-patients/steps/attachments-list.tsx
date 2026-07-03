@@ -20,7 +20,7 @@ interface AttachmentsBodyProps {
   isLoading: boolean
   attachments: AttachmentPatientItem[] | undefined
   isRemoving: boolean
-  onRemove: (id: string) => Promise<void>
+  onRemove: (id: string) => Promise<unknown>
 }
 
 function AttachmentsBody({
@@ -90,7 +90,9 @@ function AttachmentsBody({
                 <Download className="size-3.5" />
               </Button>
               <DeleteActionButton
-                onDelete={() => onRemove(file.id)}
+                onDelete={async () => {
+                  await onRemove(file.id)
+                }}
                 itemName={file.filename}
                 isLoading={isRemoving}
                 className="h-[28px] w-[28px] rounded-[5px]"

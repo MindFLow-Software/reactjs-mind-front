@@ -17,64 +17,66 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select'
+import type { IsessionVolume } from '@/types/patient'
 import { PatientsSearchInput } from '../../components/patients-search-input'
+import './patients-records-table-filters.css'
+
+interface FilterControl<T> {
+  value: T
+  onChange: (value: T) => void
+}
 
 interface PatientsRecordsTableFiltersProps {
-  search: string
-  onSearchChange: (value: string) => void
-  gender: string
-  onGenderChange: (value: string) => void
-  sessionOrder: 'high' | 'low' | 'all'
-  onSessionOrderChange: (value: 'high' | 'low' | 'all') => void
+  search: FilterControl<string>
+  gender: FilterControl<string>
+  sessionOrder: FilterControl<IsessionVolume>
   onClearFilters: () => void
-  isFetching?: boolean
 }
 
 export function PatientsRecordsTableFilters({
   search,
-  onSearchChange,
   gender,
-  onGenderChange,
   sessionOrder,
-  onSessionOrderChange,
   onClearFilters,
 }: PatientsRecordsTableFiltersProps) {
   const hasAnyFilter =
-    search !== '' || gender !== 'all' || sessionOrder !== 'all'
+    search.value !== '' ||
+    gender.value !== 'all' ||
+    sessionOrder.value !== 'all'
 
   return (
-    <div className="flex flex-col lg:flex-row gap-2 lg:items-center w-full overflow-x-auto lg:overflow-visible pb-2 lg:pb-0">
-      <div className="flex flex-col lg:flex-row gap-2 items-start lg:items-center min-w-max lg:min-w-0">
+    <div className="pr-flt-root">
+      <div className="pr-flt-group">
         <PatientsSearchInput
           placeholder="Buscar por Nome"
-          value={search}
-          onChange={(e) => onSearchChange(e.target.value)}
+          value={search.value}
+          onChange={(e) => search.onChange(e.target.value)}
           wrapperClassName="w-full lg:w-[300px]"
         />
 
-        <div className="flex flex-row gap-2 items-center">
+        <div className="pr-flt-selects">
           {/* Gênero */}
-          <Select value={gender} onValueChange={onGenderChange}>
-            <SelectTrigger className="cursor-pointer h-9 min-w-[150px] w-auto bg-background border-muted-foreground/20 hover:border-primary/30 transition-all shadow-sm px-3 text-sm font-medium">
-              <div className="flex items-center gap-2 whitespace-nowrap">
+          <Select value={gender.value} onValueChange={gender.onChange}>
+            <SelectTrigger className="pr-flt-select">
+              <div className="pr-flt-select-inner">
                 <SelectValue placeholder="Gênero" />
               </div>
             </SelectTrigger>
             <SelectContent className="min-w-[200px]">
               <SelectItem value="all" className="cursor-pointer py-2.5">
-                <div className="flex items-center gap-2 whitespace-nowrap">
+                <div className="pr-flt-option">
                   <VenusAndMars className="h-4 w-4 text-slate-500" />
                   <span>Todos Gêneros</span>
                 </div>
               </SelectItem>
               <SelectItem value="MASCULINE" className="cursor-pointer py-2.5">
-                <div className="flex items-center gap-2 whitespace-nowrap">
+                <div className="pr-flt-option">
                   <Mars className="h-4 w-4 text-blue-500" />
                   <span>Masculinos</span>
                 </div>
               </SelectItem>
               <SelectItem value="FEMININE" className="cursor-pointer py-2.5">
-                <div className="flex items-center gap-2 whitespace-nowrap">
+                <div className="pr-flt-option">
                   <Venus className="h-4 w-4 text-rose-500" />
                   <span>Femininos</span>
                 </div>
@@ -84,31 +86,29 @@ export function PatientsRecordsTableFilters({
 
           {/* Sessões */}
           <Select
-            value={sessionOrder}
-            onValueChange={(v) =>
-              onSessionOrderChange(v as 'high' | 'low' | 'all')
-            }
+            value={sessionOrder.value}
+            onValueChange={(v) => sessionOrder.onChange(v as IsessionVolume)}
           >
-            <SelectTrigger className="cursor-pointer h-9 min-w-[150px] w-auto bg-background border-muted-foreground/20 hover:border-primary/30 transition-all shadow-sm px-3 text-sm font-medium">
-              <div className="flex items-center gap-2 whitespace-nowrap">
+            <SelectTrigger className="pr-flt-select">
+              <div className="pr-flt-select-inner">
                 <SelectValue placeholder="Sessões" />
               </div>
             </SelectTrigger>
             <SelectContent className="min-w-[200px]">
               <SelectItem value="all" className="cursor-pointer py-2.5">
-                <div className="flex items-center gap-2 whitespace-nowrap">
+                <div className="pr-flt-option">
                   <History className="h-4 w-4 text-slate-500" />
                   <span>Total Sessões</span>
                 </div>
               </SelectItem>
               <SelectItem value="high" className="cursor-pointer py-2.5">
-                <div className="flex items-center gap-2 whitespace-nowrap">
+                <div className="pr-flt-option">
                   <ClockArrowUp className="h-4 w-4 text-emerald-500" />
                   <span>Mais Sessões</span>
                 </div>
               </SelectItem>
               <SelectItem value="low" className="cursor-pointer py-2.5">
-                <div className="flex items-center gap-2 whitespace-nowrap">
+                <div className="pr-flt-option">
                   <ClockArrowDown className="h-4 w-4 text-rose-500" />
                   <span>Menos Sessões</span>
                 </div>
@@ -124,7 +124,7 @@ export function PatientsRecordsTableFilters({
             size="sm"
             type="button"
             onClick={onClearFilters}
-            className="cursor-pointer h-8 px-2 text-muted-foreground hover:text-destructive gap-2 transition-colors font-bold text-xs uppercase shrink-0"
+            className="pr-flt-clear"
           >
             <XCircle className="h-4 w-4" />
             Limpar

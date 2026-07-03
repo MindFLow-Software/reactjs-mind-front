@@ -1,0 +1,34 @@
+@reference "../../../../global.css";
+
+@layer components {
+  .pd-header-actions {
+    @apply flex items-center gap-2;
+  }
+
+  .pd-btn-secondary {
+    @apply flex h-9 items-center gap-2 rounded-xl border border-border bg-background px-4 text-[13px] font-medium shadow-sm transition-all;
+    @apply hover:-translate-y-px hover:bg-muted active:scale-[0.98];
+    @apply disabled:pointer-events-none disabled:opacity-50;
+  }
+
+  .pd-btn-primary {
+    @apply flex h-9 cursor-pointer items-center gap-2 rounded-xl bg-blue-600 px-4 text-[13px] font-medium text-white transition-all;
+    @apply shadow-[0_2px_8px_rgba(37,99,235,0.25)] hover:-translate-y-px hover:bg-blue-700 active:scale-[0.98];
+  }
+
+  .pd-content-body {
+    @apply px-6 py-4;
+  }
+
+  .pd-error {
+    @apply flex h-[400px] flex-col items-center justify-center gap-4;
+  }
+
+  .pd-error-title {
+    @apply font-medium text-destructive;
+  }
+
+  .pd-error-retry {
+    @apply text-sm text-muted-foreground underline transition-colors hover:text-foreground;
+  }
+}

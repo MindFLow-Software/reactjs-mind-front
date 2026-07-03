@@ -25,6 +25,7 @@ import { handleFileDownload } from '@/utils/handle-file-download'
 import { formatFileSize } from '@/utils/format-file-size'
 import type { Attachment } from '@/api/attachments/attachments'
 import { getFileKind, FILE_KIND_STYLES, TYPE_BADGE } from '@/utils/file-helpers'
+import './attachments-table-row.css'
 
 interface AttachmentsTableRowProps {
   attachment: Attachment
@@ -48,17 +49,9 @@ function DocThumb({
     filename.split('.').pop()?.toUpperCase().slice(0, 4) ?? style.label
 
   return (
-    <div
-      className={cn(
-        'relative flex h-11 w-9 shrink-0 items-end justify-center rounded-md bg-gradient-to-br overflow-hidden',
-        style.gradient,
-      )}
-    >
-      <div className="absolute top-0 right-0 w-0 h-0 border-b-[8px] border-b-transparent border-l-[8px] border-l-white/25" />
-      <span
-        className="mb-1 text-[8px] font-bold tracking-tight"
-        style={{ color: style.labelColor }}
-      >
+    <div className={cn('pd-row-thumb', style.gradient)}>
+      <div className="pd-row-thumb-corner" />
+      <span className="pd-row-thumb-ext" style={{ color: style.labelColor }}>
         {ext}
       </span>
     </div>
@@ -73,11 +66,7 @@ function PatientAvatar({
   lastName: string
 }) {
   const initials = `${firstName[0] ?? ''}${lastName[0] ?? ''}`.toUpperCase()
-  return (
-    <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-gradient-to-br from-blue-400 to-blue-600 text-[11px] font-bold text-white select-none">
-      {initials}
-    </div>
-  )
+  return <div className="pd-row-avatar">{initials}</div>
 }
 
 export function AttachmentsTableRow({
@@ -98,12 +87,12 @@ export function AttachmentsTableRow({
       <TableRow
         onClick={() => onPreview(attachment)}
         className={cn(
-          'group cursor-pointer transition-colors border-l-2 border-l-transparent',
+          'group pd-row',
           isActivePreview
-            ? 'bg-blue-50 dark:bg-blue-950/20 border-l-primary'
+            ? 'pd-row-active'
             : isSelected
-              ? 'bg-primary/5 border-l-primary/40'
-              : 'hover:bg-blue-50/60 dark:hover:bg-blue-950/10 hover:border-l-primary/30',
+              ? 'pd-row-selected'
+              : 'pd-row-idle',
         )}
       >
         <TableCell className="px-4" onClick={(e) => e.stopPropagation()}>
@@ -117,22 +106,18 @@ export function AttachmentsTableRow({
 
         {/* Name */}
         <TableCell>
-          <div className="flex items-center gap-3">
+          <div className="pd-row-name">
             <DocThumb contentType={contentType} filename={filename} />
             <div className="min-w-0">
               <Tooltip>
                 <TooltipTrigger asChild>
-                  <p className="max-w-[180px] truncate text-[13.5px] font-semibold text-foreground leading-tight">
-                    {filename}
-                  </p>
+                  <p className="pd-row-name-text">{filename}</p>
                 </TooltipTrigger>
                 <TooltipContent side="top" className="text-xs">
                   {filename}
                 </TooltipContent>
               </Tooltip>
-              <p className="text-[11px] text-muted-foreground mt-0.5 font-medium">
-                {formatFileSize(sizeInBytes)}
-              </p>
+              <p className="pd-row-name-size">{formatFileSize(sizeInBytes)}</p>
             </div>
           </div>
         </TableCell>
@@ -140,41 +125,37 @@ export function AttachmentsTableRow({
         {/* Patient */}
         <TableCell>
           {patient ? (
-            <div className="flex items-center gap-2.5">
+            <div className="pd-row-patient">
               <PatientAvatar
                 firstName={patient.firstName}
                 lastName={patient.lastName}
               />
               <div className="min-w-0">
-                <p className="text-[13px] font-semibold text-foreground truncate max-w-[130px]">
+                <p className="pd-row-patient-name">
                   {patient.firstName} {patient.lastName}
                 </p>
               </div>
             </div>
           ) : (
-            <span className="rounded-full bg-muted px-2.5 py-0.5 text-[11px] font-semibold text-muted-foreground">
-              Sem vínculo
-            </span>
+            <span className="pd-row-nolink">Sem vínculo</span>
           )}
         </TableCell>
 
         {/* Size */}
         <TableCell>
-          <span className="font-mono text-[12.5px] font-medium text-muted-foreground tabular-nums">
-            {formatFileSize(sizeInBytes)}
-          </span>
+          <span className="pd-row-size">{formatFileSize(sizeInBytes)}</span>
         </TableCell>
 
         {/* Date */}
         <TableCell>
           <div className="flex flex-col">
-            <span className="text-[13px] font-semibold text-foreground tabular-nums">
+            <span className="pd-row-date">
               {uploadedAt
                 ? format(new Date(uploadedAt), 'dd/MM/yyyy', { locale: ptBR })
                 : '—'}
             </span>
             {uploadedAt && (
-              <span className="text-[11px] text-muted-foreground">
+              <span className="pd-row-time">
                 {format(new Date(uploadedAt), 'HH:mm')}
               </span>
             )}
@@ -183,29 +164,23 @@ export function AttachmentsTableRow({
 
         {/* Type badge */}
         <TableCell>
-          <span
-            className={cn(
-              'inline-flex items-center rounded-full px-2 py-0.5 text-[11px] font-semibold',
-              badge.bg,
-              badge.text,
-            )}
-          >
+          <span className={cn('pd-row-badge', badge.bg, badge.text)}>
             {badge.label}
           </span>
         </TableCell>
 
         {/* Actions */}
         <TableCell className="text-right" onClick={(e) => e.stopPropagation()}>
-          <div className="flex justify-end items-center gap-1 pr-2">
+          <div className="pd-row-actions">
             <Tooltip>
               <TooltipTrigger asChild>
                 <Button
                   variant="ghost"
                   size="icon"
-                  className="h-7 w-7 rounded-md text-muted-foreground hover:text-primary hover:bg-blue-50 dark:hover:bg-blue-950/30 cursor-pointer"
+                  className="pd-row-action pd-row-action-view"
                   onClick={() => onPreview(attachment)}
                 >
-                  <Eye className="h-3.5 w-3.5" />
+                  <Eye className="size-3.5" />
                 </Button>
               </TooltipTrigger>
               <TooltipContent side="top" className="text-xs">
@@ -218,10 +193,10 @@ export function AttachmentsTableRow({
                 <Button
                   variant="ghost"
                   size="icon"
-                  className="h-7 w-7 rounded-md text-muted-foreground hover:text-blue-600 hover:bg-blue-50 dark:hover:bg-blue-950/30 cursor-pointer"
+                  className="pd-row-action pd-row-action-download"
                   onClick={() => handleFileDownload(id, filename)}
                 >
-                  <Download className="h-3.5 w-3.5" />
+                  <Download className="size-3.5" />
                 </Button>
               </TooltipTrigger>
               <TooltipContent side="top" className="text-xs">
@@ -236,9 +211,9 @@ export function AttachmentsTableRow({
                     <Button
                       variant="ghost"
                       size="icon"
-                      className="h-7 w-7 rounded-md text-muted-foreground hover:text-foreground hover:bg-muted cursor-pointer"
+                      className="pd-row-action pd-row-action-more"
                     >
-                      <MoreHorizontal className="h-3.5 w-3.5" />
+                      <MoreHorizontal className="size-3.5" />
                     </Button>
                   </DropdownMenuTrigger>
                 </TooltipTrigger>
@@ -249,25 +224,25 @@ export function AttachmentsTableRow({
 
               <DropdownMenuContent align="end" className="w-44">
                 <DropdownMenuItem
-                  className="cursor-pointer gap-2 text-[13px]"
+                  className="pd-row-menu-item"
                   onClick={() => onPreview(attachment)}
                 >
-                  <Eye className="h-3.5 w-3.5" />
+                  <Eye className="size-3.5" />
                   Visualizar
                 </DropdownMenuItem>
                 <DropdownMenuItem
-                  className="cursor-pointer gap-2 text-[13px]"
+                  className="pd-row-menu-item"
                   onClick={() => handleFileDownload(id, filename)}
                 >
-                  <Download className="h-3.5 w-3.5" />
+                  <Download className="size-3.5" />
                   Baixar
                 </DropdownMenuItem>
                 <DropdownMenuSeparator />
                 <DropdownMenuItem
-                  className="cursor-pointer gap-2 text-[13px] text-destructive focus:text-destructive"
+                  className="pd-row-menu-item-danger"
                   onClick={() => onDelete(id)}
                 >
-                  <Trash2 className="h-3.5 w-3.5" />
+                  <Trash2 className="size-3.5" />
                   Excluir
                 </DropdownMenuItem>
               </DropdownMenuContent>

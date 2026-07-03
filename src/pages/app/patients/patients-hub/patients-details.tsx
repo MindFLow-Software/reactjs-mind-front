@@ -7,6 +7,7 @@ import { FileSearch } from 'lucide-react'
 
 import { getPatientProfileDetails } from '@/api/patient-profiles/get-patient-profile-details'
 import { useHeaderStore } from '@/store/use-header-store'
+import { usePatientQueueStore } from '@/store/use-patient-queue-store'
 
 import { PatientsDetailsLoading } from './components/loading'
 import { PatientsDataBlock } from '../components/patients-data-block'
@@ -16,13 +17,13 @@ import { HubTopBar } from './components/hub-top-bar'
 import { PatientHubTabs } from './components/patient-hub-tabs'
 import { PatientDetailsError } from './components/patient-details-error'
 import { usePatientQueue } from './hooks/use-patient-queue'
-import { PATIENT_QUEUE_SOURCE_KEY } from './constants'
 import './patients-details.css'
 
 export default function PatientDetails() {
   const { id } = useParams<{ id: string }>()
   const location = useLocation()
   const { setTitle, setSubtitle } = useHeaderStore()
+  const queueSource = usePatientQueueStore((state) => state.source)
 
   const [pageIndex, setPageIndex] = useState(0)
 
@@ -50,10 +51,8 @@ export default function PatientDetails() {
     const fromState = (location.state as { from?: string } | null)?.from
     if (fromState === 'patients-records') return true
     if (fromState === 'patients-list') return false
-    return (
-      sessionStorage.getItem(PATIENT_QUEUE_SOURCE_KEY) === 'patients-records'
-    )
-  }, [location.state])
+    return queueSource === 'patients-records'
+  }, [location.state, queueSource])
 
   const { queue, currentIndex, hasPrev, hasNext } = usePatientQueue(id ?? '')
 

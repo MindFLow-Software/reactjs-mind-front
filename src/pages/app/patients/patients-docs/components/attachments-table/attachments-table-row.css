@@ -1,0 +1,103 @@
+@reference "../../../../../../global.css";
+
+@layer components {
+  .pd-row-thumb {
+    @apply relative flex h-11 w-9 shrink-0 items-end justify-center overflow-hidden rounded-md bg-gradient-to-br;
+  }
+
+  .pd-row-thumb-corner {
+    @apply absolute top-0 right-0 h-0 w-0 border-b-[8px] border-l-[8px] border-b-transparent border-l-white/25;
+  }
+
+  .pd-row-thumb-ext {
+    @apply mb-1 text-[8px] font-bold tracking-tight;
+  }
+
+  .pd-row-avatar {
+    @apply flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-gradient-to-br from-blue-400 to-blue-600 text-[11px] font-bold text-white select-none;
+  }
+
+  .pd-row {
+    @apply cursor-pointer border-l-2 border-l-transparent transition-colors;
+  }
+
+  .pd-row-active {
+    @apply border-l-primary bg-blue-50 dark:bg-blue-950/20;
+  }
+
+  .pd-row-selected {
+    @apply border-l-primary/40 bg-primary/5;
+  }
+
+  .pd-row-idle {
+    @apply hover:border-l-primary/30 hover:bg-blue-50/60 dark:hover:bg-blue-950/10;
+  }
+
+  .pd-row-name {
+    @apply flex items-center gap-3;
+  }
+
+  .pd-row-name-text {
+    @apply max-w-[180px] truncate text-[13.5px] leading-tight font-semibold text-foreground;
+  }
+
+  .pd-row-name-size {
+    @apply mt-0.5 text-[11px] font-medium text-muted-foreground;
+  }
+
+  .pd-row-patient {
+    @apply flex items-center gap-2.5;
+  }
+
+  .pd-row-patient-name {
+    @apply max-w-[130px] truncate text-[13px] font-semibold text-foreground;
+  }
+
+  .pd-row-nolink {
+    @apply rounded-full bg-muted px-2.5 py-0.5 text-[11px] font-semibold text-muted-foreground;
+  }
+
+  .pd-row-size {
+    @apply font-mono text-[12.5px] font-medium text-muted-foreground tabular-nums;
+  }
+
+  .pd-row-date {
+    @apply text-[13px] font-semibold text-foreground tabular-nums;
+  }
+
+  .pd-row-time {
+    @apply text-[11px] text-muted-foreground;
+  }
+
+  .pd-row-badge {
+    @apply inline-flex items-center rounded-full px-2 py-0.5 text-[11px] font-semibold;
+  }
+
+  .pd-row-actions {
+    @apply flex items-center justify-end gap-1 pr-2;
+  }
+
+  .pd-row-action {
+    @apply h-7 w-7 cursor-pointer rounded-md text-muted-foreground;
+  }
+
+  .pd-row-action-view {
+    @apply hover:bg-blue-50 hover:text-primary dark:hover:bg-blue-950/30;
+  }
+
+  .pd-row-action-download {
+    @apply hover:bg-blue-50 hover:text-blue-600 dark:hover:bg-blue-950/30;
+  }
+
+  .pd-row-action-more {
+    @apply hover:bg-muted hover:text-foreground;
+  }
+
+  .pd-row-menu-item {
+    @apply cursor-pointer gap-2 text-[13px];
+  }
+
+  .pd-row-menu-item-danger {
+    @apply cursor-pointer gap-2 text-[13px] text-destructive focus:text-destructive;
+  }
+}
