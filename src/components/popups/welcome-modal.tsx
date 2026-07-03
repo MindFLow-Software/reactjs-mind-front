@@ -1,8 +1,7 @@
 'use client'
 
 import { useState, useEffect } from 'react'
-import { X, ChevronRight } from 'lucide-react'
-import { Brain } from '@phosphor-icons/react'
+import { X, ChevronRight, Brain } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import type { IPopup } from '@/types/popup'
 import { cn } from '@/lib/utils'
@@ -104,7 +103,7 @@ export function WelcomeModal({ popup, onClose }: WelcomeModalProps) {
             {/* Ícone da Marca */}
             <div className="mb-6 flex justify-center">
               <div className={iconBoxStyles}>
-                <Brain className="h-8 w-8 text-blue-500" weight="duotone" />
+                <Brain className="h-8 w-8 text-blue-500" />
               </div>
             </div>
 

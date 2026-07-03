@@ -1,7 +1,6 @@
-import { Home } from 'lucide-react'
+import { Brain, Home } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Link } from 'react-router-dom'
-import { BrainIcon } from '@phosphor-icons/react'
 
 export function NotFound() {
   return (
@@ -11,7 +10,7 @@ export function NotFound() {
           <div className="relative">
             <div className="absolute inset-0 bg-blue-500/20 blur-3xl rounded-full animate-pulse" />
             <div>
-              <BrainIcon
+              <Brain
                 className="h-26 w-26 text-blue-600 dark:text-blue-400"
                 strokeWidth={1.5}
               />

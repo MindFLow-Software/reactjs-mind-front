@@ -1,6 +1,6 @@
 import { memo } from 'react'
 import { useLocation } from 'react-router-dom'
-import { BrainIcon } from '@phosphor-icons/react'
+import { Brain } from 'lucide-react'
 
 function SignInContent() {
   return (
@@ -102,7 +102,7 @@ export const AuthLeftPanel = memo(function AuthLeftPanel() {
       className="hidden md:flex flex-col h-full min-h-screen p-10 bg-gradient-to-br from-[#0e1b3e] via-[#16306b] to-[#1c3c8a]"
     >
       <div className="flex items-center gap-3">
-        <BrainIcon className="h-8 w-8 text-blue-400" weight="duotone" />
+        <Brain className="h-8 w-8 text-blue-400" />
         <span className="text-lg font-semibold text-white">MindFlush</span>
       </div>
 
