@@ -24,6 +24,7 @@ import {
   type DailySessionMetric,
 } from '@/api/metrics/get-daily-sessions-metrics'
 import { getProfile } from '@/api/psychologists/get-profile'
+import './activity-heatmap.css'
 
 export function ActivityHeatmap() {
   const today = startOfToday()
@@ -129,29 +130,27 @@ export function ActivityHeatmap() {
   if (isLoading) return <Skeleton className="h-[220px] w-full rounded-xl" />
 
   return (
-    <div className="bg-card rounded-xl border border-border p-6 shadow-sm w-full">
+    <div className="acc-heat-card">
       <div className="flex flex-col gap-8">
         {/* Header: Título e Seletor de Ano */}
-        <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+        <div className="acc-heat-header">
           <div className="space-y-1">
-            <h3 className="text-sm font-bold uppercase tracking-[0.15em] text-muted-foreground/70">
-              Atividade de Sessões
-            </h3>
-            <p className="text-xs text-muted-foreground font-medium">
+            <h3 className="acc-heat-title">Atividade de Sessões</h3>
+            <p className="acc-heat-subtitle">
               Frequência diária de atendimentos no ano de {selectedYear}
             </p>
           </div>
 
-          <div className="flex bg-muted/40 p-1 rounded-lg border border-border/50">
+          <div className="acc-heat-year-toggle">
             {availableYears.map((year) => (
               <button
                 key={year}
                 onClick={() => setSelectedYear(year)}
                 className={cn(
-                  'px-4 py-1.5 text-[11px] font-bold rounded-md transition-all duration-200 uppercase tracking-tighter cursor-pointer',
+                  'acc-heat-year-btn',
                   selectedYear === year
-                    ? 'bg-white text-blue-600 shadow-sm ring-1 ring-black/5 dark:bg-slate-950'
-                    : 'text-muted-foreground hover:text-foreground',
+                    ? 'acc-heat-year-btn--active'
+                    : 'acc-heat-year-btn--inactive',
                 )}
               >
                 {year}
@@ -162,14 +161,14 @@ export function ActivityHeatmap() {
 
         {/* Heatmap Grid */}
         <div className="w-full overflow-hidden">
-          <div className="overflow-x-auto pb-4 scrollbar-thin scrollbar-thumb-muted-foreground/10 scrollbar-track-transparent">
+          <div className="acc-heat-scroll">
             <div className="min-w-max flex flex-col gap-2">
               {/* Meses */}
-              <div className="flex h-5 relative ml-8">
+              <div className="acc-heat-months-row">
                 {months.map((month, i) => (
                   <span
                     key={i}
-                    className="text-[10px] absolute font-bold text-muted-foreground/40 uppercase tracking-widest select-none"
+                    className="acc-heat-month-label"
                     style={{ left: `${month.colStart * 15}px` }}
                   >
                     {month.name}
@@ -179,20 +178,20 @@ export function ActivityHeatmap() {
 
               <div className="flex gap-4">
                 {/* Dias da Semana */}
-                <div className="flex flex-col gap-[5px] text-[9px] font-bold text-muted-foreground/20 w-6 pt-[2px] select-none uppercase">
-                  <div className="h-[11px]">Dom</div>
-                  <div className="h-[11px]" />
-                  <div className="h-[11px]">Ter</div>
-                  <div className="h-[11px]" />
-                  <div className="h-[11px]">Qui</div>
-                  <div className="h-[11px]" />
-                  <div className="h-[11px]">Sáb</div>
+                <div className="acc-heat-weekdays">
+                  <div className="acc-heat-weekday-row">Dom</div>
+                  <div className="acc-heat-weekday-row" />
+                  <div className="acc-heat-weekday-row">Ter</div>
+                  <div className="acc-heat-weekday-row" />
+                  <div className="acc-heat-weekday-row">Qui</div>
+                  <div className="acc-heat-weekday-row" />
+                  <div className="acc-heat-weekday-row">Sáb</div>
                 </div>
 
                 {/* Grid de Células */}
                 <div className="flex gap-[5px]">
                   {weeks.map((week, weekIndex) => (
-                    <div key={weekIndex} className="flex flex-col gap-[5px]">
+                    <div key={weekIndex} className="acc-heat-week-col">
                       {week.map((day, dayIndex) => {
                         const date = new Date(day.date)
                         const isInactive =
@@ -202,10 +201,9 @@ export function ActivityHeatmap() {
                           <div
                             key={dayIndex}
                             className={cn(
-                              'w-[11px] h-[11px] rounded-[2px] transition-colors shrink-0',
+                              'acc-heat-cell',
                               getColor(day.count, day.date),
-                              !isInactive &&
-                                'cursor-crosshair hover:outline-2 hover:outline-blue-500/50 hover:outline-offset-1',
+                              !isInactive && 'acc-heat-cell--active',
                             )}
                             onMouseEnter={(e) => {
                               if (isInactive) return
@@ -230,29 +228,25 @@ export function ActivityHeatmap() {
         </div>
 
         {/* Footer: Legenda */}
-        <div className="flex items-center justify-between pt-4 border-t border-border/40">
+        <div className="acc-heat-footer">
           <div className="flex items-center gap-4">
             <div className="flex items-center gap-2">
-              <span className="text-[10px] font-bold text-muted-foreground/30 uppercase tracking-tighter">
-                Menos
-              </span>
+              <span className="acc-heat-legend-label">Menos</span>
               <div className="flex gap-1">
                 {[0, 2, 4, 6, 8].map((v) => (
                   <div
                     key={v}
                     className={cn(
-                      'w-2.5 h-2.5 rounded-[2px]',
+                      'acc-heat-legend-swatch',
                       getColor(v, today.toISOString()),
                     )}
                   />
                 ))}
               </div>
-              <span className="text-[10px] font-bold text-muted-foreground/30 uppercase tracking-tighter">
-                Mais
-              </span>
+              <span className="acc-heat-legend-label">Mais</span>
             </div>
           </div>
-          <p className="text-[10px] font-medium text-muted-foreground/30 italic uppercase tracking-tighter">
+          <p className="acc-heat-legend-note">
             * Dados sincronizados em tempo real
           </p>
         </div>
@@ -261,24 +255,24 @@ export function ActivityHeatmap() {
       {/* Tooltip (Fixed Portal Style) */}
       {hoveredDay && (
         <div
-          className="fixed z-50 pointer-events-none transition-transform duration-75"
+          className="acc-heat-tooltip"
           style={{
             left: hoveredDay.x,
             top: hoveredDay.y - 12,
             transform: 'translate(-50%, -100%)',
           }}
         >
-          <div className="bg-slate-950/90 dark:bg-slate-50/95 backdrop-blur-md text-white dark:text-slate-950 px-3 py-2 rounded-lg shadow-2xl border border-white/10 animate-in fade-in zoom-in-95 duration-100">
-            <p className="text-[11px] font-bold whitespace-nowrap leading-none mb-1">
+          <div className="acc-heat-tooltip-box">
+            <p className="acc-heat-tooltip-count">
               {hoveredDay.day.count}{' '}
               {hoveredDay.day.count === 1 ? 'sessão' : 'sessões'}
             </p>
-            <p className="text-[10px] opacity-60 capitalize whitespace-nowrap leading-none font-medium">
+            <p className="acc-heat-tooltip-date">
               {format(new Date(hoveredDay.day.date), "EEEE, d 'de' MMMM", {
                 locale: ptBR,
               })}
             </p>
-            <div className="absolute -bottom-1 left-1/2 -translate-x-1/2 w-2.5 h-2.5 bg-slate-950/90 dark:bg-slate-50/95 rotate-45 border-r border-b border-white/10" />
+            <div className="acc-heat-tooltip-arrow" />
           </div>
         </div>
       )}

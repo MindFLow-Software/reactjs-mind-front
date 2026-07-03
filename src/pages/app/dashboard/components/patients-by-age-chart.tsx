@@ -3,6 +3,7 @@ import { Users, AlertCircle, RefreshCcw } from 'lucide-react'
 import { Card, CardContent, CardHeader } from '@/components/ui/card'
 import { Skeleton } from '@/components/ui/skeleton'
 import { useDashboardData } from '../hooks/use-dashboard-data'
+import './patients-by-age-chart.css'
 
 type ContentState = 'loading' | 'error' | 'empty' | 'data'
 
@@ -42,7 +43,7 @@ export const PatientsByAgeChart = React.memo(function PatientsByAgeChart() {
     switch (contentState) {
       case 'loading':
         return (
-          <div className="space-y-4">
+          <div className="dsh-age-rows">
             {[...Array(5)].map((_, i) => (
               <div key={i} className="flex items-center gap-4">
                 <Skeleton className="h-3 w-14 shrink-0" />
@@ -54,21 +55,18 @@ export const PatientsByAgeChart = React.memo(function PatientsByAgeChart() {
         )
       case 'error':
         return (
-          <div className="flex flex-col items-center justify-center gap-2 py-6 text-center">
+          <div className="dsh-age-state">
             <AlertCircle className="size-5 text-red-500" />
             <p className="text-sm text-red-500">Erro ao carregar</p>
-            <button
-              onClick={() => refetch()}
-              className="flex items-center gap-1 text-xs font-semibold text-blue-500 hover:underline"
-            >
+            <button onClick={() => refetch()} className="dsh-age-retry-btn">
               <RefreshCcw size={12} /> Tentar novamente
             </button>
           </div>
         )
       case 'empty':
         return (
-          <div className="flex flex-col items-center justify-center gap-2 py-6 text-center">
-            <div className="flex h-10 w-10 items-center justify-center rounded-full bg-muted/30">
+          <div className="dsh-age-state">
+            <div className="dsh-age-state-icon">
               <Users className="h-5 w-5 text-muted-foreground/50" />
             </div>
             <p className="text-sm font-medium text-foreground">Sem dados</p>
@@ -79,23 +77,19 @@ export const PatientsByAgeChart = React.memo(function PatientsByAgeChart() {
         )
       case 'data':
         return (
-          <div className="space-y-4">
+          <div className="dsh-age-rows">
             {data.map((item) => {
               const pct = maxValue > 0 ? (item.count / maxValue) * 100 : 0
               return (
-                <div key={item.range} className="flex items-center gap-4">
-                  <span className="w-14 shrink-0 text-sm font-medium text-muted-foreground tabular-nums whitespace-nowrap">
-                    {item.range}
-                  </span>
-                  <div className="flex-1 overflow-hidden rounded-full bg-muted h-2.5">
+                <div key={item.range} className="dsh-age-row">
+                  <span className="dsh-age-row-label">{item.range}</span>
+                  <div className="dsh-age-row-track">
                     <div
-                      className="h-2.5 rounded-full bg-blue-500 transition-all duration-500"
+                      className="dsh-age-row-bar"
                       style={{ width: `${Math.max(pct, pct > 0 ? 2 : 0)}%` }}
                     />
                   </div>
-                  <span className="w-8 shrink-0 text-right text-sm font-semibold text-foreground tabular-nums">
-                    {item.count}
-                  </span>
+                  <span className="dsh-age-row-value">{item.count}</span>
                 </div>
               )
             })}
@@ -105,24 +99,20 @@ export const PatientsByAgeChart = React.memo(function PatientsByAgeChart() {
   }
 
   return (
-    <Card className="border-border bg-card shadow-sm rounded-xl flex flex-col">
-      <CardHeader className="px-6 pb-4 border-b border-border">
-        <div className="flex items-center gap-3">
-          <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-blue-500/10 ring-1 ring-blue-500/20">
+    <Card className="dsh-age-card">
+      <CardHeader className="dsh-age-header">
+        <div className="dsh-age-header-row">
+          <div className="dsh-age-icon">
             <Users className="size-4 text-blue-600" />
           </div>
           <div>
-            <p className="text-base font-semibold text-foreground leading-tight">
-              Pacientes por faixa etária
-            </p>
-            <p className="text-xs font-medium uppercase tracking-wider text-muted-foreground mt-0.5">
-              Distribuição atual
-            </p>
+            <p className="dsh-age-title">Pacientes por faixa etária</p>
+            <p className="dsh-age-subtitle">Distribuição atual</p>
           </div>
         </div>
       </CardHeader>
 
-      <CardContent className="flex-1 px-6 pb-6">{renderContent()}</CardContent>
+      <CardContent className="dsh-age-content">{renderContent()}</CardContent>
     </Card>
   )
 })

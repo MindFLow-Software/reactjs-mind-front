@@ -7,6 +7,8 @@ import { toast } from 'sonner'
 import { uploadAvatar } from '@/api/attachments/attachments'
 import { UserAvatar } from '@/components/user-avatar'
 import type { IgetMeResponse } from '@/api/psychologists/get-profile'
+import { useSessionStore } from '@/store/use-session-store'
+import './psychologist-avatar-upload.css'
 
 interface AvatarUploadProps {
   currentImage?: string | null
@@ -20,6 +22,8 @@ export function PsychologistAvatarUpload({
   const queryClient = useQueryClient()
   const fileInputRef = useRef<HTMLInputElement>(null)
   const [previewUrl, setPreviewUrl] = useState<string | null>(null)
+  const user = useSessionStore((state) => state.user)
+  const setSession = useSessionStore((state) => state.setSession)
 
   const { mutateAsync: uploadPhoto, isPending } = useMutation({
     mutationFn: async (file: File) => {
@@ -34,12 +38,7 @@ export function PsychologistAvatarUpload({
         return { ...oldData, profileImageUrl: newPhotoUrl }
       })
 
-      const storedUser = localStorage.getItem('user')
-      if (storedUser) {
-        const userData = JSON.parse(storedUser)
-        userData.profileImageUrl = newPhotoUrl
-        localStorage.setItem('user', JSON.stringify(userData))
-      }
+      if (user) setSession({ ...user, profileImageUrl: newPhotoUrl })
 
       await queryClient.invalidateQueries({ queryKey })
 
@@ -60,29 +59,29 @@ export function PsychologistAvatarUpload({
       setPreviewUrl(objectUrl)
       try {
         await uploadPhoto(file)
-      } catch { }
+      } catch {}
     }
   }
 
   return (
-    <div className="flex flex-col items-center gap-3">
+    <div className="acc-avatar-root">
       <div
-        className="relative group cursor-pointer"
+        className="group acc-avatar-frame"
         onClick={() => !isPending && fileInputRef.current?.click()}
       >
         <UserAvatar
           src={previewUrl || currentImage}
           name={fullName}
-          className="h-28 w-28 border-4 border-background shadow-xl group-hover:border-primary/40 transition-all rounded-full object-cover"
+          className="acc-avatar-image"
         />
-        <div className="absolute bottom-0 right-0 bg-primary text-primary-foreground rounded-full p-2 shadow-lg group-hover:scale-110 transition-transform z-10 border-2 border-background">
+        <div className="acc-avatar-badge">
           {isPending ? (
             <Loader2 className="h-4 w-4 animate-spin" />
           ) : (
             <Camera className="h-4 w-4" />
           )}
         </div>
-        <div className="absolute inset-0 flex items-center justify-center bg-black/20 rounded-full opacity-0 group-hover:opacity-100 transition-opacity">
+        <div className="acc-avatar-overlay">
           {!isPending && <Upload className="h-8 w-8 text-white" />}
         </div>
       </div>
@@ -94,9 +93,7 @@ export function PsychologistAvatarUpload({
         className="hidden"
       />
       {isPending && (
-        <span className="text-[10px] font-bold text-primary animate-pulse uppercase tracking-widest">
-          Processando imagem...
-        </span>
+        <span className="acc-avatar-processing">Processando imagem...</span>
       )}
     </div>
   )

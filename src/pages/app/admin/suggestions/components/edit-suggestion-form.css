@@ -1,0 +1,27 @@
+@reference "../../../../../global.css";
+
+@layer components {
+  .ads-edit-form {
+    @apply flex flex-col gap-6;
+  }
+
+  .ads-edit-label {
+    @apply flex items-center gap-2 text-xs font-black uppercase text-muted-foreground;
+  }
+
+  .ads-edit-error {
+    @apply text-[10px] text-red-500;
+  }
+
+  .ads-edit-textarea {
+    @apply min-h-[140px] max-h-[240px] w-full resize-none;
+  }
+
+  .ads-edit-footer {
+    @apply flex flex-col gap-3 border-t border-dashed border-border pt-4 sm:flex-row;
+  }
+
+  .ads-edit-approve-btn {
+    @apply flex-1 rounded-xl bg-emerald-600 font-bold text-white hover:bg-emerald-700 dark:hover:bg-emerald-700;
+  }
+}

@@ -2,7 +2,7 @@
 
 import { useQuery } from '@tanstack/react-query'
 import { Trophy, Medal, Star, Loader2, Info } from 'lucide-react'
-import { api } from '@/lib/axios'
+import { getRanking, type RankingItem } from '@/api/suggestions/get-ranking'
 import {
   Card,
   CardContent,
@@ -25,24 +25,7 @@ import {
   TooltipTrigger,
 } from '@/components/ui/tooltip'
 import { cn } from '@/lib/utils'
-
-export interface RankingItem {
-  position: string
-  userId: string
-  name: string
-  points: number
-  approvedIdeas: number
-  highlight: string
-}
-
-export interface GetRankingResponse {
-  ranking: RankingItem[]
-}
-
-export async function getRanking() {
-  const response = await api.get<GetRankingResponse>('/suggestions/ranking')
-  return response.data.ranking
-}
+import './ranking-table.css'
 
 export function SuggestionRanking() {
   const { data: ranking, isLoading } = useQuery<RankingItem[]>({
@@ -66,11 +49,11 @@ export function SuggestionRanking() {
   const top5Ranking = ranking?.slice(0, 5)
 
   return (
-    <Card className="border-border shadow-xl rounded-2xl overflow-hidden bg-card transition-colors">
+    <Card className="ads-rank-card">
       <CardHeader className="bg-muted/30 border-b border-border p-6">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-3">
-            <div className="p-2.5 bg-primary/10 rounded-xl">
+            <div className="ads-rank-header-icon">
               <Star className="size-6 text-primary fill-primary/20" />
             </div>
             <div>
@@ -86,7 +69,7 @@ export function SuggestionRanking() {
           <TooltipProvider>
             <Tooltip delayDuration={300}>
               <TooltipTrigger asChild>
-                <div className="cursor-pointer p-2 hover:bg-muted rounded-full transition-colors">
+                <div className="ads-rank-info-btn">
                   <Info className="size-4 text-muted-foreground" />
                 </div>
               </TooltipTrigger>
@@ -117,16 +100,16 @@ export function SuggestionRanking() {
           <Table>
             <TableHeader className="bg-muted/50">
               <TableRow className="hover:bg-transparent border-border">
-                <TableHead className="w-[80px] font-black text-[10px] uppercase text-muted-foreground text-center">
+                <TableHead
+                  className={cn('ads-rank-th', 'w-[80px] text-center')}
+                >
                   Posição
                 </TableHead>
-                <TableHead className="font-black text-[10px] uppercase text-muted-foreground">
-                  Usuário
-                </TableHead>
-                <TableHead className="font-black text-[10px] uppercase text-muted-foreground text-center">
+                <TableHead className="ads-rank-th">Usuário</TableHead>
+                <TableHead className={cn('ads-rank-th', 'text-center')}>
                   Pontos
                 </TableHead>
-                <TableHead className="font-black text-[10px] uppercase text-muted-foreground text-center">
+                <TableHead className={cn('ads-rank-th', 'text-center')}>
                   Entregas
                 </TableHead>
               </TableRow>
@@ -136,7 +119,7 @@ export function SuggestionRanking() {
                 <TableRow
                   key={item.userId}
                   className={cn(
-                    'group border-border transition-colors',
+                    'group ads-rank-row',
                     item.position === '1º' &&
                       'bg-amber-500/5 hover:bg-amber-500/10',
                     item.position === '2º' &&
@@ -154,7 +137,7 @@ export function SuggestionRanking() {
                     <div className="flex items-center gap-3">
                       <div
                         className={cn(
-                          'size-8 rounded-full flex items-center justify-center text-[10px] font-bold border',
+                          'ads-rank-avatar',
                           item.position === '1º'
                             ? 'bg-amber-500/20 border-amber-500/30 text-amber-500'
                             : 'bg-muted border-border text-muted-foreground',
@@ -177,7 +160,7 @@ export function SuggestionRanking() {
                       <span className="font-bold text-foreground/80 text-xs">
                         {item.approvedIdeas}
                       </span>
-                      <span className="text-[9px] text-muted-foreground uppercase font-medium">
+                      <span className="ads-rank-approved-label">
                         Concluídas
                       </span>
                     </div>

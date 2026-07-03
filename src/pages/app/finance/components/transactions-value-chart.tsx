@@ -18,8 +18,9 @@ import {
   ChartTooltipContent,
   type ChartConfig,
 } from '@/components/ui/chart'
+import { formatCurrency } from '../helpers'
+import './transactions-value-chart.css'
 
-// Dados mockados focados apenas em valor (amount)
 const chartData = [
   { date: '2024-06-01', amount: 1250.5 },
   { date: '2024-06-02', amount: 800.0 },
@@ -48,30 +49,21 @@ export function TransactionsValueChart() {
     [],
   )
 
-  const formatCurrency = (value: number) => {
-    return new Intl.NumberFormat('pt-BR', {
-      style: 'currency',
-      currency: 'BRL',
-    }).format(value)
-  }
-
   return (
-    <Card className="col-span-6 bg-card rounded-xl overflow-hidden">
-      <CardHeader className="flex flex-col items-stretch border-b !p-0 sm:flex-row">
-        <div className="flex flex-1 flex-col justify-center gap-1 px-6 py-4 sm:py-6">
-          <CardTitle className="text-sm font-bold uppercase tracking-widest text-muted-foreground">
-            Total de Transações
-          </CardTitle>
+    <Card className="fin-value-card">
+      <CardHeader className="fin-value-header">
+        <div className="fin-value-header-main">
+          <CardTitle className="fin-value-title">Total de Transações</CardTitle>
           <CardDescription className="text-xs">
             Volume financeiro recebido no período selecionado
           </CardDescription>
         </div>
         <div className="flex">
-          <div className="relative z-30 flex flex-1 flex-col justify-center gap-1 bg-muted/30 px-6 py-4 text-left sm:border-l sm:px-8 sm:py-6">
-            <span className="text-[10px] font-bold uppercase tracking-tight text-muted-foreground">
+          <div className="fin-value-total-block">
+            <span className="fin-value-total-label">
               {chartConfig.amount.label}
             </span>
-            <span className="text-xl font-bold leading-none sm:text-3xl">
+            <span className="fin-value-total-amount">
               {formatCurrency(totalAmount)}
             </span>
           </div>
@@ -111,18 +103,16 @@ export function TransactionsValueChart() {
             <ChartTooltip
               content={
                 <ChartTooltipContent
-                  className="w-[200px] rounded-lg border-none shadow-2xl bg-slate-950 text-white"
+                  className="fin-value-tooltip"
                   labelFormatter={(value) => {
                     return format(new Date(value), "dd 'de' MMMM 'de' yyyy", {
                       locale: ptBR,
                     })
                   }}
                   formatter={(value) => (
-                    <div className="flex items-center justify-between w-full gap-4">
-                      <span className="text-xs text-slate-400 font-medium">
-                        Recebido:
-                      </span>
-                      <span className="font-bold text-emerald-500">
+                    <div className="fin-value-tooltip-row">
+                      <span className="fin-value-tooltip-label">Recebido:</span>
+                      <span className="fin-value-tooltip-value">
                         {formatCurrency(Number(value))}
                       </span>
                     </div>
@@ -135,7 +125,7 @@ export function TransactionsValueChart() {
               fill={chartConfig.amount.color}
               radius={[4, 4, 0, 0]}
               barSize={32}
-              className="opacity-90 hover:opacity-100 transition-opacity"
+              className="fin-value-bar"
             />
           </BarChart>
         </ChartContainer>

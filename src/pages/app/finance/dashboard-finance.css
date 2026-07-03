@@ -1,0 +1,23 @@
+@reference "../../../global.css";
+
+@layer components {
+  .fin-dashboard-root {
+    @apply mt-6 flex flex-col gap-5 px-2 pb-8;
+  }
+
+  .fin-dashboard-toolbar {
+    @apply flex justify-end;
+  }
+
+  .fin-dashboard-stats-grid {
+    @apply grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3;
+  }
+
+  .fin-dashboard-charts-grid {
+    @apply grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-2;
+  }
+
+  .fin-dashboard-charts-grid--2col {
+    @apply grid grid-cols-1 gap-4 lg:grid-cols-2;
+  }
+}

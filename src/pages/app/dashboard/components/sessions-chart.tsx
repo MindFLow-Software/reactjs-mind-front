@@ -23,8 +23,10 @@ import {
   ChartTooltipContent,
   type ChartConfig,
 } from '@/components/ui/chart'
+import { cn } from '@/lib/utils'
 import { type DashboardPeriod } from '../constants'
 import { useSessionsBar } from '../hooks/use-sessions-bar'
+import './sessions-chart.css'
 
 interface SessionsBarChartProps {
   period: DashboardPeriod
@@ -58,43 +60,41 @@ export const SessionsBarChart = React.memo(function SessionsBarChart({
   }, [chartData])
 
   return (
-    <Card className="border-border bg-card shadow-sm rounded-xl overflow-hidden">
-      <CardHeader className="px-6 pb-4 border-b border-border">
-        <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-          <div className="flex items-center gap-3">
-            <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-emerald-500/10 ring-1 ring-emerald-500/20">
+    <Card className="dsh-sessions-card">
+      <CardHeader className="dsh-sessions-header">
+        <div className="dsh-sessions-header-row">
+          <div className="dsh-sessions-header-main">
+            <div className="dsh-sessions-icon">
               <ChartLine className="size-4 text-emerald-600" />
             </div>
             <div>
-              <CardTitle className="text-base font-semibold text-foreground leading-tight">
+              <CardTitle className="dsh-sessions-title">
                 Volume de sessões
               </CardTitle>
-              <CardDescription className="mt-0.5 text-xs text-muted-foreground">
+              <CardDescription className="dsh-sessions-subtitle">
                 {subtitleLabel} · sessões concluídas, canceladas e remarcadas
               </CardDescription>
             </div>
           </div>
-          <div className="flex items-center gap-3 self-start">
+          <div className="dsh-sessions-legend">
             {LEGEND.map(({ key, label, color }) => (
-              <div key={key} className="flex items-center gap-1.5">
-                <span
-                  className={`inline-block h-2 w-2 rounded-full ${color}`}
-                />
-                <span className="text-xs text-muted-foreground">{label}</span>
+              <div key={key} className="dsh-sessions-legend-item">
+                <span className={cn('dsh-sessions-legend-dot', color)} />
+                <span className="dsh-sessions-legend-label">{label}</span>
               </div>
             ))}
           </div>
         </div>
       </CardHeader>
 
-      <CardContent className="px-2 pt-4 sm:px-6 sm:pt-6 bg-card">
+      <CardContent className="dsh-sessions-content">
         {isLoading ? (
           <div className="flex h-[250px] w-full items-center justify-center">
             <Loader2 className="h-8 w-8 animate-spin text-muted-foreground" />
           </div>
         ) : isError ? (
-          <div className="flex h-[250px] flex-col items-center justify-center text-center">
-            <div className="mb-3 flex h-12 w-12 items-center justify-center rounded-full bg-red-500/10 text-red-500">
+          <div className="dsh-sessions-state">
+            <div className="dsh-sessions-state-icon">
               <AlertCircle className="size-6" />
             </div>
             <p className="text-sm font-medium text-foreground">
@@ -102,14 +102,14 @@ export const SessionsBarChart = React.memo(function SessionsBarChart({
             </p>
             <button
               onClick={() => refetch()}
-              className="mt-2 text-xs font-bold text-blue-500 flex items-center gap-1 hover:underline"
+              className="dsh-sessions-retry-btn"
             >
               <RefreshCcw size={12} /> Tentar novamente
             </button>
           </div>
         ) : isEmpty ? (
-          <div className="flex h-[250px] flex-col items-center justify-center gap-2 text-center">
-            <div className="flex h-10 w-10 items-center justify-center rounded-full bg-muted/30">
+          <div className="dsh-sessions-state">
+            <div className="dsh-sessions-empty-icon">
               <CalendarOff className="size-5 text-muted-foreground/50" />
             </div>
             <p className="text-sm font-medium text-foreground">

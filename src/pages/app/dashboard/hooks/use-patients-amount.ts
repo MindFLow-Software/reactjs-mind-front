@@ -1,7 +1,7 @@
 import { useMemo } from 'react'
 import { useQueries } from '@tanstack/react-query'
 import { subDays, startOfDay, endOfDay } from 'date-fns'
-import { getDashboardMetrics } from '@/api/patient-profiles/get-dashboard-metrics'
+import { fetchDashboardData } from '@/api/metrics/fetch-dashboard-data'
 import { getNewPatientProfilesAmount } from '@/api/patient-profiles/get-new-patient-profiles-amount'
 import { QUERY_STALE_TIME, QUERY_GC_TIME } from '../constants'
 
@@ -18,8 +18,8 @@ export function usePatientsAmount(): UsePatientsAmountReturn {
   const [totalQuery, recentQuery] = useQueries({
     queries: [
       {
-        queryKey: ['dashboard', 'patients-total'],
-        queryFn: getDashboardMetrics,
+        queryKey: ['dashboard'],
+        queryFn: () => fetchDashboardData({}),
         staleTime: QUERY_STALE_TIME,
         gcTime: QUERY_GC_TIME,
       },
@@ -42,7 +42,7 @@ export function usePatientsAmount(): UsePatientsAmountReturn {
   }, [recentQuery.data])
 
   return {
-    total: totalQuery.data?.activePatients ?? 0,
+    total: totalQuery.data?.totalPatients ?? 0,
     delta,
     isLoading: totalQuery.isLoading || recentQuery.isLoading,
     isError: totalQuery.isError || recentQuery.isError,

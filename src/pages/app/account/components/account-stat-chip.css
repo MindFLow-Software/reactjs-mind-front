@@ -1,0 +1,67 @@
+@reference "../../../../global.css";
+
+@layer components {
+  .acc-chip {
+    @apply flex min-w-0 items-center gap-4 rounded-2xl border p-4 transition-colors;
+  }
+
+  .acc-chip--blue {
+    @apply border-blue-100 bg-blue-50/50 dark:border-blue-900/20 dark:bg-blue-900/10;
+  }
+
+  .acc-chip--indigo {
+    @apply border-indigo-100 bg-indigo-50/50 dark:border-indigo-900/20 dark:bg-indigo-900/10;
+  }
+
+  .acc-chip--purple {
+    @apply border-purple-100 bg-purple-50/50 dark:border-purple-900/20 dark:bg-purple-900/10;
+  }
+
+  .acc-chip--neutral {
+    @apply border-border bg-muted/50;
+  }
+
+  .acc-chip-icon {
+    @apply rounded-xl p-2.5 text-white shadow-md;
+  }
+
+  .acc-chip-icon--blue {
+    @apply bg-blue-600;
+  }
+
+  .acc-chip-icon--indigo {
+    @apply bg-indigo-600;
+  }
+
+  .acc-chip-icon--purple {
+    @apply bg-purple-600;
+  }
+
+  .acc-chip-icon--neutral {
+    @apply bg-foreground text-background;
+  }
+
+  .acc-chip-label {
+    @apply block text-[10px] font-bold uppercase tracking-widest;
+  }
+
+  .acc-chip-label--blue {
+    @apply text-blue-600/70 dark:text-blue-400/70;
+  }
+
+  .acc-chip-label--indigo {
+    @apply text-indigo-600/70 dark:text-indigo-400/70;
+  }
+
+  .acc-chip-label--purple {
+    @apply text-purple-600/70 dark:text-purple-400/70;
+  }
+
+  .acc-chip-label--neutral {
+    @apply text-muted-foreground;
+  }
+
+  .acc-chip-value {
+    @apply block truncate text-sm font-semibold;
+  }
+}

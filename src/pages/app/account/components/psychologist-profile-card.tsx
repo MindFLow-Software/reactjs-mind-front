@@ -21,6 +21,8 @@ import { formatCPF } from '@/utils/formatCPF'
 import { ROLE_TRANSLATIONS, EXPERTISE_TRANSLATIONS } from '@/utils/mappers'
 import { Dialog, DialogTrigger } from '@/components/ui/dialog'
 import { EditPsychologistProfile } from './edit-psychologist-dialog'
+import { AccountStatChip } from './account-stat-chip'
+import './psychologist-profile-card.css'
 
 interface PsychologistProfileCardProps {
   psychologist?: IMeResponse
@@ -40,7 +42,7 @@ export function PsychologistProfileCard({
 
   if (isLoading && !profile) {
     return (
-      <div className="bg-card rounded-2xl border border-border shadow-sm overflow-hidden">
+      <div className="acc-profile-card">
         <div className="h-24 bg-muted animate-pulse" />
         <div className="px-6 pb-6">
           <div className="-mt-12 flex flex-col md:flex-row items-center gap-6">
@@ -81,22 +83,20 @@ export function PsychologistProfileCard({
     EXPERTISE_TRANSLATIONS[expertise] || expertise || 'Não informado'
 
   return (
-    <div className="bg-card rounded-2xl border border-border shadow-sm overflow-hidden">
-      <div className="h-34 bg-gradient-to-r from-blue-600 via-indigo-500 to-purple-500 relative"></div>
+    <div className="acc-profile-card">
+      <div className="acc-profile-banner" />
 
-      <div className="px-6 pb-6">
-        <div className="-mt-12 flex flex-col md:flex-row items-center md:items-end gap-5">
-          <div className="ring-4 ring-card rounded-full bg-card shadow-lg">
+      <div className="acc-profile-body">
+        <div className="acc-profile-header">
+          <div className="acc-profile-avatar-ring">
             <PsychologistAvatarUpload
               currentImage={profile.profileImageUrl}
               fullName={fullName}
             />
           </div>
 
-          <div className="flex-1 text-center md:text-left pt-2 md:pb-1">
-            <h2 className="text-2xl font-bold text-foreground tracking-tight">
-              {fullName}
-            </h2>
+          <div className="acc-profile-name-block">
+            <h2 className="acc-profile-name">{fullName}</h2>
             <div className="flex items-center justify-center md:justify-start gap-2 mt-1">
               <span className="text-sm font-medium text-blue-600 dark:text-blue-400">
                 {translatedExpertise}
@@ -108,12 +108,12 @@ export function PsychologistProfileCard({
             </div>
           </div>
 
-          <div className="hidden lg:flex items-center gap-2 mb-1">
+          <div className="acc-profile-verified">
             <div className="flex -space-x-2">
-              <div className="h-8 w-8 rounded-full border-2 border-card bg-blue-100 flex items-center justify-center">
+              <div className="acc-profile-verified-icon bg-blue-100">
                 <UserRoundPen className="h-3 w-3 text-blue-600" />
               </div>
-              <div className="h-8 w-8 rounded-full border-2 border-card bg-purple-100 flex items-center justify-center">
+              <div className="acc-profile-verified-icon bg-purple-100">
                 <Calendar className="h-3 w-3 text-purple-600" />
               </div>
             </div>
@@ -123,70 +123,39 @@ export function PsychologistProfileCard({
           </div>
         </div>
 
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mt-8">
-          <div className="flex items-center gap-4 p-4 bg-blue-50/50 dark:bg-blue-900/10 border border-blue-100 dark:border-blue-900/20 rounded-2xl">
-            <div className="p-2.5 bg-blue-600 text-white rounded-xl shadow-md">
-              <Mail className="h-4 w-4" />
-            </div>
-            <div className="min-w-0">
-              <span className="text-[10px] font-bold uppercase tracking-widest text-blue-600/70 dark:text-blue-400/70 block">
-                E-mail
-              </span>
-              <span className="text-sm font-semibold truncate block">
-                {profile.email}
-              </span>
-            </div>
-          </div>
-
-          <div className="flex items-center gap-4 p-4 bg-indigo-50/50 dark:bg-indigo-900/10 border border-indigo-100 dark:border-indigo-900/20 rounded-2xl transition-colors">
-            <div className="p-2.5 bg-indigo-600 text-white rounded-xl shadow-md">
-              <Phone className="h-4 w-4" />
-            </div>
-            <div className="min-w-0">
-              <span className="text-[10px] font-bold uppercase tracking-widest text-indigo-600/70 dark:text-indigo-400/70 block">
-                Telefone
-              </span>
-              <span className="text-sm font-semibold truncate block">
-                {formatPhone(profile.phoneNumber)}
-              </span>
-            </div>
-          </div>
-
-          <div className="flex items-center gap-4 p-4 bg-purple-50/50 dark:bg-purple-900/10 border border-purple-100 dark:border-purple-900/20 rounded-2xl transition-colors">
-            <div className="p-2.5 bg-purple-600 text-white rounded-xl shadow-md">
-              <FileText className="h-4 w-4" />
-            </div>
-            <div className="min-w-0">
-              <span className="text-[10px] font-bold uppercase tracking-widest text-purple-600/70 dark:text-purple-400/70 block">
-                CPF
-              </span>
-              <span className="text-sm font-semibold truncate block">
-                {formatCPF(profile.cpf)}
-              </span>
-            </div>
-          </div>
-
-          <div className="flex items-center gap-4 p-4 bg-slate-50/50 dark:bg-slate-900/10 border border-slate-100 dark:border-slate-900/20 rounded-2xl transition-colors">
-            <div className="p-2.5 bg-slate-700 text-white rounded-xl shadow-md">
-              <Award className="h-4 w-4" />
-            </div>
-            <div className="min-w-0">
-              <span className="text-[10px] font-bold uppercase tracking-widest text-slate-600/70 dark:text-slate-400/70 block">
-                CRP
-              </span>
-              <span className="text-sm font-semibold truncate block">
-                {profile.psychologistProfile?.crp || 'Não informado'}
-              </span>
-            </div>
-          </div>
+        <div className="acc-profile-stats-grid">
+          <AccountStatChip
+            icon={<Mail className="h-4 w-4" />}
+            accent="blue"
+            label="E-mail"
+            value={profile.email}
+          />
+          <AccountStatChip
+            icon={<Phone className="h-4 w-4" />}
+            accent="indigo"
+            label="Telefone"
+            value={formatPhone(profile.phoneNumber)}
+          />
+          <AccountStatChip
+            icon={<FileText className="h-4 w-4" />}
+            accent="purple"
+            label="CPF"
+            value={formatCPF(profile.cpf)}
+          />
+          <AccountStatChip
+            icon={<Award className="h-4 w-4" />}
+            accent="neutral"
+            label="CRP"
+            value={profile.psychologistProfile?.crp || 'Não informado'}
+          />
         </div>
 
         <div className="grid grid-cols-1 sm:grid-cols-1 gap-4 mt-8 pt-6 border-t border-border/50">
           <Dialog open={isEditOpen} onOpenChange={setIsEditOpen}>
             <DialogTrigger asChild>
-              <button className="flex items-center justify-between p-4 bg-white dark:bg-muted/20 hover:bg-blue-50 dark:hover:bg-blue-900/20 border border-border hover:border-blue-200 dark:hover:border-blue-800 rounded-2xl transition-all group cursor-pointer text-left">
+              <button className="group acc-profile-edit-trigger">
                 <div className="flex items-center gap-4">
-                  <div className="p-2 bg-blue-100 dark:bg-blue-900/40 text-blue-600 rounded-lg group-hover:scale-110 transition-transform">
+                  <div className="acc-profile-edit-icon">
                     <UserRoundPen className="h-5 w-5" />
                   </div>
                   <div>

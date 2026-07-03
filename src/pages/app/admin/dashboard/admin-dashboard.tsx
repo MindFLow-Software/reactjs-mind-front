@@ -12,6 +12,7 @@ import { NewPsychologistsBarChart } from './components/new-psychologists-bar-cha
 import { NewPatientsBarChart } from './components/new-patient-bar-chart'
 import { PsychologistsAgeRangeChart } from './components/psychologists-by-age-chart'
 import { PsychologistsGenderChart } from './components/psychologists-by-gender-chart'
+import './admin-dashboard.css'
 
 interface DateRange {
   from: Date | undefined
@@ -38,19 +39,19 @@ export function AdminDashboard() {
     <>
       <Helmet title="Dashboard do Admin" />
 
-      <div className="flex flex-col gap-5 mt-6 px-2 pb-8">
-        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
+      <div className="adb-dashboard-root">
+        <div className="adb-dashboard-stats-grid">
           <TotalPsychologistsCard />
           <TotalPatientCard />
           <TotalSuggestionsCard />
         </div>
 
-        <div className="grid grid-cols-1 gap-4 lg:grid-cols-1">
+        <div className="adb-dashboard-charts-grid">
           <NewPsychologistsBarChart endDate={endDate} />
           <NewPatientsBarChart endDate={endDate} />
         </div>
 
-        <div className="grid grid-cols-1 gap-4 lg:grid-cols-2">
+        <div className="adb-dashboard-charts-grid--2col">
           <PsychologistsAgeRangeChart />
           <PsychologistsGenderChart endDate={endDate} />
         </div>

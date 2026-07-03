@@ -14,12 +14,9 @@ const expertiseSchema = z.enum([
 
 // gender, cpf, dateOfBirth are NOT updatable via this endpoint
 export const updatePsychologistSchema = z.object({
-  firstName: z.string().optional(),
-  lastName: z.string().optional(),
-  email: z.preprocess(
-    (v) => (v === '' ? undefined : v),
-    z.email('E-mail inválido').optional(),
-  ),
+  firstName: z.string().min(1, 'Nome é obrigatório'),
+  lastName: z.string().min(1, 'Sobrenome é obrigatório'),
+  email: z.email('E-mail inválido').optional(),
   phoneNumber: z.string().optional(),
   crp: z.string().optional(),
   expertise: expertiseSchema.optional(),

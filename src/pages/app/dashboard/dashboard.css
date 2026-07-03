@@ -1,0 +1,23 @@
+@reference "../../../global.css";
+
+@layer components {
+  .dsh-root {
+    @apply flex flex-col gap-5;
+  }
+
+  .dsh-top-grid {
+    @apply grid grid-cols-1 gap-4 sm:grid-cols-3;
+  }
+
+  .dsh-mid-grid {
+    @apply grid grid-cols-1 gap-4 sm:grid-cols-3;
+  }
+
+  .dsh-mid-grid-chart {
+    @apply sm:col-span-2;
+  }
+
+  .dsh-bottom-grid {
+    @apply grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3;
+  }
+}

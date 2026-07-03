@@ -1,6 +1,17 @@
 'use client'
 
-import { PieChart, Pie, Cell, ResponsiveContainer, Tooltip } from 'recharts'
+import {
+  PieChart,
+  Pie,
+  Cell,
+  ResponsiveContainer,
+  Tooltip,
+  type TooltipProps,
+} from 'recharts'
+import type {
+  ValueType,
+  NameType,
+} from 'recharts/types/component/DefaultTooltipContent'
 import {
   CheckCircle2,
   Clock,
@@ -10,8 +21,8 @@ import {
   Inbox,
 } from 'lucide-react'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
+import './transaction-status-overview.css'
 
-// Dados mockados para visualização imediata
 const MOCK_DATA = {
   paid: 42,
   pending: 12,
@@ -30,21 +41,23 @@ interface TransactionStatusProps {
   }
 }
 
-// Tooltip customizado seguindo o padrão escuro/premium
-// eslint-disable-next-line
-function CustomTooltip({ active, payload }: any) {
-  if (active && payload && payload.length) {
-    const data = payload[0].payload
-    return (
-      <div className="rounded-lg border-none bg-slate-950 p-3 shadow-2xl text-white">
-        <p className="font-bold text-[10px] uppercase tracking-widest opacity-70 mb-1">
-          {data.label}
-        </p>
-        <p className="text-xs font-bold">{data.value} transações</p>
-      </div>
-    )
-  }
-  return null
+interface TransactionStatusDatum {
+  label: string
+  value: number
+  color: string
+}
+
+function CustomTooltip({ active, payload }: TooltipProps<ValueType, NameType>) {
+  if (!active || !payload || payload.length === 0) return null
+
+  const data = payload[0].payload as TransactionStatusDatum
+
+  return (
+    <div className="fin-status-tooltip">
+      <p className="fin-status-tooltip-label">{data.label}</p>
+      <p className="fin-status-tooltip-value">{data.value} transações</p>
+    </div>
+  )
 }
 
 export function TransactionStatusOverview({
@@ -52,7 +65,6 @@ export function TransactionStatusOverview({
 }: TransactionStatusProps) {
   const totalOrders = Object.values(data).reduce((acc, curr) => acc + curr, 0)
 
-  // Formatação dos dados para o Recharts
   const chartData = [
     { label: 'Pago', value: data.paid, color: '#01DE82', icon: CheckCircle2 },
     { label: 'Pendente', value: data.pending, color: '#f59e0b', icon: Clock },
@@ -74,13 +86,13 @@ export function TransactionStatusOverview({
       color: '#6366f1',
       icon: RotateCcw,
     },
-  ].filter((item) => item.value > 0) // Remove categorias zeradas do gráfico
+  ].filter((item) => item.value > 0)
 
   return (
-    <Card className="rounded-xl bg-card overflow-hidden flex flex-col h-full transition-all duration-300">
+    <Card className="fin-status-card">
       <CardHeader className="p-6 pb-2">
         <div className="space-y-1">
-          <CardTitle className="text-sm font-bold uppercase tracking-[0.15em] text-muted-foreground/70">
+          <CardTitle className="fin-status-title">
             Status das Transações
           </CardTitle>
           <p className="text-xs text-muted-foreground">
@@ -91,17 +103,14 @@ export function TransactionStatusOverview({
         </div>
       </CardHeader>
 
-      <CardContent className="flex-1 flex flex-col p-6 pt-0">
+      <CardContent className="fin-status-content">
         {totalOrders === 0 ? (
-          <div className="flex-1 flex flex-col items-center justify-center py-10 border-2 border-dashed border-muted/20 rounded-xl bg-muted/5 min-h-[300px]">
-            <Inbox className="size-8 text-muted-foreground/20 mb-2" />
-            <span className="text-[11px] font-bold text-muted-foreground/50 uppercase tracking-tighter">
-              Sem dados no período
-            </span>
+          <div className="fin-status-empty">
+            <Inbox className="mb-2 size-8 text-muted-foreground/20" />
+            <span className="fin-status-empty-label">Sem dados no período</span>
           </div>
         ) : (
           <>
-            {/* Área do Gráfico */}
             <div className="h-[220px] w-full">
               <ResponsiveContainer width="100%" height="100%">
                 <PieChart>
@@ -109,7 +118,7 @@ export function TransactionStatusOverview({
                     data={chartData}
                     cx="50%"
                     cy="50%"
-                    innerRadius={0} // Pizza sólida (mude para 60 para Donut)
+                    innerRadius={0}
                     outerRadius={85}
                     paddingAngle={0}
                     dataKey="value"
@@ -121,7 +130,7 @@ export function TransactionStatusOverview({
                       <Cell
                         key={`cell-${index}`}
                         fill={entry.color}
-                        className="hover:opacity-80 transition-opacity cursor-pointer outline-none"
+                        className="fin-status-cell"
                       />
                     ))}
                   </Pie>
@@ -130,25 +139,19 @@ export function TransactionStatusOverview({
               </ResponsiveContainer>
             </div>
 
-            {/* Legenda Estilizada */}
-            <div className="grid grid-cols-2 gap-x-4 gap-y-2 mt-auto pt-4 border-t border-border/50">
+            <div className="fin-status-legend">
               {chartData.map((item) => (
-                <div
-                  key={item.label}
-                  className="flex items-center justify-between group"
-                >
+                <div key={item.label} className="fin-status-legend-item group">
                   <div className="flex items-center gap-2">
                     <div
-                      className="h-1.5 w-1.5 rounded-full"
+                      className="fin-status-legend-dot"
                       style={{ backgroundColor: item.color }}
                     />
-                    <span className="text-[10px] font-bold uppercase tracking-tight text-muted-foreground group-hover:text-foreground transition-colors">
+                    <span className="fin-status-legend-label">
                       {item.label}
                     </span>
                   </div>
-                  <span className="text-[11px] font-black tabular-nums">
-                    {item.value}
-                  </span>
+                  <span className="fin-status-legend-value">{item.value}</span>
                 </div>
               ))}
             </div>
