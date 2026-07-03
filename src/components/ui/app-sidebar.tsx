@@ -138,7 +138,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
         icon: Inbox,
         items: [
           { title: 'Sugestões Recebidas', url: 'admin-suggestions' },
-          { title: 'Controle de Sugestões', url: 'menagement-suggestions' },
+          { title: 'Controle de Sugestões', url: 'management-suggestions' },
         ],
       })
     }

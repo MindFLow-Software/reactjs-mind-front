@@ -22,15 +22,7 @@ export interface CreateBillingResponse {
 export async function createBilling(
   data: CreateBillingRequest,
 ): Promise<CreateBillingResponse> {
-  const token = localStorage.getItem('token')
-
-  const response = await api.post<CreateBillingResponse>(
-    '/billing', // <-- Rota correta no backend
-    data,
-    {
-      headers: token ? { Authorization: `Bearer ${token}` } : undefined,
-    },
-  )
+  const response = await api.post<CreateBillingResponse>('/billing', data)
 
   return response.data
 }

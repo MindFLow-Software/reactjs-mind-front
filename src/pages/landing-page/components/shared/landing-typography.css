@@ -1,0 +1,7 @@
+@reference "../../../../global.css";
+
+@layer components {
+  .lp-serif {
+    font-family: 'Lora', serif;
+  }
+}

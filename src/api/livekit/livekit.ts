@@ -1,11 +1,16 @@
-// api/livekit.ts
-export async function fetchLivekitToken(identity: string, room: string) {
-  const res = await fetch(
-    `/api/livekit/token?identity=${identity}&room=${room}`,
-  )
+import { api } from '@/lib/axios'
 
-  if (!res.ok) throw new Error('Erro ao gerar token LiveKit')
+export interface LivekitTokenResponse {
+  token: string
+}
 
-  const data = await res.json()
-  return data.token
+export async function fetchLivekitToken(
+  identity: string,
+  room: string,
+): Promise<string> {
+  const response = await api.get<LivekitTokenResponse>('/livekit/token', {
+    params: { identity, room },
+  })
+
+  return response.data.token
 }

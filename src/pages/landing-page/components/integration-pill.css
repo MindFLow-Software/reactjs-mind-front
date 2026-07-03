@@ -1,0 +1,28 @@
+@reference "../../../global.css";
+
+@layer components {
+  .lp-pill {
+    @apply flex items-center gap-3 rounded-2xl border border-slate-200/80 bg-white px-4 py-3 transition-shadow duration-300;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.07);
+  }
+
+  .lp-pill:hover {
+    box-shadow: 0 6px 28px rgba(37, 99, 235, 0.12);
+  }
+
+  .lp-pill-mobile {
+    @apply flex items-center gap-3 rounded-2xl border border-slate-200/80 bg-white px-4 py-3 shadow-sm;
+  }
+
+  .lp-pill-icon {
+    @apply flex h-9 w-9 shrink-0 items-center justify-center rounded-xl border border-slate-100 bg-slate-50 shadow-sm;
+  }
+
+  .lp-pill-name {
+    @apply mb-[5px] text-[13.5px] font-semibold leading-none text-slate-800;
+  }
+
+  .lp-pill-desc {
+    @apply flex items-center gap-1.5 text-[11px] font-medium text-slate-400;
+  }
+}

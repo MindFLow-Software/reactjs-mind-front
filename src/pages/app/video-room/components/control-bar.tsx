@@ -18,28 +18,29 @@ import {
 } from '@/components/ui/tooltip'
 import { Badge } from '@/components/ui/badge'
 
-interface ControlBarProps {
+export interface ControlBarStatus {
   isMicMuted: boolean
   isVideoEnabled: boolean
   isScreenSharing: boolean
   participantCount: number
+}
+
+export interface ControlBarActions {
   onToggleMic: () => void
   onToggleVideo: () => void
   onToggleScreenShare: () => void
-  onSettings: () => void
   onLeave: () => void
 }
 
-export function ControlBar({
-  isMicMuted,
-  isVideoEnabled,
-  isScreenSharing,
-  participantCount,
-  onToggleMic,
-  onToggleVideo,
-  onToggleScreenShare,
-  onLeave,
-}: ControlBarProps) {
+interface ControlBarProps {
+  status: ControlBarStatus
+  actions: ControlBarActions
+}
+
+export function ControlBar({ status, actions }: ControlBarProps) {
+  const { isMicMuted, isVideoEnabled, isScreenSharing, participantCount } =
+    status
+  const { onToggleMic, onToggleVideo, onToggleScreenShare, onLeave } = actions
   return (
     <TooltipProvider>
       <div className="flex items-center justify-between gap-4 border-t border-slate-200 bg-white px-4 py-3 sm:py-4">

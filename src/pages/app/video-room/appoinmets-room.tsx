@@ -49,13 +49,17 @@ export function AppointmentsRoom() {
         />
 
         <AppointmentAddForm
-          onSelectPatient={setSelectedAppointmentId}
-          currentAppointmentId={selectedAppointmentId}
-          currentSessionId={currentSessionId}
-          onSessionStarted={handleSessionStarted}
-          onSessionFinished={handleSessionFinished}
-          isSessionActive={isSessionActive}
-          content={content}
+          session={{
+            currentAppointmentId: selectedAppointmentId,
+            currentSessionId,
+            isSessionActive,
+            content,
+          }}
+          handlers={{
+            onSelectPatient: setSelectedAppointmentId,
+            onSessionStarted: handleSessionStarted,
+            onSessionFinished: handleSessionFinished,
+          }}
         />
       </div>
     </>

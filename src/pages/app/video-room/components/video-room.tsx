@@ -73,15 +73,18 @@ export function VideoRoomMock() {
       </div>
 
       <ControlBar
-        isMicMuted={isMicMuted}
-        isVideoEnabled={isVideoEnabled}
-        isScreenSharing={isScreenSharing}
-        participantCount={2}
-        onToggleMic={() => setIsMicMuted((prev) => !prev)}
-        onToggleVideo={() => setIsVideoEnabled((prev) => !prev)}
-        onToggleScreenShare={() => setIsScreenSharing((prev) => !prev)}
-        onSettings={() => console.log('Abrir configurações')}
-        onLeave={() => console.log('Encerrar chamada')}
+        status={{
+          isMicMuted,
+          isVideoEnabled,
+          isScreenSharing,
+          participantCount: 2,
+        }}
+        actions={{
+          onToggleMic: () => setIsMicMuted((prev) => !prev),
+          onToggleVideo: () => setIsVideoEnabled((prev) => !prev),
+          onToggleScreenShare: () => setIsScreenSharing((prev) => !prev),
+          onLeave: () => console.log('Encerrar chamada'),
+        }}
       />
     </div>
   )

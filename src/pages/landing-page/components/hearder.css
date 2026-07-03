@@ -1,0 +1,72 @@
+@reference "../../../global.css";
+
+@layer components {
+  .lp-hdr {
+    @apply sticky top-0 z-50 w-full px-4 pt-4 md:px-6;
+  }
+
+  .lp-hdr-bar {
+    @apply relative flex items-center justify-between rounded-full border px-2 py-3 backdrop-blur-xl transition-all duration-300;
+  }
+
+  .lp-hdr-bar--scrolled {
+    @apply border-blue-200/90 bg-white/95;
+    box-shadow: 0 8px 32px -12px rgba(37, 99, 235, 0.3);
+  }
+
+  .lp-hdr-bar--top {
+    @apply border-blue-100/80 bg-white/85;
+    box-shadow: 0 18px 40px -20px rgba(37, 99, 235, 0.5);
+  }
+
+  .lp-hdr-shimmer {
+    @apply pointer-events-none absolute inset-0 rounded-full opacity-80;
+    background: linear-gradient(
+      90deg,
+      rgba(255, 255, 255, 0.7),
+      rgba(239, 246, 255, 0.7),
+      rgba(255, 255, 255, 0.7)
+    );
+  }
+
+  .lp-hdr-nav-link {
+    @apply relative rounded-full px-3 py-1.5 text-[15px] font-medium text-slate-600 transition-colors duration-200 hover:text-blue-700;
+  }
+
+  .lp-hdr-nav-underline {
+    @apply absolute inset-x-2 -bottom-[2px] h-[2px] origin-left scale-x-0 rounded-full bg-blue-500 transition-transform duration-300 ease-[cubic-bezier(0.16,1,0.3,1)] group-hover:scale-x-100;
+  }
+
+  .lp-hdr-btn-outline {
+    @apply cursor-pointer rounded-full border border-blue-200 bg-white px-3.5 py-1.5 text-[15px] font-semibold text-blue-700 transition-all duration-200 hover:-translate-y-px hover:border-blue-300 hover:bg-blue-50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-300;
+  }
+
+  .lp-hdr-btn-outline-mobile {
+    @apply w-full rounded-xl border border-blue-200 bg-white px-3.5 py-2.5 text-sm font-semibold text-blue-700 transition-colors hover:bg-blue-50;
+  }
+
+  .lp-hdr-btn-primary {
+    @apply inline-flex cursor-pointer items-center gap-1.5 rounded-full px-4 py-1.5 text-[15px] font-semibold text-white transition-all duration-200 hover:-translate-y-px active:scale-[0.98] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-300;
+    background: linear-gradient(135deg, #2563eb 0%, #3b82f6 100%);
+    box-shadow: 0 8px 20px -8px rgba(37, 99, 235, 0.55);
+  }
+
+  .lp-hdr-btn-primary-mobile {
+    @apply inline-flex w-full items-center justify-center gap-1.5 rounded-xl px-3.5 py-2.5 text-sm font-semibold text-white transition-all active:scale-[0.98];
+    background: linear-gradient(135deg, #2563eb 0%, #3b82f6 100%);
+    box-shadow: 0 4px 12px rgba(37, 99, 235, 0.35);
+  }
+
+  .lp-hdr-hamburger {
+    @apply inline-flex h-8 w-8 items-center justify-center rounded-full border border-blue-200 bg-white text-slate-700 transition-colors hover:bg-blue-50 md:hidden;
+  }
+
+  .lp-hdr-mobile-menu {
+    @apply mt-2 rounded-2xl border border-blue-100 bg-white/95 p-3 backdrop-blur-xl md:hidden;
+    box-shadow: 0 18px 40px -20px rgba(37, 99, 235, 0.45);
+  }
+
+  .lp-hdr-mobile-link {
+    @apply rounded-xl px-3 py-2.5 text-sm font-medium text-slate-600 transition-colors hover:bg-blue-50 hover:text-blue-700;
+  }
+}
