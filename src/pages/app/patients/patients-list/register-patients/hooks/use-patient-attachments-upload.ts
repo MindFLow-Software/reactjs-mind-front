@@ -1,6 +1,7 @@
 import { useCallback, useState } from 'react'
 import { useQueryClient } from '@tanstack/react-query'
-import { uploadAttachment, uploadAvatar } from '@/api/attachments/attachments'
+import { uploadAttachment } from '@/api/attachments/upload-attachment'
+import { uploadAvatar } from '@/api/attachments/upload-avatar'
 
 export interface UsePatientAttachmentsUploadParams {
   targetId: string

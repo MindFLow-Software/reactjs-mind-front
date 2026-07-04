@@ -1,8 +1,6 @@
 import { useQuery } from '@tanstack/react-query'
-import {
-  getAllAttachments,
-  type AttachmentListMeta,
-} from '@/api/attachments/attachments'
+import { getAllAttachments } from '@/api/attachments/get-all-attachments'
+import type { AttachmentListMeta } from '@/types/attachment'
 import type { useAttachmentsFilters } from '@/hooks/use-attachments-filters'
 
 type AttachmentsFilters = ReturnType<typeof useAttachmentsFilters>

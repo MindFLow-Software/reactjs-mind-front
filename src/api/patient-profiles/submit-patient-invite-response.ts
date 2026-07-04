@@ -1,13 +1,19 @@
 import { api } from '@/lib/axios'
+import type { IMutationResult } from '@/types/api'
 
-type IsubmitPatientInviteResponse = {
+export type PatientInviteResponseAction = 'accept' | 'reject'
+
+export interface ISubmitPatientInviteResponseParams {
   token: string | undefined
-  action: 'accept' | 'reject'
+  action: PatientInviteResponseAction
 }
 
-export const submitPatientInviteResponse = async ({
+export async function submitPatientInviteResponse({
   token,
   action,
-}: IsubmitPatientInviteResponse): Promise<void> => {
-  await api.post(`/patient-profiles/invites/${token}/${action}`)
+}: ISubmitPatientInviteResponseParams): Promise<IMutationResult<null>> {
+  const response = await api.post(
+    `/patient-profiles/invites/${token}/${action}`,
+  )
+  return { data: null, message: response.apiMessage ?? null }
 }

@@ -3,13 +3,14 @@ import type {
   CreatePracticeContextBody,
   IPsychologistPracticeContext,
 } from '@/types/psychologist'
+import type { IMutationResult } from '@/types/api'
 
 export async function createPracticeContext(
   body: CreatePracticeContextBody,
-): Promise<IPsychologistPracticeContext> {
+): Promise<IMutationResult<IPsychologistPracticeContext>> {
   const response = await api.post<IPsychologistPracticeContext>(
     '/psychologist/practice-context',
     body,
   )
-  return response.data
+  return { data: response.data, message: response.apiMessage ?? null }
 }

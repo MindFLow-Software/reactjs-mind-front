@@ -1,6 +1,9 @@
+import './professional-identity-form-step.css'
 import { Controller, useFormContext } from 'react-hook-form'
 
 import z from 'zod'
+
+import { cn } from '@/lib/utils'
 
 import {
   Field,
@@ -131,10 +134,11 @@ export function ProfessionalIdentityFormStep() {
                         key={language}
                         variant="outline"
                         onClick={() => handleToggleLanguage(language)}
-                        className={`
-                          px-2 py-1 cursor-pointer
-                          ${selectedLanguages.includes(language) && 'bg-violet-200 border border-violet-500 text-violet-500'}
-                        `}
+                        className={cn(
+                          'psob-badge',
+                          selectedLanguages.includes(language) &&
+                            'psob-badge-selected',
+                        )}
                       >
                         {translatedLanguages[language]}
                       </Badge>
@@ -162,10 +166,11 @@ export function ProfessionalIdentityFormStep() {
                         onClick={() => {
                           field.onChange(expertise)
                         }}
-                        className={`
-                          px-2 py-1 cursor-pointer
-                          ${selectedExpertise === expertise && 'bg-violet-200 border border-violet-500 text-violet-500'}
-                        `}
+                        className={cn(
+                          'psob-badge',
+                          selectedExpertise === expertise &&
+                            'psob-badge-selected',
+                        )}
                       >
                         {translatedExpertise[expertise]}
                       </Badge>

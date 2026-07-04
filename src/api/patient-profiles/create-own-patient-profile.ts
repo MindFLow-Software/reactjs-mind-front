@@ -1,5 +1,6 @@
 import { api } from '@/lib/axios'
 import type { IPatientProfile } from '@/types/patient-profile'
+import type { IMutationResult } from '@/types/api'
 
 export interface CreateOwnPatientProfileBody {
   psychologistPracticeContextId: string | null
@@ -7,7 +8,7 @@ export interface CreateOwnPatientProfileBody {
 
 export async function createOwnPatientProfile(
   body: CreateOwnPatientProfileBody,
-): Promise<IPatientProfile> {
+): Promise<IMutationResult<IPatientProfile>> {
   const response = await api.post<IPatientProfile>('/me/patient-profiles', body)
-  return response.data
+  return { data: response.data, message: response.apiMessage ?? null }
 }

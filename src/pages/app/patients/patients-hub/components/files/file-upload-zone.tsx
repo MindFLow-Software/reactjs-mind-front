@@ -3,7 +3,7 @@ import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { useDropzone } from 'react-dropzone'
 import { toast } from 'sonner'
 
-import { uploadAttachment } from '@/api/attachments/attachments'
+import { uploadAttachment } from '@/api/attachments/upload-attachment'
 import { uploadFileSchema } from '@/validators/attachments/form/upload-attachment-schema'
 import { cn } from '@/lib/utils'
 

@@ -1,0 +1,23 @@
+@reference "../../../global.css";
+
+@layer components {
+  .cc-shell {
+    @apply flex justify-center p-4;
+  }
+
+  .cc-main {
+    @apply flex w-2xl flex-col gap-2;
+  }
+
+  .cc-back-link {
+    @apply mb-4 flex cursor-pointer items-center gap-1 text-xs text-foreground;
+  }
+
+  .cc-section-label {
+    @apply flex items-center gap-2;
+  }
+
+  .cc-list {
+    @apply flex w-full flex-col gap-4;
+  }
+}

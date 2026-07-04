@@ -1,0 +1,47 @@
+@reference "../../global.css";
+
+@keyframes at-confetti-fall {
+  0% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+  100% {
+    opacity: 0;
+    transform: translateY(220px);
+  }
+}
+
+@keyframes at-shimmer-sweep {
+  0% {
+    transform: translateX(-100%);
+  }
+  100% {
+    transform: translateX(100%);
+  }
+}
+
+@keyframes at-shrink {
+  from {
+    transform: scaleX(1);
+  }
+  to {
+    transform: scaleX(0);
+  }
+}
+
+@layer components {
+  .at-confetti-piece {
+    @apply absolute top-0 h-2 w-2 rounded-[2px] opacity-0;
+    animation: at-confetti-fall 1.5s ease-out forwards;
+  }
+
+  .at-shimmer-bar {
+    @apply absolute inset-x-0 top-0 h-px bg-gradient-to-r;
+    animation: at-shimmer-sweep 2s infinite;
+  }
+
+  .at-progress-fill {
+    @apply h-full origin-left bg-gradient-to-r;
+    animation: at-shrink linear forwards;
+  }
+}

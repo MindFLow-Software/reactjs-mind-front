@@ -33,6 +33,12 @@ export interface AttachmentListMeta {
   totalStorageSize: number
 }
 
+// GET /attachments (paginado)
+export interface GetAllAttachmentsResponse {
+  attachments: AttachmentListItem[]
+  meta: AttachmentListMeta
+}
+
 // POST /attachments
 export interface UploadAttachmentResponse {
   attachmentId: string

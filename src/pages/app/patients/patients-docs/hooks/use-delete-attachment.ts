@@ -1,5 +1,5 @@
 import { useApiMutation } from '@/hooks/use-api-mutation'
-import { deleteAttachment } from '@/api/attachments/attachments'
+import { deleteAttachment } from '@/api/attachments/delete-attachment'
 
 export function useDeleteAttachment() {
   return useApiMutation<{ message: string | null }, string>({

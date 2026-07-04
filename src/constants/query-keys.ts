@@ -14,4 +14,10 @@ export const queryKeys = {
   popups: ['popups'] as const,
   psychologists: (params?: Record<string, unknown>) =>
     ['psychologists', params] as const,
+  claimCandidates: ['claim-candidates'] as const,
+  claimRequests: ['claim-requests'] as const,
+  claimRequest: (claimRequestId: string | null) =>
+    ['claim-request', claimRequestId] as const,
+  patientInvite: (token: string | undefined) =>
+    ['patient-invite', token] as const,
 } as const

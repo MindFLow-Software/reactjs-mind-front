@@ -1,8 +1,11 @@
+import './create-individual-context.css'
+import './practice-context-shared.css'
 import { Form } from '@/components/ui/form'
 import { Controller, useForm, type Resolver } from 'react-hook-form'
 import { Briefcase, CircleCheck, Repeat2 } from 'lucide-react'
 
 import { zodResolver } from '@hookform/resolvers/zod'
+import { cn } from '@/lib/utils'
 
 import {
   ContextType,
@@ -37,15 +40,17 @@ import {
 } from '@/validators/psychologists/form/create-practice-context-schema'
 import { TitleIcon } from '@/components/title-icon'
 
-type IcreateIndividualContext = {
+interface CreateIndividualContextProps {
   onGoBack: () => void
-  onCreatPracticeContext: (data: CreatePracticeContextBody) => void
+  onCreatePracticeContext: (data: CreatePracticeContextBody) => void
+  isSubmitting?: boolean
 }
 
 export function CreateIndividualContext({
   onGoBack,
-  onCreatPracticeContext,
-}: IcreateIndividualContext) {
+  onCreatePracticeContext,
+  isSubmitting,
+}: CreateIndividualContextProps) {
   const methods = useForm<CreatePsychologistPracticeContextData>({
     resolver: zodResolver(
       createPsychologistPracticeContextSchema,
@@ -71,10 +76,7 @@ export function CreateIndividualContext({
 
   return (
     <div className="w-full max-w-xl mx-auto">
-      <Button
-        onClick={onGoBack}
-        className="text-black bg-transparent border-none hover:bg-transparent gap-1"
-      >
+      <Button onClick={onGoBack} className="pctx-back-button">
         <Repeat2 size={16} />
         Trocar contexto
       </Button>
@@ -95,7 +97,7 @@ export function CreateIndividualContext({
         <Form {...methods}>
           <form
             className="flex flex-col gap-4"
-            onSubmit={handleSubmit(onCreatPracticeContext)}
+            onSubmit={handleSubmit(onCreatePracticeContext)}
           >
             <CardContent className="p-0">
               <FieldSet className="flex flex-col gap-4">
@@ -163,10 +165,11 @@ export function CreateIndividualContext({
                                 onClick={() => {
                                   field.onChange(format)
                                 }}
-                                className={`
-                                flex-1 py-3 cursor-pointer rounded-sm
-                                ${selectedSessionFormat === format && 'bg-violet-200 border border-violet-500 text-violet-500'}
-                              `}
+                                className={cn(
+                                  'cic-format-badge',
+                                  selectedSessionFormat === format &&
+                                    'cic-format-badge-selected',
+                                )}
                               >
                                 {translatedSessionFormat[format]}
                               </Badge>
@@ -217,6 +220,7 @@ export function CreateIndividualContext({
               <Button
                 type="submit"
                 variant="outline"
+                disabled={isSubmitting}
                 className="items-center gap-2"
               >
                 Finalizar

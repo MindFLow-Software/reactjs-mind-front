@@ -23,7 +23,7 @@ import {
 import { cn } from '@/lib/utils'
 import { handleFileDownload } from '@/utils/handle-file-download'
 import { formatFileSize } from '@/utils/format-file-size'
-import type { Attachment } from '@/api/attachments/attachments'
+import type { AttachmentListItem as Attachment } from '@/types/attachment'
 import { getFileKind, FILE_KIND_STYLES, TYPE_BADGE } from '@/utils/file-helpers'
 import './attachments-table-row.css'
 

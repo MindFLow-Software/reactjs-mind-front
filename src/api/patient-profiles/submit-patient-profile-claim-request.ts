@@ -1,14 +1,22 @@
 import { api } from '@/lib/axios'
+import type { IMutationResult } from '@/types/api'
+import type { IPatientProfileClaimRequest } from '@/types/patient-profile-claim-request'
 
-type IsubmitPatientProfileClaimRequest = {
+export type ClaimRequestAction = 'approve' | 'reject'
+
+export interface ISubmitPatientProfileClaimRequestParams {
   claimRequestId: string | null
-  action: 'approve' | 'reject'
+  action: ClaimRequestAction
 }
 
-export const submitPatientProfileClaimRequest = async ({
+export async function submitPatientProfileClaimRequest({
   action,
   claimRequestId,
-}: IsubmitPatientProfileClaimRequest) => {
-  const response = await api.post(`/patient-profiles/claim-requests/${claimRequestId}/${action}`)
-  return response.data
+}: ISubmitPatientProfileClaimRequestParams): Promise<
+  IMutationResult<IPatientProfileClaimRequest>
+> {
+  const response = await api.post<IPatientProfileClaimRequest>(
+    `/patient-profiles/claim-requests/${claimRequestId}/${action}`,
+  )
+  return { data: response.data, message: response.apiMessage ?? null }
 }

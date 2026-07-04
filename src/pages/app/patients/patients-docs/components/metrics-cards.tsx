@@ -1,7 +1,7 @@
 import { FolderOpen, HardDrive, Clock, Archive } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import { formatFileSize } from '@/utils/format-file-size'
-import type { AttachmentListMeta } from '@/api/attachments/attachments'
+import type { AttachmentListMeta } from '@/types/attachment'
 import './metrics-cards.css'
 
 interface MetricCardProps {

@@ -1,20 +1,18 @@
+import './practice-context-shared.css'
 import { Repeat2 } from 'lucide-react'
 
 import { Button } from '@/components/ui/button'
 import type { CreatePracticeContextBody } from '@/types/psychologist'
 
-type IcreateClinicContext = {
+interface CreateClinicContextProps {
   onGoBack: () => void
-  onCreatPracticeContext: (data: CreatePracticeContextBody) => void
+  onCreatePracticeContext: (data: CreatePracticeContextBody) => void
 }
 
-export function CreateClinicContext({ onGoBack }: IcreateClinicContext) {
+export function CreateClinicContext({ onGoBack }: CreateClinicContextProps) {
   return (
     <div className="flex flex-col items-center justify-center bg-muted/30 px-4 text-center">
-      <Button
-        onClick={onGoBack}
-        className="text-black bg-transparent border-none hover:bg-transparent gap-1"
-      >
+      <Button onClick={onGoBack} className="pctx-back-button">
         <Repeat2 size={16} />
         Trocar contexto
       </Button>

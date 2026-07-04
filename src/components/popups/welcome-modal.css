@@ -1,0 +1,84 @@
+@reference "../../global.css";
+
+@layer components {
+  .wm-overlay {
+    @apply fixed inset-0 z-50 flex items-center justify-center p-4 transition-all duration-300;
+  }
+  .wm-overlay-open {
+    @apply bg-slate-900/25 backdrop-blur-sm opacity-100;
+  }
+  .wm-overlay-closed {
+    @apply bg-slate-900/0 backdrop-blur-none opacity-0 pointer-events-none;
+  }
+
+  .wm-container {
+    @apply relative w-full max-w-2xl transition-all duration-500 ease-[cubic-bezier(0.34,1.56,0.64,1)];
+  }
+  .wm-container-open {
+    @apply scale-100 opacity-100 translate-y-0;
+  }
+  .wm-container-closed {
+    @apply scale-90 opacity-0 translate-y-8;
+  }
+
+  .wm-icon-box {
+    @apply flex h-16 w-16 items-center justify-center rounded-xl bg-white shadow-md shadow-slate-200/50
+           border border-slate-100 transition-all duration-500 delay-100;
+  }
+  .wm-icon-box-open {
+    @apply scale-100 opacity-100;
+  }
+  .wm-icon-box-closed {
+    @apply scale-75 opacity-0;
+  }
+
+  .wm-badge {
+    @apply mb-5 flex justify-center transition-all duration-500 delay-150;
+  }
+  .wm-badge-open {
+    @apply translate-y-0 opacity-100;
+  }
+  .wm-badge-closed {
+    @apply translate-y-3 opacity-0;
+  }
+
+  .wm-title {
+    @apply mb-4 text-center text-xl font-semibold tracking-tight text-slate-900
+           transition-all duration-500 delay-200 text-balance;
+  }
+  .wm-title-open {
+    @apply translate-y-0 opacity-100;
+  }
+  .wm-title-closed {
+    @apply translate-y-3 opacity-0;
+  }
+
+  .wm-body {
+    @apply mb-8 text-center text-slate-500 leading-relaxed text-sm transition-all duration-500 delay-300 text-pretty;
+  }
+  .wm-body a {
+    @apply text-slate-700 underline underline-offset-2 decoration-slate-300;
+  }
+  .wm-body a:hover {
+    @apply decoration-slate-500;
+  }
+  .wm-body-open {
+    @apply translate-y-0 opacity-100;
+  }
+  .wm-body-closed {
+    @apply translate-y-3 opacity-0;
+  }
+
+  .wm-button {
+    @apply cursor-pointer group relative w-full overflow-hidden rounded-full bg-gradient-to-r
+           from-blue-500 to-blue-700 py-6 text-sm font-semibold text-white shadow-lg shadow-blue-500/25
+           transition-all duration-300 hover:shadow-xl hover:shadow-blue-500/30 hover:from-blue-600
+           hover:to-blue-800 border-0 delay-500;
+  }
+  .wm-button-open {
+    @apply translate-y-0 opacity-100;
+  }
+  .wm-button-closed {
+    @apply translate-y-4 opacity-0;
+  }
+}

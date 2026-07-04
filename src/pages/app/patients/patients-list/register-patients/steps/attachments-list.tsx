@@ -4,17 +4,15 @@ import { Eye, Download, FileText, Loader2 } from 'lucide-react'
 import { format, parseISO } from 'date-fns'
 import { ptBR } from 'date-fns/locale'
 import { toast } from 'sonner'
-import {
-  getPatientAttachments,
-  deleteAttachment,
-} from '@/api/attachments/attachments'
+import { getPatientAttachments } from '@/api/attachments/get-patient-attachments'
+import { deleteAttachment } from '@/api/attachments/delete-attachment'
 import { handleFileDownload } from '@/utils/handle-file-download'
 import { formatFileSize } from '@/utils/format-file-size'
 import { getFileKind, FILE_KIND_STYLES } from '@/utils/file-helpers'
 import { cn } from '@/lib/utils'
 import { Button } from '@/components/ui/button'
 import { DeleteActionButton } from './delete-attachments-button'
-import type { AttachmentPatientItem } from '@/api/attachments/attachments'
+import type { AttachmentPatientItem } from '@/types/attachment'
 
 interface AttachmentsBodyProps {
   isLoading: boolean

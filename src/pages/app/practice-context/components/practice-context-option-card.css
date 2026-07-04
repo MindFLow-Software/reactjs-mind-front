@@ -1,0 +1,45 @@
+@reference "../../../../global.css";
+
+@layer components {
+  .pctx-option-card {
+    @apply relative w-full max-w-1/2 h-full p-4 gap-1;
+  }
+
+  .pctx-option-accent {
+    @apply absolute left-0 top-0 h-1 w-full;
+  }
+
+  .pctx-option-accent-blue {
+    @apply bg-blue-500;
+  }
+
+  .pctx-option-accent-teal {
+    @apply bg-teal-500;
+  }
+
+  .pctx-option-bullet {
+    @apply flex gap-2 text-sm text-muted-foreground;
+  }
+
+  .pctx-option-bullet-dot {
+    @apply mt-1.5 size-1.5 shrink-0 rounded-full;
+  }
+
+  .pctx-option-bullet-dot-blue {
+    @apply bg-blue-500;
+  }
+
+  .pctx-option-bullet-dot-teal {
+    @apply bg-teal-500;
+  }
+
+  .pctx-option-button-blue {
+    @apply w-full bg-blue-600 text-white hover:bg-blue-700 hover:text-white
+           dark:hover:bg-blue-950/30;
+  }
+
+  .pctx-option-button-teal {
+    @apply flex items-center gap-2 w-full bg-teal-600 text-white
+           hover:bg-teal-700 hover:text-white dark:hover:bg-teal-950/30;
+  }
+}

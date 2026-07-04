@@ -1,20 +1,6 @@
-import { useState } from 'react'
-import { useNavigate } from 'react-router-dom'
-import { useMutation } from '@tanstack/react-query'
-import { ArrowRight, Briefcase, Building2 } from 'lucide-react'
-
-import { toast } from 'sonner'
-
-import {
-  Card,
-  CardTitle,
-  CardHeader,
-  CardFooter,
-  CardContent,
-  CardDescription,
-} from '@/components/ui/card'
-
-import { Button } from '@/components/ui/button'
+import './practice-context-page.css'
+import { useCallback, useState } from 'react'
+import { Briefcase, Building2 } from 'lucide-react'
 
 import {
   ContextType,
@@ -22,43 +8,64 @@ import {
 } from '@/types/psychologist'
 
 import { CreateClinicContext } from './components/create-clinic-context'
-import { createPracticeContext } from '@/api/auth/create-practice-context'
 import { CreateIndividualContext } from './components/create-individual-context'
+import {
+  PracticeContextOptionCard,
+  type PracticeContextOption,
+} from './components/practice-context-option-card'
 import { ActivePsychologistProfileBadge } from '@/pages/auth/components/active-psychologist-profile-badge'
-import { TitleIcon } from '@/components/title-icon'
+import { useCreatePracticeContext } from './hooks/use-create-practice-context'
 
 export function PracticeContextPage() {
-  const navigate = useNavigate()
-
   const [practiceContext, setPracticeContext] = useState<ContextType | null>(
     null,
   )
 
-  const handleSetContextType = (contextType: ContextType) => {
+  const handleSetContextType = useCallback((contextType: ContextType) => {
     setPracticeContext(contextType)
-  }
+  }, [])
 
-  const handleGoBack = () => {
+  const handleGoBack = useCallback(() => {
     setPracticeContext(null)
-  }
+  }, [])
 
-  const { mutateAsync } = useMutation({
-    mutationKey: ['create-psychologist-practice-context'],
-    mutationFn: createPracticeContext,
-    onSuccess: () => {
-      toast.success('Contexto de atuação criado')
-      navigate('/profiles')
-    },
-    onError: () => {
-      toast.error('Erro ao criar contexto de atuação')
-    },
-  })
+  const { mutateAsync, isPending } = useCreatePracticeContext()
 
-  const handleCreatePracticeContext = async (
-    data: CreatePracticeContextBody,
-  ) => {
-    await mutateAsync(data)
-  }
+  const handleCreatePracticeContext = useCallback(
+    async (data: CreatePracticeContextBody) => {
+      await mutateAsync(data)
+    },
+    [mutateAsync],
+  )
+
+  const options: PracticeContextOption[] = [
+    {
+      accent: 'blue',
+      titleIconVariant: 'primary',
+      icon: <Briefcase />,
+      title: 'INDIVIDUAL / PRIVADO',
+      description: 'Você conduz suas próprias sessões',
+      bullets: [
+        'Defina sua própria taxa e disponibilidade',
+        'Faturamento direto aos seus pacientes',
+        'Sessões online ou presenciais',
+      ],
+      onSelect: () => handleSetContextType(ContextType.INDIVIDUAL),
+    },
+    {
+      accent: 'teal',
+      titleIconVariant: 'secondary',
+      icon: <Building2 />,
+      title: 'CLÍNICA / INSTITUIÇÃO',
+      description: 'Participe de um espaço de trabalho por convite.',
+      bullets: [
+        'CRP e credenciais (pagamento único)',
+        'Adicione vários espaços de trabalho posteriormente',
+        'Ferramentas para prática calma e focada',
+      ],
+      onSelect: () => handleSetContextType(ContextType.CLINIC),
+    },
+  ]
 
   const renderPracticeContextForm = () => {
     switch (practiceContext) {
@@ -66,7 +73,8 @@ export function PracticeContextPage() {
         return (
           <CreateIndividualContext
             onGoBack={handleGoBack}
-            onCreatPracticeContext={handleCreatePracticeContext}
+            onCreatePracticeContext={handleCreatePracticeContext}
+            isSubmitting={isPending}
           />
         )
       }
@@ -74,7 +82,7 @@ export function PracticeContextPage() {
         return (
           <CreateClinicContext
             onGoBack={handleGoBack}
-            onCreatPracticeContext={handleCreatePracticeContext}
+            onCreatePracticeContext={handleCreatePracticeContext}
           />
         )
       }
@@ -82,8 +90,8 @@ export function PracticeContextPage() {
   }
 
   return (
-    <div className="flex flex-col items-center justify-center mx-auto mt-4">
-      <div className="flex flex-col items-center justify-center max-w-xl">
+    <div className="pctx-shell">
+      <div className="pctx-header">
         <header className="text-center space-y-2">
           <p className="font-medium text-muted-foreground">
             Contexto de atuação
@@ -103,84 +111,10 @@ export function PracticeContextPage() {
 
       <main className="w-full max-w-4xl">
         {!practiceContext ? (
-          <div className="flex items-center gap-4 h-80">
-            <Card className="relative w-full max-w-1/2 h-full p-4 gap-1">
-              <div className="absolute left-0 top-0 h-1 w-full bg-blue-500" />
-              <CardHeader className="flex items-center gap-2 p-0">
-                <TitleIcon variant="primary">
-                  <Briefcase />
-                </TitleIcon>
-                <CardTitle className="text-xl">INDIVIDUAL / PRIVADO</CardTitle>
-              </CardHeader>
-              <CardContent className="px-0 h-full space-y-6">
-                <CardDescription>Você conduz suas próprias sessões</CardDescription>
-                <ul className="flex flex-col justify-center flex-1 gap-2">
-                  <li className="flex gap-2 text-sm text-muted-foreground">
-                    <span className="mt-1.5 size-1.5 shrink-0 rounded-full bg-blue-500" />
-                    Defina sua própria taxa e disponibilidade
-                  </li>
-                  <li className="flex gap-2 text-sm text-muted-foreground">
-                    <span className="mt-1.5 size-1.5 shrink-0 rounded-full bg-blue-500" />
-                    Faturamento direto aos seus pacientes
-                  </li>
-                  <li className="flex gap-2 text-sm text-muted-foreground">
-                    <span className="mt-1.5 size-1.5 shrink-0 rounded-full bg-blue-500" />
-                    Sessões online ou presenciais
-                  </li>
-                </ul>
-              </CardContent>
-              <CardFooter className="p-0 h-fit">
-                <Button
-                  type="button"
-                  variant="outline"
-                  onClick={() => handleSetContextType(ContextType.INDIVIDUAL)}
-                  className="w-full bg-blue-600 text-white hover:bg-blue-700 hover:text-white dark:hover:bg-blue-950/30"
-                >
-                  Continuar
-                  <ArrowRight className="ml-2 size-4" />
-                </Button>
-              </CardFooter>
-            </Card>
-
-            <Card className="relative w-full max-w-1/2 h-full p-4 gap-1">
-              <div className="absolute left-0 top-0 h-1 w-full bg-teal-500" />
-              <CardHeader className="flex items-center gap-2 p-0">
-                <TitleIcon variant="secondary">
-                  <Building2 />
-                </TitleIcon>
-                <CardTitle className="text-xl">CLÍNICA / INSTITUIÇÃO</CardTitle>
-              </CardHeader>
-              <CardContent className="px-0 h-full space-y-6">
-                <CardDescription>
-                  Participe de um espaço de trabalho por convite.
-                </CardDescription>
-                <ul className="flex flex-col justify-center gap-2">
-                  <li className="flex gap-2 text-sm text-muted-foreground">
-                    <span className="mt-1.5 size-1.5 shrink-0 rounded-full bg-teal-500" />
-                    CRP e credenciais (pagamento único)
-                  </li>
-                  <li className="flex gap-2 text-sm text-muted-foreground">
-                    <span className="mt-1.5 size-1.5 shrink-0 rounded-full bg-teal-500" />
-                    Adicione vários espaços de trabalho posteriormente
-                  </li>
-                  <li className="flex gap-2 text-sm text-muted-foreground">
-                    <span className="mt-1.5 size-1.5 shrink-0 rounded-full bg-teal-500" />
-                    Ferramentas para prática calma e focada
-                  </li>
-                </ul>
-              </CardContent>
-              <CardFooter className="p-0 mt-auto">
-                <Button
-                  type="button"
-                  variant="outline"
-                  onClick={() => handleSetContextType(ContextType.CLINIC)}
-                  className="flex items-center gap-2 w-full bg-teal-600 text-white hover:bg-teal-700 hover:text-white dark:hover:bg-teal-950/30"
-                >
-                  Continuar
-                  <ArrowRight size={16} />
-                </Button>
-              </CardFooter>
-            </Card>
+          <div className="pctx-options-row">
+            {options.map((option) => (
+              <PracticeContextOptionCard key={option.title} option={option} />
+            ))}
           </div>
         ) : (
           renderPracticeContextForm()

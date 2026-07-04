@@ -1,17 +1,8 @@
-import { api } from '@/lib/axios'
+import { getAttachmentBlob } from '@/api/attachments/get-attachment-blob'
 
 export async function handleFileDownload(fileKey: string, filename: string) {
   try {
-    // 🟢 OBRIGATÓRIO: responseType 'blob' para arquivos binários
-    const response = await api.get(`/attachments/${fileKey}`, {
-      responseType: 'blob',
-    })
-
-    // Cria o arquivo na memória do navegador
-    const blob = new Blob([response.data], {
-      type: response.headers['content-type'] as string || 'application/octet-stream',
-    })
-
+    const blob = await getAttachmentBlob(fileKey)
     const url = window.URL.createObjectURL(blob)
     const link = document.createElement('a')
 

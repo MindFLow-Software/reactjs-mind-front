@@ -1,14 +1,10 @@
 import { useCallback, useState } from 'react'
-import { useNavigate, useParams } from 'react-router-dom'
-import { useMutation } from '@tanstack/react-query'
+import { useParams } from 'react-router-dom'
 import { Controller, useForm } from 'react-hook-form'
 import { Eye, EyeOff } from 'lucide-react'
 
 import { cn } from '@/lib/utils'
-import { toast } from 'sonner'
 import { zodResolver } from '@hookform/resolvers/zod'
-
-import { registerViaPatientInvite } from '@/api/patient-profiles/register-via-patient-invite'
 
 import {
   Card,
@@ -31,21 +27,22 @@ import { Form } from '@/components/ui/form'
 import { Input } from '@/components/ui/input'
 import { Button } from '@/components/ui/button'
 import { MaskedInput } from '@/components/maked-input'
-
 import { PasswordStrength } from '@/components/password-strength'
 
 import {
   registerViaPatientInviteSchema,
   type RegisterViaPatientInviteData,
 } from '@/validators/register-via-patient-invite/form/register-via-patient-invite-schema'
-import { signIn } from '@/api/auth/sign-in'
+
+import { useRegisterViaPatientInvite } from './hooks/use-register-via-patient-invite'
+
+import './register-via-patient-invite-page.css'
 
 type Iparams = {
   token: string
 }
 
 export function RegisterViaPatientInvitePage() {
-  const navigate = useNavigate()
   const { token } = useParams<Iparams>()
 
   const [showPassword, setShowPassword] = useState(false)
@@ -74,34 +71,11 @@ export function RegisterViaPatientInvitePage() {
     [],
   )
 
-  const { mutateAsync, isPending: isRegistering } = useMutation({
-    mutationKey: ['register-via-patient-invite', token],
-    mutationFn: async (data: RegisterViaPatientInviteData) => {
-      await registerViaPatientInvite(token, data)
-    },
-    onSuccess: async (_, { email, password }) => {
-      toast.success('Conta criada com sucesso.')
-      await signIn({
-        email,
-        password,
-      })
-      navigate(`/patient/invite/${token}/review`)
-    },
-    onError: () => {
-      toast.error('Erro ao criar conta.')
-    },
-  })
-
-  const onRegisterViaPatientInvite = async (
-    data: RegisterViaPatientInviteData,
-  ) => {
-    await mutateAsync(data)
-  }
-
-  const isDisabled = isRegistering
+  const { registerPatientAccount, isRegistering } =
+    useRegisterViaPatientInvite(token)
 
   return (
-    <Card className="w-xl gap-2">
+    <Card className="inv-register-card">
       <CardHeader>
         <CardTitle>Finalizar Cadastro</CardTitle>
         <CardDescription>
@@ -110,7 +84,7 @@ export function RegisterViaPatientInvitePage() {
         </CardDescription>
       </CardHeader>
       <Form {...methods}>
-        <form onSubmit={handleSubmit(onRegisterViaPatientInvite)}>
+        <form onSubmit={handleSubmit(registerPatientAccount)}>
           <CardContent>
             <FieldSet className="gap-4">
               <FieldGroup className="flex flex-row items-start gap-4">
@@ -217,10 +191,7 @@ export function RegisterViaPatientInvitePage() {
                         <button
                           type="button"
                           onClick={togglePasswordVisibility}
-                          className="
-                            absolute right-2.5 top-1/2 -translate-y-1/2 text-muted-foreground
-                            hover:text-foreground cursor-pointer transition-colors outline-none rounded-sm
-                          "
+                          className="inv-password-toggle"
                           aria-label={
                             showPassword ? 'Ocultar senha' : 'Mostrar senha'
                           }
@@ -242,8 +213,8 @@ export function RegisterViaPatientInvitePage() {
               <PasswordStrength value={passwordValue} />
             </FieldSet>
           </CardContent>
-          <CardFooter className="flex justify-end mt-4">
-            <Button type="submit" disabled={isDisabled}>
+          <CardFooter className="inv-register-footer">
+            <Button type="submit" disabled={isRegistering}>
               Cadastrar
             </Button>
           </CardFooter>
