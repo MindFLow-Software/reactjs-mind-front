@@ -1,0 +1,27 @@
+@reference "../global.css";
+
+@layer components {
+  .pgn-root {
+    @apply flex items-center justify-between;
+  }
+
+  .pgn-total {
+    @apply text-sm text-muted-foreground;
+  }
+
+  .pgn-pages {
+    @apply flex items-center gap-6 lg:gap-8;
+  }
+
+  .pgn-indicator {
+    @apply text-sm font-medium;
+  }
+
+  .pgn-controls {
+    @apply flex items-center gap-2;
+  }
+
+  .pgn-btn {
+    @apply h-8 w-8 cursor-pointer p-0;
+  }
+}

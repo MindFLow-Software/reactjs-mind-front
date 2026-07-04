@@ -1,8 +1,7 @@
 'use client'
 
 import * as React from 'react'
-import { ChevronsUpDown, Plus } from 'lucide-react'
-import { Brain } from '@phosphor-icons/react'
+import { Brain, ChevronsUpDown, Plus } from 'lucide-react'
 
 import {
   DropdownMenu,
@@ -20,6 +19,7 @@ import {
   useSidebar,
 } from '@/components/ui/sidebar'
 import { Skeleton } from '@/components/ui/skeleton'
+import './team-switcher.css'
 
 interface TeamSwitcherTeam {
   name: string
@@ -48,8 +48,8 @@ export function TeamSwitcher({ teams, isLoading }: TeamSwitcherProps) {
     return (
       <SidebarMenu>
         <SidebarMenuItem>
-          <div className="px-2 py-1.5">
-            <Skeleton className="h-12 w-full rounded-lg" />
+          <div className="ts-skeleton-wrap">
+            <Skeleton className="ts-skeleton" />
           </div>
         </SidebarMenuItem>
       </SidebarMenu>
@@ -71,32 +71,32 @@ export function TeamSwitcher({ teams, isLoading }: TeamSwitcherProps) {
               size="lg"
               className="data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground"
             >
-              <div className="text-sidebar-primary-foreground flex aspect-square size-8 items-center justify-center rounded-lg">
-                <Brain size={32} className="text-blue-500" />
+              <div className="ts-logo text-sidebar-primary-foreground">
+                <Brain size={32} className="ts-brand-icon" />
               </div>
-              <div className="grid flex-1 text-left text-sm leading-tight">
-                <span className="truncate font-medium">{fullName}</span>
-                <span className="truncate text-xs">{activeTeam.plan}</span>
+              <div className="ts-info">
+                <span className="ts-name">{fullName}</span>
+                <span className="ts-plan">{activeTeam.plan}</span>
               </div>
               <ChevronsUpDown className="ml-auto" />
             </SidebarMenuButton>
           </DropdownMenuTrigger>
           <DropdownMenuContent
-            className="w-[--radix-dropdown-menu-trigger-width] min-w-56 rounded-lg"
+            className="ts-content w-[--radix-dropdown-menu-trigger-width]"
             align="start"
             side={isMobile ? 'bottom' : 'right'}
             sideOffset={4}
           >
-            <DropdownMenuLabel className="text-muted-foreground text-xs">
+            <DropdownMenuLabel className="ts-group-label">
               Equipes
             </DropdownMenuLabel>
             {teams.map((team, index) => (
               <DropdownMenuItem
                 key={team.name}
                 onClick={() => setActiveTeam(team)}
-                className="gap-2 p-2"
+                className="ts-item"
               >
-                <div className="flex size-6 items-center justify-center rounded-md border">
+                <div className="ts-item-logo">
                   <team.logo className="size-3.5 shrink-0" />
                 </div>
                 {team.firstName} {team.lastName}
@@ -104,13 +104,11 @@ export function TeamSwitcher({ teams, isLoading }: TeamSwitcherProps) {
               </DropdownMenuItem>
             ))}
             <DropdownMenuSeparator />
-            <DropdownMenuItem className="gap-2 p-2">
-              <div className="flex size-6 items-center justify-center rounded-md border bg-transparent">
+            <DropdownMenuItem className="ts-item">
+              <div className="ts-add-logo">
                 <Plus className="size-4" />
               </div>
-              <div className="text-muted-foreground font-medium">
-                Adicionar equipe
-              </div>
+              <div className="ts-add-label">Adicionar equipe</div>
             </DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>

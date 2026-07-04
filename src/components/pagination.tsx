@@ -7,20 +7,22 @@ import {
 } from 'lucide-react'
 
 import { Button } from './ui/button'
+import './pagination.css'
+
+export interface PaginationState {
+  pageIndex: number
+  perPage: number
+  totalCount: number
+  onPageChange: (pageIndex: number) => void
+}
 
 interface PaginationProps {
-  pageIndex: number
-  totalCount: number
-  perPage: number
-  onPageChange: (pageIndex: number) => void
+  pagination: PaginationState
   totalLabel?: string
 }
 
 export const Pagination = memo(function Pagination({
-  pageIndex,
-  perPage,
-  totalCount,
-  onPageChange,
+  pagination: { pageIndex, perPage, totalCount, onPageChange },
   totalLabel = 'registros',
 }: PaginationProps) {
   const pages = Math.ceil(totalCount / perPage) || 1
@@ -28,20 +30,20 @@ export const Pagination = memo(function Pagination({
   const isLastPage = pageIndex === pages - 1
 
   return (
-    <div className="flex items-center justify-between">
-      <span className="text-sm text-muted-foreground">
+    <div className="pgn-root">
+      <span className="pgn-total">
         Total de {totalCount} {totalLabel}
       </span>
 
-      <div className="flex items-center gap-6 lg:gap-8">
-        <div className="text-sm font-medium">
+      <div className="pgn-pages">
+        <div className="pgn-indicator">
           Página {pageIndex + 1} de {pages}
         </div>
-        <div className="flex items-center gap-2">
+        <div className="pgn-controls">
           <Button
             onClick={() => onPageChange(0)}
             variant="outline"
-            className="h-8 w-8 p-0 cursor-pointer"
+            className="pgn-btn"
             disabled={isFirstPage}
           >
             <ChevronsLeft className="h-4 w-4" />
@@ -51,7 +53,7 @@ export const Pagination = memo(function Pagination({
           <Button
             onClick={() => onPageChange(pageIndex - 1)}
             variant="outline"
-            className="h-8 w-8 p-0 cursor-pointer"
+            className="pgn-btn"
             disabled={isFirstPage}
           >
             <ChevronLeft className="h-4 w-4" />
@@ -61,7 +63,7 @@ export const Pagination = memo(function Pagination({
           <Button
             onClick={() => onPageChange(pageIndex + 1)}
             variant="outline"
-            className="h-8 w-8 p-0 cursor-pointer"
+            className="pgn-btn"
             disabled={isLastPage}
           >
             <ChevronRight className="h-4 w-4" />
@@ -71,7 +73,7 @@ export const Pagination = memo(function Pagination({
           <Button
             onClick={() => onPageChange(pages - 1)}
             variant="outline"
-            className="h-8 w-8 p-0 cursor-pointer"
+            className="pgn-btn"
             disabled={isLastPage}
           >
             <ChevronsRight className="h-4 w-4" />

@@ -48,20 +48,26 @@ const styles = StyleSheet.create({
   },
 })
 
-export interface SessionPDFProps {
-  psychologist: { name: string; crp?: string | null }
+export interface SessionPDFPsychologist {
+  name: string
+  crp?: string | null
+}
+
+export interface SessionPDFRecord {
   patientName: string
-  date: string // String já formatada
-  content: string // Conteúdo da nota
-  diagnosis?: string // Tema ou diagnóstico
+  date: string
+  content: string
+  diagnosis?: string
+}
+
+export interface SessionPDFProps {
+  psychologist: SessionPDFPsychologist
+  record: SessionPDFRecord
 }
 
 export function SessionPDFTemplate({
   psychologist,
-  patientName,
-  date,
-  content,
-  diagnosis,
+  record: { patientName, date, content, diagnosis },
 }: SessionPDFProps) {
   return (
     <Document>

@@ -18,23 +18,16 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from '@/components/ui/tooltip'
-import { Pagination } from '@/components/pagination'
+import { Pagination, type PaginationState } from '@/components/pagination'
 import {
   FINISHED_SESSION_STATUSES,
   getSessionStatusLabel,
 } from '@/utils/mappers'
 import type { SessionItem } from '@/types/patient'
 
-interface SessionHistoryPagination {
-  pageIndex: number
-  perPage: number
-  totalCount: number
-  onPageChange: (pageIndex: number) => void
-}
-
 interface SessionHistoryTableProps {
   sessions: SessionItem[]
-  pagination: SessionHistoryPagination
+  pagination: PaginationState
   onSelectSession: (session: SessionItem) => void
 }
 
@@ -139,13 +132,7 @@ export function SessionHistoryTable({
         </Table>
       </div>
 
-      <Pagination
-        pageIndex={pagination.pageIndex}
-        totalCount={pagination.totalCount}
-        perPage={pagination.perPage}
-        onPageChange={pagination.onPageChange}
-        totalLabel="registro(s)"
-      />
+      <Pagination pagination={pagination} totalLabel="registro(s)" />
     </div>
   )
 }

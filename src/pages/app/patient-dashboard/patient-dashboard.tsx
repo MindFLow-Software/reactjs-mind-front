@@ -1,10 +1,28 @@
+import { Clock } from 'lucide-react'
+
+import {
+  Empty,
+  EmptyDescription,
+  EmptyHeader,
+  EmptyMedia,
+  EmptyTitle,
+} from '@/components/ui/empty'
+import './patient-dashboard.css'
+
 export function PatientDashboard() {
   return (
-    <div className="flex min-h-screen w-full flex-col items-center justify-center bg-muted/30 px-4 text-center">
-      <h1 className="text-2xl font-bold text-foreground">Painel do paciente</h1>
-      <p className="mt-2 text-sm text-muted-foreground">
-        Em breve. Esta área está em construção.
-      </p>
+    <div className="pd-root">
+      <Empty>
+        <EmptyHeader>
+          <EmptyMedia variant="icon">
+            <Clock />
+          </EmptyMedia>
+          <EmptyTitle>Painel do paciente</EmptyTitle>
+          <EmptyDescription>
+            Em breve. Esta área está em construção.
+          </EmptyDescription>
+        </EmptyHeader>
+      </Empty>
     </div>
   )
 }

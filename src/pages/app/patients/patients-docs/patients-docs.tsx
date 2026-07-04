@@ -121,10 +121,12 @@ export function PatientDocuments() {
               {meta.totalCount > 0 && (
                 <PatientsDataBlock.Footer>
                   <Pagination
-                    pageIndex={meta.pageIndex}
-                    totalCount={meta.totalCount}
-                    perPage={meta.perPage}
-                    onPageChange={filters.setPageIndex}
+                    pagination={{
+                      pageIndex: meta.pageIndex,
+                      totalCount: meta.totalCount,
+                      perPage: meta.perPage,
+                      onPageChange: filters.setPageIndex,
+                    }}
                     totalLabel="documentos arquivados"
                   />
                 </PatientsDataBlock.Footer>

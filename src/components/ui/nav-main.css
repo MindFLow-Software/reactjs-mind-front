@@ -1,0 +1,11 @@
+@reference "../../global.css";
+
+@layer components {
+  .nm-title {
+    @apply font-medium;
+  }
+
+  .nm-chevron {
+    @apply ml-auto size-4 text-muted-foreground/80 transition-transform duration-200;
+  }
+}

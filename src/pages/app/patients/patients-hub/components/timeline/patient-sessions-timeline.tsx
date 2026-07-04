@@ -111,10 +111,12 @@ export function PatientSessionsTimeline({
 
       <div className="pst-pagination-wrapper">
         <Pagination
-          pageIndex={pageIndex}
-          totalCount={meta.totalCount}
-          perPage={meta.perPage}
-          onPageChange={onPageChange}
+          pagination={{
+            pageIndex,
+            totalCount: meta.totalCount,
+            perPage: meta.perPage,
+            onPageChange,
+          }}
           totalLabel="Sessões"
         />
       </div>

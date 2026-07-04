@@ -9,7 +9,6 @@ import { NotFound } from './pages/404'
 import { SignIn } from './pages/auth/sign-in'
 import { SignUp } from './pages/auth/sign-up'
 import { GoogleOAuthSuccess } from './pages/auth/google-oauth-success'
-import { GoogleOAuthComplete } from './pages/auth/google-oauth-complete'
 import { ProfilesPage } from './pages/app/profiles/profiles-page'
 import { PatientDashboard } from './pages/app/patient-dashboard/patient-dashboard'
 import { AppointmentsList } from './pages/app/appointment/appointment-list/appointment-list'
@@ -96,7 +95,10 @@ export const router = createBrowserRouter([
       { path: '/sign-in', element: <SignIn /> },
       { path: '/sign-up', element: <SignUp /> },
       { path: '/auth/google/success', element: <GoogleOAuthSuccess /> },
-      { path: '/auth/google/complete', element: <GoogleOAuthComplete /> },
+      {
+        path: '/auth/google/complete',
+        loader: () => redirect('/auth/google/success'),
+      },
       { path: '/google-oauth-success', element: <GoogleOAuthSuccess /> },
       { path: '/claim-account', element: <ClaimAccountPage /> },
       {
@@ -111,7 +113,10 @@ export const router = createBrowserRouter([
         path: '/patient/invite/:token/review',
         element: <PatientInviteReviewPage />,
       },
-      { path: '/google-oauth-complete', loader: () => redirect('/sign-in') }, // TODO: remove/replace this route
+      {
+        path: '/google-oauth-complete',
+        loader: () => redirect('/auth/google/success'),
+      },
     ],
   },
   {
@@ -151,21 +156,50 @@ export const router = createBrowserRouter([
         loader: practiceContextGuard,
         element: <Dashboard />,
       },
-      { path: '/dashboard-finance', element: <DashboardFinance /> },
-      { path: '/patients-list', element: <PatientsList /> },
-      { path: '/patients-records', element: <PatientsRecords /> },
-      { path: '/patients-docs', element: <PatientDocuments /> },
-      { path: '/patients/:id/details', element: <PatientDetails /> },
+      {
+        path: '/dashboard-finance',
+        loader: practiceContextGuard,
+        element: <DashboardFinance />,
+      },
+      {
+        path: '/patients-list',
+        loader: practiceContextGuard,
+        element: <PatientsList />,
+      },
+      {
+        path: '/patients-records',
+        loader: practiceContextGuard,
+        element: <PatientsRecords />,
+      },
+      {
+        path: '/patients-docs',
+        loader: practiceContextGuard,
+        element: <PatientDocuments />,
+      },
+      {
+        path: '/patients/:id/details',
+        loader: practiceContextGuard,
+        element: <PatientDetails />,
+      },
       {
         path: '/video-room',
+        loader: practiceContextGuard,
         element: (
           <Suspense fallback={<RouteFallback />}>
             <AppointmentsRoom />
           </Suspense>
         ),
       },
-      { path: '/appointment', element: <AppointmentsList /> },
-      { path: '/availability', element: <AvailabilityPage /> },
+      {
+        path: '/appointment',
+        loader: practiceContextGuard,
+        element: <AppointmentsList />,
+      },
+      {
+        path: '/availability',
+        loader: practiceContextGuard,
+        element: <AvailabilityPage />,
+      },
       { path: '/account', element: <MockPsychologistProfilePage /> },
       { path: '/approvals', loader: () => redirect('/admin-dashboard') },
       {
@@ -197,6 +231,7 @@ export const router = createBrowserRouter([
 
       {
         path: '/patient-profiles/claim-requests',
+        loader: practiceContextGuard,
         element: <ClaimProfileRequestsPage />,
       },
 

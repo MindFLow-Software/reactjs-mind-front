@@ -50,10 +50,12 @@ export function SessionRow({ session, patientName }: SessionRowProps) {
     exportToPdf(
       createElement(SessionPDFTemplate, {
         psychologist: { name: 'Seu Nome Profissional', crp: '06/12345-X' },
-        patientName,
-        date: dateFormatted,
-        content: session?.content ?? 'Nenhuma nota registrada.',
-        diagnosis: session?.theme ?? '',
+        record: {
+          patientName,
+          date: dateFormatted,
+          content: session?.content ?? 'Nenhuma nota registrada.',
+          diagnosis: session?.theme ?? '',
+        },
       }),
     )
   }, [date, exportToPdf, patientName, session, setFilename])

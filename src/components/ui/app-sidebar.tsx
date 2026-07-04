@@ -1,4 +1,5 @@
 'use client'
+// No paired CSS: composition-only shell over shadcn Sidebar + nav config, no feature styling.
 import * as React from 'react'
 
 import { useAuth } from '@/hooks/use-auth'

@@ -234,10 +234,12 @@ export function PatientsList() {
 
               <PatientsDataBlock.Footer>
                 <Pagination
-                  pageIndex={meta.pageIndex}
-                  totalCount={meta.totalCount}
-                  perPage={meta.perPage}
-                  onPageChange={setPage}
+                  pagination={{
+                    pageIndex: meta.pageIndex,
+                    totalCount: meta.totalCount,
+                    perPage: meta.perPage,
+                    onPageChange: setPage,
+                  }}
                   totalLabel="Pacientes"
                 />
               </PatientsDataBlock.Footer>

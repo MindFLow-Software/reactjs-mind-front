@@ -39,10 +39,12 @@ export function EvolutionViewer({
       const blob = await pdf(
         <SessionPDFTemplate
           psychologist={psychologist}
-          patientName={patientName}
-          date={isDateValid ? format(parsedDate, 'dd/MM/yyyy') : '--/--/----'}
-          content={content || 'Nenhuma evolucao registrada.'}
-          diagnosis={diagnosis || 'Nao informado'}
+          record={{
+            patientName,
+            date: isDateValid ? format(parsedDate, 'dd/MM/yyyy') : '--/--/----',
+            content: content || 'Nenhuma evolucao registrada.',
+            diagnosis: diagnosis || 'Nao informado',
+          }}
         />,
       ).toBlob()
 

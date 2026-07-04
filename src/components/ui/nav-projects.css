@@ -1,0 +1,7 @@
+@reference "../../global.css";
+
+@layer components {
+  .np-group {
+    @apply group-data-[collapsible=icon]:hidden;
+  }
+}
