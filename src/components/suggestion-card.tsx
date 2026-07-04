@@ -59,7 +59,7 @@ export function SuggestionCard({ item, userId, onLike }: SuggestionCardProps) {
             </button>
           )}
 
-          <div className="flex-1 min-w-0 space-y-1.5">
+          <div className="flex-1 min-w-0 flex flex-col gap-1.5">
             <h3
               className={cn(
                 'sc-title',

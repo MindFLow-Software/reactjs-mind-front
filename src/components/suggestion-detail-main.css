@@ -2,7 +2,7 @@
 
 @layer components {
   .sdm-main {
-    @apply flex-1 overflow-y-auto px-[22px] pt-[6px] pb-[22px] space-y-5 min-w-0 scrollbar-thin scrollbar-thumb-border hover:scrollbar-thumb-muted-foreground/30;
+    @apply flex-1 overflow-y-auto px-[22px] pt-[6px] pb-[22px] flex flex-col gap-5 min-w-0 scrollbar-thin scrollbar-thumb-border hover:scrollbar-thumb-muted-foreground/30;
   }
 
   .sdm-description {

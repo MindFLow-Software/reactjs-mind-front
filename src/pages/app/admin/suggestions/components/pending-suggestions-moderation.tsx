@@ -35,6 +35,7 @@ import {
   SelectItem,
   SelectTrigger,
   SelectValue,
+  SelectGroup,
 } from '@/components/ui/select'
 import {
   Dialog,
@@ -92,7 +93,7 @@ export function PendingSuggestionsModeration() {
             <Loader2 className="animate-spin text-muted-foreground" />
           </div>
         ) : isEmpty ? (
-          <div className="p-12 text-center space-y-2">
+          <div className="p-12 text-center flex flex-col gap-2">
             <Check className="size-8 text-emerald-500 mx-auto opacity-20" />
             <p className="text-sm text-muted-foreground font-medium">
               Nenhuma sugestão pendente no momento.
@@ -148,7 +149,7 @@ function SuggestionModerationItem({
 
   return (
     <div className="ads-mod-row">
-      <div className="space-y-2 flex-1 min-w-0">
+      <div className="flex flex-col gap-2 flex-1 min-w-0">
         <div className="flex items-center gap-2">
           <span className="ads-mod-badge">
             {translatedSuggestionCategory[item.category] || 'Geral'}
@@ -185,9 +186,9 @@ function SuggestionModerationItem({
               </DialogTitle>
             </DialogHeader>
 
-            <div className="space-y-5 min-w-0 overflow-hidden">
+            <div className="flex flex-col gap-5 min-w-0 overflow-hidden">
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                <div className="space-y-2 min-w-0">
+                <div className="flex flex-col gap-2 min-w-0">
                   <Label className="ads-mod-field-label">
                     <FileText className="size-3" /> Título (Editável)
                   </Label>
@@ -197,7 +198,7 @@ function SuggestionModerationItem({
                     className="ads-mod-field-input"
                   />
                 </div>
-                <div className="space-y-2">
+                <div className="flex flex-col gap-2">
                   <Label className="ads-mod-field-label">
                     <Tag className="size-3" /> Categoria
                   </Label>
@@ -206,19 +207,21 @@ function SuggestionModerationItem({
                       <SelectValue />
                     </SelectTrigger>
                     <SelectContent className="bg-popover border-border">
-                      {Object.entries(translatedSuggestionCategory).map(
-                        ([val, label]) => (
-                          <SelectItem key={val} value={val}>
-                            {label}
-                          </SelectItem>
-                        ),
-                      )}
+                      <SelectGroup>
+                        {Object.entries(translatedSuggestionCategory).map(
+                          ([val, label]) => (
+                            <SelectItem key={val} value={val}>
+                              {label}
+                            </SelectItem>
+                          ),
+                        )}
+                      </SelectGroup>
                     </SelectContent>
                   </Select>
                 </div>
               </div>
 
-              <div className="space-y-2 min-w-0">
+              <div className="flex flex-col gap-2 min-w-0">
                 <Label className="ads-mod-field-label">
                   <AlignLeft className="size-3" /> Descrição da Sugestão
                   (Editável)

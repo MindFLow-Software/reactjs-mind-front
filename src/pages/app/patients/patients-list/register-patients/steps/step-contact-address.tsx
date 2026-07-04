@@ -19,7 +19,7 @@ export function StepContactAddress() {
   const { control } = useFormContext<CreatePatientFormData>()
 
   return (
-    <div className="space-y-6">
+    <div className="flex flex-col gap-6">
       <div>
         <SectionTitle icon={Phone} label="Contato" />
         <div className="patient-form-grid-2">

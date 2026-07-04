@@ -70,7 +70,7 @@ export function RoadmapCard({
       <DialogTrigger asChild>
         <article className="group ads-roadmap-article">
           <div className="flex flex-col xl:flex-row xl:items-center justify-between gap-6 min-w-0">
-            <div className="space-y-3 flex-1 min-w-0">
+            <div className="flex flex-col gap-3 flex-1 min-w-0">
               <div className="flex items-center gap-2">
                 <span className="ads-roadmap-badge">
                   {translatedSuggestionCategory[item.category] || item.category}
@@ -157,7 +157,7 @@ export function RoadmapCard({
           </DialogTitle>
         </DialogHeader>
 
-        <div className="space-y-6">
+        <div className="flex flex-col gap-6">
           <div className="ads-roadmap-dialog-desc-box">
             <p className="text-sm text-muted-foreground whitespace-pre-wrap leading-relaxed break-words">
               {item.description}

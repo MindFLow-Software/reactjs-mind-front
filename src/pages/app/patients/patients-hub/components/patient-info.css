@@ -3,7 +3,7 @@
 @layer components {
   /* Root */
   .ph-patient-info {
-    @apply space-y-4 mt-4;
+    @apply flex flex-col gap-4 mt-4;
   }
 
   .ph-patient-info__grid {

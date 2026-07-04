@@ -6,7 +6,7 @@ export const createAppointmentSchema = z.object({
   diagnosis: z.string().min(1, 'Diagnóstico é obrigatório'),
   content: z.string().optional(),
   scheduledAt: z.string().min(1, 'Data é obrigatória'),
-  status: z.enum(AppointmentStatus).default('SCHEDULED'),
+  status: z.enum(AppointmentStatus),
 })
 
 export type CreateAppointmentData = z.infer<typeof createAppointmentSchema>

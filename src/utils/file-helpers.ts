@@ -39,27 +39,27 @@ export const FILE_KIND_STYLES: Record<
   pdf: {
     gradient: 'from-red-600 to-red-800',
     label: 'PDF',
-    labelColor: '#fca5a5',
+    labelColor: 'text-red-300',
   },
   image: {
     gradient: 'from-cyan-500 to-cyan-700',
     label: 'IMG',
-    labelColor: '#67e8f9',
+    labelColor: 'text-cyan-300',
   },
   doc: {
     gradient: 'from-blue-500 to-blue-800',
     label: 'DOC',
-    labelColor: '#93c5fd',
+    labelColor: 'text-blue-300',
   },
   xls: {
     gradient: 'from-green-600 to-green-800',
     label: 'XLS',
-    labelColor: '#86efac',
+    labelColor: 'text-green-300',
   },
   other: {
     gradient: 'from-slate-500 to-slate-700',
     label: 'FILE',
-    labelColor: '#cbd5e1',
+    labelColor: 'text-slate-300',
   },
 }
 

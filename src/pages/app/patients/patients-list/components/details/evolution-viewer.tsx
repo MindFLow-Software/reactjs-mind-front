@@ -70,7 +70,7 @@ export function EvolutionViewer({
   }
 
   return (
-    <div className="w-full min-w-0 max-w-full mx-auto space-y-6 py-2 overflow-x-hidden">
+    <div className="w-full min-w-0 max-w-full mx-auto flex flex-col gap-6 py-2 overflow-x-hidden">
       <div className="flex items-center justify-between">
         <Button
           variant="ghost"

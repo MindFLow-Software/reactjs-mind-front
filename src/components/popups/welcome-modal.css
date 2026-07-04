@@ -70,7 +70,7 @@
   }
 
   .wm-button {
-    @apply cursor-pointer group relative w-full overflow-hidden rounded-full bg-gradient-to-r
+    @apply cursor-pointer relative w-full overflow-hidden rounded-full bg-gradient-to-r
            from-blue-500 to-blue-700 py-6 text-sm font-semibold text-white shadow-lg shadow-blue-500/25
            transition-all duration-300 hover:shadow-xl hover:shadow-blue-500/30 hover:from-blue-600
            hover:to-blue-800 border-0 delay-500;

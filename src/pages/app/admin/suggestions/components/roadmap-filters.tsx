@@ -23,6 +23,7 @@ import {
   SelectItem,
   SelectTrigger,
   SelectValue,
+  SelectGroup,
 } from '@/components/ui/select'
 import './roadmap-filters.css'
 
@@ -139,21 +140,23 @@ export function RoadmapFilters({
           </SelectTrigger>
 
           <SelectContent className="min-w-[220px]">
-            {CATEGORIES.map((item) => {
-              const Icon = item.icon
-              return (
-                <SelectItem
-                  key={item.value}
-                  value={item.value}
-                  className="cursor-pointer py-2.5"
-                >
-                  <div className="flex items-center gap-2 whitespace-nowrap">
-                    <Icon className={`h-4 w-4 ${item.color}`} />
-                    <span className="text-sm font-medium">{item.label}</span>
-                  </div>
-                </SelectItem>
-              )
-            })}
+            <SelectGroup>
+              {CATEGORIES.map((item) => {
+                const Icon = item.icon
+                return (
+                  <SelectItem
+                    key={item.value}
+                    value={item.value}
+                    className="cursor-pointer py-2.5"
+                  >
+                    <div className="flex items-center gap-2 whitespace-nowrap">
+                      <Icon className={`h-4 w-4 ${item.color}`} />
+                      <span className="text-sm font-medium">{item.label}</span>
+                    </div>
+                  </SelectItem>
+                )
+              })}
+            </SelectGroup>
           </SelectContent>
         </Select>
 

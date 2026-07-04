@@ -2,7 +2,7 @@
 
 @layer components {
   .prt-root {
-    @apply mt-4 space-y-4;
+    @apply mt-4 flex flex-col gap-4;
   }
 
   .prt-stats-grid {

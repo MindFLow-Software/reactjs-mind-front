@@ -47,7 +47,7 @@ export function MockPsychologistProfilePage() {
         <div className="acc-page-error-icon">
           <p className="text-4xl">😕</p>
         </div>
-        <div className="space-y-1">
+        <div className="flex flex-col gap-1">
           <h2 className="text-xl font-semibold">Ops! Algo deu errado</h2>
           <p className="text-muted-foreground">
             Não conseguimos carregar os dados da sua conta agora.

@@ -29,6 +29,7 @@ import {
   SelectItem,
   SelectTrigger,
   SelectValue,
+  SelectGroup,
 } from '@/components/ui/select'
 import {
   Popover,
@@ -142,7 +143,7 @@ export function RegisterAppointment({
 
   return (
     <DialogContent className="max-h-[90vh] max-w-2xl overflow-y-auto">
-      <DialogHeader className="space-y-1.5">
+      <DialogHeader className="flex flex-col gap-1.5">
         <DialogTitle className="text-xl font-semibold">
           Novo Agendamento
         </DialogTitle>
@@ -152,7 +153,10 @@ export function RegisterAppointment({
       </DialogHeader>
 
       <Form {...form}>
-        <form onSubmit={handleSubmit(onSubmit)} className="space-y-5 pt-2">
+        <form
+          onSubmit={handleSubmit(onSubmit)}
+          className="flex flex-col gap-5 pt-2"
+        >
           <FormField
             control={control}
             name="patientProfileId"
@@ -181,25 +185,27 @@ export function RegisterAppointment({
                       />
                     </SelectTrigger>
                     <SelectContent className="max-h-[280px]">
-                      {isLoadingPatients ? (
-                        <div className="flex items-center justify-center py-4">
-                          <Loader2 className="h-5 w-5 animate-spin text-muted-foreground" />
-                        </div>
-                      ) : patients.length > 0 ? (
-                        patients.map((patient) => (
-                          <SelectItem
-                            key={patient.id}
-                            value={patient.id}
-                            className="cursor-pointer"
-                          >
-                            {patient.name}
-                          </SelectItem>
-                        ))
-                      ) : (
-                        <div className="px-3 py-4 text-sm text-muted-foreground text-center">
-                          Nenhum paciente ativo encontrado
-                        </div>
-                      )}
+                      <SelectGroup>
+                        {isLoadingPatients ? (
+                          <div className="flex items-center justify-center py-4">
+                            <Loader2 className="h-5 w-5 animate-spin text-muted-foreground" />
+                          </div>
+                        ) : patients.length > 0 ? (
+                          patients.map((patient) => (
+                            <SelectItem
+                              key={patient.id}
+                              value={patient.id}
+                              className="cursor-pointer"
+                            >
+                              {patient.name}
+                            </SelectItem>
+                          ))
+                        ) : (
+                          <div className="px-3 py-4 text-sm text-muted-foreground text-center">
+                            Nenhum paciente ativo encontrado
+                          </div>
+                        )}
+                      </SelectGroup>
                     </SelectContent>
                   </Select>
                 </FormControl>

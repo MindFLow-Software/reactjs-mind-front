@@ -23,6 +23,7 @@ import {
   SelectItem,
   SelectTrigger,
   SelectValue,
+  SelectGroup,
 } from '@/components/ui/select'
 import './time-series-bar-chart-card.css'
 
@@ -82,15 +83,17 @@ export function TimeSeriesBarChartCard<
                 <SelectValue placeholder="Período" />
               </SelectTrigger>
               <SelectContent className="adb-tschart-select-content">
-                <SelectItem value="90d" className="adb-tschart-select-item">
-                  90 dias
-                </SelectItem>
-                <SelectItem value="30d" className="adb-tschart-select-item">
-                  30 dias
-                </SelectItem>
-                <SelectItem value="7d" className="adb-tschart-select-item">
-                  7 dias
-                </SelectItem>
+                <SelectGroup>
+                  <SelectItem value="90d" className="adb-tschart-select-item">
+                    90 dias
+                  </SelectItem>
+                  <SelectItem value="30d" className="adb-tschart-select-item">
+                    30 dias
+                  </SelectItem>
+                  <SelectItem value="7d" className="adb-tschart-select-item">
+                    7 dias
+                  </SelectItem>
+                </SelectGroup>
               </SelectContent>
             </Select>
           </div>

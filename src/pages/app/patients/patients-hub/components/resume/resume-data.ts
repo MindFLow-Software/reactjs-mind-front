@@ -25,9 +25,9 @@ export const HUMOR_AVG = (
 ).toFixed(1)
 
 export const frequencyConfig = {
-  sessions: { label: 'Sessões', color: '#3b82f6' },
+  sessions: { label: 'Sessões', color: 'var(--chart-blue)' },
 } satisfies ChartConfig
 
 export const humorConfig = {
-  score: { label: 'Humor', color: '#3b82f6' },
+  score: { label: 'Humor', color: 'var(--chart-blue)' },
 } satisfies ChartConfig

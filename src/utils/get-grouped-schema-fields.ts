@@ -1,15 +1,18 @@
-import { ZodObject } from "zod"
+import { ZodObject } from 'zod'
 
 type IgroupField<T extends string> = Record<T, string[]>
 
 type Ifieldgroup<T> = {
-  name: T,
+  name: T
   fields: string[]
 }
 
 type IGroupedFields<T> = Ifieldgroup<T>[]
 
-export const getGroupedFields = <T extends string>(initialState: IgroupField<T>, schema: ZodObject): IGroupedFields<T> => {
+export const getGroupedFields = <T extends string>(
+  initialState: IgroupField<T>,
+  schema: ZodObject,
+): IGroupedFields<T> => {
   const shape = schema.shape
   const groupedFields: IgroupField<T> = initialState
 
@@ -29,7 +32,7 @@ export const getGroupedFields = <T extends string>(initialState: IgroupField<T>,
   const tabs = keys.map((key) => {
     return {
       name: key,
-      fields: groupedFields[key]
+      fields: groupedFields[key],
     }
   })
 

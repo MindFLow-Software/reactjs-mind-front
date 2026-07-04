@@ -20,12 +20,16 @@ const GENDER_TRANSLATIONS: Record<string, string> = {
 }
 
 const GENDER_COLORS: Record<string, string> = {
-  FEMININE: '#ec4899',
-  MASCULINE: '#3b82f6',
-  OTHER: '#a855f7',
+  FEMININE: 'var(--gender-feminine)',
+  MASCULINE: 'var(--gender-masculine)',
+  OTHER: 'var(--gender-other)',
 }
 
-const CHART_COLORS = ['#ec4899', '#3b82f6', '#a855f7'] as const
+const CHART_COLORS = [
+  'var(--gender-feminine)',
+  'var(--gender-masculine)',
+  'var(--gender-other)',
+] as const
 
 const chartConfig = {
   patients: { label: 'Pacientes' },

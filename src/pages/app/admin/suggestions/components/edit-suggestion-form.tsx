@@ -22,6 +22,7 @@ import {
   SelectItem,
   SelectTrigger,
   SelectValue,
+  SelectGroup,
 } from '@/components/ui/select'
 import { DialogHeader, DialogTitle, DialogFooter } from '@/components/ui/dialog'
 import {
@@ -78,9 +79,9 @@ export function EditSuggestionForm({
         </DialogTitle>
       </DialogHeader>
 
-      <div className="space-y-5">
+      <div className="flex flex-col gap-5">
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-          <div className="space-y-2">
+          <div className="flex flex-col gap-2">
             <Label className="ads-edit-label">
               <FileText className="size-3" /> Título
             </Label>
@@ -90,7 +91,7 @@ export function EditSuggestionForm({
             )}
           </div>
 
-          <div className="space-y-2">
+          <div className="flex flex-col gap-2">
             <Label className="ads-edit-label">
               <Tag className="size-3" /> Categoria
             </Label>
@@ -104,19 +105,21 @@ export function EditSuggestionForm({
                 <SelectValue />
               </SelectTrigger>
               <SelectContent>
-                {Object.entries(translatedSuggestionCategory).map(
-                  ([value, label]) => (
-                    <SelectItem key={value} value={value}>
-                      {label}
-                    </SelectItem>
-                  ),
-                )}
+                <SelectGroup>
+                  {Object.entries(translatedSuggestionCategory).map(
+                    ([value, label]) => (
+                      <SelectItem key={value} value={value}>
+                        {label}
+                      </SelectItem>
+                    ),
+                  )}
+                </SelectGroup>
               </SelectContent>
             </Select>
           </div>
         </div>
 
-        <div className="space-y-2">
+        <div className="flex flex-col gap-2">
           <Label className="ads-edit-label">Conteúdo da Sugestão</Label>
           <Textarea
             {...register('description')}

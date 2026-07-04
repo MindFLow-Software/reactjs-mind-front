@@ -38,7 +38,7 @@ export function PatientAvatarUpload({
   }
 
   useEffect(() => {
-    (async () => await loadFromUrl(defaultUrl))()
+    ;(async () => await loadFromUrl(defaultUrl))()
   }, [defaultUrl, clear, loadFromUrl])
 
   const avatarId = useMemo(() => String(Math.random() * 1000), [])
@@ -50,7 +50,7 @@ export function PatientAvatarUpload({
         style={{
           background: displayUrl
             ? undefined
-            : 'linear-gradient(135deg, #4e8ed3, #1858b0)',
+            : 'linear-gradient(135deg, var(--blue-400), var(--blue-600))',
         }}
         onClick={() => !isLoading && inputRef.current?.click()}
       >

@@ -2,7 +2,7 @@
 
 @layer components {
   .pf-section-wrap {
-    @apply space-y-1 mb-4;
+    @apply flex flex-col gap-1 mb-4;
   }
 
   .pf-section-eyebrow {

@@ -40,7 +40,7 @@ export function MostVotedSuggestionsCard() {
 
   return (
     <Card className="ads-voted-card">
-      <CardHeader className="border-b border-border bg-muted/30 space-y-1 p-4">
+      <CardHeader className="border-b border-border bg-muted/30 flex flex-col gap-1 p-4">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-2">
             <TrendingUp className="size-4 text-primary" />
@@ -60,7 +60,7 @@ export function MostVotedSuggestionsCard() {
             <Loader2 className="h-8 w-8 animate-spin text-muted-foreground" />
           </div>
         ) : (
-          <div className="space-y-3">
+          <div className="flex flex-col gap-3">
             {suggestions?.map((item) => (
               <SuggestionCard
                 key={item.id}

@@ -136,7 +136,7 @@ export function DemographicsPieChartCard<T extends object>({
                     key={String(item[chart.nameKey])}
                     className="group adb-pie-legend-item"
                   >
-                    <div className="flex items-center space-x-2.5">
+                    <div className="flex items-center gap-x-2.5">
                       <div
                         className="adb-pie-legend-dot"
                         style={{

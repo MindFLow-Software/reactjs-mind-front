@@ -52,7 +52,7 @@ export function ClaimAccountPage() {
     <Card className="w-full max-w-lg">
       <CardHeader className="gap-3">
         <div className="flex items-center gap-2">
-          <div className="claim-icon-badge bg-linear-to-br from-[#16306b] to-[#194ac5]">
+          <div className="claim-icon-badge bg-linear-to-br from-(--auth-navy-800) to-(--auth-navy-600)">
             <Lock size={24} className="text-white" />
           </div>
           <CardTitle className="text-xl m-0">Finalizar Cadastro</CardTitle>

@@ -35,7 +35,7 @@ export function SuggestionDetailMain({
       </div>
 
       {item.attachments && item.attachments.length > 0 && (
-        <div className="space-y-2.5">
+        <div className="flex flex-col gap-2.5">
           <div className="flex items-center gap-1.5">
             <Paperclip className="size-[13px] text-muted-foreground" />
             <span className="sdm-section-label">Anexos</span>
@@ -76,7 +76,7 @@ export function SuggestionDetailMain({
         </div>
       )}
 
-      <div className="space-y-3">
+      <div className="flex flex-col gap-3">
         <div className="flex items-center gap-1.5">
           <MessageCircle className="size-[13px] text-muted-foreground" />
           <span className="sdm-section-label">Discussão</span>

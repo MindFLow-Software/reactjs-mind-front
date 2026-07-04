@@ -57,8 +57,8 @@ export function WelcomeModal({ popup, onClose }: WelcomeModalProps) {
             className="absolute inset-0 opacity-[0.4]"
             style={{
               backgroundImage: `
-                                linear-gradient(to right, #e2e8f0 1px, transparent 1px),
-                                linear-gradient(to bottom, #e2e8f0 1px, transparent 1px)
+                                linear-gradient(to right, var(--welcome-grid-line) 1px, transparent 1px),
+                                linear-gradient(to bottom, var(--welcome-grid-line) 1px, transparent 1px)
                             `,
               backgroundSize: '28px 28px',
             }}
@@ -110,7 +110,7 @@ export function WelcomeModal({ popup, onClose }: WelcomeModalProps) {
               onClick={handleCTA}
               size="lg"
               className={cn(
-                'wm-button',
+                'group wm-button',
                 isOpen ? 'wm-button-open' : 'wm-button-closed',
               )}
             >

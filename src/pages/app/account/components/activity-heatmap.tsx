@@ -134,7 +134,7 @@ export function ActivityHeatmap() {
       <div className="flex flex-col gap-8">
         {/* Header: Título e Seletor de Ano */}
         <div className="acc-heat-header">
-          <div className="space-y-1">
+          <div className="flex flex-col gap-1">
             <h3 className="acc-heat-title">Atividade de Sessões</h3>
             <p className="acc-heat-subtitle">
               Frequência diária de atendimentos no ano de {selectedYear}

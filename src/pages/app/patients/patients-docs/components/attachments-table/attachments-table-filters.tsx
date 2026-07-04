@@ -8,6 +8,7 @@ import {
   SelectItem,
   SelectTrigger,
   SelectValue,
+  SelectGroup,
 } from '@/components/ui/select'
 import { usePatientsWithAttachments } from '../../hooks/use-patients-with-attachments'
 import { DatePickerWithRange } from '../date-picker-with-range'
@@ -100,27 +101,31 @@ export function AttachmentsTableFilters({
           </SelectTrigger>
 
           <SelectContent className="min-w-[220px]">
-            <SelectItem value="all" className="cursor-pointer py-2.5">
-              <div className="pd-flt-option">
-                <Users className="size-4 text-muted-foreground" />
-                <span className="text-sm font-medium">Todos os Pacientes</span>
-              </div>
-            </SelectItem>
-
-            {patients?.map((patient) => (
-              <SelectItem
-                key={patient.id}
-                value={patient.id}
-                className="cursor-pointer py-2.5"
-              >
+            <SelectGroup>
+              <SelectItem value="all" className="cursor-pointer py-2.5">
                 <div className="pd-flt-option">
-                  <User className="size-4 shrink-0 text-blue-500" />
-                  <span className="pd-flt-option-name">
-                    {patient.firstName} {patient.lastName}
+                  <Users className="size-4 text-muted-foreground" />
+                  <span className="text-sm font-medium">
+                    Todos os Pacientes
                   </span>
                 </div>
               </SelectItem>
-            ))}
+
+              {patients?.map((patient) => (
+                <SelectItem
+                  key={patient.id}
+                  value={patient.id}
+                  className="cursor-pointer py-2.5"
+                >
+                  <div className="pd-flt-option">
+                    <User className="size-4 shrink-0 text-blue-500" />
+                    <span className="pd-flt-option-name">
+                      {patient.firstName} {patient.lastName}
+                    </span>
+                  </div>
+                </SelectItem>
+              ))}
+            </SelectGroup>
           </SelectContent>
         </Select>
 

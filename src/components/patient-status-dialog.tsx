@@ -89,7 +89,7 @@ export function PatientStatusDialog({
           <Icon className={cn('psd-icon', cfg.iconColor)} strokeWidth={1.75} />
         </div>
 
-        <DialogHeader className="mb-3 space-y-0">
+        <DialogHeader className="mb-3 ">
           <DialogTitle className="text-[20px] font-bold tracking-tight text-foreground">
             {cfg.title}
           </DialogTitle>

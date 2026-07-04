@@ -54,10 +54,10 @@ export function SuggestionDetailSidebar({
 
   return (
     <div className="sdm-sidebar">
-      <div className="sdm-card space-y-3">
+      <div className="sdm-card flex flex-col gap-3">
         <span className="sdm-card-label">Quem votou</span>
         {item.likesCount > 0 ? (
-          <div className="space-y-2">
+          <div className="flex flex-col gap-2">
             <div className="flex items-center">
               {Array.from({ length: Math.min(5, item.likesCount) }).map(
                 (_, i) => (
@@ -93,7 +93,7 @@ export function SuggestionDetailSidebar({
         <span className="sdm-card-label mb-4 block">Jornada</span>
         <div className="relative">
           <div className="absolute left-[12px] top-3 bottom-3 w-px bg-border" />
-          <div className="space-y-0">
+          <div className="">
             {SUGGESTION_TIMELINE_STEPS.map((label, i) => {
               const isDone = i <= timelineCfg.doneUntil
               const isCurrent = i === timelineCfg.currentIdx
@@ -167,9 +167,9 @@ export function SuggestionDetailSidebar({
         </div>
       </div>
 
-      <div className="sdm-card space-y-3">
+      <div className="sdm-card flex flex-col gap-3">
         <span className="sdm-card-label">Relacionadas</span>
-        <div className="space-y-1">
+        <div className="flex flex-col gap-1">
           {MOCK_RELATED.map((rel) => (
             <button key={rel.title} type="button" className="sdm-related">
               <span className="text-[13px] font-bold text-muted-foreground tabular-nums w-8 shrink-0 mt-px">

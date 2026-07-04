@@ -56,7 +56,7 @@ export function PracticeContextOptionCard({
         <TitleIcon variant={titleIconVariant}>{icon}</TitleIcon>
         <CardTitle className="text-xl">{title}</CardTitle>
       </CardHeader>
-      <CardContent className="px-0 h-full space-y-6">
+      <CardContent className="px-0 h-full flex flex-col gap-6">
         <CardDescription>{description}</CardDescription>
         <ul className="flex flex-col justify-center flex-1 gap-2">
           {bullets.map((bullet) => (

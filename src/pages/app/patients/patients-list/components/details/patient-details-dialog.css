@@ -11,7 +11,7 @@
   }
 
   .pdd-body {
-    @apply space-y-8;
+    @apply flex flex-col gap-8;
   }
 
   /* Info field */
@@ -51,7 +51,7 @@
 
   /* Session history */
   .pdd-history {
-    @apply space-y-4;
+    @apply flex flex-col gap-4;
   }
 
   .pdd-history-title {

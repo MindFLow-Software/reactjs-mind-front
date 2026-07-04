@@ -90,14 +90,14 @@ export function CreateSuggestion({ onSuccess }: CreateSuggestionProps) {
         </div>
       </DialogHeader>
 
-      <div className="flex-1 overflow-y-auto px-6 py-5 space-y-6 min-h-0">
+      <div className="flex-1 overflow-y-auto px-6 py-5 flex flex-col gap-6 min-h-0">
         <div className="cs-hint">
           <div className="cs-hint-badge">
             <span className="text-blue-600 dark:text-blue-400 text-[10px] font-extrabold">
               i
             </span>
           </div>
-          <div className="space-y-2 min-w-0">
+          <div className="flex flex-col gap-2 min-w-0">
             <p className="text-sm font-semibold text-blue-900 dark:text-blue-100">
               Antes de enviar, dê uma olhada no board
             </p>
@@ -118,15 +118,15 @@ export function CreateSuggestion({ onSuccess }: CreateSuggestionProps) {
         <form
           id="create-suggestion-form"
           onSubmit={handleSubmit(onSubmit)}
-          className="space-y-6"
+          className="flex flex-col gap-6"
         >
-          <div className="space-y-4">
+          <div className="flex flex-col gap-4">
             <div className="flex items-center gap-2">
               <Lightbulb className="size-3.5 text-muted-foreground" />
               <span className="cs-section-label">Classificação</span>
             </div>
 
-            <div className="space-y-1.5">
+            <div className="flex flex-col gap-1.5">
               <Label
                 htmlFor="title"
                 className={cn(
@@ -150,7 +150,7 @@ export function CreateSuggestion({ onSuccess }: CreateSuggestionProps) {
               )}
             </div>
 
-            <div className="space-y-2">
+            <div className="flex flex-col gap-2">
               <Label
                 className={cn(
                   'text-sm font-medium',
@@ -171,7 +171,7 @@ export function CreateSuggestion({ onSuccess }: CreateSuggestionProps) {
             </div>
           </div>
 
-          <div className="space-y-3 pt-4 border-t">
+          <div className="flex flex-col gap-3 pt-4 border-t">
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-2">
                 <FileText className="size-3.5 text-muted-foreground" />
@@ -202,7 +202,7 @@ export function CreateSuggestion({ onSuccess }: CreateSuggestionProps) {
             )}
           </div>
 
-          <div className="space-y-3 pt-4 border-t">
+          <div className="flex flex-col gap-3 pt-4 border-t">
             <div className="flex items-center gap-2">
               <Paperclip className="size-3.5 text-muted-foreground" />
               <span className="cs-section-label">Anexos</span>

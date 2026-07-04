@@ -26,7 +26,7 @@
   }
 
   .pf-card-content {
-    @apply space-y-2;
+    @apply flex flex-col gap-2;
   }
 
   .pf-card-footer {
@@ -35,7 +35,7 @@
 
   /* Feature bullet list — shared by patient-card.tsx and psychologist-card.tsx */
   .pf-feature-list {
-    @apply space-y-2;
+    @apply flex flex-col gap-2;
   }
 
   .pf-feature-item {
@@ -69,7 +69,7 @@
 
   /* Stat box — shared by psychologist-card.tsx and practice-context-card.tsx */
   .pf-stat-grid {
-    @apply grid grid-cols-2 space-y-4 rounded-lg bg-muted/50 p-4;
+    @apply grid grid-cols-2 gap-y-4 rounded-lg bg-muted/50 p-4;
   }
 
   .pf-stat-label {

@@ -17,7 +17,7 @@ export function useAppointmentsList(
   params: UseAppointmentsListParams,
 ): UseQueryResult<GetAppointmentsResponse, Error> {
   return useQuery<GetAppointmentsResponse, Error>({
-    queryKey: queryKeys.appointments(params),
+    queryKey: queryKeys.appointments({ ...params }),
     queryFn: () => getAppointments(params),
     staleTime: 1000 * 60 * 5,
     placeholderData: (previousData) => previousData,

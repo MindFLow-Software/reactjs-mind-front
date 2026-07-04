@@ -66,24 +66,34 @@ export function TransactionStatusOverview({
   const totalOrders = Object.values(data).reduce((acc, curr) => acc + curr, 0)
 
   const chartData = [
-    { label: 'Pago', value: data.paid, color: '#01DE82', icon: CheckCircle2 },
-    { label: 'Pendente', value: data.pending, color: '#f59e0b', icon: Clock },
+    {
+      label: 'Pago',
+      value: data.paid,
+      color: 'var(--finance-paid)',
+      icon: CheckCircle2,
+    },
+    {
+      label: 'Pendente',
+      value: data.pending,
+      color: 'var(--finance-pending)',
+      icon: Clock,
+    },
     {
       label: 'Expirado',
       value: data.expired,
-      color: '#ef4444',
+      color: 'var(--finance-expired)',
       icon: AlertTriangle,
     },
     {
       label: 'Cancelado',
       value: data.canceled,
-      color: '#64748b',
+      color: 'var(--finance-canceled)',
       icon: XCircle,
     },
     {
       label: 'Reembolsado',
       value: data.refunded,
-      color: '#6366f1',
+      color: 'var(--finance-refunded)',
       icon: RotateCcw,
     },
   ].filter((item) => item.value > 0)
@@ -91,7 +101,7 @@ export function TransactionStatusOverview({
   return (
     <Card className="fin-status-card">
       <CardHeader className="p-6 pb-2">
-        <div className="space-y-1">
+        <div className="flex flex-col gap-1">
           <CardTitle className="fin-status-title">
             Status das Transações
           </CardTitle>
@@ -122,7 +132,7 @@ export function TransactionStatusOverview({
                     outerRadius={85}
                     paddingAngle={0}
                     dataKey="value"
-                    stroke="#fff"
+                    stroke="white"
                     strokeWidth={2}
                     animationDuration={1500}
                   >

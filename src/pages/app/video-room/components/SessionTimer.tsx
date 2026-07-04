@@ -141,7 +141,7 @@ export function SessionTimer({ isActive }: SessionTimerProps) {
           </div>
         </div>
 
-        <div className="w-full space-y-3 px-4">
+        <div className="w-full flex flex-col gap-3 px-4">
           <div className="flex justify-between items-end text-[10px] font-bold text-muted-foreground uppercase tracking-wider">
             <span className="flex items-center gap-1.5">
               <span

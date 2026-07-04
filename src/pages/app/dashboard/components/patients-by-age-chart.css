@@ -42,7 +42,7 @@
   }
 
   .dsh-age-rows {
-    @apply space-y-4;
+    @apply flex flex-col gap-4;
   }
 
   .dsh-age-row {

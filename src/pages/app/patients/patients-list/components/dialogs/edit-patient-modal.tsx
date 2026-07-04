@@ -111,7 +111,7 @@ export function EditPatientModal({ patientId }: EditPatientModalProps) {
       }
       case 3: {
         return (
-          <div className="space-y-5">
+          <div className="flex flex-col gap-5">
             <AttachmentsList patientId={patient?.id ?? null} />
             <UploadZone
               selectedFiles={files}
@@ -197,7 +197,7 @@ export function EditPatientModal({ patientId }: EditPatientModalProps) {
         <div className="rp-modal-icon-box">
           <UserPen className="text-blue-600" />
         </div>
-        <div className="flex-1 space-y-2">
+        <div className="flex-1 flex flex-col gap-2">
           <h2 className="rp-modal-title">Editar paciente</h2>
           <p className="rp-modal-subtitle">
             {patient

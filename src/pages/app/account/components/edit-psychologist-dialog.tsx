@@ -25,6 +25,7 @@ import {
   SelectValue,
   SelectContent,
   SelectItem,
+  SelectGroup,
 } from '@/components/ui/select'
 import { formatPhone } from '@/utils/formatPhone'
 import type { UpdatePsychologistBody } from '@/api/psychologists/update-psychologist'
@@ -98,7 +99,7 @@ export function EditPsychologistProfile({
 
       <Form {...form}>
         <form onSubmit={handleSubmit(onSubmit)} className="grid gap-6 py-4">
-          <div className="space-y-4">
+          <div className="flex flex-col gap-4">
             <div className="acc-edit-section-heading">
               <User className="h-4 w-4" />
               <h3 className="acc-edit-section-title">Informações Básicas</h3>
@@ -166,13 +167,15 @@ export function EditPsychologistProfile({
                         </SelectTrigger>
                       </FormControl>
                       <SelectContent>
-                        {Object.entries(EXPERTISE_TRANSLATIONS).map(
-                          ([key, label]) => (
-                            <SelectItem key={key} value={key}>
-                              {label}
-                            </SelectItem>
-                          ),
-                        )}
+                        <SelectGroup>
+                          {Object.entries(EXPERTISE_TRANSLATIONS).map(
+                            ([key, label]) => (
+                              <SelectItem key={key} value={key}>
+                                {label}
+                              </SelectItem>
+                            ),
+                          )}
+                        </SelectGroup>
                       </SelectContent>
                     </Select>
                     <FormMessage />

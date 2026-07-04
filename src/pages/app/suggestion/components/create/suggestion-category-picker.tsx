@@ -34,7 +34,7 @@ export function SuggestionCategoryPicker({
             <div className={cn('cs-category-icon', cat.iconBg)}>
               <Icon className={cn('size-4', cat.iconColor)} />
             </div>
-            <div className="space-y-0.5">
+            <div className="flex flex-col gap-0.5">
               <p
                 className={cn(
                   'text-xs font-semibold leading-tight',

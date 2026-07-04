@@ -126,7 +126,7 @@ function TableBodyContent({
               <div className="p-4 rounded-full bg-muted">
                 <SearchX className="h-8 w-8 text-muted-foreground/40" />
               </div>
-              <div className="space-y-1">
+              <div className="flex flex-col gap-1">
                 <p className="text-sm font-medium">
                   Nenhum paciente encontrado
                 </p>
@@ -148,7 +148,7 @@ function TableBodyContent({
               <div className="p-4 rounded-full bg-muted">
                 <UserPlus className="h-8 w-8 text-muted-foreground/40" />
               </div>
-              <div className="space-y-1">
+              <div className="flex flex-col gap-1">
                 <p className="text-sm font-medium">
                   Nenhum paciente cadastrado
                 </p>

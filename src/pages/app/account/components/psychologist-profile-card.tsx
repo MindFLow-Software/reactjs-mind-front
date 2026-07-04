@@ -47,7 +47,7 @@ export function PsychologistProfileCard({
         <div className="px-6 pb-6">
           <div className="-mt-12 flex flex-col md:flex-row items-center gap-6">
             <Skeleton className="h-24 w-24 rounded-full ring-4 ring-card" />
-            <div className="flex-1 space-y-3 w-full pt-8">
+            <div className="flex-1 flex flex-col gap-3 w-full pt-8">
               <Skeleton className="h-7 w-1/3" />
               <Skeleton className="h-5 w-1/4" />
             </div>
@@ -109,11 +109,11 @@ export function PsychologistProfileCard({
           </div>
 
           <div className="acc-profile-verified">
-            <div className="flex -space-x-2">
+            <div className="flex">
               <div className="acc-profile-verified-icon bg-blue-100">
                 <UserRoundPen className="h-3 w-3 text-blue-600" />
               </div>
-              <div className="acc-profile-verified-icon bg-purple-100">
+              <div className="acc-profile-verified-icon -ml-2 bg-purple-100">
                 <Calendar className="h-3 w-3 text-purple-600" />
               </div>
             </div>

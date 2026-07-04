@@ -5,7 +5,7 @@ import { Link } from 'react-router-dom'
 export function NotFound() {
   return (
     <div className="flex min-h-screen flex-col items-center justify-center bg-linear-to-b from-background to-muted/20 px-4">
-      <div className="mx-auto max-w-md text-center space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-1000">
+      <div className="mx-auto max-w-md text-center flex flex-col gap-8 animate-in fade-in slide-in-from-bottom-4 duration-1000">
         <div className="flex justify-center">
           <div className="relative">
             <div className="absolute inset-0 bg-blue-500/20 blur-3xl rounded-full animate-pulse" />
@@ -19,7 +19,7 @@ export function NotFound() {
         </div>
 
         {/* Content */}
-        <div className="space-y-4">
+        <div className="flex flex-col gap-4">
           <h1 className="text-6xl font-bold text-foreground">404</h1>
           <h2 className="text-2xl font-semibold text-foreground">
             Página não encontrada

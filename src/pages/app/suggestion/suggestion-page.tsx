@@ -83,7 +83,7 @@ export function SuggestionPage() {
 
       <div className="sp-root">
         <header className="sp-header">
-          <div className="space-y-1">
+          <div className="flex flex-col gap-1">
             <h1 className="text-2xl font-bold tracking-tight flex items-center gap-3">
               <Hand className="size-6 text-blue-600" />
               <span>Sugestões da Comunidade</span>

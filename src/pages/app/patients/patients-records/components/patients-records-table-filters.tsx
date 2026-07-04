@@ -16,6 +16,7 @@ import {
   SelectItem,
   SelectTrigger,
   SelectValue,
+  SelectGroup,
 } from '@/components/ui/select'
 import type { IsessionVolume } from '@/types/patient'
 import { PatientsSearchInput } from '../../components/patients-search-input'
@@ -63,24 +64,26 @@ export function PatientsRecordsTableFilters({
               </div>
             </SelectTrigger>
             <SelectContent className="min-w-[200px]">
-              <SelectItem value="all" className="cursor-pointer py-2.5">
-                <div className="pr-flt-option">
-                  <VenusAndMars className="h-4 w-4 text-slate-500" />
-                  <span>Todos Gêneros</span>
-                </div>
-              </SelectItem>
-              <SelectItem value="MASCULINE" className="cursor-pointer py-2.5">
-                <div className="pr-flt-option">
-                  <Mars className="h-4 w-4 text-blue-500" />
-                  <span>Masculinos</span>
-                </div>
-              </SelectItem>
-              <SelectItem value="FEMININE" className="cursor-pointer py-2.5">
-                <div className="pr-flt-option">
-                  <Venus className="h-4 w-4 text-rose-500" />
-                  <span>Femininos</span>
-                </div>
-              </SelectItem>
+              <SelectGroup>
+                <SelectItem value="all" className="cursor-pointer py-2.5">
+                  <div className="pr-flt-option">
+                    <VenusAndMars className="h-4 w-4 text-slate-500" />
+                    <span>Todos Gêneros</span>
+                  </div>
+                </SelectItem>
+                <SelectItem value="MASCULINE" className="cursor-pointer py-2.5">
+                  <div className="pr-flt-option">
+                    <Mars className="h-4 w-4 text-blue-500" />
+                    <span>Masculinos</span>
+                  </div>
+                </SelectItem>
+                <SelectItem value="FEMININE" className="cursor-pointer py-2.5">
+                  <div className="pr-flt-option">
+                    <Venus className="h-4 w-4 text-rose-500" />
+                    <span>Femininos</span>
+                  </div>
+                </SelectItem>
+              </SelectGroup>
             </SelectContent>
           </Select>
 
@@ -95,24 +98,26 @@ export function PatientsRecordsTableFilters({
               </div>
             </SelectTrigger>
             <SelectContent className="min-w-[200px]">
-              <SelectItem value="all" className="cursor-pointer py-2.5">
-                <div className="pr-flt-option">
-                  <History className="h-4 w-4 text-slate-500" />
-                  <span>Total Sessões</span>
-                </div>
-              </SelectItem>
-              <SelectItem value="high" className="cursor-pointer py-2.5">
-                <div className="pr-flt-option">
-                  <ClockArrowUp className="h-4 w-4 text-emerald-500" />
-                  <span>Mais Sessões</span>
-                </div>
-              </SelectItem>
-              <SelectItem value="low" className="cursor-pointer py-2.5">
-                <div className="pr-flt-option">
-                  <ClockArrowDown className="h-4 w-4 text-rose-500" />
-                  <span>Menos Sessões</span>
-                </div>
-              </SelectItem>
+              <SelectGroup>
+                <SelectItem value="all" className="cursor-pointer py-2.5">
+                  <div className="pr-flt-option">
+                    <History className="h-4 w-4 text-slate-500" />
+                    <span>Total Sessões</span>
+                  </div>
+                </SelectItem>
+                <SelectItem value="high" className="cursor-pointer py-2.5">
+                  <div className="pr-flt-option">
+                    <ClockArrowUp className="h-4 w-4 text-emerald-500" />
+                    <span>Mais Sessões</span>
+                  </div>
+                </SelectItem>
+                <SelectItem value="low" className="cursor-pointer py-2.5">
+                  <div className="pr-flt-option">
+                    <ClockArrowDown className="h-4 w-4 text-rose-500" />
+                    <span>Menos Sessões</span>
+                  </div>
+                </SelectItem>
+              </SelectGroup>
             </SelectContent>
           </Select>
         </div>

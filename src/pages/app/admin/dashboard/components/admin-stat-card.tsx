@@ -46,7 +46,7 @@ export function AdminStatCard({
         <Separator className="adb-stat-separator" />
 
         {query.isLoading ? (
-          <div className="space-y-2">
+          <div className="flex flex-col gap-2">
             <Skeleton className="h-10 w-28" />
             <Skeleton className="h-4 w-48" />
           </div>

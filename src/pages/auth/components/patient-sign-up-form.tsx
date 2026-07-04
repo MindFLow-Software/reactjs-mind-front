@@ -27,6 +27,7 @@ import {
   SelectItem,
   SelectTrigger,
   SelectValue,
+  SelectGroup,
 } from '@/components/ui/select'
 import { createUser } from '@/api/auth/create-user'
 import { signIn } from '@/api/auth/sign-in'
@@ -257,9 +258,11 @@ export function PatientSignUpForm({
                   <SelectValue placeholder="Selecione" />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value={Gender.MASCULINE}>Masculino</SelectItem>
-                  <SelectItem value={Gender.FEMININE}>Feminino</SelectItem>
-                  <SelectItem value={Gender.OTHER}>Outro</SelectItem>
+                  <SelectGroup>
+                    <SelectItem value={Gender.MASCULINE}>Masculino</SelectItem>
+                    <SelectItem value={Gender.FEMININE}>Feminino</SelectItem>
+                    <SelectItem value={Gender.OTHER}>Outro</SelectItem>
+                  </SelectGroup>
                 </SelectContent>
               </Select>
             )}

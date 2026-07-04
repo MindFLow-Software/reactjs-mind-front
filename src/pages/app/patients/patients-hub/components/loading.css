@@ -16,7 +16,7 @@
   }
 
   .ph-loading__header-name-group {
-    @apply space-y-2;
+    @apply flex flex-col gap-2;
   }
 
   .ph-loading__header-badges {
@@ -37,7 +37,7 @@
   }
 
   .ph-loading__metric-content {
-    @apply space-y-2;
+    @apply flex flex-col gap-2;
   }
 
   /* Tabs */
@@ -59,11 +59,11 @@
 
   /* Clinical tab */
   .ph-loading__clinical-content {
-    @apply pt-6 space-y-4;
+    @apply pt-6 flex flex-col gap-4;
   }
 
   .ph-loading__clinical-section {
-    @apply space-y-2;
+    @apply flex flex-col gap-2;
   }
 
   .ph-loading__clinical-fields-grid {
@@ -72,7 +72,7 @@
 
   /* Timeline tab */
   .ph-loading__timeline-content {
-    @apply space-y-4;
+    @apply flex flex-col gap-4;
   }
 
   .ph-loading__timeline-filter {
@@ -80,11 +80,11 @@
   }
 
   .ph-loading__timeline-list {
-    @apply space-y-6;
+    @apply flex flex-col gap-6;
   }
 
   .ph-loading__timeline-item {
-    @apply space-y-2;
+    @apply flex flex-col gap-2;
   }
 
   .ph-loading__timeline-item-tags {
@@ -97,19 +97,19 @@
   }
 
   .ph-loading__docs-col {
-    @apply space-y-4;
+    @apply flex flex-col gap-4;
   }
 
   .ph-loading__docs-filter-box {
-    @apply p-4 rounded-xl border border-muted/40 space-y-3;
+    @apply p-4 rounded-xl border border-muted/40 flex flex-col gap-3;
   }
 
   .ph-loading__docs-upload-zone {
-    @apply border rounded-xl p-6 border-dashed space-y-3;
+    @apply border rounded-xl p-6 border-dashed flex flex-col gap-3;
   }
 
   .ph-loading__docs-file-list {
-    @apply space-y-2;
+    @apply flex flex-col gap-2;
   }
 
   .ph-loading__docs-file-item {

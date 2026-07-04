@@ -53,7 +53,7 @@
 
   /* Footer progress */
   .ph-anamnesis-navigation__footer {
-    @apply border-t border-border/40 px-4 py-3 space-y-2;
+    @apply border-t border-border/40 px-4 py-3 flex flex-col gap-2;
   }
 
   .ph-anamnesis-navigation__progress-row {

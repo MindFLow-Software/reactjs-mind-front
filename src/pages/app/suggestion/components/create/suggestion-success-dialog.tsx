@@ -21,7 +21,7 @@ export function SuggestionSuccess({ onClose }: SuggestionSuccessProps) {
       <div className="css-success-header">
         <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_right,rgba(16,185,129,0.1),transparent_50%)]" />
 
-        <DialogHeader className="relative flex flex-col items-center justify-center text-center space-y-4">
+        <DialogHeader className="relative flex flex-col items-center justify-center text-center gap-y-4">
           <div className="relative">
             <div className="absolute inset-0 bg-emerald-500/20 rounded-full blur-xl animate-pulse" />
             <div className="css-success-icon">
@@ -29,7 +29,7 @@ export function SuggestionSuccess({ onClose }: SuggestionSuccessProps) {
             </div>
           </div>
 
-          <div className="space-y-2">
+          <div className="flex flex-col gap-2">
             <DialogTitle className="text-2xl font-bold text-slate-900 flex items-center justify-center gap-2 animate-in fade-in slide-in-from-bottom-3 duration-500 delay-100">
               Sugestão Enviada!
               <Sparkles className="size-5 text-amber-500 fill-amber-400 animate-in spin-in duration-700 delay-300" />
@@ -42,10 +42,10 @@ export function SuggestionSuccess({ onClose }: SuggestionSuccessProps) {
         </DialogHeader>
       </div>
 
-      <div className="p-8 space-y-6 bg-white">
+      <div className="p-8 flex flex-col gap-6 bg-white">
         <div className="css-success-steps">
           <div className="flex items-start gap-4">
-            <div className="space-y-1.5 flex-1">
+            <div className="flex flex-col gap-1.5 flex-1">
               <p className="text-sm font-semibold text-slate-900">
                 Próximos passos
               </p>

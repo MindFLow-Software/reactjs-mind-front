@@ -87,7 +87,10 @@ export const SuggestionAttachments = memo(
           ) : (
             <div className="grid gap-1.5 max-h-[200px] overflow-y-auto pr-1 scrollbar-thin scrollbar-thumb-muted">
               {files.map((file, index) => (
-                <div key={`${file.name}-${index}`} className="cs-file-row group">
+                <div
+                  key={`${file.name}-${index}`}
+                  className="cs-file-row group"
+                >
                   <div className="flex items-center gap-3 overflow-hidden">
                     <div className="cs-file-icon">{getFileIcon(file.type)}</div>
                     <div className="flex flex-col min-w-0">

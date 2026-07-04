@@ -37,7 +37,7 @@ const chartData = [
 const chartConfig = {
   amount: {
     label: 'Valor Recebido',
-    color: '#63d72a',
+    color: 'var(--chart-transactions-green)',
   },
 } satisfies ChartConfig
 

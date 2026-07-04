@@ -112,7 +112,7 @@ export function SuggestionHelpButton() {
                   <step.icon className={cn('size-5', step.color)} />
                 </div>
 
-                <div className="space-y-1">
+                <div className="flex flex-col gap-1">
                   <span className="text-[10px] font-bold text-muted-foreground tracking-widest">
                     PASSO {index + 1}
                   </span>

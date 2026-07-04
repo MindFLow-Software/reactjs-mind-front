@@ -92,7 +92,7 @@ export function PracticeContextPage() {
   return (
     <div className="pctx-shell">
       <div className="pctx-header">
-        <header className="text-center space-y-2">
+        <header className="text-center flex flex-col gap-2">
           <p className="font-medium text-muted-foreground">
             Contexto de atuação
           </p>

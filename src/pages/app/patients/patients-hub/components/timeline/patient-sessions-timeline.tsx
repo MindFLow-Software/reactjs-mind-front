@@ -78,7 +78,7 @@ export function PatientSessionsTimeline({
   }
 
   return (
-    <div className="space-y-5">
+    <div className="flex flex-col gap-5">
       <TimelineFilterBar
         search={{ value: searchText, onChange: setSearchText }}
         status={{

@@ -175,7 +175,7 @@ export function RegisterPatients() {
         <div className="rp-modal-icon-box">
           <UserPlus className="text-blue-600" />
         </div>
-        <div className="flex-1 space-y-2">
+        <div className="flex-1 flex flex-col gap-2">
           <h2 className="rp-modal-title">Cadastrar paciente</h2>
           <p className="rp-modal-subtitle">
             Comece apenas com nome e contato — o resto pode ser preenchido

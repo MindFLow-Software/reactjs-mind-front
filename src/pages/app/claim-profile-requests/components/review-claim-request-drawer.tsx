@@ -63,7 +63,7 @@ export function ReviewClaimRequestDrawer({
         <ClaimRequestStatusBadge status={status} />
       </DrawerHeader>
 
-      <div className="space-y-4 px-4">
+      <div className="flex flex-col gap-4 px-4">
         <SecurityNotice
           variant="info"
           title="Confira os dados com cuidado"

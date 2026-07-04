@@ -3,7 +3,7 @@
 @layer components {
   /* Root */
   .ph-files-tab {
-    @apply space-y-4 mt-4;
+    @apply flex flex-col gap-4 mt-4;
   }
 
   /* Loading state */

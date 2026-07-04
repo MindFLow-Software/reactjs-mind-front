@@ -59,7 +59,7 @@ export function ResumeFrequencyChart() {
             />
             <Bar
               dataKey="sessions"
-              fill="#3b82f6"
+              fill="var(--chart-blue)"
               radius={[6, 6, 0, 0]}
               label={{
                 position: 'top',

@@ -79,7 +79,7 @@ export function SuggestionRanking() {
                 className="max-w-[250px] p-3 text-xs leading-relaxed bg-popover border-border shadow-lg text-popover-foreground"
               >
                 <p className="font-bold mb-1">Como pontuar?</p>
-                <ul className="space-y-1">
+                <ul className="flex flex-col gap-1">
                   <li>
                     • 1.0 pt por ideia <strong>concluída</strong>.
                   </li>

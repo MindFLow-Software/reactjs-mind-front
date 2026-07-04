@@ -256,7 +256,7 @@ function MetricCardProgress({ value, atGoal, label }: MetricCardProgressProps) {
 
   if (isLoading) {
     return (
-      <div className="mt-2 space-y-2">
+      <div className="mt-2 flex flex-col gap-2">
         <Skeleton className="h-3 w-24" />
         <Skeleton className="h-1.5 w-full rounded-full" />
       </div>

@@ -35,7 +35,7 @@ interface SessionsBarChartProps {
 const chartConfig = {
   count: {
     label: 'Concluídas',
-    color: '#22c55e',
+    color: 'var(--chart-sessions-green)',
   },
 } satisfies ChartConfig
 
@@ -160,7 +160,7 @@ export const SessionsBarChart = React.memo(function SessionsBarChart({
               />
               <Bar
                 dataKey="count"
-                fill="#22c55e"
+                fill="var(--chart-sessions-green)"
                 radius={[8, 8, 0, 0]}
                 className="cursor-pointer"
               />

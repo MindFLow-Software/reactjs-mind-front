@@ -42,8 +42,16 @@ export function ResumeHumorChart() {
           >
             <defs>
               <linearGradient id="humorGradient" x1="0" y1="0" x2="0" y2="1">
-                <stop offset="5%" stopColor="#3b82f6" stopOpacity={0.2} />
-                <stop offset="95%" stopColor="#3b82f6" stopOpacity={0} />
+                <stop
+                  offset="5%"
+                  stopColor="var(--chart-blue)"
+                  stopOpacity={0.2}
+                />
+                <stop
+                  offset="95%"
+                  stopColor="var(--chart-blue)"
+                  stopOpacity={0}
+                />
               </linearGradient>
             </defs>
             <CartesianGrid
@@ -64,10 +72,10 @@ export function ResumeHumorChart() {
             <Area
               type="monotone"
               dataKey="score"
-              stroke="#3b82f6"
+              stroke="var(--chart-blue)"
               strokeWidth={2}
               fill="url(#humorGradient)"
-              dot={{ r: 3, fill: '#3b82f6', strokeWidth: 0 }}
+              dot={{ r: 3, fill: 'var(--chart-blue)', strokeWidth: 0 }}
               activeDot={{ r: 5 }}
             />
           </AreaChart>

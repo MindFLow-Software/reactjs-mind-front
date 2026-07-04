@@ -142,7 +142,7 @@ export function AnamnesisForm({
 
   return (
     <AnamnesisEditorContext.Provider value={contextValue}>
-      <div className="w-full space-y-4">
+      <div className="w-full flex flex-col gap-4">
         <AnamnesisHeader
           onGeneratePDF={exportToPdf}
           onCopy={onCopy}
@@ -159,7 +159,7 @@ export function AnamnesisForm({
         <div className="flex items-start gap-4">
           <AnamnesisNavigation />
 
-          <div className="flex-1 min-w-0 space-y-3">
+          <div className="flex-1 min-w-0 flex flex-col gap-3">
             {blocks.map((block, index) => (
               <AnamnesisEditorBlock
                 key={block.id}

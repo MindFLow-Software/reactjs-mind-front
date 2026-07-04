@@ -2,7 +2,7 @@
 
 @layer components {
   .pd-tbl-root {
-    @apply w-full space-y-3;
+    @apply w-full flex flex-col gap-3;
   }
 
   .pd-tbl-wrap {

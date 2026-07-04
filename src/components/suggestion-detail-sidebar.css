@@ -2,7 +2,7 @@
 
 @layer components {
   .sdm-sidebar {
-    @apply md:w-[290px] shrink-0 border-t md:border-t-0 md:border-l border-border bg-slate-50 dark:bg-muted/20 overflow-y-auto p-[18px] space-y-[18px] scrollbar-thin scrollbar-thumb-border hover:scrollbar-thumb-muted-foreground/30;
+    @apply md:w-[290px] shrink-0 border-t md:border-t-0 md:border-l border-border bg-slate-50 dark:bg-muted/20 overflow-y-auto p-[18px] flex flex-col gap-[18px] scrollbar-thin scrollbar-thumb-border hover:scrollbar-thumb-muted-foreground/30;
   }
 
   .sdm-card {

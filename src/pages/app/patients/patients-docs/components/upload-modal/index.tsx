@@ -17,6 +17,7 @@ import {
   SelectItem,
   SelectTrigger,
   SelectValue,
+  SelectGroup,
 } from '@/components/ui/select'
 import { cn } from '@/lib/utils'
 import { usePatientsWithAttachments } from '../../hooks/use-patients-with-attachments'
@@ -136,20 +137,22 @@ export function UploadModal({ open, onClose }: UploadModalProps) {
                 </div>
               </SelectTrigger>
               <SelectContent className="max-h-[220px]">
-                {patients?.map((p) => (
-                  <SelectItem
-                    key={p.id}
-                    value={p.id}
-                    className="cursor-pointer py-2.5"
-                  >
-                    <div className="pd-up-option">
-                      <User className="size-3.5 shrink-0 text-blue-500" />
-                      <span className="text-sm font-medium">
-                        {p.firstName} {p.lastName}
-                      </span>
-                    </div>
-                  </SelectItem>
-                ))}
+                <SelectGroup>
+                  {patients?.map((p) => (
+                    <SelectItem
+                      key={p.id}
+                      value={p.id}
+                      className="cursor-pointer py-2.5"
+                    >
+                      <div className="pd-up-option">
+                        <User className="size-3.5 shrink-0 text-blue-500" />
+                        <span className="text-sm font-medium">
+                          {p.firstName} {p.lastName}
+                        </span>
+                      </div>
+                    </SelectItem>
+                  ))}
+                </SelectGroup>
               </SelectContent>
             </Select>
           </div>

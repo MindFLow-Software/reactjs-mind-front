@@ -57,7 +57,7 @@ export function SuggestionColumn({
 
       <div className="scol-body">
         {isLoading ? (
-          <div className="space-y-3">
+          <div className="flex flex-col gap-3">
             {[1, 2, 3].map((i) => (
               <div key={i} className="scol-skeleton" />
             ))}
@@ -69,7 +69,7 @@ export function SuggestionColumn({
             </p>
           </div>
         ) : (
-          <div className="space-y-3">
+          <div className="flex flex-col gap-3">
             {visible.map((item) => (
               <SuggestionCard
                 key={item.id}

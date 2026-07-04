@@ -55,10 +55,10 @@ export function AdminSuggestionsPage() {
         </div>
 
         <div className="ads-page-grid">
-          <div className="space-y-6">
+          <div className="flex flex-col gap-6">
             <MostVotedSuggestionsCard />
           </div>
-          <div className="space-y-6">
+          <div className="flex flex-col gap-6">
             <SuggestionRanking />
           </div>
         </div>

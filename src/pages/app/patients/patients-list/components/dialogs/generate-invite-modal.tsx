@@ -45,7 +45,7 @@ export function GenerateInviteModal() {
   return (
     <DialogContent className="sm:max-w-xl p-0 gap-0 overflow-hidden rounded-2xl">
       <div className="px-6 py-5 border-b border-border bg-muted/40">
-        <DialogHeader className="space-y-0">
+        <DialogHeader className="">
           <DialogTitle className="flex items-center gap-3 text-base font-semibold text-foreground">
             <div className="flex items-center justify-center w-9 h-9 rounded-xl bg-primary text-primary-foreground shrink-0">
               <QrCode className="w-4 h-4" />
@@ -97,7 +97,7 @@ export function GenerateInviteModal() {
               Aponte a câmera do celular para o QR Code ou copie o link abaixo
             </p>
 
-            <div className="w-full space-y-2">
+            <div className="w-full flex flex-col gap-2">
               <div className="flex items-center gap-2 px-3 py-2 rounded-lg border border-border bg-muted/30">
                 <span className="flex-1 min-w-0 text-xs font-mono text-muted-foreground whitespace-nowrap overflow-x-auto select-all">
                   {inviteData.url}

@@ -10,7 +10,7 @@
   }
 
   .fin-stat-card--green {
-    @apply border-l-4 border-l-[#01DE82];
+    @apply border-l-4 border-l-(--finance-paid);
   }
 
   .fin-stat-card--amber {
@@ -30,7 +30,7 @@
   }
 
   .fin-stat-icon--green {
-    @apply border-[#01DE82]/20 bg-[#01DE82]/10 text-[#01DE82];
+    @apply border-(--finance-paid)/20 bg-(--finance-paid)/10 text-(--finance-paid);
   }
 
   .fin-stat-icon--amber {

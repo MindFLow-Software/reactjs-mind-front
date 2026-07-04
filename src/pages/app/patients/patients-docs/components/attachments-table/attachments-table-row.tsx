@@ -51,9 +51,7 @@ function DocThumb({
   return (
     <div className={cn('pd-row-thumb', style.gradient)}>
       <div className="pd-row-thumb-corner" />
-      <span className="pd-row-thumb-ext" style={{ color: style.labelColor }}>
-        {ext}
-      </span>
+      <span className={cn('pd-row-thumb-ext', style.labelColor)}>{ext}</span>
     </div>
   )
 }

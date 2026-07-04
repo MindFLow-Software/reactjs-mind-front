@@ -6,7 +6,7 @@
   }
 
   .adb-pie-header {
-    @apply flex flex-col items-stretch space-y-0 border-b border-border p-0 sm:flex-row;
+    @apply flex flex-col items-stretch  border-b border-border p-0 sm:flex-row;
   }
 
   .adb-pie-header-main {

@@ -18,7 +18,7 @@ export function PatientsTableLoading({ rows = 10 }: PatientsTableLoadingProps) {
           <TableCell>
             <div className="flex items-center gap-3">
               <Skeleton className="h-8 w-8 rounded-full shrink-0" />
-              <div className="space-y-1.5">
+              <div className="flex flex-col gap-1.5">
                 <Skeleton className="h-3.5 w-32" />
                 <Skeleton className="h-2.5 w-24" />
               </div>
@@ -30,7 +30,7 @@ export function PatientsTableLoading({ rows = 10 }: PatientsTableLoadingProps) {
           </TableCell>
           {/* Contato */}
           <TableCell>
-            <div className="space-y-1.5">
+            <div className="flex flex-col gap-1.5">
               <Skeleton className="h-3 w-32" />
               <Skeleton className="h-3 w-40" />
             </div>
@@ -41,7 +41,7 @@ export function PatientsTableLoading({ rows = 10 }: PatientsTableLoadingProps) {
           </TableCell>
           {/* Idade */}
           <TableCell className="hidden xl:table-cell">
-            <div className="space-y-1.5">
+            <div className="flex flex-col gap-1.5">
               <Skeleton className="h-3.5 w-14" />
               <Skeleton className="h-2.5 w-20" />
             </div>

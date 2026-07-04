@@ -81,7 +81,7 @@ export function SuggestionDetailHeader({
         </button>
       )}
 
-      <div className="flex-1 min-w-0 space-y-2">
+      <div className="flex-1 min-w-0 flex flex-col gap-2">
         <DialogTitle id="dm-title" className="sdm-title">
           {item.title}
         </DialogTitle>

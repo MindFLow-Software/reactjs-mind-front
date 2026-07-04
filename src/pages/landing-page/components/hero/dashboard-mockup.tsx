@@ -84,7 +84,7 @@ function MockupSidebar() {
           </div>
         </div>
       </div>
-      <div className="flex-1 px-2 py-3 space-y-0.5">
+      <div className="flex-1 px-2 py-3 flex flex-col gap-0.5">
         {SIDEBAR_ITEMS.map(({ icon: Icon, label, active }) => (
           <div
             key={label}

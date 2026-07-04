@@ -67,7 +67,7 @@ export function StepBasicData({ onAvatarSelect, patient }: StepBasicDataProps) {
   }, [dateOfBirth])
 
   return (
-    <div className="space-y-5">
+    <div className="flex flex-col gap-5">
       <PatientAvatarUpload
         fullName={fullName}
         onFileSelect={onAvatarSelect}

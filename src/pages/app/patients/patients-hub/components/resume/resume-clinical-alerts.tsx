@@ -103,7 +103,7 @@ export function ResumeClinicalAlerts() {
         </div>
       </CardHeader>
       <Separator />
-      <CardContent className="space-y-2 pt-3">
+      <CardContent className="flex flex-col gap-2 pt-3">
         {ALERTS.map((alert) => (
           <AlertRow key={alert.title} {...alert} />
         ))}

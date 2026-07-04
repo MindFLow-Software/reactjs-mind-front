@@ -24,6 +24,7 @@ import {
   SelectValue,
   SelectTrigger,
   SelectContent,
+  SelectGroup,
 } from '@/components/ui/select'
 
 import {
@@ -338,21 +339,23 @@ export function SignUpForm() {
                   <SelectValue placeholder="Selecione" />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="FEMININE" className="cursor-pointer">
-                    <div className="flex items-center gap-2">
-                      <Venus className="size-3.5 text-rose-500" /> Feminino
-                    </div>
-                  </SelectItem>
-                  <SelectItem value="MASCULINE" className="cursor-pointer">
-                    <div className="flex items-center gap-2">
-                      <Mars className="size-3.5 text-blue-500" /> Masculino
-                    </div>
-                  </SelectItem>
-                  <SelectItem value="OTHER" className="cursor-pointer">
-                    <div className="flex items-center gap-2">
-                      <Users className="size-3.5 text-violet-500" /> Outro
-                    </div>
-                  </SelectItem>
+                  <SelectGroup>
+                    <SelectItem value="FEMININE" className="cursor-pointer">
+                      <div className="flex items-center gap-2">
+                        <Venus className="size-3.5 text-rose-500" /> Feminino
+                      </div>
+                    </SelectItem>
+                    <SelectItem value="MASCULINE" className="cursor-pointer">
+                      <div className="flex items-center gap-2">
+                        <Mars className="size-3.5 text-blue-500" /> Masculino
+                      </div>
+                    </SelectItem>
+                    <SelectItem value="OTHER" className="cursor-pointer">
+                      <div className="flex items-center gap-2">
+                        <Users className="size-3.5 text-violet-500" /> Outro
+                      </div>
+                    </SelectItem>
+                  </SelectGroup>
                 </SelectContent>
               </Select>
             )}

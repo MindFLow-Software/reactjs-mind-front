@@ -112,7 +112,7 @@ export function AttachmentsTable({
                   <TableCell>
                     <div className="flex items-center gap-3">
                       <Skeleton className="h-11 w-9 rounded-md" />
-                      <div className="space-y-1.5">
+                      <div className="flex flex-col gap-1.5">
                         <Skeleton className="h-3 w-[140px]" />
                         <Skeleton className="h-2.5 w-[60px]" />
                       </div>

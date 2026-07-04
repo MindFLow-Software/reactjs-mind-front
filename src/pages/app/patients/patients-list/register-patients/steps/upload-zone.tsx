@@ -21,7 +21,10 @@ export const UploadZone = memo(
     })
 
     return (
-      <div className="space-y-[10px]" onClick={(e) => e.stopPropagation()}>
+      <div
+        className="flex flex-col gap-[10px]"
+        onClick={(e) => e.stopPropagation()}
+      >
         <div
           {...getRootProps()}
           className={cn(
