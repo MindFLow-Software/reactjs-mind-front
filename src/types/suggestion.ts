@@ -1,34 +1,15 @@
-export const SuggestionCategory = {
-  UI_UX: 'UI_UX',
-  SCHEDULING: 'SCHEDULING',
-  REPORTS: 'REPORTS',
-  PRIVACY_LGPD: 'PRIVACY_LGPD',
-  INTEGRATIONS: 'INTEGRATIONS',
-  OTHERS: 'OTHERS',
-} as const
-export type SuggestionCategory =
-  (typeof SuggestionCategory)[keyof typeof SuggestionCategory]
+import type { SuggestionCategory, SuggestionStatus } from '@/types/enums'
 
-export const SuggestionStatus = {
-  PENDING: 'PENDING',
-  OPEN: 'OPEN',
-  UNDER_REVIEW: 'UNDER_REVIEW',
-  PLANNED: 'PLANNED',
-  IMPLEMENTED: 'IMPLEMENTED',
-  REJECTED: 'REJECTED',
-} as const
-export type SuggestionStatus =
-  (typeof SuggestionStatus)[keyof typeof SuggestionStatus]
-
-export interface SuggestionHTTP {
+export interface ISuggestion {
   id: string
-  psychologistId: string
+  psychologistProfileId: string
   psychologistName: string | null
   title: string
   description: string
   category: SuggestionCategory
   status: SuggestionStatus
   likes: string[]
+  likesCount: number
   attachments: string[]
   createdAt: string
   updatedAt: string

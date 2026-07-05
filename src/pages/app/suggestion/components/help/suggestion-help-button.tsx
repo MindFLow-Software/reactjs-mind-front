@@ -23,6 +23,7 @@ import {
   TooltipTrigger,
 } from '@/components/ui/tooltip'
 import { cn } from '@/lib/utils'
+import './suggestion-help-button.css'
 
 const STEPS = [
   {
@@ -67,19 +68,7 @@ export function SuggestionHelpButton() {
           <Tooltip>
             <DialogTrigger asChild>
               <TooltipTrigger asChild>
-                <button
-                  className="
-                                    relative flex items-center justify-center size-12
-                                    rounded-full text-white
-                                    bg-gradient-to-br from-blue-600 to-indigo-600
-                                    shadow-xl hover:shadow-2xl
-                                    hover:scale-110 transition-all
-                                    active:scale-95
-                                    border-2 border-white/30 dark:border-white/10
-                                    focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2
-                                    cursor-pointer
-                                "
-                >
+                <button className="shb-fab">
                   <HelpCircle className="size-6" />
                 </button>
               </TooltipTrigger>
@@ -94,9 +83,9 @@ export function SuggestionHelpButton() {
         </TooltipProvider>
 
         <DialogContent className="max-w-2xl p-0 overflow-hidden border-none sm:rounded-2xl">
-          <DialogHeader className="p-6 pb-4 bg-muted/50 border-b border-border">
+          <DialogHeader className="shb-header">
             <div className="flex items-center gap-4">
-              <div className="p-3 rounded-xl bg-card shadow-sm">
+              <div className="shb-header-icon">
                 <Lightbulb className="size-5 text-indigo-600 dark:text-indigo-400" />
               </div>
               <div className="text-left">
@@ -115,22 +104,15 @@ export function SuggestionHelpButton() {
               <div
                 key={index}
                 className={cn(
-                  'p-6 flex gap-4 transition-all duration-300',
-                  'hover:bg-muted/50 hover:shadow-sm group',
+                  'shb-step group',
                   index < 2 && 'md:border-b border-border',
                 )}
               >
-                <div
-                  className={cn(
-                    'size-11 rounded-xl flex items-center justify-center shrink-0',
-                    'transition-transform group-hover:-translate-y-0.5',
-                    step.bg,
-                  )}
-                >
+                <div className={cn('shb-step-icon', step.bg)}>
                   <step.icon className={cn('size-5', step.color)} />
                 </div>
 
-                <div className="space-y-1">
+                <div className="flex flex-col gap-1">
                   <span className="text-[10px] font-bold text-muted-foreground tracking-widest">
                     PASSO {index + 1}
                   </span>

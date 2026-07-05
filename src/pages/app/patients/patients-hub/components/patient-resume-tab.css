@@ -1,4 +1,40 @@
 @reference "../../../../../global.css";
 
-.ph-patient-resume-tab {
+@layer components {
+  .prt-root {
+    @apply mt-4 flex flex-col gap-4;
+  }
+
+  .prt-stats-grid {
+    @apply grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-4;
+  }
+
+  .prt-charts-grid {
+    @apply grid grid-cols-1 gap-3 lg:grid-cols-2;
+  }
+
+  .prt-bottom-grid {
+    @apply grid grid-cols-1 gap-3 lg:grid-cols-2;
+  }
+
+  /* Stat card */
+  .prt-stat-body {
+    @apply pt-5 pb-4;
+  }
+
+  .prt-stat-label {
+    @apply mb-3 flex items-center gap-1.5 text-[10px] font-bold uppercase tracking-widest text-muted-foreground;
+  }
+
+  .prt-stat-icon {
+    @apply size-3;
+  }
+
+  .prt-stat-value {
+    @apply text-[28px] font-bold leading-none tabular-nums text-foreground;
+  }
+
+  .prt-stat-footer {
+    @apply mt-2;
+  }
 }

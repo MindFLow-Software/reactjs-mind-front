@@ -1,4 +1,5 @@
 import { api } from '@/lib/axios'
+import type { IMutationResult } from '@/types/api'
 
 interface CreateSuggestionRequest {
   title: string
@@ -12,7 +13,7 @@ export async function createSuggestion({
   description,
   category,
   files,
-}: CreateSuggestionRequest) {
+}: CreateSuggestionRequest): Promise<IMutationResult<void>> {
   const formData = new FormData()
 
   formData.append('title', title)
@@ -25,9 +26,11 @@ export async function createSuggestion({
     })
   }
 
-  await api.post('/suggestions', formData, {
+  const response = await api.post('/suggestions', formData, {
     headers: {
       'Content-Type': 'multipart/form-data',
     },
   })
+
+  return { data: undefined, message: response.apiMessage ?? null }
 }

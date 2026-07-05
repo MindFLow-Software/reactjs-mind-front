@@ -32,7 +32,11 @@ function PatientsDataBlockRoot({
   children,
   className,
 }: PatientsDataBlockRootProps) {
-  return <section className={cn('space-y-4', className)}>{children}</section>
+  return (
+    <section className={cn('flex flex-col gap-4', className)}>
+      {children}
+    </section>
+  )
 }
 
 function PatientsDataBlockHeader({
@@ -45,7 +49,7 @@ function PatientsDataBlockHeader({
 
   return (
     <header className="flex items-start justify-between gap-4">
-      <div className="space-y-1 min-w-0">
+      <div className="flex flex-col gap-1 min-w-0">
         {isLoading ? (
           <Skeleton className="h-5 w-32" />
         ) : (

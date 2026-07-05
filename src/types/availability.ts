@@ -1,6 +1,6 @@
-export interface AvailabilityHTTP {
+export interface IPsychologistAvailability {
   id: string
-  psychologistId: string
+  psychologistPracticeContextId: string
   dayOfWeek: number
   startTime: string
   endTime: string

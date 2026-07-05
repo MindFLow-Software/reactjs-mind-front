@@ -1,0 +1,27 @@
+@reference "../../../../global.css";
+
+@layer components {
+  .psob-back-link {
+    @apply text-xs flex items-center gap-1 cursor-pointer text-black;
+  }
+
+  .psob-step-button {
+    @apply justify-start gap-2;
+  }
+
+  .psob-step-button-active {
+    @apply bg-blue-200 border border-blue-400 hover:bg-blue-300;
+  }
+
+  .psob-step-index {
+    @apply rounded-full flex items-center justify-center p-3.5 size-4 bg-blue-500 text-white;
+  }
+
+  .psob-icon-badge {
+    @apply flex items-center justify-center p-2 w-fit rounded-md text-white bg-blue-500/75;
+  }
+
+  .psob-footer {
+    @apply flex justify-between px-0 py-5 border-t-[0.5px] border-t-black/25 mt-auto;
+  }
+}

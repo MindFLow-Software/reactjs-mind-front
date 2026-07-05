@@ -23,7 +23,9 @@ import {
   SelectItem,
   SelectTrigger,
   SelectValue,
+  SelectGroup,
 } from '@/components/ui/select'
+import './roadmap-filters.css'
 
 interface RoadmapFiltersProps {
   search: string
@@ -115,27 +117,22 @@ export function RoadmapFilters({
   }
 
   return (
-    <div className="flex flex-col lg:flex-row gap-3 lg:items-center lg:justify-between">
-      <div className="flex flex-col lg:flex-row gap-2 flex-1 lg:items-center">
-        <div className="relative w-full lg:w-auto">
-          <Search className="absolute left-2.5 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground pointer-events-none" />
+    <div className="ads-filters-root">
+      <div className="ads-filters-group">
+        <div className="ads-filters-search">
+          <Search className="ads-filters-search-icon" />
           <Input
             {...register('search')}
             placeholder="Buscar sugestão..."
-            className="h-8 w-full lg:w-[320px] pl-9"
+            className="ads-filters-search-input"
           />
         </div>
 
-        {/* Select de Categoria Padronizado */}
         <Select
           value={category}
           onValueChange={(value) => onFiltersChange({ category: value })}
         >
-          <SelectTrigger
-            className="cursor-pointer h-8 min-w-[180px] w-auto bg-background
-            border-muted-foreground/20 hover:border-primary/30 transition-all
-            shadow-sm px-3"
-          >
+          <SelectTrigger className="ads-filters-select-trigger">
             <div className="flex items-center gap-2 whitespace-nowrap">
               <Filter className="h-3.5 w-3.5 text-muted-foreground" />
               <SelectValue placeholder="Categoria" />
@@ -143,21 +140,23 @@ export function RoadmapFilters({
           </SelectTrigger>
 
           <SelectContent className="min-w-[220px]">
-            {CATEGORIES.map((item) => {
-              const Icon = item.icon
-              return (
-                <SelectItem
-                  key={item.value}
-                  value={item.value}
-                  className="cursor-pointer py-2.5"
-                >
-                  <div className="flex items-center gap-2 whitespace-nowrap">
-                    <Icon className={`h-4 w-4 ${item.color}`} />
-                    <span className="text-sm font-medium">{item.label}</span>
-                  </div>
-                </SelectItem>
-              )
-            })}
+            <SelectGroup>
+              {CATEGORIES.map((item) => {
+                const Icon = item.icon
+                return (
+                  <SelectItem
+                    key={item.value}
+                    value={item.value}
+                    className="cursor-pointer py-2.5"
+                  >
+                    <div className="flex items-center gap-2 whitespace-nowrap">
+                      <Icon className={`h-4 w-4 ${item.color}`} />
+                      <span className="text-sm font-medium">{item.label}</span>
+                    </div>
+                  </SelectItem>
+                )
+              })}
+            </SelectGroup>
           </SelectContent>
         </Select>
 
@@ -167,7 +166,7 @@ export function RoadmapFilters({
             size="sm"
             type="button"
             onClick={handleClearFilters}
-            className="cursor-pointer h-8 px-2 lg:px-3 text-muted-foreground hover:text-destructive gap-2 transition-colors"
+            className="ads-filters-clear-btn"
           >
             <XCircle className="h-4 w-4" />
             Limpar filtros

@@ -1,6 +1,6 @@
 class Fn {
   static one = <T = unknown>(
-    key: string | undefined,
+    key: string | undefined | null,
     object: Record<string, NonNullable<T>>,
     defaultValue: NonNullable<T>,
   ): NonNullable<T> => {

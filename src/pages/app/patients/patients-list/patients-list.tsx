@@ -16,9 +16,9 @@ import { Button } from '@/components/ui/button'
 import { Dialog } from '@/components/ui/dialog'
 import { Pagination } from '@/components/pagination'
 
-import { MetricCard } from './components/metric-card'
+import { MetricCard } from '@/components/metric-card'
 import { PatientsTable } from './components/table/patients-table'
-import { RegisterPatients } from './register-patients/register-patients'
+import { RegisterPatients } from './components/dialogs/register-patients/register-patients'
 import { PatientsPageShell } from '../components/patients-page-shell'
 import { PatientsDataBlock } from '../components/patients-data-block'
 import { GenerateInviteModal } from './components/dialogs/generate-invite-modal'
@@ -29,14 +29,13 @@ import {
   formatPatientsShowing,
 } from './patients-list.helpers'
 
-import { useHeaderStore } from '@/hooks/use-header-store'
+import { useHeaderStore } from '@/store/use-header-store'
 import { usePatientFilters } from '@/hooks/use-patient-filters'
 import { usePatientsMetrics } from './hooks/use-patients-metrics'
 import { usePatientsListQuery } from './hooks/use-patients-list-query'
 
 type IregisterModal = {
   isOpen: boolean
-  isEditing?: boolean
 }
 
 type IpageShellHeader = {
@@ -122,7 +121,6 @@ export function PatientsList() {
   const [isInviteOpen, setIsInviteOpen] = useState(false)
   const [registerModalData, setRegisterModalData] = useState<IregisterModal>({
     isOpen: false,
-    isEditing: false,
   })
 
   const { filters, setPage, setSort, clearFilters } = usePatientFilters()
@@ -152,7 +150,7 @@ export function PatientsList() {
           icon={<UsersRound className="size-6 text-blue-600" />}
         >
           <PageShellHeader
-            primaryAction={() => {}}
+            primaryAction={() => { }}
             secondaryAction={() => setIsInviteOpen(true)}
             terciaryAction={() => setRegisterModalData({ isOpen: true })}
           />
@@ -205,8 +203,8 @@ export function PatientsList() {
                 )}
               >
                 <PageDataBlockHeader
-                  primaryAction={() => {}}
-                  secondaryAction={() => {}}
+                  primaryAction={() => { }}
+                  secondaryAction={() => { }}
                 />
               </PatientsDataBlock.Header>
 
@@ -222,22 +220,27 @@ export function PatientsList() {
                   hasActiveFilters={filtersActive}
                   sort={
                     filters.sortBy
-                      ? { by: filters.sortBy, order: filters.order, onSort: setSort }
+                      ? {
+                        by: filters.sortBy,
+                        order: filters.order,
+                        onSort: setSort,
+                      }
                       : undefined
                   }
                   onClearFilters={clearFilters}
-                  onRegister={() =>
-                    setRegisterModalData({ isOpen: true, isEditing: false })
-                  }
+                  onRegister={() => setRegisterModalData({ isOpen: true })}
                 />
               </PatientsDataBlock.Content>
 
               <PatientsDataBlock.Footer>
                 <Pagination
-                  pageIndex={meta.pageIndex}
-                  totalCount={meta.totalCount}
-                  perPage={meta.perPage}
-                  onPageChange={setPage}
+                  pagination={{
+                    pageIndex: meta.pageIndex,
+                    totalCount: meta.totalCount,
+                    perPage: meta.perPage,
+                    onPageChange: setPage,
+                  }}
+                  totalLabel="Pacientes"
                 />
               </PatientsDataBlock.Footer>
             </PatientsDataBlock>
@@ -249,7 +252,7 @@ export function PatientsList() {
         open={registerModalData.isOpen}
         onOpenChange={() => setRegisterModalData({ isOpen: false })}
       >
-        <RegisterPatients isEditing={registerModalData.isEditing} />
+        <RegisterPatients />
       </Dialog>
 
       <Dialog open={isInviteOpen} onOpenChange={setIsInviteOpen}>

@@ -1,0 +1,23 @@
+@reference "../../../global.css";
+
+@layer components {
+  .sp-root {
+    @apply flex flex-col gap-6 mt-4 h-[calc(100vh-160px)] overflow-hidden;
+  }
+
+  .sp-header {
+    @apply flex flex-col lg:flex-row lg:items-center justify-between gap-4 border-l-4 border-primary pl-5 py-2;
+  }
+
+  .sp-toolbar {
+    @apply border border-border rounded-xl p-3 bg-card shrink-0;
+  }
+
+  .sp-sort-chip {
+    @apply inline-flex items-center gap-1.5 h-7 px-3 rounded-full text-xs font-medium border border-border text-muted-foreground hover:bg-muted/50 transition-colors cursor-pointer shrink-0;
+  }
+
+  .sp-board {
+    @apply grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 md:gap-6 overflow-x-auto pb-4 h-full min-h-0 auto-cols-fr;
+  }
+}

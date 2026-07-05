@@ -19,7 +19,7 @@ import { toast } from 'sonner'
 import { signOut } from '@/api/auth/sign-out'
 import {
   getProfile,
-  type GetProfileResponse,
+  type IgetMeResponse,
 } from '@/api/psychologists/get-profile'
 import { useTheme } from '../theme/theme-provider'
 
@@ -43,19 +43,22 @@ import {
   useSidebar,
 } from '@/components/ui/sidebar'
 import { Skeleton } from '@/components/ui/skeleton'
-import { UserAvatar } from '@/components/user-avatar' // Importando o componente padronizado
+import { UserAvatar } from '@/components/user-avatar'
+import { useSessionStore } from '@/store/use-session-store'
+import './nav-user.css'
 
 export function NavUser() {
   const { isMobile } = useSidebar()
   const navigate = useNavigate()
   const { setTheme } = useTheme()
   const queryClient = useQueryClient()
+  const clearSession = useSessionStore((state) => state.clearSession)
 
   const {
     data: profile,
     isLoading,
     isError,
-  } = useQuery<GetProfileResponse | null>({
+  } = useQuery<IgetMeResponse | null>({
     queryKey: ['user-profile'],
     queryFn: getProfile,
     retry: false,
@@ -65,13 +68,14 @@ export function NavUser() {
   const { mutateAsync: signOutFn, isPending: isSigningOut } = useMutation({
     mutationFn: signOut,
     onSuccess: () => {
+      clearSession()
       queryClient.clear()
       toast.success('Sessão encerrada com segurança!', { duration: 4000 })
       navigate('/sign-in', { replace: true })
     },
     onError: (error) => {
       console.error('Erro ao sair:', error)
-      localStorage.removeItem('isAuthenticated')
+      clearSession()
       navigate('/sign-in', { replace: true })
     },
   })
@@ -92,59 +96,57 @@ export function NavUser() {
             <SidebarMenuButton
               size="lg"
               disabled={isLoading}
-              className="cursor-pointer data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground"
+              className="nu-trigger data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground"
             >
               {isLoading ? (
-                <Skeleton className="h-8 w-8 rounded-lg" />
+                <Skeleton className="nu-avatar-skeleton" />
               ) : (
                 <UserAvatar
                   src={profileImage}
                   name={name}
                   size="md"
-                  className="rounded-lg"
+                  className="nu-avatar"
                 />
               )}
 
-              <div className="grid flex-1 text-left text-sm leading-tight">
+              <div className="nu-info">
                 {isLoading ? (
-                  <div className="space-y-1">
+                  <div className="nu-skeleton-stack">
                     <Skeleton className="h-4 w-32" />
                     <Skeleton className="h-3 w-24" />
                   </div>
                 ) : (
                   <>
-                    <span className="truncate font-medium">{name}</span>
-                    <span className="truncate text-xs text-muted-foreground">
+                    <span className="nu-name">{name}</span>
+                    <span className="nu-email">
                       {profile?.email || 'Sem e-mail'}
                     </span>
                   </>
                 )}
               </div>
 
-              {!isLoading && <ChevronsUpDown className="ml-auto size-4" />}
+              {!isLoading && <ChevronsUpDown className="nu-chevron" />}
             </SidebarMenuButton>
           </DropdownMenuTrigger>
 
           {!isLoading && profile && (
             <DropdownMenuContent
-              className="w-[--radix-dropdown-menu-trigger-width] min-w-56 rounded-lg"
+              className="nu-content w-[--radix-dropdown-menu-trigger-width]"
               side={isMobile ? 'bottom' : 'right'}
               align="end"
               sideOffset={4}
             >
-              <DropdownMenuLabel className="p-0 font-normal">
-                <div className="flex items-center gap-2 px-1 py-1.5 text-left text-sm">
+              <DropdownMenuLabel className="nu-label">
+                <div className="nu-label-inner">
                   <UserAvatar
                     src={profileImage}
                     name={name}
                     size="md"
-                    className="rounded-lg"
+                    className="nu-avatar"
                   />
-                  <div className="grid flex-1 text-left text-sm leading-tight">
-                    <span className="truncate font-medium">{name}</span>
-                    <span className="truncate text-xs text-muted-foreground">
-                      {profile.email}
-                    </span>
+                  <div className="nu-info">
+                    <span className="nu-name">{name}</span>
+                    <span className="nu-email">{profile.email}</span>
                   </div>
                 </div>
               </DropdownMenuLabel>
@@ -154,7 +156,7 @@ export function NavUser() {
               <DropdownMenuGroup>
                 <DropdownMenuItem asChild>
                   <Link to="/planos" className="cursor-pointer">
-                    <Sparkles className="mr-2 h-4 w-4" />
+                    <Sparkles className="nu-item-icon" />
                     Planos
                   </Link>
                 </DropdownMenuItem>
@@ -165,7 +167,7 @@ export function NavUser() {
               <DropdownMenuGroup>
                 <DropdownMenuSub>
                   <DropdownMenuSubTrigger className="cursor-pointer">
-                    <Palette className="mr-2 h-4 w-4" />
+                    <Palette className="nu-item-icon" />
                     <span>Tema</span>
                   </DropdownMenuSubTrigger>
                   <DropdownMenuPortal>
@@ -174,21 +176,21 @@ export function NavUser() {
                         onClick={() => setTheme('light')}
                         className="cursor-pointer"
                       >
-                        <Sun className="mr-2 h-4 w-4" />
+                        <Sun className="nu-item-icon" />
                         <span>Claro</span>
                       </DropdownMenuItem>
                       <DropdownMenuItem
                         onClick={() => setTheme('dark')}
                         className="cursor-pointer"
                       >
-                        <Moon className="mr-2 h-4 w-4" />
+                        <Moon className="nu-item-icon" />
                         <span>Escuro</span>
                       </DropdownMenuItem>
                       <DropdownMenuItem
                         onClick={() => setTheme('system')}
                         className="cursor-pointer"
                       >
-                        <Laptop className="mr-2 h-4 w-4" />
+                        <Laptop className="nu-item-icon" />
                         <span>Sistema</span>
                       </DropdownMenuItem>
                     </DropdownMenuSubContent>
@@ -196,20 +198,20 @@ export function NavUser() {
                 </DropdownMenuSub>
                 <DropdownMenuItem asChild>
                   <Link to="/account" className="cursor-pointer">
-                    <BadgeCheck className="mr-2 h-4 w-4" />
+                    <BadgeCheck className="nu-item-icon" />
                     Conta
                   </Link>
                 </DropdownMenuItem>
 
                 <DropdownMenuItem asChild>
                   <Link to="/pagamentos" className="cursor-pointer">
-                    <CreditCard className="mr-2 h-4 w-4" />
+                    <CreditCard className="nu-item-icon" />
                     Pagamentos
                   </Link>
                 </DropdownMenuItem>
 
                 <DropdownMenuItem className="cursor-pointer">
-                  <Bell className="mr-2 h-4 w-4" />
+                  <Bell className="nu-item-icon" />
                   Notificações
                 </DropdownMenuItem>
               </DropdownMenuGroup>
@@ -218,10 +220,10 @@ export function NavUser() {
 
               <DropdownMenuItem
                 disabled={isSigningOut}
-                className="text-red-500 dark:text-red-400 focus:text-red-500 focus:bg-red-100 dark:focus:bg-red-900/20 cursor-pointer"
+                className="nu-signout"
                 onClick={() => signOutFn()}
               >
-                <LogOut className="mr-2 h-4 w-4" />
+                <LogOut className="nu-item-icon" />
                 Sair
               </DropdownMenuItem>
             </DropdownMenuContent>

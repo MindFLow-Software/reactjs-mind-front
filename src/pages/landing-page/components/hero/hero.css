@@ -1,0 +1,21 @@
+@reference "../../../../global.css";
+
+@layer components {
+  .lp-hero-section {
+    @apply relative overflow-hidden bg-[#F7F9FF] pt-20 md:pt-28;
+  }
+
+  .lp-hero-glow {
+    @apply pointer-events-none absolute -top-40 left-1/2 h-[600px] w-[800px] -translate-x-1/2;
+    background: radial-gradient(
+      ellipse at 50% 0%,
+      rgba(37, 99, 235, 0.18) 0%,
+      transparent 60%
+    );
+  }
+
+  .lp-hero-mockup-fade {
+    @apply pointer-events-none absolute bottom-0 left-0 right-0 h-48;
+    background: linear-gradient(to top, #f7f9ff 0%, transparent 100%);
+  }
+}

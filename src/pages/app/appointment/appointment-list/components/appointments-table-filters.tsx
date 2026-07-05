@@ -23,6 +23,7 @@ import {
   SelectItem,
   SelectTrigger,
   SelectValue,
+  SelectGroup,
 } from '@/components/ui/select'
 
 interface AppointmentsTableFiltersProps {
@@ -112,47 +113,49 @@ export function AppointmentsTableFilters({
           </SelectTrigger>
 
           <SelectContent className="min-w-[220px] bg-popover border-border rounded-xl">
-            <SelectItem value="all" className="cursor-pointer py-2.5">
-              <div className="flex items-center gap-2 whitespace-nowrap">
-                <Users className="h-4 w-4 text-slate-500" />
-                <span className="text-sm font-medium">Todos os status</span>
-              </div>
-            </SelectItem>
+            <SelectGroup>
+              <SelectItem value="all" className="cursor-pointer py-2.5">
+                <div className="flex items-center gap-2 whitespace-nowrap">
+                  <Users className="h-4 w-4 text-slate-500" />
+                  <span className="text-sm font-medium">Todos os status</span>
+                </div>
+              </SelectItem>
 
-            <SelectItem value="SCHEDULED" className="cursor-pointer py-2.5">
-              <div className="flex items-center gap-2 whitespace-nowrap">
-                <CalendarCheck2 className="h-4 w-4 text-blue-500" />
-                <span className="text-sm font-medium">Agendados</span>
-              </div>
-            </SelectItem>
+              <SelectItem value="SCHEDULED" className="cursor-pointer py-2.5">
+                <div className="flex items-center gap-2 whitespace-nowrap">
+                  <CalendarCheck2 className="h-4 w-4 text-blue-500" />
+                  <span className="text-sm font-medium">Agendados</span>
+                </div>
+              </SelectItem>
 
-            <SelectItem value="RESCHEDULED" className="cursor-pointer py-2.5">
-              <div className="flex items-center gap-2 whitespace-nowrap">
-                <History className="h-4 w-4 text-purple-500" />
-                <span className="text-sm font-medium">Remarcados</span>
-              </div>
-            </SelectItem>
+              <SelectItem value="RESCHEDULED" className="cursor-pointer py-2.5">
+                <div className="flex items-center gap-2 whitespace-nowrap">
+                  <History className="h-4 w-4 text-purple-500" />
+                  <span className="text-sm font-medium">Remarcados</span>
+                </div>
+              </SelectItem>
 
-            <SelectItem value="ATTENDING" className="cursor-pointer py-2.5">
-              <div className="flex items-center gap-2 whitespace-nowrap">
-                <Activity className="h-4 w-4 text-amber-500" />
-                <span className="text-sm font-medium">Em atendimento</span>
-              </div>
-            </SelectItem>
+              <SelectItem value="ATTENDING" className="cursor-pointer py-2.5">
+                <div className="flex items-center gap-2 whitespace-nowrap">
+                  <Activity className="h-4 w-4 text-amber-500" />
+                  <span className="text-sm font-medium">Em atendimento</span>
+                </div>
+              </SelectItem>
 
-            <SelectItem value="FINISHED" className="cursor-pointer py-2.5">
-              <div className="flex items-center gap-2 whitespace-nowrap">
-                <CheckCircle2 className="h-4 w-4 text-emerald-500" />
-                <span className="text-sm font-medium">Finalizados</span>
-              </div>
-            </SelectItem>
+              <SelectItem value="FINISHED" className="cursor-pointer py-2.5">
+                <div className="flex items-center gap-2 whitespace-nowrap">
+                  <CheckCircle2 className="h-4 w-4 text-emerald-500" />
+                  <span className="text-sm font-medium">Finalizados</span>
+                </div>
+              </SelectItem>
 
-            <SelectItem value="CANCELED" className="cursor-pointer py-2.5">
-              <div className="flex items-center gap-2 whitespace-nowrap">
-                <XCircle className="h-4 w-4 text-rose-500" />
-                <span className="text-sm font-medium">Cancelados</span>
-              </div>
-            </SelectItem>
+              <SelectItem value="CANCELED" className="cursor-pointer py-2.5">
+                <div className="flex items-center gap-2 whitespace-nowrap">
+                  <XCircle className="h-4 w-4 text-rose-500" />
+                  <span className="text-sm font-medium">Cancelados</span>
+                </div>
+              </SelectItem>
+            </SelectGroup>
           </SelectContent>
         </Select>
 

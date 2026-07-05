@@ -1,0 +1,15 @@
+@reference "../../../../../global.css";
+
+@layer components {
+  .pr-nav-root {
+    @apply flex items-center gap-3 rounded-lg border border-border/60 bg-card px-3 py-1.5;
+  }
+
+  .pr-nav-btn {
+    @apply size-8 cursor-pointer rounded-md border-border/70 bg-background text-muted-foreground hover:bg-muted hover:text-foreground disabled:text-muted-foreground disabled:opacity-35;
+  }
+
+  .pr-nav-label {
+    @apply whitespace-nowrap text-[11px] font-semibold uppercase tracking-wider tabular-nums text-muted-foreground;
+  }
+}

@@ -2,7 +2,12 @@ import { useMemo } from 'react'
 import { useQuery } from '@tanstack/react-query'
 import { subDays, startOfDay, endOfDay } from 'date-fns'
 import { getDailySessionsMetrics } from '@/api/metrics/get-daily-sessions-metrics'
-import { type DashboardPeriod, PERIOD_DAYS, QUERY_STALE_TIME, QUERY_GC_TIME } from '../constants'
+import {
+  type DashboardPeriod,
+  PERIOD_DAYS,
+  QUERY_STALE_TIME,
+  QUERY_GC_TIME,
+} from '../constants'
 
 export interface UseSessionsBarReturn {
   data: Awaited<ReturnType<typeof getDailySessionsMetrics>>

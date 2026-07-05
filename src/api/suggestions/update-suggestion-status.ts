@@ -1,6 +1,7 @@
 import { api } from '@/lib/axios'
+import type { IMutationResult } from '@/types/api'
 
-interface UpdateSuggestionParams {
+export interface UpdateSuggestionParams {
   id: string
   status?: string
   title?: string
@@ -11,6 +12,7 @@ interface UpdateSuggestionParams {
 export async function updateSuggestionStatus({
   id,
   ...data
-}: UpdateSuggestionParams) {
-  await api.patch(`/admin/suggestions/${id}/status`, data)
+}: UpdateSuggestionParams): Promise<IMutationResult<void>> {
+  const response = await api.patch(`/admin/suggestions/${id}/status`, data)
+  return { data: response.data, message: response.apiMessage ?? null }
 }

@@ -1,35 +1,41 @@
 import type { ReactNode } from 'react'
 import { cn } from '@/lib/utils'
+import { Card } from '@/components/ui/card'
 
-interface StatCardProps {
+export interface StatCardData {
   icon: ReactNode
   iconBg: string
   value: string | number
   label: string
   trend?: string
   trendClass?: string
+}
+
+interface StatCardProps {
+  data: StatCardData
   className?: string
 }
 
-export function StatCard({
-  icon,
-  iconBg,
-  value,
-  label,
-  trend,
-  trendClass = 'text-emerald-600',
-  className,
-}: StatCardProps) {
+export function StatCard({ data, className }: StatCardProps) {
+  const {
+    icon,
+    iconBg,
+    value,
+    label,
+    trend,
+    trendClass = 'text-emerald-600',
+  } = data
+
   return (
-    <div
+    <Card
       className={cn(
-        'flex items-center gap-4 bg-card border border-border rounded-xl px-5 py-4',
+        'flex-row items-center gap-4 rounded-xl border border-border px-5 py-4',
         className,
       )}
     >
       <div
         className={cn(
-          'size-11 rounded-lg flex items-center justify-center shrink-0',
+          'flex size-11 shrink-0 items-center justify-center rounded-lg',
           iconBg,
         )}
       >
@@ -37,13 +43,13 @@ export function StatCard({
       </div>
       <div>
         <p className="text-2xl font-bold leading-none">{value}</p>
-        <p className="text-xs text-muted-foreground mt-1.5">{label}</p>
+        <p className="mt-1.5 text-xs text-muted-foreground">{label}</p>
         {trend && (
-          <p className={cn('text-[11px] font-semibold mt-1', trendClass)}>
+          <p className={cn('mt-1 text-[11px] font-semibold', trendClass)}>
             {trend}
           </p>
         )}
       </div>
-    </div>
+    </Card>
   )
 }

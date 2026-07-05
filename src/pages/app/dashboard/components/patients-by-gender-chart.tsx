@@ -1,11 +1,7 @@
 import * as React from 'react'
 import { Cell, Label, Pie, PieChart } from 'recharts'
 import { Loader2, Users, AlertCircle, RefreshCcw } from 'lucide-react'
-import {
-  Card,
-  CardContent,
-  CardHeader,
-} from '@/components/ui/card'
+import { Card, CardContent, CardHeader } from '@/components/ui/card'
 import {
   ChartContainer,
   ChartTooltip,
@@ -13,6 +9,7 @@ import {
   type ChartConfig,
 } from '@/components/ui/chart'
 import { useDashboardData } from '../hooks/use-dashboard-data'
+import './patients-by-gender-chart.css'
 
 type ContentState = 'loading' | 'error' | 'empty' | 'data'
 
@@ -23,12 +20,16 @@ const GENDER_TRANSLATIONS: Record<string, string> = {
 }
 
 const GENDER_COLORS: Record<string, string> = {
-  FEMININE: '#ec4899',
-  MASCULINE: '#3b82f6',
-  OTHER: '#a855f7',
+  FEMININE: 'var(--gender-feminine)',
+  MASCULINE: 'var(--gender-masculine)',
+  OTHER: 'var(--gender-other)',
 }
 
-const CHART_COLORS = ['#ec4899', '#3b82f6', '#a855f7'] as const
+const CHART_COLORS = [
+  'var(--gender-feminine)',
+  'var(--gender-masculine)',
+  'var(--gender-other)',
+] as const
 
 const chartConfig = {
   patients: { label: 'Pacientes' },
@@ -68,18 +69,18 @@ export const PatientsByGenderChart = React.memo(
       switch (contentState) {
         case 'loading':
           return (
-            <div className="flex h-[180px] items-center justify-center">
+            <div className="dsh-gender-loading">
               <Loader2 className="h-8 w-8 animate-spin text-muted-foreground" />
             </div>
           )
         case 'error':
           return (
-            <div className="flex h-[180px] flex-col items-center justify-center gap-2 text-center">
+            <div className="dsh-gender-state">
               <AlertCircle className="size-5 text-red-500" />
               <p className="text-sm text-red-500">Erro ao carregar</p>
               <button
                 onClick={() => refetch()}
-                className="flex items-center gap-1 text-xs font-semibold text-blue-500 hover:underline"
+                className="dsh-gender-retry-btn"
               >
                 <RefreshCcw size={12} /> Tentar novamente
               </button>
@@ -87,8 +88,8 @@ export const PatientsByGenderChart = React.memo(
           )
         case 'empty':
           return (
-            <div className="flex h-[180px] flex-col items-center justify-center gap-2 text-center">
-              <div className="flex h-10 w-10 items-center justify-center rounded-full bg-muted/30">
+            <div className="dsh-gender-state">
+              <div className="dsh-gender-state-icon">
                 <Users className="h-5 w-5 text-muted-foreground/50" />
               </div>
               <p className="text-sm font-medium text-foreground">
@@ -98,10 +99,10 @@ export const PatientsByGenderChart = React.memo(
           )
         case 'data':
           return (
-            <div className="flex items-center gap-6">
+            <div className="dsh-gender-data-row">
               <ChartContainer
                 config={chartConfig}
-                className="h-[160px] w-[160px] shrink-0"
+                className="dsh-gender-chart-wrap"
               >
                 <PieChart>
                   <ChartTooltip
@@ -167,7 +168,7 @@ export const PatientsByGenderChart = React.memo(
                 </PieChart>
               </ChartContainer>
 
-              <div className="flex flex-col gap-3 flex-1">
+              <div className="dsh-gender-legend">
                 {chartData.map((item, index) => {
                   const color =
                     GENDER_COLORS[item.genderKey] ??
@@ -178,15 +179,15 @@ export const PatientsByGenderChart = React.memo(
                       : 0
 
                   return (
-                    <div key={item.gender} className="flex items-center gap-2.5">
+                    <div key={item.gender} className="dsh-gender-legend-item">
                       <div
-                        className="h-2.5 w-2.5 shrink-0 rounded-full"
+                        className="dsh-gender-legend-dot"
                         style={{ backgroundColor: color }}
                       />
-                      <span className="text-sm text-foreground flex-1">
+                      <span className="dsh-gender-legend-label">
                         {item.gender}
                       </span>
-                      <span className="text-sm font-semibold tabular-nums text-muted-foreground">
+                      <span className="dsh-gender-legend-value">
                         {pct}%{' '}
                         <span className="font-normal text-xs">
                           ({item.count})
@@ -202,24 +203,20 @@ export const PatientsByGenderChart = React.memo(
     }
 
     return (
-      <Card className="border-border bg-card shadow-sm rounded-xl flex flex-col">
-        <CardHeader className="px-6 pb-4 border-b border-border">
-          <div className="flex items-center gap-3">
-            <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-blue-500/10 ring-1 ring-blue-500/20">
+      <Card className="dsh-gender-card">
+        <CardHeader className="dsh-gender-header">
+          <div className="dsh-gender-header-row">
+            <div className="dsh-gender-icon">
               <Users className="size-4 text-blue-600" />
             </div>
             <div>
-              <p className="text-base font-semibold text-foreground leading-tight">
-                Perfil dos pacientes
-              </p>
-              <p className="text-xs font-medium uppercase tracking-wider text-muted-foreground mt-0.5">
-                Distribuição por gênero
-              </p>
+              <p className="dsh-gender-title">Perfil dos pacientes</p>
+              <p className="dsh-gender-subtitle">Distribuição por gênero</p>
             </div>
           </div>
         </CardHeader>
 
-        <CardContent className="flex-1 px-6 pb-6">
+        <CardContent className="dsh-gender-content">
           {renderContent()}
         </CardContent>
       </Card>

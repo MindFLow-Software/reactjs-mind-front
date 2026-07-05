@@ -1,4 +1,4 @@
-import type { AnamnesisData } from '@/api/patients/anamnesis'
+import type { IAnamnesisContent } from '@/types/clinical'
 import type { AnamnesisBlock, SerializedBlock } from './anamnesis-types'
 
 export const DYNAMIC_TEMPLATE_PREFIX = '__ANAMNESIS_BLOCKS_V1__:'
@@ -77,7 +77,7 @@ export function parseMarkdownBlocks(content: string): AnamnesisBlock[] {
   return blocks
 }
 
-export function buildInitialBlocks(data: AnamnesisData): AnamnesisBlock[] {
+export function buildInitialBlocks(data: IAnamnesisContent): AnamnesisBlock[] {
   const raw = data.medicalHistory ?? ''
 
   if (raw.startsWith(DYNAMIC_TEMPLATE_PREFIX)) {
@@ -128,7 +128,7 @@ export function buildContentFromBlocks(blocks: AnamnesisBlock[]): string {
     .trim()
 }
 
-export function toApiData(blocks: AnamnesisBlock[]): AnamnesisData {
+export function toApiData(blocks: AnamnesisBlock[]): IAnamnesisContent {
   const normalized = normalizeBlocks(blocks)
   const serialized = `${DYNAMIC_TEMPLATE_PREFIX}${JSON.stringify(
     normalized.map((block, index) => ({

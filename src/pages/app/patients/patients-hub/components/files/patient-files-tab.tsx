@@ -5,10 +5,8 @@ import { useQuery, useQueryClient, useMutation } from '@tanstack/react-query'
 import { Loader2, FileSearch } from 'lucide-react'
 import { toast } from 'sonner'
 
-import {
-  getPatientAttachments,
-  deleteAttachment,
-} from '@/api/attachments/attachments'
+import { getPatientAttachments } from '@/api/attachments/get-patient-attachments'
+import { deleteAttachment } from '@/api/attachments/delete-attachment'
 import type { AttachmentPatientItem } from '@/types/attachment'
 import { FileUploadZone } from './file-upload-zone'
 import { FileTypeFilter, getFileType } from './file-type-filter'

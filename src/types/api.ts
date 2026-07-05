@@ -27,6 +27,60 @@ export type ApiErrorCode =
   | 'UNPROCESSABLE_ENTITY'
   | 'TOO_MANY_REQUESTS'
   | 'HTTP_ERROR'
+  | 'CPF_ALREADY_EXISTS'
+  | 'EMAIL_ALREADY_EXISTS'
+  | 'CRP_ALREADY_IN_USE'
+  | 'CNPJ_ALREADY_IN_USE'
+  | 'PATIENT_ALREADY_LINKED'
+  | 'PRACTICE_CONTEXT_NOT_FOUND'
+  | 'PRACTICE_CONTEXT_INACTIVE'
+  | 'PRACTICE_CONTEXT_OWNERSHIP'
+  | 'PRACTICE_CONTEXT_REQUIRED'
+  | 'INVALID_SESSION_PARTICIPANT'
+  | 'PSYCHOLOGIST_PROFILE_NOT_FOUND'
+  | 'PATIENT_PROFILE_NOT_FOUND'
+  | 'INVALID_CREDENTIALS'
+  | 'USER_NOT_FOUND'
+  | 'USER_EMAIL_ALREADY_EXISTS'
+  | 'USER_CPF_ALREADY_EXISTS'
+  | 'PSYCHOLOGIST_PROFILE_ALREADY_EXISTS'
+  | 'CONTEXT_INACTIVE'
+  | 'PATIENT_PROFILE_ALREADY_EXISTS'
+  | 'PATIENT_CPF_ALREADY_IN_CONTEXT'
+  | 'PATIENT_EMAIL_ALREADY_IN_CONTEXT'
+  | 'PATIENT_INVITE_INVALID'
+  | 'PATIENT_INVITE_EXPIRED'
+  | 'PATIENT_INVITE_ALREADY_USED'
+  | 'PATIENT_CPF_MISMATCH'
+  | 'PATIENT_PROFILE_ACCESS_CODE_INVALID'
+  | 'PATIENT_PROFILE_ACCESS_CODE_EXPIRED'
+  | 'PATIENT_PROFILE_ACCESS_CODE_ALREADY_USED'
+  | 'CLAIM_REQUEST_ALREADY_EXISTS'
+  | 'SUGGESTION_NOT_FOUND'
+  | 'POPUP_NOT_FOUND'
+  | 'CLINIC_NOT_FOUND'
+  | 'CLINIC_BRANCH_NOT_FOUND'
+  | 'CLINIC_MEMBER_ALREADY_EXISTS'
+  | 'CLINIC_MEMBER_NOT_FOUND'
+  | 'PRACTICE_CONTEXT_ACCESS_DENIED'
+  | 'REGISTRATION_LINK_INVALID'
+  | 'REGISTRATION_LINK_EXPIRED'
+  | 'REGISTRATION_LINK_ORPHAN'
+  | 'BILLING_VALIDATION'
+  | 'INVALID_SEARCH_PARAMETERS'
+
+export interface ISessionRawResponse {
+  message: string
+  user: {
+    id: string
+    email: string
+    firstName?: string
+    lastName?: string
+    status?: string
+    role?: string
+    profileImageUrl: string | null
+  }
+}
 
 export interface ApiSuccessEnvelope<T = unknown> {
   success: true
@@ -44,8 +98,17 @@ export interface ApiErrorEnvelope {
   }
 }
 
+export interface IMutationResult<T> {
+  data: T
+  message: string | null
+}
+
 declare module 'axios' {
   interface AxiosError {
     apiCode?: ApiErrorCode
+  }
+
+  interface AxiosResponse {
+    apiMessage?: string | null
   }
 }

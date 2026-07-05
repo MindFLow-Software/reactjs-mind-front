@@ -1,7 +1,6 @@
-import { useState } from 'react'
 import { Loader2, UserRoundCheck, TriangleAlert } from 'lucide-react'
-import { cn } from '@/lib/utils'
 import { toast } from 'sonner'
+import { cn } from '@/lib/utils'
 import { Button } from '@/components/ui/button'
 import {
   DialogContent,
@@ -10,13 +9,20 @@ import {
   DialogHeader,
   DialogTitle,
 } from '@/components/ui/dialog'
+import './patient-status-dialog.css'
+
+type PatientStatusMode = 'archive' | 'reactivate'
+
+interface PatientStatusAction {
+  onConfirm: () => Promise<void>
+  onClose: () => void
+  isPending: boolean
+}
 
 interface PatientStatusDialogProps {
-  mode: 'archive' | 'reactivate'
+  mode: PatientStatusMode
   fullName: string
-  onClose: () => void
-  onConfirm: () => Promise<void>
-  isPending: boolean
+  action: PatientStatusAction
 }
 
 const CONFIG = {
@@ -57,17 +63,14 @@ const CONFIG = {
 export function PatientStatusDialog({
   mode,
   fullName,
-  onClose,
-  onConfirm,
-  isPending,
+  action,
 }: PatientStatusDialogProps) {
-  const [, setError] = useState<string | null>(null)
+  const { onConfirm, onClose, isPending } = action
   const cfg = CONFIG[mode]
   const Icon = cfg.icon
 
   async function handleAction() {
     try {
-      setError(null)
       await onConfirm()
       toast.success(cfg.successToast(fullName))
       onClose()
@@ -75,27 +78,18 @@ export function PatientStatusDialog({
       const message =
         (err as { message?: string })?.message ??
         'Erro ao processar. Tente novamente.'
-      setError(message)
       toast.error(message)
     }
   }
 
   return (
     <DialogContent className="sm:max-w-[420px] gap-0 overflow-hidden rounded-2xl border border-border bg-card p-0 shadow-xl">
-      <div className="flex flex-col items-center px-8 pb-6 pt-8 text-center">
-        <div
-          className={cn(
-            'mb-5 grid h-16 w-16 shrink-0 place-items-center rounded-full',
-            cfg.iconBg,
-          )}
-        >
-          <Icon
-            className={cn('h-6 w-6 shrink-0', cfg.iconColor)}
-            strokeWidth={1.75}
-          />
+      <div className="psd-body">
+        <div className={cn('psd-icon-wrap', cfg.iconBg)}>
+          <Icon className={cn('psd-icon', cfg.iconColor)} strokeWidth={1.75} />
         </div>
 
-        <DialogHeader className="mb-3 space-y-0">
+        <DialogHeader className="mb-3 ">
           <DialogTitle className="text-[20px] font-bold tracking-tight text-foreground">
             {cfg.title}
           </DialogTitle>
@@ -119,7 +113,10 @@ export function PatientStatusDialog({
         <Button
           onClick={handleAction}
           disabled={isPending}
-          className={`h-12 w-full cursor-pointer rounded-xl font-semibold ${cfg.confirmClass}`}
+          className={cn(
+            'h-12 w-full cursor-pointer rounded-xl font-semibold',
+            cfg.confirmClass,
+          )}
         >
           {isPending ? (
             <Loader2 className="h-4 w-4 animate-spin" />

@@ -21,12 +21,13 @@ import './patient-info.css'
 import { Time } from '@/utils/time'
 import { formatCPF } from '@/utils/formatCPF'
 import { formatPhone } from '@/utils/formatPhone'
-import type { Gender, Ipatient } from '@/types/patient'
+import type { Gender } from '@/types/enums'
 import { copyToClipboard } from '@/utils/copy-to-clipboard'
+import type { IPatientProfile } from '@/types/patient-profile'
 
 interface PatientInfoProps {
   patient: Pick<
-    Ipatient,
+    IPatientProfile,
     'dateOfBirth' | 'cpf' | 'email' | 'phoneNumber' | 'gender'
   >
 }
@@ -116,9 +117,11 @@ function FieldRow({
 }
 
 export function PatientInfo({ patient }: PatientInfoProps) {
-  const age = Time.calculateAge(patient?.dateOfBirth)
+  const age = Time.calculateAge(
+    patient?.dateOfBirth ? new Date(patient.dateOfBirth) : null,
+  )
   const dateOfBirth = patient?.dateOfBirth
-    ? Time.toBrazilianFormat(patient.dateOfBirth)
+    ? Time.toBrazilianFormat(new Date(patient.dateOfBirth))
     : null
 
   const cpf = formatCPF(patient?.cpf)

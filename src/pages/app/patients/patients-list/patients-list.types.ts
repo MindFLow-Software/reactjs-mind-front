@@ -1,5 +1,7 @@
-import type { PatientStatus, Ipatient } from '@/types/patient'
 import type { PaginationMeta } from '@/types/pagination'
+import type { IPatient } from '@/types/patient'
+
+type PatientStatus = 'ACTIVE' | 'REJECTED' | 'PENDING' | 'BLOCKED'
 
 export interface StatusPillOption {
   value: PatientStatus | null
@@ -16,7 +18,7 @@ export interface PatientsMetrics {
 }
 
 export interface PatientsListQueryResult {
-  patients: Ipatient[]
+  patients: IPatient[]
   meta: PaginationMeta
   isLoading: boolean
   isFetching: boolean

@@ -1,0 +1,15 @@
+@reference "../../../../global.css";
+
+@layer components {
+  .pob-back-link {
+    @apply text-xs flex items-center gap-1 cursor-pointer text-black;
+  }
+
+  .pob-footer {
+    @apply flex justify-between px-0 py-5 border-t-[0.5px] border-t-black/25 mt-auto;
+  }
+
+  .pob-icon-badge {
+    @apply flex items-center justify-center p-2 w-fit rounded-md text-white bg-blue-500/75;
+  }
+}

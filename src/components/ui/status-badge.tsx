@@ -2,6 +2,7 @@ import { ArrowDownToLine, Ban, Check, Clock } from 'lucide-react'
 
 import { cn } from '@/lib/utils'
 import type { AccountStatus } from '@/types/auth'
+import './status-badge.css'
 
 export type { AccountStatus }
 
@@ -62,7 +63,7 @@ export function StatusBadge({
   return (
     <span
       className={cn(
-        'inline-flex items-center gap-1.5 rounded-full pl-1.5 pr-2.5 py-0.5 font-semibold leading-tight whitespace-nowrap',
+        'sb-badge',
         isMd ? 'text-sm' : 'text-xs',
         cfg.bg,
         cfg.fg,
@@ -71,7 +72,7 @@ export function StatusBadge({
     >
       <span
         className={cn(
-          'grid place-items-center rounded-full text-white shrink-0',
+          'sb-icon-wrap',
           cfg.ico,
           isMd ? 'w-4 h-4' : 'w-3.5 h-3.5',
         )}

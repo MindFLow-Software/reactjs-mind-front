@@ -1,0 +1,7 @@
+@reference "../../../../global.css";
+
+@layer components {
+  .lp-avatar {
+    @apply -ml-2 rounded-full border-2 border-white object-cover first:ml-0;
+  }
+}

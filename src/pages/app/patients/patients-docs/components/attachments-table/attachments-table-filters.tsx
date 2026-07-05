@@ -1,7 +1,6 @@
 'use client'
 
 import { XCircle, Users, User, Filter } from 'lucide-react'
-import { useQuery } from '@tanstack/react-query'
 import { Button } from '@/components/ui/button'
 import {
   Select,
@@ -9,12 +8,14 @@ import {
   SelectItem,
   SelectTrigger,
   SelectValue,
+  SelectGroup,
 } from '@/components/ui/select'
-import { getPatientsWithAttachments } from '@/api/patients/patient-with-attachment'
+import { usePatientsWithAttachments } from '../../hooks/use-patients-with-attachments'
 import { DatePickerWithRange } from '../date-picker-with-range'
 import { type DateRange } from 'react-day-picker'
 import { PatientsSearchInput } from '../../../components/patients-search-input'
 import { cn } from '@/lib/utils'
+import './attachments-table-filters.css'
 
 const FILE_TYPE_CHIPS = [
   { label: 'Todos', value: undefined, count: null },
@@ -46,20 +47,16 @@ export function AttachmentsTableFilters({
   onContentTypeChange,
   onClearFilters,
 }: AttachmentsTableFiltersProps) {
-  const { data: patients, isLoading } = useQuery({
-    queryKey: ['patients-with-attachments'],
-    queryFn: getPatientsWithAttachments,
-    staleTime: 1000 * 60 * 5,
-  })
+  const { data: patients, isLoading } = usePatientsWithAttachments()
 
   const isPatientSelected = patientId && patientId !== 'all'
   const hasActiveFilter =
     search || isPatientSelected || date?.from || contentType
 
   return (
-    <div className="flex flex-col gap-3">
+    <div className="pd-flt-root">
       {/* File type chips */}
-      <div className="flex items-center gap-1.5 flex-wrap">
+      <div className="pd-flt-chips">
         {FILE_TYPE_CHIPS.map((chip) => {
           const isActive = contentType === chip.value
           return (
@@ -68,10 +65,8 @@ export function AttachmentsTableFilters({
               type="button"
               onClick={() => onContentTypeChange(chip.value)}
               className={cn(
-                'inline-flex items-center gap-1.5 rounded-full px-3 py-1 text-[12px] font-semibold transition-all duration-150 border',
-                isActive
-                  ? 'bg-primary text-primary-foreground border-primary'
-                  : 'bg-background text-muted-foreground border-border hover:border-blue-300 hover:text-foreground hover:bg-blue-50 dark:hover:bg-blue-950/30',
+                'pd-flt-chip',
+                isActive ? 'pd-flt-chip-active' : 'pd-flt-chip-idle',
               )}
             >
               {chip.label}
@@ -81,7 +76,7 @@ export function AttachmentsTableFilters({
       </div>
 
       {/* Search + dropdowns */}
-      <div className="flex flex-col lg:flex-row gap-2 lg:items-center">
+      <div className="pd-flt-controls">
         <PatientsSearchInput
           placeholder="Buscar por nome, arquivo..."
           value={search}
@@ -91,12 +86,12 @@ export function AttachmentsTableFilters({
         <Select value={patientId} onValueChange={onPatientChange}>
           <SelectTrigger
             className={cn(
-              'cursor-pointer h-9 w-full lg:w-[240px] bg-background border-muted-foreground/20 hover:border-primary/30 transition-all shadow-sm px-3 text-left font-normal',
+              'pd-flt-select',
               !isPatientSelected && 'text-muted-foreground',
             )}
           >
-            <div className="flex items-center gap-2 whitespace-nowrap overflow-hidden">
-              <Filter className="h-3.5 w-3.5 text-muted-foreground shrink-0" />
+            <div className="pd-flt-select-inner">
+              <Filter className="size-3.5 shrink-0 text-muted-foreground" />
               <SelectValue
                 placeholder={
                   isLoading ? 'Carregando...' : 'Filtrar por paciente'
@@ -106,27 +101,31 @@ export function AttachmentsTableFilters({
           </SelectTrigger>
 
           <SelectContent className="min-w-[220px]">
-            <SelectItem value="all" className="cursor-pointer py-2.5">
-              <div className="flex items-center gap-2 whitespace-nowrap">
-                <Users className="h-4 w-4 text-slate-500" />
-                <span className="text-sm font-medium">Todos os Pacientes</span>
-              </div>
-            </SelectItem>
-
-            {patients?.map((patient) => (
-              <SelectItem
-                key={patient.id}
-                value={patient.id}
-                className="cursor-pointer py-2.5"
-              >
-                <div className="flex items-center gap-2 overflow-hidden">
-                  <User className="h-4 w-4 text-blue-500 shrink-0" />
-                  <span className="text-sm font-medium truncate">
-                    {patient.firstName} {patient.lastName}
+            <SelectGroup>
+              <SelectItem value="all" className="cursor-pointer py-2.5">
+                <div className="pd-flt-option">
+                  <Users className="size-4 text-muted-foreground" />
+                  <span className="text-sm font-medium">
+                    Todos os Pacientes
                   </span>
                 </div>
               </SelectItem>
-            ))}
+
+              {patients?.map((patient) => (
+                <SelectItem
+                  key={patient.id}
+                  value={patient.id}
+                  className="cursor-pointer py-2.5"
+                >
+                  <div className="pd-flt-option">
+                    <User className="size-4 shrink-0 text-blue-500" />
+                    <span className="pd-flt-option-name">
+                      {patient.firstName} {patient.lastName}
+                    </span>
+                  </div>
+                </SelectItem>
+              ))}
+            </SelectGroup>
           </SelectContent>
         </Select>
 
@@ -142,9 +141,9 @@ export function AttachmentsTableFilters({
             size="sm"
             type="button"
             onClick={onClearFilters}
-            className="cursor-pointer h-9 px-2 lg:px-3 text-muted-foreground hover:text-destructive gap-2 transition-colors"
+            className="pd-flt-clear"
           >
-            <XCircle className="h-4 w-4" />
+            <XCircle className="size-4" />
             <span className="text-sm">Limpar</span>
           </Button>
         )}

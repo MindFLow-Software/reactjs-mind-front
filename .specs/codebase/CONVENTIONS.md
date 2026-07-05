@@ -1,5 +1,83 @@
 # Conventions — MindFlush Frontend
 
+## Mandatory Refactor Conventions
+
+This section is mandatory and overrides older text in this file when there is a conflict.
+
+Source of truth:
+
+- Backend contracts come from current backend implementation and `docs/frontend-reference/*.md`.
+- `.specs/features/frontend-contract/*.md` is historical unless it matches `docs/frontend-reference/*.md`.
+- Existing frontend DTOs, routes, and entity shapes are not authoritative.
+
+API:
+
+- API calls live only in `src/api/{domain}/{action}.ts`.
+- Every API file exports one API function.
+- Every API function imports `api` from `@/lib/axios`.
+- No raw `fetch`, no raw `axios`, and no `api.*` calls inside pages/components/hooks.
+- GET requests are consumed through `useQuery`.
+- POST/PUT/PATCH/DELETE requests are consumed through `useMutation`.
+- Mutation success and error handlers must show backend-provided messages/guidance through Sonner.
+- Request and response types must be aligned with backend contracts and must reuse `src/types` entities/domains wherever possible.
+
+Types:
+
+- Interfaces must use `I` + PascalCase: `IUser`, `IPatient`, `IAppointmentResponse`.
+- Backend entities/domains must have a single source of truth in `src/types`.
+- API files may define action-specific request/response wrappers only when they are not reusable entities.
+- UI-only types must be explicitly named as view models and must not replace backend entities.
+- Use TypeScript `enum` whenever possible for closed domain values. Do not export enum-like `const` objects plus `typeof` type aliases when an `enum` fits; export `enum AppointmentStatus` and use `AppointmentStatus.SCHEDULED`.
+- No `any`. Use backend-aligned types, `unknown` plus guards, or generics.
+
+Conditional logic:
+
+- Never chain or nest ternaries, especially inside JSX. This rule is absolute.
+- Two-state ternaries are allowed only when they stay simple and readable.
+- Three or more states must use a named render function, `switch`, lookup map, or precomputed variable.
+
+Reuse:
+
+- If an equivalent helper or utility exists, reuse it. Do not reimplement formatting, normalization, validation, guards, or mapping logic inline.
+- Any function used in two or more places must be extracted to a helper class or helper/util/shared file and reused from there.
+- Shared reusable helpers belong in `src/utils`, `src/shared`, or the closest established shared location for that domain.
+
+Validators and forms:
+
+- Zod schemas live in `src/validators/{domain}/{layer}/{action}-schema.ts`.
+- Each validator file exports exactly one schema.
+- No inline schemas in components/pages.
+- Every form must use React Hook Form + Zod and be fully typed.
+- Validated fields must use shadcn form/field primitives.
+
+Components and hooks:
+
+- Prefer shadcn/ui primitives before custom components.
+- Components with more than 3 props must use composition or a grouped typed object.
+- Creation and editing flows must be separate. Never reuse a create modal/form/schema/hook for edit mode.
+- Reusable API/filter logic becomes hooks.
+- Shared hooks live in `src/hooks`; feature-only hooks live next to the feature.
+- Logged-in user profile data must always come from `useAuth`. Do not read profile data from `localStorage`, duplicate profile queries, or pass stale user snapshots when `useAuth` is available.
+- Global state uses Zustand and must live in one consistent store location. Do not put stores in `src/utils`.
+- Each `.tsx` file should expose one main function when possible. Compound components are the allowed exception.
+
+CSS:
+
+- Every page/component `.tsx` that owns markup must have its respective CSS file.
+- CSS must use Tailwind `@reference`, `@layer`, and `@apply`.
+- No pure feature CSS blocks and no inline style blocks for reusable component styling.
+- Consolidate duplicated class lists into a shared CSS source when two or more places repeat the same styling.
+- Use design tokens and shadcn variants; avoid hardcoded colors.
+
+Legacy conflict notes:
+
+- `useApiMutation` is not canonical while `src/hooks/use-api-mutation.ts` is empty.
+- Stores must not live in `src/utils`.
+- API request/response interfaces should not be duplicated inside API files when they represent backend entities.
+- Components such as `RegisterPatients` must not accept `isEditing` to turn a creation flow into an editing flow. Split into create and edit components with separate schemas, hooks, and mutation logic.
+
+---
+
 ## API Layer (`src/api/`)
 
 - Um arquivo por endpoint, nomeado como `verbo-substantivo.ts` (ex: `get-profile.ts`, `create-appointment.ts`).
@@ -60,12 +138,16 @@ Referência canônica: `src/pages/app/patients/patients-list/register-patients/h
 
 ## Tipagem
 
-- Enums como type unions: `type Status = 'SCHEDULED' | 'DONE' | 'CANCELLED'`
-- Objetos-enum com `as const` quando precisar iterar valores:
+- Valores fechados de dominio devem usar `enum` TypeScript sempre que possivel:
   ```ts
-  export const AppointmentStatus = { SCHEDULED: 'SCHEDULED', ... } as const
-  type AppointmentStatus = typeof AppointmentStatus[keyof typeof AppointmentStatus]
+  export enum AppointmentStatus {
+    SCHEDULED = 'SCHEDULED',
+    ATTENDING = 'ATTENDING',
+    FINISHED = 'FINISHED',
+  }
   ```
+- Usar `AppointmentStatus.SCHEDULED` nos call sites.
+- Nao exportar objeto `const` + type alias com `typeof AppointmentStatus[keyof typeof AppointmentStatus]` quando um `enum` atende.
 - `Record<string, string>` para dicionários de tradução.
 - `?` para campos opcionais, nunca `| undefined` explícito desnecessário.
 
@@ -86,7 +168,7 @@ Referência canônica: `src/pages/app/patients/patients-list/register-patients/h
 
 ## Tradução de Enums
 
-- Centralizado em `src/utils/mappers.ts` como `Record<string, string>` (ex: `ROLE_TRANSLATIONS`, `EXPERTISE_TRANSLATIONS`).
+- Centralizado em `src/constants` como `Record<string, string>` (ex: `translatedExpertise`, `translatedHonorific`).
 - Chaves em SCREAMING_SNAKE_CASE (valor do backend), valores em PT-BR.
 
 ## Formatadores

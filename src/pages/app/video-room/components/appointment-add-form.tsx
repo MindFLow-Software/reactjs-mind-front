@@ -23,25 +23,32 @@ import { startAppointmentSession } from '@/api/appointments/start-appointment-se
 import { finishAppointmentSession } from '@/api/appointments/finish-appointment-session'
 import { getActiveAppointmentsGrouped } from '@/api/appointments/get-active-appointments-grouped'
 
-interface AppointmentAddFormProps {
-  onSelectPatient: (appointmentId: string) => void
+export interface AppointmentAddFormSession {
   currentAppointmentId: string
   currentSessionId: string | null
+  isSessionActive: boolean
+  content?: string
+}
+
+export interface AppointmentAddFormHandlers {
+  onSelectPatient: (appointmentId: string) => void
   onSessionStarted: (sessionId: string) => void
   onSessionFinished: () => void
-  isSessionActive: boolean
-  content?: string // ✅ Unificado
+}
+
+interface AppointmentAddFormProps {
+  session: AppointmentAddFormSession
+  handlers: AppointmentAddFormHandlers
 }
 
 export function AppointmentAddForm({
-  onSelectPatient,
-  currentAppointmentId,
-  currentSessionId,
-  onSessionStarted,
-  onSessionFinished,
-  isSessionActive,
-  content,
+  session,
+  handlers,
 }: AppointmentAddFormProps) {
+  const { currentAppointmentId, currentSessionId, isSessionActive, content } =
+    session
+  const { onSelectPatient, onSessionStarted, onSessionFinished } = handlers
+
   const queryClient = useQueryClient()
 
   const { data: groupedData, isLoading: isAppointmentsLoading } = useQuery({
@@ -132,8 +139,8 @@ export function AppointmentAddForm({
         </CardTitle>
       </CardHeader>
 
-      <CardContent className="space-y-5">
-        <div className="space-y-2.5">
+      <CardContent className="flex flex-col gap-5">
+        <div className="flex flex-col gap-2.5">
           <label className="text-sm font-medium text-foreground/80 flex items-center gap-2">
             <User className="w-4 h-4" /> Paciente
           </label>

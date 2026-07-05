@@ -1,59 +1,63 @@
-import { useCallback, useState, useEffect, type ChangeEvent } from 'react'
-import { useForm, Controller } from 'react-hook-form'
-import { zodResolver } from '@hookform/resolvers/zod'
-import { toast } from 'sonner'
-import { useNavigate, Link } from 'react-router-dom'
-import { useMutation } from '@tanstack/react-query'
+import { useCallback, useState } from 'react'
+
 import {
   Eye,
-  EyeOff,
-  CalendarIcon,
-  Loader2,
   Mars,
   Users,
   Venus,
+  EyeOff,
+  Loader2,
+  CalendarIcon,
 } from 'lucide-react'
-import { IMaskMixin } from 'react-imask'
-import axios from 'axios'
+
+import { useMutation } from '@tanstack/react-query'
+import { useNavigate, Link } from 'react-router-dom'
+import { useForm, Controller } from 'react-hook-form'
+
 import { cn } from '@/lib/utils'
-import { Button } from '@/components/ui/button'
-import { Input } from '@/components/ui/input'
+import { toast } from 'sonner'
+import { zodResolver } from '@hookform/resolvers/zod'
+
 import {
   Select,
-  SelectContent,
   SelectItem,
-  SelectTrigger,
   SelectValue,
+  SelectTrigger,
+  SelectContent,
+  SelectGroup,
 } from '@/components/ui/select'
-import { Calendar } from '@/components/ui/calendar'
+
 import {
   Popover,
-  PopoverContent,
   PopoverTrigger,
+  PopoverContent,
 } from '@/components/ui/popover'
-import { registerPsychologist } from '@/api/psychologists/create-user'
-import { signUpFormSchema, type SignUpFormData } from '@/validators/auth'
+
+import {
+  Field,
+  FieldError,
+  FieldGroup,
+  FieldLabel,
+} from '@/components/ui/field'
+
+import { Input } from '@/components/ui/input'
+import { Button } from '@/components/ui/button'
+import { Calendar } from '@/components/ui/calendar'
+import { MaskedInput } from '@/components/maked-input'
 import { GoogleAuthButton } from './google-auth-button'
+import { PasswordStrength } from '@/components/password-strength'
 
-const today = new Date()
-const minDate = new Date(
-  today.getFullYear() - 120,
-  today.getMonth(),
-  today.getDate(),
-)
-const maxDateForPro = new Date(
-  today.getFullYear() - 18,
-  today.getMonth(),
-  today.getDate(),
-)
-
-interface MaskedInputBaseProps extends React.ComponentProps<'input'> {
-  inputRef: React.Ref<HTMLInputElement>
-}
-
-const MaskedInput = IMaskMixin(({ inputRef, ...props }: MaskedInputBaseProps) => (
-  <Input ref={inputRef} {...props} />
-))
+import { Time } from '@/utils/time'
+import { signIn } from '@/api/auth/sign-in'
+import { Normalizer } from '@/utils/normalizer'
+import { createUser } from '@/api/auth/create-user'
+import { getProfile } from '@/api/psychologists/get-profile'
+import { getApiErrorMessage } from '@/lib/get-api-error-message'
+import { useSessionStore } from '@/store/use-session-store'
+import {
+  createUserSchema,
+  type CreateUserData,
+} from '@/validators/user/form/create-user-schema'
 
 function FieldRow({
   children,
@@ -63,7 +67,9 @@ function FieldRow({
   className?: string
 }) {
   return (
-    <div className={cn('grid grid-cols-2 gap-3', className)}>{children}</div>
+    <FieldGroup className={cn('grid grid-cols-2 gap-3', className)}>
+      {children}
+    </FieldGroup>
   )
 }
 
@@ -79,18 +85,20 @@ function FieldWrap({
   className?: string
 }) {
   return (
-    <div className={cn('flex flex-col gap-1', className)}>
-      <label
+    <Field className={cn('flex flex-col gap-1', className)}>
+      <FieldLabel
         className={cn(
           'text-xs font-medium text-foreground/70',
           error && 'text-red-500',
         )}
       >
         {label}
-      </label>
+      </FieldLabel>
       {children}
-      {error && <p className="text-[10px] text-red-500 font-medium">{error}</p>}
-    </div>
+      {error && (
+        <FieldError className="text-[10px] font-medium">{error}</FieldError>
+      )}
+    </Field>
   )
 }
 
@@ -106,107 +114,21 @@ function SectionHeading({ children }: { children: React.ReactNode }) {
   )
 }
 
-function PasswordStrength({ value }: { value: string }) {
-  const checks = [
-    value.length >= 8 && value.length <= 30,
-    /[A-Z]/.test(value),
-    /[a-z]/.test(value),
-    /\d/.test(value),
-    /[!@#$%^&*]/.test(value),
-  ]
-  const score = checks.filter(Boolean).length
-
-  const barColor =
-    score <= 1
-      ? 'bg-red-500'
-      : score <= 2
-        ? 'bg-orange-400'
-        : score <= 3
-          ? 'bg-yellow-500'
-          : score <= 4
-            ? 'bg-blue-500'
-            : 'bg-green-500'
-
-  const label =
-    score === 0
-      ? ''
-      : score <= 1
-        ? 'Fraca'
-        : score <= 2
-          ? 'Razoável'
-          : score <= 3
-            ? 'Boa'
-            : score <= 4
-              ? 'Forte'
-              : 'Muito forte'
-
-  const labelColor =
-    score <= 1
-      ? 'text-red-500'
-      : score <= 2
-        ? 'text-orange-500'
-        : score <= 3
-          ? 'text-yellow-600'
-          : score <= 4
-            ? 'text-blue-600'
-            : 'text-green-600'
-
-  if (!value) return null
-
-  return (
-    <div className="mt-1 space-y-1">
-      <div className="flex gap-0.5">
-        {[1, 2, 3, 4, 5].map((i) => (
-          <div
-            key={i}
-            className={cn(
-              'h-1 flex-1 rounded-full transition-colors duration-300',
-              i <= score ? barColor : 'bg-muted',
-            )}
-          />
-        ))}
-      </div>
-      <div className="flex justify-between items-center">
-        <p className="text-[10px] text-muted-foreground">
-          Use maiúsc., minúsc., número e símbolo
-        </p>
-        {label && (
-          <p className={cn('text-[10px] font-semibold', labelColor)}>{label}</p>
-        )}
-      </div>
-    </div>
-  )
-}
-
-const FIELD_VALIDATION_FALLBACK: Record<string, string> = {
-  firstName: 'Nome obrigatório.',
-  lastName: 'Sobrenome obrigatório.',
-  email: 'E-mail inválido.',
-  password: 'Senha inválida.',
-  phoneNumber: 'Telefone inválido.',
-  cpf: 'CPF inválido.',
-  dateOfBirth: 'Data de nascimento inválida.',
-  gender: 'Gênero obrigatório.',
-}
-
-export function SignUpForm({
-  className,
-  ...props
-}: React.ComponentProps<'form'>) {
+export function SignUpForm() {
   const navigate = useNavigate()
-  const [showPassword, setShowPassword] = useState(false)
-  const [calendarOpen, setCalendarOpen] = useState(false)
+  const setSession = useSessionStore((state) => state.setSession)
+
   const [dobInputValue, setDobInputValue] = useState('')
+  const [showPassword, setShowPassword] = useState(false)
 
   const {
+    watch,
+    control,
     register,
     handleSubmit,
-    control,
-    setError,
-    watch,
-    formState: { isSubmitting, errors },
-  } = useForm<SignUpFormData>({
-    resolver: zodResolver(signUpFormSchema),
+    formState: { errors },
+  } = useForm<CreateUserData>({
+    resolver: zodResolver(createUserSchema),
     defaultValues: {
       firstName: '',
       lastName: '',
@@ -217,17 +139,31 @@ export function SignUpForm({
     },
   })
 
-  const passwordValue = watch('password', '')
-  const dobFieldValue = watch('dateOfBirth')
+  const passwordValue = watch('password')
 
-  useEffect(() => {
-    if (dobFieldValue instanceof Date && !isNaN(dobFieldValue.getTime())) {
-      setDobInputValue(dobFieldValue.toLocaleDateString('pt-BR'))
-    }
-  }, [dobFieldValue])
-
-  const { mutateAsync: registerPsychologistFn } = useMutation({
-    mutationFn: registerPsychologist,
+  const { mutateAsync, isPending } = useMutation({
+    mutationFn: async (data: CreateUserData) => {
+      await createUser({
+        firstName: data.firstName,
+        lastName: data.lastName,
+        email: data.email,
+        password: data.password,
+        gender: data.gender,
+        phoneNumber: Normalizer.digits(data.phoneNumber),
+        cpf: Normalizer.digits(data.cpf),
+        dateOfBirth: Time.toAmericanFormat(data.dateOfBirth),
+      })
+      await signIn({ email: data.email, password: data.password })
+      return getProfile()
+    },
+    onSuccess: (profile) => {
+      setSession(profile)
+      toast.success('Conta criada com sucesso!')
+      navigate('/profiles')
+    },
+    onError: (error) => {
+      toast.error(getApiErrorMessage(error, 'Erro ao realizar cadastro.'))
+    },
   })
 
   const togglePasswordVisibility = useCallback(
@@ -236,60 +172,10 @@ export function SignUpForm({
   )
 
   const handleSignUp = useCallback(
-    async (data: SignUpFormData) => {
-    try {
-      await registerPsychologistFn({
-        ...data,
-        phoneNumber: data.phoneNumber.replace(/\D/g, ''),
-        cpf: data.cpf.replace(/\D/g, ''),
-      })
-      toast.success('Psicólogo cadastrado com sucesso!')
-      navigate('/sign-in')
-    } catch (err: unknown) {
-      if (!axios.isAxiosError(err)) {
-        toast.error('Erro ao realizar cadastro')
-        return
-      }
-
-      const body = err.response?.data as {
-        message?: string
-        errors?: { properties?: Record<string, { errors: string[] }> }
-      } | undefined
-
-      if (body?.message === 'EMAIL_ALREADY_EXISTS') {
-        setError('email', { type: 'server', message: 'E-mail já cadastrado.' })
-        return
-      }
-
-      if (body?.message === 'CPF_ALREADY_EXISTS') {
-        setError('cpf', { type: 'server', message: 'CPF já cadastrado.' })
-        return
-      }
-
-      if (body?.message === 'INVALID_BIRTH_DATE') {
-        setError('dateOfBirth', { type: 'server', message: 'Data de nascimento inválida.' })
-        return
-      }
-
-      if (body?.message === 'Validation failed') {
-        const properties = body.errors?.properties ?? {}
-        for (const [field, value] of Object.entries(properties)) {
-          const msgs = value?.errors ?? []
-          if (msgs.length > 0) {
-            setError(field as keyof SignUpFormData, {
-              type: 'server',
-              message: FIELD_VALIDATION_FALLBACK[field] ?? msgs[0],
-            })
-          }
-        }
-        toast.error('Preencha corretamente os campos destacados.')
-        return
-      }
-
-      toast.error(err.message || 'Erro ao realizar cadastro')
-    }
-  },
-    [registerPsychologistFn, navigate, setError],
+    async (data: CreateUserData) => {
+      await mutateAsync(data)
+    },
+    [mutateAsync],
   )
 
   const onInvalid = () =>
@@ -297,21 +183,18 @@ export function SignUpForm({
 
   return (
     <form
+      className="flex flex-col gap-3"
       onSubmit={handleSubmit(handleSignUp, onInvalid)}
-      className={cn('flex flex-col gap-3', className)}
-      {...props}
     >
       {/* Google */}
       <GoogleAuthButton />
 
       {/* OR divider */}
-      <div className="relative">
-        <div className="absolute inset-0 flex items-center">
-          <span className="w-full border-t" />
-        </div>
-        <div className="relative flex justify-center text-xs uppercase">
-          <span className="bg-gray-50 px-2 text-muted-foreground">Ou</span>
-        </div>
+      <div className="relative inset-0 flex items-center my-2">
+        <span className="w-full border-t" />
+        <p className="absolute left-1/2 -translate-x-1/2 bg-gray-50 px-2 text-xs text-muted-foreground">
+          OU
+        </p>
       </div>
 
       {/* ── Dados Pessoais ── */}
@@ -391,69 +274,58 @@ export function SignUpForm({
           <Controller
             name="dateOfBirth"
             control={control}
-            render={({ field }) => {
-              const handleInputChange = (e: ChangeEvent<HTMLInputElement>) => {
-                let val = e.target.value.replace(/\D/g, '')
-                if (val.length > 2) val = val.slice(0, 2) + '/' + val.slice(2)
-                if (val.length > 5)
-                  val = val.slice(0, 5) + '/' + val.slice(5, 9)
-                setDobInputValue(val)
-                if (val.length === 10) {
-                  const [day, month, year] = val.split('/').map(Number)
-                  const date = new Date(year, month - 1, day)
-                  if (
-                    !isNaN(date.getTime()) &&
-                    date.getFullYear() === year &&
-                    year >= minDate.getFullYear()
-                  ) {
-                    field.onChange(date)
-                  }
-                }
-              }
-              return (
-                <Popover open={calendarOpen} onOpenChange={setCalendarOpen}>
-                  <div className="relative">
-                    <Input
-                      placeholder="DD/MM/AAAA"
-                      value={dobInputValue}
-                      onChange={handleInputChange}
-                      maxLength={10}
-                      autoComplete="bday"
-                      aria-invalid={!!errors.dateOfBirth}
-                      className={cn(
-                        'pr-9 tabular-nums',
-                        errors.dateOfBirth && 'border-red-500',
-                      )}
-                    />
-                    <PopoverTrigger asChild>
-                      <button
-                        type="button"
-                        className="absolute right-0 top-0 h-full px-2.5 text-muted-foreground hover:text-blue-600 cursor-pointer flex items-center outline-none rounded-r-md transition-colors"
-                      >
-                        <CalendarIcon className="size-3.5" />
-                      </button>
-                    </PopoverTrigger>
-                  </div>
-                  <PopoverContent
-                    className="w-auto overflow-hidden p-0"
-                    align="start"
-                    sideOffset={6}
-                  >
-                    <Calendar
-                      mode="single"
-                      selected={field.value}
-                      captionLayout="dropdown"
-                      fromYear={minDate.getFullYear()}
-                      toYear={maxDateForPro.getFullYear()}
-                      onSelect={(date) => {
-                        field.onChange(date)
-                        setCalendarOpen(false)
-                      }}
-                    />
-                  </PopoverContent>
-                </Popover>
-              )
-            }}
+            render={({ field }) => (
+              <Popover>
+                <div className="relative">
+                  <Input
+                    placeholder="DD/MM/AAAA"
+                    value={dobInputValue}
+                    onChange={(e) => {
+                      const { date, inputValue } = Time.textToDate(
+                        e.target.value,
+                      )
+                      setDobInputValue(inputValue)
+                      field.onChange(date)
+                    }}
+                    maxLength={10}
+                    autoComplete="bday"
+                    aria-invalid={!!errors.dateOfBirth}
+                    className={cn(
+                      'pr-9 tabular-nums',
+                      errors.dateOfBirth && 'border-red-500',
+                    )}
+                  />
+                  <PopoverTrigger asChild>
+                    <button
+                      type="button"
+                      className="
+                          absolute right-0 top-0 h-full px-2.5
+                          text-muted-foreground hover:text-blue-600 cursor-pointer flex
+                          items-center outline-none rounded-r-md transition-colors
+                        "
+                    >
+                      <CalendarIcon className="size-3.5" />
+                    </button>
+                  </PopoverTrigger>
+                </div>
+                <PopoverContent
+                  className="w-auto overflow-hidden p-0"
+                  align="start"
+                  sideOffset={6}
+                >
+                  <Calendar
+                    mode="single"
+                    selected={field.value}
+                    captionLayout="dropdown"
+                    startMonth={Time.minDate}
+                    onSelect={(date) => {
+                      field.onChange(date)
+                      setDobInputValue(Time.dateToText(date))
+                    }}
+                  />
+                </PopoverContent>
+              </Popover>
+            )}
           />
         </FieldWrap>
 
@@ -467,21 +339,23 @@ export function SignUpForm({
                   <SelectValue placeholder="Selecione" />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="FEMININE" className="cursor-pointer">
-                    <div className="flex items-center gap-2">
-                      <Venus className="h-3.5 w-3.5 text-rose-500" /> Feminino
-                    </div>
-                  </SelectItem>
-                  <SelectItem value="MASCULINE" className="cursor-pointer">
-                    <div className="flex items-center gap-2">
-                      <Mars className="h-3.5 w-3.5 text-blue-500" /> Masculino
-                    </div>
-                  </SelectItem>
-                  <SelectItem value="OTHER" className="cursor-pointer">
-                    <div className="flex items-center gap-2">
-                      <Users className="h-3.5 w-3.5 text-violet-500" /> Outro
-                    </div>
-                  </SelectItem>
+                  <SelectGroup>
+                    <SelectItem value="FEMININE" className="cursor-pointer">
+                      <div className="flex items-center gap-2">
+                        <Venus className="size-3.5 text-rose-500" /> Feminino
+                      </div>
+                    </SelectItem>
+                    <SelectItem value="MASCULINE" className="cursor-pointer">
+                      <div className="flex items-center gap-2">
+                        <Mars className="size-3.5 text-blue-500" /> Masculino
+                      </div>
+                    </SelectItem>
+                    <SelectItem value="OTHER" className="cursor-pointer">
+                      <div className="flex items-center gap-2">
+                        <Users className="size-3.5 text-violet-500" /> Outro
+                      </div>
+                    </SelectItem>
+                  </SelectGroup>
                 </SelectContent>
               </Select>
             )}
@@ -517,7 +391,10 @@ export function SignUpForm({
           <button
             type="button"
             onClick={togglePasswordVisibility}
-            className="absolute right-2.5 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground cursor-pointer transition-colors outline-none rounded-sm"
+            className="
+              absolute right-2.5 top-1/2 -translate-y-1/2 text-muted-foreground
+              hover:text-foreground cursor-pointer transition-colors outline-none rounded-sm
+            "
             aria-label={showPassword ? 'Ocultar senha' : 'Mostrar senha'}
           >
             {showPassword ? <EyeOff size={15} /> : <Eye size={15} />}
@@ -528,13 +405,16 @@ export function SignUpForm({
 
       {/* Submit */}
       <Button
-        disabled={isSubmitting}
-        className="w-full mt-1 bg-blue-600 hover:bg-blue-700 active:scale-[0.98] transition-all duration-200 font-medium text-white cursor-pointer"
         type="submit"
+        disabled={isPending}
+        className="
+          w-full mt-1 bg-blue-600 hover:bg-blue-700 active:scale-[0.98]
+          transition-all duration-200 font-medium text-white cursor-pointer
+        "
       >
-        {isSubmitting ? (
+        {isPending ? (
           <>
-            <Loader2 className="mr-2 h-4 w-4 animate-spin" /> Criando conta…
+            <Loader2 className="mr-2 size-4 animate-spin" /> Criando conta…
           </>
         ) : (
           'Criar conta'
@@ -544,19 +424,19 @@ export function SignUpForm({
       {/* Footer */}
       <p className="text-center text-xs text-muted-foreground leading-relaxed">
         Ao continuar você aceita os{' '}
-        <a
-          href="#"
+        <Link
+          to="#"
           className="underline underline-offset-4 hover:text-foreground"
         >
           termos
-        </a>{' '}
+        </Link>{' '}
         e a{' '}
-        <a
-          href="#"
+        <Link
+          to="#"
           className="underline underline-offset-4 hover:text-foreground"
         >
           privacidade
-        </a>
+        </Link>
         .{' · '}
         <Link
           to="/sign-in"

@@ -1,0 +1,103 @@
+@reference "../../../../global.css";
+
+@layer components {
+  .acc-heat-card {
+    @apply w-full rounded-xl border border-border bg-card p-6 shadow-sm;
+  }
+
+  .acc-heat-header {
+    @apply flex flex-col items-start justify-between gap-4 sm:flex-row sm:items-center;
+  }
+
+  .acc-heat-title {
+    @apply text-sm font-bold uppercase tracking-[0.15em] text-muted-foreground/70;
+  }
+
+  .acc-heat-subtitle {
+    @apply text-xs font-medium text-muted-foreground;
+  }
+
+  .acc-heat-year-toggle {
+    @apply flex rounded-lg border border-border/50 bg-muted/40 p-1;
+  }
+
+  .acc-heat-year-btn {
+    @apply cursor-pointer rounded-md px-4 py-1.5 text-[11px] font-bold uppercase tracking-tighter transition-all duration-200;
+  }
+
+  .acc-heat-year-btn--active {
+    @apply bg-card text-blue-600 shadow-sm ring-1 ring-black/5;
+  }
+
+  .acc-heat-year-btn--inactive {
+    @apply text-muted-foreground hover:text-foreground;
+  }
+
+  .acc-heat-scroll {
+    @apply scrollbar-thin scrollbar-thumb-muted-foreground/10 scrollbar-track-transparent overflow-x-auto pb-4;
+  }
+
+  .acc-heat-months-row {
+    @apply relative ml-8 flex h-5;
+  }
+
+  .acc-heat-month-label {
+    @apply absolute select-none text-[10px] font-bold uppercase tracking-widest text-muted-foreground/40;
+  }
+
+  .acc-heat-weekdays {
+    @apply flex w-6 flex-col gap-[5px] pt-[2px] text-[9px] font-bold uppercase text-muted-foreground/20 select-none;
+  }
+
+  .acc-heat-weekday-row {
+    @apply h-[11px];
+  }
+
+  .acc-heat-week-col {
+    @apply flex flex-col gap-[5px];
+  }
+
+  .acc-heat-cell {
+    @apply h-[11px] w-[11px] shrink-0 rounded-[2px] transition-colors;
+  }
+
+  .acc-heat-cell--active {
+    @apply cursor-crosshair hover:outline-2 hover:outline-offset-1 hover:outline-blue-500/50;
+  }
+
+  .acc-heat-footer {
+    @apply flex items-center justify-between border-t border-border/40 pt-4;
+  }
+
+  .acc-heat-legend-label {
+    @apply text-[10px] font-bold uppercase tracking-tighter text-muted-foreground/30;
+  }
+
+  .acc-heat-legend-swatch {
+    @apply h-2.5 w-2.5 rounded-[2px];
+  }
+
+  .acc-heat-legend-note {
+    @apply text-[10px] font-medium uppercase italic tracking-tighter text-muted-foreground/30;
+  }
+
+  .acc-heat-tooltip {
+    @apply pointer-events-none fixed z-50 transition-transform duration-75;
+  }
+
+  .acc-heat-tooltip-box {
+    @apply animate-in fade-in zoom-in-95 rounded-lg border border-white/10 bg-slate-950/90 px-3 py-2 text-white shadow-2xl backdrop-blur-md duration-100 dark:bg-slate-50/95 dark:text-slate-950;
+  }
+
+  .acc-heat-tooltip-count {
+    @apply mb-1 text-[11px] font-bold whitespace-nowrap leading-none;
+  }
+
+  .acc-heat-tooltip-date {
+    @apply text-[10px] font-medium leading-none whitespace-nowrap capitalize opacity-60;
+  }
+
+  .acc-heat-tooltip-arrow {
+    @apply absolute -bottom-1 left-1/2 h-2.5 w-2.5 -translate-x-1/2 rotate-45 border-r border-b border-white/10 bg-slate-950/90 dark:bg-slate-50/95;
+  }
+}

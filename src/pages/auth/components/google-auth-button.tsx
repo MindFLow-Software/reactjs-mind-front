@@ -1,5 +1,5 @@
 import { Button } from '@/components/ui/button'
-import { env } from '@/env'
+import { authenticateWithOAuth } from '@/api/auth/oauth-authenticate'
 
 export function GoogleAuthButton() {
   return (
@@ -7,9 +7,7 @@ export function GoogleAuthButton() {
       type="button"
       variant="outline"
       className="w-full gap-2 font-medium cursor-pointer"
-      onClick={() => {
-        window.location.href = `${env.VITE_API_URL}/auth/google`
-      }}
+      onClick={() => authenticateWithOAuth('google')}
     >
       <svg viewBox="0 0 24 24" className="h-4 w-4 shrink-0" aria-hidden="true">
         <path

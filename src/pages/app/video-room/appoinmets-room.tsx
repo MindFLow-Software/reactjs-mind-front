@@ -5,7 +5,7 @@ import { Helmet } from 'react-helmet-async'
 
 import { AppointmentAddForm } from './components/appointment-add-form'
 import { SessionTimer } from './components/SessionTimer'
-import { useHeaderStore } from '@/hooks/use-header-store'
+import { useHeaderStore } from '@/store/use-header-store'
 import { SessionNotesEditor } from './components/session-notes-editor'
 
 export function AppointmentsRoom() {
@@ -49,13 +49,17 @@ export function AppointmentsRoom() {
         />
 
         <AppointmentAddForm
-          onSelectPatient={setSelectedAppointmentId}
-          currentAppointmentId={selectedAppointmentId}
-          currentSessionId={currentSessionId}
-          onSessionStarted={handleSessionStarted}
-          onSessionFinished={handleSessionFinished}
-          isSessionActive={isSessionActive}
-          content={content}
+          session={{
+            currentAppointmentId: selectedAppointmentId,
+            currentSessionId,
+            isSessionActive,
+            content,
+          }}
+          handlers={{
+            onSelectPatient: setSelectedAppointmentId,
+            onSessionStarted: handleSessionStarted,
+            onSessionFinished: handleSessionFinished,
+          }}
         />
       </div>
     </>

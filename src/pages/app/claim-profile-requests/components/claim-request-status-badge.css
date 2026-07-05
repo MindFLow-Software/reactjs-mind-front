@@ -1,0 +1,18 @@
+@reference "../../../../global.css";
+
+@layer components {
+  .cpr-status-approved {
+    @apply border-green-500 bg-green-100 text-green-500;
+    @apply dark:border-green-800 dark:bg-green-950/30 dark:text-green-400;
+  }
+
+  .cpr-status-pending {
+    @apply border-yellow-500 bg-yellow-100 text-yellow-500;
+    @apply dark:border-yellow-800 dark:bg-yellow-950/30 dark:text-yellow-400;
+  }
+
+  .cpr-status-rejected {
+    @apply border-red-500 bg-red-100 text-red-500;
+    @apply dark:border-red-800 dark:bg-red-950/30 dark:text-red-400;
+  }
+}

@@ -2,10 +2,8 @@ import { useCallback, useMemo, useState } from 'react'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { toast } from 'sonner'
 
-import {
-  deleteAttachment,
-  getPatientAttachments,
-} from '@/api/attachments/attachments'
+import { deleteAttachment } from '@/api/attachments/delete-attachment'
+import { getPatientAttachments } from '@/api/attachments/get-patient-attachments'
 import type { AttachmentPatientItem } from '@/types/attachment'
 import type { FileTypeFilter } from '../components/files/file-type-filter'
 import { getFileType } from '../components/files/file-type-filter'

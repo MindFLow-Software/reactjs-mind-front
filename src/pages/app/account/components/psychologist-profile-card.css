@@ -1,0 +1,47 @@
+@reference "../../../../global.css";
+
+@layer components {
+  .acc-profile-card {
+    @apply relative z-0 overflow-hidden rounded-2xl border border-border bg-card shadow-sm w-full max-w-lg;
+  }
+
+  .acc-profile-banner {
+    @apply absolute top-0 left-0 w-full -z-10! h-34 bg-linear-to-r from-purple-500 via-indigo-500 to-blue-600 ;
+  }
+
+  .acc-profile-body {
+    @apply px-6 pb-6;
+  }
+
+  .acc-profile-header {
+    @apply flex flex-col items-center gap-5 pt-4 md:flex-row md:items-end;
+  }
+
+  .acc-profile-name-block {
+    @apply flex-1 pt-2 text-center md:pb-1 md:text-left;
+  }
+
+  .acc-profile-name {
+    @apply text-2xl font-bold tracking-tight text-white/90;
+  }
+
+  .acc-profile-verified {
+    @apply mb-1 hidden items-end gap-2 lg:flex;
+  }
+
+  .acc-profile-verified-icon {
+    @apply flex h-8 w-8 items-center justify-center rounded-full border-2 border-card;
+  }
+
+  .acc-profile-stats-grid {
+    @apply mt-8 grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-2;
+  }
+
+  .acc-profile-edit-trigger {
+    @apply flex cursor-pointer items-center justify-between rounded-2xl border border-border bg-card p-4 text-left transition-all hover:border-blue-200 hover:bg-blue-50 dark:hover:border-blue-800 dark:hover:bg-blue-900/20;
+  }
+
+  .acc-profile-edit-icon {
+    @apply rounded-lg bg-blue-100 p-2 text-blue-600 transition-transform group-hover:scale-110 dark:bg-blue-900/40;
+  }
+}

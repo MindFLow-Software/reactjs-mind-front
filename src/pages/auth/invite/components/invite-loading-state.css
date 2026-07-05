@@ -1,0 +1,11 @@
+@reference "../../../../global.css";
+
+@layer components {
+  .inv-loading-shell {
+    @apply flex items-center justify-center;
+  }
+
+  .inv-loading-content {
+    @apply flex items-center gap-2;
+  }
+}

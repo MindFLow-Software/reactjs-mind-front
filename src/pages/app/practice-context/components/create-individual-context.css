@@ -1,0 +1,11 @@
+@reference "../../../../global.css";
+
+@layer components {
+  .cic-format-badge {
+    @apply flex-1 py-3 cursor-pointer rounded-sm;
+  }
+
+  .cic-format-badge-selected {
+    @apply bg-violet-200 border border-violet-500 text-violet-500;
+  }
+}

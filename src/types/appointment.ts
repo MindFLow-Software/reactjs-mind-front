@@ -1,20 +1,11 @@
-export const AppointmentStatus = {
-  SCHEDULED: 'SCHEDULED',
-  ATTENDING: 'ATTENDING',
-  FINISHED: 'FINISHED',
-  CANCELED: 'CANCELED',
-  NOT_ATTEND: 'NOT_ATTEND',
-  RESCHEDULED: 'RESCHEDULED',
-  DONE: 'DONE',
-} as const
+import type { AppointmentStatus } from '@/types/enums'
 
-export type AppointmentStatus =
-  (typeof AppointmentStatus)[keyof typeof AppointmentStatus]
+export type { AppointmentStatus }
 
-export interface AppointmentItem {
+export interface IAppointment {
   id: string
-  patientId: string | null
-  psychologistId: string | null
+  patientProfileId: string | null
+  psychologistPracticeContextId: string | null
   diagnosis: string
   content: string | null
   scheduledAt: string
@@ -23,39 +14,36 @@ export interface AppointmentItem {
   createdAt: string
 }
 
-export interface Appointment {
-  id: string
-  patientId: string
-  psychologistId: string
-  diagnosis: string
-  notes?: string | null
-  scheduledAt: string
-  startedAt?: string | null
-  endedAt?: string | null
-  status: AppointmentStatus
-  durationInMin?: number | null
+export interface IAppointmentWithNames extends IAppointment {
   patient: {
     firstName: string
     lastName: string
-  }
+  } | null
   psychologist: {
     firstName: string
     lastName: string
-  }
-}
-
-export interface RegisterAppointmentRequest {
-  patientId: string
-  psychologistId: string
-  diagnosis: string
-  notes?: string
-  scheduledAt: Date
-  startedAt?: Date
-  endedAt?: Date
-  status: string
+  } | null
 }
 
 export interface RegisterAppointmentResponse {
   message: string
-  appointment: Appointment
+  appointment: IAppointment
+}
+
+export interface IAppointmentSession {
+  id: string
+  appointmentId: string
+  startedAt: string
+  endedAt: string | null
+  durationInMin: number | null
+  meetingLink: string | null
+  notes: string | null
+}
+
+export interface ISessionParticipant {
+  participantType: 'PSYCHOLOGIST' | 'PATIENT' | null
+  psychologistPracticeContextId: string | null
+  patientProfileId: string | null
+  joinedAt: string
+  leftAt: string | null
 }

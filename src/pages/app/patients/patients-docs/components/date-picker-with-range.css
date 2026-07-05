@@ -1,0 +1,7 @@
+@reference "../../../../../global.css";
+
+@layer components {
+  .pd-date-trigger {
+    @apply h-9 w-full cursor-pointer justify-start border border-muted-foreground/20 bg-background px-3 text-left font-normal shadow-sm transition-all hover:border-primary/30 lg:w-[260px];
+  }
+}

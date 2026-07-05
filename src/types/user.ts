@@ -1,16 +1,18 @@
-export type UserType = 'PATIENT' | 'PSYCHOLOGIST' | 'ADMIN' | 'DEV' | 'CLINIC'
+import type { Gender, PlatformRole } from '@/types/enums'
 
-export interface Iuser {
+export type { PlatformRole } from '@/types/enums'
+
+export interface IUser {
   id: string
   firstName: string
   lastName: string
-  email: string | null
+  email: string
   phoneNumber: string | null
   profileImageUrl: string | null
-  type: UserType
+  dateOfBirth: string | null
   cpf: string | null
-  dateOfBirth: Date | null
-  addressId: string | null
-  createdAt: Date
-  updatedAt: Date
+  gender: Gender
+  isActive: boolean
+  platformRole: PlatformRole
+  createdAt: string
 }

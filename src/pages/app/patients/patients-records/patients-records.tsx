@@ -7,10 +7,11 @@ import { ClipboardList } from 'lucide-react'
 import { Helmet } from 'react-helmet-async'
 
 import {
-  getPatients,
+  fetchPatientProfiles,
   type IgetPatientsQueryParams,
-} from '@/api/patients/get-patients'
-import { useHeaderStore } from '@/hooks/use-header-store'
+} from '@/api/patient-profiles/fetch-patient-profiles'
+import { useHeaderStore } from '@/store/use-header-store'
+import { usePatientQueueStore } from '@/store/use-patient-queue-store'
 import { PatientsDataBlock } from '../components/patients-data-block'
 import { PatientsPageShell } from '../components/patients-page-shell'
 import { usePatientRecordsFilters } from '@/hooks/use-patient-records-filters'
@@ -18,10 +19,12 @@ import { PatientCard } from './components/patient-card'
 import { RecordsSkeleton } from './components/records-skeleton'
 import { RecordsEmptyState } from './components/records-empty-state'
 import { PatientsRecordsTableFilters } from './components/patients-records-table-filters'
+import './patients-records.css'
 
 export default function PatientsRecords() {
   const navigate = useNavigate()
   const { setTitle } = useHeaderStore()
+  const setQueue = usePatientQueueStore((state) => state.setQueue)
 
   const {
     search,
@@ -34,22 +37,21 @@ export default function PatientsRecords() {
     clearFilters,
   } = usePatientRecordsFilters()
 
-  const {
-    data: result,
-    isLoading,
-    isFetching,
-  } = useQuery({
+  const { data: result, isLoading } = useQuery({
     queryKey: [
       'patients-records-list',
       debouncedSearch,
       gender /*, sessionOrder */,
     ],
     queryFn: () =>
-      getPatients({
+      fetchPatientProfiles({
         pageIndex: 0,
         perPage: 100,
         filter: debouncedSearch || undefined,
-        gender: gender as IgetPatientsQueryParams['gender'],
+        gender:
+          gender === 'all'
+            ? undefined
+            : (gender as IgetPatientsQueryParams['gender']),
         // sessionVolume: sessionOrder,
       }),
     placeholderData: (previousData) => previousData,
@@ -62,9 +64,10 @@ export default function PatientsRecords() {
   const patients = useMemo(() => result?.patients ?? [], [result])
 
   const handleOpenRecord = (patientId: string) => {
-    const queueIds = patients.map((p) => p.id)
-    sessionStorage.setItem('active_patient_queue', JSON.stringify(queueIds))
-    sessionStorage.setItem('active_patient_queue_source', 'patients-records')
+    setQueue(
+      patients.map((p) => p.id),
+      'patients-records',
+    )
     navigate(`/patients/${patientId}/details`, {
       state: { from: 'patients-records' },
     })
@@ -88,18 +91,17 @@ export default function PatientsRecords() {
             />
             <PatientsDataBlock.Toolbar>
               <PatientsRecordsTableFilters
-                search={search}
-                onSearchChange={setSearch}
-                gender={gender}
-                onGenderChange={setGender}
-                sessionOrder={sessionOrder}
-                onSessionOrderChange={setSessionOrder}
+                search={{ value: search, onChange: setSearch }}
+                gender={{ value: gender, onChange: setGender }}
+                sessionOrder={{
+                  value: sessionOrder,
+                  onChange: setSessionOrder,
+                }}
                 onClearFilters={clearFilters}
-                isFetching={isFetching}
               />
             </PatientsDataBlock.Toolbar>
             <PatientsDataBlock.Content>
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+              <div className="pr-grid">
                 {isLoading ? (
                   <RecordsSkeleton />
                 ) : patients.length > 0 ? (

@@ -7,6 +7,7 @@ import type { DashboardPeriod } from '../constants'
 import { PERIODS } from '../constants'
 import { getGreeting } from '../helpers'
 import { useTodayAppointments } from '../hooks/use-today-appointments'
+import './dashboard-header.css'
 
 interface DashboardHeaderProps {
   period: DashboardPeriod
@@ -31,29 +32,27 @@ export function DashboardHeader({
     : ''
 
   return (
-    <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
+    <div className="dsh-header-root">
       <div>
-        <h1 className="text-2xl font-bold text-foreground">
+        <h1 className="dsh-header-title">
           {getGreeting()}
           {name ? `, ${name}` : ''}
         </h1>
-        <p className="mt-1 text-sm text-muted-foreground capitalize">
+        <p className="dsh-header-date">
           {formattedDate}
           {appointmentCount > 0 &&
             ` · ${appointmentCount} ${appointmentCount === 1 ? 'sessão hoje' : 'sessões hoje'}`}
         </p>
       </div>
 
-      <div className="flex items-center gap-1 self-start rounded-lg border border-border bg-muted/30 p-1">
+      <div className="dsh-header-periods">
         {PERIODS.map(({ value, label }) => (
           <button
             key={value}
             onClick={() => onPeriodChange(value)}
             className={cn(
-              'rounded-md px-3 py-1.5 text-sm font-medium transition-all cursor-pointer',
-              period === value
-                ? 'bg-blue-700 text-background shadow-sm'
-                : 'text-muted-foreground hover:text-foreground',
+              'dsh-header-period-btn',
+              period === value && 'dsh-header-period-btn--active',
             )}
           >
             {label}

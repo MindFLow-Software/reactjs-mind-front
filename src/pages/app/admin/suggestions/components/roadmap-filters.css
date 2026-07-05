@@ -1,0 +1,31 @@
+@reference "../../../../../global.css";
+
+@layer components {
+  .ads-filters-root {
+    @apply flex flex-col gap-3 lg:flex-row lg:items-center lg:justify-between;
+  }
+
+  .ads-filters-group {
+    @apply flex flex-1 flex-col gap-2 lg:flex-row lg:items-center;
+  }
+
+  .ads-filters-search {
+    @apply relative w-full lg:w-auto;
+  }
+
+  .ads-filters-search-icon {
+    @apply pointer-events-none absolute left-2.5 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground;
+  }
+
+  .ads-filters-search-input {
+    @apply h-8 w-full pl-9 lg:w-[320px];
+  }
+
+  .ads-filters-select-trigger {
+    @apply h-8 w-auto min-w-[180px] cursor-pointer border-muted-foreground/20 bg-background px-3 shadow-sm transition-all hover:border-primary/30;
+  }
+
+  .ads-filters-clear-btn {
+    @apply h-8 cursor-pointer gap-2 px-2 text-muted-foreground transition-colors hover:text-destructive lg:px-3;
+  }
+}

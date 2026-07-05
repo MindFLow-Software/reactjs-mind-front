@@ -1,7 +1,11 @@
 import { useMemo } from 'react'
 import { useQuery } from '@tanstack/react-query'
 import { getTotalWorkHours } from '@/api/metrics/get-total-work-hours'
-import { MONTHLY_GOAL_HOURS, QUERY_STALE_TIME, QUERY_GC_TIME } from '../constants'
+import {
+  MONTHLY_GOAL_HOURS,
+  QUERY_STALE_TIME,
+  QUERY_GC_TIME,
+} from '../constants'
 
 export interface UseWorkHoursOptions {
   startDate?: Date

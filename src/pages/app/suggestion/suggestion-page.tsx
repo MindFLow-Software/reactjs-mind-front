@@ -4,12 +4,9 @@ import { useEffect, useRef, useState } from 'react'
 import { Helmet } from 'react-helmet-async'
 import {
   Hand,
-  Rocket,
-  Microscope,
   Search,
   XCircle,
   Plus,
-  Lightbulb,
   ChevronsUp,
   Zap,
   Check,
@@ -18,80 +15,31 @@ import {
 } from 'lucide-react'
 import { useQuery } from '@tanstack/react-query'
 
-import { useHeaderStore } from '@/hooks/use-header-store'
+import { useHeaderStore } from '@/store/use-header-store'
 import { useDebounce } from '@/hooks/use-debounce'
 import { getSuggestions } from '@/api/suggestions/get-suggestions'
-import { SuggestionColumn } from './components/board/suggestion-column'
 import { Input } from '@/components/ui/input'
 import { Button } from '@/components/ui/button'
 import { Dialog, DialogTrigger } from '@/components/ui/dialog'
+import { StatCard } from '@/components/stat-card'
 import { cn } from '@/lib/utils'
+import type { SuggestionCategory } from '@/types/enums'
+import { SuggestionColumn } from './components/board/suggestion-column'
+import { SuggestionFilterChip } from './components/board/suggestion-filter-chip'
 import { CreateSuggestion } from './components/create/create-suggestion'
 import { SuggestionHelpButton } from './components/help/suggestion-help-button'
-import { StatCard } from '@/components/stat-card'
-
-type CategoryFilter =
-  | 'UI_UX'
-  | 'SCHEDULING'
-  | 'REPORTS'
-  | 'PRIVACY_LGPD'
-  | 'INTEGRATIONS'
-  | 'OTHERS'
-
-const FILTER_CATEGORIES: {
-  value: CategoryFilter
-  label: string
-  dot: string
-}[] = [
-  { value: 'UI_UX', label: 'Fluxo', dot: 'bg-violet-500' },
-  { value: 'REPORTS', label: 'Relatórios', dot: 'bg-amber-500' },
-  { value: 'INTEGRATIONS', label: 'Integrações', dot: 'bg-blue-500' },
-  { value: 'SCHEDULING', label: 'Paciente', dot: 'bg-pink-500' },
-  { value: 'PRIVACY_LGPD', label: 'Financeiro', dot: 'bg-emerald-500' },
-  { value: 'OTHERS', label: 'Outros', dot: 'bg-slate-400' },
-]
-
-const COLUMN_CONFIG = [
-  {
-    title: 'Votação',
-    icon: Lightbulb,
-    status: 'OPEN',
-    iconColor: 'text-blue-500',
-    badgeClass:
-      'bg-blue-100 dark:bg-blue-950/40 text-blue-700 dark:text-blue-400',
-  },
-  {
-    title: 'Em Estudo',
-    icon: Microscope,
-    status: 'UNDER_REVIEW',
-    iconColor: 'text-purple-500',
-    badgeClass:
-      'bg-purple-100 dark:bg-purple-950/40 text-purple-700 dark:text-purple-400',
-  },
-  {
-    title: 'Implementando',
-    icon: Rocket,
-    status: 'PLANNED',
-    iconColor: 'text-amber-500',
-    badgeClass:
-      'bg-amber-100 dark:bg-amber-950/40 text-amber-700 dark:text-amber-400',
-  },
-  {
-    title: 'Concluído',
-    icon: Check,
-    status: 'IMPLEMENTED',
-    iconColor: 'text-emerald-500',
-    badgeClass:
-      'bg-emerald-100 dark:bg-emerald-950/40 text-emerald-700 dark:text-emerald-400',
-  },
-] as const
+import {
+  SUGGESTION_FILTER_CATEGORIES,
+  SUGGESTION_COLUMN_CONFIG,
+} from './suggestion-page-constants'
+import './suggestion-page.css'
 
 export function SuggestionPage() {
   const { setTitle } = useHeaderStore()
   const [search, setSearch] = useState('')
   const [isCreateOpen, setIsCreateOpen] = useState(false)
   const [selectedCategory, setSelectedCategory] =
-    useState<CategoryFilter | null>(null)
+    useState<SuggestionCategory | null>(null)
   const searchInputRef = useRef<HTMLInputElement>(null)
   const debouncedSearch = useDebounce(search, 400)
 
@@ -102,22 +50,19 @@ export function SuggestionPage() {
   const { data: suggestions, isLoading } = useQuery({
     queryKey: ['suggestions', debouncedSearch],
     queryFn: () =>
-      getSuggestions({
-        search: debouncedSearch,
-        sortBy: 'most_voted',
-      }),
+      getSuggestions({ search: debouncedSearch, sortBy: 'most_voted' }),
   })
 
   const totalCount = suggestions?.length ?? 0
 
-  const filterByStatus = (status: string) => {
+  const filterByStatus = (status: SuggestionCategory | string) => {
     let filtered = suggestions?.filter((s) => s.status === status) ?? []
     if (selectedCategory)
       filtered = filtered.filter((s) => s.category === selectedCategory)
     return filtered
   }
 
-  const categoryCount = (cat: CategoryFilter) =>
+  const categoryCount = (cat: SuggestionCategory) =>
     suggestions?.filter((s) => s.category === cat).length ?? 0
 
   useEffect(() => {
@@ -136,9 +81,9 @@ export function SuggestionPage() {
     <>
       <Helmet title="Envios da Comunidade" />
 
-      <div className="flex flex-col gap-6 mt-4 h-[calc(100vh-160px)] overflow-hidden">
-        <header className="flex flex-col lg:flex-row lg:items-center justify-between gap-4 border-l-4 border-primary pl-5 py-2">
-          <div className="space-y-1">
+      <div className="sp-root">
+        <header className="sp-header">
+          <div className="flex flex-col gap-1">
             <h1 className="text-2xl font-bold tracking-tight flex items-center gap-3">
               <Hand className="size-6 text-blue-600" />
               <span>Sugestões da Comunidade</span>
@@ -166,34 +111,42 @@ export function SuggestionPage() {
 
         <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 shrink-0">
           <StatCard
-            icon={<BadgeCheck className="size-5 text-blue-500" />}
-            iconBg="bg-blue-50 dark:bg-blue-950/30"
-            value="128"
-            label="Sugestões totais"
+            data={{
+              icon: <BadgeCheck className="size-5 text-blue-500" />,
+              iconBg: 'bg-blue-50 dark:bg-blue-950/30',
+              value: '128',
+              label: 'Sugestões totais',
+            }}
           />
           <StatCard
-            icon={<ChevronsUp className="size-5 text-violet-500" />}
-            iconBg="bg-violet-50 dark:bg-violet-950/30"
-            value="2.341"
-            label="Votos da comunidade"
-            trend="+84 esta semana"
+            data={{
+              icon: <ChevronsUp className="size-5 text-violet-500" />,
+              iconBg: 'bg-violet-50 dark:bg-violet-950/30',
+              value: '2.341',
+              label: 'Votos da comunidade',
+              trend: '+84 esta semana',
+            }}
           />
           <StatCard
-            icon={<Zap className="size-5 text-red-500" />}
-            iconBg="bg-red-50 dark:bg-red-950/30"
-            value="9"
-            label="Em produção agora"
+            data={{
+              icon: <Zap className="size-5 text-red-500" />,
+              iconBg: 'bg-red-50 dark:bg-red-950/30',
+              value: '9',
+              label: 'Em produção agora',
+            }}
           />
           <StatCard
-            icon={<Check className="size-5 text-emerald-600" />}
-            iconBg="bg-emerald-50 dark:bg-emerald-950/30"
-            value="42"
-            label="Já implementadas"
-            trend="+6 nos últimos 30d"
+            data={{
+              icon: <Check className="size-5 text-emerald-600" />,
+              iconBg: 'bg-emerald-50 dark:bg-emerald-950/30',
+              value: '42',
+              label: 'Já implementadas',
+              trend: '+6 nos últimos 30d',
+            }}
           />
         </div>
 
-        <div className="border border-border rounded-xl p-3 bg-card shrink-0">
+        <div className="sp-toolbar">
           <div className="flex items-center gap-2 flex-wrap">
             <div className="relative flex-1 min-w-[160px]">
               <Search className="absolute left-2.5 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-muted-foreground pointer-events-none" />
@@ -214,7 +167,7 @@ export function SuggestionPage() {
               )}
             </div>
 
-            <button className="inline-flex items-center gap-1.5 h-7 px-3 rounded-full text-xs font-medium border border-border text-muted-foreground hover:bg-muted/50 transition-colors cursor-pointer shrink-0">
+            <button className="sp-sort-chip">
               <ListFilter className="size-3.5" />
               Mais votadas
             </button>
@@ -222,75 +175,39 @@ export function SuggestionPage() {
             <div className="h-4 w-px bg-border shrink-0" />
 
             <div className="flex items-center gap-1.5 flex-wrap">
-              <button
+              <SuggestionFilterChip
+                data={{ label: 'Todas', count: totalCount }}
+                isActive={selectedCategory === null}
                 onClick={() => setSelectedCategory(null)}
-                className={cn(
-                  'inline-flex items-center gap-1.5 h-7 px-3 rounded-full text-xs font-medium whitespace-nowrap transition-colors cursor-pointer border',
-                  selectedCategory === null
-                    ? 'border-blue-500 bg-blue-50 text-blue-700 dark:bg-blue-950/30 dark:text-blue-400'
-                    : 'border-border text-muted-foreground hover:bg-muted/50',
-                )}
-              >
-                Todas
-                <span
-                  className={cn(
-                    'text-[10px] px-1.5 py-0.5 rounded-full font-semibold',
-                    selectedCategory === null
-                      ? 'bg-blue-100 text-blue-600 dark:bg-blue-900/50 dark:text-blue-300'
-                      : 'bg-muted text-muted-foreground',
-                  )}
-                >
-                  {totalCount}
-                </span>
-              </button>
-
-              {FILTER_CATEGORIES.map((cat) => {
-                const isSelected = selectedCategory === cat.value
-                return (
-                  <button
-                    key={cat.value}
-                    onClick={() =>
-                      setSelectedCategory(isSelected ? null : cat.value)
-                    }
-                    className={cn(
-                      'inline-flex items-center gap-1.5 h-7 px-3 rounded-full text-xs font-medium whitespace-nowrap transition-colors cursor-pointer border',
-                      isSelected
-                        ? 'border-blue-500 bg-blue-50 text-blue-700 dark:bg-blue-950/30 dark:text-blue-400'
-                        : 'border-border text-muted-foreground hover:bg-muted/50',
-                    )}
-                  >
-                    <span
-                      className={cn('size-2 rounded-full shrink-0', cat.dot)}
-                    />
-                    {cat.label}
-                    <span
-                      className={cn(
-                        'text-[10px] px-1.5 py-0.5 rounded-full font-semibold',
-                        isSelected
-                          ? 'bg-blue-100 text-blue-600 dark:bg-blue-900/50 dark:text-blue-300'
-                          : 'bg-muted text-muted-foreground',
-                      )}
-                    >
-                      {categoryCount(cat.value)}
-                    </span>
-                  </button>
-                )
-              })}
+              />
+              {SUGGESTION_FILTER_CATEGORIES.map((cat) => (
+                <SuggestionFilterChip
+                  key={cat.value}
+                  data={{
+                    label: cat.label,
+                    count: categoryCount(cat.value),
+                    dot: cat.dot,
+                  }}
+                  isActive={selectedCategory === cat.value}
+                  onClick={() =>
+                    setSelectedCategory(
+                      selectedCategory === cat.value ? null : cat.value,
+                    )
+                  }
+                />
+              ))}
             </div>
           </div>
         </div>
 
-        <div
-          className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 md:gap-6 overflow-x-auto pb-4 h-full min-h-0 auto-cols-fr"
-          role="region"
-        >
-          {COLUMN_CONFIG.map((column) => {
+        <div className="sp-board" role="region">
+          {SUGGESTION_COLUMN_CONFIG.map((column) => {
             const Icon = column.icon
             return (
               <SuggestionColumn
                 key={column.status}
                 title={column.title}
-                icon={<Icon className={`size-4 ${column.iconColor}`} />}
+                icon={<Icon className={cn('size-4', column.iconColor)} />}
                 badgeClass={column.badgeClass}
                 suggestions={filterByStatus(column.status)}
                 isLoading={isLoading}

@@ -1,0 +1,92 @@
+@reference "../../../../../../global.css";
+
+@layer components {
+  /* Dialog shell */
+  .pdd-content {
+    @apply max-h-[90vh] max-w-xl! w-full overflow-x-hidden overflow-y-auto;
+  }
+
+  .pdd-loading {
+    @apply flex items-center justify-center p-20;
+  }
+
+  .pdd-body {
+    @apply flex flex-col gap-8;
+  }
+
+  /* Info field */
+  .pdd-field-masked {
+    @apply h-auto w-full border-none bg-transparent p-0 text-right font-medium tabular-nums text-foreground pointer-events-none focus:outline-none disabled:opacity-100;
+  }
+
+  .pdd-field-empty {
+    @apply text-xs font-normal italic text-muted-foreground/60;
+  }
+
+  .pdd-field-value {
+    @apply font-medium text-foreground;
+  }
+
+  /* Registration table */
+  .pdd-reg-table {
+    @apply rounded-lg border bg-card;
+  }
+
+  .pdd-reg-label {
+    @apply py-3 font-medium text-muted-foreground;
+  }
+
+  .pdd-reg-value {
+    @apply py-3 text-right;
+  }
+
+  /* Average duration item */
+  .pdd-avg-item {
+    @apply border-sky-200 dark:border-sky-900 dark:bg-sky-950/10;
+  }
+
+  .pdd-avg-value {
+    @apply text-lg font-bold text-sky-700;
+  }
+
+  /* Session history */
+  .pdd-history {
+    @apply flex flex-col gap-4;
+  }
+
+  .pdd-history-title {
+    @apply flex items-center gap-2 px-1 text-sm font-bold;
+  }
+
+  .pdd-history-table {
+    @apply rounded-md border;
+  }
+
+  .pdd-history-head {
+    @apply text-xs uppercase;
+  }
+
+  .pdd-history-date {
+    @apply whitespace-nowrap text-xs tabular-nums;
+  }
+
+  .pdd-history-theme {
+    @apply max-w-[180px] truncate text-xs italic text-muted-foreground;
+  }
+
+  .pdd-history-status {
+    @apply text-right text-[10px] font-bold uppercase;
+  }
+
+  .pdd-history-empty {
+    @apply h-24 text-center italic text-muted-foreground;
+  }
+
+  .pdd-history-total-label {
+    @apply py-4 text-xs text-muted-foreground;
+  }
+
+  .pdd-history-total-value {
+    @apply py-4 text-right font-bold;
+  }
+}

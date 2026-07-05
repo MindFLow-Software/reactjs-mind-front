@@ -41,13 +41,13 @@ export function AppErrorBoundary() {
   if (isChunkError(error)) {
     return (
       <div className="flex min-h-screen flex-col items-center justify-center bg-background px-4">
-        <div className="mx-auto max-w-md text-center space-y-6">
+        <div className="mx-auto max-w-md text-center flex flex-col gap-6">
           <div className="flex justify-center">
             <div className="flex h-16 w-16 items-center justify-center rounded-full bg-blue-500/10">
               <RotateCcw className="h-8 w-8 text-blue-600 animate-spin" />
             </div>
           </div>
-          <div className="space-y-2">
+          <div className="flex flex-col gap-2">
             <h2 className="text-xl font-semibold text-foreground">
               Atualizando o aplicativo…
             </h2>
@@ -63,14 +63,14 @@ export function AppErrorBoundary() {
 
   return (
     <div className="flex min-h-screen flex-col items-center justify-center bg-background px-4">
-      <div className="mx-auto max-w-md text-center space-y-8">
+      <div className="mx-auto max-w-md text-center flex flex-col gap-8">
         <div className="flex justify-center">
           <div className="flex h-16 w-16 items-center justify-center rounded-full bg-red-500/10">
             <AlertTriangle className="h-8 w-8 text-red-500" />
           </div>
         </div>
 
-        <div className="space-y-3">
+        <div className="flex flex-col gap-3">
           <h1 className="text-2xl font-bold text-foreground">
             Algo deu errado
           </h1>

@@ -7,6 +7,15 @@
   button:not(:disabled) {
     cursor: pointer;
   }
+
+  @media (prefers-reduced-motion: reduce) {
+    *, ::before, ::after {
+      animation-duration: 0.01ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.01ms !important;
+      scroll-behavior: auto !important;
+    }
+  }
 }
 
 @theme inline {
@@ -141,6 +150,27 @@
   --border: oklch(0.90 0.002 247.84);
   --input: oklch(0.90 0.002 247.84);
   --ring: oklch(0.623 0.214 259.815);
+
+  /* Feature palette tokens — single hex source (see .specs/project/design-system.md) */
+  --blue-400: #4e8ed3;
+  --blue-600: #1858b0;
+  --gender-feminine: #ec4899;
+  --gender-masculine: #3b82f6;
+  --gender-other: #a855f7;
+  --chart-blue: #3b82f6;
+  --chart-sessions-green: #22c55e;
+  --chart-transactions-green: #63d72a;
+  --finance-paid: #01de82;
+  --finance-pending: #f59e0b;
+  --finance-expired: #ef4444;
+  --finance-canceled: #64748b;
+  --finance-refunded: #6366f1;
+  --auth-navy-950: #0e1b3e;
+  --auth-navy-800: #16306b;
+  --auth-navy-700: #1c3c8a;
+  --auth-navy-600: #194ac5;
+  --welcome-grid-line: #e2e8f0;
+  --attachment-preview-bg: #0d1117;
 }
 
 .dark {

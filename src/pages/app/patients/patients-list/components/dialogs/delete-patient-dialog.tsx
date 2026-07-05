@@ -17,9 +17,7 @@ export function DeletePatientDialog({
     <PatientStatusDialog
       mode="archive"
       fullName={fullName}
-      onClose={onClose}
-      onConfirm={onConfirm}
-      isPending={isPending}
+      action={{ onConfirm, onClose, isPending }}
     />
   )
 }

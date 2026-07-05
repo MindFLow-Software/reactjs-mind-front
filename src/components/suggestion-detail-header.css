@@ -1,0 +1,31 @@
+@reference "../global.css";
+
+@layer components {
+  .sdm-header {
+    @apply flex gap-4 items-start px-[22px] pt-[18px] pb-3 shrink-0 border-b border-border;
+  }
+
+  .sdm-vote-done {
+    @apply flex flex-col items-center justify-center gap-1 shrink-0 w-16 py-2;
+  }
+
+  .sdm-vote {
+    @apply flex flex-col items-center justify-center gap-1 shrink-0 w-16 min-h-[72px] rounded-[6px] border-[1.5px] px-1 py-2.5 transition-all cursor-pointer active:scale-95;
+  }
+
+  .sdm-title {
+    @apply text-[21px] font-bold leading-[1.25] tracking-[-0.015em] text-foreground;
+  }
+
+  .sdm-pill {
+    @apply inline-flex items-center gap-1 text-[11px] font-semibold px-2 py-0.5 rounded-full shrink-0;
+  }
+
+  .sdm-author-avatar {
+    @apply size-[18px] rounded-full bg-blue-100 dark:bg-blue-900/50 border border-blue-200 dark:border-blue-800 flex items-center justify-center text-[8px] font-bold text-blue-700 dark:text-blue-300 shrink-0;
+  }
+
+  .sdm-action {
+    @apply size-[34px] rounded-lg border flex items-center justify-center transition-colors;
+  }
+}

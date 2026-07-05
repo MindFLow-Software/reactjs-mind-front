@@ -1,0 +1,80 @@
+@reference "../../../global.css";
+
+@keyframes lp-marquee {
+  0% {
+    transform: translateX(0);
+  }
+  100% {
+    transform: translateX(-50%);
+  }
+}
+
+@keyframes lp-marquee-rev {
+  0% {
+    transform: translateX(-50%);
+  }
+  100% {
+    transform: translateX(0);
+  }
+}
+
+@layer components {
+  .lp-marquee {
+    animation: lp-marquee 42s linear infinite;
+  }
+
+  .lp-marquee-rev {
+    animation: lp-marquee-rev 48s linear infinite;
+  }
+
+  .lp-tst-section {
+    @apply relative overflow-hidden border-t border-slate-100 bg-[#F7F9FF] py-24 scroll-mt-20;
+  }
+
+  .lp-tst-glow {
+    @apply pointer-events-none absolute right-0 top-0 h-[500px] w-[600px];
+    background: radial-gradient(
+      ellipse at 80% 10%,
+      rgba(37, 99, 235, 0.07) 0%,
+      transparent 65%
+    );
+  }
+
+  .lp-tst-heading {
+    @apply mx-auto mb-4 max-w-[560px] text-[clamp(28px,3.6vw,44px)] font-semibold leading-[1.15] tracking-tight text-slate-900;
+  }
+
+  .lp-tst-subtitle {
+    @apply mx-auto max-w-[440px] text-[15.5px] font-light leading-relaxed text-slate-500;
+  }
+
+  .lp-tst-fade-left {
+    @apply pointer-events-none absolute inset-y-0 left-0 z-10 w-32;
+    background: linear-gradient(to right, #f7f9ff, transparent);
+  }
+
+  .lp-tst-fade-right {
+    @apply pointer-events-none absolute inset-y-0 right-0 z-10 w-32;
+    background: linear-gradient(to left, #f7f9ff, transparent);
+  }
+
+  .lp-tst-card {
+    @apply mx-2 flex h-full w-[320px] flex-shrink-0 flex-col rounded-2xl border border-slate-100 bg-white p-5 shadow-sm transition-all duration-300 hover:-translate-y-0.5 hover:shadow-md;
+  }
+
+  .lp-tst-quote {
+    @apply mb-4 flex-1 text-[14px] font-light leading-relaxed text-slate-600;
+  }
+
+  .lp-tst-avatar {
+    @apply h-9 w-9 shrink-0 rounded-full border border-slate-100 object-cover;
+  }
+
+  .lp-tst-name {
+    @apply mb-[4px] text-[13px] font-semibold leading-none text-slate-800;
+  }
+
+  .lp-tst-role {
+    @apply text-[11px] font-light text-slate-400;
+  }
+}

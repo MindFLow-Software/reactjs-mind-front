@@ -1,7 +1,7 @@
 import { memo } from 'react'
 import { CalendarCheck } from 'lucide-react'
 import { useSessionsCount } from '../hooks/use-sessions-count'
-import { MetricCard } from './metric-card'
+import { MetricCard } from '@/components/metric-card'
 
 interface MonthPatientsAmountCardProps {
   startDate: Date | undefined
@@ -16,21 +16,24 @@ export const MonthPatientsAmountCard = memo(function MonthPatientsAmountCard({
     useSessionsCount({ startDate, endDate })
 
   return (
-    <MetricCard
-      accentColor="violet"
-      header={{ label: 'Sessões no mês', icon: <CalendarCheck className="size-4 text-violet-500" /> }}
-      state={{ isLoading, isError, onRetry: refetch }}
-    >
-      <MetricCard.Value>{count.toLocaleString('pt-BR')}</MetricCard.Value>
-      {pct !== null && (
-        <MetricCard.Trend
-          direction={isPositive ? 'up' : 'down'}
-          label="vs. mês anterior"
-        >
-          {isPositive ? '+' : '-'}
-          {pct}%
-        </MetricCard.Trend>
-      )}
+    <MetricCard variant="stacked" accentColor="violet" isLoading={isLoading}>
+      <MetricCard.Header
+        icon={<CalendarCheck className="size-4 text-violet-500" />}
+        label="Sessões no mês"
+        accentColor="violet"
+      />
+      <MetricCard.Body isError={isError} onRetry={refetch}>
+        <MetricCard.Value>{count.toLocaleString('pt-BR')}</MetricCard.Value>
+        {pct !== null && (
+          <MetricCard.Trend
+            direction={isPositive ? 'up' : 'down'}
+            label="vs. mês anterior"
+          >
+            {isPositive ? '+' : '-'}
+            {pct}%
+          </MetricCard.Trend>
+        )}
+      </MetricCard.Body>
     </MetricCard>
   )
 })

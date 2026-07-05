@@ -1,0 +1,15 @@
+@reference "../../../global.css";
+
+@layer components {
+  .pctx-shell {
+    @apply flex flex-col items-center justify-center mx-auto mt-4;
+  }
+
+  .pctx-header {
+    @apply flex flex-col items-center justify-center max-w-xl;
+  }
+
+  .pctx-options-row {
+    @apply flex items-center gap-4 h-80;
+  }
+}

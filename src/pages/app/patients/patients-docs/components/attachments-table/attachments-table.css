@@ -1,0 +1,43 @@
+@reference "../../../../../../global.css";
+
+@layer components {
+  .pd-tbl-root {
+    @apply w-full flex flex-col gap-3;
+  }
+
+  .pd-tbl-wrap {
+    @apply w-full overflow-hidden rounded-xl border bg-background shadow-sm;
+  }
+
+  .pd-tbl-head-row {
+    @apply bg-muted/30 whitespace-nowrap hover:bg-muted/30;
+  }
+
+  .pd-tbl-head-checkbox {
+    @apply w-[42px] px-4;
+  }
+
+  .pd-tbl-th {
+    @apply text-[11px] font-semibold tracking-[0.06em] text-muted-foreground/80 uppercase;
+  }
+
+  .pd-tbl-empty-cell {
+    @apply py-20 text-center text-muted-foreground;
+  }
+
+  .pd-tbl-empty {
+    @apply flex flex-col items-center justify-center gap-3;
+  }
+
+  .pd-tbl-empty-icon {
+    @apply rounded-full bg-muted p-4;
+  }
+
+  .pd-tbl-empty-title {
+    @apply text-sm font-medium text-muted-foreground;
+  }
+
+  .pd-tbl-empty-sub {
+    @apply text-xs text-muted-foreground/60;
+  }
+}
