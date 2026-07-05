@@ -2,7 +2,7 @@
 
 @layer components {
   .acc-edit-content {
-    @apply max-h-[90vh] max-w-2xl overflow-y-auto border-none shadow-2xl sm:rounded-2xl;
+    @apply max-h-[90vh] max-w-2xl! overflow-y-auto border-none shadow-2xl;
   }
 
   .acc-edit-title {

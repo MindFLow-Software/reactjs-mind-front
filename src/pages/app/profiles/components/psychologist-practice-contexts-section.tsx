@@ -1,70 +1,56 @@
 import { useCallback } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { Plus } from 'lucide-react'
 
 import { useAuth } from '@/hooks/use-auth'
 import { useActivePracticeContextStore } from '@/store/use-active-practice-context-store'
 
-import { Button } from '@/components/ui/button'
-import { PracticeContextCard } from './practice-context-card'
 import { ProfileSectionHeader } from './profile-section-header'
+import { PracticeContextFeaturedCard } from './practice-context-featured-card'
 
 import './psychologist-practice-contexts-section.css'
 
 export function PsychologistPracticeContextsSection() {
   const navigate = useNavigate()
-  const { profile } = useAuth()
 
-  const setActivePracticeContextId = useActivePracticeContextStore(
-    (state) => state.setActivePracticeContextId,
-  )
+  const { profile } = useAuth()
+  const { setActivePracticeContextId } = useActivePracticeContextStore()
 
   const practiceContexts = profile?.practiceContexts ?? []
 
-  const handleAddContext = () => {
-    navigate('/profiles/context')
-  }
+  const featuredContext = practiceContexts[0]
 
-  const handleAccessPracticeContext = useCallback(
-    (contextId: string) => {
-      if (!contextId) return
+  const otherContexts = practiceContexts.filter(
+    (c) => c.id !== featuredContext?.id,
+  )
 
-      setActivePracticeContextId(contextId)
+  const handleEnter = useCallback(
+    (id: string) => {
+      setActivePracticeContextId(id)
       navigate('/dashboard')
     },
-    [navigate, setActivePracticeContextId],
+    [setActivePracticeContextId, navigate],
+  )
+
+  const handleViewAll = useCallback(
+    () => navigate('/profiles/contexts'),
+    [navigate],
   )
 
   if (practiceContexts.length === 0) return null
 
   return (
-    <section className="w-full">
-      <div className="pf-section-header-row">
-        <ProfileSectionHeader
-          section="profissional"
-          title="Seus contextos de atuação"
-          label="Os contextos representam os ambientes em que você atende, como consultório particular ou clínica."
-        />
-        <Button
-          size="sm"
-          variant="outline"
-          className="gap-2"
-          onClick={handleAddContext}
-        >
-          <Plus size={16} />
-          Adicionar Contexto
-        </Button>
-      </div>
-
-      <div className="pf-cards-row">
-        {practiceContexts?.map((context) => (
-          <PracticeContextCard
-            key={context.id}
-            context={context}
-            onSelect={handleAccessPracticeContext}
-          />
-        ))}
-      </div>
+    <section className="flex flex-col gap-3 w-full">
+      <ProfileSectionHeader
+        section="contextos"
+        title="Seus contextos de atuação"
+        label="Os contextos representam os ambientes em que você atende, como consultório particular ou clínica."
+      />
+      <PracticeContextFeaturedCard
+        context={featuredContext}
+        otherContextsCount={otherContexts.length}
+        onEnter={handleEnter}
+        onViewAll={handleViewAll}
+      />
     </section>
   )
 }

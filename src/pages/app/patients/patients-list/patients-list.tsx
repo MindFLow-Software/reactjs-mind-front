@@ -18,7 +18,7 @@ import { Pagination } from '@/components/pagination'
 
 import { MetricCard } from '@/components/metric-card'
 import { PatientsTable } from './components/table/patients-table'
-import { RegisterPatients } from './register-patients/register-patients'
+import { RegisterPatients } from './components/dialogs/register-patients/register-patients'
 import { PatientsPageShell } from '../components/patients-page-shell'
 import { PatientsDataBlock } from '../components/patients-data-block'
 import { GenerateInviteModal } from './components/dialogs/generate-invite-modal'
@@ -150,7 +150,7 @@ export function PatientsList() {
           icon={<UsersRound className="size-6 text-blue-600" />}
         >
           <PageShellHeader
-            primaryAction={() => {}}
+            primaryAction={() => { }}
             secondaryAction={() => setIsInviteOpen(true)}
             terciaryAction={() => setRegisterModalData({ isOpen: true })}
           />
@@ -203,8 +203,8 @@ export function PatientsList() {
                 )}
               >
                 <PageDataBlockHeader
-                  primaryAction={() => {}}
-                  secondaryAction={() => {}}
+                  primaryAction={() => { }}
+                  secondaryAction={() => { }}
                 />
               </PatientsDataBlock.Header>
 
@@ -221,10 +221,10 @@ export function PatientsList() {
                   sort={
                     filters.sortBy
                       ? {
-                          by: filters.sortBy,
-                          order: filters.order,
-                          onSort: setSort,
-                        }
+                        by: filters.sortBy,
+                        order: filters.order,
+                        onSort: setSort,
+                      }
                       : undefined
                   }
                   onClearFilters={clearFilters}

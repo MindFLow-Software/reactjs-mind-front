@@ -22,6 +22,6 @@
   }
 
   .pgn-btn {
-    @apply h-8 w-8 cursor-pointer p-0;
+    @apply h-8! w-8! cursor-pointer p-0;
   }
 }

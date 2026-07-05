@@ -1,10 +1,11 @@
 import type { ReactNode } from 'react'
 import { cn } from '@/lib/utils'
+
 import './account-stat-chip.css'
 
 type AccountStatChipAccent = 'blue' | 'indigo' | 'purple' | 'neutral'
 
-interface AccountStatChipProps {
+interface IAccountStatChip {
   icon: ReactNode
   accent: AccountStatChipAccent
   label: string
@@ -16,7 +17,7 @@ export function AccountStatChip({
   accent,
   label,
   value,
-}: AccountStatChipProps) {
+}: IAccountStatChip) {
   return (
     <div className={cn('acc-chip', `acc-chip--${accent}`)}>
       <div className={cn('acc-chip-icon', `acc-chip-icon--${accent}`)}>

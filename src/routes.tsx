@@ -1,6 +1,5 @@
 import { createBrowserRouter, Outlet, redirect } from 'react-router-dom'
 import { lazy, Suspense } from 'react'
-// import { getProfile } from './api/psychologists/get-profile'
 import { AppLayout } from './pages/_layouts/app'
 import { AuthLayout } from './pages/_layouts/auth'
 import { PatientsList } from './pages/app/patients/patients-list/patients-list'
@@ -34,6 +33,7 @@ import { ProtectedRoute } from './components/auth/protected-route'
 import { ValidatePatientInvitePage } from './pages/auth/invite/validate-patient-invite-page'
 import { RegisterViaPatientInvitePage } from './pages/auth/invite/register-via-patient-invite-page'
 import { PatientInviteReviewPage } from './pages/auth/invite/patient-invite-review-page'
+import { ContextSelectionPage } from './pages/app/profiles/context-selection-page'
 import { ClaimCandidatesPage } from './pages/app/claim-candidates/claim-candidates-page'
 import { ClaimProfileRequestsPage } from './pages/app/claim-profile-requests/claim-profile-requests-page'
 import { PatientOnboardingPage } from './pages/app/onboarding/patient/patient-onboarding'
@@ -137,6 +137,10 @@ export const router = createBrowserRouter([
       {
         path: '/profiles/context',
         element: <PracticeContextPage />,
+      },
+      {
+        path: '/profiles/contexts',
+        element: <ContextSelectionPage />,
       },
       {
         path: '/profiles/claim-candidates',

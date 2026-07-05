@@ -1,17 +1,20 @@
-import { type ReactNode } from 'react'
+import './profiles-page.css'
+
+
 import { Navigate } from 'react-router-dom'
 import { Loader2 } from 'lucide-react'
 
 import { useAuth } from '@/hooks/use-auth'
 
-import { CreatePatientProfileCard } from './components/create-patient-profile-card'
-import { PsychologistCard } from './components/psychologist-card'
 import { ProfileSectionHeader } from './components/profile-section-header'
-import { PsychologistPracticeContextsSection } from './components/psychologist-practice-contexts-section'
 import { PatientProfileSection } from './components/patient-profile-section'
+import { CreatePatientProfileCard } from './components/create-patient-profile-card'
+import { PsychologistPracticeContextsSection } from './components/psychologist-practice-contexts-section'
 import { PatientProfilePossibleCandidatesSection } from './components/patient-profile-possible-candidates-section'
 
 import './profiles-page.css'
+import type { ReactNode } from 'react'
+import { PsychologistProfileCard } from '../account/components/psychologist-profile-card'
 
 function ProfilesLayout({
   children,
@@ -83,7 +86,7 @@ export function ProfilesPage() {
         />
 
         <div className="flex justify-center gap-4">
-          <PsychologistCard />
+          <PsychologistProfileCard />
           <CreatePatientProfileCard />
         </div>
       </section>

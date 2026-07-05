@@ -1,15 +1,15 @@
-import { memo } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { HeartPulse, ArrowRight } from 'lucide-react'
-
-import { useAuth } from '@/hooks/use-auth'
 
 import { Button } from '@/components/ui/button'
 import { ProfileCard } from './profile-card'
 
+import { useAuth } from '@/hooks/use-auth'
+
+import './patient-card.css'
 import './create-patient-profile-card.css'
 
-function CreatePatientProfileCardBase() {
+export function CreatePatientProfileCard() {
   const navigate = useNavigate()
   const { profile: me } = useAuth()
 
@@ -20,7 +20,7 @@ function CreatePatientProfileCardBase() {
   }
 
   return (
-    <ProfileCard.Root>
+    <ProfileCard>
       <ProfileCard.Header
         variant="secondary"
         icon={<HeartPulse />}
@@ -55,8 +55,7 @@ function CreatePatientProfileCardBase() {
         {existingCount > 0 && (
           <p className="pf-hint text-muted-foreground">
             Você já possui {existingCount}{' '}
-            {existingCount === 1 ? 'perfil' : 'perfis'} de paciente vinculado
-            {existingCount === 1 ? '' : 's'}.
+            {existingCount === 1 ? 'perfil vinculado' : 'perfis vinculados'}.
           </p>
         )}
       </ProfileCard.Content>
@@ -67,11 +66,12 @@ function CreatePatientProfileCardBase() {
           onClick={handleCreatePatientProfile}
         >
           Criar perfil de paciente
-          <ArrowRight size={16} />
+          <ArrowRight
+            size={16}
+            className="group-hover:translate-x-[3px] transition-transform duration-150"
+          />
         </Button>
       </ProfileCard.Footer>
-    </ProfileCard.Root>
+    </ProfileCard>
   )
 }
-
-export const CreatePatientProfileCard = memo(CreatePatientProfileCardBase)

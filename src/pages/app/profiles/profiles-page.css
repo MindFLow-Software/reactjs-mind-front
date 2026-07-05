@@ -14,7 +14,7 @@
   }
 
   .pf-layout-main {
-    @apply mx-auto flex flex-col justify-center items-center gap-8 w-full max-w-4xl;
+    @apply mx-auto flex flex-col justify-center items-center gap-8 w-full max-w-5xl;
   }
 
   .pf-loading-state {

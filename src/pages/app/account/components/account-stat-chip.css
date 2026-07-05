@@ -2,7 +2,7 @@
 
 @layer components {
   .acc-chip {
-    @apply flex min-w-0 items-center gap-4 rounded-2xl border p-4 transition-colors;
+    @apply flex  min-w-0 items-center gap-4 rounded-2xl border p-4 transition-colors;
   }
 
   .acc-chip--blue {

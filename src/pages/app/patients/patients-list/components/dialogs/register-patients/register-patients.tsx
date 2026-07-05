@@ -1,43 +1,48 @@
-import './form-components.css'
 import { useEffect, useRef, useState } from 'react'
 import { useForm } from 'react-hook-form'
-import { useFileSelection } from '@/hooks/use-file-selection'
-import { useFormSteps } from '../../../../../hooks/use-form-steps'
-import { useCreatePatient } from './hooks/use-create-patient'
-import { zodResolver } from '@hookform/resolvers/zod'
 import {
+  Check,
   Loader2,
+  UserPlus,
   ChevronLeft,
   ChevronRight,
-  Check,
-  UserPlus,
 } from 'lucide-react'
 
-import {
-  DialogClose,
-  DialogContent,
-  DialogFooter,
-  DialogTitle,
-} from '@/components/ui/dialog'
-import { Button } from '@/components/ui/button'
-import { Form } from '@/components/ui/form'
 import { cn } from '@/lib/utils'
+import { zodResolver } from '@hookform/resolvers/zod'
+
+import { useFormSteps } from '@/hooks/use-form-steps'
+import { useCreatePatient } from './hooks/use-create-patient'
+import { useFileSelection } from '@/hooks/use-file-selection'
+
+import {
+  DialogTitle,
+  DialogClose,
+  DialogFooter,
+  DialogContent,
+} from '@/components/ui/dialog'
+
+import { Form } from '@/components/ui/form'
+import { Button } from '@/components/ui/button'
 
 import {
   createPatientSchema,
   type CreatePatientFormData,
 } from '@/validators/patients/form/create-patient-schema'
+
 import {
   STEPS,
   MAX_DOC_FILES,
   MAX_DOC_SIZE,
   type IRegisterPatientTabs,
 } from './constants'
-import { StepBasicData } from './steps/step-basic-data'
-import { StepContactAddress } from './steps/step-contact-address'
-// import { StepClinical } from './steps/step-clinical'
+
 import { UploadZone } from './steps/upload-zone'
+import { StepBasicData } from './steps/step-basic-data'
 import { getGroupedFields } from '@/utils/get-grouped-schema-fields'
+import { StepContactAddress } from './steps/step-contact-address'
+
+import './form-components.css'
 
 type IgroupField = Record<IRegisterPatientTabs, string[]>
 
@@ -67,7 +72,7 @@ export function RegisterPatients() {
     goToStep,
     isFirstStep,
     isLastStep,
-  } = useFormSteps()
+  } = useFormSteps({ stepsLength: STEPS.length })
 
   const { submit, isSubmitting } = useCreatePatient({
     avatarFile,

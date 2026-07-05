@@ -1,37 +1,33 @@
-export const PlatformRole = {
-  USER: 'USER',
-  ADMIN: 'ADMIN',
-  SUPPORT: 'SUPPORT',
-} as const
-export type PlatformRole = (typeof PlatformRole)[keyof typeof PlatformRole]
+export enum PlatformRole {
+  USER = 'USER',
+  ADMIN = 'ADMIN',
+  SUPPORT = 'SUPPORT',
+}
 
-export const Gender = {
-  OTHER: 'OTHER',
-  FEMININE: 'FEMININE',
-  MASCULINE: 'MASCULINE',
-} as const
-export type Gender = (typeof Gender)[keyof typeof Gender]
+export enum Gender {
+  OTHER = 'OTHER',
+  FEMININE = 'FEMININE',
+  MASCULINE = 'MASCULINE',
+}
 
-export const Expertise = {
-  OTHER: 'OTHER',
-  SOCIAL: 'SOCIAL',
-  INFANT: 'INFANT',
-  CLINICAL: 'CLINICAL',
-  JURIDICAL: 'JURIDICAL',
-  EDUCATIONAL: 'EDUCATIONAL',
-  ORGANIZATIONAL: 'ORGANIZATIONAL',
-  PSYCHOTHERAPIST: 'PSYCHOTHERAPIST',
-  NEUROPSYCHOLOGY: 'NEUROPSYCHOLOGY',
-} as const
-export type Expertise = (typeof Expertise)[keyof typeof Expertise]
+export enum Expertise {
+  OTHER = 'OTHER',
+  SOCIAL = 'SOCIAL',
+  INFANT = 'INFANT',
+  CLINICAL = 'CLINICAL',
+  JURIDICAL = 'JURIDICAL',
+  EDUCATIONAL = 'EDUCATIONAL',
+  ORGANIZATIONAL = 'ORGANIZATIONAL',
+  PSYCHOTHERAPIST = 'PSYCHOTHERAPIST',
+  NEUROPSYCHOLOGY = 'NEUROPSYCHOLOGY',
+}
 
-export const Honorific = {
-  MASC_DR: 'MASC_DR',
-  FEMININE_DR: 'FEMININE_DR',
-  MSC: 'MSC',
-  PHD: 'PHD',
-} as const
-export type Honorific = (typeof Honorific)[keyof typeof Honorific]
+export enum Honorific {
+  MASC_DR = 'MASC_DR',
+  FEMININE_DR = 'FEMININE_DR',
+  MSC = 'MSC',
+  PHD = 'PHD',
+}
 
 export const Languages = {
   PORTUGUESE: 'PORTUGUESE',

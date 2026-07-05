@@ -1,5 +1,6 @@
 import { z } from 'zod'
 import { cpfSchema } from '@/validators/shared/cpf-schema'
+import { Gender } from '@/types/enums'
 
 const cpfField = z.preprocess(
   (v) => (v === '' ? undefined : v),
@@ -19,7 +20,7 @@ export const updatePatientSchema = z.object({
   dateOfBirth: z.date().nullable().optional().describe('basicData'),
   cpf: cpfField.describe('basicData'),
   gender: z
-    .enum(['FEMININE', 'MASCULINE', 'OTHER'])
+    .enum(Gender)
     .optional()
     .describe('basicData'),
   profileImageUrl: z.string().optional().describe('basicData'),

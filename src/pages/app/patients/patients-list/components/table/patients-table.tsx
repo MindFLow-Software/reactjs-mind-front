@@ -31,7 +31,7 @@ export interface SortState {
   onSort: (column: PatientSortBy) => void
 }
 
-interface PatientsTableProps {
+interface IPatientsTable {
   patients: IPatient[]
   isLoading: boolean
   perPage?: number
@@ -175,9 +175,9 @@ export function PatientsTable({
   sort,
   onClearFilters,
   onRegister,
-}: PatientsTableProps) {
+}: IPatientsTable) {
   return (
-    <Card className="overflow-hidden p-0">
+    <Card className="overflow-hidden p-0 border">
       <Table>
         <TableHeader>
           <TableRow className="bg-muted/30 hover:bg-muted/30">

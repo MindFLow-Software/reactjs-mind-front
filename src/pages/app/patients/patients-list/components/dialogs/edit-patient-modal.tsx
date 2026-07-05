@@ -1,54 +1,54 @@
-import '../../register-patients/form-components.css'
 import { useEffect, useRef, useState } from 'react'
 import { useForm, type Resolver } from 'react-hook-form'
-import { zodResolver } from '@hookform/resolvers/zod'
 import {
+  Check,
+  UserPen,
   Loader2,
   ChevronLeft,
   ChevronRight,
-  Check,
-  UserPen,
 } from 'lucide-react'
 
-import { useFileSelection } from '@/hooks/use-file-selection'
-import { useFormSteps } from '@/hooks/use-form-steps'
+import { cn } from '@/lib/utils'
+import { zodResolver } from '@hookform/resolvers/zod'
+
 import { usePatient } from '@/hooks/use-patient'
+import { useFormSteps } from '@/hooks/use-form-steps'
+import { useFileSelection } from '@/hooks/use-file-selection'
 import { getGroupedFields } from '@/utils/get-grouped-schema-fields'
+import { useUpdatePatient } from './register-patients/hooks/use-update-patient'
 
 import {
-  DialogClose,
-  DialogContent,
-  DialogFooter,
   DialogTitle,
+  DialogClose,
+  DialogFooter,
+  DialogContent,
 } from '@/components/ui/dialog'
-import { Button } from '@/components/ui/button'
+
 import { Form } from '@/components/ui/form'
-import { cn } from '@/lib/utils'
+import { Button } from '@/components/ui/button'
 
 import {
   updatePatientSchema,
   type UpdatePatientFormData,
 } from '@/validators/patients/form/update-patient-schema'
-import {
-  STEPS,
-  MAX_DOC_FILES,
-  MAX_DOC_SIZE,
-  type IRegisterPatientTabs,
-} from '../../register-patients/constants'
-import { StepBasicData } from '../../register-patients/steps/step-basic-data'
-import { StepContactAddress } from '../../register-patients/steps/step-contact-address'
-import { AttachmentsList } from '../../register-patients/steps/attachments-list'
-import { UploadZone } from '../../register-patients/steps/upload-zone'
-import { useUpdatePatient } from '../../register-patients/hooks/use-update-patient'
-import { buildPatientUpdateDefaults } from './edit-patient-modal.helpers'
 
-interface EditPatientModalProps {
+import { buildPatientUpdateDefaults } from './edit-patient-modal.helpers'
+import { MAX_DOC_FILES, MAX_DOC_SIZE, STEPS, type IRegisterPatientTabs } from './register-patients/constants'
+
+import { UploadZone } from './register-patients/steps/upload-zone'
+import { StepBasicData } from './register-patients/steps/step-basic-data'
+import { AttachmentsList } from './register-patients/steps/attachments-list'
+import { StepContactAddress } from './register-patients/steps/step-contact-address'
+
+import '../dialogs/register-patients/form-components.css'
+
+interface IEditPatientModal {
   patientId: string
 }
 
 type IgroupField = Record<IRegisterPatientTabs, string[]>
 
-export function EditPatientModal({ patientId }: EditPatientModalProps) {
+export function EditPatientModal({ patientId }: IEditPatientModal) {
   const { patient } = usePatient(patientId)
 
   const redirectedToError = useRef(false)
@@ -78,7 +78,7 @@ export function EditPatientModal({ patientId }: EditPatientModalProps) {
     goToStep,
     isFirstStep,
     isLastStep,
-  } = useFormSteps()
+  } = useFormSteps({ stepsLength: STEPS.length })
 
   const { submit, isSubmitting } = useUpdatePatient({
     patientId,
@@ -152,7 +152,7 @@ export function EditPatientModal({ patientId }: EditPatientModalProps) {
   }
 
   useEffect(() => {
-    ;(async () => {
+    ; (async () => {
       if (errors && !redirectedToError.current) {
         const firstErrorField = Object.keys(errors)[0]
 

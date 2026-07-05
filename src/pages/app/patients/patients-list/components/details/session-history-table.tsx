@@ -18,7 +18,7 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from '@/components/ui/tooltip'
-import { Pagination, type PaginationState } from '@/components/pagination'
+import { Pagination, type IPaginationState } from '@/components/pagination'
 import {
   FINISHED_SESSION_STATUSES,
   getSessionStatusLabel,
@@ -27,7 +27,7 @@ import type { SessionItem } from '@/types/patient'
 
 interface SessionHistoryTableProps {
   sessions: SessionItem[]
-  pagination: PaginationState
+  pagination: IPaginationState
   onSelectSession: (session: SessionItem) => void
 }
 

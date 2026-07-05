@@ -1,15 +1,9 @@
 import { useNavigate } from 'react-router-dom'
 import { ArrowRight, Key, ShieldCheck } from 'lucide-react'
 
-import {
-  Card,
-  CardTitle,
-  CardHeader,
-  CardFooter,
-  CardDescription,
-} from '@/components/ui/card'
-
 import { Button } from '@/components/ui/button'
+import { Card, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card'
+
 import { TitleIcon } from '@/components/title-icon'
 import { ProfileSectionHeader } from './profile-section-header'
 
@@ -57,12 +51,13 @@ export function PatientProfilePossibleCandidatesSection() {
             Visualizar possíveis vínculos
             <ArrowRight size={16} />
           </Button>
-          <div className="flex items-center gap-2 text-muted-foreground">
-            <ShieldCheck size={14} />
-            <p className="text-xs">
-              Identificação por CPF, sem ações automáticas.
-            </p>
-          </div>
+          <p className="pf-candidate-footer-details">
+            <ShieldCheck
+              size={16}
+              className="text-green-600 dark:text-green-400"
+            />
+            Identificação por CPF, sem ações automáticas.
+          </p>
         </CardFooter>
       </Card>
     </section>

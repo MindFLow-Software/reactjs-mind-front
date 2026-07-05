@@ -2,6 +2,7 @@ import { useNavigate } from 'react-router-dom'
 import { ArrowRight, Brain, Plus } from 'lucide-react'
 
 import { cn } from '@/lib/utils'
+
 import { useAuth } from '@/hooks/use-auth'
 
 import { Button } from '@/components/ui/button'
@@ -14,23 +15,23 @@ export function PsychologistCard() {
 
   const { profile: me } = useAuth()
 
-  const handleCreatePsychologistProfile = () => {
-    navigate('/onboarding/psychologist')
-  }
+  const hasPsychologistProfile = Boolean(me?.psychologistProfile)
 
   const handleAddContext = () => {
     navigate('/profiles/context')
   }
 
-  const hasPsychologistProfile = Boolean(me?.psychologistProfile)
+  const handleCreatePsychologistProfile = () => {
+    navigate('/onboarding/psychologist')
+  }
 
   return (
-    <ProfileCard.Root>
+    <ProfileCard>
       <ProfileCard.Header
         icon={<Brain />}
         label="Para profissionais licenciados"
+        variant="primary"
       />
-
       <ProfileCard.Content>
         {hasPsychologistProfile ? (
           <>
@@ -61,7 +62,7 @@ export function PsychologistCard() {
 
               <div>
                 <p className="pf-stat-label">crp</p>
-                <p className="pf-stat-value">{me?.psychologistProfile!.crp}</p>
+                <p className="pf-stat-value">{me?.psychologistProfile?.crp}</p>
               </div>
 
               <div>
@@ -129,6 +130,6 @@ export function PsychologistCard() {
           </Button>
         )}
       </ProfileCard.Footer>
-    </ProfileCard.Root>
+    </ProfileCard>
   )
 }

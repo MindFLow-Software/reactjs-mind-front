@@ -45,9 +45,8 @@ function ProfileCardFooter({ children }: { children: ReactNode }) {
   return <CardFooter className="pf-card-footer">{children}</CardFooter>
 }
 
-export const ProfileCard = {
-  Root: ProfileCardRoot,
+export const ProfileCard = Object.assign(ProfileCardRoot, {
   Header: ProfileCardHeader,
   Content: ProfileCardContent,
   Footer: ProfileCardFooter,
-}
+})

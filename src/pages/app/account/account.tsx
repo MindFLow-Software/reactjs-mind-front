@@ -67,7 +67,7 @@ export function MockPsychologistProfilePage() {
 
       <div className="acc-page-root">
         {psychologist && (
-          <PsychologistProfileCard psychologist={psychologist} />
+          <PsychologistProfileCard />
         )}
 
         <div className="acc-page-heatmap-wrap">

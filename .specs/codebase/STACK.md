@@ -13,6 +13,10 @@ These choices are mandatory during the refactor:
 - Icons: Lucide for new or touched UI. Phosphor is legacy.
 - Styling: Tailwind CSS v4 through CSS files using `@reference`, `@layer`, and `@apply`.
 - Toasts: Sonner for backend success/error guidance.
+- TypeScript closed domain values: exported `enum` whenever possible, consumed as `EnumName.VALUE`.
+- React auth/profile state: `useAuth` is the only source for logged-in user profile data.
+- Conditional rendering: no chained or nested ternaries, especially inside JSX.
+- Shared logic: existing helpers/utils must be reused; functions used in two or more places must be extracted to a helper/util/shared module.
 
 Do not introduce another state, form, validation, styling, or HTTP library without explicit approval.
 

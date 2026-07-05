@@ -20,6 +20,7 @@ export function PsychologistAvatarUpload({
   fullName,
 }: AvatarUploadProps) {
   const queryClient = useQueryClient()
+  
   const fileInputRef = useRef<HTMLInputElement>(null)
   const [previewUrl, setPreviewUrl] = useState<string | null>(null)
   const user = useSessionStore((state) => state.user)

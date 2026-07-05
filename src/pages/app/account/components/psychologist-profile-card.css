@@ -2,11 +2,11 @@
 
 @layer components {
   .acc-profile-card {
-    @apply overflow-hidden rounded-2xl border border-border bg-card shadow-sm;
+    @apply relative z-0 overflow-hidden rounded-2xl border border-border bg-card shadow-sm w-full max-w-lg;
   }
 
   .acc-profile-banner {
-    @apply relative h-34 bg-gradient-to-r from-blue-600 via-indigo-500 to-purple-500;
+    @apply absolute top-0 left-0 w-full -z-10! h-34 bg-linear-to-r from-purple-500 via-indigo-500 to-blue-600 ;
   }
 
   .acc-profile-body {
@@ -14,11 +14,7 @@
   }
 
   .acc-profile-header {
-    @apply -mt-12 flex flex-col items-center gap-5 md:flex-row md:items-end;
-  }
-
-  .acc-profile-avatar-ring {
-    @apply rounded-full bg-card shadow-lg ring-4 ring-card;
+    @apply flex flex-col items-center gap-5 pt-4 md:flex-row md:items-end;
   }
 
   .acc-profile-name-block {
@@ -26,11 +22,11 @@
   }
 
   .acc-profile-name {
-    @apply text-2xl font-bold tracking-tight text-foreground;
+    @apply text-2xl font-bold tracking-tight text-white/90;
   }
 
   .acc-profile-verified {
-    @apply mb-1 hidden items-center gap-2 lg:flex;
+    @apply mb-1 hidden items-end gap-2 lg:flex;
   }
 
   .acc-profile-verified-icon {
@@ -38,7 +34,7 @@
   }
 
   .acc-profile-stats-grid {
-    @apply mt-8 grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4;
+    @apply mt-8 grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-2;
   }
 
   .acc-profile-edit-trigger {

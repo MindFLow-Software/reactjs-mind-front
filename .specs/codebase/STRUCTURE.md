@@ -24,6 +24,7 @@ src/
         hooks/                 # local-only hooks
         constants.ts           # local-only constants, if needed
         helpers.ts             # local-only pure helpers, if needed
+  shared/                      # cross-domain shared helpers only when utils/constants/hooks/components do not fit
   store/                       # global Zustand stores
   types/                       # backend-aligned entities/domains
   utils/                       # pure utilities only; no stores, no API calls
@@ -42,6 +43,9 @@ Hard boundaries:
 - `src/hooks` must not contain API route implementations.
 - API route functions must not be called directly from pages/components if a query/mutation hook is required.
 - Every `.tsx` page/component that owns markup must have its CSS counterpart or use an explicitly shared CSS file documented in the feature.
+- Feature-local `helpers.ts` may contain only helpers used by that feature.
+- Any pure function used by two or more files must move to `src/utils`, `src/shared`, or the established shared module for that domain.
+- Existing equivalent helpers/utilities must be reused instead of duplicated inline.
 
 ---
 

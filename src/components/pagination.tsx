@@ -9,22 +9,22 @@ import {
 import { Button } from './ui/button'
 import './pagination.css'
 
-export interface PaginationState {
+export interface IPaginationState {
   pageIndex: number
   perPage: number
   totalCount: number
   onPageChange: (pageIndex: number) => void
 }
 
-interface PaginationProps {
-  pagination: PaginationState
+interface IPagination {
+  pagination: IPaginationState
   totalLabel?: string
 }
 
 export const Pagination = memo(function Pagination({
   pagination: { pageIndex, perPage, totalCount, onPageChange },
   totalLabel = 'registros',
-}: PaginationProps) {
+}: IPagination) {
   const pages = Math.ceil(totalCount / perPage) || 1
   const isFirstPage = pageIndex === 0
   const isLastPage = pageIndex === pages - 1
@@ -41,43 +41,43 @@ export const Pagination = memo(function Pagination({
         </div>
         <div className="pgn-controls">
           <Button
+            size="icon"
+            variant="outline"
+            className="pgn-btn"
+            disabled={isFirstPage}
             onClick={() => onPageChange(0)}
-            variant="outline"
-            className="pgn-btn"
-            disabled={isFirstPage}
           >
-            <ChevronsLeft className="h-4 w-4" />
-            <span className="sr-only">Primeira página</span>
+            <ChevronsLeft className="size-4" />
           </Button>
 
           <Button
+            size="icon"
+            variant="outline"
+            className="pgn-btn"
+            disabled={isFirstPage}
             onClick={() => onPageChange(pageIndex - 1)}
-            variant="outline"
-            className="pgn-btn"
-            disabled={isFirstPage}
           >
-            <ChevronLeft className="h-4 w-4" />
-            <span className="sr-only">Página anterior</span>
+            <ChevronLeft className="size-4" />
           </Button>
 
           <Button
+            size="icon"
+            variant="outline"
+            className="pgn-btn"
+            disabled={isLastPage}
             onClick={() => onPageChange(pageIndex + 1)}
-            variant="outline"
-            className="pgn-btn"
-            disabled={isLastPage}
           >
-            <ChevronRight className="h-4 w-4" />
-            <span className="sr-only">Próxima página</span>
+            <ChevronRight className="size-4" />
           </Button>
 
           <Button
-            onClick={() => onPageChange(pages - 1)}
+            size="icon"
             variant="outline"
             className="pgn-btn"
             disabled={isLastPage}
+            onClick={() => onPageChange(pages - 1)}
           >
-            <ChevronsRight className="h-4 w-4" />
-            <span className="sr-only">Última página</span>
+            <ChevronsRight className="size-4" />
           </Button>
         </div>
       </div>

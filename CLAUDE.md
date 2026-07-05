@@ -44,6 +44,11 @@ Required standards:
 - Shared constants live in `src/constants`.
 - Shared/reusable components live in `src/components`.
 - Use existing utilities in `src/utils` (`Isness`, `Sanitizer`, `Normalizer`, `Time`, formatters, mappers) as the single source of truth for validation, formatting, normalization, and guards.
+- Never chain or nest ternaries, especially inside JSX. For three or more states, use a named render function, `switch`, lookup map, or precomputed variable.
+- If an equivalent helper or utility already exists, it must be reused. Do not reimplement formatting, normalization, validation, guards, or mapping logic inline.
+- Any function used in two or more places must be extracted to a helper class or helper/util/shared file and reused from there.
+- Logged-in user profile data must always come from `useAuth`. Do not read profile data from `localStorage`, duplicate profile queries, or pass stale user snapshots when `useAuth` is available.
+- Use TypeScript `enum` whenever possible for closed domain values. Do not export enum-like `const` objects plus `typeof` type aliases when an `enum` fits; export `enum AppointmentStatus` and consume values as `AppointmentStatus.SCHEDULED`.
 - No `any`, no duplicated entity definitions, no inline backend DTOs inside pages/components, no speculative abstractions.
 
 `src/pages/app/profiles` can be used as an inspiration for cleaner composition, but it is not exempt from these rules and still needs fixes called out in the refactor audit.
@@ -216,7 +221,7 @@ Claude must follow these patterns exactly. No deviations.
 
 - Two states: ternary is fine.
 - Three or more states: use a named `renderXyz` function with a `switch` statement.
-- Never nest ternaries.
+- Never chain or nest ternaries. This rule is absolute, especially inside JSX.
 
 ### Hook Architecture
 
@@ -238,13 +243,16 @@ Claude must follow these patterns exactly. No deviations.
 
 - Input masking and normalization run on `onChange`, not in `useEffect`.
 - Always use the existing utilities: `formatCPF`, `formatPhone`, `formatCEP`, `formatDateInput`, `Normalizer`, or `date-fns`. Never write raw regex inline for a format that an existing utility already handles.
+- If a helper/util already covers the behavior, reuse it instead of creating a local variant.
 
 ### Constants, Helpers, Types
 
 - Feature-level option arrays, step config, numeric limits, and branded type aliases live in `constants.ts` (or `constants.tsx` if JSX is needed). Use `as const` for literal type inference.
 - Pure transformation functions live in `helpers.ts`.
+- Pure functions used by two or more files must be promoted to a shared helper class or helper/util/shared file and imported by every caller.
 - Local constants used only in one file stay in that file — do not move them to `constants.ts` just for organization.
 - Entity types have a single source of truth in `src/types/`. Never redefine an entity type inside a feature — import it.
+- Prefer exported TypeScript enums for closed value sets, for example `export enum AppointmentStatus { SCHEDULED = "SCHEDULED" }`, and use `AppointmentStatus.SCHEDULED` at call sites.
 
 ### Code Quality Checklist
 

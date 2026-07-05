@@ -22,6 +22,11 @@ Before calling a module done, verify:
 - Every POST/PUT/PATCH/DELETE is consumed through `useMutation`.
 - Touched `.tsx` pages/components have CSS using `@reference`, `@layer`, and `@apply`.
 - Backend entity/DTO types match `docs/frontend-reference/*.md`.
+- No chained or nested ternaries, especially inside JSX.
+- Existing helpers/utils are reused instead of reimplemented inline.
+- Functions used in two or more places are extracted to a helper class or helper/util/shared file.
+- Logged-in user profile data is read through `useAuth`.
+- Closed domain values use TypeScript `enum` whenever possible, not exported `const` objects plus `typeof` aliases.
 
 Manual smoke tests for the final refactor:
 

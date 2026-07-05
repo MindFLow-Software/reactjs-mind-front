@@ -2,7 +2,7 @@
 
 @layer components {
   .pf-card-root {
-    @apply relative overflow-hidden max-w-1/2 w-full max-h-96 p-0 gap-3;
+    @apply relative overflow-hidden max-w-lg w-full p-0! gap-3;
   }
 
   .pf-card-header {
