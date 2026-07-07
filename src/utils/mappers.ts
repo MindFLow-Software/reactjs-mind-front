@@ -1,5 +1,6 @@
 export const ROLE_TRANSLATIONS: Record<string, string> = {
-  PSYCHOLOGIST: 'Psicólogo',
+  USER: 'Usuário',
+  SUPPORT: 'Suporte',
   ADMIN: 'Administrador',
 }
 

@@ -1,84 +1,58 @@
-'use client'
-
-import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import {
-  BadgeCheck,
-  Bell,
-  ChevronsUpDown,
-  CreditCard,
-  LogOut,
-  Sparkles,
-  Moon,
   Sun,
+  Bell,
+  Moon,
+  LogOut,
   Laptop,
   Palette,
+  Sparkles,
+  CreditCard,
+  BadgeCheck,
+  ChevronsUpDown,
 } from 'lucide-react'
-import { useNavigate, Link } from 'react-router-dom'
-import { toast } from 'sonner'
+import { Link } from 'react-router-dom'
 
-import { signOut } from '@/api/auth/sign-out'
-import {
-  getProfile,
-  type IgetMeResponse,
-} from '@/api/psychologists/get-profile'
+import { useAuth } from '@/hooks/use-auth'
 import { useTheme } from '../theme/theme-provider'
+import { useSignOut } from '@/hooks/use-sign-out'
 
 import {
   DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuGroup,
+  DropdownMenuSub,
   DropdownMenuItem,
   DropdownMenuLabel,
-  DropdownMenuSeparator,
+  DropdownMenuGroup,
+  DropdownMenuPortal,
   DropdownMenuTrigger,
-  DropdownMenuSub,
+  DropdownMenuContent,
+  DropdownMenuSeparator,
   DropdownMenuSubTrigger,
   DropdownMenuSubContent,
-  DropdownMenuPortal,
 } from '@/components/ui/dropdown-menu'
+
 import {
-  SidebarMenu,
-  SidebarMenuButton,
-  SidebarMenuItem,
   useSidebar,
+  SidebarMenu,
+  SidebarMenuItem,
+  SidebarMenuButton,
 } from '@/components/ui/sidebar'
+
 import { Skeleton } from '@/components/ui/skeleton'
 import { UserAvatar } from '@/components/user-avatar'
-import { useSessionStore } from '@/store/use-session-store'
+
 import './nav-user.css'
 
 export function NavUser() {
   const { isMobile } = useSidebar()
-  const navigate = useNavigate()
   const { setTheme } = useTheme()
-  const queryClient = useQueryClient()
-  const clearSession = useSessionStore((state) => state.clearSession)
 
   const {
-    data: profile,
-    isLoading,
+    profile,
     isError,
-  } = useQuery<IgetMeResponse | null>({
-    queryKey: ['user-profile'],
-    queryFn: getProfile,
-    retry: false,
-    staleTime: Infinity,
-  })
+    isPending: isLoading,
+  } = useAuth()
 
-  const { mutateAsync: signOutFn, isPending: isSigningOut } = useMutation({
-    mutationFn: signOut,
-    onSuccess: () => {
-      clearSession()
-      queryClient.clear()
-      toast.success('Sessão encerrada com segurança!', { duration: 4000 })
-      navigate('/sign-in', { replace: true })
-    },
-    onError: (error) => {
-      console.error('Erro ao sair:', error)
-      clearSession()
-      navigate('/sign-in', { replace: true })
-    },
-  })
+  const { signOut, isSigningOut } = useSignOut()
 
   const name = profile
     ? `${profile.firstName} ${profile.lastName}`
@@ -86,7 +60,7 @@ export function NavUser() {
       ? 'Erro ao carregar'
       : 'Carregando...'
 
-  const profileImage = profile?.profileImageUrl || null
+  const profileImage = profile?.profileImageUrl ?? null
 
   return (
     <SidebarMenu>
@@ -221,7 +195,7 @@ export function NavUser() {
               <DropdownMenuItem
                 disabled={isSigningOut}
                 className="nu-signout"
-                onClick={() => signOutFn()}
+                onClick={() => signOut()}
               >
                 <LogOut className="nu-item-icon" />
                 Sair

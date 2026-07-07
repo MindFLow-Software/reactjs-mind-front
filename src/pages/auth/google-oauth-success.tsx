@@ -4,12 +4,12 @@ import { toast } from 'sonner'
 import { AxiosError } from 'axios'
 import { getProfile } from '@/api/psychologists/get-profile'
 import { refreshSession } from '@/api/auth/refresh-session'
-import { useSessionStore } from '@/store/use-session-store'
+// import { useSessionStore } from '@/store/use-session-store'
 import { BrandedLoader } from '@/components/branded-loader'
 
 export function GoogleOAuthSuccess() {
   const navigate = useNavigate()
-  const setSession = useSessionStore((state) => state.setSession)
+  // const setSession = useSessionStore((state) => state.setSession)
   const called = useRef(false)
 
   useEffect(() => {
@@ -45,7 +45,7 @@ export function GoogleOAuthSuccess() {
           profile = await fetchProfileWithRetry()
         }
 
-        setSession(profile)
+        // setSession(profile)
         navigate('/dashboard', { replace: true })
       } catch (error: unknown) {
         if (error instanceof AxiosError) {
@@ -61,7 +61,7 @@ export function GoogleOAuthSuccess() {
     }
 
     finishLogin()
-  }, [navigate, setSession])
+  }, [navigate])
 
   return <BrandedLoader message="Finalizando login..." />
 }
