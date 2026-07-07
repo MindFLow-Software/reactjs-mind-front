@@ -5,7 +5,6 @@ import { useQuery } from '@tanstack/react-query'
 import { Loader2 } from 'lucide-react'
 
 import { getPatientProfileDetails } from '@/api/patient-profiles/get-patient-profile-details'
-import { usePsychologistProfile } from '@/hooks/use-psychologist-profile'
 import type { SessionItem } from '@/types/patient'
 import {
   DialogContent,
@@ -19,6 +18,7 @@ import { PatientRegistrationTable } from './patient-registration-table'
 import { AverageDurationItem } from './average-duration-item'
 import { SessionHistoryTable } from './session-history-table'
 import './patient-details-dialog.css'
+import { useAuth } from '@/hooks/use-auth'
 
 interface PatientDetailsDialogProps {
   patientId: string
@@ -30,24 +30,25 @@ export function PatientDetailsDialog({ patientId }: PatientDetailsDialogProps) {
     null,
   )
 
+  const { profile } = useAuth()
+
   const { data, isLoading } = useQuery({
     queryKey: ['patient-details', patientId, pageIndex],
     queryFn: () => getPatientProfileDetails(patientId, pageIndex),
     enabled: !!patientId,
   })
 
-  const { data: profile } = usePsychologistProfile()
-
   if (isLoading || !data) {
     return (
       <DialogContent className="pdd-loading">
         <DialogTitle className="sr-only">Carregando</DialogTitle>
-        <Loader2 className="h-8 w-8 animate-spin text-primary" />
+        <Loader2 className="size-8 animate-spin text-primary" />
       </DialogContent>
     )
   }
 
   const { patient, meta } = data
+
   const patientFullName =
     `${patient?.firstName ?? ''} ${patient?.lastName ?? ''}`.trim() ||
     'Paciente sem nome'

@@ -1,7 +1,7 @@
 import axios from 'axios'
 import { env } from '@/env'
 import { useActivePracticeContextStore } from '@/store/use-active-practice-context-store'
-import { useSessionStore } from '@/store/use-session-store'
+// import { useSessionStore } from '@/store/use-session-store'
 import type {
   // ApiErrorCode,
   ApiSuccessEnvelope,
@@ -71,7 +71,7 @@ api.interceptors.response.use(
     }
 
     if (error.response.status === 401) {
-      useSessionStore.getState().clearSession()
+      useActivePracticeContextStore.getState().clearActivePracticeContextId()
       const currentPath = window.location.pathname
       const shouldRedirect = !SKIP_REDIRECT_PATHS.some((p) =>
         currentPath.startsWith(p),

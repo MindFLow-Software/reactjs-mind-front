@@ -2,11 +2,11 @@
 
 @layer components {
   .pf-layout {
-    @apply min-h-screen w-full bg-background py-10;
+    @apply flex flex-col items-center min-h-screen w-full bg-background py-10;
   }
 
   .pf-layout-header {
-    @apply text-center mb-8;
+    @apply text-center mb-8 w-full;
   }
 
   .pf-layout-greeting {

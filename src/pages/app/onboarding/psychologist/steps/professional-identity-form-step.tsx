@@ -199,7 +199,7 @@ export function ProfessionalIdentityFormStep() {
                   placeholder="Digite sua biografia profissional (MÁX. 200 CARACTERES)"
                 />
                 <FieldDescription className="text-xs">
-                  Patients will read this on your profile
+                  Os pacientes lerão isso no seu perfil.
                 </FieldDescription>
               </Field>
             )}

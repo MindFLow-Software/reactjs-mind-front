@@ -6,10 +6,10 @@ import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { toast } from 'sonner'
 import { uploadAvatar } from '@/api/attachments/upload-avatar'
 import { UserAvatar } from '@/components/user-avatar'
-import type { IgetMeResponse } from '@/api/psychologists/get-profile'
+import type { IgetMeResponse } from '@/api/auth/get-profile'
 import { useSessionStore } from '@/store/use-session-store'
-import './psychologist-avatar-upload.css'
 
+import './psychologist-avatar-upload.css'
 interface AvatarUploadProps {
   currentImage?: string | null
   fullName: string
@@ -20,7 +20,7 @@ export function PsychologistAvatarUpload({
   fullName,
 }: AvatarUploadProps) {
   const queryClient = useQueryClient()
-  
+
   const fileInputRef = useRef<HTMLInputElement>(null)
   const [previewUrl, setPreviewUrl] = useState<string | null>(null)
   const user = useSessionStore((state) => state.user)
@@ -60,7 +60,7 @@ export function PsychologistAvatarUpload({
       setPreviewUrl(objectUrl)
       try {
         await uploadPhoto(file)
-      } catch {}
+      } catch { }
     }
   }
 
@@ -77,13 +77,13 @@ export function PsychologistAvatarUpload({
         />
         <div className="acc-avatar-badge">
           {isPending ? (
-            <Loader2 className="h-4 w-4 animate-spin" />
+            <Loader2 className="size-4 animate-spin" />
           ) : (
-            <Camera className="h-4 w-4" />
+            <Camera className="size-4" />
           )}
         </div>
         <div className="acc-avatar-overlay">
-          {!isPending && <Upload className="h-8 w-8 text-white" />}
+          {!isPending && <Upload className="size-8 text-white" />}
         </div>
       </div>
       <input

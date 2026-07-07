@@ -2,12 +2,13 @@ import { useMemo } from 'react'
 import { format } from 'date-fns'
 import { ptBR } from 'date-fns/locale'
 import { cn } from '@/lib/utils'
-import { usePsychologistProfile } from '@/hooks/use-psychologist-profile'
 import type { DashboardPeriod } from '../constants'
 import { PERIODS } from '../constants'
 import { getGreeting } from '../helpers'
 import { useTodayAppointments } from '../hooks/use-today-appointments'
 import './dashboard-header.css'
+import { useAuth } from '@/hooks/use-auth'
+import { translatedHonorific } from '@/constants/translated-honorific'
 
 interface DashboardHeaderProps {
   period: DashboardPeriod
@@ -18,7 +19,7 @@ export function DashboardHeader({
   period,
   onPeriodChange,
 }: DashboardHeaderProps) {
-  const { data: profile } = usePsychologistProfile()
+  const { profile } = useAuth()
   const { count: appointmentCount } = useTodayAppointments()
 
   const formattedDate = useMemo(
@@ -26,17 +27,18 @@ export function DashboardHeader({
     [],
   )
 
-  const title = profile?.gender === 'FEMININE' ? 'Dra.' : 'Dr.'
-  const name = profile
-    ? `${title} ${profile.firstName} ${profile.lastName}`
-    : ''
+  const targetHonorific = profile?.psychologistProfile?.honorific
+  const honorific = targetHonorific && translatedHonorific[targetHonorific]
+
+  const fullName = profile ? `${profile?.firstName} ${profile?.lastName}` : ''
+  const title = honorific ? `${honorific} ${fullName}` : fullName
 
   return (
     <div className="dsh-header-root">
       <div>
         <h1 className="dsh-header-title">
           {getGreeting()}
-          {name ? `, ${name}` : ''}
+          {`, ${title}`}
         </h1>
         <p className="dsh-header-date">
           {formattedDate}

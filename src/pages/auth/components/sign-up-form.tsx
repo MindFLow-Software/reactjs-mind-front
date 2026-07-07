@@ -51,9 +51,9 @@ import { Time } from '@/utils/time'
 import { signIn } from '@/api/auth/sign-in'
 import { Normalizer } from '@/utils/normalizer'
 import { createUser } from '@/api/auth/create-user'
-import { getProfile } from '@/api/psychologists/get-profile'
+import { getProfile } from '@/api/auth/get-profile'
 import { getApiErrorMessage } from '@/lib/get-api-error-message'
-import { useSessionStore } from '@/store/use-session-store'
+// import { useSessionStore } from '@/store/use-session-store'
 import {
   createUserSchema,
   type CreateUserData,
@@ -116,7 +116,7 @@ function SectionHeading({ children }: { children: React.ReactNode }) {
 
 export function SignUpForm() {
   const navigate = useNavigate()
-  const setSession = useSessionStore((state) => state.setSession)
+  // const setSession = useSessionStore((state) => state.setSession)
 
   const [dobInputValue, setDobInputValue] = useState('')
   const [showPassword, setShowPassword] = useState(false)
@@ -156,8 +156,8 @@ export function SignUpForm() {
       await signIn({ email: data.email, password: data.password })
       return getProfile()
     },
-    onSuccess: (profile) => {
-      setSession(profile)
+    onSuccess: () => {
+      // setSession(profile)
       toast.success('Conta criada com sucesso!')
       navigate('/profiles')
     },
