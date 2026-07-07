@@ -51,7 +51,7 @@ import { Time } from '@/utils/time'
 import { signIn } from '@/api/auth/sign-in'
 import { Normalizer } from '@/utils/normalizer'
 import { createUser } from '@/api/auth/create-user'
-import { getProfile } from '@/api/psychologists/get-profile'
+import { getProfile } from '@/api/auth/get-profile'
 import { getApiErrorMessage } from '@/lib/get-api-error-message'
 // import { useSessionStore } from '@/store/use-session-store'
 import {

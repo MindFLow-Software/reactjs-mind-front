@@ -6,16 +6,16 @@ import { Loader2, User, Briefcase } from 'lucide-react'
 
 import { cn } from '@/lib/utils'
 
-import { translatedLanguages } from '@/types/psychologist'
+import { translatedLanguages, type IPsychologistProfile } from '@/types/psychologist'
 import { Honorific, Languages } from '@/types/enums'
-import { useUpdatePsychologist } from '../hooks/use-update-psychologist'
+import { useUpdatePsychologistProfile } from '../hooks/use-update-psychologist-profile'
 import { EXPERTISE_TRANSLATIONS } from '@/utils/mappers'
 
 import {
   updatePsychologistSchema,
   type UpdatePsychologistData,
 } from '@/validators/psychologists/form/update-psychologist-schema'
-import type { UpdatePsychologistBody } from '@/api/psychologists/update-psychologist'
+// import type { UpdatePsychologistBody } from '@/api/psychologists/update-psychologist'
 
 import {
   DialogTitle,
@@ -51,37 +51,43 @@ import { Textarea } from '@/components/ui/textarea'
 import { MaskedInput } from '@/components/maked-input'
 
 import './edit-psychologist-profile-dialog.css'
+import { usePsychologistProfile } from '@/hooks/use-psychologist-profile'
+import { useEffect } from 'react'
 
 interface IEditPsychologistProfile {
-  psychologistProfile: UpdatePsychologistBody
   onClose: () => void
+  psychologistProfileId: string | null
 }
 
 function buildDefaultValues(
-  psychologistProfile: IEditPsychologistProfile['psychologistProfile'],
+  psychologistProfile?: IPsychologistProfile,
 ): UpdatePsychologistData {
   return {
-    crp: psychologistProfile.crp ?? '',
-    honorific: psychologistProfile.honorific,
-    languages: psychologistProfile.languages,
-    expertise: psychologistProfile.expertise,
-    profileImageUrl: psychologistProfile.profileImageUrl ?? '',
-    professionalBio: psychologistProfile.professionalBio ?? '',
-    professionalName: psychologistProfile.professionalName ?? '',
+    crp: psychologistProfile?.crp ?? '',
+    honorific: psychologistProfile?.honorific,
+    languages: psychologistProfile?.languages,
+    expertise: psychologistProfile?.expertise,
+    // profileImageUrl: psychologistProfile.profileImageUrl ?? '',
+    professionalBio: psychologistProfile?.professionalBio ?? '',
+    professionalName: psychologistProfile?.professionalName ?? '',
   }
 }
 
 export function EditPsychologistProfile({
   onClose,
-  psychologistProfile,
+  psychologistProfileId,
 }: IEditPsychologistProfile) {
+  const { data } = usePsychologistProfile(psychologistProfileId)
+
+  const psychologistProfile = data?.psychologist
+
   const form = useForm<UpdatePsychologistData>({
     resolver: zodResolver(updatePsychologistSchema),
     mode: 'onTouched',
-    defaultValues: buildDefaultValues(psychologistProfile),
   })
 
   const {
+    reset,
     watch,
     control,
     setValue,
@@ -105,12 +111,18 @@ export function EditPsychologistProfile({
     )
   }
 
-  const { mutateAsync: updateProfileFn, isPending } = useUpdatePsychologist()
+  const { mutateAsync: updateProfileFn, isPending } = useUpdatePsychologistProfile()
 
   async function onSubmit(data: UpdatePsychologistData) {
     await updateProfileFn(data)
     onClose()
   }
+
+  useEffect(() => {
+    if (!psychologistProfile) return
+
+    reset(buildDefaultValues(psychologistProfile))
+  }, [psychologistProfile])
 
   return (
     <DialogContent className="acc-edit-content">
@@ -159,7 +171,10 @@ export function EditPsychologistProfile({
                 render={({ field }) => (
                   <Field className="gap-1 w-full">
                     <FieldLabel htmlFor="honorific">Honorífico(a)</FieldLabel>
-                    <Select onValueChange={field.onChange}>
+                    <Select
+                      value={field.value}
+                      onValueChange={field.onChange}
+                    >
                       <SelectTrigger>
                         <SelectValue id="honorific" placeholder="Honorífico(a)" />
                       </SelectTrigger>

@@ -28,12 +28,6 @@ function ProfilesLayout({
   return (
     <div className="pf-layout">
       <div className="flex w-full max-w-5xl">
-        <Button
-          variant="ghost"
-          onClick={() => signOut()}
-        >
-          <LogOut size={16} className="rotate-180" />
-        </Button>
         <header className="pf-layout-header">
           <h1 className="pf-layout-greeting">{greeting}</h1>
           <p className="text-sm text-muted-foreground">
@@ -44,6 +38,13 @@ function ProfilesLayout({
             Você pode usar a plataforma como psicólogo, paciente ou ambos.
           </p>
         </header>
+        <Button
+          size="icon"
+          variant="ghost"
+          onClick={() => signOut()}
+        >
+          <LogOut size={16} />
+        </Button>
       </div>
 
       <main className="pf-layout-main">{children}</main>

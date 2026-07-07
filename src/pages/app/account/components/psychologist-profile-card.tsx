@@ -160,11 +160,8 @@ export function PsychologistProfileCard() {
               </DialogTrigger>
 
               <EditPsychologistProfile
-                psychologistProfile={{
-                  crp: me.psychologistProfile?.crp,
-                  expertise: me.psychologistProfile?.expertise,
-                }}
                 onClose={() => setIsEditOpen(false)}
+                psychologistProfileId={me?.psychologistProfile?.id ?? null}
               />
             </Dialog>
           ) : (

@@ -2,22 +2,22 @@ import { api } from '@/lib/axios'
 import type { IMutationResult } from '@/types/api'
 import type { Expertise, Honorific, Languages } from '@/types/enums'
 
-export interface UpdatePsychologistBody {
+export interface UpdatePsychologistProfileBody {
   crp?: string
   expertise?: Expertise
   honorific?: Honorific
   languages?: Languages[]
   professionalBio?: string
   professionalName?: string
-  profileImageUrl?: string
+  // profileImageUrl?: string
 }
 
 /**
  * Atualiza os dados do perfil do psicólogo logado.
  * * @param body - Dados parciais para atualização
  */
-export async function updatePsychologist(
-  body: UpdatePsychologistBody,
+export async function updatePsychologistProfile(
+  body: UpdatePsychologistProfileBody,
 ): Promise<IMutationResult<void>> {
   // Utilizamos PATCH pois o backend está configurado com @Patch('/profile')
   // e queremos uma atualização parcial (apenas o que foi enviado).
