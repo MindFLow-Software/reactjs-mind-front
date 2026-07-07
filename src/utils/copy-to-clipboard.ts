@@ -1,7 +1,7 @@
 import { toast } from 'sonner'
 import { is } from './isness'
 
-export const copyToClipboard = (value: string) => {
+export const copyToClipboard = (value: string | null | undefined) => {
   if (!value || is.emptyString(value)) {
     toast.warning('Nada para copiar.')
     return

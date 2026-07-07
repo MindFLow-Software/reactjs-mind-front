@@ -1,14 +1,17 @@
-import type { PatientInviteStatus } from '@/types/enums'
+import type { Honorific, PatientInviteStatus } from '@/types/enums'
 
 export interface RegistrationLinkInfo {
-  psychologistPracticeContextId: string
-  psychologistProfileId: string
-  psychologistName: string
   expiresAt: string
+  psychologistCrp: string
+  professionalName: string
+  psychologistProfileId: string
+  psychologistHonorific: Honorific
+  psychologistPracticeContextId: string
 }
 
 export interface RegistrationLink {
   id: string
+  url: string
   hash: string
   psychologistPracticeContextId: string
   expiresAt: string

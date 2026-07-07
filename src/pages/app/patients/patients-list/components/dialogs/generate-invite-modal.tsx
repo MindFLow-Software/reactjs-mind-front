@@ -3,52 +3,43 @@
 import { useState } from 'react'
 import { QRCodeSVG } from 'qrcode.react'
 import { Loader2, QrCode, Copy, Check, RefreshCw, Sparkles } from 'lucide-react'
-import { toast } from 'sonner'
 
 import { cn } from '@/lib/utils'
-import { Button } from '@/components/ui/button'
+
+import { copyToClipboard } from '@/utils/copy-to-clipboard'
+import { useActiveRegistrationLink } from '@/hooks/use-active-registration-link'
+import { useGenerateRegistrationLink } from '../../hooks/use-generate-registration-link'
+
 import {
+  DialogTitle,
+  DialogHeader,
   DialogContent,
   DialogDescription,
-  DialogHeader,
-  DialogTitle,
 } from '@/components/ui/dialog'
-import { generateRegistrationLink } from '@/api/invites/generate-registration-link'
-import { useInviteStore } from '@/store/use-invite-store'
+
+import { Button } from '@/components/ui/button'
 
 export function GenerateInviteModal() {
-  const [loading, setLoading] = useState(false)
   const [copied, setCopied] = useState(false)
 
-  const { inviteData, setInviteData } = useInviteStore()
+  const { data } = useActiveRegistrationLink()
+  const { generateRegistrationLink, isGenerating } = useGenerateRegistrationLink()
 
-  async function handleGenerate() {
-    try {
-      setLoading(true)
-      const data = await generateRegistrationLink()
-      setInviteData({ url: data.qrCodeLink, hash: data.hash })
-    } catch {
-      toast.error('Não foi possível gerar o link de convite.')
-    } finally {
-      setLoading(false)
-    }
-  }
+  const registrationLink = data?.registrationLink
 
-  function copyToClipboard() {
-    if (!inviteData) return
-    navigator.clipboard.writeText(inviteData.url)
+  function handleCopyToClipboard() {
+    copyToClipboard(registrationLink?.url)
     setCopied(true)
-    toast.success('Link copiado!')
     setTimeout(() => setCopied(false), 2000)
   }
 
   return (
-    <DialogContent className="sm:max-w-xl p-0 gap-0 overflow-hidden rounded-2xl">
+    <DialogContent className="max-w-xl! p-0 gap-0 overflow-hidden rounded-2xl">
       <div className="px-6 py-5 border-b border-border bg-muted/40">
         <DialogHeader className="">
           <DialogTitle className="flex items-center gap-3 text-base font-semibold text-foreground">
-            <div className="flex items-center justify-center w-9 h-9 rounded-xl bg-primary text-primary-foreground shrink-0">
-              <QrCode className="w-4 h-4" />
+            <div className="flex items-center justify-center size-9 rounded-xl bg-primary text-primary-foreground shrink-0">
+              <QrCode className="size-4" />
             </div>
             Convite via QR Code
           </DialogTitle>
@@ -59,7 +50,7 @@ export function GenerateInviteModal() {
       </div>
 
       <div className="p-6">
-        {!inviteData ? (
+        {!registrationLink ? (
           <div className="flex flex-col items-center justify-center py-10 gap-5">
             <div className="flex items-center justify-center w-20 h-20 rounded-2xl bg-muted">
               <QrCode className="w-9 h-9 text-muted-foreground/40" />
@@ -69,15 +60,15 @@ export function GenerateInviteModal() {
               seu paciente.
             </p>
             <Button
-              onClick={handleGenerate}
-              disabled={loading}
               size="lg"
+              disabled={isGenerating}
+              onClick={generateRegistrationLink}
               className="w-full max-w-xs cursor-pointer font-medium gap-2"
             >
-              {loading ? (
-                <Loader2 className="h-4 w-4 animate-spin" />
+              {isGenerating ? (
+                <Loader2 className="size-4 animate-spin" />
               ) : (
-                <Sparkles className="h-4 w-4" />
+                <Sparkles className="size-4" />
               )}
               Gerar Link de Acesso
             </Button>
@@ -86,10 +77,9 @@ export function GenerateInviteModal() {
           <div className="flex flex-col items-center gap-5">
             <div className="p-5 bg-card rounded-2xl border border-border shadow-sm">
               <QRCodeSVG
-                value={inviteData.url}
+                value={registrationLink.url}
                 size={180}
                 level="H"
-                includeMargin={false}
               />
             </div>
 
@@ -100,13 +90,13 @@ export function GenerateInviteModal() {
             <div className="w-full flex flex-col gap-2">
               <div className="flex items-center gap-2 px-3 py-2 rounded-lg border border-border bg-muted/30">
                 <span className="flex-1 min-w-0 text-xs font-mono text-muted-foreground whitespace-nowrap overflow-x-auto select-all">
-                  {inviteData.url}
+                  {registrationLink.url}
                 </span>
                 <button
                   type="button"
-                  onClick={copyToClipboard}
+                  onClick={handleCopyToClipboard}
                   className={cn(
-                    'inline-flex items-center justify-center gap-1.5 h-7 w-[82px] shrink-0 rounded-md text-xs font-medium transition-colors cursor-pointer',
+                    'inline-flex items-center justify-center gap-1.5 h-7 w-20 shrink-0 rounded-md text-xs font-medium transition-colors cursor-pointer',
                     copied
                       ? 'bg-emerald-500/10 text-emerald-600 dark:bg-emerald-500/15 dark:text-emerald-400'
                       : 'bg-secondary text-secondary-foreground hover:bg-secondary/70',
@@ -114,12 +104,12 @@ export function GenerateInviteModal() {
                 >
                   {copied ? (
                     <>
-                      <Check className="h-3.5 w-3.5" />
+                      <Check className="size-3.5" />
                       Copiado
                     </>
                   ) : (
                     <>
-                      <Copy className="h-3.5 w-3.5" />
+                      <Copy className="size-3.5" />
                       Copiar
                     </>
                   )}
@@ -129,10 +119,10 @@ export function GenerateInviteModal() {
               <Button
                 variant="ghost"
                 size="sm"
-                onClick={() => setInviteData(null)}
+                onClick={generateRegistrationLink}
                 className="w-full cursor-pointer text-muted-foreground hover:text-foreground gap-2"
               >
-                <RefreshCw className="h-3.5 w-3.5" />
+                <RefreshCw className="size-3.5" />
                 Gerar novo link
               </Button>
             </div>

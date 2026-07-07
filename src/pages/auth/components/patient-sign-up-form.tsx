@@ -32,7 +32,7 @@ import {
 import { createUser } from '@/api/auth/create-user'
 import { signIn } from '@/api/auth/sign-in'
 import { createOwnPatientProfile } from '@/api/patient-profiles/create-own-patient-profile'
-import { getInviteDetails } from '@/api/invites/get-invite-details'
+import { getRegistrationLinkByHash } from '@/api/registration-link/get-registration-link-by-hash'
 import { getApiErrorMessage } from '@/lib/get-api-error-message'
 import { useActivePracticeContextStore } from '@/store/use-active-practice-context-store'
 import {
@@ -84,7 +84,7 @@ export function PatientSignUpForm({
       })
       await signIn({ email: data.email, password: data.password })
 
-      const { psychologistPracticeContextId } = await getInviteDetails(hash)
+      const { psychologistPracticeContextId } = await getRegistrationLinkByHash(hash)
       await createOwnPatientProfile({ psychologistPracticeContextId })
     },
   })

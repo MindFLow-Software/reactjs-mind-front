@@ -254,7 +254,7 @@ export function EditPatientModal({ patientId }: IEditPatientModal) {
               Voltar
             </Button>
           )}
-          <DialogClose>
+          <DialogClose asChild>
             <Button
               type="button"
               variant="outline"
