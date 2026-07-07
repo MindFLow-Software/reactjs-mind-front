@@ -1,4 +1,4 @@
-@reference "../../../../global.css";
+@reference "../global.css";
 
 @layer components {
   .pf-card-root {
@@ -6,7 +6,7 @@
   }
 
   .pf-card-header {
-    @apply flex items-center pt-4;
+    @apply flex! items-center! gap-2 pt-4;
   }
 
   .pf-card-accent-bar {
@@ -67,7 +67,7 @@
     @apply bg-teal-600 hover:bg-teal-700 dark:hover:bg-teal-950/30;
   }
 
-  /* Stat box — shared by psychologist-card.tsx and practice-context-card.tsx */
+  /* Stat box — shared by psychologist-card.tsx, psychologist-profile-card.tsx and practice-context-card.tsx */
   .pf-stat-grid {
     @apply grid grid-cols-2 gap-y-4 rounded-lg bg-muted/50 p-4;
   }

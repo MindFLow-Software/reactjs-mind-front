@@ -92,15 +92,12 @@ export function PracticeContextFeaturedCard({
       <CardFooter className="pb-4">
         <div className="flex gap-2 w-full">
           <MotionButton
-            className="flex-1 group"
+            className="flex-1 gap-2"
             whileTap={{ scale: 0.98 }}
             onClick={() => onEnter(context.id)}
           >
             Acessar contexto
-            <ArrowRight
-              size={15}
-              className="group-hover:translate-x-[3px] transition-transform duration-150"
-            />
+            <ArrowRight size={16} />
           </MotionButton>
           {otherContextsCount > 0 && (
             <Button variant="outline" onClick={onViewAll}>

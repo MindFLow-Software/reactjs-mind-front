@@ -2,7 +2,7 @@ import { useNavigate } from 'react-router-dom'
 import { HeartPulse, ArrowRight } from 'lucide-react'
 
 import { Button } from '@/components/ui/button'
-import { ProfileCard } from './profile-card'
+import { ProfileCard } from '@/components/profile-card'
 
 import { useAuth } from '@/hooks/use-auth'
 
@@ -66,10 +66,7 @@ export function CreatePatientProfileCard() {
           onClick={handleCreatePatientProfile}
         >
           Criar perfil de paciente
-          <ArrowRight
-            size={16}
-            className="group-hover:translate-x-[3px] transition-transform duration-150"
-          />
+          <ArrowRight size={16} />
         </Button>
       </ProfileCard.Footer>
     </ProfileCard>

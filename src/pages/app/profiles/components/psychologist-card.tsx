@@ -6,7 +6,7 @@ import { cn } from '@/lib/utils'
 import { useAuth } from '@/hooks/use-auth'
 
 import { Button } from '@/components/ui/button'
-import { ProfileCard } from './profile-card'
+import { ProfileCard } from '@/components/profile-card'
 
 import './psychologist-card.css'
 
