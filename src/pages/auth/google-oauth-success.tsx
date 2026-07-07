@@ -2,8 +2,8 @@ import { useEffect, useRef } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { toast } from 'sonner'
 import { AxiosError } from 'axios'
-import { getProfile } from '@/api/psychologists/get-profile'
-import { refreshSession } from '@/api/auth/refresh-session'
+// import { getProfile } from '@/api/psychologists/get-profile'
+// import { refreshSession } from '@/api/auth/refresh-session'
 // import { useSessionStore } from '@/store/use-session-store'
 import { BrandedLoader } from '@/components/branded-loader'
 
@@ -18,32 +18,32 @@ export function GoogleOAuthSuccess() {
 
     async function finishLogin() {
       try {
-        const wait = (ms: number) =>
-          new Promise((resolve) => setTimeout(resolve, ms))
+        // const wait = (ms: number) =>
+        //   new Promise((resolve) => setTimeout(resolve, ms))
 
-        const fetchProfileWithRetry = async () => {
-          let lastError: unknown
+        // const fetchProfileWithRetry = async () => {
+        //   let lastError: unknown
 
-          for (let attempt = 0; attempt < 3; attempt++) {
-            try {
-              return await getProfile()
-            } catch (error) {
-              lastError = error
-              await wait(250 * (attempt + 1))
-            }
-          }
+        //   for (let attempt = 0; attempt < 3; attempt++) {
+        //     try {
+        //       return await getProfile()
+        //     } catch (error) {
+        //       lastError = error
+        //       await wait(250 * (attempt + 1))
+        //     }
+        //   }
 
-          throw lastError
-        }
+        //   throw lastError
+        // }
 
-        let profile
+        // let profile
 
-        try {
-          profile = await fetchProfileWithRetry()
-        } catch {
-          await refreshSession()
-          profile = await fetchProfileWithRetry()
-        }
+        // try {
+        //   profile = await fetchProfileWithRetry()
+        // } catch {
+        //   await refreshSession()
+        //   profile = await fetchProfileWithRetry()
+        // }
 
         // setSession(profile)
         navigate('/dashboard', { replace: true })
