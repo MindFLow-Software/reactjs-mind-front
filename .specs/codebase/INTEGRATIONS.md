@@ -20,6 +20,12 @@ React Query:
 - Query keys must be stable and typed.
 - Mutations must invalidate affected queries and display backend messages.
 
+Auth/profile data:
+
+- Logged-in user profile data must always come from `useAuth`.
+- Do not read logged-in profile data directly from `localStorage`.
+- Do not duplicate profile queries or pass stale user snapshots when `useAuth` is available.
+
 Practice context:
 
 - Routes requiring practice context must send `x-psychologist-practice-context-id`.
@@ -30,7 +36,7 @@ Known contract reconciliation points:
 - `/psychologist/practice-context` vs `/psychologist/practice-contexts`.
 - `/auth/complete-registration` and Google OAuth completion flow.
 - `/patient-profiles/*` vs current patient/profile routes.
-- Appointment status enum values.
+- Appointment status enum values; closed domain values must use TypeScript `enum` whenever possible and be consumed as `AppointmentStatus.SCHEDULED`.
 
 ---
 

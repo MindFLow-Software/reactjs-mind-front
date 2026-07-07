@@ -1,7 +1,0 @@
-@reference "../../../../../../global.css";
-
-@layer components {
-  .rp-cpf-check {
-    @apply absolute right-3 top-1/2 size-3.5 -translate-y-1/2 text-emerald-500;
-  }
-}

@@ -1,1 +1,1 @@
-export type { Gender } from '@/types/patient'
+export { Gender } from '@/types/enums'

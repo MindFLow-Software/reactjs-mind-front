@@ -1,0 +1,55 @@
+@reference "../../global.css";
+
+@layer components {
+  .nu-trigger {
+    @apply cursor-pointer;
+  }
+
+  .nu-avatar {
+    @apply rounded-lg;
+  }
+
+  .nu-avatar-skeleton {
+    @apply h-8 w-8 rounded-lg;
+  }
+
+  .nu-info {
+    @apply grid flex-1 text-left text-sm leading-tight;
+  }
+
+  .nu-skeleton-stack {
+    @apply flex flex-col gap-1;
+  }
+
+  .nu-name {
+    @apply truncate font-medium;
+  }
+
+  .nu-email {
+    @apply truncate text-xs text-muted-foreground;
+  }
+
+  .nu-chevron {
+    @apply ml-auto size-4;
+  }
+
+  .nu-content {
+    @apply min-w-56 rounded-lg;
+  }
+
+  .nu-label {
+    @apply p-0 font-normal;
+  }
+
+  .nu-label-inner {
+    @apply flex items-center gap-2 px-1 py-1.5 text-left text-sm;
+  }
+
+  .nu-item-icon {
+    @apply mr-2 h-4 w-4;
+  }
+
+  .nu-signout {
+    @apply cursor-pointer text-red-500 focus:bg-red-100 focus:text-red-500 dark:text-red-400 dark:focus:bg-red-900/20;
+  }
+}

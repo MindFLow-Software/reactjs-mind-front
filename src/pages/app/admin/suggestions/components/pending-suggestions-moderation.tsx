@@ -1,7 +1,7 @@
 'use client'
 
 import { useState } from 'react'
-import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
+import { useQuery } from '@tanstack/react-query'
 import {
   Check,
   X,
@@ -17,7 +17,6 @@ import {
 } from 'lucide-react'
 import { format } from 'date-fns'
 import { ptBR } from 'date-fns/locale'
-import { toast } from 'sonner'
 
 import {
   Card,
@@ -36,6 +35,7 @@ import {
   SelectItem,
   SelectTrigger,
   SelectValue,
+  SelectGroup,
 } from '@/components/ui/select'
 import {
   Dialog,
@@ -45,49 +45,27 @@ import {
   DialogTrigger,
   DialogFooter,
 } from '@/components/ui/dialog'
-import { api } from '@/lib/axios'
-import { updateSuggestionStatus } from '@/api/suggestions/update-suggestion-status'
+import { getSuggestions } from '@/api/suggestions/get-suggestions'
+import type { UpdateSuggestionParams } from '@/api/suggestions/update-suggestion-status'
+import type { ISuggestion } from '@/types/suggestion'
 import {
   Tooltip,
   TooltipContent,
   TooltipProvider,
   TooltipTrigger,
 } from '@/components/ui/tooltip'
-
-const CATEGORY_LABELS: Record<string, string> = {
-  UI_UX: 'Interface / UX',
-  SCHEDULING: 'Agendamentos',
-  REPORTS: 'Relatórios',
-  PRIVACY_LGPD: 'Privacidade',
-  INTEGRATIONS: 'Integrações',
-  OTHERS: 'Outros',
-}
+import { useUpdateSuggestionStatus } from '../hooks/use-update-suggestion-status'
+import { translatedSuggestionCategory } from '@/constants/translated-suggestion-category'
+import './pending-suggestions-moderation.css'
 
 export function PendingSuggestionsModeration() {
-  const queryClient = useQueryClient()
-
   const { data: suggestions, isLoading } = useQuery({
     queryKey: ['admin', 'suggestions', 'pending'],
-    queryFn: async () => {
-      const response = await api.get('/suggestions', {
-        params: { status: 'PENDING' },
-      })
-      return response.data.suggestions
-    },
+    queryFn: () => getSuggestions({ status: 'PENDING' }),
   })
 
   const { mutateAsync: handleUpdateStatus, isPending: isUpdating } =
-    useMutation({
-      mutationFn: updateSuggestionStatus,
-      onSuccess: () => {
-        queryClient.invalidateQueries({ queryKey: ['admin', 'suggestions'] })
-        queryClient.invalidateQueries({
-          queryKey: ['admin', 'suggestions-stats'],
-        })
-        toast.success('Sugestão aprovada com sucesso!')
-      },
-      onError: () => toast.error('Falha ao processar moderação.'),
-    })
+    useUpdateSuggestionStatus()
 
   const isEmpty = !suggestions || suggestions.length === 0
 
@@ -115,7 +93,7 @@ export function PendingSuggestionsModeration() {
             <Loader2 className="animate-spin text-muted-foreground" />
           </div>
         ) : isEmpty ? (
-          <div className="p-12 text-center space-y-2">
+          <div className="p-12 text-center flex flex-col gap-2">
             <Check className="size-8 text-emerald-500 mx-auto opacity-20" />
             <p className="text-sm text-muted-foreground font-medium">
               Nenhuma sugestão pendente no momento.
@@ -123,8 +101,7 @@ export function PendingSuggestionsModeration() {
           </div>
         ) : (
           <div className="divide-y divide-border">
-            {/* eslint-disable-next-line */}
-            {suggestions.map((item: any) => (
+            {suggestions.map((item) => (
               <SuggestionModerationItem
                 key={item.id}
                 item={item}
@@ -139,23 +116,23 @@ export function PendingSuggestionsModeration() {
   )
 }
 
+interface SuggestionModerationItemProps {
+  item: ISuggestion
+  onUpdate: (data: UpdateSuggestionParams) => Promise<unknown>
+  isUpdating: boolean
+}
+
 function SuggestionModerationItem({
   item,
   onUpdate,
   isUpdating,
-}: {
-  // eslint-disable-next-line
-  item: any
-  // eslint-disable-next-line
-  onUpdate: any
-  isUpdating: boolean
-}) {
+}: SuggestionModerationItemProps) {
   const [title, setTitle] = useState(item.title)
-  const [category, setCategory] = useState(item.category)
+  const [category, setCategory] = useState<string>(item.category)
   const [description, setDescription] = useState(item.description)
   const [isDialogOpen, setIsDialogOpen] = useState(false)
 
-  async function handleAction(status?: string) {
+  async function handleAction(status?: UpdateSuggestionParams['status']) {
     try {
       await onUpdate({
         id: item.id,
@@ -165,15 +142,17 @@ function SuggestionModerationItem({
         description,
       })
       setIsDialogOpen(false)
-    } catch (error) {}
+    } catch {
+      // handled by useUpdateSuggestionStatus error toast
+    }
   }
 
   return (
-    <div className="p-5 flex flex-col md:flex-row md:items-center justify-between gap-6 hover:bg-muted/50 transition-colors">
-      <div className="space-y-2 flex-1 min-w-0">
+    <div className="ads-mod-row">
+      <div className="flex flex-col gap-2 flex-1 min-w-0">
         <div className="flex items-center gap-2">
-          <span className="text-[10px] font-black uppercase px-2 py-0.5 bg-primary/10 text-primary rounded-md tracking-wider">
-            {CATEGORY_LABELS[item.category] || 'Geral'}
+          <span className="ads-mod-badge">
+            {translatedSuggestionCategory[item.category] || 'Geral'}
           </span>
           <span className="text-[10px] text-muted-foreground flex items-center gap-1 font-medium">
             <Calendar className="size-3" />{' '}
@@ -195,11 +174,7 @@ function SuggestionModerationItem({
       <div className="flex items-center gap-2 shrink-0">
         <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
           <DialogTrigger asChild>
-            <Button
-              variant="outline"
-              size="sm"
-              className="text-xs font-bold rounded-xl h-9 px-4 gap-2 hover:bg-primary/5 border-border cursor-pointer"
-            >
+            <Button variant="outline" size="sm" className="ads-mod-review-btn">
               <Eye className="size-3.5" /> Revisar e Editar
             </Button>
           </DialogTrigger>
@@ -211,72 +186,72 @@ function SuggestionModerationItem({
               </DialogTitle>
             </DialogHeader>
 
-            <div className="space-y-5 min-w-0 overflow-hidden">
+            <div className="flex flex-col gap-5 min-w-0 overflow-hidden">
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                <div className="space-y-2 min-w-0">
-                  <Label className="text-[10px] font-black uppercase text-muted-foreground flex items-center gap-2">
+                <div className="flex flex-col gap-2 min-w-0">
+                  <Label className="ads-mod-field-label">
                     <FileText className="size-3" /> Título (Editável)
                   </Label>
                   <Input
                     value={title}
                     onChange={(e) => setTitle(e.target.value)}
-                    className="h-10 border-border bg-background focus-visible:ring-primary font-medium w-full text-foreground"
+                    className="ads-mod-field-input"
                   />
                 </div>
-                <div className="space-y-2">
-                  <Label className="text-[10px] font-black uppercase text-muted-foreground flex items-center gap-2">
+                <div className="flex flex-col gap-2">
+                  <Label className="ads-mod-field-label">
                     <Tag className="size-3" /> Categoria
                   </Label>
                   <Select value={category} onValueChange={setCategory}>
-                    <SelectTrigger className="h-10 border-border bg-background font-medium text-foreground">
+                    <SelectTrigger className="ads-mod-field-select-trigger">
                       <SelectValue />
                     </SelectTrigger>
                     <SelectContent className="bg-popover border-border">
-                      {Object.entries(CATEGORY_LABELS).map(([val, label]) => (
-                        <SelectItem key={val} value={val}>
-                          {label}
-                        </SelectItem>
-                      ))}
+                      <SelectGroup>
+                        {Object.entries(translatedSuggestionCategory).map(
+                          ([val, label]) => (
+                            <SelectItem key={val} value={val}>
+                              {label}
+                            </SelectItem>
+                          ),
+                        )}
+                      </SelectGroup>
                     </SelectContent>
                   </Select>
                 </div>
               </div>
 
-              <div className="space-y-2 min-w-0">
-                <Label className="text-[10px] font-black uppercase text-muted-foreground flex items-center gap-2">
+              <div className="flex flex-col gap-2 min-w-0">
+                <Label className="ads-mod-field-label">
                   <AlignLeft className="size-3" /> Descrição da Sugestão
                   (Editável)
                 </Label>
                 <Textarea
                   value={description}
                   onChange={(e) => setDescription(e.target.value)}
-                  className="min-h-[220px] resize-none border-border bg-background focus-visible:ring-primary leading-relaxed text-muted-foreground text-sm break-all"
+                  className="ads-mod-textarea break-all"
                   placeholder="Corrija erros ou remova termos impróprios aqui..."
                 />
               </div>
 
-              <footer className="grid grid-cols-1 sm:grid-cols-2 gap-6 pt-2 border-t border-dashed border-border min-w-0 overflow-hidden">
+              <footer className="ads-mod-footer">
                 <div className="flex items-center gap-3 min-w-0">
-                  <div className="size-9 rounded-full bg-muted/50 flex items-center justify-center text-muted-foreground shrink-0">
+                  <div className="ads-mod-footer-avatar">
                     <User className="size-4" />
                   </div>
                   <div className="flex flex-col text-[11px] min-w-0 overflow-hidden">
-                    <span className="font-black uppercase text-muted-foreground">
-                      Autor Original
-                    </span>
+                    <span className="ads-mod-footer-label">Autor Original</span>
                     <span className="font-bold text-foreground truncate">
                       {item.psychologistName || 'Não identificado'}
                     </span>
                   </div>
                 </div>
                 <div className="flex items-center gap-3 text-[11px] min-w-0 overflow-hidden">
-                  <div className="size-9 rounded-full bg-muted/50 flex items-center justify-center text-muted-foreground shrink-0">
+                  <div className="ads-mod-footer-avatar">
                     <Calendar className="size-4" />
                   </div>
                   <div className="flex flex-col min-w-0 overflow-hidden">
-                    <span className="font-black uppercase text-muted-foreground">
-                      Enviado em
-                    </span>
+                    <span className="ads-mod-footer-label">Enviado em</span>
                     <span className="font-bold text-foreground truncate">
                       {format(
                         new Date(item.createdAt),
@@ -294,7 +269,7 @@ function SuggestionModerationItem({
                 variant="ghost"
                 onClick={() => handleAction()}
                 disabled={isUpdating}
-                className="flex-1 rounded-xl font-bold h-11 text-muted-foreground hover:bg-muted cursor-pointer"
+                className="ads-mod-save-btn h-11"
               >
                 <Save className="size-4 mr-2" /> Salvar Edição
               </Button>
@@ -311,7 +286,7 @@ function SuggestionModerationItem({
                   disabled={isUpdating}
                   variant="ghost"
                   size="icon"
-                  className="text-emerald-600 hover:bg-emerald-500/10 size-9 rounded-xl transition-all cursor-pointer"
+                  className="ads-mod-approve-btn"
                 >
                   {isUpdating ? (
                     <Loader2 className="size-4 animate-spin" />
@@ -332,7 +307,7 @@ function SuggestionModerationItem({
                   disabled={isUpdating}
                   variant="ghost"
                   size="icon"
-                  className="text-red-500 hover:bg-red-500/10 size-9 rounded-xl transition-all cursor-pointer"
+                  className="ads-mod-reject-btn"
                 >
                   {isUpdating ? (
                     <Loader2 className="size-4 animate-spin" />

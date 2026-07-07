@@ -12,7 +12,7 @@ import {
 import { format } from 'date-fns'
 import { ptBR } from 'date-fns/locale'
 import { cn } from '@/lib/utils'
-import type { Suggestion } from '@/api/suggestions/get-suggestions'
+import type { ISuggestion } from '@/types/suggestion'
 import {
   Dialog,
   DialogContent,
@@ -20,20 +20,13 @@ import {
   DialogTitle,
   DialogTrigger,
 } from '@/components/ui/dialog'
+import { translatedSuggestionCategory } from '@/constants/translated-suggestion-category'
+import './roadmap-card.css'
 
 interface RoadmapCardProps {
-  item: Suggestion
+  item: ISuggestion
   onStatusChange: (id: string, status: string) => void
   isUpdating: boolean
-}
-
-const CATEGORY_LABELS: Record<string, string> = {
-  UI_UX: 'Interface / UX',
-  SCHEDULING: 'Agendamentos',
-  REPORTS: 'Relatórios',
-  PRIVACY_LGPD: 'Privacidade',
-  INTEGRATIONS: 'Integrações',
-  OTHERS: 'Outros',
 }
 
 const STEPS = [
@@ -75,14 +68,14 @@ export function RoadmapCard({
   return (
     <Dialog>
       <DialogTrigger asChild>
-        <article className="bg-card border border-border rounded-[24px] p-5 cursor-pointer transition-all hover:shadow-md group min-w-0 w-full">
+        <article className="group ads-roadmap-article">
           <div className="flex flex-col xl:flex-row xl:items-center justify-between gap-6 min-w-0">
-            <div className="space-y-3 flex-1 min-w-0">
+            <div className="flex flex-col gap-3 flex-1 min-w-0">
               <div className="flex items-center gap-2">
-                <span className="text-[10px] bg-primary/10 text-primary px-2 py-0.5 rounded-md font-black uppercase tracking-wider shrink-0">
-                  {CATEGORY_LABELS[item.category] || item.category}
+                <span className="ads-roadmap-badge">
+                  {translatedSuggestionCategory[item.category] || item.category}
                 </span>
-                <div className="flex items-center gap-1.5 text-amber-500 bg-amber-500/10 px-2.5 py-1 rounded-full shrink-0 border border-amber-500/20">
+                <div className="ads-roadmap-likes">
                   <ThumbsUp className="size-3.5 fill-amber-500/20" />
                   <span className="text-[10px] font-black">
                     {item.likesCount || 0}
@@ -91,19 +84,17 @@ export function RoadmapCard({
               </div>
 
               <div className="min-w-0">
-                <h3 className="font-bold text-foreground text-sm group-hover:text-primary transition-colors truncate break-words">
-                  {item.title}
-                </h3>
-                <p className="text-xs text-muted-foreground line-clamp-1 break-words italic">
+                <h3 className="ads-roadmap-title break-words">{item.title}</h3>
+                <p className="ads-roadmap-desc break-words">
                   &quot;{item.description}&quot;
                 </p>
               </div>
 
-              <div className="flex items-center gap-2 pt-2 border-t border-dashed border-border">
-                <div className="size-6 rounded-full bg-muted flex items-center justify-center border border-border text-muted-foreground font-bold text-[8px] shrink-0">
+              <div className="ads-roadmap-author-row">
+                <div className="ads-roadmap-avatar size-6 text-[8px]">
                   {item.psychologistName?.substring(0, 2).toUpperCase()}
                 </div>
-                <span className="text-[10px] text-muted-foreground font-bold uppercase tracking-tight truncate">
+                <span className="ads-roadmap-author-name">
                   {item.psychologistName} •{' '}
                   {format(new Date(item.createdAt), 'dd/MM/yyyy')}
                 </span>
@@ -112,7 +103,7 @@ export function RoadmapCard({
 
             {/* Stepper de Status */}
             <div
-              className="flex items-center gap-1 p-1 bg-muted/50 rounded-xl shrink-0 self-end xl:self-center"
+              className="ads-roadmap-stepper"
               onClick={(e) => e.stopPropagation()}
             >
               {STEPS.map((step, index) => {
@@ -123,7 +114,7 @@ export function RoadmapCard({
                       disabled={isUpdating}
                       onClick={() => onStatusChange(item.id, step.id)}
                       className={cn(
-                        'cursor-pointer flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-[10px] font-black uppercase transition-all',
+                        'ads-roadmap-step-btn',
                         isCurrent
                           ? `${step.bg} ${step.color} shadow-sm border border-border`
                           : 'text-muted-foreground hover:bg-muted',
@@ -144,7 +135,7 @@ export function RoadmapCard({
               <div className="ml-1 pl-1 border-l border-border">
                 <button
                   onClick={() => onStatusChange(item.id, 'REJECTED')}
-                  className="p-1.5 text-muted-foreground hover:text-destructive transition-colors cursor-pointer"
+                  className="ads-roadmap-reject-btn"
                 >
                   <XCircle className="size-4" />
                 </button>
@@ -154,11 +145,11 @@ export function RoadmapCard({
         </article>
       </DialogTrigger>
 
-      <DialogContent className="sm:max-w-[600px] border-border bg-card gap-6 rounded-3xl overflow-hidden">
+      <DialogContent className="ads-roadmap-dialog-content">
         <DialogHeader>
           <div className="mb-2">
-            <span className="text-[10px] bg-primary/10 text-primary px-2 py-0.5 rounded-full font-black uppercase">
-              {CATEGORY_LABELS[item.category] || item.category}
+            <span className="ads-roadmap-badge-lg">
+              {translatedSuggestionCategory[item.category] || item.category}
             </span>
           </div>
           <DialogTitle className="text-xl font-bold text-foreground leading-tight break-words">
@@ -166,20 +157,20 @@ export function RoadmapCard({
           </DialogTitle>
         </DialogHeader>
 
-        <div className="space-y-6">
-          <div className="bg-muted/30 p-5 rounded-2xl border border-border max-h-[350px] overflow-y-auto scrollbar-thin scrollbar-thumb-border">
+        <div className="flex flex-col gap-6">
+          <div className="ads-roadmap-dialog-desc-box">
             <p className="text-sm text-muted-foreground whitespace-pre-wrap leading-relaxed break-words">
               {item.description}
             </p>
           </div>
 
-          <footer className="flex items-center justify-between pt-4 border-t border-dashed border-border">
+          <footer className="ads-roadmap-dialog-footer">
             <div className="flex items-center gap-3 min-w-0">
-              <div className="size-10 rounded-full bg-muted flex items-center justify-center border border-border text-muted-foreground font-bold text-xs shrink-0">
+              <div className="ads-roadmap-avatar size-10 text-xs">
                 {item.psychologistName?.substring(0, 2).toUpperCase()}
               </div>
               <div className="flex flex-col min-w-0">
-                <span className="text-[10px] font-black text-muted-foreground uppercase">
+                <span className="ads-roadmap-footer-label">
                   Sugestão enviada por
                 </span>
                 <span className="text-xs font-bold text-foreground truncate">
@@ -188,7 +179,7 @@ export function RoadmapCard({
               </div>
             </div>
             <div className="text-right shrink-0">
-              <span className="text-[10px] font-black text-muted-foreground uppercase block">
+              <span className="ads-roadmap-footer-label block">
                 Data do Registro
               </span>
               <span className="text-xs font-medium text-muted-foreground">

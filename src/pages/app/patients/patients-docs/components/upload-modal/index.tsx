@@ -2,7 +2,6 @@
 
 import { useState } from 'react'
 import { CloudUpload, Lock, Users, User, Loader2, X } from 'lucide-react'
-import { useQuery } from '@tanstack/react-query'
 import { toast } from 'sonner'
 
 import {
@@ -18,12 +17,14 @@ import {
   SelectItem,
   SelectTrigger,
   SelectValue,
+  SelectGroup,
 } from '@/components/ui/select'
 import { cn } from '@/lib/utils'
-import { getPatientsWithAttachments } from '@/api/patient-profiles/patient-with-attachment'
+import { usePatientsWithAttachments } from '../../hooks/use-patients-with-attachments'
 import { useUpload } from '@/hooks/use-upload'
 import { DropZone } from './drop-zone'
 import { FileList } from './file-list'
+import './upload-modal.css'
 
 interface UploadModalProps {
   open: boolean
@@ -48,12 +49,8 @@ export function UploadModal({ open, onClose }: UploadModalProps) {
     canUpload,
   } = useUpload()
 
-  const { data: patients, isLoading: patientsLoading } = useQuery({
-    queryKey: ['patients-with-attachments'],
-    queryFn: getPatientsWithAttachments,
-    staleTime: 1000 * 60 * 5,
-    enabled: open,
-  })
+  const { data: patients, isLoading: patientsLoading } =
+    usePatientsWithAttachments({ enabled: open })
 
   const handleClose = () => {
     if (isUploading) return
@@ -86,30 +83,28 @@ export function UploadModal({ open, onClose }: UploadModalProps) {
         if (!o) handleClose()
       }}
     >
-      <DialogContent className="max-w-[600px] p-0 gap-0 overflow-hidden rounded-2xl flex flex-col max-h-[90vh]">
+      <DialogContent className="pd-up-dialog">
         {/* Head */}
-        <div className="flex items-start gap-3 px-6 py-5 border-b border-border shrink-0">
-          <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-blue-50 dark:bg-blue-950/40">
-            <CloudUpload className="h-5 w-5 text-primary" />
+        <div className="pd-up-head">
+          <div className="pd-up-head-icon">
+            <CloudUpload className="size-5 text-primary" />
           </div>
-          <div className="flex-1 min-w-0">
-            <DialogTitle className="text-[15px] font-bold text-foreground">
-              Enviar documento
-            </DialogTitle>
-            <DialogDescription className="text-[13px] text-muted-foreground mt-0.5">
+          <div className="min-w-0 flex-1">
+            <DialogTitle className="pd-up-title">Enviar documento</DialogTitle>
+            <DialogDescription className="pd-up-desc">
               Adicione anexos clínicos vinculados a um paciente.
             </DialogDescription>
           </div>
           <button
             onClick={handleClose}
-            className="shrink-0 flex h-7 w-7 items-center justify-center rounded-md text-muted-foreground hover:text-foreground hover:bg-muted transition-colors cursor-pointer"
+            className="pd-up-close"
             aria-label="Fechar"
           >
-            <X className="h-4 w-4" />
+            <X className="size-4" />
           </button>
         </div>
 
-        <div className="flex flex-col flex-1 min-h-0 px-6 py-5 gap-4 overflow-y-auto">
+        <div className="pd-up-body">
           <DropZone
             isDragging={isDragging}
             onDragEnter={handleDragEnter}
@@ -121,19 +116,19 @@ export function UploadModal({ open, onClose }: UploadModalProps) {
           <FileList files={files} onRemove={removeFile} onClear={clearFiles} />
 
           {/* Patient selector */}
-          <div className="flex flex-col flex-1 min-h-0 gap-1.5">
-            <label className="text-[13px] font-semibold text-foreground shrink-0">
+          <div className="pd-up-field">
+            <label className="pd-up-label">
               Paciente <span className="text-destructive">*</span>
             </label>
             <Select value={patientId} onValueChange={setPatientId}>
               <SelectTrigger
                 className={cn(
-                  'h-full min-h-[38px] cursor-pointer bg-background border-muted-foreground/20 hover:border-primary/40 transition-all',
+                  'pd-up-select',
                   !patientId && 'text-muted-foreground',
                 )}
               >
-                <div className="flex items-center gap-2">
-                  <Users className="h-3.5 w-3.5 text-muted-foreground shrink-0" />
+                <div className="pd-up-select-inner">
+                  <Users className="size-3.5 shrink-0 text-muted-foreground" />
                   <SelectValue
                     placeholder={
                       patientsLoading ? 'Carregando...' : 'Selecionar paciente'
@@ -142,53 +137,55 @@ export function UploadModal({ open, onClose }: UploadModalProps) {
                 </div>
               </SelectTrigger>
               <SelectContent className="max-h-[220px]">
-                {patients?.map((p) => (
-                  <SelectItem
-                    key={p.id}
-                    value={p.id}
-                    className="cursor-pointer py-2.5"
-                  >
-                    <div className="flex items-center gap-2">
-                      <User className="h-3.5 w-3.5 text-blue-500 shrink-0" />
-                      <span className="text-sm font-medium">
-                        {p.firstName} {p.lastName}
-                      </span>
-                    </div>
-                  </SelectItem>
-                ))}
+                <SelectGroup>
+                  {patients?.map((p) => (
+                    <SelectItem
+                      key={p.id}
+                      value={p.id}
+                      className="cursor-pointer py-2.5"
+                    >
+                      <div className="pd-up-option">
+                        <User className="size-3.5 shrink-0 text-blue-500" />
+                        <span className="text-sm font-medium">
+                          {p.firstName} {p.lastName}
+                        </span>
+                      </div>
+                    </SelectItem>
+                  ))}
+                </SelectGroup>
               </SelectContent>
             </Select>
           </div>
         </div>
 
         {/* Footer */}
-        <div className="flex items-center justify-between gap-3 px-6 py-4 border-t border-border bg-muted/20 shrink-0">
-          <div className="flex items-center gap-1.5 text-[12px] text-muted-foreground">
-            <Lock className="h-3 w-3" />
+        <div className="pd-up-footer">
+          <div className="pd-up-note">
+            <Lock className="size-3" />
             Criptografado em trânsito
           </div>
-          <div className="flex items-center gap-2">
+          <div className="pd-up-footer-actions">
             <Button
               variant="outline"
               size="sm"
               onClick={handleClose}
-              className="cursor-pointer h-9"
+              className="pd-up-btn-cancel"
             >
               Cancelar
             </Button>
             <Button
               size="sm"
-              className="cursor-pointer h-9 gap-2 min-w-[120px]"
+              className="pd-up-btn-submit"
               onClick={handleUpload}
               disabled={!canUpload || !patientId}
             >
               {isUploading ? (
                 <>
-                  <Loader2 className="h-3.5 w-3.5 animate-spin" /> Enviando...
+                  <Loader2 className="size-3.5 animate-spin" /> Enviando...
                 </>
               ) : (
                 <>
-                  <CloudUpload className="h-3.5 w-3.5" /> Enviar{' '}
+                  <CloudUpload className="size-3.5" /> Enviar{' '}
                   {pendingCount > 0 ? `(${pendingCount})` : ''}
                 </>
               )}

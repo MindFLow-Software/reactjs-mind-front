@@ -2,8 +2,10 @@ import { api } from '@/lib/axios'
 import { Normalizer } from '@/utils/normalizer'
 import type { CreatePatientBody, CreatePatientResponse } from '@/types/patient'
 
-export interface IcreatePatientProfileInput
-  extends Omit<CreatePatientBody, 'dateOfBirth'> {
+export interface IcreatePatientProfileInput extends Omit<
+  CreatePatientBody,
+  'dateOfBirth'
+> {
   dateOfBirth?: Date | string | null
 }
 

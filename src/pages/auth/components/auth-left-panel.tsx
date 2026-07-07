@@ -1,11 +1,11 @@
 import { memo } from 'react'
 import { useLocation } from 'react-router-dom'
-import { BrainIcon } from '@phosphor-icons/react'
+import { Brain } from 'lucide-react'
 
 function SignInContent() {
   return (
     <div className="flex flex-1 flex-col justify-center gap-8">
-      <div className="space-y-3">
+      <div className="flex flex-col gap-3">
         <h2 className="text-3xl font-bold text-white leading-snug">
           Bem-vindo de volta
         </h2>
@@ -63,7 +63,7 @@ function SignUpContent() {
 
   return (
     <div className="flex flex-1 flex-col justify-center gap-8">
-      <div className="space-y-3">
+      <div className="flex flex-col gap-3">
         <h2 className="text-3xl font-bold text-white leading-snug">
           Comece em 3 passos
         </h2>
@@ -99,10 +99,10 @@ export const AuthLeftPanel = memo(function AuthLeftPanel() {
   return (
     <div
       aria-hidden="true"
-      className="hidden md:flex flex-col h-full min-h-screen p-10 bg-gradient-to-br from-[#0e1b3e] via-[#16306b] to-[#1c3c8a]"
+      className="hidden md:flex flex-col h-full min-h-screen p-10 bg-gradient-to-br from-(--auth-navy-950) via-(--auth-navy-800) to-(--auth-navy-700)"
     >
       <div className="flex items-center gap-3">
-        <BrainIcon className="h-8 w-8 text-blue-400" weight="duotone" />
+        <Brain className="h-8 w-8 text-blue-400" />
         <span className="text-lg font-semibold text-white">MindFlush</span>
       </div>
 

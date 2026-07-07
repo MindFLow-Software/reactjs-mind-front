@@ -1,5 +1,4 @@
 import { useState, useCallback } from 'react'
-import { STEPS } from '../pages/app/patients/patients-list/register-patients/constants'
 
 interface IUseFormStepsReturn {
   step: number
@@ -10,15 +9,21 @@ interface IUseFormStepsReturn {
   isLastStep: boolean
 }
 
-export function useFormSteps(): IUseFormStepsReturn {
+interface IuseFormSteps {
+  stepsLength: number
+}
+
+export function useFormSteps({
+  stepsLength
+}: IuseFormSteps): IUseFormStepsReturn {
   const [step, setStep] = useState<number>(1)
 
   const handleNext = useCallback(async () => {
-    setStep((prevStep) => prevStep >= STEPS.length ? prevStep : prevStep + 1)
+    setStep((prevStep) => (prevStep >= stepsLength ? prevStep : prevStep + 1))
   }, [step])
 
   const handleBack = useCallback(() => {
-    setStep((prevStep) => prevStep <= 0 ? prevStep : prevStep - 1)
+    setStep((prevStep) => (prevStep <= 0 ? prevStep : prevStep - 1))
   }, [])
 
   const goToStep = useCallback((id: number) => {
@@ -31,6 +36,6 @@ export function useFormSteps(): IUseFormStepsReturn {
     handleBack,
     goToStep,
     isFirstStep: step === 1,
-    isLastStep: step === STEPS.length,
+    isLastStep: step === stepsLength,
   }
 }

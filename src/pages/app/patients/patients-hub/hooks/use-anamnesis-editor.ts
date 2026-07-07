@@ -12,25 +12,23 @@ import { toast } from 'sonner'
 import { format } from 'date-fns'
 import { ptBR } from 'date-fns/locale'
 
-import {
-  getAnamnesis,
-  saveAnamnesis,
-  type AnamnesisData,
-} from '@/api/patient-profiles/anamnesis'
+import { getAnamnesis } from '@/api/patient-profiles/get-anamnesis'
+import { saveAnamnesis } from '@/api/patient-profiles/save-anamnesis'
+import type { IAnamnesisContent } from '@/types/clinical'
 import { AnamnesisPDFTemplate } from '@/utils/anamnesis-pdf-template'
 
-import type {
-  AnamnesisBlock,
-  AnamnesisDraft,
-} from '../components/anamnesis/anamnesis-types'
+import type { AnamnesisBlock } from '../components/anamnesis/anamnesis-types'
 import {
   buildContentFromBlocks,
   buildInitialBlocks,
-  createBlock,
   normalizeBlocks,
   toApiData,
 } from '../components/anamnesis/anamnesis-utils'
-import { ANAMNESIS_DRAFT_KEY_PREFIX } from '../constants'
+import {
+  clearAnamnesisDraft,
+  readAnamnesisDraft,
+  writeAnamnesisDraft,
+} from '../components/anamnesis/anamnesis-draft-storage'
 import { usePdfExport } from './use-pdf-export'
 import { copyToClipboard } from '@/utils/copy-to-clipboard'
 
@@ -129,7 +127,6 @@ export function useAnamnesisEditor({
 
   const lastPersistedHash = useRef('')
   const serverBlocksRef = useRef<AnamnesisBlock[]>([])
-  const draftStorageKey = `${ANAMNESIS_DRAFT_KEY_PREFIX}${patientId}`
 
   const { data } = useQuery({
     queryKey: ['patient-hub', patientId, 'anamnesis'],
@@ -137,11 +134,12 @@ export function useAnamnesisEditor({
   })
 
   const { mutate, isPending } = useMutation({
-    mutationFn: (newData: AnamnesisData) => saveAnamnesis(patientId, newData),
+    mutationFn: (newData: IAnamnesisContent) =>
+      saveAnamnesis(patientId, newData),
     onSuccess: async (_, vars) => {
       lastPersistedHash.current = JSON.stringify(vars)
       dispatch({ type: 'SET_HAS_LOCAL_DRAFT', value: false })
-      localStorage.removeItem(draftStorageKey)
+      clearAnamnesisDraft(patientId)
       await Promise.all([
         queryClient.invalidateQueries({
           queryKey: ['patient-hub', patientId, 'anamnesis'],
@@ -159,7 +157,7 @@ export function useAnamnesisEditor({
   )
   const payloadHash = JSON.stringify(payload)
 
-  // Data load + localStorage draft recovery
+  // Data load + local draft recovery
   useEffect(() => {
     if (!data) return
 
@@ -171,25 +169,14 @@ export function useAnamnesisEditor({
     let initial = serverBlocks
     let hasLocalDraftValue = false
 
-    try {
-      const rawDraft = localStorage.getItem(draftStorageKey)
-      if (rawDraft) {
-        const parsed = JSON.parse(rawDraft) as AnamnesisDraft
-        const parsedBlocks = Array.isArray(parsed?.blocks)
-          ? parsed.blocks.map((b, i) => createBlock(b, i))
-          : []
-
-        if (parsedBlocks.length > 0) {
-          const draftHash = JSON.stringify(toApiData(parsedBlocks))
-          if (draftHash !== serverHash) {
-            initial = normalizeBlocks(parsedBlocks)
-            hasLocalDraftValue = true
-            toast.info('Rascunho local recuperado.')
-          }
-        }
+    const draftBlocks = readAnamnesisDraft(patientId)
+    if (draftBlocks.length > 0) {
+      const draftHash = JSON.stringify(toApiData(draftBlocks))
+      if (draftHash !== serverHash) {
+        initial = normalizeBlocks(draftBlocks)
+        hasLocalDraftValue = true
+        toast.info('Rascunho local recuperado.')
       }
-    } catch {
-      localStorage.removeItem(draftStorageKey)
     }
 
     dispatch({
@@ -197,32 +184,20 @@ export function useAnamnesisEditor({
       blocks: initial,
       hasLocalDraft: hasLocalDraftValue,
     })
-  }, [data, draftStorageKey])
+  }, [data, patientId])
 
-  // Auto-save debounce + localStorage write
+  // Auto-save debounce + local draft write
   useEffect(() => {
     if (!hydrated) return
 
-    const draft: AnamnesisDraft = {
-      blocks: normalizedBlocks,
-      updatedAt: Date.now(),
-    }
-
-    localStorage.setItem(draftStorageKey, JSON.stringify(draft))
+    writeAnamnesisDraft(patientId, normalizedBlocks)
 
     if (payloadHash !== lastPersistedHash.current) {
       dispatch({ type: 'SET_HAS_LOCAL_DRAFT', value: true })
       const timer = setTimeout(() => mutate(payload), 1000)
       return () => clearTimeout(timer)
     }
-  }, [
-    payloadHash,
-    hydrated,
-    mutate,
-    payload,
-    normalizedBlocks,
-    draftStorageKey,
-  ])
+  }, [payloadHash, hydrated, mutate, payload, normalizedBlocks, patientId])
 
   const {
     isExporting,
@@ -257,9 +232,9 @@ export function useAnamnesisEditor({
   }, [])
 
   const discardDraft = useCallback(() => {
-    localStorage.removeItem(draftStorageKey)
+    clearAnamnesisDraft(patientId)
     dispatch({ type: 'DISCARD_DRAFT', blocks: serverBlocksRef.current })
-  }, [draftStorageKey])
+  }, [patientId])
 
   const onCopy = useCallback(async () => {
     copyToClipboard(content)

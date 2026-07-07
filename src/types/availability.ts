@@ -1,4 +1,4 @@
-export interface AvailabilityHTTP {
+export interface IPsychologistAvailability {
   id: string
   psychologistPracticeContextId: string
   dayOfWeek: number
@@ -6,5 +6,3 @@ export interface AvailabilityHTTP {
   endTime: string
   isActive: boolean
 }
-
-export type PsychologistAvailability = AvailabilityHTTP

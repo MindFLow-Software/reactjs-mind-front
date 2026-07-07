@@ -1,0 +1,23 @@
+@reference "../../../../../global.css";
+
+@layer components {
+  .cs-dropzone {
+    @apply flex cursor-pointer flex-col items-center gap-3 rounded-[10px] border-2 border-dashed border-border p-[22px] text-center transition-all duration-150 bg-muted/50 hover:border-blue-600 hover:bg-blue-50 dark:hover:bg-blue-950/30;
+  }
+
+  .cs-dropzone-icon {
+    @apply flex h-[42px] w-[42px] items-center justify-center rounded-full border border-blue-100 dark:border-blue-900 bg-card text-blue-600;
+  }
+
+  .cs-file-row {
+    @apply flex items-center justify-between p-2 rounded-xl border border-transparent hover:bg-muted/30 transition-all duration-200;
+  }
+
+  .cs-file-icon {
+    @apply h-9 w-9 rounded-full bg-background flex items-center justify-center border shrink-0;
+  }
+
+  .cs-file-remove {
+    @apply h-7 w-7 rounded-full text-muted-foreground hover:text-red-500 hover:bg-red-50 opacity-0 group-hover:opacity-100 transition-opacity cursor-pointer;
+  }
+}

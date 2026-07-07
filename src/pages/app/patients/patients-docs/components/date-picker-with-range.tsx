@@ -13,6 +13,7 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from '@/components/ui/popover'
+import './date-picker-with-range.css'
 
 interface DatePickerWithRangeProps {
   className?: string
@@ -33,12 +34,12 @@ export function DatePickerWithRange({
             id="date"
             variant={'outline'}
             className={cn(
-              'cursor-pointer h-9 w-full lg:w-[260px] bg-background border border-muted-foreground/20 hover:border-primary/30 transition-all shadow-sm px-3 justify-start text-left font-normal',
+              'pd-date-trigger',
               !date && 'text-muted-foreground',
               className,
             )}
           >
-            <CalendarIcon className="mr-2 h-4 w-4" />
+            <CalendarIcon className="mr-2 size-4" />
             {date?.from ? (
               date.to ? (
                 <>

@@ -65,10 +65,12 @@ export function useSessionsTimeline(
     await exportPdfDoc(
       createElement(SessionPDFTemplate, {
         psychologist: { name: '', crp: '' },
-        patientName,
-        date: dateFormatted,
-        content: first?.content ?? 'Nenhuma nota registrada.',
-        diagnosis: first?.theme ?? '',
+        record: {
+          patientName,
+          date: dateFormatted,
+          content: first?.content ?? 'Nenhuma nota registrada.',
+          diagnosis: first?.theme ?? '',
+        },
       }),
     )
   }, [filteredSessions, exportPdfDoc, patientName])

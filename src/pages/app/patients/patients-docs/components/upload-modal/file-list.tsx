@@ -13,79 +13,68 @@ export function FileList({ files, onRemove, onClear }: FileListProps) {
   if (files.length === 0) return null
 
   return (
-    <div className="space-y-2 shrink-0">
-      <div className="flex items-center justify-between">
-        <p className="text-[12px] font-semibold text-muted-foreground uppercase tracking-wider">
+    <div className="pd-up-list">
+      <div className="pd-up-list-head">
+        <p className="pd-up-list-count">
           {files.length} {files.length === 1 ? 'arquivo' : 'arquivos'}
         </p>
-        <button
-          type="button"
-          onClick={onClear}
-          className="text-[12px] text-muted-foreground hover:text-destructive transition-colors cursor-pointer"
-        >
+        <button type="button" onClick={onClear} className="pd-up-list-clear">
           Limpar tudo
         </button>
       </div>
 
       {files.map((item) => (
-        <div
-          key={item.id}
-          className="flex items-center gap-3 rounded-lg border border-border bg-card p-3"
-        >
+        <div key={item.id} className="pd-up-item">
           <FileThumb type={item.file.type} />
 
-          <div className="flex-1 min-w-0 space-y-1">
-            <p className="text-[13px] font-semibold text-foreground truncate">
-              {item.file.name}
-            </p>
-            <div className="flex items-center gap-2">
-              <p className="text-[11px] text-muted-foreground">
+          <div className="pd-up-item-body">
+            <p className="pd-up-item-name">{item.file.name}</p>
+            <div className="pd-up-item-meta">
+              <p className="pd-up-item-size">
                 {formatFileSize(item.file.size)}
               </p>
               {item.status === 'error' && (
-                <p className="text-[11px] text-destructive font-medium">
-                  {item.error}
-                </p>
+                <p className="pd-up-item-error">{item.error}</p>
               )}
             </div>
 
             {item.status === 'uploading' && (
-              <div className="h-1 w-full rounded-full bg-muted overflow-hidden">
+              <div className="pd-up-progress">
                 <div
-                  className="h-full rounded-full bg-primary transition-all duration-300"
+                  className="pd-up-progress-bar"
                   style={{ width: `${item.progress}%` }}
                 />
               </div>
             )}
             {item.status === 'done' && (
-              <div className="h-1 w-full rounded-full bg-green-500/30">
-                <div className="h-full w-full rounded-full bg-green-500" />
+              <div className="pd-up-progress-done">
+                <div className="pd-up-progress-done-bar" />
               </div>
             )}
             {item.status === 'error' && (
-              <div className="h-1 w-full rounded-full bg-destructive/30">
-                <div className="h-full w-full rounded-full bg-destructive" />
+              <div className="pd-up-progress-error">
+                <div className="pd-up-progress-error-bar" />
               </div>
             )}
           </div>
 
           <div className="shrink-0">
             {item.status === 'uploading' && (
-              <Loader2 className="h-4 w-4 animate-spin text-primary" />
+              <Loader2 className="size-4 animate-spin text-primary" />
             )}
             {item.status === 'done' && (
-              <CheckCircle2 className="h-4 w-4 text-green-600" />
+              <CheckCircle2 className="size-4 text-green-600" />
             )}
             {item.status === 'error' && (
-              <AlertCircle className="h-4 w-4 text-destructive" />
+              <AlertCircle className="size-4 text-destructive" />
             )}
             {item.status === 'pending' && (
               <button
                 type="button"
                 onClick={() => onRemove(item.id)}
-                className="flex h-6 w-6 items-center justify-center rounded-md text-muted-foreground hover:text-destructive hover:bg-destructive/10 transition-colors cursor-pointer"
+                className="pd-up-item-remove"
               >
-                <Trash2 className="h-3.5 w-3.5" />
+                <Trash2 className="size-3.5" />
               </button>
             )}
           </div>

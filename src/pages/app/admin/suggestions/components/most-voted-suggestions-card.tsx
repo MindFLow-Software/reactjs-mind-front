@@ -13,6 +13,7 @@ import { getMostVotedSuggestions } from '@/api/suggestions/get-most-voted-sugges
 import { toggleSuggestionLike } from '@/api/suggestions/toggle-suggestion-like'
 import { getProfile } from '@/api/psychologists/get-profile'
 import { SuggestionCard } from '@/components/suggestion-card'
+import './most-voted-suggestions-card.css'
 
 export function MostVotedSuggestionsCard() {
   const queryClient = useQueryClient()
@@ -38,8 +39,8 @@ export function MostVotedSuggestionsCard() {
   })
 
   return (
-    <Card className="col-span-full lg:col-span-4 border-border bg-card shadow-md rounded-2xl overflow-hidden flex flex-col">
-      <CardHeader className="border-b border-border bg-muted/30 space-y-1 p-4">
+    <Card className="ads-voted-card">
+      <CardHeader className="border-b border-border bg-muted/30 flex flex-col gap-1 p-4">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-2">
             <TrendingUp className="size-4 text-primary" />
@@ -53,13 +54,13 @@ export function MostVotedSuggestionsCard() {
         </CardDescription>
       </CardHeader>
 
-      <CardContent className="p-3 flex-1 overflow-y-auto min-h-0 scrollbar-thin scrollbar-thumb-border hover:scrollbar-thumb-muted-foreground/20 bg-card">
+      <CardContent className="ads-voted-content">
         {isLoading ? (
           <div className="flex h-[300px] items-center justify-center">
             <Loader2 className="h-8 w-8 animate-spin text-muted-foreground" />
           </div>
         ) : (
-          <div className="space-y-3">
+          <div className="flex flex-col gap-3">
             {suggestions?.map((item) => (
               <SuggestionCard
                 key={item.id}

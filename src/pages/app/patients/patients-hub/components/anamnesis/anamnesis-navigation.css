@@ -1,76 +1,78 @@
 @reference "../../../../../../global.css";
 
-/* Root aside */
-.ph-anamnesis-navigation {
-  @apply flex w-52 shrink-0 flex-col gap-0 rounded-xl border border-border/50 bg-muted/20 overflow-hidden;
-}
+@layer components {
+  /* Root aside */
+  .ph-anamnesis-navigation {
+    @apply flex w-52 shrink-0 flex-col gap-0 rounded-xl border border-border/50 bg-muted/20 overflow-hidden;
+  }
 
-/* Header */
-.ph-anamnesis-navigation__header {
-  @apply flex items-center gap-2 border-b border-border/40 px-4 py-2.5;
-}
+  /* Header */
+  .ph-anamnesis-navigation__header {
+    @apply flex items-center gap-2 border-b border-border/40 px-4 py-2.5;
+  }
 
-.ph-anamnesis-navigation__header-icon {
-  @apply text-muted-foreground/70 mb-0.5;
-}
+  .ph-anamnesis-navigation__header-icon {
+    @apply text-muted-foreground/70 mb-0.5;
+  }
 
-.ph-anamnesis-navigation__header-label {
-  @apply text-[10px] font-bold uppercase tracking-widest text-muted-foreground/70;
-}
+  .ph-anamnesis-navigation__header-label {
+    @apply text-[10px] font-bold uppercase tracking-widest text-muted-foreground/70;
+  }
 
-/* Section list */
-.ph-anamnesis-navigation__list {
-  @apply flex-1 overflow-y-auto;
-}
+  /* Section list */
+  .ph-anamnesis-navigation__list {
+    @apply flex-1 overflow-y-auto;
+  }
 
-/* Section button — base (inactive) */
-.ph-anamnesis-navigation__item {
-  @apply flex w-full items-center justify-between gap-2 border-l-2 border-l-transparent px-4 py-2.5 text-left transition-all duration-150 hover:bg-muted/40 text-muted-foreground hover:text-foreground;
-}
+  /* Section button — base (inactive) */
+  .ph-anamnesis-navigation__item {
+    @apply flex w-full items-center justify-between gap-2 border-l-2 border-l-transparent px-4 py-2.5 text-left transition-all duration-150 hover:bg-muted/40 text-muted-foreground hover:text-foreground;
+  }
 
-.ph-anamnesis-navigation__item--active {
-  @apply border-l-emerald-500 bg-emerald-50/60 dark:bg-emerald-950/20 text-foreground;
-}
+  .ph-anamnesis-navigation__item--active {
+    @apply border-l-emerald-500 bg-emerald-50/60 dark:bg-emerald-950/20 text-foreground;
+  }
 
-/* Section label text */
-.ph-anamnesis-navigation__item-label {
-  @apply text-sm truncate;
-}
+  /* Section label text */
+  .ph-anamnesis-navigation__item-label {
+    @apply text-sm truncate;
+  }
 
-.ph-anamnesis-navigation__item-label--active {
-  @apply font-medium;
-}
+  .ph-anamnesis-navigation__item-label--active {
+    @apply font-medium;
+  }
 
-/* Word count badge */
-.ph-anamnesis-navigation__item-count {
-  @apply shrink-0 text-xs tabular-nums text-muted-foreground/50;
-}
+  /* Word count badge */
+  .ph-anamnesis-navigation__item-count {
+    @apply shrink-0 text-xs tabular-nums text-muted-foreground/50;
+  }
 
-.ph-anamnesis-navigation__item-count--filled {
-  @apply text-emerald-600 font-medium;
-}
+  .ph-anamnesis-navigation__item-count--filled {
+    @apply text-emerald-600 font-medium;
+  }
 
-/* Footer progress */
-.ph-anamnesis-navigation__footer {
-  @apply border-t border-border/40 px-4 py-3 space-y-2;
-}
+  /* Footer progress */
+  .ph-anamnesis-navigation__footer {
+    @apply border-t border-border/40 px-4 py-3 flex flex-col gap-2;
+  }
 
-.ph-anamnesis-navigation__progress-row {
-  @apply flex items-center justify-between;
-}
+  .ph-anamnesis-navigation__progress-row {
+    @apply flex items-center justify-between;
+  }
 
-.ph-anamnesis-navigation__progress-label {
-  @apply text-[10px] text-muted-foreground/70 uppercase tracking-wide font-medium;
-}
+  .ph-anamnesis-navigation__progress-label {
+    @apply text-[10px] text-muted-foreground/70 uppercase tracking-wide font-medium;
+  }
 
-.ph-anamnesis-navigation__progress-count {
-  @apply text-[10px] font-semibold text-emerald-600;
-}
+  .ph-anamnesis-navigation__progress-count {
+    @apply text-[10px] font-semibold text-emerald-600;
+  }
 
-.ph-anamnesis-navigation__progress-track {
-  @apply h-1.5 w-full rounded-full bg-muted overflow-hidden;
-}
+  .ph-anamnesis-navigation__progress-track {
+    @apply h-1.5 w-full rounded-full bg-muted overflow-hidden;
+  }
 
-.ph-anamnesis-navigation__progress-fill {
-  @apply h-full rounded-full bg-emerald-500 transition-all duration-300;
+  .ph-anamnesis-navigation__progress-fill {
+    @apply h-full rounded-full bg-emerald-500 transition-all duration-300;
+  }
 }

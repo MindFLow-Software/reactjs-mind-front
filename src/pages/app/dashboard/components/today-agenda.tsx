@@ -6,10 +6,11 @@ import { Link } from 'react-router-dom'
 import { Card, CardContent, CardHeader } from '@/components/ui/card'
 import { Skeleton } from '@/components/ui/skeleton'
 import { cn } from '@/lib/utils'
-import type { Appointment } from '@/types/appointment'
-import { AppointmentStatus } from '@/types/appointment'
+import type { IAppointmentWithNames } from '@/types/appointment'
+import { AppointmentStatus } from '@/types/enums'
 import { useTodayAppointments } from '../hooks/use-today-appointments'
 import { formatTime } from '../helpers'
+import './today-agenda.css'
 
 const STATUS_CONFIG: Record<string, { label: string; className: string }> = {
   [AppointmentStatus.FINISHED]: {
@@ -42,7 +43,7 @@ const STATUS_CONFIG: Record<string, { label: string; className: string }> = {
 }
 
 interface AgendaRowProps {
-  appt: Appointment
+  appt: IAppointmentWithNames
 }
 
 function AgendaRow({ appt }: AgendaRowProps) {
@@ -59,31 +60,20 @@ function AgendaRow({ appt }: AgendaRowProps) {
   }
 
   return (
-    <div className="flex items-center gap-3 py-3 border-b border-border last:border-0">
-      <div className="min-w-[52px]">
-        <p className="text-sm font-semibold text-foreground tabular-nums">
-          {time}
-        </p>
-        <p className="text-xs text-muted-foreground">{duration}</p>
+    <div className="dsh-agenda-row">
+      <div className="dsh-agenda-row-time">
+        <p className="dsh-agenda-row-time-value">{time}</p>
+        <p className="dsh-agenda-row-time-duration">{duration}</p>
       </div>
 
-      <div className="flex-1 min-w-0">
-        <p className="text-sm font-medium text-foreground truncate">
-          {patientName}
-        </p>
+      <div className="dsh-agenda-row-main">
+        <p className="dsh-agenda-row-name">{patientName}</p>
         {appt.diagnosis && (
-          <p className="text-xs text-muted-foreground truncate">
-            {appt.diagnosis}
-          </p>
+          <p className="dsh-agenda-row-diagnosis">{appt.diagnosis}</p>
         )}
       </div>
 
-      <span
-        className={cn(
-          'shrink-0 rounded-md px-2 py-0.5 text-xs font-medium',
-          status.className,
-        )}
-      >
+      <span className={cn('dsh-agenda-row-status', status.className)}>
         {status.label}
       </span>
     </div>
@@ -99,41 +89,36 @@ export function TodayAgenda() {
   const { appointments: todayAppointments, isLoading } = useTodayAppointments()
 
   return (
-    <Card className="border-border bg-card shadow-sm rounded-xl flex flex-col h-full">
-      <CardHeader className="pb-4 px-5 border-b border-border">
-        <div className="flex items-center justify-between">
-          <div className="flex items-center gap-3">
-            <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-blue-500/10 ring-1 ring-blue-500/20">
+    <Card className="dsh-agenda-card">
+      <CardHeader className="dsh-agenda-header">
+        <div className="dsh-agenda-header-row">
+          <div className="dsh-agenda-header-main">
+            <div className="dsh-agenda-icon">
               <CalendarDays className="size-4 text-blue-600" />
             </div>
             <div>
-              <p className="text-base font-semibold text-foreground leading-tight">
-                Agenda de hoje
-              </p>
-              <p className="mt-0.5 text-xs text-muted-foreground">
+              <p className="dsh-agenda-title">Agenda de hoje</p>
+              <p className="dsh-agenda-subtitle">
                 {isLoading
                   ? '...'
                   : `${todayLabel} · ${todayAppointments.length} ${todayAppointments.length === 1 ? 'sessão' : 'sessões'}`}
               </p>
             </div>
           </div>
-          <Link
-            to="/appointments"
-            className="flex items-center gap-1 text-xs text-muted-foreground hover:text-foreground transition-colors shrink-0"
-          >
+          <Link to="/appointments" className="dsh-agenda-link">
             Ver tudo
             <ArrowRight className="size-3" />
           </Link>
         </div>
       </CardHeader>
 
-      <CardContent className="flex-1 flex flex-col px-5 pt-4 pb-5">
+      <CardContent className="dsh-agenda-content">
         {isLoading ? (
-          <div className="space-y-3 pt-2">
+          <div className="dsh-agenda-loading">
             {[...Array(4)].map((_, i) => (
-              <div key={i} className="flex items-center gap-3 py-2">
+              <div key={i} className="dsh-agenda-loading-row">
                 <Skeleton className="h-8 w-12" />
-                <div className="flex-1 space-y-1.5">
+                <div className="dsh-agenda-loading-lines">
                   <Skeleton className="h-3.5 w-32" />
                   <Skeleton className="h-3 w-20" />
                 </div>
@@ -142,8 +127,8 @@ export function TodayAgenda() {
             ))}
           </div>
         ) : todayAppointments.length === 0 ? (
-          <div className="flex flex-1 flex-col items-center justify-center gap-2 text-center">
-            <div className="flex h-10 w-10 items-center justify-center rounded-full bg-muted/30">
+          <div className="dsh-agenda-empty">
+            <div className="dsh-agenda-empty-icon">
               <CalendarDays className="size-5 text-muted-foreground/50" />
             </div>
             <p className="text-sm font-medium text-foreground">
@@ -154,7 +139,7 @@ export function TodayAgenda() {
             </p>
           </div>
         ) : (
-          <div className="pt-1">
+          <div className="dsh-agenda-list">
             {todayAppointments.map((appt) => (
               <AgendaRow key={appt.id} appt={appt} />
             ))}

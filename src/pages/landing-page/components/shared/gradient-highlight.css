@@ -1,0 +1,15 @@
+@reference "../../../../global.css";
+
+@layer components {
+  .lp-gradient-text {
+    background: linear-gradient(135deg, #2563eb 0%, #3b82f6 100%);
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+  }
+
+  .lp-gradient-underline {
+    @apply absolute bottom-[3px] -left-1 -right-1 -z-10 h-[30%] origin-left rounded-sm;
+    background: rgba(37, 99, 235, 0.12);
+  }
+}

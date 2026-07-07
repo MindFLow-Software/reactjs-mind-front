@@ -1,0 +1,24 @@
+@reference "../../../global.css";
+
+@layer components {
+  .lp-res-section {
+    @apply relative overflow-hidden border-t border-slate-100 bg-[#F7F9FF] py-24 scroll-mt-20;
+  }
+
+  .lp-res-glow {
+    @apply pointer-events-none absolute left-0 top-0 h-[400px] w-[500px];
+    background: radial-gradient(
+      ellipse at 20% 10%,
+      rgba(37, 99, 235, 0.07) 0%,
+      transparent 65%
+    );
+  }
+
+  .lp-res-heading {
+    @apply mb-4 max-w-[540px] text-[clamp(28px,3.6vw,44px)] font-semibold leading-[1.15] tracking-tight text-slate-900;
+  }
+
+  .lp-res-subtitle {
+    @apply max-w-[420px] text-[15.5px] font-light leading-relaxed text-slate-500;
+  }
+}

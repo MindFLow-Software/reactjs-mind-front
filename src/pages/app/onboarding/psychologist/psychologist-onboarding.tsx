@@ -1,11 +1,13 @@
-import { useMemo, useState } from 'react'
+import './psychologist-onboarding.css'
+import { useEffect, useMemo, useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
-import { useMutation, useQuery } from '@tanstack/react-query'
+import { useQuery } from '@tanstack/react-query'
 import { FormProvider, useForm, type Resolver } from 'react-hook-form'
 import { ArrowLeft, ArrowRight, Brain, Sparkles } from 'lucide-react'
 
 import type z from 'zod'
 import { zodResolver } from '@hookform/resolvers/zod'
+import { cn } from '@/lib/utils'
 
 import {
   Card,
@@ -19,10 +21,11 @@ import { Button } from '@/components/ui/button'
 
 import { Expertise } from '@/types/expertise'
 import { Honorific } from '@/types/psychologist'
+import { queryKeys } from '@/constants/query-keys'
 import { getProfile } from '@/api/psychologists/get-profile'
-import { createPsychologistProfile } from '@/api/auth/create-psychologist-profile'
 import { ProfessionalIdentityFormStep } from './steps/professional-identity-form-step'
-import { createPsychologistProfileSchema } from '@/validators/psychologist-profile'
+import { createPsychologistProfileSchema } from '@/validators/psychologists/form/create-psychologist-profile-schema'
+import { useCreatePsychologistProfile } from './hooks/use-create-psychologist-profile'
 
 type IcreatePsychologistProfile = z.infer<
   typeof createPsychologistProfileSchema
@@ -39,7 +42,7 @@ export function PsychologistOnboardingPage() {
   const navigate = useNavigate()
 
   const { data: me } = useQuery({
-    queryKey: ['me'],
+    queryKey: queryKeys.me,
     queryFn: getProfile,
   })
 
@@ -91,15 +94,8 @@ export function PsychologistOnboardingPage() {
     }
   }
 
-  const { isPending: isCreatingPsychologistProfile, mutateAsync } = useMutation(
-    {
-      mutationKey: ['create-psychologist-profile'],
-      mutationFn: createPsychologistProfile,
-      onError: (error) => {
-        console.log('Error: ', error)
-      },
-    },
-  )
+  const { isPending: isCreatingPsychologistProfile, mutateAsync } =
+    useCreatePsychologistProfile()
 
   const handleCreatePsychologistProfile = async (
     data: IcreatePsychologistProfile,
@@ -112,17 +108,16 @@ export function PsychologistOnboardingPage() {
     [me],
   )
 
-  if (alreadyHasPsychologistProfile) navigate('/profiles')
+  useEffect(() => {
+    if (alreadyHasPsychologistProfile) navigate('/profiles')
+  }, [alreadyHasPsychologistProfile, navigate])
 
   const isDisabled = isCreatingPsychologistProfile
 
   return (
     <main className="flex gap-8 mx-auto max-w-7xl mt-4">
       <aside className="flex flex-col gap-6 max-w-72">
-        <Link
-          to="/profiles"
-          className="text-xs flex items-center gap-1 cursor-pointer text-black"
-        >
+        <Link to="/profiles" className="psob-back-link">
           <ArrowLeft size={14} />
           Voltar aos espaços de trabalho
         </Link>
@@ -139,11 +134,12 @@ export function PsychologistOnboardingPage() {
               key={step.order}
               variant="outline"
               onClick={() => handleSetCurrentStep(step.order)}
-              className={`justify-start gap-2 ${currentStep === step.order && 'bg-blue-200 border border-blue-400 hover:bg-blue-300'}`}
+              className={cn(
+                'psob-step-button',
+                currentStep === step.order && 'psob-step-button-active',
+              )}
             >
-              <div className="rounded-full flex items-center justify-center p-3.5 size-4 bg-blue-500 text-white">
-                {step.order}
-              </div>
+              <div className="psob-step-index">{step.order}</div>
               <span>{step.label}</span>
             </Button>
           ))}
@@ -173,7 +169,7 @@ export function PsychologistOnboardingPage() {
               {String(stepsLength).padStart(2, '0')}
             </CardAction>
             <CardTitle className="flex items-center gap-2 text-2xl mb-0">
-              <div className="flex items-center justify-center p-2 w-fit rounded-md text-white bg-blue-500/75">
+              <div className="psob-icon-badge">
                 <Brain size={24} />
               </div>
               Sua identidade profissional
@@ -186,7 +182,7 @@ export function PsychologistOnboardingPage() {
             <CardContent className="p-0 flex-1 mb-8">
               {renderFormStep()}
             </CardContent>
-            <CardFooter className="flex justify-between px-0 py-5 border-t-[0.5px] border-t-black/25 mt-auto">
+            <CardFooter className="psob-footer">
               <p className="text-sm">
                 Essas informações são reutilizadas em todos os contextos de
                 atuação.

@@ -1,15 +1,16 @@
 import { api } from '@/lib/axios'
 import type {
   CreatePsychologistProfileBody,
-  PsychologistProfile,
+  IPsychologistProfile,
 } from '@/types/psychologist'
+import type { IMutationResult } from '@/types/api'
 
 export async function createPsychologistProfile(
   body: CreatePsychologistProfileBody,
-): Promise<PsychologistProfile> {
-  const response = await api.post<PsychologistProfile>(
+): Promise<IMutationResult<IPsychologistProfile>> {
+  const response = await api.post<IPsychologistProfile>(
     '/psychologist/profile',
     body,
   )
-  return response.data
+  return { data: response.data, message: response.apiMessage ?? null }
 }

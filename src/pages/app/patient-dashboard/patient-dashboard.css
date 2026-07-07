@@ -1,0 +1,7 @@
+@reference "../../../global.css";
+
+@layer components {
+  .pd-root {
+    @apply flex min-h-screen w-full flex-col items-center justify-center px-4;
+  }
+}

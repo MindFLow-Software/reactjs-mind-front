@@ -7,7 +7,7 @@ import { CalendarClock, Info, Loader2 } from 'lucide-react'
 
 import { toast } from 'sonner'
 import { getAvailability } from '@/api/availability/get-availability'
-import { useHeaderStore } from '@/hooks/use-header-store'
+import { useHeaderStore } from '@/store/use-header-store'
 import { ScheduleManager } from './components/schedule-manager'
 
 export function AvailabilityPage() {
@@ -52,7 +52,7 @@ export function AvailabilityPage() {
 
         <div className="bg-primary/5 border-l-4 border-primary p-4 flex gap-3 rounded-r-xl">
           <Info className="text-primary shrink-0 size-5" />
-          <div className="space-y-1">
+          <div className="flex flex-col gap-1">
             <p className="text-sm text-foreground font-semibold">
               Como funciona?
             </p>

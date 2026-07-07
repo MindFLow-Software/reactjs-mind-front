@@ -2,35 +2,18 @@ import type { ReactNode } from 'react'
 
 import { cn } from '@/lib/utils'
 import { TitleIcon } from '@/components/title-icon'
-import { CardContent, CardFooter, CardHeader } from '@/components/ui/card'
+import { Card, CardContent, CardFooter, CardHeader } from '@/components/ui/card'
 
-type ProfileCardVariant = 'primary' | 'secondary'
+import './profile-card.css'
 
-function ProfileCardRoot({
-  children,
-  variant = 'primary',
-}: {
-  children: ReactNode
-  variant?: ProfileCardVariant
-}) {
-  return (
-    <div
-      className={cn(
-        "relative w-full h-full flex flex-col gap-6 py-6 overflow-hidden rounded-xl border border-border bg-card transition-colors duration-150 before:absolute before:inset-x-0 before:top-0 before:h-[3px] before:content-['']",
-        variant === 'primary'
-          ? 'hover:bg-blue-50/50 dark:hover:bg-blue-950/10 before:bg-linear-to-r before:from-primary before:to-primary/50'
-          : 'hover:bg-green-50/50 dark:hover:bg-green-950/10 before:bg-linear-to-r before:from-green-600 before:to-green-400',
-      )}
-    >
-      {children}
-    </div>
-  )
+function ProfileCardRoot({ children }: { children: ReactNode }) {
+  return <Card className="pf-card-root">{children}</Card>
 }
 
 type IProfileCardHeader = {
   label: string
   icon: ReactNode
-  variant?: ProfileCardVariant
+  variant?: 'primary' | 'secondary'
 }
 
 function ProfileCardHeader({
@@ -39,21 +22,27 @@ function ProfileCardHeader({
   variant = 'primary',
 }: IProfileCardHeader) {
   return (
-    <CardHeader className="flex items-center pt-4">
+    <CardHeader className="pf-card-header">
+      <div
+        className={cn(
+          'pf-card-accent-bar',
+          variant === 'primary'
+            ? 'pf-card-accent-bar--primary'
+            : 'pf-card-accent-bar--secondary',
+        )}
+      />
       <TitleIcon variant={variant}>{icon}</TitleIcon>
-      <span className="text-xs font-semibold uppercase tracking-widest text-muted-foreground">
-        {label}
-      </span>
+      <span className="pf-card-header-label">{label}</span>
     </CardHeader>
   )
 }
 
 function ProfileCardContent({ children }: { children: ReactNode }) {
-  return <CardContent className="space-y-2 flex-1">{children}</CardContent>
+  return <CardContent className="pf-card-content">{children}</CardContent>
 }
 
 function ProfileCardFooter({ children }: { children: ReactNode }) {
-  return <CardFooter className="pb-4 mt-auto">{children}</CardFooter>
+  return <CardFooter className="pf-card-footer">{children}</CardFooter>
 }
 
 export const ProfileCard = Object.assign(ProfileCardRoot, {

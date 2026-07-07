@@ -1,0 +1,19 @@
+@reference "../../../global.css";
+
+@layer components {
+  .acc-page-root {
+    @apply mt-6 flex flex-col gap-5;
+  }
+
+  .acc-page-state {
+    @apply flex h-[600px] flex-col items-center justify-center gap-3 px-4 text-center;
+  }
+
+  .acc-page-error-icon {
+    @apply rounded-full bg-destructive/10 p-4;
+  }
+
+  .acc-page-heatmap-wrap {
+    @apply animate-in fade-in slide-in-from-bottom-4 duration-500 delay-150;
+  }
+}

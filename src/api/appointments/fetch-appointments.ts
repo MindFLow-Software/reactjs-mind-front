@@ -1,5 +1,5 @@
 import { api } from '@/lib/axios'
-import type { Appointment } from '@/types/appointment'
+import type { IAppointment } from '@/types/appointment'
 
 export interface FetchAppointmentsParams {
   pageIndex?: number
@@ -8,7 +8,7 @@ export interface FetchAppointmentsParams {
 }
 
 export interface FetchAppointmentsResponse {
-  appointments: Appointment[]
+  appointments: IAppointment[]
 }
 
 export async function fetchAppointments(

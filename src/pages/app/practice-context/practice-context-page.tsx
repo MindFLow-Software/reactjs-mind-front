@@ -1,12 +1,7 @@
 import './practice-context-page.css'
 
-import { useState } from 'react'
-import { useNavigate } from 'react-router-dom'
-import { useMutation, useQueryClient } from '@tanstack/react-query'
+import { useCallback, useState } from 'react'
 import { Briefcase, Building2 } from 'lucide-react'
-
-import { toast } from 'sonner'
-import { AxiosError } from 'axios'
 
 import {
   ContextType,
@@ -14,53 +9,35 @@ import {
 } from '@/types/psychologist'
 
 import { CreateClinicContext } from './components/create-clinic-context'
-import { createPracticeContext } from '@/api/auth/create-practice-context'
 import { CreateIndividualContext } from './components/create-individual-context'
 import { PracticeContextHeader } from './components/practice-context-header'
 import {
   PracticeTypeCard,
   type IPracticeTypeCardOption,
 } from './components/practice-type-card'
+import { useCreatePracticeContext } from './hooks/use-create-practice-context'
 
 export function PracticeContextPage() {
-  const navigate = useNavigate()
-  const queryClient = useQueryClient()
-
   const [practiceContext, setPracticeContext] = useState<ContextType | null>(
     null,
   )
 
-  const handleSetContextType = (contextType: ContextType) => {
+  const handleSetContextType = useCallback((contextType: ContextType) => {
     setPracticeContext(contextType)
-  }
+  }, [])
 
-  const handleGoBack = () => {
+  const handleGoBack = useCallback(() => {
     setPracticeContext(null)
-  }
+  }, [])
 
-  const { mutateAsync } = useMutation({
-    mutationKey: ['create-psychologist-practice-context'],
-    mutationFn: createPracticeContext,
-    onSuccess: async () => {
-      await queryClient.invalidateQueries({ queryKey: ['profile'] })
-      toast.success('Contexto de atuação criado')
-      navigate('/profiles')
+  const { mutateAsync, isPending } = useCreatePracticeContext()
+
+  const handleCreatePracticeContext = useCallback(
+    async (data: CreatePracticeContextBody) => {
+      await mutateAsync(data)
     },
-    onError: (error) => {
-      const errorMessage =
-        error instanceof AxiosError
-          ? error.message
-          : 'Erro ao criar contexto de atuação'
-
-      toast.error(errorMessage)
-    },
-  })
-
-  const handleCreatePracticeContext = async (
-    data: CreatePracticeContextBody,
-  ) => {
-    await mutateAsync(data)
-  }
+    [mutateAsync],
+  )
 
   const typeOptions: IPracticeTypeCardOption[] = [
     {
@@ -95,7 +72,8 @@ export function PracticeContextPage() {
         return (
           <CreateIndividualContext
             onGoBack={handleGoBack}
-            onCreatPracticeContext={handleCreatePracticeContext}
+            onCreatePracticeContext={handleCreatePracticeContext}
+            isSubmitting={isPending}
           />
         )
       }
@@ -103,7 +81,7 @@ export function PracticeContextPage() {
         return (
           <CreateClinicContext
             onGoBack={handleGoBack}
-            onCreatPracticeContext={handleCreatePracticeContext}
+            onCreatePracticeContext={handleCreatePracticeContext}
           />
         )
       }

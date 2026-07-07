@@ -1,0 +1,35 @@
+@reference "../../../../../global.css";
+
+@layer components {
+  .cs-header-icon {
+    @apply p-2 rounded-xl bg-blue-50 dark:bg-blue-950/30 shrink-0;
+  }
+
+  .cs-hint {
+    @apply bg-blue-50 dark:bg-blue-950/30 border border-blue-100 dark:border-blue-900 rounded-xl p-4 flex gap-3;
+  }
+
+  .cs-hint-badge {
+    @apply size-5 rounded-full bg-blue-100 dark:bg-blue-900/50 flex items-center justify-center shrink-0 mt-0.5;
+  }
+
+  .cs-hint-pill {
+    @apply inline-flex items-center gap-1.5 text-xs font-medium text-blue-700 dark:text-blue-300 bg-white/70 dark:bg-blue-950/50 border border-blue-200 dark:border-blue-800 rounded-full px-3 py-1;
+  }
+
+  .cs-section-label {
+    @apply text-[11px] font-bold text-muted-foreground uppercase tracking-widest;
+  }
+
+  .cs-error {
+    @apply text-[11px] text-red-500 font-medium;
+  }
+
+  .cs-counter {
+    @apply text-[11px] font-bold px-2.5 py-0.5 rounded-full;
+  }
+
+  .cs-footer {
+    @apply shrink-0 px-6 py-4 border-t bg-background flex items-center justify-between gap-4;
+  }
+}

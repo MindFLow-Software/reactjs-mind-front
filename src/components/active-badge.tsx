@@ -8,12 +8,11 @@ type IActiveBadge = {
 export function ActiveBadge({ isActive }: IActiveBadge) {
   return (
     <Badge
-      className={`${
+      className={cn(
         isActive
           ? 'bg-green-50 text-green-700 dark:bg-green-950/30 dark:text-green-400'
-          : 'bg-red-50 text-red-600 dark:bg-red-950/30 dark:text-red-400'
-      }
-      `}
+          : 'bg-red-50 text-red-600 dark:bg-red-950/30 dark:text-red-400',
+      )}
     >
       <span
         className={cn(

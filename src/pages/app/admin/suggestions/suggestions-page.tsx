@@ -4,12 +4,13 @@ import { useEffect } from 'react'
 import { Helmet } from 'react-helmet-async'
 import { LayoutGrid } from 'lucide-react'
 
-import { useHeaderStore } from '@/hooks/use-header-store'
+import { useHeaderStore } from '@/store/use-header-store'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 
 import { MostVotedSuggestionsCard } from './components/most-voted-suggestions-card'
 import { PendingSuggestionsModeration } from './components/pending-suggestions-moderation'
 import { SuggestionRanking } from './components/ranking-table'
+import './suggestions-page.css'
 
 export function AdminSuggestionsPage() {
   const { setTitle } = useHeaderStore()
@@ -22,12 +23,12 @@ export function AdminSuggestionsPage() {
     <>
       <Helmet title="Sugestões e Sugestões" />
 
-      <div className="flex flex-col gap-8 mt-6">
+      <div className="ads-page-root">
         <div>
-          <Card className="border border-blue-500/20 bg-gradient-to-br from-blue-600 to-blue-500 text-white shadow-lg rounded-2xl">
+          <Card className="ads-page-banner">
             <CardHeader className="pb-3">
               <CardTitle className="text-sm font-semibold flex items-center gap-3">
-                <span className="flex items-center justify-center size-8 rounded-full bg-white/20">
+                <span className="ads-page-banner-icon">
                   <LayoutGrid className="size-4" />
                 </span>
                 Priorização de Sugestões
@@ -35,7 +36,7 @@ export function AdminSuggestionsPage() {
             </CardHeader>
 
             <CardContent>
-              <p className="text-xs leading-relaxed text-white/90">
+              <p className="ads-page-banner-text">
                 As sugestões mais votadas representam demandas reais dos
                 psicólogos. Priorize-as movendo para{' '}
                 <span className="font-semibold text-white underline underline-offset-2">
@@ -53,11 +54,11 @@ export function AdminSuggestionsPage() {
           </div>
         </div>
 
-        <div className="grid grid-cols-2 gap-6">
-          <div className=" space-y-6">
+        <div className="ads-page-grid">
+          <div className="flex flex-col gap-6">
             <MostVotedSuggestionsCard />
           </div>
-          <div className=" space-y-6">
+          <div className="flex flex-col gap-6">
             <SuggestionRanking />
           </div>
         </div>

@@ -28,22 +28,20 @@ export function DropZone({
         onDrop={onDrop}
         onClick={() => inputRef.current?.click()}
         className={cn(
-          'shrink-0 flex cursor-pointer flex-col items-center gap-3 rounded-xl border-2 border-dashed p-8 text-center transition-all duration-150',
-          isDragging
-            ? 'border-primary bg-blue-50 dark:bg-blue-950/20'
-            : 'border-border bg-muted/40 hover:border-blue-400 hover:bg-blue-50/50 dark:hover:bg-blue-950/10',
+          'pd-up-dropzone',
+          isDragging ? 'pd-up-dropzone-active' : 'pd-up-dropzone-idle',
         )}
       >
-        <div className="flex h-11 w-11 items-center justify-center rounded-full border border-blue-100 bg-card dark:border-blue-900">
-          <CloudUpload className="h-5 w-5 text-primary" />
+        <div className="pd-up-dropzone-icon">
+          <CloudUpload className="size-5 text-primary" />
         </div>
         <div>
-          <p className="text-[13.5px] font-semibold text-foreground">
+          <p className="pd-up-dropzone-title">
             {isDragging
               ? 'Solte para enviar'
               : 'Arraste arquivos aqui ou clique para selecionar'}
           </p>
-          <p className="mt-1 text-[12px] text-muted-foreground">
+          <p className="pd-up-dropzone-sub">
             PDF, JPG, PNG, DOCX — até 20 MB cada
           </p>
         </div>

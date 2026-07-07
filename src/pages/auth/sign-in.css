@@ -1,0 +1,7 @@
+@reference "../../global.css";
+
+@layer components {
+  .signin-shell {
+    @apply w-full max-w-[420px];
+  }
+}

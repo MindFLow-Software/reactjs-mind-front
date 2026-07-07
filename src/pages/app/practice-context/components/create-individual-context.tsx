@@ -1,4 +1,5 @@
 import './create-individual-context.css'
+import './practice-context-shared.css'
 
 import { useForm, type Resolver } from 'react-hook-form'
 import { Briefcase, CircleCheck, Repeat2 } from 'lucide-react'
@@ -35,7 +36,7 @@ import { Card, CardContent, CardFooter, CardHeader } from '@/components/ui/card'
 import {
   createPsychologistPracticeContextSchema,
   type ICreatePsychologistPracticeContext,
-} from '@/validators/psychologist-context'
+} from '@/validators/psychologists/form/create-practice-context-schema'
 import { TitleIcon } from '@/components/title-icon'
 import { PracticeContextHeader } from './practice-context-header'
 import { SessionFormatToggle } from './session-format-toggle'
@@ -48,12 +49,14 @@ const SESSION_FORMAT_OPTIONS = [
 
 type ICreateIndividualContext = {
   onGoBack: () => void
-  onCreatPracticeContext: (data: CreatePracticeContextBody) => void
+  onCreatePracticeContext: (data: CreatePracticeContextBody) => void
+  isSubmitting?: boolean
 }
 
 export function CreateIndividualContext({
   onGoBack,
-  onCreatPracticeContext,
+  onCreatePracticeContext,
+  isSubmitting,
 }: ICreateIndividualContext) {
   const form = useForm<ICreatePsychologistPracticeContext>({
     resolver: zodResolver(
@@ -80,7 +83,7 @@ export function CreateIndividualContext({
 
       <Card className="pc-cfg-card">
         <Form {...form}>
-          <form onSubmit={form.handleSubmit(onCreatPracticeContext)}>
+          <form onSubmit={form.handleSubmit(onCreatePracticeContext)}>
             <CardHeader className="pc-cfg-head">
               <TitleIcon variant="secondary">
                 <Briefcase />
@@ -186,6 +189,7 @@ export function CreateIndividualContext({
             <CardFooter className="pc-cfg-foot">
               <Button
                 type="submit"
+                disabled={isSubmitting}
                 className="bg-blue-600 text-white hover:bg-blue-700"
               >
                 Finalizar

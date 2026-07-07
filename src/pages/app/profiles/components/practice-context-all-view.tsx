@@ -3,12 +3,12 @@ import './practice-context-all-view.css'
 import { motion } from 'framer-motion'
 import { ArrowRight, ChevronLeft, Plus, ShieldCheck } from 'lucide-react'
 
-import type { PsychologistPracticeContext } from '@/types/psychologist'
+import type { IPsychologistPracticeContext } from '@/types/psychologist'
 
 import { PracticeContextListItem } from './practice-context-list-item'
 
 interface PracticeContextAllViewProps {
-  contexts: PsychologistPracticeContext[]
+  contexts: IPsychologistPracticeContext[]
   activeContextId: string | null
   onEnter: (id: string) => void
   onViewMain: () => void
@@ -16,7 +16,7 @@ interface PracticeContextAllViewProps {
 }
 
 interface TopbarProps {
-  contexts: PsychologistPracticeContext[]
+  contexts: IPsychologistPracticeContext[]
   onViewMain: () => void
 }
 

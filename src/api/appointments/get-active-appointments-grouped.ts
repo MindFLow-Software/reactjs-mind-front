@@ -1,5 +1,5 @@
 import { api } from '@/lib/axios'
-import type { AppointmentStatus } from '@/types/appointment'
+import type { AppointmentStatus } from '@/types/enums'
 
 export interface ActiveAppointment {
   id: string

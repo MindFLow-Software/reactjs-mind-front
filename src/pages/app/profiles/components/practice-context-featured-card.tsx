@@ -7,7 +7,7 @@ import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardFooter, CardHeader } from '@/components/ui/card'
 import {
   ContextType,
-  type PsychologistPracticeContext,
+  type IPsychologistPracticeContext,
 } from '@/types/psychologist'
 import { Currency } from '@/utils/currency'
 
@@ -27,13 +27,13 @@ const BILLING_MODEL_LABELS: Record<ContextType, string> = {
 }
 
 interface PracticeContextFeaturedCardProps {
-  context: PsychologistPracticeContext
+  context: IPsychologistPracticeContext
   otherContextsCount: number
   onEnter: (id: string) => void
   onViewAll: () => void
 }
 
-function FeatStats({ context }: { context: PsychologistPracticeContext }) {
+function FeatStats({ context }: { context: IPsychologistPracticeContext }) {
   return (
     <div className="ca-feat-stats">
       <div className="ca-feat-stat">

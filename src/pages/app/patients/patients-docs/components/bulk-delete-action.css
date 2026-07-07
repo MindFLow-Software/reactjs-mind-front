@@ -1,0 +1,36 @@
+@reference "../../../../../global.css";
+
+@layer components {
+  .pd-bulk-wrap {
+    @apply fixed bottom-6 left-1/2 z-50 -translate-x-1/2;
+    @apply animate-in fade-in slide-in-from-bottom-4 duration-300;
+  }
+
+  .pd-bulk-bar {
+    @apply flex items-center gap-3 rounded-xl border border-border/10 bg-foreground px-4 py-2.5 text-background shadow-2xl;
+  }
+
+  .pd-bulk-clear {
+    @apply flex h-7 w-7 cursor-pointer items-center justify-center rounded-lg transition-colors hover:bg-background/15;
+  }
+
+  .pd-bulk-divider {
+    @apply h-5 w-px bg-background/20;
+  }
+
+  .pd-bulk-count {
+    @apply text-sm font-medium tabular-nums whitespace-nowrap;
+  }
+
+  .pd-bulk-download {
+    @apply h-8 border-0 bg-background/15 text-xs font-medium text-background hover:bg-background/25;
+  }
+
+  .pd-bulk-delete-btn {
+    @apply h-8 cursor-pointer text-xs font-medium;
+  }
+
+  .pd-bulk-dialog-icon {
+    @apply flex h-9 w-9 items-center justify-center rounded-full bg-destructive/10;
+  }
+}

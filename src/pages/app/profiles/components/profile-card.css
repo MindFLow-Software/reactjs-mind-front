@@ -1,0 +1,104 @@
+@reference "../../../../global.css";
+
+@layer components {
+  .pf-card-root {
+    @apply relative overflow-hidden max-w-lg w-full p-0! gap-3;
+  }
+
+  .pf-card-header {
+    @apply flex items-center pt-4;
+  }
+
+  .pf-card-accent-bar {
+    @apply absolute inset-x-0 top-0 h-1;
+  }
+
+  .pf-card-accent-bar--primary {
+    @apply bg-blue-600;
+  }
+
+  .pf-card-accent-bar--secondary {
+    @apply bg-teal-600;
+  }
+
+  .pf-card-header-label {
+    @apply text-xs font-semibold uppercase tracking-widest text-muted-foreground;
+  }
+
+  .pf-card-content {
+    @apply flex flex-col gap-2;
+  }
+
+  .pf-card-footer {
+    @apply pb-4 mt-auto;
+  }
+
+  /* Feature bullet list — shared by patient-card.tsx and psychologist-card.tsx */
+  .pf-feature-list {
+    @apply flex flex-col gap-2;
+  }
+
+  .pf-feature-item {
+    @apply flex gap-2 text-sm text-muted-foreground;
+  }
+
+  .pf-feature-dot {
+    @apply mt-1.5 size-1.5 shrink-0 rounded-full;
+  }
+
+  .pf-feature-dot--primary {
+    @apply bg-blue-500;
+  }
+
+  .pf-feature-dot--secondary {
+    @apply bg-teal-500;
+  }
+
+  /* Primary CTA button — shared by patient-card.tsx and psychologist-card.tsx */
+  .pf-cta-btn {
+    @apply flex items-center gap-2 w-full text-white;
+  }
+
+  .pf-cta-btn--primary {
+    @apply bg-blue-600 hover:bg-blue-700 hover:text-white dark:hover:bg-blue-950/30;
+  }
+
+  .pf-cta-btn--secondary {
+    @apply bg-teal-600 hover:bg-teal-700 dark:hover:bg-teal-950/30;
+  }
+
+  /* Stat box — shared by psychologist-card.tsx and practice-context-card.tsx */
+  .pf-stat-grid {
+    @apply grid grid-cols-2 gap-y-4 rounded-lg bg-muted/50 p-4;
+  }
+
+  .pf-stat-label {
+    @apply text-xs tracking-wider text-muted-foreground uppercase;
+  }
+
+  .pf-stat-value {
+    @apply mt-1 text-sm font-medium text-foreground;
+  }
+
+  /* Single-value variant — practice-context-card.tsx */
+  .pf-stat-box {
+    @apply rounded-md bg-muted/50 p-4;
+  }
+
+  /* Entity card shell — shared by practice-context-card.tsx and patient-profile-card.tsx */
+  .pf-entity-card {
+    @apply flex flex-col gap-0 overflow-hidden p-0 max-w-1/2 w-full;
+  }
+
+  .pf-entity-card-header {
+    @apply flex items-start gap-3 py-4;
+  }
+
+  .pf-entity-card-title-wrap {
+    @apply min-w-0 flex-1;
+  }
+
+  .pf-entity-card-footer {
+    @apply py-4;
+  }
+}

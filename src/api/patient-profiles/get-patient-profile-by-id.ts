@@ -1,8 +1,8 @@
 import { api } from '@/lib/axios'
-import type { IpatientProfile } from '@/types/patient-profile'
+import type { IPatientProfile } from '@/types/patient-profile'
 
 export interface IgetPatientProfileByIdResponse {
-  patient: IpatientProfile | null
+  patient: IPatientProfile | null
 }
 
 export async function getPatientProfileById(

@@ -228,7 +228,7 @@ export function WeeklyAvailability({
   )
 
   return (
-    <div className="space-y-4">
+    <div className="flex flex-col gap-4">
       <div className="flex items-center justify-between">
         <div>
           <h3 className="text-lg font-semibold text-foreground">
@@ -248,7 +248,7 @@ export function WeeklyAvailability({
         </div>
       </div>
 
-      <div className="space-y-2">
+      <div className="flex flex-col gap-2">
         {daysOfWeek.map(({ dayOfWeek, dayName }) => (
           <AvailabilityDayRow
             key={dayOfWeek}

@@ -27,7 +27,20 @@ Types:
 - Backend entities/domains must have a single source of truth in `src/types`.
 - API files may define action-specific request/response wrappers only when they are not reusable entities.
 - UI-only types must be explicitly named as view models and must not replace backend entities.
+- Use TypeScript `enum` whenever possible for closed domain values. Do not export enum-like `const` objects plus `typeof` type aliases when an `enum` fits; export `enum AppointmentStatus` and use `AppointmentStatus.SCHEDULED`.
 - No `any`. Use backend-aligned types, `unknown` plus guards, or generics.
+
+Conditional logic:
+
+- Never chain or nest ternaries, especially inside JSX. This rule is absolute.
+- Two-state ternaries are allowed only when they stay simple and readable.
+- Three or more states must use a named render function, `switch`, lookup map, or precomputed variable.
+
+Reuse:
+
+- If an equivalent helper or utility exists, reuse it. Do not reimplement formatting, normalization, validation, guards, or mapping logic inline.
+- Any function used in two or more places must be extracted to a helper class or helper/util/shared file and reused from there.
+- Shared reusable helpers belong in `src/utils`, `src/shared`, or the closest established shared location for that domain.
 
 Validators and forms:
 
@@ -44,6 +57,7 @@ Components and hooks:
 - Creation and editing flows must be separate. Never reuse a create modal/form/schema/hook for edit mode.
 - Reusable API/filter logic becomes hooks.
 - Shared hooks live in `src/hooks`; feature-only hooks live next to the feature.
+- Logged-in user profile data must always come from `useAuth`. Do not read profile data from `localStorage`, duplicate profile queries, or pass stale user snapshots when `useAuth` is available.
 - Global state uses Zustand and must live in one consistent store location. Do not put stores in `src/utils`.
 - Each `.tsx` file should expose one main function when possible. Compound components are the allowed exception.
 
@@ -124,12 +138,16 @@ Referência canônica: `src/pages/app/patients/patients-list/register-patients/h
 
 ## Tipagem
 
-- Enums como type unions: `type Status = 'SCHEDULED' | 'DONE' | 'CANCELLED'`
-- Objetos-enum com `as const` quando precisar iterar valores:
+- Valores fechados de dominio devem usar `enum` TypeScript sempre que possivel:
   ```ts
-  export const AppointmentStatus = { SCHEDULED: 'SCHEDULED', ... } as const
-  type AppointmentStatus = typeof AppointmentStatus[keyof typeof AppointmentStatus]
+  export enum AppointmentStatus {
+    SCHEDULED = 'SCHEDULED',
+    ATTENDING = 'ATTENDING',
+    FINISHED = 'FINISHED',
+  }
   ```
+- Usar `AppointmentStatus.SCHEDULED` nos call sites.
+- Nao exportar objeto `const` + type alias com `typeof AppointmentStatus[keyof typeof AppointmentStatus]` quando um `enum` atende.
 - `Record<string, string>` para dicionários de tradução.
 - `?` para campos opcionais, nunca `| undefined` explícito desnecessário.
 

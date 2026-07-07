@@ -1,0 +1,75 @@
+@reference "../../../../../global.css";
+
+@layer components {
+  .adb-pie-card {
+    @apply flex flex-col overflow-hidden rounded-2xl border-border bg-card shadow-sm;
+  }
+
+  .adb-pie-header {
+    @apply flex flex-col items-stretch  border-b border-border p-0 sm:flex-row;
+  }
+
+  .adb-pie-header-main {
+    @apply flex flex-1 flex-col justify-center gap-1 px-6 py-4;
+  }
+
+  .adb-pie-title {
+    @apply text-base font-semibold uppercase tracking-wider text-foreground;
+  }
+
+  .adb-pie-header-aside {
+    @apply flex border-t border-border sm:border-t-0 sm:border-l;
+  }
+
+  .adb-pie-total-block {
+    @apply relative z-30 flex flex-1 flex-col justify-center gap-1 px-6 py-4 text-left sm:px-8;
+  }
+
+  .adb-pie-total-label {
+    @apply text-[10px] font-medium uppercase tracking-wider text-muted-foreground;
+  }
+
+  .adb-pie-total-value {
+    @apply text-xl font-bold leading-none text-foreground sm:text-2xl;
+  }
+
+  .adb-pie-content {
+    @apply flex flex-1 flex-col bg-card px-6 pb-6 pt-6;
+  }
+
+  .adb-pie-state {
+    @apply flex h-[300px] flex-col items-center justify-center text-center;
+  }
+
+  .adb-pie-state-icon {
+    @apply mb-3 flex h-12 w-12 items-center justify-center rounded-full bg-muted/30;
+  }
+
+  .adb-pie-retry-btn {
+    @apply mt-2 flex cursor-pointer items-center gap-1 text-xs font-bold text-blue-500 hover:underline;
+  }
+
+  .adb-pie-chart-wrap {
+    @apply flex flex-1 min-h-[250px] items-center justify-center;
+  }
+
+  .adb-pie-legend {
+    @apply mt-6 grid grid-cols-2 gap-x-4 gap-y-3 border-t border-border pt-6;
+  }
+
+  .adb-pie-legend-item {
+    @apply flex items-center justify-between;
+  }
+
+  .adb-pie-legend-dot {
+    @apply h-2 w-2 shrink-0 rounded-full shadow-sm;
+  }
+
+  .adb-pie-legend-label {
+    @apply text-[11px] font-bold uppercase tracking-tight text-muted-foreground transition-colors group-hover:text-foreground;
+  }
+
+  .adb-pie-legend-value {
+    @apply text-[11px] font-bold tabular-nums text-foreground;
+  }
+}

@@ -5,7 +5,7 @@ import { ArrowRight, Briefcase, Building2, Star } from 'lucide-react'
 
 import {
   ContextType,
-  type PsychologistPracticeContext,
+  type IPsychologistPracticeContext,
 } from '@/types/psychologist'
 import { Currency } from '@/utils/currency'
 
@@ -23,7 +23,7 @@ const BILLING_MODEL_LABELS: Record<ContextType, string> = {
 }
 
 interface PracticeContextListItemProps {
-  context: PsychologistPracticeContext
+  context: IPsychologistPracticeContext
   isPrincipal: boolean
   onEnter: (id: string) => void
 }

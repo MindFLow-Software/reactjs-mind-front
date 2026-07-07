@@ -1,14 +1,14 @@
 import './context-monogram.css'
 
 import { cn } from '@/lib/utils'
-import type { PsychologistPracticeContext } from '@/types/psychologist'
+import type { IPsychologistPracticeContext } from '@/types/psychologist'
 
 const CONTEXT_TYPE_LABELS: Record<string, string> = {
   CLINIC: 'Clinica Equipe',
   INDIVIDUAL: 'At Ind',
 }
 
-function getInitials(context: PsychologistPracticeContext): string {
+function getInitials(context: IPsychologistPracticeContext): string {
   const name = context.nickname ?? CONTEXT_TYPE_LABELS[context.contextType]
   return name
     .split(/\s+/)
@@ -18,7 +18,7 @@ function getInitials(context: PsychologistPracticeContext): string {
 }
 
 interface ContextMonogramProps {
-  context: PsychologistPracticeContext
+  context: IPsychologistPracticeContext
   size: 'featured' | 'list'
   showPip?: boolean
 }

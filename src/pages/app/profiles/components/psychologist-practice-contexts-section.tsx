@@ -4,24 +4,20 @@ import { useNavigate } from 'react-router-dom'
 import { useAuth } from '@/hooks/use-auth'
 import { useActivePracticeContextStore } from '@/store/use-active-practice-context-store'
 
-import { PracticeContextMainView } from './practice-context-main-view'
+import { ProfileSectionHeader } from './profile-section-header'
+import { PracticeContextFeaturedCard } from './practice-context-featured-card'
+
+import './psychologist-practice-contexts-section.css'
 
 export function PsychologistPracticeContextsSection() {
   const navigate = useNavigate()
-  const { profile } = useAuth()
 
-  const activePracticeContextId = useActivePracticeContextStore(
-    (state) => state.activePracticeContextId,
-  )
-  const setActivePracticeContextId = useActivePracticeContextStore(
-    (state) => state.setActivePracticeContextId,
-  )
+  const { profile } = useAuth()
+  const { setActivePracticeContextId } = useActivePracticeContextStore()
 
   const practiceContexts = profile?.practiceContexts ?? []
 
-  const featuredContext =
-    practiceContexts.find((c) => c.id === activePracticeContextId) ??
-    practiceContexts[0]
+  const featuredContext = practiceContexts[0]
 
   const otherContexts = practiceContexts.filter(
     (c) => c.id !== featuredContext?.id,
@@ -43,10 +39,15 @@ export function PsychologistPracticeContextsSection() {
   if (practiceContexts.length === 0) return null
 
   return (
-    <section className="w-full">
-      <PracticeContextMainView
-        featuredContext={featuredContext}
-        otherContexts={otherContexts}
+    <section className="flex flex-col gap-3 w-full">
+      <ProfileSectionHeader
+        section="contextos"
+        title="Seus contextos de atuação"
+        label="Os contextos representam os ambientes em que você atende, como consultório particular ou clínica."
+      />
+      <PracticeContextFeaturedCard
+        context={featuredContext}
+        otherContextsCount={otherContexts.length}
         onEnter={handleEnter}
         onViewAll={handleViewAll}
       />

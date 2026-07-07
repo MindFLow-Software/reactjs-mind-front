@@ -1,4 +1,5 @@
 'use client'
+// No paired CSS: composition-only shell over shadcn Sidebar + nav config, no feature styling.
 import * as React from 'react'
 
 import { useAuth } from '@/hooks/use-auth'
@@ -138,7 +139,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
         icon: Inbox,
         items: [
           { title: 'Sugestões Recebidas', url: 'admin-suggestions' },
-          { title: 'Controle de Sugestões', url: 'menagement-suggestions' },
+          { title: 'Controle de Sugestões', url: 'management-suggestions' },
         ],
       })
     }

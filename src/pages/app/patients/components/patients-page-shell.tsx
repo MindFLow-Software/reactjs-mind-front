@@ -55,7 +55,7 @@ function PatientsPageShellHeader({
 }: PatientsPageShellHeaderProps) {
   return (
     <header className="flex flex-col lg:flex-row lg:items-center justify-between gap-4 border-l-4 border-primary pl-5 py-2">
-      <div className="space-y-1">
+      <div className="flex flex-col gap-1">
         {title && (
           <h1 className="text-2xl font-bold tracking-tight flex items-center gap-3">
             {icon}

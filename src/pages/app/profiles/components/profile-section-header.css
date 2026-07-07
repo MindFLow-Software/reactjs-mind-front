@@ -1,0 +1,15 @@
+@reference "../../../../global.css";
+
+@layer components {
+  .pf-section-wrap {
+    @apply flex flex-col gap-1 mb-4;
+  }
+
+  .pf-section-eyebrow {
+    @apply text-xs tracking-wider font-medium text-muted-foreground uppercase;
+  }
+
+  .pf-section-title {
+    @apply text-xl text-foreground;
+  }
+}

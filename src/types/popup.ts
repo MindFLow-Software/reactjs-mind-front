@@ -1,10 +1,4 @@
-export const PopupType = {
-  MODAL: 'MODAL',
-  SLIDE_IN: 'SLIDE_IN',
-  BAR: 'BAR',
-  TOAST: 'TOAST',
-} as const
-export type PopupType = (typeof PopupType)[keyof typeof PopupType]
+import type { PopupType } from '@/types/enums'
 
 export const PopupStatus = {
   DRAFT: 'DRAFT',
@@ -14,7 +8,7 @@ export const PopupStatus = {
 } as const
 export type PopupStatus = (typeof PopupStatus)[keyof typeof PopupStatus]
 
-export interface PopupHTTP {
+export interface IPopup {
   id: string
   internalName: string
   title: string | null
@@ -24,9 +18,9 @@ export interface PopupHTTP {
   ctaUrl: string | null
   type: PopupType
   status: PopupStatus
-  styleConfig: Record<string, unknown> | null
-  triggerConfig: Record<string, unknown> | null
-  displayRules: Record<string, unknown> | null
+  styleConfig: unknown
+  triggerConfig: unknown
+  displayRules: unknown
   startsAt: string | null
   endsAt: string | null
   psychologistId: string | null

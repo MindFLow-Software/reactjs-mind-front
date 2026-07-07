@@ -6,6 +6,7 @@ import {
   dateFnsLocalizer,
   Views,
   type View,
+  type ToolbarProps,
 } from 'react-big-calendar'
 import { format, parse, startOfWeek, getDay } from 'date-fns'
 import { ptBR } from 'date-fns/locale'
@@ -21,7 +22,11 @@ import {
 
 import { Button } from '@/components/ui/button'
 import { cn } from '@/lib/utils'
-import { type Appointment } from '@/api/appointments/get-appointment'
+import { type IAppointmentListItem } from '@/api/appointments/get-appointments'
+import { AppointmentStatus } from '@/types/enums'
+import { translatedAppointmentStatus } from '@/constants/translated-appointment-status'
+
+import './calendar-view.css'
 
 const locales = { 'pt-BR': ptBR }
 const localizer = dateFnsLocalizer({
@@ -32,116 +37,33 @@ const localizer = dateFnsLocalizer({
   locales,
 })
 
-const calendarStyles = `
-  .rbc-calendar { font-family: inherit; border: none !important; background: transparent; }
-  .rbc-header { 
-    padding: 12px 8px !important; 
-    font-weight: 600 !important; 
-    text-transform: capitalize; 
-    font-size: 13px; 
-    color: var(--foreground); 
-    border-bottom: 1px solid var(--border) !important;
-    background: var(--muted);
+const STATUS_STYLES: Record<AppointmentStatus, { block: string; dot: string }> =
+  {
+    SCHEDULED: { block: 'cv-status-scheduled', dot: 'cv-dot-scheduled' },
+    RESCHEDULED: { block: 'cv-status-rescheduled', dot: 'cv-dot-rescheduled' },
+    ATTENDING: { block: 'cv-status-attending', dot: 'cv-dot-attending' },
+    FINISHED: { block: 'cv-status-finished', dot: 'cv-dot-finished' },
+    CANCELED: { block: 'cv-status-canceled', dot: 'cv-dot-canceled' },
+    NOT_ATTEND: { block: 'cv-status-not-attend', dot: 'cv-dot-not-attend' },
   }
-  .rbc-time-view, .rbc-month-view { 
-    border: 1px solid var(--border) !important; 
-    border-radius: 12px !important;
-    overflow: hidden;
-    background: var(--card);
-  }
-  .rbc-event { 
-    padding: 0 !important; 
-    border: none !important; 
-    background-color: transparent !important; 
-  }
-  .rbc-off-range-bg { background-color: var(--muted) !important; opacity: 0.5; }
-  .rbc-today { background-color: var(--primary/5) !important; }
-  .rbc-event-label { display: none !important; }
-`
-
-const statusConfig = {
-  SCHEDULED: {
-    bg: 'bg-blue-50 dark:bg-blue-950/50',
-    border: 'border-l-blue-500',
-    text: 'text-blue-700 dark:text-blue-300',
-    dot: 'bg-blue-500',
-    label: 'Agendado',
-  },
-  RESCHEDULED: {
-    bg: 'bg-purple-50 dark:bg-purple-950/50',
-    border: 'border-l-purple-500',
-    text: 'text-purple-700 dark:text-purple-300',
-    dot: 'bg-purple-500',
-    label: 'Remarcado',
-  },
-  ATTENDING: {
-    bg: 'bg-amber-50 dark:bg-amber-950/50',
-    border: 'border-l-amber-500',
-    text: 'text-amber-700 dark:text-amber-300',
-    dot: 'bg-amber-500',
-    label: 'Em atendimento',
-  },
-  FINISHED: {
-    bg: 'bg-emerald-50 dark:bg-emerald-950/50',
-    border: 'border-l-emerald-500',
-    text: 'text-emerald-700 dark:text-emerald-300',
-    dot: 'bg-emerald-500',
-    label: 'Finalizado',
-  },
-  CANCELED: {
-    bg: 'bg-rose-50 dark:bg-rose-950/50',
-    border: 'border-l-rose-500',
-    text: 'text-rose-700 dark:text-rose-300',
-    dot: 'bg-rose-500',
-    label: 'Cancelado',
-  },
-  NOT_ATTEND: {
-    bg: 'bg-slate-50 dark:bg-slate-900/50',
-    border: 'border-l-slate-400',
-    text: 'text-slate-600 dark:text-slate-400',
-    dot: 'bg-slate-400',
-    label: 'Não compareceu',
-  },
-} as const
-
-type AppointmentStatus = keyof typeof statusConfig
-
-interface CalendarAppointment extends Appointment {
-  // eslint-disable-next-line
-  [key: string]: any
-}
 
 interface CalendarEvent {
   id: string
   title: string
   start: Date
   end: Date
-  resource: CalendarAppointment
+  resource: IAppointmentListItem
 }
 
-const CustomEvent = ({ event }: { event: CalendarEvent }) => {
-  const status = event.resource?.status || 'SCHEDULED'
-  const config =
-    statusConfig[status as AppointmentStatus] || statusConfig.SCHEDULED
+function CustomEvent({ event }: { event: CalendarEvent }) {
+  const status = event.resource?.status ?? AppointmentStatus.SCHEDULED
+  const styles = STATUS_STYLES[status] ?? STATUS_STYLES.SCHEDULED
 
   return (
-    <div
-      className={cn(
-        'h-full w-full px-2 py-1 flex flex-col border-l-[3px] rounded-r-md transition-all cursor-pointer',
-        config.bg,
-        config.border,
-      )}
-    >
+    <div className={cn('cv-event', styles.block)}>
       <div className="flex items-center gap-1.5 overflow-hidden">
-        <div className={cn('w-1.5 h-1.5 rounded-full shrink-0', config.dot)} />
-        <span
-          className={cn(
-            'font-bold text-[10px] truncate leading-tight',
-            config.text,
-          )}
-        >
-          {event.title}
-        </span>
+        <div className={cn('cv-event-dot', styles.dot)} />
+        <span className="cv-event-label">{event.title}</span>
       </div>
     </div>
   )
@@ -154,8 +76,12 @@ const viewOptions = [
   { value: Views.AGENDA, label: 'Lista', icon: List },
 ] as const
 
-// eslint-disable-next-line
-const CustomToolbar = ({ date, view, onNavigate, onView }: any) => {
+function CustomToolbar({
+  date,
+  view,
+  onNavigate,
+  onView,
+}: ToolbarProps<CalendarEvent, IAppointmentListItem>) {
   return (
     <div className="flex flex-col sm:flex-row items-center justify-between gap-4 p-4 border-b border-border bg-muted/10">
       <div className="flex items-center gap-4">
@@ -210,9 +136,9 @@ const CustomToolbar = ({ date, view, onNavigate, onView }: any) => {
 }
 
 interface CalendarViewProps {
-  appointments: Appointment[]
+  appointments: IAppointmentListItem[]
   onSelectSlot: (date: Date) => void
-  onSelectEvent: (appointment: Appointment) => void
+  onSelectEvent: (appointment: IAppointmentListItem) => void
 }
 
 export function CalendarView({
@@ -226,28 +152,23 @@ export function CalendarView({
   const events = useMemo<CalendarEvent[]>(() => {
     return appointments
       .map((apt) => {
-        // eslint-disable-next-line
-        const raw = (apt as any).props || apt
-        const startDate = apt.start || new Date(raw.scheduledAt || '')
-        const endDate =
-          apt.end || new Date(raw.endedAt || startDate.getTime() + 3600000)
+        const startDate = apt.start ?? new Date(apt.scheduledAt)
+        const endDate = apt.end ?? new Date(startDate.getTime() + 3600000)
 
         return {
-          id: apt.id || raw.id || Math.random().toString(),
-          title: apt.title || 'Consulta',
+          id: apt.id,
+          title: apt.title ?? 'Consulta',
           start: startDate,
           end: endDate,
-          resource: apt as CalendarAppointment,
+          resource: apt,
         }
       })
-      .filter((e) => e.start && !isNaN(e.start.getTime()))
+      .filter((e) => !isNaN(e.start.getTime()))
   }, [appointments])
 
   return (
-    <div className="h-full flex flex-col bg-card rounded-xl border border-border overflow-hidden">
-      <style dangerouslySetInnerHTML={{ __html: calendarStyles }} />
-
-      <Calendar<CalendarEvent, CalendarAppointment>
+    <div className="cv-container h-full flex flex-col bg-card rounded-xl border border-border overflow-hidden">
+      <Calendar<CalendarEvent, IAppointmentListItem>
         localizer={localizer}
         events={events}
         date={date}
@@ -261,8 +182,7 @@ export function CalendarView({
         }}
         components={{
           event: CustomEvent,
-          // eslint-disable-next-line
-          toolbar: (props: any) => <CustomToolbar {...props} />,
+          toolbar: CustomToolbar,
         }}
         step={30}
         timeslots={2}
@@ -274,11 +194,11 @@ export function CalendarView({
       />
 
       <div className="flex flex-wrap items-center gap-4 px-5 py-3 border-t border-border bg-muted/30">
-        {Object.entries(statusConfig).map(([key, config]) => (
-          <div key={key} className="flex items-center gap-1.5">
-            <div className={cn('w-2 h-2 rounded-full', config.dot)} />
-            <span className="text-[10px] uppercase font-bold text-muted-foreground">
-              {config.label}
+        {Object.values(AppointmentStatus).map((status) => (
+          <div key={status} className="flex items-center gap-1.5">
+            <div className={cn('cv-legend-dot', STATUS_STYLES[status].dot)} />
+            <span className="cv-legend-label">
+              {translatedAppointmentStatus[status]}
             </span>
           </div>
         ))}

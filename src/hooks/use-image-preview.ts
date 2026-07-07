@@ -1,5 +1,5 @@
-import { api } from '@/lib/axios'
 import { useState, useEffect, useRef, useCallback } from 'react'
+import { useAttachmentBlob } from '@/hooks/use-attachment-blob'
 
 interface UseImagePreviewReturn {
   previewUrl: string | null
@@ -7,14 +7,14 @@ interface UseImagePreviewReturn {
   isLoading: boolean
   onSetPreview: (file: File) => void
   clear: () => void
-  loadFromUrl: (url?: string | null) => Promise<void>
+  loadFromUrl: (attachmentId?: string | null) => Promise<void>
 }
 
 export function useImagePreview(): UseImagePreviewReturn {
   const [previewUrl, setPreviewUrl] = useState<string | null>(null)
   const [file, setFile] = useState<File | null>(null)
-  const [isLoading, setIsLoading] = useState(false)
   const createdUrls = useRef<string[]>([])
+  const { isLoading, fetchBlobUrl } = useAttachmentBlob()
 
   useEffect(() => {
     const urls = createdUrls.current
@@ -26,7 +26,6 @@ export function useImagePreview(): UseImagePreviewReturn {
   const onSetPreview = useCallback((f: File) => {
     const url = URL.createObjectURL(f)
     createdUrls.current.push(url)
-    setIsLoading(false)
     setPreviewUrl(url)
     setFile(f)
   }, [])
@@ -37,20 +36,16 @@ export function useImagePreview(): UseImagePreviewReturn {
   }, [])
 
   const loadFromUrl = useCallback(
-    async (url?: string | null): Promise<void> => {
-      try {
-        setIsLoading(true)
-        const blob = await api.get(`/attachments/${url}`, { responseType: 'blob' })
-        const objectUrl = URL.createObjectURL(blob.data)
-        createdUrls.current.push(objectUrl)
-        setPreviewUrl(objectUrl)
-      } catch {
+    async (attachmentId?: string | null): Promise<void> => {
+      if (!attachmentId) {
         setPreviewUrl(null)
-      } finally {
-        setIsLoading(false)
+        return
       }
+      const objectUrl = await fetchBlobUrl(attachmentId)
+      if (objectUrl) createdUrls.current.push(objectUrl)
+      setPreviewUrl(objectUrl)
     },
-    [],
+    [fetchBlobUrl],
   )
 
   return { previewUrl, file, isLoading, onSetPreview, clear, loadFromUrl }

@@ -1,0 +1,39 @@
+@reference "../../../../global.css";
+
+@layer components {
+  .acc-edit-content {
+    @apply max-h-[90vh] max-w-2xl! overflow-y-auto border-none shadow-2xl;
+  }
+
+  .acc-edit-title {
+    @apply flex items-center gap-2 text-xl text-blue-600;
+  }
+
+  .acc-edit-section {
+    @apply flex flex-col gap-4 border-t border-muted/40 pt-4;
+  }
+
+  .acc-edit-section-heading {
+    @apply flex items-center gap-2 px-1 text-muted-foreground;
+  }
+
+  .acc-edit-section-title {
+    @apply text-[11px] font-bold uppercase tracking-widest;
+  }
+
+  .acc-edit-input {
+    @apply bg-secondary/30;
+  }
+
+  .acc-edit-input-icon {
+    @apply absolute left-3 top-2.5 h-4 w-4 text-muted-foreground;
+  }
+
+  .acc-edit-footer {
+    @apply flex items-center justify-end gap-3 border-t border-muted/40 pt-6;
+  }
+
+  .acc-edit-submit-btn {
+    @apply cursor-pointer bg-blue-600 px-8 shadow-md hover:bg-blue-700;
+  }
+}

@@ -25,6 +25,10 @@ The frontend currently has systemic architecture drift:
 - Validators are flat and multi-export instead of `src/validators/{domain}/{layer}/{action}-schema.ts`.
 - Forms are not consistently React Hook Form + Zod.
 - `any` exists in appointment, admin, finance, billing, auth, utilities, and popup code.
+- Chained/nested ternaries make JSX branches hard to audit and are forbidden.
+- Helper logic is duplicated instead of consistently reusing `src/utils`/shared helpers.
+- Logged-in profile data is sometimes read from stale local sources instead of `useAuth`.
+- Enum-like `const` objects and type aliases create avoidable drift where TypeScript `enum` should be used.
 - CSS is missing for most `.tsx` feature components and several CSS files do not use `@layer`.
 - Zustand stores are split between `src/hooks`, `src/store`, and `src/utils`.
 - Mutation success/error feedback is inconsistent and often does not show backend guidance.

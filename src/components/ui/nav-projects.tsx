@@ -9,6 +9,7 @@ import {
   SidebarMenuButton,
   SidebarMenuItem,
 } from '@/components/ui/sidebar'
+import './nav-projects.css'
 
 export function NavProjects({
   projects,
@@ -20,7 +21,7 @@ export function NavProjects({
   }[]
 }) {
   return (
-    <SidebarGroup className="group-data-[collapsible=icon]:hidden">
+    <SidebarGroup className="np-group">
       <SidebarGroupLabel>Materiais de Apoio</SidebarGroupLabel>
       <SidebarMenu>
         {projects.map((item) => (

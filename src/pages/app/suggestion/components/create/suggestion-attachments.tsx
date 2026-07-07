@@ -11,6 +11,7 @@ import {
 } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { FieldSet } from '@/components/ui/field'
+import './suggestion-attachments.css'
 
 interface SuggestionAttachmentsProps {
   files: File[]
@@ -70,11 +71,8 @@ export const SuggestionAttachments = memo(
 
         <FieldSet className="border-none p-0 shadow-none">
           {files.length === 0 ? (
-            <div
-              className="flex cursor-pointer flex-col items-center gap-3 rounded-[10px] border-2 border-dashed border-border p-[22px] text-center transition-all duration-150 bg-muted/50 hover:border-blue-600 hover:bg-blue-50 dark:hover:bg-blue-950/30"
-              onClick={triggerFileInput}
-            >
-              <div className="flex h-[42px] w-[42px] items-center justify-center rounded-full border border-blue-100 dark:border-blue-900 bg-card text-blue-600">
+            <div className="cs-dropzone" onClick={triggerFileInput}>
+              <div className="cs-dropzone-icon">
                 <CloudUpload className="size-6" />
               </div>
               <div>
@@ -91,12 +89,10 @@ export const SuggestionAttachments = memo(
               {files.map((file, index) => (
                 <div
                   key={`${file.name}-${index}`}
-                  className="group flex items-center justify-between p-2 rounded-xl border border-transparent hover:bg-muted/30 transition-all duration-200"
+                  className="cs-file-row group"
                 >
                   <div className="flex items-center gap-3 overflow-hidden">
-                    <div className="h-9 w-9 rounded-full bg-background flex items-center justify-center border shrink-0">
-                      {getFileIcon(file.type)}
-                    </div>
+                    <div className="cs-file-icon">{getFileIcon(file.type)}</div>
                     <div className="flex flex-col min-w-0">
                       <span className="text-[12px] font-medium text-foreground/80 truncate max-w-[180px]">
                         {file.name}
@@ -111,7 +107,7 @@ export const SuggestionAttachments = memo(
                     variant="ghost"
                     size="icon"
                     type="button"
-                    className="h-7 w-7 rounded-full text-muted-foreground hover:text-red-500 hover:bg-red-50 opacity-0 group-hover:opacity-100 transition-opacity cursor-pointer"
+                    className="cs-file-remove"
                     onClick={() => handleRemoveFile(index)}
                   >
                     <X className="h-4 w-4" />

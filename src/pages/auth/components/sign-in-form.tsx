@@ -10,19 +10,17 @@ import { motion, useReducedMotion, type Variants } from 'framer-motion'
 import { cn } from '@/lib/utils'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
-import { Label } from '@/components/ui/label'
+import { Field, FieldError, FieldLabel } from '@/components/ui/field'
 
-import z from 'zod'
 import { signIn } from '@/api/auth/sign-in'
-import { Sanitize } from '@/utils/Sanitizer'
+import { getProfile } from '@/api/psychologists/get-profile'
+import { getApiErrorMessage } from '@/lib/get-api-error-message'
+import { useSessionStore } from '@/store/use-session-store'
 import { GoogleAuthButton } from './google-auth-button'
-
-const signInSchema = z.object({
-  email: z.email({ message: 'E-mail inválido' }),
-  password: z.string().min(1, { message: 'A senha é obrigatória' }),
-})
-
-type SignInSchema = z.infer<typeof signInSchema>
+import {
+  signInSchema,
+  type SignInFormData,
+} from '@/validators/auth/form/sign-in-schema'
 
 const containerVariants: Variants = {
   hidden: {},
@@ -40,10 +38,12 @@ const itemVariants: Variants = {
 
 export const SignInForm = memo(function SignInForm({
   className,
-  ...props
-}: React.ComponentProps<'form'>) {
+}: {
+  className?: string
+}) {
   const navigate = useNavigate()
   const [searchParams] = useSearchParams()
+  const setSession = useSessionStore((state) => state.setSession)
 
   const prefersReduced = useReducedMotion()
   const [showPassword, setShowPassword] = useState(false)
@@ -52,7 +52,7 @@ export const SignInForm = memo(function SignInForm({
     register,
     handleSubmit,
     formState: { isSubmitting, errors },
-  } = useForm<SignInSchema>({
+  } = useForm<SignInFormData>({
     resolver: zodResolver(signInSchema),
     defaultValues: {
       email: searchParams.get('email') ?? '',
@@ -65,23 +65,22 @@ export const SignInForm = memo(function SignInForm({
   })
 
   const handleSignIn = useCallback(
-    async (data: SignInSchema) => {
+    async (data: SignInFormData) => {
       try {
         await authenticate(data)
 
-        localStorage.setItem('isAuthenticated', 'true')
+        const profile = await getProfile()
+        setSession(profile)
 
         toast.success('Login realizado com sucesso!', { duration: 2000 })
-
-        setTimeout(() => {
-          navigate('/dashboard', { replace: true })
-        }, 100)
+        navigate('/dashboard', { replace: true })
       } catch (error) {
-        const errorMessage = Sanitize.responseError(error)
-        toast.error(errorMessage)
+        toast.error(
+          getApiErrorMessage(error, 'Erro ao entrar. Tente novamente.'),
+        )
       }
     },
-    [authenticate, navigate],
+    [authenticate, setSession, navigate],
   )
 
   const togglePasswordVisibility = useCallback(
@@ -98,8 +97,6 @@ export const SignInForm = memo(function SignInForm({
       variants={prefersReduced ? undefined : containerVariants}
       initial={prefersReduced ? undefined : 'hidden'}
       animate={prefersReduced ? undefined : 'visible'}
-      // eslint-disable-next-line
-      {...(props as any)}
     >
       {/* Google */}
       <motion.div {...animItem}>
@@ -117,71 +114,76 @@ export const SignInForm = memo(function SignInForm({
       </motion.div>
 
       {/* Email */}
-      <motion.div {...animItem} className="space-y-2">
-        <Label htmlFor="email">E-mail profissional</Label>
-        <div className="relative">
-          <Mail
-            className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground pointer-events-none"
-            size={16}
-            aria-hidden="true"
-          />
-          <Input
-            id="email"
-            type="email"
-            placeholder="exemplo@mindflush.com"
-            autoComplete="email"
-            className={cn(
-              'pl-9 h-11',
-              errors.email && 'border-red-500 focus-visible:ring-red-500/20',
-            )}
-            {...register('email')}
-          />
-        </div>
-        {errors.email && (
-          <p className="text-red-500 text-xs">{errors.email.message}</p>
-        )}
+      <motion.div {...animItem}>
+        <Field>
+          <FieldLabel htmlFor="email">E-mail profissional</FieldLabel>
+          <div className="relative">
+            <Mail
+              className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground pointer-events-none"
+              size={16}
+              aria-hidden="true"
+            />
+            <Input
+              id="email"
+              type="email"
+              placeholder="exemplo@mindflush.com"
+              autoComplete="email"
+              aria-invalid={!!errors.email}
+              className={cn(
+                'pl-9 h-11',
+                errors.email && 'border-red-500 focus-visible:ring-red-500/20',
+              )}
+              {...register('email')}
+            />
+          </div>
+          {errors.email && <FieldError>{errors.email.message}</FieldError>}
+        </Field>
       </motion.div>
 
       {/* Password */}
-      <motion.div {...animItem} className="space-y-2">
-        <div className="flex items-center justify-between">
-          <Label htmlFor="password">Senha</Label>
-          <Link
-            to="/forgot-password"
-            className="text-xs text-muted-foreground hover:text-blue-600 transition-colors underline-offset-4 hover:underline"
-          >
-            Esqueceu a senha?
-          </Link>
-        </div>
-        <div className="relative">
-          <Lock
-            className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground pointer-events-none"
-            size={16}
-            aria-hidden="true"
-          />
-          <Input
-            id="password"
-            type={showPassword ? 'text' : 'password'}
-            placeholder="••••••••"
-            autoComplete="current-password"
-            className={cn(
-              'pl-9 pr-10 h-11',
-              errors.password && 'border-red-500 focus-visible:ring-red-500/20',
-            )}
-            {...register('password')}
-          />
-          <button
-            type="button"
-            onClick={togglePasswordVisibility}
-            className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground transition-colors"
-            aria-label={showPassword ? 'Ocultar senha' : 'Mostrar senha'}
-          >
-            {showPassword ? <EyeOff size={16} /> : <Eye size={16} />}
-          </button>
-        </div>
-        {errors.password && (
-          <p className="text-red-500 text-xs">{errors.password.message}</p>
-        )}
+      <motion.div {...animItem}>
+        <Field>
+          <div className="flex items-center justify-between">
+            <FieldLabel htmlFor="password">Senha</FieldLabel>
+            <Link
+              to="/forgot-password"
+              className="text-xs text-muted-foreground hover:text-blue-600 transition-colors underline-offset-4 hover:underline"
+            >
+              Esqueceu a senha?
+            </Link>
+          </div>
+          <div className="relative">
+            <Lock
+              className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground pointer-events-none"
+              size={16}
+              aria-hidden="true"
+            />
+            <Input
+              id="password"
+              type={showPassword ? 'text' : 'password'}
+              placeholder="••••••••"
+              autoComplete="current-password"
+              aria-invalid={!!errors.password}
+              className={cn(
+                'pl-9 pr-10 h-11',
+                errors.password &&
+                  'border-red-500 focus-visible:ring-red-500/20',
+              )}
+              {...register('password')}
+            />
+            <button
+              type="button"
+              onClick={togglePasswordVisibility}
+              className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground transition-colors"
+              aria-label={showPassword ? 'Ocultar senha' : 'Mostrar senha'}
+            >
+              {showPassword ? <EyeOff size={16} /> : <Eye size={16} />}
+            </button>
+          </div>
+          {errors.password && (
+            <FieldError>{errors.password.message}</FieldError>
+          )}
+        </Field>
       </motion.div>
 
       {/* Submit */}

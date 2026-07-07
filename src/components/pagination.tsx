@@ -1,3 +1,4 @@
+import { memo } from 'react'
 import {
   ChevronLeft,
   ChevronRight,
@@ -6,76 +7,80 @@ import {
 } from 'lucide-react'
 
 import { Button } from './ui/button'
+import './pagination.css'
 
-interface PaginationProps {
+export interface IPaginationState {
   pageIndex: number
-  totalCount: number
   perPage: number
+  totalCount: number
   onPageChange: (pageIndex: number) => void
 }
 
-export function Pagination({
-  pageIndex,
-  perPage,
-  totalCount,
-  onPageChange,
-}: PaginationProps) {
+interface IPagination {
+  pagination: IPaginationState
+  totalLabel?: string
+}
+
+export const Pagination = memo(function Pagination({
+  pagination: { pageIndex, perPage, totalCount, onPageChange },
+  totalLabel = 'registros',
+}: IPagination) {
   const pages = Math.ceil(totalCount / perPage) || 1
   const isFirstPage = pageIndex === 0
   const isLastPage = pageIndex === pages - 1
 
   return (
-    <div className="flex items-center justify-between">
-      <span className="text-sm text-muted-foreground">
-        Total de {totalCount} Pacientes
+    <div className="pgn-root">
+      <span className="pgn-total">
+        Total de {totalCount} {totalLabel}
       </span>
 
-      <div className="flex items-center gap-6 lg:gap-8">
-        <div className="text-sm font-medium">
+      <div className="pgn-pages">
+        <div className="pgn-indicator">
           Página {pageIndex + 1} de {pages}
         </div>
-        <div className="flex items-center gap-2">
+        <div className="pgn-controls">
           <Button
+            size="icon"
+            variant="outline"
+            className="pgn-btn"
+            disabled={isFirstPage}
             onClick={() => onPageChange(0)}
-            variant="outline"
-            className="h-8 w-8 p-0 cursor-pointer"
-            disabled={isFirstPage}
           >
-            <ChevronsLeft className="h-4 w-4" />
-            <span className="sr-only">Primeira página</span>
+            <ChevronsLeft className="size-4" />
           </Button>
 
           <Button
+            size="icon"
+            variant="outline"
+            className="pgn-btn"
+            disabled={isFirstPage}
             onClick={() => onPageChange(pageIndex - 1)}
-            variant="outline"
-            className="h-8 w-8 p-0 cursor-pointer"
-            disabled={isFirstPage}
           >
-            <ChevronLeft className="h-4 w-4" />
-            <span className="sr-only">Página anterior</span>
+            <ChevronLeft className="size-4" />
           </Button>
 
           <Button
+            size="icon"
+            variant="outline"
+            className="pgn-btn"
+            disabled={isLastPage}
             onClick={() => onPageChange(pageIndex + 1)}
-            variant="outline"
-            className="h-8 w-8 p-0 cursor-pointer"
-            disabled={isLastPage}
           >
-            <ChevronRight className="h-4 w-4" />
-            <span className="sr-only">Próxima página</span>
+            <ChevronRight className="size-4" />
           </Button>
 
           <Button
-            onClick={() => onPageChange(pages - 1)}
+            size="icon"
             variant="outline"
-            className="h-8 w-8 p-0 cursor-pointer"
+            className="pgn-btn"
             disabled={isLastPage}
+            onClick={() => onPageChange(pages - 1)}
           >
-            <ChevronsRight className="h-4 w-4" />
-            <span className="sr-only">Última página</span>
+            <ChevronsRight className="size-4" />
           </Button>
         </div>
       </div>
     </div>
   )
-}
+})

@@ -1,0 +1,15 @@
+@reference "../../../../../global.css";
+
+@layer components {
+  .pr-empty {
+    @apply col-span-full flex flex-col items-center rounded-2xl border-2 border-dashed py-20 text-muted-foreground;
+  }
+
+  .pr-empty-icon {
+    @apply mb-2 size-10 opacity-20;
+  }
+
+  .pr-empty-text {
+    @apply text-sm;
+  }
+}

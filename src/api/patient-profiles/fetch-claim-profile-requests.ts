@@ -1,8 +1,8 @@
 import { api } from '@/lib/axios'
-import type { IpatientProfileClaimRequestWithRequester } from '@/types/patient-profile-claim-request'
+import type { IPatientProfileClaimRequest } from '@/types/patient-profile-claim-request'
 
 type IfetchClaimProfileRequestsResponse = {
-  requests: IpatientProfileClaimRequestWithRequester[]
+  requests: IPatientProfileClaimRequest[]
 }
 
 export const fetchClaimProfileRequests =

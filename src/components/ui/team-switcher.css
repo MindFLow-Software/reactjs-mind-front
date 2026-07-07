@@ -1,0 +1,55 @@
+@reference "../../global.css";
+
+@layer components {
+  .ts-logo {
+    @apply flex aspect-square size-8 items-center justify-center rounded-lg;
+  }
+
+  .ts-brand-icon {
+    @apply text-blue-500;
+  }
+
+  .ts-info {
+    @apply grid flex-1 text-left text-sm leading-tight;
+  }
+
+  .ts-name {
+    @apply truncate font-medium;
+  }
+
+  .ts-plan {
+    @apply truncate text-xs;
+  }
+
+  .ts-content {
+    @apply min-w-56 rounded-lg;
+  }
+
+  .ts-group-label {
+    @apply text-xs text-muted-foreground;
+  }
+
+  .ts-item {
+    @apply gap-2 p-2;
+  }
+
+  .ts-item-logo {
+    @apply flex size-6 items-center justify-center rounded-md border;
+  }
+
+  .ts-add-logo {
+    @apply flex size-6 items-center justify-center rounded-md border bg-transparent;
+  }
+
+  .ts-add-label {
+    @apply font-medium text-muted-foreground;
+  }
+
+  .ts-skeleton-wrap {
+    @apply px-2 py-1.5;
+  }
+
+  .ts-skeleton {
+    @apply h-12 w-full rounded-lg;
+  }
+}

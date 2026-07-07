@@ -13,7 +13,8 @@ The target architecture is layered and contract-first:
 3. `src/api/{domain}/{action}.ts` typed HTTP functions using `api`.
 4. `useQuery`/`useMutation` hooks for server-state consumption and mutation side effects.
 5. Page orchestrators that compose hooks and layout.
-6. Local/shared components built with shadcn/ui primitives and feature CSS.
+6. Shared helpers/utilities for any pure function reused in two or more places.
+7. Local/shared components built with shadcn/ui primitives and feature CSS.
 
 Forbidden architectural shortcuts:
 
@@ -26,6 +27,11 @@ Forbidden architectural shortcuts:
 - Prop drilling through components with more than 3 independent props.
 - Reusing creation modals/forms/schemas/hooks for editing through flags such as `isEditing`, `mode`, or `initialData`.
 - CSS embedded in TSX or pure feature CSS outside Tailwind `@layer`/`@apply`.
+- Chained or nested ternaries, especially inside JSX.
+- Logged-in user profile reads outside `useAuth`.
+- Duplicating a helper/utility function when an equivalent helper already exists.
+- Keeping a function local after it is used in two or more places.
+- Enum-like `const` objects plus `typeof` aliases when a TypeScript `enum` fits the domain value.
 
 `src/pages/app/profiles` is an inspiration for composition, but not a perfect target. It must still be corrected for CSS, effects, typing, and backend contract alignment.
 

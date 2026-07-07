@@ -1,18 +1,7 @@
 import type { Expertise } from './expertise'
+import { Honorific, Languages } from '@/types/enums'
 
-export enum Honorific {
-  'MASC_DR' = 'MASC_DR',
-  'FEMININE_DR' = 'FEMININE_DR',
-  'MSC' = 'MSC',
-  'PHD' = 'PHD',
-}
-
-export enum Languages {
-  'PORTUGUESE' = 'PORTUGUESE',
-  'ENGLISH' = 'ENGLISH',
-  'SPANISH' = 'SPANISH',
-  'SIGNS' = 'SIGNS',
-}
+export { Honorific, Languages }
 
 export const translatedLanguages = {
   PORTUGUESE: 'Português',
@@ -21,17 +10,17 @@ export const translatedLanguages = {
   SIGNS: 'Linguagem de Sinais',
 }
 
-export interface PsychologistProfile {
+export interface IPsychologistProfile {
   id: string
   userId: string
   crp: string
   expertise: Expertise
   honorific: Honorific
   professionalName: string
+  languages: Languages[]
   professionalBio: string | null
   status: string
   isActive: boolean
-  languages: Languages[]
   createdAt: string
 }
 
@@ -61,7 +50,7 @@ export const translatedSessionFormat = {
   IN_PERSON: 'Presencial',
 }
 
-export interface PsychologistPracticeContext {
+export interface IPsychologistPracticeContext {
   id: string
   psychologistProfileId: string
   contextType: ContextType

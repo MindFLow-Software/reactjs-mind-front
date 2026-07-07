@@ -23,7 +23,7 @@ import type {
   PatientSortOrder,
 } from '@/hooks/use-patient-filters'
 import { cn } from '@/lib/utils'
-import type { IpatientProfile } from '@/types/patient-profile'
+import type { IPatient } from '@/types/patient'
 
 export interface SortState {
   by: PatientSortBy
@@ -31,8 +31,8 @@ export interface SortState {
   onSort: (column: PatientSortBy) => void
 }
 
-interface PatientsTableProps {
-  patients: IpatientProfile[]
+interface IPatientsTable {
+  patients: IPatient[]
   isLoading: boolean
   perPage?: number
   hasActiveFilters?: boolean
@@ -94,7 +94,7 @@ function SortableHead({ column, label, sort, className }: SortableHeadProps) {
 
 interface TableBodyContentProps {
   isLoading: boolean
-  patients: IpatientProfile[]
+  patients: IPatient[]
   perPage: number
   hasActiveFilters?: boolean
   onClearFilters?: () => void
@@ -126,7 +126,7 @@ function TableBodyContent({
               <div className="p-4 rounded-full bg-muted">
                 <SearchX className="h-8 w-8 text-muted-foreground/40" />
               </div>
-              <div className="space-y-1">
+              <div className="flex flex-col gap-1">
                 <p className="text-sm font-medium">
                   Nenhum paciente encontrado
                 </p>
@@ -148,7 +148,7 @@ function TableBodyContent({
               <div className="p-4 rounded-full bg-muted">
                 <UserPlus className="h-8 w-8 text-muted-foreground/40" />
               </div>
-              <div className="space-y-1">
+              <div className="flex flex-col gap-1">
                 <p className="text-sm font-medium">
                   Nenhum paciente cadastrado
                 </p>
@@ -175,10 +175,9 @@ export function PatientsTable({
   sort,
   onClearFilters,
   onRegister,
-}: PatientsTableProps) {
-
+}: IPatientsTable) {
   return (
-    <Card className="overflow-hidden p-0">
+    <Card className="overflow-hidden p-0 border">
       <Table>
         <TableHeader>
           <TableRow className="bg-muted/30 hover:bg-muted/30">

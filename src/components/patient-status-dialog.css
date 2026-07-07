@@ -1,0 +1,15 @@
+@reference "../global.css";
+
+@layer components {
+  .psd-body {
+    @apply flex flex-col items-center px-8 pb-6 pt-8 text-center;
+  }
+
+  .psd-icon-wrap {
+    @apply mb-5 grid h-16 w-16 shrink-0 place-items-center rounded-full;
+  }
+
+  .psd-icon {
+    @apply h-6 w-6 shrink-0;
+  }
+}

@@ -1,0 +1,19 @@
+@reference "../global.css";
+
+@layer components {
+  .sdm-banner {
+    @apply flex items-center gap-2.5 px-5 shrink-0 h-10 border-b border-border/60;
+  }
+
+  .sdm-banner-label {
+    @apply text-[11.5px] font-bold tracking-[0.07em] shrink-0;
+  }
+
+  .sdm-banner-step {
+    @apply size-4 rounded-full flex items-center justify-center text-[9px] font-bold shrink-0;
+  }
+
+  .sdm-banner-code {
+    @apply flex items-center gap-1 text-[11px] font-mono text-slate-500 dark:text-slate-400 shrink-0;
+  }
+}

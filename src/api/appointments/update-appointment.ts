@@ -1,12 +1,13 @@
 import { api } from '@/lib/axios'
+import type { AppointmentStatus } from '@/types/enums'
+import type { IMutationResult } from '@/types/api'
 
 export interface UpdateAppointmentRequest {
   id: string
   diagnosis?: string
-  notes?: string
   content?: string | null
   scheduledAt?: Date
-  status?: string
+  status?: AppointmentStatus
 }
 
 export async function updateAppointment({
@@ -15,11 +16,13 @@ export async function updateAppointment({
   content,
   scheduledAt,
   status,
-}: UpdateAppointmentRequest) {
-  await api.put(`/appointments/${id}`, {
+}: UpdateAppointmentRequest): Promise<IMutationResult<void>> {
+  const response = await api.put(`/appointments/${id}`, {
     diagnosis,
     content,
     status,
     scheduledAt: scheduledAt?.toISOString(),
   })
+
+  return { data: response.data, message: response.apiMessage ?? null }
 }

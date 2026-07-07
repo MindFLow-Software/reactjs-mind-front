@@ -1,6 +1,6 @@
 import { useCallback, useMemo } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { PATIENT_QUEUE_STORAGE_KEY } from '../constants'
+import { usePatientQueueStore } from '@/store/use-patient-queue-store'
 
 interface UsePatientQueueReturn {
   queue: string[]
@@ -15,20 +15,7 @@ export function usePatientQueue(
   currentPatientId: string,
 ): UsePatientQueueReturn {
   const navigate = useNavigate()
-
-  const queue = useMemo<string[]>(() => {
-    try {
-      const raw = sessionStorage.getItem(PATIENT_QUEUE_STORAGE_KEY)
-      if (!raw) return []
-      const parsed: unknown = JSON.parse(raw)
-      if (Array.isArray(parsed)) {
-        return parsed.filter((item): item is string => typeof item === 'string')
-      }
-      return []
-    } catch {
-      return []
-    }
-  }, [])
+  const queue = usePatientQueueStore((state) => state.queue)
 
   const currentIndex = useMemo(() => {
     if (!currentPatientId || queue.length === 0) return -1

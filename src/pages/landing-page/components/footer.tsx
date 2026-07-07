@@ -7,9 +7,8 @@ import {
   YoutubeLogo,
 } from '@phosphor-icons/react'
 import { ArrowRight, Shield, Clock } from 'lucide-react'
-
-const BRAND = '#2563eb'
-const BRAND_LIGHT = '#3b82f6'
+import { BRAND } from '../constants'
+import './footer.css'
 
 function XIcon({ size = 18 }: { size?: number }) {
   return (
@@ -70,23 +69,21 @@ function LinkItem({
 }: {
   link: { label: string; to?: string; href?: string }
 }) {
-  const className =
-    'group relative w-fit text-[13px] font-light text-slate-500 no-underline transition-colors duration-200 hover:text-blue-600'
   const inner = (
     <>
       {link.label}
-      <span className="absolute -bottom-px left-0 right-0 h-px origin-left scale-x-0 rounded-full bg-blue-500 transition-transform duration-300 group-hover:scale-x-100" />
+      <span className="lp-ftr-link-underline" />
     </>
   )
 
   if (link.to)
     return (
-      <Link to={link.to} className={className}>
+      <Link to={link.to} className="lp-ftr-link group">
         {inner}
       </Link>
     )
   return (
-    <a href={link.href} className={className}>
+    <a href={link.href} className="lp-ftr-link group">
       {inner}
     </a>
   )
@@ -95,38 +92,23 @@ function LinkItem({
 export function Footer() {
   return (
     <footer className="w-full border-t border-slate-100 bg-white">
-      {/* CTA Strip */}
-      <div
-        className="relative overflow-hidden"
-        style={{
-          background: `linear-gradient(135deg, ${BRAND} 0%, ${BRAND_LIGHT} 100%)`,
-        }}
-      >
-        <div
-          className="absolute inset-0 pointer-events-none opacity-20"
-          style={{
-            backgroundImage: `linear-gradient(rgba(255,255,255,0.1) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.1) 1px, transparent 1px)`,
-            backgroundSize: '60px 60px',
-          }}
-        />
+      <div className="lp-ftr-cta-strip">
+        <div className="lp-ftr-cta-grid" />
 
         <div className="container relative mx-auto px-6 py-14 md:px-8 lg:px-12">
           <div className="flex flex-col items-center gap-8 text-center lg:flex-row lg:justify-between lg:text-left">
             <div>
-              <h2
-                className="text-[clamp(22px,3vw,34px)] font-semibold tracking-tight text-white leading-[1.2] mb-2"
-                style={{ fontFamily: "'Lora', serif" }}
-              >
+              <h2 className="lp-ftr-cta-heading lp-serif">
                 Pronto para simplificar seu consultório?
               </h2>
-              <p className="text-[15px] font-light text-blue-100 max-w-[420px]">
+              <p className="max-w-[420px] text-[15px] font-light text-blue-100">
                 Junte-se a mais de 1.200 psicólogos que já recuperaram horas do
                 seu dia.
               </p>
             </div>
 
-            <div className="flex flex-col sm:flex-row items-center gap-3 shrink-0">
-              <div className="flex items-center gap-4 text-[12px] text-blue-100 font-light">
+            <div className="flex shrink-0 flex-col items-center gap-3 sm:flex-row">
+              <div className="flex items-center gap-4 text-[12px] font-light text-blue-100">
                 <span className="flex items-center gap-1.5">
                   <Clock className="h-3.5 w-3.5" />
                   14 dias grátis
@@ -138,7 +120,7 @@ export function Footer() {
               </div>
               <Link
                 to="/sign-up"
-                className="group inline-flex items-center gap-2 rounded-xl bg-white px-6 py-3 text-[14px] font-semibold transition-all duration-200 hover:-translate-y-0.5 hover:shadow-lg"
+                className="lp-ftr-cta-btn group"
                 style={{ color: BRAND }}
               >
                 Começar grátis
@@ -149,32 +131,20 @@ export function Footer() {
         </div>
       </div>
 
-      {/* Main footer body */}
       <div className="container mx-auto px-6 md:px-8 lg:px-12">
-        <div className="flex flex-col gap-12 lg:flex-row lg:gap-16 py-14">
-          {/* Brand column */}
+        <div className="flex flex-col gap-12 py-14 lg:flex-row lg:gap-16">
           <div className="flex flex-col lg:w-[220px] lg:shrink-0">
             <Link
               to="/"
-              className="group flex items-center gap-2 mb-4 transition-opacity hover:opacity-80 w-fit"
+              className="group mb-4 flex w-fit items-center gap-2 transition-opacity hover:opacity-80"
             >
-              <div
-                className="w-8 h-8 rounded-xl flex items-center justify-center shadow-sm"
-                style={{
-                  background: `linear-gradient(135deg, ${BRAND}, ${BRAND_LIGHT})`,
-                }}
-              >
+              <div className="lp-ftr-logo-box">
                 <Brain size={16} weight="bold" className="text-white" />
               </div>
-              <span
-                className="text-[17px] font-semibold tracking-tight text-slate-900"
-                style={{ fontFamily: "'Lora', serif" }}
-              >
-                MindFlush
-              </span>
+              <span className="lp-ftr-logo-text lp-serif">MindFlush</span>
             </Link>
 
-            <p className="text-[13px] font-light leading-relaxed text-slate-500 mb-6">
+            <p className="mb-6 text-[13px] font-light leading-relaxed text-slate-500">
               Simplificando a gestão de consultórios de psicologia em todo o
               Brasil.
             </p>
@@ -187,8 +157,7 @@ export function Footer() {
                   aria-label={label}
                   whileHover={{ y: -2 }}
                   transition={{ duration: 0.2 }}
-                  className="flex h-8 w-8 items-center justify-center rounded-lg border border-slate-100 bg-slate-50 text-slate-400 transition-colors duration-200"
-                  style={{ ['--hover-color' as string]: hoverColor }}
+                  className="lp-ftr-social"
                   onMouseEnter={(e) =>
                     (e.currentTarget.style.color = hoverColor)
                   }
@@ -202,20 +171,17 @@ export function Footer() {
                 aria-label="X (Twitter)"
                 whileHover={{ y: -2 }}
                 transition={{ duration: 0.2 }}
-                className="flex h-8 w-8 items-center justify-center rounded-lg border border-slate-100 bg-slate-50 text-slate-400 transition-colors duration-200 hover:text-slate-900"
+                className="lp-ftr-social hover:text-slate-900"
               >
                 <XIcon size={14} />
               </motion.a>
             </div>
           </div>
 
-          {/* Links grid */}
           <div className="grid flex-1 grid-cols-2 gap-8 md:grid-cols-4">
             {LINK_GROUPS.map((group) => (
               <div key={group.title} className="flex flex-col gap-3">
-                <span className="text-[11px] font-semibold uppercase tracking-widest text-slate-400">
-                  {group.title}
-                </span>
+                <span className="lp-ftr-group-title">{group.title}</span>
                 <nav className="flex flex-col gap-2.5">
                   {group.links.map((link) => (
                     <LinkItem key={link.label} link={link} />
@@ -226,7 +192,6 @@ export function Footer() {
           </div>
         </div>
 
-        {/* Bottom bar */}
         <div className="flex flex-col items-center justify-between gap-3 border-t border-slate-100 py-6 md:flex-row">
           <span className="text-[12.5px] font-light text-slate-400">
             &copy; {new Date().getFullYear()} MindFlush. Todos os direitos
