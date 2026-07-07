@@ -39,7 +39,7 @@ export function PsychologistPracticeContextsSection() {
   if (practiceContexts.length === 0) return null
 
   return (
-    <section className="flex flex-col gap-3 w-full">
+    <section className="flex flex-col w-full">
       <ProfileSectionHeader
         section="contextos"
         title="Seus contextos de atuação"

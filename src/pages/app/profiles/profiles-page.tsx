@@ -1,20 +1,20 @@
-import './profiles-page.css'
-
-
+import type { ReactNode } from 'react'
 import { Navigate } from 'react-router-dom'
-import { Loader2 } from 'lucide-react'
+import { Loader2, LogOut } from 'lucide-react'
 
 import { useAuth } from '@/hooks/use-auth'
+import { useSignOut } from '@/hooks/use-sign-out'
+
+import { Button } from '@/components/ui/button'
 
 import { ProfileSectionHeader } from './components/profile-section-header'
 import { PatientProfileSection } from './components/patient-profile-section'
+import { PsychologistProfileCard } from '../account/components/psychologist-profile-card'
 import { CreatePatientProfileCard } from './components/create-patient-profile-card'
 import { PsychologistPracticeContextsSection } from './components/psychologist-practice-contexts-section'
 import { PatientProfilePossibleCandidatesSection } from './components/patient-profile-possible-candidates-section'
 
 import './profiles-page.css'
-import type { ReactNode } from 'react'
-import { PsychologistProfileCard } from '../account/components/psychologist-profile-card'
 
 function ProfilesLayout({
   children,
@@ -23,18 +23,29 @@ function ProfilesLayout({
   children: ReactNode
   greeting?: string
 }) {
+  const { signOut } = useSignOut()
+
   return (
     <div className="pf-layout">
-      <header className="pf-layout-header">
-        <h1 className="pf-layout-greeting">{greeting}</h1>
-        <p className="text-sm text-muted-foreground">
-          Escolha como deseja usar a plataforma ou continue em um perfil já
-          existente.
-        </p>
-        <p className="text-sm text-muted-foreground">
-          Você pode usar a plataforma como psicólogo, paciente ou ambos.
-        </p>
-      </header>
+      <div className="flex w-full max-w-5xl">
+        <header className="pf-layout-header">
+          <h1 className="pf-layout-greeting">{greeting}</h1>
+          <p className="text-sm text-muted-foreground">
+            Escolha como deseja usar a plataforma ou continue em um perfil já
+            existente.
+          </p>
+          <p className="text-sm text-muted-foreground">
+            Você pode usar a plataforma como psicólogo, paciente ou ambos.
+          </p>
+        </header>
+        <Button
+          size="icon"
+          variant="ghost"
+          onClick={() => signOut()}
+        >
+          <LogOut size={16} />
+        </Button>
+      </div>
 
       <main className="pf-layout-main">{children}</main>
     </div>

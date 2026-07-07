@@ -23,7 +23,7 @@ import {
   getDailySessionsMetrics,
   type DailySessionMetric,
 } from '@/api/metrics/get-daily-sessions-metrics'
-import { getProfile } from '@/api/psychologists/get-profile'
+import { getProfile } from '@/api/auth/get-profile'
 import './activity-heatmap.css'
 
 export function ActivityHeatmap() {

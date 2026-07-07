@@ -1,8 +1,9 @@
 'use client'
 
 import { useState } from 'react'
+import { useNavigate } from 'react-router-dom'
 
-import { ShieldCheck, UserRoundPen, ArrowRight } from 'lucide-react'
+import { ArrowRight, ShieldCheck, UserRoundPen } from 'lucide-react'
 
 import { useAuth } from '@/hooks/use-auth'
 import { formatCPF } from '@/utils/formatCPF'
@@ -14,17 +15,18 @@ import { Button } from '@/components/ui/button'
 import { Dialog, DialogTrigger } from '@/components/ui/dialog'
 import { ProfileCard } from '@/components/profile-card'
 
-import { EditPsychologistProfile } from './edit-psychologist-dialog'
+import { EditPsychologistProfile } from './edit-psychologist-profile-dialog'
 import { PsychologistAvatarUpload } from './psychologist-avatar-upload'
 
 import './psychologist-profile-card.css'
 
 export function PsychologistProfileCard() {
+  const navigate = useNavigate()
+  const { profile: me, isPending: isLoading } = useAuth()
+
   const [isEditOpen, setIsEditOpen] = useState(false)
 
-  const { profile, isPending: isLoading } = useAuth()
-
-  if (isLoading || !profile) {
+  if (isLoading || !me) {
     return (
       <ProfileCard>
         <ProfileCard.Header
@@ -50,15 +52,23 @@ export function PsychologistProfileCard() {
     )
   }
 
-  const fullName = `${profile.firstName} ${profile.lastName}`
+  const psychologistProfile = me.psychologistProfile
+  const hasPsychologistProfile = Boolean(psychologistProfile)
+
+  const professionalName =
+    psychologistProfile?.professionalName ?? 'Perfil profissional não criado'
 
   const translatedRole = (() => {
-    return ROLE_TRANSLATIONS[profile.platformRole] || profile.platformRole
+    return ROLE_TRANSLATIONS[me.platformRole] || me.platformRole
   })()
 
-  const expertise = profile.psychologistProfile?.expertise ?? ''
+  const expertise = psychologistProfile?.expertise ?? ''
   const translatedExpertise =
     EXPERTISE_TRANSLATIONS[expertise] || expertise || 'Não informado'
+
+  const handleRedirectToCreatePsychologistProfile = () => {
+    navigate('/onboarding/psychologist')
+  }
 
   return (
     <ProfileCard>
@@ -70,13 +80,13 @@ export function PsychologistProfileCard() {
       <ProfileCard.Content>
         <div className="acc-identity-row">
           <PsychologistAvatarUpload
-            currentImage={profile.profileImageUrl}
-            fullName={fullName}
+            currentImage={me.profileImageUrl}
+            fullName={professionalName}
           />
 
           <div className="min-w-0 flex-1">
             <h2 className="truncate text-xl font-bold text-foreground">
-              {fullName}
+              {professionalName}
             </h2>
             <div className="mt-1 flex items-center gap-2">
               <span className="text-sm font-medium text-blue-700 dark:text-blue-400">
@@ -89,58 +99,74 @@ export function PsychologistProfileCard() {
             </div>
           </div>
 
-          <div className="acc-verified-badge">
-            <ShieldCheck size={14} className="text-blue-600 dark:text-blue-400" />
-            Conta Verificada
-          </div>
+          {hasPsychologistProfile && (
+            <div className="acc-verified-badge">
+              <ShieldCheck
+                size={14}
+                className="text-blue-600 dark:text-blue-400"
+              />
+              Conta Verificada
+            </div>
+          )}
         </div>
 
         <div className="pf-stat-grid">
           <div>
             <p className="pf-stat-label">e-mail</p>
-            <p className="pf-stat-value truncate">{profile.email}</p>
+            <p className="pf-stat-value truncate">{me.email}</p>
           </div>
 
           <div>
             <p className="pf-stat-label">telefone</p>
-            <p className="pf-stat-value">{formatPhone(profile.phoneNumber)}</p>
+            <p className="pf-stat-value">{formatPhone(me.phoneNumber)}</p>
           </div>
 
           <div>
             <p className="pf-stat-label">cpf</p>
-            <p className="pf-stat-value">{formatCPF(profile.cpf)}</p>
+            <p className="pf-stat-value">{formatCPF(me.cpf)}</p>
           </div>
 
           <div>
             <p className="pf-stat-label">crp</p>
             <p className="pf-stat-value">
-              {profile.psychologistProfile?.crp || 'Não informado'}
+              {psychologistProfile?.crp || 'Não informado'}
             </p>
           </div>
         </div>
+
+        {!hasPsychologistProfile && (
+          <p className="text-xs text-muted-foreground">
+            Cadastre seu CRP e configure suas informações profissionais para
+            começar a atender.
+          </p>
+        )}
       </ProfileCard.Content>
 
       <ProfileCard.Footer>
-        <Dialog open={isEditOpen} onOpenChange={setIsEditOpen}>
-          <DialogTrigger asChild>
-            <Button type="button" className="pf-cta-btn pf-cta-btn--primary">
-              Editar Perfil
-              <ArrowRight size={16} />
-            </Button>
-          </DialogTrigger>
+        {hasPsychologistProfile ? (
+          <Dialog open={isEditOpen} onOpenChange={setIsEditOpen}>
+            <DialogTrigger asChild>
+              <Button type="button" className="pf-cta-btn pf-cta-btn--primary">
+                Editar Perfil
+                <ArrowRight size={16} />
+              </Button>
+            </DialogTrigger>
 
-          <EditPsychologistProfile
-            psychologist={{
-              firstName: profile.firstName,
-              lastName: profile.lastName,
-              email: profile.email ?? '',
-              phoneNumber: profile.phoneNumber ?? '',
-              crp: profile.psychologistProfile?.crp ?? null,
-              expertise: profile.psychologistProfile?.expertise,
-            }}
-            onClose={() => setIsEditOpen(false)}
-          />
-        </Dialog>
+            <EditPsychologistProfile
+              onClose={() => setIsEditOpen(false)}
+              psychologistProfileId={psychologistProfile?.id ?? null}
+            />
+          </Dialog>
+        ) : (
+          <Button
+            type="button"
+            className="pf-cta-btn pf-cta-btn--primary"
+            onClick={handleRedirectToCreatePsychologistProfile}
+          >
+            Criar perfil de psicólogo
+            <ArrowRight size={16} />
+          </Button>
+        )}
       </ProfileCard.Footer>
     </ProfileCard>
   )

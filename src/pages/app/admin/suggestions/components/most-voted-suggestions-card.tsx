@@ -11,7 +11,7 @@ import {
 } from '@/components/ui/card'
 import { getMostVotedSuggestions } from '@/api/suggestions/get-most-voted-suggestions'
 import { toggleSuggestionLike } from '@/api/suggestions/toggle-suggestion-like'
-import { getProfile } from '@/api/psychologists/get-profile'
+import { getProfile } from '@/api/auth/get-profile'
 import { SuggestionCard } from '@/components/suggestion-card'
 import './most-voted-suggestions-card.css'
 

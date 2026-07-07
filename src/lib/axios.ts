@@ -1,16 +1,16 @@
 import axios from 'axios'
 import { env } from '@/env'
 import { useActivePracticeContextStore } from '@/store/use-active-practice-context-store'
-import { useSessionStore } from '@/store/use-session-store'
+// import { useSessionStore } from '@/store/use-session-store'
 import type {
-  ApiErrorCode,
+  // ApiErrorCode,
   ApiSuccessEnvelope,
   ApiErrorEnvelope,
 } from '@/types/api'
 
-const API_ERROR_MESSAGES_PT: Partial<Record<ApiErrorCode, string>> = {
-  PATIENT_ALREADY_EXISTS: 'Já existe um paciente com este CPF.',
-}
+// const API_ERROR_MESSAGES_PT: Partial<Record<ApiErrorCode, string>> = {
+//   PATIENT_ALREADY_EXISTS: 'Já existe um paciente com este CPF.',
+// }
 
 export const api = axios.create({
   baseURL: env.VITE_API_URL,
@@ -38,7 +38,7 @@ function isErrorEnvelope(body: unknown): body is ApiErrorEnvelope {
   return (
     typeof body === 'object' &&
     body !== null &&
-    typeof (body as ApiErrorEnvelope).error?.code === 'string' &&
+    /*typeof (body as ApiErrorEnvelope).error?.code === 'string' &&*/
     typeof (body as ApiErrorEnvelope).error?.message === 'string'
   )
 }
@@ -66,13 +66,12 @@ api.interceptors.response.use(
 
     if (axios.isAxiosError(error) && isErrorEnvelope(error.response?.data)) {
       const envelope = error.response!.data as ApiErrorEnvelope
-      error.message =
-        API_ERROR_MESSAGES_PT[envelope.error.code] ?? envelope.error.message
-      error.apiCode = envelope.error.code
+      error.message = envelope?.message ?? envelope.error.message
+      // error.apiCode = envelope.statusCode
     }
 
     if (error.response.status === 401) {
-      useSessionStore.getState().clearSession()
+      useActivePracticeContextStore.getState().clearActivePracticeContextId()
       const currentPath = window.location.pathname
       const shouldRedirect = !SKIP_REDIRECT_PATHS.some((p) =>
         currentPath.startsWith(p),
