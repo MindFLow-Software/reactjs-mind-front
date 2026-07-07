@@ -71,7 +71,7 @@ export function RegisterPatientViaRegistrationLinkPage() {
   const [showPassword, setShowPassword] = useState(false)
 
   const { data: registrationLinkInfo, isError } = useRegistrationLink(hash)
-  const { registerPatientViaRegistrationLink, isRegisteringPatient } = useRegisterPatientViaRegistrationLink()
+  const { registerPatientViaRegistrationLink, isRegisteringPatient } = useRegisterPatientViaRegistrationLink(hash)
 
   if (isError) navigate('/sign-in')
 

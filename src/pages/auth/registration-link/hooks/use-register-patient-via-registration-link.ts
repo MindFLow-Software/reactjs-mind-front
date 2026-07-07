@@ -1,3 +1,4 @@
+import { useNavigate } from 'react-router-dom'
 import { useApiMutation } from '@/hooks/use-api-mutation'
 import type { IMutationResult } from '@/types/api'
 
@@ -9,11 +10,14 @@ type IuseRegisterPatientViaRegistrationLink = {
   registerPatientViaRegistrationLink: (data: RegisterPatientViaRegistrationLinkData) => Promise<IMutationResult<void>>,
 }
 
-export function useRegisterPatientViaRegistrationLink(): IuseRegisterPatientViaRegistrationLink {
+export function useRegisterPatientViaRegistrationLink(hash: string | undefined): IuseRegisterPatientViaRegistrationLink {
+  const navigate = useNavigate()
+
   const { mutateAsync, isPending } = useApiMutation({
-    mutationFn: registerPatientViaRegistrationLink,
+    mutationFn: (data: RegisterPatientViaRegistrationLinkData) => registerPatientViaRegistrationLink(hash, data),
     successFallback: 'Cadastro realizado com sucesso.',
     errorFallback: 'Falha ao realizar cadastro.',
+    onSuccess: () => { navigate('/sign-in') }
   })
 
   return {
