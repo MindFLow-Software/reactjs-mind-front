@@ -6,7 +6,7 @@
 
   .rp-pill-radio__label {
     @apply flex cursor-pointer items-center gap-[6px] rounded-[6px] border-[1.5px]
-           px-3 py-[7px] text-[12.5px] font-semibold transition-all duration-[120ms];
+           px-3 py-[7px] text-[12.5px] font-semibold transition-all duration-120;
   }
 
   .rp-pill-radio__label--checked {
