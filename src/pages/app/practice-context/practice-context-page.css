@@ -1,0 +1,17 @@
+@reference "../../../global.css";
+
+@layer components {
+  .pc-wrap {
+    @apply mx-auto flex w-full max-w-[760px] flex-col items-center px-6 pt-11 pb-[60px];
+  }
+
+  .pc-types {
+    @apply mt-[26px] grid w-full grid-cols-1 gap-4;
+  }
+
+  @media (min-width: 660px) {
+    .pc-types {
+      @apply grid-cols-2;
+    }
+  }
+}

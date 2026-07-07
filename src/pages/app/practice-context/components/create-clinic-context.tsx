@@ -3,12 +3,12 @@ import { Repeat2 } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import type { CreatePracticeContextBody } from '@/types/psychologist'
 
-type IcreateClinicContext = {
+type ICreateClinicContext = {
   onGoBack: () => void
   onCreatPracticeContext: (data: CreatePracticeContextBody) => void
 }
 
-export function CreateClinicContext({ onGoBack }: IcreateClinicContext) {
+export function CreateClinicContext({ onGoBack }: ICreateClinicContext) {
   return (
     <div className="flex flex-col items-center justify-center bg-muted/30 px-4 text-center">
       <Button

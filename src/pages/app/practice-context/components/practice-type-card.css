@@ -1,0 +1,67 @@
+@reference "../../../../global.css";
+
+@layer components {
+  .pc-tcard {
+    @apply relative flex h-full flex-col overflow-hidden rounded-[14px] border border-border bg-card text-left shadow-sm transition-all duration-150;
+  }
+
+  .pc-tcard:hover {
+    @apply -translate-y-0.5 shadow-md;
+  }
+
+  .pc-tcard::before {
+    @apply absolute inset-x-0 top-0 h-[3px] content-[''];
+  }
+
+  .pc-tcard--individual::before {
+    @apply bg-linear-to-r from-green-600 to-green-500;
+  }
+
+  .pc-tcard--clinic::before {
+    @apply bg-linear-to-r from-blue-500 to-blue-400;
+  }
+
+  .pc-tcard-body {
+    @apply flex flex-1 flex-col gap-4 p-[22px] pb-5;
+  }
+
+  .pc-tcard-title {
+    @apply mt-3.5 font-title text-[18px] font-extrabold text-foreground;
+  }
+
+  .pc-tcard-desc {
+    @apply text-[13px] text-muted-foreground;
+  }
+
+  .pc-tcard-list {
+    @apply flex flex-1 flex-col justify-center gap-2;
+  }
+
+  .pc-tcard-list-item {
+    @apply flex items-start gap-2 text-[13px] text-foreground/80;
+  }
+
+  .pc-tcard-list-dash {
+    @apply text-muted-foreground/60;
+  }
+
+  .pc-tcard-foot {
+    @apply flex items-center justify-between border-t border-border px-[22px] py-4;
+  }
+
+  .pc-tcard-foot-label {
+    @apply text-[14px] font-semibold text-foreground/80;
+  }
+
+  .pc-tcard-go {
+    @apply flex size-[38px] items-center justify-center rounded-full bg-muted text-foreground/70 transition-all duration-150;
+  }
+
+  .pc-tcard--individual:hover .pc-tcard-go {
+    @apply translate-x-0.5 bg-green-600 text-white;
+  }
+
+  .pc-tcard--clinic:hover .pc-tcard-go {
+    @apply translate-x-0.5 bg-blue-600 text-white;
+  }
+}
