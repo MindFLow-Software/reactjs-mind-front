@@ -1,0 +1,15 @@
+@reference "../../../../../global.css";
+
+@layer components {
+  .dsh-period-selector-root {
+    @apply flex items-center gap-1 self-start rounded-lg border border-border bg-muted/30 p-1;
+  }
+
+  .dsh-period-selector-btn {
+    @apply cursor-pointer rounded-md px-3 py-1.5 text-sm font-medium transition-all text-muted-foreground hover:text-foreground;
+  }
+
+  .dsh-period-selector-btn--active {
+    @apply bg-blue-700 text-background shadow-sm hover:text-background;
+  }
+}

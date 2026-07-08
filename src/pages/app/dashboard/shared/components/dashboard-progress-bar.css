@@ -1,0 +1,27 @@
+@reference "../../../../../global.css";
+
+@layer components {
+  .dsh-progress-bar-root {
+    @apply flex flex-col gap-1.5;
+  }
+
+  .dsh-progress-bar-header {
+    @apply flex items-center justify-between;
+  }
+
+  .dsh-progress-bar-label {
+    @apply text-sm font-medium text-foreground;
+  }
+
+  .dsh-progress-bar-value {
+    @apply text-xs text-muted-foreground tabular-nums;
+  }
+
+  .dsh-progress-bar-track {
+    @apply h-1.5 w-full overflow-hidden rounded-full bg-muted;
+  }
+
+  .dsh-progress-bar-fill {
+    @apply h-full rounded-full transition-all;
+  }
+}
