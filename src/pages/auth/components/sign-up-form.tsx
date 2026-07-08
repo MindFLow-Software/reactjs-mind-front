@@ -51,7 +51,6 @@ import { Time } from '@/utils/time'
 import { signIn } from '@/api/auth/sign-in'
 import { Normalizer } from '@/utils/normalizer'
 import { createUser } from '@/api/auth/create-user'
-import { getProfile } from '@/api/auth/get-profile'
 import { getApiErrorMessage } from '@/lib/get-api-error-message'
 // import { useSessionStore } from '@/store/use-session-store'
 import {
@@ -153,11 +152,10 @@ export function SignUpForm() {
         cpf: Normalizer.digits(data.cpf),
         dateOfBirth: Time.toAmericanFormat(data.dateOfBirth),
       })
-      await signIn({ email: data.email, password: data.password })
-      return getProfile()
     },
-    onSuccess: () => {
+    onSuccess: async (_, { email, password }) => {
       // setSession(profile)
+      await signIn({ email, password })
       toast.success('Conta criada com sucesso!')
       navigate('/profiles')
     },

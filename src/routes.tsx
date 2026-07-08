@@ -38,6 +38,7 @@ import { ClaimCandidatesPage } from './pages/app/claim-candidates/claim-candidat
 import { ClaimProfileRequestsPage } from './pages/app/claim-profile-requests/claim-profile-requests-page'
 import { PatientOnboardingPage } from './pages/app/onboarding/patient/patient-onboarding'
 import { Loader2 } from 'lucide-react'
+import { RegisterPatientViaRegistrationLinkPage } from './pages/auth/registration-link/register-patient-via-registration-link-page'
 
 const AppointmentsRoom = lazy(() =>
   import('./pages/app/video-room/appoinmets-room').then((module) => ({
@@ -94,11 +95,8 @@ export const router = createBrowserRouter([
     children: [
       { path: '/sign-in', element: <SignIn /> },
       { path: '/sign-up', element: <SignUp /> },
+      // TODO: ajustar dois paths diferentes levam para mesma página
       { path: '/auth/google/success', element: <GoogleOAuthSuccess /> },
-      {
-        path: '/auth/google/complete',
-        loader: () => redirect('/auth/google/success'),
-      },
       { path: '/google-oauth-success', element: <GoogleOAuthSuccess /> },
       { path: '/claim-account', element: <ClaimAccountPage /> },
       {
@@ -114,8 +112,8 @@ export const router = createBrowserRouter([
         element: <PatientInviteReviewPage />,
       },
       {
-        path: '/google-oauth-complete',
-        loader: () => redirect('/auth/google/success'),
+        path: '/patient/register/:hash',
+        element: <RegisterPatientViaRegistrationLinkPage />,
       },
     ],
   },

@@ -33,16 +33,17 @@ export function PatientProfileCard({ profile, onSelect }: IPatientProfileCard) {
   return (
     <Card className="pf-entity-card">
       <CardHeader className="pf-entity-card-header">
-        <TitleIcon variant="secondary">
-          <User />
-        </TitleIcon>
-
         <div className="pf-entity-card-title-wrap">
-          <CardTitle className="text-sm text-foreground">{fullName}</CardTitle>
-          <CardDescription className="flex items-center gap-1 text-sm text-muted-foreground">
-            {subtitle}
-            {isLinked && <BadgeCheck size={16} className="text-green-500" />}
-          </CardDescription>
+          <TitleIcon variant="secondary">
+            <User />
+          </TitleIcon>
+          <div>
+            <CardTitle className="text-sm text-foreground">{fullName}</CardTitle>
+            <CardDescription className="flex items-center gap-1 text-sm text-muted-foreground">
+              {subtitle}
+              {isLinked && <BadgeCheck size={16} className="text-green-500" />}
+            </CardDescription>
+          </div>
         </div>
 
         <ActiveBadge
@@ -61,7 +62,6 @@ export function PatientProfileCard({ profile, onSelect }: IPatientProfileCard) {
 
       <CardFooter className="pf-entity-card-footer">
         <Button
-          variant="outline"
           onClick={() => onSelect(profile.id)}
           className="pf-cta-btn pf-cta-btn--secondary"
         >
