@@ -80,13 +80,43 @@ function AgendaRow({ appt }: AgendaRowProps) {
   )
 }
 
+interface AgendaGroupProps {
+  label: string
+  appointments: IAppointmentWithNames[]
+  emptyMessage: string
+}
+
+function AgendaGroup({ label, appointments, emptyMessage }: AgendaGroupProps) {
+  return (
+    <div className="dsh-agenda-group">
+      <p className="dsh-agenda-group-label">{label}</p>
+      {appointments.length === 0 ? (
+        <p className="dsh-agenda-group-empty">{emptyMessage}</p>
+      ) : (
+        <div className="dsh-agenda-list">
+          {appointments.map((appt) => (
+            <AgendaRow key={appt.id} appt={appt} />
+          ))}
+        </div>
+      )}
+    </div>
+  )
+}
+
 export function TodayAgenda() {
   const todayLabel = useMemo(
     () => format(new Date(), "d 'de' MMMM", { locale: ptBR }),
     [],
   )
 
-  const { appointments: todayAppointments, isLoading } = useTodayAppointments()
+  const {
+    appointments: todayAppointments,
+    tomorrowAppointments,
+    isLoading,
+  } = useTodayAppointments()
+
+  const hasNoAppointments =
+    todayAppointments.length === 0 && tomorrowAppointments.length === 0
 
   return (
     <Card className="dsh-agenda-card">
@@ -97,15 +127,15 @@ export function TodayAgenda() {
               <CalendarDays className="size-4 text-blue-600" />
             </div>
             <div>
-              <p className="dsh-agenda-title">Agenda de hoje</p>
+              <p className="dsh-agenda-title">Agenda</p>
               <p className="dsh-agenda-subtitle">
                 {isLoading
                   ? '...'
-                  : `${todayLabel} · ${todayAppointments.length} ${todayAppointments.length === 1 ? 'sessão' : 'sessões'}`}
+                  : `${todayLabel} · ${todayAppointments.length} ${todayAppointments.length === 1 ? 'sessão hoje' : 'sessões hoje'}`}
               </p>
             </div>
           </div>
-          <Link to="/appointments" className="dsh-agenda-link">
+          <Link to="/appointment" className="dsh-agenda-link">
             Ver tudo
             <ArrowRight className="size-3" />
           </Link>
@@ -126,23 +156,30 @@ export function TodayAgenda() {
               </div>
             ))}
           </div>
-        ) : todayAppointments.length === 0 ? (
+        ) : hasNoAppointments ? (
           <div className="dsh-agenda-empty">
             <div className="dsh-agenda-empty-icon">
               <CalendarDays className="size-5 text-muted-foreground/50" />
             </div>
             <p className="text-sm font-medium text-foreground">
-              Nenhuma sessão hoje
+              Nenhuma sessão agendada
             </p>
             <p className="text-xs text-muted-foreground">
-              Sua agenda está livre
+              Sua agenda está livre para hoje e amanhã
             </p>
           </div>
         ) : (
-          <div className="dsh-agenda-list">
-            {todayAppointments.map((appt) => (
-              <AgendaRow key={appt.id} appt={appt} />
-            ))}
+          <div className="dsh-agenda-groups">
+            <AgendaGroup
+              label="Hoje"
+              appointments={todayAppointments}
+              emptyMessage="Nenhuma sessão hoje"
+            />
+            <AgendaGroup
+              label="Amanhã"
+              appointments={tomorrowAppointments}
+              emptyMessage="Nenhuma sessão amanhã"
+            />
           </div>
         )}
       </CardContent>

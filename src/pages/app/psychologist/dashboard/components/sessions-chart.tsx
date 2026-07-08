@@ -8,6 +8,10 @@ import {
   RefreshCcw,
   AlertCircle,
   ChartLine,
+  TrendingUp,
+  TrendingDown,
+  Minus,
+  type LucideIcon,
 } from 'lucide-react'
 
 import {
@@ -24,40 +28,146 @@ import {
   type ChartConfig,
 } from '@/components/ui/chart'
 import { cn } from '@/lib/utils'
+import type { DailySessionMetric } from '@/api/metrics/get-daily-sessions-metrics'
+import {
+  calcDailyAverage,
+  calcSessionsGrowth,
+} from '@/pages/app/dashboard/shared/helpers'
 import { type DashboardPeriod } from '../constants'
 import { useSessionsBar } from '../hooks/use-sessions-bar'
+import { buildPsychologistMock } from '../mocks/psychologist-dashboard.mock'
 import './sessions-chart.css'
 
 interface SessionsBarChartProps {
   period: DashboardPeriod
 }
 
+interface SessionsVolumePoint {
+  date: string
+  completed: number
+  cancelled: number
+  rescheduled: number
+}
+
 const chartConfig = {
-  count: {
+  completed: {
     label: 'Concluídas',
     color: 'var(--chart-sessions-green)',
+  },
+  cancelled: {
+    label: 'Canceladas',
+    color: 'var(--chart-sessions-red)',
+  },
+  rescheduled: {
+    label: 'Remarcadas',
+    color: 'var(--chart-sessions-amber)',
   },
 } satisfies ChartConfig
 
 const LEGEND = [
   { key: 'completed', label: 'Concluídas', color: 'bg-green-500' },
+  { key: 'cancelled', label: 'Canceladas', color: 'bg-red-500' },
+  { key: 'rescheduled', label: 'Remarcadas', color: 'bg-amber-500' },
 ] as const
+
+type GrowthTone = 'up' | 'down' | 'flat'
+
+const GROWTH_ICON: Record<GrowthTone, LucideIcon> = {
+  up: TrendingUp,
+  down: TrendingDown,
+  flat: Minus,
+}
+
+const GROWTH_CLASS: Record<GrowthTone, string> = {
+  up: 'dsh-sessions-growth-up',
+  down: 'dsh-sessions-growth-down',
+  flat: 'dsh-sessions-growth-flat',
+}
+
+function getGrowthTone(value: number): GrowthTone {
+  if (value > 0) return 'up'
+  if (value < 0) return 'down'
+  return 'flat'
+}
+
+function toDateKey(iso: string): string {
+  return iso.slice(0, 10)
+}
+
+function mergeSessionsVolume(
+  completed: DailySessionMetric[],
+  cancelled: DailySessionMetric[],
+  rescheduled: DailySessionMetric[],
+): SessionsVolumePoint[] {
+  const cancelledByDate = new Map(
+    cancelled.map((point) => [toDateKey(point.date), point.count]),
+  )
+  const rescheduledByDate = new Map(
+    rescheduled.map((point) => [toDateKey(point.date), point.count]),
+  )
+
+  return completed.map((point) => {
+    const key = toDateKey(point.date)
+    return {
+      date: point.date,
+      completed: point.count,
+      cancelled: cancelledByDate.get(key) ?? 0,
+      rescheduled: rescheduledByDate.get(key) ?? 0,
+    }
+  })
+}
+
+function GrowthBadge({ value }: { value: number }) {
+  const tone = getGrowthTone(value)
+  const Icon = GROWTH_ICON[tone]
+  const sign = value > 0 ? '+' : ''
+
+  return (
+    <span className={cn('dsh-sessions-growth', GROWTH_CLASS[tone])}>
+      <Icon className="size-3.5" />
+      {sign}
+      {value}%
+    </span>
+  )
+}
 
 export const SessionsBarChart = React.memo(function SessionsBarChart({
   period,
 }: SessionsBarChartProps) {
   const {
-    data: chartData,
+    data: completed,
     subtitleLabel,
     isLoading,
     isError,
     refetch,
   } = useSessionsBar(period)
 
+  const mock = React.useMemo(() => buildPsychologistMock(period), [period])
+
+  const chartData = React.useMemo(
+    () =>
+      mergeSessionsVolume(
+        completed,
+        mock.sessionsVolume.cancelled,
+        mock.sessionsVolume.rescheduled,
+      ),
+    [completed, mock],
+  )
+
+  const growthPercent = React.useMemo(
+    () => calcSessionsGrowth(completed),
+    [completed],
+  )
+
+  const dailyAverage = React.useMemo(
+    () => calcDailyAverage(completed.map((point) => point.count)),
+    [completed],
+  )
+
   const isEmpty = React.useMemo(() => {
-    const total = chartData.reduce((acc, d) => acc + d.count, 0)
-    return chartData.length === 0 || total === 0
-  }, [chartData])
+    const total = completed.reduce((acc, point) => acc + point.count, 0)
+    return completed.length === 0 || total === 0
+  }, [completed])
 
   return (
     <Card className="dsh-sessions-card">
@@ -76,13 +186,25 @@ export const SessionsBarChart = React.memo(function SessionsBarChart({
               </CardDescription>
             </div>
           </div>
-          <div className="dsh-sessions-legend">
-            {LEGEND.map(({ key, label, color }) => (
-              <div key={key} className="dsh-sessions-legend-item">
-                <span className={cn('dsh-sessions-legend-dot', color)} />
-                <span className="dsh-sessions-legend-label">{label}</span>
+          <div className="dsh-sessions-header-side">
+            <div className="dsh-sessions-stats">
+              <div className="dsh-sessions-stat">
+                <span className="dsh-sessions-stat-label">Crescimento</span>
+                <GrowthBadge value={growthPercent} />
               </div>
-            ))}
+              <div className="dsh-sessions-stat">
+                <span className="dsh-sessions-stat-label">Média diária</span>
+                <span className="dsh-sessions-stat-value">{dailyAverage}</span>
+              </div>
+            </div>
+            <div className="dsh-sessions-legend">
+              {LEGEND.map(({ key, label, color }) => (
+                <div key={key} className="dsh-sessions-legend-item">
+                  <span className={cn('dsh-sessions-legend-dot', color)} />
+                  <span className="dsh-sessions-legend-label">{label}</span>
+                </div>
+              ))}
+            </div>
           </div>
         </div>
       </CardHeader>
@@ -159,8 +281,20 @@ export const SessionsBarChart = React.memo(function SessionsBarChart({
                 }
               />
               <Bar
-                dataKey="count"
+                dataKey="completed"
                 fill="var(--chart-sessions-green)"
+                radius={[8, 8, 0, 0]}
+                className="cursor-pointer"
+              />
+              <Bar
+                dataKey="cancelled"
+                fill="var(--chart-sessions-red)"
+                radius={[8, 8, 0, 0]}
+                className="cursor-pointer"
+              />
+              <Bar
+                dataKey="rescheduled"
+                fill="var(--chart-sessions-amber)"
                 radius={[8, 8, 0, 0]}
                 className="cursor-pointer"
               />

@@ -3,7 +3,7 @@ import { lazy, Suspense } from 'react'
 import { AppLayout } from './pages/_layouts/app'
 import { AuthLayout } from './pages/_layouts/auth'
 import { PatientsList } from './pages/app/patients/patients-list/patients-list'
-import { Dashboard } from './pages/app/dashboard/dashboard'
+import { PsychologistDashboard } from './pages/app/psychologist/dashboard/psychologist-dashboard'
 import { NotFound } from './pages/404'
 import { SignIn } from './pages/auth/sign-in'
 import { SignUp } from './pages/auth/sign-up'
@@ -156,7 +156,7 @@ export const router = createBrowserRouter([
       {
         path: '/dashboard',
         loader: practiceContextGuard,
-        element: <Dashboard />,
+        element: <PsychologistDashboard />,
       },
       {
         path: '/dashboard-finance',

@@ -28,8 +28,14 @@ interface IPracticeTypeCard {
 }
 
 export function PracticeTypeCard({ option }: IPracticeTypeCard) {
-  const { variant, icon: Icon, title, description, bullets, onContinue } =
-    option
+  const {
+    variant,
+    icon: Icon,
+    title,
+    description,
+    bullets,
+    onContinue,
+  } = option
 
   return (
     <button

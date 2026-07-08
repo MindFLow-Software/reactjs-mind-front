@@ -6,6 +6,8 @@ interface IGetActiveRegistrationLink {
 }
 
 export async function getActiveRegistrationLink(): Promise<IGetActiveRegistrationLink> {
-  const response = await api.get<IGetActiveRegistrationLink>('/registration-links/active')
+  const response = await api.get<IGetActiveRegistrationLink>(
+    '/registration-links/active',
+  )
   return response.data
 }

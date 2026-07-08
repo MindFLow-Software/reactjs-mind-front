@@ -12,9 +12,7 @@ export function useGenerateRegistrationLink(): IUseGenerateRegistrationLink {
     mutationFn: generateRegistrationLink,
     successFallback: 'Link gerado com sucesso!',
     errorFallback: 'Falha ao gerar Link.',
-    invalidateKeys: [
-      ['active-registration-link'],
-    ],
+    invalidateKeys: [['active-registration-link']],
   })
 
   return {

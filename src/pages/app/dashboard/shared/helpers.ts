@@ -26,3 +26,15 @@ export function calcDailyAverage(values: number[]): number {
   const total = values.reduce((acc, value) => acc + value, 0)
   return Math.round((total / values.length) * 10) / 10
 }
+
+export function sumDailyCounts(series: { count: number }[]): number {
+  return series.reduce((total, point) => total + point.count, 0)
+}
+
+export function calcSessionsGrowth(series: { count: number }[]): number {
+  if (series.length < 2) return 0
+  const mid = Math.floor(series.length / 2)
+  const previous = sumDailyCounts(series.slice(0, mid))
+  const current = sumDailyCounts(series.slice(mid))
+  return calcGrowthPercentage(current, previous)
+}

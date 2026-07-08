@@ -38,7 +38,7 @@ function isErrorEnvelope(body: unknown): body is ApiErrorEnvelope {
   return (
     typeof body === 'object' &&
     body !== null &&
-    /*typeof (body as ApiErrorEnvelope).error?.code === 'string' &&*/
+    /* typeof (body as ApiErrorEnvelope).error?.code === 'string' && */
     typeof (body as ApiErrorEnvelope).error?.message === 'string'
   )
 }

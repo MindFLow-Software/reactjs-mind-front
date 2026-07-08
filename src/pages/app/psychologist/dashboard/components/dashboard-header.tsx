@@ -1,23 +1,25 @@
 import { useMemo } from 'react'
 import { format } from 'date-fns'
 import { ptBR } from 'date-fns/locale'
-import { cn } from '@/lib/utils'
-import type { DashboardPeriod } from '../constants'
-import { PERIODS } from '../constants'
-import { getGreeting } from '../helpers'
-import { useTodayAppointments } from '../hooks/use-today-appointments'
-import './dashboard-header.css'
 import { useAuth } from '@/hooks/use-auth'
 import { translatedHonorific } from '@/constants/translated-honorific'
+import { DashboardPeriodSelector } from '@/pages/app/dashboard/shared/components/dashboard-period-selector'
+import type { DashboardPeriod } from '../constants'
+import { getGreeting } from '../helpers'
+import { useTodayAppointments } from '../hooks/use-today-appointments'
+import type { IPsychologistDashboardSummary } from '../types'
+import './dashboard-header.css'
 
 interface DashboardHeaderProps {
   period: DashboardPeriod
   onPeriodChange: (p: DashboardPeriod) => void
+  summary: IPsychologistDashboardSummary
 }
 
 export function DashboardHeader({
   period,
   onPeriodChange,
+  summary,
 }: DashboardHeaderProps) {
   const { profile } = useAuth()
   const { count: appointmentCount } = useTodayAppointments()
@@ -33,6 +35,13 @@ export function DashboardHeader({
   const fullName = profile ? `${profile?.firstName} ${profile?.lastName}` : ''
   const title = honorific ? `${honorific} ${fullName}` : fullName
 
+  const summaryText = [
+    `${summary.sessionsCompleted} sessões concluídas`,
+    `${summary.weeklyOccupancyPercent}% de ocupação semanal`,
+    `${summary.newPatients} novos pacientes`,
+    `${summary.monthlyGoalProgressPercent}% da meta mensal`,
+  ].join(' · ')
+
   return (
     <div className="dsh-header-root">
       <div>
@@ -45,22 +54,10 @@ export function DashboardHeader({
           {appointmentCount > 0 &&
             ` · ${appointmentCount} ${appointmentCount === 1 ? 'sessão hoje' : 'sessões hoje'}`}
         </p>
+        <p className="dsh-header-summary">{summaryText}</p>
       </div>
 
-      <div className="dsh-header-periods">
-        {PERIODS.map(({ value, label }) => (
-          <button
-            key={value}
-            onClick={() => onPeriodChange(value)}
-            className={cn(
-              'dsh-header-period-btn',
-              period === value && 'dsh-header-period-btn--active',
-            )}
-          >
-            {label}
-          </button>
-        ))}
-      </div>
+      <DashboardPeriodSelector value={period} onChange={onPeriodChange} />
     </div>
   )
 }

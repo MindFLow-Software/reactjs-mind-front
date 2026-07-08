@@ -33,7 +33,12 @@ import {
 } from '@/validators/patients/form/update-patient-schema'
 
 import { buildPatientUpdateDefaults } from './edit-patient-modal.helpers'
-import { MAX_DOC_FILES, MAX_DOC_SIZE, STEPS, type IRegisterPatientTabs } from './register-patients/constants'
+import {
+  MAX_DOC_FILES,
+  MAX_DOC_SIZE,
+  STEPS,
+  type IRegisterPatientTabs,
+} from './register-patients/constants'
 
 import { UploadZone } from './register-patients/steps/upload-zone'
 import { StepBasicData } from './register-patients/steps/step-basic-data'
@@ -152,7 +157,7 @@ export function EditPatientModal({ patientId }: IEditPatientModal) {
   }
 
   useEffect(() => {
-    ; (async () => {
+    ;(async () => {
       if (errors && !redirectedToError.current) {
         const firstErrorField = Object.keys(errors)[0]
 

@@ -5,8 +5,11 @@ import type { RegisterPatientViaRegistrationLinkData } from '@/validators/regist
 
 export async function registerPatientViaRegistrationLink(
   hash: string | undefined,
-  data: RegisterPatientViaRegistrationLinkData
+  data: RegisterPatientViaRegistrationLinkData,
 ): Promise<IMutationResult<void>> {
-  const response = await api.post(`/patient-profiles/registration-links/${hash}/register`, data)
+  const response = await api.post(
+    `/patient-profiles/registration-links/${hash}/register`,
+    data,
+  )
   return { data: response.data, message: response.apiMessage ?? null }
 }

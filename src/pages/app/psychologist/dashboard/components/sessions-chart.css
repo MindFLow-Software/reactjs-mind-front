@@ -1,4 +1,4 @@
-@reference "../../../../global.css";
+@reference "../../../../../global.css";
 
 @layer components {
   .dsh-sessions-card {
@@ -27,6 +27,42 @@
 
   .dsh-sessions-subtitle {
     @apply mt-0.5 text-xs text-muted-foreground;
+  }
+
+  .dsh-sessions-header-side {
+    @apply flex flex-col gap-2 self-start sm:items-end;
+  }
+
+  .dsh-sessions-stats {
+    @apply flex items-center gap-4;
+  }
+
+  .dsh-sessions-stat {
+    @apply flex items-center gap-1.5;
+  }
+
+  .dsh-sessions-stat-label {
+    @apply text-xs text-muted-foreground;
+  }
+
+  .dsh-sessions-stat-value {
+    @apply text-sm font-semibold text-foreground;
+  }
+
+  .dsh-sessions-growth {
+    @apply inline-flex items-center gap-0.5 text-sm font-semibold;
+  }
+
+  .dsh-sessions-growth-up {
+    @apply text-emerald-600 dark:text-emerald-400;
+  }
+
+  .dsh-sessions-growth-down {
+    @apply text-red-600 dark:text-red-400;
+  }
+
+  .dsh-sessions-growth-flat {
+    @apply text-muted-foreground;
   }
 
   .dsh-sessions-legend {

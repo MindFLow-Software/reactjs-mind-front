@@ -19,10 +19,7 @@ export const updatePatientSchema = z.object({
   phoneNumber: z.string().optional().describe('contact'),
   dateOfBirth: z.date().nullable().optional().describe('basicData'),
   cpf: cpfField.describe('basicData'),
-  gender: z
-    .enum(Gender)
-    .optional()
-    .describe('basicData'),
+  gender: z.enum(Gender).optional().describe('basicData'),
   profileImageUrl: z.string().optional().describe('basicData'),
   attachmentIds: z.array(z.string()).optional(),
 })

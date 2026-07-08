@@ -46,11 +46,7 @@ export function NavUser() {
   const { isMobile } = useSidebar()
   const { setTheme } = useTheme()
 
-  const {
-    profile,
-    isError,
-    isPending: isLoading,
-  } = useAuth()
+  const { profile, isError, isPending: isLoading } = useAuth()
 
   const { signOut, isSigningOut } = useSignOut()
 

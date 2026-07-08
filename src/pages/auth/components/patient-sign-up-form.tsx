@@ -84,7 +84,8 @@ export function PatientSignUpForm({
       })
       await signIn({ email: data.email, password: data.password })
 
-      const { psychologistPracticeContextId } = await getRegistrationLinkByHash(hash)
+      const { psychologistPracticeContextId } =
+        await getRegistrationLinkByHash(hash)
       await createOwnPatientProfile({ psychologistPracticeContextId })
     },
   })

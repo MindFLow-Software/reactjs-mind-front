@@ -1,12 +1,5 @@
 export type DashboardPeriod = '7d' | '30d' | '90d' | 'year'
 
-export const PERIODS = [
-  { value: '7d' as DashboardPeriod, label: '7 dias' },
-  { value: '30d' as DashboardPeriod, label: '30 dias' },
-  { value: '90d' as DashboardPeriod, label: '90 dias' },
-  { value: 'year' as DashboardPeriod, label: 'Ano' },
-] as const
-
 export const PERIOD_DAYS: Record<DashboardPeriod, number> = {
   '7d': 7,
   '30d': 30,

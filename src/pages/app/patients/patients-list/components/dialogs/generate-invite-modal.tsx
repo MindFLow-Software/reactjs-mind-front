@@ -23,7 +23,8 @@ export function GenerateInviteModal() {
   const [copied, setCopied] = useState(false)
 
   const { data } = useActiveRegistrationLink()
-  const { generateRegistrationLink, isGenerating } = useGenerateRegistrationLink()
+  const { generateRegistrationLink, isGenerating } =
+    useGenerateRegistrationLink()
 
   const registrationLink = data?.registrationLink
 
@@ -76,11 +77,7 @@ export function GenerateInviteModal() {
         ) : (
           <div className="flex flex-col items-center gap-5">
             <div className="p-5 bg-card rounded-2xl border border-border shadow-sm">
-              <QRCodeSVG
-                value={registrationLink.url}
-                size={180}
-                level="H"
-              />
+              <QRCodeSVG value={registrationLink.url} size={180} level="H" />
             </div>
 
             <p className="text-xs text-muted-foreground text-center">

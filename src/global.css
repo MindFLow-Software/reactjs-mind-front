@@ -159,6 +159,8 @@
   --gender-other: #a855f7;
   --chart-blue: #3b82f6;
   --chart-sessions-green: #22c55e;
+  --chart-sessions-red: #ef4444;
+  --chart-sessions-amber: #f59e0b;
   --chart-transactions-green: #63d72a;
   --finance-paid: #01de82;
   --finance-pending: #f59e0b;
