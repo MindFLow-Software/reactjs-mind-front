@@ -1,35 +1,21 @@
-'use client'
-
-import { useState, useEffect } from 'react'
+import { useEffect } from 'react'
 import { Helmet } from 'react-helmet-async'
-import { subDays } from 'date-fns'
 
 import { useHeaderStore } from '@/store/use-header-store'
-import { TotalPsychologistsCard } from './components/total-psychologists-card'
-import { TotalPatientCard } from './components/total-patient-card'
-import { TotalSuggestionsCard } from './components/total-suggestions-card'
-import { NewPsychologistsBarChart } from './components/new-psychologists-bar-chart'
-import { NewPatientsBarChart } from './components/new-patient-bar-chart'
-import { PsychologistsAgeRangeChart } from './components/psychologists-by-age-chart'
-import { PsychologistsGenderChart } from './components/psychologists-by-gender-chart'
+import { AdminDashboardHeader } from './components/admin-dashboard-header'
+import { useAdminDashboard } from './hooks/use-admin-dashboard'
+import { ExecutiveOverviewSection } from './components/executive-overview-section'
+import { GrowthSection } from './components/growth-section'
+import { RevenueSubscriptionsSection } from './components/revenue-subscriptions-section'
+import { SessionsActivitySection } from './components/sessions-activity-section'
+import { PsychologistsAnalyticsSection } from './components/psychologists-analytics-section'
+import { PatientsAnalyticsSection } from './components/patients-analytics-section'
+import { OperationalInsightsSection } from './components/operational-insights-section'
 import './admin-dashboard.css'
-
-interface DateRange {
-  from: Date | undefined
-  to: Date | undefined
-}
-
-const getInitialRange = (): DateRange => {
-  const today = new Date()
-  const thirtyDaysAgo = subDays(today, 30)
-  return { from: thirtyDaysAgo, to: today }
-}
 
 export function AdminDashboard() {
   const { setTitle } = useHeaderStore()
-
-  const [dateRange] = useState<DateRange>(getInitialRange)
-  const { to: endDate } = dateRange
+  const { data, isLoading, isError, period, setPeriod } = useAdminDashboard()
 
   useEffect(() => {
     setTitle('Dashboard do Admin')
@@ -40,21 +26,35 @@ export function AdminDashboard() {
       <Helmet title="Dashboard do Admin" />
 
       <div className="adb-dashboard-root">
-        <div className="adb-dashboard-stats-grid">
-          <TotalPsychologistsCard />
-          <TotalPatientCard />
-          <TotalSuggestionsCard />
-        </div>
+        <AdminDashboardHeader period={period} onPeriodChange={setPeriod} />
 
-        <div className="adb-dashboard-charts-grid">
-          <NewPsychologistsBarChart endDate={endDate} />
-          <NewPatientsBarChart endDate={endDate} />
-        </div>
+        <ExecutiveOverviewSection
+          executive={data.executive}
+          isLoading={isLoading}
+          isError={isError}
+        />
 
-        <div className="adb-dashboard-charts-grid--2col">
-          <PsychologistsAgeRangeChart />
-          <PsychologistsGenderChart endDate={endDate} />
-        </div>
+        <GrowthSection
+          growth={data.growth}
+          period={period}
+          onPeriodChange={setPeriod}
+          isLoading={isLoading}
+          isError={isError}
+        />
+
+        <RevenueSubscriptionsSection revenue={data.revenue} />
+
+        <SessionsActivitySection activity={data.activity} />
+
+        <PsychologistsAnalyticsSection psychologists={data.psychologists} />
+
+        <PatientsAnalyticsSection
+          patients={data.patients}
+          isLoading={isLoading}
+          isError={isError}
+        />
+
+        <OperationalInsightsSection insights={data.insights} />
       </div>
     </>
   )
