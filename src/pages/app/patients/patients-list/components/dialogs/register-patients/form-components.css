@@ -7,7 +7,7 @@
   .patient-input {
     @apply h-[38px] border-border text-[13.5px] text-foreground;
     @apply placeholder:text-muted-foreground;
-    @apply focus-visible:border-blue-600 focus-visible:ring-[3px] focus-visible:ring-blue-600/[.18];
+    @apply focus-visible:border-blue-600 focus-visible:ring-[3px] focus-visible:ring-blue-600/18;
   }
 
   /* ── Form layout — shared across steps ──────────────────────────── */
@@ -61,7 +61,7 @@
 
   .rp-modal-tab {
     @apply -mb-px flex flex-1 cursor-pointer items-center justify-center gap-[7px] border-b-2
-           px-3 py-[10px] text-[13px] font-semibold transition-colors duration-[120ms];
+           px-3 py-[10px] text-[13px] font-semibold transition-colors duration-120;
   }
 
   .rp-modal-tab--active { @apply border-blue-600 text-blue-600; }

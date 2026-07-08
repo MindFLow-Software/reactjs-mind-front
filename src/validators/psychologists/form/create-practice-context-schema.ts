@@ -15,6 +15,6 @@ export const createPsychologistPracticeContextSchema = z.object({
   closeAt: z.string().optional().default('18:00'),
 })
 
-export type CreatePsychologistPracticeContextData = z.infer<
+export type ICreatePsychologistPracticeContext = z.infer<
   typeof createPsychologistPracticeContextSchema
 >

@@ -1,8 +1,8 @@
 @reference "../../../../global.css";
 
 @layer components {
-  .acc-profile-card {
-    @apply relative z-0 overflow-hidden rounded-2xl border border-border bg-card shadow-sm w-full max-w-lg;
+  .acc-identity-row {
+    @apply flex flex-col items-center gap-4 text-center sm:flex-row sm:text-left;
   }
 
   .acc-profile-body {

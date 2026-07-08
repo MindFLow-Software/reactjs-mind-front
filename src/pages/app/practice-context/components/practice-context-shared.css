@@ -1,7 +1,11 @@
 @reference "../../../../global.css";
 
 @layer components {
-  .pctx-back-button {
-    @apply text-black bg-transparent border-none hover:bg-transparent gap-1;
+  .pc-switch {
+    @apply mx-auto mt-6 flex w-fit cursor-pointer items-center gap-1.5 rounded-md border-none bg-transparent px-2 py-1 text-[13px] font-semibold text-muted-foreground transition-colors duration-150;
+  }
+
+  .pc-switch:hover {
+    @apply text-primary;
   }
 }

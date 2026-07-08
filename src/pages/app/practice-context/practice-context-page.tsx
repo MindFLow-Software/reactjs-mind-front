@@ -1,4 +1,5 @@
 import './practice-context-page.css'
+
 import { useCallback, useState } from 'react'
 import { Briefcase, Building2 } from 'lucide-react'
 
@@ -9,11 +10,11 @@ import {
 
 import { CreateClinicContext } from './components/create-clinic-context'
 import { CreateIndividualContext } from './components/create-individual-context'
+import { PracticeContextHeader } from './components/practice-context-header'
 import {
-  PracticeContextOptionCard,
-  type PracticeContextOption,
-} from './components/practice-context-option-card'
-import { ActivePsychologistProfileBadge } from '@/pages/auth/components/active-psychologist-profile-badge'
+  PracticeTypeCard,
+  type IPracticeTypeCardOption,
+} from './components/practice-type-card'
 import { useCreatePracticeContext } from './hooks/use-create-practice-context'
 
 export function PracticeContextPage() {
@@ -38,32 +39,30 @@ export function PracticeContextPage() {
     [mutateAsync],
   )
 
-  const options: PracticeContextOption[] = [
+  const typeOptions: IPracticeTypeCardOption[] = [
     {
-      accent: 'blue',
-      titleIconVariant: 'primary',
-      icon: <Briefcase />,
+      variant: 'individual',
+      icon: Briefcase,
       title: 'INDIVIDUAL / PRIVADO',
-      description: 'Você conduz suas próprias sessões',
+      description: 'Você conduz suas próprias sessões.',
       bullets: [
         'Defina sua própria taxa e disponibilidade',
         'Faturamento direto aos seus pacientes',
         'Sessões online ou presenciais',
       ],
-      onSelect: () => handleSetContextType(ContextType.INDIVIDUAL),
+      onContinue: () => handleSetContextType(ContextType.INDIVIDUAL),
     },
     {
-      accent: 'teal',
-      titleIconVariant: 'secondary',
-      icon: <Building2 />,
+      variant: 'clinic',
+      icon: Building2,
       title: 'CLÍNICA / INSTITUIÇÃO',
       description: 'Participe de um espaço de trabalho por convite.',
       bullets: [
-        'CRP e credenciais (pagamento único)',
+        'CRP e credenciais (cadastro único)',
         'Adicione vários espaços de trabalho posteriormente',
         'Ferramentas para prática calma e focada',
       ],
-      onSelect: () => handleSetContextType(ContextType.CLINIC),
+      onContinue: () => handleSetContextType(ContextType.CLINIC),
     },
   ]
 
@@ -90,36 +89,18 @@ export function PracticeContextPage() {
   }
 
   return (
-    <div className="pctx-shell">
-      <div className="pctx-header">
-        <header className="text-center flex flex-col gap-2">
-          <p className="font-medium text-muted-foreground">
-            Contexto de atuação
-          </p>
-          <div className="flex flex-col items-center gap-2">
-            <h1 className="text-3xl">Onde você pratica?</h1>
-            <p className="text-xs text-muted-foreground">
-              Sua identidade profissional (CRP e credenciais) permanece a mesma
-              em todos os seus espaços de trabalho. Escolha como deseja
-              configurá-la — você pode adicionar mais informações a qualquer
-              momento.
-            </p>
-          </div>
-        </header>
-        <ActivePsychologistProfileBadge />
-      </div>
+    <div className="pc-wrap">
+      <PracticeContextHeader />
 
-      <main className="w-full max-w-4xl">
-        {!practiceContext ? (
-          <div className="pctx-options-row">
-            {options.map((option) => (
-              <PracticeContextOptionCard key={option.title} option={option} />
-            ))}
-          </div>
-        ) : (
-          renderPracticeContextForm()
-        )}
-      </main>
+      {!practiceContext ? (
+        <div className="pc-types">
+          {typeOptions.map((option) => (
+            <PracticeTypeCard key={option.variant} option={option} />
+          ))}
+        </div>
+      ) : (
+        renderPracticeContextForm()
+      )}
     </div>
   )
 }
