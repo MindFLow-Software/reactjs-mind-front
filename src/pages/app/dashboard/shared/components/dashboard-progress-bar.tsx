@@ -32,8 +32,8 @@ export function DashboardProgressBar({
       <div className="dsh-progress-bar-header">
         <span className="dsh-progress-bar-label">{label}</span>
         <span className="dsh-progress-bar-value">
-          {value}
-          {unit} / {target}
+          {value}{' '}
+          {unit} / {target}{' '}
           {unit}
         </span>
       </div>

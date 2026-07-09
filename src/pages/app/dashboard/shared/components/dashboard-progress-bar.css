@@ -2,11 +2,11 @@
 
 @layer components {
   .dsh-progress-bar-root {
-    @apply flex flex-col gap-1.5;
+    @apply flex flex-col gap-1.5 flex-1;
   }
 
   .dsh-progress-bar-header {
-    @apply flex items-center justify-between;
+    @apply flex items-center gap-4 justify-between;
   }
 
   .dsh-progress-bar-label {

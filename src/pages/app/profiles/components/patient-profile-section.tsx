@@ -2,6 +2,7 @@ import { useCallback } from 'react'
 import { useNavigate } from 'react-router-dom'
 
 import { useAuth } from '@/hooks/use-auth'
+import { useActivePracticeContextStore } from '@/store/use-active-practice-context-store'
 import { PatientProfileCard } from './patient-profile-card'
 import { ProfileSectionHeader } from './profile-section-header'
 
@@ -10,12 +11,14 @@ import './patient-profile-section.css'
 export function PatientProfileSection() {
   const navigate = useNavigate()
   const { profile: me } = useAuth()
+  const { clearActivePracticeContextId } = useActivePracticeContextStore()
 
   const patientProfiles = me?.patientProfiles ?? []
 
   const handleEnterPatientProfile = useCallback(() => {
-    navigate('/patient-dashboard')
-  }, [navigate])
+    clearActivePracticeContextId()
+    navigate('/patient/dashboard')
+  }, [clearActivePracticeContextId, navigate])
 
   if (patientProfiles.length === 0) return null
 

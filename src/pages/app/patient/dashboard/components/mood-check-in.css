@@ -1,0 +1,27 @@
+@reference "../../../../../global.css";
+
+@layer components {
+  .ptd-mood-card {
+    @apply flex flex-col gap-4 rounded-2xl p-6;
+  }
+
+  .ptd-mood-title {
+    @apply text-sm font-semibold text-foreground;
+  }
+
+  .ptd-mood-options {
+    @apply flex flex-wrap justify-between gap-2;
+  }
+
+  .ptd-mood-option {
+    @apply flex size-11 items-center justify-center rounded-full text-2xl transition-colors hover:bg-muted/50;
+  }
+
+  .ptd-mood-option--selected {
+    @apply bg-blue-600/10 ring-2 ring-blue-600/40 dark:bg-blue-950/30;
+  }
+
+  .ptd-mood-streak {
+    @apply text-xs text-muted-foreground;
+  }
+}

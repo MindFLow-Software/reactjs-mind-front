@@ -18,7 +18,7 @@ export function SessionsActivitySection({
       title="Sessões & Atividade"
       description="Volume de sessões e atividade de usuários no período selecionado"
     >
-      <div className="adb-activity-grid">
+      <div className="adb-activity-content">
         <MetricCard variant="stacked" accentColor="emerald">
           <MetricCard.Header
             icon={<CheckCircle2 className="size-4 text-emerald-600" />}

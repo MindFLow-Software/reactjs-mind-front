@@ -110,6 +110,7 @@ export function useAdminDashboard(): UseAdminDashboardReturn {
         from: dateRange.startDate,
         to: dateRange.endDate,
       }),
+    initialData: [],
     ...queryDefaults,
   })
 
@@ -120,18 +121,21 @@ export function useAdminDashboard(): UseAdminDashboardReturn {
         startDate: dateRange.startDate,
         endDate: dateRange.endDate,
       }),
+    initialData: [],
     ...queryDefaults,
   })
 
   const ageStats = useQuery({
     queryKey: ['admin', 'psychologists-age-stats'],
     queryFn: getPsychologistsAgeStats,
+    initialData: [],
     ...queryDefaults,
   })
 
   const genderStats = useQuery({
     queryKey: ['admin', 'psychologists-gender-stats'],
     queryFn: getPsychologistsGenderStats,
+    initialData: [],
     ...queryDefaults,
   })
 
@@ -153,15 +157,15 @@ export function useAdminDashboard(): UseAdminDashboardReturn {
         conversionPercent: mock.executive.conversionPercent,
       },
       growth: {
-        newPsychologists: mapNewPsychologists(newPsychologists.data ?? []),
-        newPatients: mapNewPatients(newPatients.data ?? []),
+        newPsychologists: mapNewPsychologists(newPsychologists?.data),
+        newPatients: mapNewPatients(newPatients?.data),
         clinics: mock.growth.clinics,
       },
       revenue: mock.revenue,
       activity: mock.activity,
       psychologists: {
-        byAge: mapAgeStats(ageStats.data ?? []),
-        byGender: mapGenderStats(genderStats.data ?? []),
+        byAge: mapAgeStats(ageStats?.data),
+        byGender: mapGenderStats(genderStats?.data),
         active: mock.psychologists.active,
         inactive: mock.psychologists.inactive,
         byState: mock.psychologists.byState,

@@ -1,7 +1,11 @@
 @reference "../../../../../global.css";
 
 @layer components {
-  .adb-revenue-grid {
-    @apply grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3;
+  .adb-revenue-content {
+    @apply flex gap-4;
+  }
+
+  .adb-revenue-cards {
+    @apply flex flex-col gap-4 w-full max-w-80 h-full max-h-[464px] overflow-y-scroll;
   }
 }

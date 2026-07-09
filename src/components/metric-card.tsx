@@ -1,23 +1,36 @@
-import { createContext, useContext } from 'react'
 import type { ReactNode } from 'react'
-import { cn } from '@/lib/utils'
+import { createContext, useContext } from 'react'
 import {
-  TrendingDown,
-  TrendingUp,
-  TrendingUpDown,
-  AlertCircle,
-  RefreshCcw,
   Minus,
+  RefreshCcw,
+  TrendingUp,
+  AlertCircle,
+  TrendingDown,
+  TrendingUpDown,
 } from 'lucide-react'
+
+import { cn } from '@/lib/utils'
 
 import {
   Card,
   CardTitle,
   CardAction,
+  CardHeader,
   CardContent,
   CardDescription,
 } from '@/components/ui/card'
+
 import { Skeleton } from '@/components/ui/skeleton'
+
+interface MetricCardContextValue {
+  isLoading: boolean
+  variant: MetricCardVariant
+}
+
+const MetricCardContext = createContext<MetricCardContextValue>({
+  isLoading: false,
+  variant: 'grid',
+})
 
 type MetricCardVariant = 'grid' | 'stacked'
 type AccentColor = 'blue' | 'violet' | 'emerald'
@@ -51,22 +64,13 @@ const ICON_RING: Record<AccentColor, string> = {
   emerald: 'bg-emerald-500/10 ring-emerald-500/20',
 }
 
-interface MetricCardContextValue {
-  isLoading: boolean
-  variant: MetricCardVariant
-}
-
-const MetricCardContext = createContext<MetricCardContextValue>({
-  isLoading: false,
-  variant: 'grid',
-})
-
 interface MetricCardRootProps {
   variant?: MetricCardVariant
   isLoading?: boolean
   accentColor?: AccentColor
   children: ReactNode
   className?: string
+  size?: 'md' | 'fill'
 }
 
 interface MetricCardIconProps {
@@ -112,13 +116,15 @@ function MetricCardRoot({
   accentColor,
   children,
   className,
+  size = 'fill'
 }: MetricCardRootProps) {
   return (
     <MetricCardContext.Provider value={{ isLoading, variant }}>
       <Card
         className={cn(
-          'relative rounded-md border bg-card shadow-sm',
+          'relative rounded-md border bg-card shadow-sm min-h-36 max-h-40 w-full',
           variant === 'grid' ? 'px-6 py-5' : 'p-5',
+          size === 'md' && 'max-w-80 shrink-0',
           className,
         )}
       >
@@ -160,7 +166,7 @@ function MetricCardIcon({ bg, children }: MetricCardIconProps) {
 
 function MetricCardHeader({ icon, label, accentColor }: MetricCardHeaderProps) {
   return (
-    <div className="flex items-center gap-3">
+    <CardHeader className="flex items-center gap-3 p-0">
       <div
         className={cn(
           'flex size-9 shrink-0 items-center justify-center rounded-full ring-1',
@@ -172,7 +178,7 @@ function MetricCardHeader({ icon, label, accentColor }: MetricCardHeaderProps) {
       <p className="text-sm font-semibold text-foreground leading-tight">
         {label}
       </p>
-    </div>
+    </CardHeader>
   )
 }
 
@@ -191,7 +197,7 @@ function MetricCardValue({ children }: MetricCardValueProps) {
     <CardTitle
       className={cn(
         'font-bold tabular-nums leading-none',
-        variant === 'stacked' ? 'mt-3 text-4xl' : 'text-3xl',
+        variant === 'stacked' ? 'mt-3 text-2xl' : 'text-xl',
       )}
     >
       {children}

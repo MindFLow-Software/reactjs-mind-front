@@ -1,0 +1,43 @@
+@reference "../../../../../global.css";
+
+@layer components {
+  .ptd-journal-card {
+    @apply flex flex-col gap-4 rounded-2xl p-6;
+  }
+
+  .ptd-journal-title {
+    @apply text-sm font-semibold text-foreground;
+  }
+
+  .ptd-journal-empty-text {
+    @apply text-sm text-muted-foreground;
+  }
+
+  .ptd-journal-list {
+    @apply flex flex-col gap-3;
+  }
+
+  .ptd-journal-entry {
+    @apply flex flex-col gap-2;
+  }
+
+  .ptd-journal-entry-header {
+    @apply flex items-center justify-between gap-2;
+  }
+
+  .ptd-journal-entry-title {
+    @apply text-sm font-medium text-foreground;
+  }
+
+  .ptd-journal-entry-date {
+    @apply text-xs text-muted-foreground;
+  }
+
+  .ptd-journal-entry-excerpt {
+    @apply text-sm text-foreground/80;
+  }
+
+  .ptd-journal-separator {
+    @apply mt-3;
+  }
+}

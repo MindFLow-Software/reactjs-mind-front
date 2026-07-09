@@ -1,0 +1,31 @@
+@reference "../../../../global.css";
+
+@layer components {
+  .ptd-root {
+    @apply flex flex-col gap-6;
+  }
+
+  .ptd-greeting {
+    @apply flex flex-col gap-1;
+  }
+
+  .ptd-greeting-title {
+    @apply text-2xl font-semibold text-foreground;
+  }
+
+  .ptd-greeting-subtitle {
+    @apply text-sm text-muted-foreground;
+  }
+
+  .ptd-grid {
+    @apply grid grid-cols-1 gap-4 lg:grid-cols-3;
+  }
+
+  .ptd-col-main {
+    @apply flex flex-col gap-4 lg:col-span-2;
+  }
+
+  .ptd-col-side {
+    @apply flex flex-col gap-4;
+  }
+}

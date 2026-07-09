@@ -17,7 +17,11 @@
     @apply lg:col-span-2;
   }
 
-  .dsh-goals-grid {
-    @apply grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3;
+  .dsh-goals-content {
+    @apply flex flex-col gap-4 px-0;
+  }
+
+  .dsh-goals-section {
+    @apply flex gap-4
   }
 }

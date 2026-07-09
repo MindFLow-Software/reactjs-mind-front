@@ -2,7 +2,7 @@ import { CalendarCheck, CalendarX, RotateCcw } from 'lucide-react'
 import type { LucideIcon } from 'lucide-react'
 
 import { Badge } from '@/components/ui/badge'
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { cn } from '@/lib/utils'
 import type { IPsychologistDashboardAttendance } from '../types'
 import './attendance-section.css'
@@ -46,7 +46,10 @@ export function AttendanceSection({ attendance }: AttendanceSectionProps) {
   return (
     <Card className="dsh-attendance-card">
       <CardHeader className="dsh-attendance-header">
-        <CardTitle className="dsh-attendance-title">Comparecimento</CardTitle>
+        <div>
+          <CardTitle className="dsh-attendance-title">Comparecimento</CardTitle>
+          <CardDescription>Indicadores chaves de presença</CardDescription>
+        </div>
       </CardHeader>
       <CardContent className="dsh-attendance-content">
         {METRICS.map(({ key, label, icon: Icon, badgeClassName }) => (

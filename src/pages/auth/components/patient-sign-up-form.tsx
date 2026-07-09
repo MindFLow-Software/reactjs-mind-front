@@ -96,7 +96,7 @@ export function PatientSignUpForm({
         await registerPatient(data)
         clearActivePracticeContextId()
         toast.success('Cadastro realizado!')
-        navigate('/patient-dashboard')
+        navigate('/patient/dashboard')
       } catch (error) {
         toast.error(getApiErrorMessage(error, 'Erro ao criar conta.'))
       }

@@ -71,10 +71,12 @@ export function PsychologistDashboard() {
           title="Metas e comparecimento"
           description="Progresso mensal, presença e recomendações"
         >
-          <div className="dsh-goals-grid">
+          <div className="dsh-goals-content">
             <MonthlyGoalsSection goals={data.goals} />
-            <AttendanceSection attendance={data.attendance} />
-            <InsightsSection insights={data.insights} />
+            <div className="dsh-goals-section">
+              <InsightsSection insights={data.insights} />
+              <AttendanceSection attendance={data.attendance} />
+            </div>
           </div>
         </DashboardSection>
 

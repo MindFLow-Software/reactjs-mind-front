@@ -1,0 +1,15 @@
+@reference "../../../../../global.css";
+
+@layer components {
+  .ptd-goals-card {
+    @apply flex flex-col gap-4 rounded-2xl p-6;
+  }
+
+  .ptd-goals-title {
+    @apply text-sm font-semibold text-foreground;
+  }
+
+  .ptd-goals-list {
+    @apply flex flex-col gap-4;
+  }
+}

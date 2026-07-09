@@ -2,7 +2,7 @@
 
 @layer components {
   .dsh-insight-card-root {
-    @apply border bg-card shadow-sm;
+    @apply border bg-card shadow-sm pb-2! gap-0!;
   }
 
   .dsh-insight-card-content {

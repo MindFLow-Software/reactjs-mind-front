@@ -1,7 +1,7 @@
 @reference "../../../../../global.css";
 
 @layer components {
-  .adb-activity-grid {
-    @apply grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4;
+  .adb-activity-content {
+    @apply flex gap-4;
   }
 }

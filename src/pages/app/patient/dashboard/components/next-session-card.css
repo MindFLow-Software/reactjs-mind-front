@@ -1,0 +1,60 @@
+@reference "../../../../../global.css";
+
+@layer components {
+  .ptd-next-session {
+    @apply flex min-h-[220px] flex-col gap-4 rounded-2xl border-0 p-6 text-white;
+    background: linear-gradient(
+      135deg,
+      hsl(160 84% 39%) 0%,
+      hsl(199 89% 48%) 100%
+    );
+  }
+
+  .ptd-next-session--empty {
+    @apply items-center justify-center text-center;
+  }
+
+  .ptd-next-session-empty-text {
+    @apply text-sm text-white/80;
+  }
+
+  .ptd-next-session-label {
+    @apply text-xs font-semibold uppercase tracking-wide text-white/80;
+  }
+
+  .ptd-next-session-main {
+    @apply flex items-center gap-3;
+  }
+
+  .ptd-next-session-avatar {
+    @apply size-12 border-2 border-white/30;
+  }
+
+  .ptd-next-session-info {
+    @apply flex flex-col gap-0.5;
+  }
+
+  .ptd-next-session-psychologist {
+    @apply text-lg font-semibold;
+  }
+
+  .ptd-next-session-datetime {
+    @apply text-sm text-white/80;
+  }
+
+  .ptd-next-session-meta {
+    @apply flex flex-wrap gap-2;
+  }
+
+  .ptd-next-session-badge {
+    @apply border-transparent bg-white/20 text-white;
+  }
+
+  .ptd-next-session-actions {
+    @apply mt-auto flex flex-wrap gap-2;
+  }
+
+  .ptd-next-session-action {
+    @apply flex-1 border-white/40 bg-white/10 text-white hover:bg-white/20;
+  }
+}

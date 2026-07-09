@@ -68,10 +68,6 @@ export const SignInForm = memo(function SignInForm({
     async (data: SignInFormData) => {
       try {
         await authenticate(data)
-
-        // const profile = await getProfile()
-        // setSession(profile)
-
         toast.success('Login realizado com sucesso!', { duration: 2000 })
         navigate('/dashboard', { replace: true })
       } catch (error) {

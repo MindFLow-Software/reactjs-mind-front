@@ -54,7 +54,15 @@ export function DashboardHeader({
           {appointmentCount > 0 &&
             ` · ${appointmentCount} ${appointmentCount === 1 ? 'sessão hoje' : 'sessões hoje'}`}
         </p>
-        <p className="dsh-header-summary">{summaryText}</p>
+        <p className="dsh-header-summary">
+          <span className="font-medium">{`${summary.sessionsCompleted} sessões concluídas`}</span>
+          <span>{' · '}</span>
+          <span className="font-medium text-green-500">{`${summary.weeklyOccupancyPercent}% de ocupação semanal`}</span>
+          <span>{' · '}</span>
+          <span className="font-medium text-violet-400">{`${summary.newPatients} novos pacientes`}</span>
+          <span>{' · '}</span>
+          <span className="font-medium">{`${summary.monthlyGoalProgressPercent}% da meta mensal concluída`}</span>
+        </p>
       </div>
 
       <DashboardPeriodSelector value={period} onChange={onPeriodChange} />

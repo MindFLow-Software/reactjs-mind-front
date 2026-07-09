@@ -1,6 +1,6 @@
 import { Lightbulb } from 'lucide-react'
 
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { DashboardInsightCard } from '@/pages/app/dashboard/shared/components/dashboard-insight-card'
 import type { IDashboardInsight } from '@/pages/app/dashboard/shared/types'
 import './insights-section.css'
@@ -13,11 +13,12 @@ export function InsightsSection({ insights }: InsightsSectionProps) {
   return (
     <Card className="dsh-insights-card">
       <CardHeader className="dsh-insights-header">
-        <div className="dsh-insights-header-row">
-          <div className="dsh-insights-icon">
-            <Lightbulb className="size-4 text-amber-600" />
-          </div>
+        <div className="dsh-insights-icon">
+          <Lightbulb className="size-4 text-amber-600" />
+        </div>
+        <div>
           <CardTitle className="dsh-insights-title">Insights</CardTitle>
+          <CardDescription>Recomendações inteligentes para sua prática</CardDescription>
         </div>
       </CardHeader>
       <CardContent className="dsh-insights-content">
@@ -27,11 +28,11 @@ export function InsightsSection({ insights }: InsightsSectionProps) {
             severity={insight.severity}
             title={insight.title}
             description={insight.description}
-            action={
-              insight.actionLabel
-                ? { label: insight.actionLabel, disabled: true }
-                : undefined
-            }
+            // action={
+            //   insight.actionLabel
+            //     ? { label: insight.actionLabel, disabled: true }
+            //     : undefined
+            // }
           />
         ))}
       </CardContent>

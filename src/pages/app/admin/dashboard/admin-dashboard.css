@@ -2,6 +2,6 @@
 
 @layer components {
   .adb-dashboard-root {
-    @apply flex flex-col gap-6;
+    @apply flex flex-col gap-6 overflow-x-hidden;
   }
 }

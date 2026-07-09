@@ -33,7 +33,8 @@ export function ExecutiveOverviewSection({
       title="Visão executiva"
       description="Indicadores principais da plataforma no período selecionado"
     >
-      <div className="adb-exec-grid">
+      <div></div>
+      <div className="adb-exec-content">
         <AdminStatCard
           icon={<Users className="size-4" />}
           accent="blue"
@@ -84,7 +85,7 @@ export function ExecutiveOverviewSection({
             isError: false,
           }}
         />
-        <MetricCard variant="stacked" accentColor="emerald">
+        <MetricCard variant="stacked" accentColor="emerald" size="md">
           <MetricCard.Header
             icon={<DollarSign className="size-4 text-emerald-600" />}
             label="MRR"
@@ -92,7 +93,7 @@ export function ExecutiveOverviewSection({
           />
           <MetricCard.Value>{Currency.toBRL(executive.mrr)}</MetricCard.Value>
         </MetricCard>
-        <MetricCard variant="stacked" accentColor="violet">
+        <MetricCard variant="stacked" accentColor="violet" size="md">
           <MetricCard.Header
             icon={<Percent className="size-4 text-violet-600" />}
             label="Taxa de conversão"

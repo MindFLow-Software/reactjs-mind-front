@@ -2,7 +2,7 @@ import { AlertTriangle, Info, OctagonAlert } from 'lucide-react'
 
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
-import { Card, CardContent } from '@/components/ui/card'
+import { Card, CardContent, CardHeader } from '@/components/ui/card'
 import { InsightSeverity } from '../types'
 import './dashboard-insight-card.css'
 
@@ -54,14 +54,14 @@ export function DashboardInsightCard({
 
   return (
     <Card className="dsh-insight-card-root">
-      <CardContent className="dsh-insight-card-content">
-        <div className="dsh-insight-card-header">
-          <Badge className={config.badgeClassName}>
-            <Icon className="size-3" />
-            {config.label}
-          </Badge>
-        </div>
+      <CardHeader className="flex justify-between">
         <p className="dsh-insight-card-title">{title}</p>
+        <Badge className={config.badgeClassName}>
+          <Icon className="size-3" />
+          {config.label}
+        </Badge>
+      </CardHeader>
+      <CardContent className="dsh-insight-card-content">
         <p className="dsh-insight-card-description">{description}</p>
         {action && (
           <Button

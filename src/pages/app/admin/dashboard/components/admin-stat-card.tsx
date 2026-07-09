@@ -59,7 +59,7 @@ export function AdminStatCard({
           <div className="flex flex-col">
             <div className="flex items-baseline gap-2">
               <span className="adb-stat-value">
-                {query.value !== undefined
+                {query.value
                   ? query.value.toLocaleString('pt-BR')
                   : '0'}
               </span>
