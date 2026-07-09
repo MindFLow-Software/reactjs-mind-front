@@ -166,7 +166,7 @@
 
   /* File thumb */
   .pd-up-thumb {
-    @apply flex h-10 w-8 shrink-0 items-end justify-center overflow-hidden rounded-md bg-gradient-to-br;
+    @apply flex h-10 w-8 shrink-0 items-end justify-center overflow-hidden rounded-md bg-linear-to-br;
   }
 
   .pd-up-thumb-ext {
