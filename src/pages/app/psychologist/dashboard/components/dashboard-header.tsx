@@ -35,13 +35,6 @@ export function DashboardHeader({
   const fullName = profile ? `${profile?.firstName} ${profile?.lastName}` : ''
   const title = honorific ? `${honorific} ${fullName}` : fullName
 
-  const summaryText = [
-    `${summary.sessionsCompleted} sessões concluídas`,
-    `${summary.weeklyOccupancyPercent}% de ocupação semanal`,
-    `${summary.newPatients} novos pacientes`,
-    `${summary.monthlyGoalProgressPercent}% da meta mensal`,
-  ].join(' · ')
-
   return (
     <div className="dsh-header-root">
       <div>
