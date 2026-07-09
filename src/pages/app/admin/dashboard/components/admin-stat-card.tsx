@@ -14,7 +14,7 @@ interface AdminStatCardProps {
   title: string
   subtitle: string
   query: {
-    value: number | undefined
+    value: string | number | null
     isLoading: boolean
     isError: boolean
   }
@@ -59,9 +59,9 @@ export function AdminStatCard({
           <div className="flex flex-col">
             <div className="flex items-baseline gap-2">
               <span className="adb-stat-value">
-                {query.value
+                {query.value && typeof query.value === 'number'
                   ? query.value.toLocaleString('pt-BR')
-                  : '0'}
+                  : query.value}
               </span>
             </div>
           </div>

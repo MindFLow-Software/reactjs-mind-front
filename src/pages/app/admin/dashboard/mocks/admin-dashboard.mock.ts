@@ -76,7 +76,7 @@ const BY_STATE: IRegionStat[] = [
 ]
 
 const SPECIALTIES: ISpecialtyStat[] = [
-  { specialty: 'Terapia cognitivo-comportamental', count: 96 },
+  { specialty: 'Cognitivo-comportamental', count: 96 },
   { specialty: 'Psicanálise', count: 58 },
   { specialty: 'Terapia sistêmica', count: 34 },
   { specialty: 'Terapia humanista', count: 27 },
@@ -155,6 +155,8 @@ export function buildAdminMock(period: DashboardPeriod): IAdminDashboardMock {
       clinics: buildDailySeries(days, 3, 1),
     },
     revenue: {
+      isError: false,
+      isLoading: false,
       mrr: 4865000,
       premium: 214,
       freemium: 526,
@@ -163,6 +165,8 @@ export function buildAdminMock(period: DashboardPeriod): IAdminDashboardMock {
       churnPercent: 4,
     },
     activity: {
+      isError: false,
+      isLoading: false,
       completed: 1568,
       rescheduled: 187,
       canceled: 122,

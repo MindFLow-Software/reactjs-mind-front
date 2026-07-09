@@ -1,15 +1,26 @@
 'use client'
 
 import * as React from 'react'
-import { useQuery } from '@tanstack/react-query'
 import { Users2 } from 'lucide-react'
 
-import { type ChartConfig } from '@/components/ui/chart'
+import { Bar, BarChart, Tooltip, XAxis, YAxis } from 'recharts'
+
+import type { AgeRangeItem } from '@/types/dashboard'
+
 import {
-  getPsychologistsAgeStats,
-  type IPsychologistAgeStats,
-} from '@/api/metrics/get-psychologists-age-stats'
-import { DemographicsPieChartCard } from './demographics-pie-chart-card'
+  Card,
+  CardTitle,
+  CardHeader,
+  CardContent,
+  CardDescription,
+} from '@/components/ui/card'
+import { ChartContainer, type ChartConfig } from '@/components/ui/chart'
+
+import { DashboardChartEmpty } from '@/pages/app/dashboard/shared/components/dashboard-chart-empty'
+import { DashboardChartError } from '@/pages/app/dashboard/shared/components/dashboard-chart-error'
+import { DashboardChartLoader } from '@/pages/app/dashboard/shared/components/dashboard-chart-loader'
+
+import "./psychologists-by-age-chart.css"
 
 const chartConfig = {
   psychologists: {
@@ -25,47 +36,71 @@ const CHART_COLORS = [
   'var(--chart-5)',
 ]
 
-export function PsychologistsAgeRangeChart() {
-  const { data, isLoading, isError, refetch } = useQuery<
-    IPsychologistAgeStats[]
-  >({
-    queryKey: ['admin', 'psychologists-age-stats'],
-    queryFn: getPsychologistsAgeStats,
-    staleTime: 1000 * 60 * 5,
-  })
+interface IPsychologistsAgeRangeChart {
+  isError: boolean
+  onRetry: () => void
+  isLoading: boolean
+  psychologistsByAge: AgeRangeItem[]
+}
 
+export function PsychologistsAgeRangeChart({
+  isError,
+  onRetry,
+  isLoading,
+  psychologistsByAge
+}: IPsychologistsAgeRangeChart) {
   const { totalPsychologists, isEmpty } = React.useMemo(() => {
-    const total = data?.reduce((sum, item) => sum + item.count, 0) ?? 0
+    const total = psychologistsByAge?.reduce((sum, item) => sum + item.count, 0) ?? 0
     return {
       totalPsychologists: total,
-      isEmpty: !data || data.length === 0 || total === 0,
+      isEmpty: !psychologistsByAge || psychologistsByAge.length === 0 || total === 0,
     }
-  }, [data])
+  }, [psychologistsByAge])
+
+  const chartColor = React.useMemo(() => Math.round(Math.random() * 4), [])
 
   return (
-    <DemographicsPieChartCard
-      header={{
-        title: 'Perfil Etário',
-        description: 'Distribuição dos psicólogos ativos',
-        totalLabel: 'Total Geral',
-        total: totalPsychologists,
-      }}
-      chart={{
-        config: chartConfig,
-        data,
-        nameKey: 'ageRange',
-        valueKey: 'count',
-        colors: CHART_COLORS,
-        isLoading,
-        isError,
-        isEmpty,
-        onRetry: refetch,
-      }}
-      empty={{
-        icon: <Users2 className="h-5 w-5 text-muted-foreground/50" />,
-        title: 'Sem dados demográficos',
-        subtitle: 'Nenhum psicólogo cadastrado no sistema',
-      }}
-    />
+    <Card className="adb-bar-card">
+      <CardHeader className="adb-bar-card-header">
+        <div className="adb-bar-header-main">
+          <CardTitle className="adb-bar-title">
+            Faixa Etária
+          </CardTitle>
+          <CardDescription className="adb-bar-header-subtitle">
+            Distribuição por idade
+          </CardDescription>
+        </div>
+        <div className="adb-bar-total-block">
+          <p className="adb-bar-total-label">Total de Psicólogos</p>
+          <p className="adb-bar-total-value">{totalPsychologists}</p>
+        </div>
+      </CardHeader>
+      <CardContent className="adb-bar-content">
+        {isLoading
+          ? ( <DashboardChartLoader /> )
+          : isError ? (<DashboardChartError onRetry={onRetry} />)
+          : isEmpty ? (
+            <DashboardChartEmpty
+              icon={<Users2 />}
+              title="Sem dados demográficos"
+              subtitle="Nenhum psicólogo cadastrado no sistema"
+            />
+          ) : (
+            <div className="adb-bar-chart-wrap">
+              <ChartContainer
+                config={chartConfig}
+                className="mx-auto aspect-square size-full"
+              >
+                <BarChart data={psychologistsByAge}>
+                  <XAxis dataKey="range" />
+                  <YAxis tickCount={5} allowDecimals={false} />
+                  <Tooltip />
+                  <Bar dataKey="count" fill={CHART_COLORS[chartColor]} radius={[10, 10, 0, 0]} />
+                </BarChart>
+              </ChartContainer>
+            </div>
+        )}
+      </CardContent>
+    </Card>
   )
 }

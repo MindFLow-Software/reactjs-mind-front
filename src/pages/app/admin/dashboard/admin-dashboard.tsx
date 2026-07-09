@@ -2,20 +2,22 @@ import { useEffect } from 'react'
 import { Helmet } from 'react-helmet-async'
 
 import { useHeaderStore } from '@/store/use-header-store'
-import { AdminDashboardHeader } from './components/admin-dashboard-header'
 import { useAdminDashboard } from './hooks/use-admin-dashboard'
-import { ExecutiveOverviewSection } from './components/executive-overview-section'
+
 import { GrowthSection } from './components/growth-section'
-import { RevenueSubscriptionsSection } from './components/revenue-subscriptions-section'
+import { AdminDashboardHeader } from './components/admin-dashboard-header'
 import { SessionsActivitySection } from './components/sessions-activity-section'
-import { PsychologistsAnalyticsSection } from './components/psychologists-analytics-section'
+import { ExecutiveOverviewSection } from './components/executive-overview-section'
 import { PatientsAnalyticsSection } from './components/patients-analytics-section'
 import { OperationalInsightsSection } from './components/operational-insights-section'
+import { RevenueSubscriptionsSection } from './components/revenue-subscriptions-section'
+import { PsychologistsAnalyticsSection } from './components/psychologists-analytics-section'
+
 import './admin-dashboard.css'
 
 export function AdminDashboard() {
   const { setTitle } = useHeaderStore()
-  const { data, isLoading, isError, period, setPeriod } = useAdminDashboard()
+  const { data, period, setPeriod } = useAdminDashboard()
 
   useEffect(() => {
     setTitle('Dashboard do Admin')
@@ -30,16 +32,16 @@ export function AdminDashboard() {
 
         <ExecutiveOverviewSection
           executive={data.executive}
-          isLoading={isLoading}
-          isError={isError}
+          isError={data.executive.isError}
+          isLoading={data.executive.isLoading}
         />
 
         <GrowthSection
-          growth={data.growth}
           period={period}
+          growth={data.growth}
           onPeriodChange={setPeriod}
-          isLoading={isLoading}
-          isError={isError}
+          isError={data.growth.isError}
+          isLoading={data.growth.isLoading}
         />
 
         <RevenueSubscriptionsSection revenue={data.revenue} />
@@ -50,8 +52,8 @@ export function AdminDashboard() {
 
         <PatientsAnalyticsSection
           patients={data.patients}
-          isLoading={isLoading}
-          isError={isError}
+          isError={data.patients.isError}
+          isLoading={data.patients.isLoading}
         />
 
         <OperationalInsightsSection insights={data.insights} />

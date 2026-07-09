@@ -31,7 +31,7 @@ export function RevenueSubscriptionsSection({
         <Card className="flex-1">
 
         </Card>
-        <div className="adb-revenue-cards">
+        <div className="adb-revenue-side">
           <MetricCard variant="stacked" accentColor="emerald">
             <MetricCard.Header
               icon={<DollarSign className="size-4 text-emerald-600" />}

@@ -6,6 +6,6 @@
   }
 
   .adb-growth-side {
-    @apply flex flex-col w-full max-w-80 gap-4;
+    @apply flex flex-col gap-4 w-full max-w-80 h-full max-h-[464px] overflow-y-scroll;
   }
 }

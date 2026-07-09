@@ -12,7 +12,7 @@ export function Header() {
   const { title, titleHref, subtitle, subtitleHref } = useHeaderStore()
 
   return (
-    <header className="sticky top-0 z-50 flex h-16 shrink-0 items-center gap-4 border-b bg-background/95 px-6 backdrop-blur supports-backdrop-filter:bg-background/60">
+    <header className="sticky top-0 z-50 flex h-16 shrink-0 items-center gap-4 border-b bg-white/95 px-6 backdrop-blur supports-backdrop-filter:bg-white/60">
       <div className="flex items-center gap-2">
         <SidebarTrigger className="-ml-1" />
         <Separator orientation="vertical" className="mr-2 h-4" />

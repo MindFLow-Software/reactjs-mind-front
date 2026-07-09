@@ -1,0 +1,11 @@
+@reference "../../../../../global.css";
+
+@layer components {
+  .dsh-loader-container {
+    @apply flex size-full items-center justify-center
+  }
+
+  .dsh-loader-icon {
+    @apply size-8 animate-spin text-muted-foreground
+  }
+}

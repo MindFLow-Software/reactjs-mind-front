@@ -17,6 +17,8 @@ export interface ISpecialtyStat {
 }
 
 export interface IAdminDashboardExecutive {
+  isError: boolean
+  isLoading: boolean
   sessions: number
   /** cents, formatted via `Currency.toBRL` */
   mrr: number
@@ -29,12 +31,16 @@ export interface IAdminDashboardExecutive {
 }
 
 export interface IAdminDashboardGrowth {
+  isError: boolean
+  isLoading: boolean
   newPsychologists: ITimeSeriesPoint[]
   newPatients: ITimeSeriesPoint[]
   clinics: ITimeSeriesPoint[]
 }
 
 export interface IAdminDashboardRevenue {
+  isError: boolean
+  isLoading: boolean
   /** cents, formatted via `Currency.toBRL` */
   mrr: number
   premium: number
@@ -45,6 +51,8 @@ export interface IAdminDashboardRevenue {
 }
 
 export interface IAdminDashboardActivity {
+  isError: boolean
+  isLoading: boolean
   completed: number
   rescheduled: number
   canceled: number
@@ -52,6 +60,8 @@ export interface IAdminDashboardActivity {
 }
 
 export interface IAdminDashboardPsychologists {
+  isError: boolean
+  isLoading: boolean
   byAge: AgeRangeItem[]
   byGender: GenderItem[]
   active: number
@@ -61,6 +71,8 @@ export interface IAdminDashboardPsychologists {
 }
 
 export interface IAdminDashboardPatients {
+  isError: boolean
+  isLoading: boolean
   total: number
   byAge: AgeRangeItem[]
   byGender: GenderItem[]

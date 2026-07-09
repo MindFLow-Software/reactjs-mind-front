@@ -1,19 +1,20 @@
 import {
-  Users,
-  UserRound,
-  CalendarCheck,
-  Building2,
-  Crown,
   Gift,
-  DollarSign,
+  Crown,
+  Users,
   Percent,
+  Building2,
+  UserRound,
+  DollarSign,
+  CalendarCheck,
 } from 'lucide-react'
 
-import { DashboardSection } from '@/pages/app/dashboard/shared/components/dashboard-section'
-import { MetricCard } from '@/components/metric-card'
 import { Currency } from '@/utils/currency'
-import { AdminStatCard } from './admin-stat-card'
 import type { IAdminDashboardExecutive } from '../types'
+
+import { AdminStatCard } from './admin-stat-card'
+import { DashboardSection } from '@/pages/app/dashboard/shared/components/dashboard-section'
+
 import './executive-overview-section.css'
 
 interface ExecutiveOverviewSectionProps {
@@ -33,7 +34,9 @@ export function ExecutiveOverviewSection({
       title="Visão executiva"
       description="Indicadores principais da plataforma no período selecionado"
     >
-      <div></div>
+      <div>
+        
+      </div>
       <div className="adb-exec-content">
         <AdminStatCard
           icon={<Users className="size-4" />}
@@ -85,22 +88,28 @@ export function ExecutiveOverviewSection({
             isError: false,
           }}
         />
-        <MetricCard variant="stacked" accentColor="emerald" size="md">
-          <MetricCard.Header
-            icon={<DollarSign className="size-4 text-emerald-600" />}
-            label="MRR"
-            accentColor="emerald"
-          />
-          <MetricCard.Value>{Currency.toBRL(executive.mrr)}</MetricCard.Value>
-        </MetricCard>
-        <MetricCard variant="stacked" accentColor="violet" size="md">
-          <MetricCard.Header
-            icon={<Percent className="size-4 text-violet-600" />}
-            label="Taxa de conversão"
-            accentColor="violet"
-          />
-          <MetricCard.Value>{executive.conversionPercent}%</MetricCard.Value>
-        </MetricCard>
+        <AdminStatCard
+          icon={<DollarSign className="size-4" />}
+          accent="amber"
+          title="MRR"
+          subtitle="No período selecionado"
+          query={{
+            value: Currency.toBRL(executive.mrr),
+            isLoading: false,
+            isError: false,
+          }}
+        />
+        <AdminStatCard
+          icon={<Percent className="size-4" />}
+          accent="blue"
+          title="Taxa de conversão"
+          subtitle="No período selecionado"
+          query={{
+            value: `${executive.conversionPercent}%`,
+            isLoading: false,
+            isError: false,
+          }}
+        />
       </div>
     </DashboardSection>
   )

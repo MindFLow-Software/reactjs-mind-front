@@ -6,7 +6,7 @@ export interface GetTotalPatientsResponse {
 
 export async function getTotalPatientsCard() {
   const response = await api.get<GetTotalPatientsResponse>(
-    '/admin/metrics/patients/total',
+    '/patient-profiles/metrics/total',
   )
 
   return response.data

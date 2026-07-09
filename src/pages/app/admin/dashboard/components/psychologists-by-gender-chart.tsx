@@ -97,9 +97,10 @@ export function PsychologistsGenderChart({
         isError,
         isEmpty,
         onRetry: refetch,
+        label: 'Profissionais'
       }}
       empty={{
-        icon: <Users2 className="h-5 w-5 text-muted-foreground/50" />,
+        icon: <Users2 className="size-5 text-muted-foreground/50" />,
         title: 'Sem dados de gênero',
         subtitle: 'Nenhum psicólogo identificado',
       }}

@@ -34,6 +34,7 @@ interface DemographicsPieChartCardProps<T extends object> {
     isError: boolean
     isEmpty: boolean
     onRetry: () => void
+    label: string
   }
   empty: {
     icon: ReactNode
@@ -69,7 +70,7 @@ export function DemographicsPieChartCard<T extends object>({
       <CardContent className="adb-pie-content">
         {chart.isLoading ? (
           <div className="flex h-[300px] w-full items-center justify-center">
-            <Loader2 className="h-8 w-8 animate-spin text-muted-foreground" />
+            <Loader2 className="size-8 animate-spin text-muted-foreground" />
           </div>
         ) : chart.isError ? (
           <div className="adb-pie-state">
@@ -107,11 +108,11 @@ export function DemographicsPieChartCard<T extends object>({
                     data={chart.data}
                     dataKey={chart.valueKey}
                     nameKey={chart.nameKey}
-                    innerRadius={70}
+                    innerRadius={65}
                     outerRadius={90}
-                    strokeWidth={5}
                     stroke="var(--card)"
                     paddingAngle={2}
+
                   >
                     {chart.data?.map((_, index) => (
                       <Cell
@@ -123,6 +124,10 @@ export function DemographicsPieChartCard<T extends object>({
                   </Pie>
                 </PieChart>
               </ChartContainer>
+              <div className="pointer-events-none absolute inset-0 flex flex-col items-center justify-center">
+                <span className="text-2xl font-semibold text-foreground">{header.total}</span>
+                <span className="text-[11px] text-muted-foreground">{chart.label}</span>
+              </div>
             </div>
 
             <div className="adb-pie-legend">

@@ -2,73 +2,89 @@ import { useCallback, useMemo, useState } from 'react'
 import { useQuery, useQueryClient } from '@tanstack/react-query'
 import { subDays, startOfDay, endOfDay } from 'date-fns'
 
-import { getTotalPsychologists } from '@/api/psychologists/get-total-psychologists'
 import { getTotalPatientsCard } from '@/api/metrics/get-total-patients-card'
+import { getTotalPsychologists } from '@/api/psychologists/get-total-psychologists'
 import { getTotalSuggestionsCard } from '@/api/suggestions/get-total-suggestions-card'
+
 import {
   getNewPsychologistsCount,
   type PsychologistsChartData,
 } from '@/api/psychologists/get-new-psychologists-count'
+
 import {
   getTotalPatientsAdminChart,
   type NewPatientsChartData,
 } from '@/api/metrics/get-total-patients-admin-chart'
+
 import {
   getPsychologistsAgeStats,
   type IPsychologistAgeStats,
 } from '@/api/metrics/get-psychologists-age-stats'
+
 import {
   getPsychologistsGenderStats,
   type PsychologistGenderStats,
 } from '@/api/psychologists/get-psychologists-gender-stats'
+
 import {
   PERIOD_DAYS,
-  QUERY_STALE_TIME,
   QUERY_GC_TIME,
+  QUERY_STALE_TIME,
 } from '@/pages/app/dashboard/shared/constants'
-import type { DashboardPeriod } from '@/pages/app/dashboard/shared/types'
-import type { AgeRange, AgeRangeItem, GenderItem } from '@/types/dashboard'
+
 import type { Gender } from '@/types/enums'
 import { buildAdminMock } from '../mocks/admin-dashboard.mock'
+import type { DashboardPeriod } from '@/pages/app/dashboard/shared/types'
+import type { AgeRange, AgeRangeItem, GenderItem } from '@/types/dashboard'
 import type { IAdminDashboardData, ITimeSeriesPoint } from '../types'
 
-export interface UseAdminDashboardReturn {
-  data: IAdminDashboardData
-  isLoading: boolean
-  isError: boolean
-  refetch: () => void
-  period: DashboardPeriod
-  setPeriod: (period: DashboardPeriod) => void
-}
-
 function mapNewPsychologists(
-  items: PsychologistsChartData[],
+  items: PsychologistsChartData[] | undefined,
 ): ITimeSeriesPoint[] {
+  if (!items) return []
+  if (!Array.isArray(items)) return []
+
   return items.map((item) => ({
     date: item.date,
     count: item.newPsychologists,
   }))
 }
 
-function mapNewPatients(items: NewPatientsChartData[]): ITimeSeriesPoint[] {
+function mapNewPatients(items: NewPatientsChartData[] | undefined): ITimeSeriesPoint[] {
+  if (!items) return []
+  if (!Array.isArray(items)) return []
+
   return items.map((item) => ({ date: item.date, count: item.newPatients }))
 }
 
-function mapAgeStats(items: IPsychologistAgeStats[]): AgeRangeItem[] {
+function mapAgeStats(items: IPsychologistAgeStats[] | undefined): AgeRangeItem[] {
+  if (!items) return []
+  if (!Array.isArray(items)) return []
+
   return items.map((item) => ({
     range: item.ageRange as AgeRange,
     count: item.count,
   }))
 }
 
-function mapGenderStats(items: PsychologistGenderStats[]): GenderItem[] {
+function mapGenderStats(items: PsychologistGenderStats[] | undefined): GenderItem[] {
+  if (!items) return []
+  if (!Array.isArray(items)) return []
+
   return items.map((item) => ({
     gender: item.gender as Gender,
     count: item.count,
   }))
 }
 
-export function useAdminDashboard(): UseAdminDashboardReturn {
+export interface IUseAdminDashboard {
+  data: IAdminDashboardData
+  refetch: () => void
+  period: DashboardPeriod
+  setPeriod: (period: DashboardPeriod) => void
+}
+
+export function useAdminDashboard(): IUseAdminDashboard {
   const queryClient = useQueryClient()
   const [period, setPeriod] = useState<DashboardPeriod>('30d')
 
@@ -110,7 +126,6 @@ export function useAdminDashboard(): UseAdminDashboardReturn {
         from: dateRange.startDate,
         to: dateRange.endDate,
       }),
-    initialData: [],
     ...queryDefaults,
   })
 
@@ -121,21 +136,18 @@ export function useAdminDashboard(): UseAdminDashboardReturn {
         startDate: dateRange.startDate,
         endDate: dateRange.endDate,
       }),
-    initialData: [],
     ...queryDefaults,
   })
 
   const ageStats = useQuery({
     queryKey: ['admin', 'psychologists-age-stats'],
     queryFn: getPsychologistsAgeStats,
-    initialData: [],
     ...queryDefaults,
   })
 
   const genderStats = useQuery({
     queryKey: ['admin', 'psychologists-gender-stats'],
     queryFn: getPsychologistsGenderStats,
-    initialData: [],
     ...queryDefaults,
   })
 
@@ -147,6 +159,8 @@ export function useAdminDashboard(): UseAdminDashboardReturn {
 
     return {
       executive: {
+        isError: totalPsychologists.isError || totalPatients.isError,
+        isLoading: totalPsychologists.isPending || totalPatients.isPending,
         psychologists: psychologistsTotal,
         patients: patientsTotal,
         sessions: mock.executive.sessions,
@@ -157,6 +171,8 @@ export function useAdminDashboard(): UseAdminDashboardReturn {
         conversionPercent: mock.executive.conversionPercent,
       },
       growth: {
+        isError: newPsychologists.isError || newPatients.isError,
+        isLoading: newPsychologists.isPending || newPatients.isPending,
         newPsychologists: mapNewPsychologists(newPsychologists?.data),
         newPatients: mapNewPatients(newPatients?.data),
         clinics: mock.growth.clinics,
@@ -164,6 +180,8 @@ export function useAdminDashboard(): UseAdminDashboardReturn {
       revenue: mock.revenue,
       activity: mock.activity,
       psychologists: {
+        isError: ageStats.isError || genderStats.isError,
+        isLoading: ageStats.isPending || genderStats.isPending,
         byAge: mapAgeStats(ageStats?.data),
         byGender: mapGenderStats(genderStats?.data),
         active: mock.psychologists.active,
@@ -172,6 +190,8 @@ export function useAdminDashboard(): UseAdminDashboardReturn {
         specialties: mock.psychologists.specialties,
       },
       patients: {
+        isError: totalPatients.isError,
+        isLoading: totalPatients.isPending,
         total: patientsTotal,
         byAge: mock.patients.byAge,
         byGender: mock.patients.byGender,
@@ -191,32 +211,12 @@ export function useAdminDashboard(): UseAdminDashboardReturn {
     mock,
   ])
 
-  const isLoading =
-    totalPsychologists.isLoading ||
-    totalPatients.isLoading ||
-    totalSuggestions.isLoading ||
-    newPsychologists.isLoading ||
-    newPatients.isLoading ||
-    ageStats.isLoading ||
-    genderStats.isLoading
-
-  const isError =
-    totalPsychologists.isError ||
-    totalPatients.isError ||
-    totalSuggestions.isError ||
-    newPsychologists.isError ||
-    newPatients.isError ||
-    ageStats.isError ||
-    genderStats.isError
-
   const refetch = useCallback(() => {
     queryClient.invalidateQueries({ queryKey: ['admin'] })
   }, [queryClient])
 
   return {
     data,
-    isLoading,
-    isError,
     refetch,
     period,
     setPeriod,
