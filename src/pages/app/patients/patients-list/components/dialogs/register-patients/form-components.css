@@ -35,7 +35,7 @@
   /* ── Modal — register-patients.tsx ──────────────────────────────── */
 
   .rp-modal {
-    @apply flex w-full max-w-[800px]! flex-col overflow-hidden gap-0! p-0! sm:rounded-xl max-h-[92vh];
+    @apply flex! w-full max-w-[800px]! flex-col overflow-hidden gap-0! p-0! sm:rounded-xl max-h-[92vh];
   }
 
   .rp-modal-header {
