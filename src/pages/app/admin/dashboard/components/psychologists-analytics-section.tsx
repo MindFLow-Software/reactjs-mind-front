@@ -1,4 +1,4 @@
-import { MapPin, Layers } from 'lucide-react'
+import { Layers } from 'lucide-react'
 
 import { ChartContainer, type ChartConfig } from '@/components/ui/chart'
 import type { IAdminDashboardPsychologists } from '../types'
