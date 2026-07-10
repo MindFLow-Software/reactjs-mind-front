@@ -1,27 +1,19 @@
 import { useCallback } from 'react'
-import { toast } from 'sonner'
-import { Clock, MapPin, Video } from 'lucide-react'
+import { Clock, MapPin, Play, Video } from 'lucide-react'
 
-import { Avatar, AvatarFallback } from '@/components/ui/avatar'
-import { Badge } from '@/components/ui/badge'
-import { Button } from '@/components/ui/button'
-import { Card } from '@/components/ui/card'
+import { toast } from 'sonner'
+
 import { Time } from '@/utils/time'
 import { SessionModality, type IPatientNextSession } from '../types'
+
+import { Card } from '@/components/ui/card'
+import { Badge } from '@/components/ui/badge'
+import { Button } from '@/components/ui/button'
+
 import './next-session-card.css'
 
 export interface NextSessionCardProps {
   session: IPatientNextSession | null
-}
-
-function getInitials(name: string): string {
-  return name
-    .split(' ')
-    .filter(Boolean)
-    .slice(0, 2)
-    .map((part) => part[0])
-    .join('')
-    .toUpperCase()
 }
 
 export function NextSessionCard({ session }: NextSessionCardProps) {
@@ -42,49 +34,49 @@ export function NextSessionCard({ session }: NextSessionCardProps) {
   const isOnline = session.modality === SessionModality.ONLINE
 
   return (
-    <Card className="ptd-next-session">
+    <Card className="ptd-next-session-card">
       <span className="ptd-next-session-label">Próxima sessão</span>
 
       <div className="ptd-next-session-main">
-        <Avatar className="ptd-next-session-avatar">
-          <AvatarFallback>
-            {getInitials(session.psychologistName)}
-          </AvatarFallback>
-        </Avatar>
-
         <div className="ptd-next-session-info">
-          <span className="ptd-next-session-psychologist">
-            {session.psychologistName}
-          </span>
           <span className="ptd-next-session-datetime">
-            {Time.toReadableDateTime(new Date(session.date))}
+            {Time.toExtensiveReadableDateTime(new Date(session.date))}
           </span>
+          <div className="flex items-center gap-1">
+            <span className="ptd-next-session-details">
+              {session.psychologistName}{' ·'} 
+            </span>
+            <div className="ptd-next-session-meta">
+              <Badge className="ptd-next-session-badge">
+                <Clock className="size-3" />
+                {session.durationMinutes} min
+              </Badge>
+              <Badge className="ptd-next-session-badge">
+                {isOnline ? (
+                  <Video className="size-3" />
+                ) : (
+                  <MapPin className="size-3" />
+                )}
+                {isOnline ? 'Online' : 'Presencial'}
+              </Badge>
+            </div>
+          </div>
         </div>
       </div>
 
-      <div className="ptd-next-session-meta">
-        <Badge variant="secondary" className="ptd-next-session-badge">
-          <Clock className="size-3" />
-          {session.durationMinutes} min
-        </Badge>
-        <Badge variant="secondary" className="ptd-next-session-badge">
-          {isOnline ? (
-            <Video className="size-3" />
-          ) : (
-            <MapPin className="size-3" />
-          )}
-          {isOnline ? 'Online' : 'Presencial'}
-        </Badge>
-      </div>
-
       <div className="ptd-next-session-actions">
-        <Button className="ptd-next-session-action" disabled>
+        <Button
+          size="sm"
+          variant="secondary"
+          className="ptd-next-session-action-btn"
+        >
+          <Play size={16} />
           Entrar na sessão
         </Button>
         <Button
-          variant="outline"
-          className="ptd-next-session-action"
+          size="sm"
           onClick={handleReschedule}
+          className="ptd-next-session-action-btn--secondary"
         >
           Reagendar
         </Button>

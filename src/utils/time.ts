@@ -44,10 +44,20 @@ export class Time {
     return `${age} ${suffix}`
   }
 
-  static toReadableDateTime(date: Date) {
+  static toReadableDateTime(date: Date | null | undefined) {
     if (!date || !isValid(date)) return ''
 
     const dateFormatted = format(date, "dd/MM/yyyy 'às' HH:mm", {
+      locale: ptBR,
+    })
+
+    return dateFormatted
+  }
+
+  static toExtensiveReadableDateTime(date: Date | null | undefined) {
+    if (!date || !isValid(date)) return ''
+
+    const dateFormatted = format(date, "EEEE 'às' HH:mm", {
       locale: ptBR,
     })
 

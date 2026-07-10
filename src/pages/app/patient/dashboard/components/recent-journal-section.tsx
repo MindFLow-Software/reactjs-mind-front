@@ -1,7 +1,12 @@
-import { Card } from '@/components/ui/card'
-import { Separator } from '@/components/ui/separator'
+import { NotepadText } from 'lucide-react'
+
 import { Time } from '@/utils/time'
+
 import type { IPatientJournalEntry } from '../types'
+
+import { Separator } from '@/components/ui/separator'
+import { Card, CardHeader, CardTitle } from '@/components/ui/card'
+
 import './recent-journal-section.css'
 
 export interface RecentJournalSectionProps {
@@ -12,7 +17,10 @@ export function RecentJournalSection({ entries }: RecentJournalSectionProps) {
   if (entries.length === 0) {
     return (
       <Card className="ptd-journal-card">
-        <span className="ptd-journal-title">Diário recente</span>
+        <CardHeader className="ptd-journal-header">
+          <NotepadText size={20} className="ptd-journal-icon" />
+          <CardTitle className="ptd-journal-title">Diário recente</CardTitle>
+        </CardHeader>
         <p className="ptd-journal-empty-text">
           Nenhuma entrada de diário ainda.
         </p>
@@ -22,7 +30,10 @@ export function RecentJournalSection({ entries }: RecentJournalSectionProps) {
 
   return (
     <Card className="ptd-journal-card">
-      <span className="ptd-journal-title">Diário recente</span>
+      <CardHeader className="ptd-journal-header">
+        <NotepadText size={20} className="ptd-journal-icon" />
+        <CardTitle className="ptd-journal-title">Diário recente</CardTitle>
+      </CardHeader>
 
       <div className="ptd-journal-list">
         {entries.map((entry, index) => (

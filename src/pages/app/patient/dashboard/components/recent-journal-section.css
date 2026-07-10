@@ -2,11 +2,19 @@
 
 @layer components {
   .ptd-journal-card {
-    @apply flex flex-col gap-4 rounded-2xl p-6;
+    @apply flex flex-col gap-4 p-4! flex-1;
+  }
+
+  .ptd-journal-header {
+    @apply flex! items-center gap-2 px-0!;
+  }
+
+  .ptd-journal-icon {
+    @apply text-teal-500;
   }
 
   .ptd-journal-title {
-    @apply text-sm font-semibold text-foreground;
+    @apply text-sm! font-semibold text-foreground;
   }
 
   .ptd-journal-empty-text {

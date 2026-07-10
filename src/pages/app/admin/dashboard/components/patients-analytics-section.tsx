@@ -2,12 +2,14 @@ import { useMemo } from 'react'
 import { UserRound, Users2, MapPin } from 'lucide-react'
 
 import { DashboardSection } from '@/pages/app/dashboard/shared/components/dashboard-section'
-import { type ChartConfig } from '@/components/ui/chart'
+import { ChartContainer, type ChartConfig } from '@/components/ui/chart'
 import { AdminStatCard } from './admin-stat-card'
 import { DemographicsPieChartCard } from './demographics-pie-chart-card'
 import type { IAdminDashboardPatients } from '../types'
 import './patients-analytics-section.css'
 import { PatientsByGenderChart } from './patients-by-age-chart'
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
+import { Bar, BarChart, XAxis, YAxis } from 'recharts'
 
 const CHART_COLORS = [
   'var(--chart-1)',
@@ -106,6 +108,45 @@ export function PatientsAnalyticsSection({
             subtitle: 'Nenhum paciente identificado',
           }}
         />
+
+        <Card className="flex-1">
+          <CardHeader className="flex justify-between">
+            <div>
+              <CardTitle>Distribuição por estado</CardTitle>
+              <CardDescription className="text-sm text-muted-foreground">
+                Psicólogos ativos por unidade federativa
+              </CardDescription>
+            </div>
+            <div className="flex flex-col text-right">
+              <span className="text-[10px] font-medium uppercase tracking-wider text-muted-foreground">Total Geral</span>
+              <span className="text-2xl font-bold">{regionTotal} </span>
+            </div>
+          </CardHeader>
+          <CardContent className="pl-0!">
+            <ChartContainer
+              config={distributionChartConfig}
+              className="mx-auto aspect-square h-[300px] w-full"
+            >
+              <BarChart
+                data={[
+                  { region: "SP", count: 25 },
+                  { region: "RJ", count: 18 },
+                  { region: "MG", count: 12 },
+                ]}
+                layout="vertical"
+              >
+                <XAxis dataKey="count" type="number" allowDecimals={false} />
+                <YAxis type="category" dataKey="region" />
+
+                <Bar
+                  dataKey="count"
+                  fill={CHART_COLORS[0]}
+                  radius={[0, 10, 10, 0]}
+                />
+              </BarChart>
+            </ChartContainer>
+          </CardContent>
+        </Card>
 
         <DemographicsPieChartCard
           header={{

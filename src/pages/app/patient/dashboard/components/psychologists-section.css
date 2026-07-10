@@ -1,8 +1,8 @@
 @reference "../../../../../global.css";
 
 @layer components {
-  .ptd-psychologists-card {
-    @apply flex flex-col gap-4 rounded-2xl p-6;
+  .ptd-psychologists-content {
+    @apply flex flex-col gap-2;
   }
 
   .ptd-psychologists-title {
@@ -10,19 +10,27 @@
   }
 
   .ptd-psychologists-list {
-    @apply flex flex-col gap-4;
+    @apply flex gap-4;
   }
 
-  .ptd-psychologist-item {
-    @apply flex items-center gap-3;
+  .ptd-psychologist-card {
+    @apply gap-3! w-80! p-4!;
+  }
+
+  .ptd-psychologist-header {
+    @apply flex! items-center px-0!;
   }
 
   .ptd-psychologist-avatar {
-    @apply size-10;
+    @apply size-12! text-sm! font-medium;
+  }
+
+  .ptd-psychologist-header-content {
+    @apply flex flex-col
   }
 
   .ptd-psychologist-info {
-    @apply flex min-w-0 flex-1 flex-col gap-0.5;
+    @apply flex flex-1 px-0!;
   }
 
   .ptd-psychologist-name {
@@ -34,7 +42,7 @@
   }
 
   .ptd-psychologist-meta {
-    @apply mt-1 flex items-center gap-2;
+    @apply mt-1 flex flex-1 justify-between items-center gap-2;
   }
 
   .ptd-psychologist-badge {
@@ -45,7 +53,11 @@
     @apply text-xs font-medium text-foreground/80;
   }
 
+  .ptd-psychologist-footer {
+    @apply px-0!;
+  }
+
   .ptd-psychologist-action {
-    @apply shrink-0;
+    @apply w-full bg-slate-900!;
   }
 }

@@ -5,12 +5,12 @@ import { Star } from 'lucide-react'
 import { Avatar, AvatarFallback } from '@/components/ui/avatar'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
-import { Card } from '@/components/ui/card'
+import { Card, CardContent, CardFooter, CardHeader } from '@/components/ui/card'
 import { Currency } from '@/utils/currency'
 import type { IPatientPsychologistCard } from '../types'
 import './psychologists-section.css'
 
-export interface PsychologistsSectionProps {
+export interface IPsychologistsSection {
   psychologists: IPatientPsychologistCard[]
 }
 
@@ -31,7 +31,7 @@ function getInitials(name: string): string {
 
 export function PsychologistsSection({
   psychologists,
-}: PsychologistsSectionProps) {
+}: IPsychologistsSection) {
   const handleAction = useCallback(() => {
     toast.info('Ação ainda não disponível nesta versão.')
   }, [])
@@ -41,44 +41,50 @@ export function PsychologistsSection({
     : 'recommended'
 
   return (
-    <Card className="ptd-psychologists-card">
+    <div className="ptd-psychologists-content">
       <span className="ptd-psychologists-title">
         {SECTION_TITLE_BY_MODE[mode]}
       </span>
 
       <div className="ptd-psychologists-list">
-        {psychologists.map((psychologist) => (
-          <div key={psychologist.id} className="ptd-psychologist-item">
-            <Avatar className="ptd-psychologist-avatar">
-              <AvatarFallback>{getInitials(psychologist.name)}</AvatarFallback>
-            </Avatar>
+        {[...psychologists, ...psychologists].map((psychologist) => (
+          <Card key={psychologist.id} className="ptd-psychologist-card">
+            <CardHeader className="ptd-psychologist-header">
+              <Avatar className="ptd-psychologist-avatar">
+                <AvatarFallback>{getInitials(psychologist.name)}</AvatarFallback>
+              </Avatar>
+              <div className="ptd-psychologist-header-content">
+                <span className="ptd-psychologist-name">{psychologist.name}</span>
+                <span className="ptd-psychologist-specialty">
+                  {psychologist.specialty}
+                </span>
+              </div>
+            </CardHeader>
 
-            <div className="ptd-psychologist-info">
-              <span className="ptd-psychologist-name">{psychologist.name}</span>
-              <span className="ptd-psychologist-specialty">
-                {psychologist.specialty}
-              </span>
+            <CardContent className="ptd-psychologist-info">
               <div className="ptd-psychologist-meta">
                 <Badge variant="secondary" className="ptd-psychologist-badge">
-                  <Star className="size-3" />
+                  <Star className="size-3 text-accent-orange" />
                   {psychologist.rating.toFixed(1)}
                 </Badge>
                 <span className="ptd-psychologist-price">
-                  {Currency.toBRL(psychologist.pricePerSession)}
+                  {Currency.toBRL(psychologist.pricePerSession)} / Sessão
                 </span>
               </div>
-            </div>
+            </CardContent>
 
-            <Button
-              variant={psychologist.isLinked ? 'outline' : 'default'}
-              className="ptd-psychologist-action"
-              onClick={handleAction}
-            >
-              {psychologist.isLinked ? 'Ver perfil' : 'Vincular'}
-            </Button>
-          </div>
+            <CardFooter className="ptd-psychologist-footer">
+              <Button
+                size="sm"
+                onClick={handleAction}
+                className="ptd-psychologist-action"
+              >
+                {psychologist.isLinked ? 'Ver perfil' : 'Vincular'}
+              </Button>
+            </CardFooter>
+          </Card>
         ))}
       </div>
-    </Card>
+    </div>
   )
 }

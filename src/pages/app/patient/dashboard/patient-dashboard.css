@@ -17,15 +17,11 @@
     @apply text-sm text-muted-foreground;
   }
 
-  .ptd-grid {
-    @apply grid grid-cols-1 gap-4 lg:grid-cols-3;
-  }
-
-  .ptd-col-main {
-    @apply flex flex-col gap-4 lg:col-span-2;
-  }
-
-  .ptd-col-side {
+  .ptd-content {
     @apply flex flex-col gap-4;
+  }
+
+  .ptd-row {
+    @apply flex gap-4 lg:col-span-2;
   }
 }

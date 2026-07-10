@@ -2,19 +2,22 @@ import { useEffect } from 'react'
 import { Helmet } from 'react-helmet-async'
 import { UserPlus } from 'lucide-react'
 
+import { getGreeting } from '@/pages/app/dashboard/shared/helpers'
 import { useHeaderStore } from '@/store/use-header-store'
+import { usePatientDashboard } from './hooks/use-patient-dashboard'
+
 import {
+  DashboardSkeleton,
   DashboardEmptyState,
   DashboardErrorState,
-  DashboardSkeleton,
 } from '@/pages/app/dashboard/shared/components/dashboard-states'
-import { getGreeting } from '@/pages/app/dashboard/shared/helpers'
-import { usePatientDashboard } from './hooks/use-patient-dashboard'
-import { NextSessionCard } from './components/next-session-card'
+
 import { MoodCheckIn } from './components/mood-check-in'
-import { TherapeuticGoalsSection } from './components/therapeutic-goals-section'
-import { RecentJournalSection } from './components/recent-journal-section'
+import { NextSessionCard } from './components/next-session-card'
 import { PsychologistsSection } from './components/psychologists-section'
+import { RecentJournalSection } from './components/recent-journal-section'
+import { TherapeuticGoalsSection } from './components/therapeutic-goals-section'
+
 import './patient-dashboard.css'
 
 type PatientDashboardState = 'loading' | 'error' | 'empty' | 'ready'
@@ -29,7 +32,7 @@ export function PatientDashboard() {
   }, [setTitle])
 
   const state = resolveState({ isLoading, isError, hasPatientProfile })
-  const firstName = data.patientName.split(' ')[0]
+  const fullName = data.patientName
 
   const renderState = () => {
     switch (state) {
@@ -51,22 +54,25 @@ export function PatientDashboard() {
           <>
             <header className="ptd-greeting">
               <h1 className="ptd-greeting-title">
-                {getGreeting()}, {firstName}
+                {getGreeting()}, {fullName}
               </h1>
               <p className="ptd-greeting-subtitle">
                 Acompanhe sua jornada de bem-estar.
               </p>
             </header>
 
-            <div className="ptd-grid">
-              <div className="ptd-col-main">
+            <div className="ptd-content">
+              <div className="ptd-row">
                 <NextSessionCard session={data.nextSession} />
+                <MoodCheckIn />
+              </div>
+
+              <div className="ptd-row">
                 <TherapeuticGoalsSection goals={data.goals} />
                 <RecentJournalSection entries={data.journal} />
               </div>
 
-              <div className="ptd-col-side">
-                <MoodCheckIn />
+              <div className="ptd-row">
                 <PsychologistsSection psychologists={data.psychologists} />
               </div>
             </div>

@@ -2,10 +2,18 @@
 
 @layer components {
   .adb-revenue-content {
-    @apply flex gap-4;
+    @apply flex gap-4 max-h-[464px];
+  }
+
+  .adb-revenue-area-chart-contianer {
+    @apply flex-1 px-3
+  }
+
+  .adb-revenue-area-chart {
+    @apply aspect-square h-full w-full
   }
 
   .adb-revenue-side {
-    @apply flex flex-col gap-4 w-full max-w-80 h-full max-h-[464px] overflow-y-scroll;
+    @apply flex flex-col gap-4 w-full max-w-80 h-full overflow-y-scroll;
   }
 }
