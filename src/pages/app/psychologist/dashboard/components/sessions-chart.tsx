@@ -4,9 +4,6 @@ import { format } from 'date-fns'
 import { ptBR } from 'date-fns/locale'
 import {
   CalendarOff,
-  Loader2,
-  RefreshCcw,
-  AlertCircle,
   ChartLine,
   TrendingUp,
   TrendingDown,
@@ -28,18 +25,25 @@ import {
   type ChartConfig,
 } from '@/components/ui/chart'
 import { cn } from '@/lib/utils'
-import type { DailySessionMetric } from '@/api/metrics/get-daily-sessions-metrics'
-import {
-  calcDailyAverage,
-  calcSessionsGrowth,
-} from '@/pages/app/dashboard/shared/helpers'
-import { type DashboardPeriod } from '../constants'
-import { useSessionsBar } from '../hooks/use-sessions-bar'
-import { buildPsychologistMock } from '../mocks/psychologist-dashboard.mock'
+import type { ITimeSeriesPoint } from '@/types/dashboard'
+import { type DashboardPeriod, PERIOD_DAYS } from '../constants'
 import './sessions-chart.css'
+
+interface SessionsVolumeProps {
+  completed: ITimeSeriesPoint[]
+  cancelled: ITimeSeriesPoint[]
+  rescheduled: ITimeSeriesPoint[]
+}
+
+interface SessionsStatsProps {
+  growthPercent: number
+  dailyAverage: number
+}
 
 interface SessionsBarChartProps {
   period: DashboardPeriod
+  sessionsVolume: SessionsVolumeProps
+  sessionsStats: SessionsStatsProps
 }
 
 interface SessionsVolumePoint {
@@ -94,27 +98,33 @@ function toDateKey(iso: string): string {
   return iso.slice(0, 10)
 }
 
-function mergeSessionsVolume(
-  completed: DailySessionMetric[],
-  cancelled: DailySessionMetric[],
-  rescheduled: DailySessionMetric[],
-): SessionsVolumePoint[] {
+function mergeSessionsVolume({
+  completed,
+  cancelled,
+  rescheduled,
+}: SessionsVolumeProps): SessionsVolumePoint[] {
   const cancelledByDate = new Map(
-    cancelled.map((point) => [toDateKey(point.date), point.count]),
+    cancelled.map((point) => [toDateKey(point.date), point.value]),
   )
   const rescheduledByDate = new Map(
-    rescheduled.map((point) => [toDateKey(point.date), point.count]),
+    rescheduled.map((point) => [toDateKey(point.date), point.value]),
   )
 
   return completed.map((point) => {
     const key = toDateKey(point.date)
     return {
       date: point.date,
-      completed: point.count,
+      completed: point.value,
       cancelled: cancelledByDate.get(key) ?? 0,
       rescheduled: rescheduledByDate.get(key) ?? 0,
     }
   })
+}
+
+function getSubtitleLabel(period: DashboardPeriod): string {
+  return period === 'year'
+    ? 'Último ano'
+    : `Últimos ${PERIOD_DAYS[period]} dias`
 }
 
 function GrowthBadge({ value }: { value: number }) {
@@ -133,41 +143,23 @@ function GrowthBadge({ value }: { value: number }) {
 
 export const SessionsBarChart = React.memo(function SessionsBarChart({
   period,
+  sessionsVolume,
+  sessionsStats,
 }: SessionsBarChartProps) {
-  const {
-    data: completed,
-    subtitleLabel,
-    isLoading,
-    isError,
-    refetch,
-  } = useSessionsBar(period)
-
-  const mock = React.useMemo(() => buildPsychologistMock(period), [period])
+  const subtitleLabel = React.useMemo(() => getSubtitleLabel(period), [period])
 
   const chartData = React.useMemo(
-    () =>
-      mergeSessionsVolume(
-        completed,
-        mock.sessionsVolume.cancelled,
-        mock.sessionsVolume.rescheduled,
-      ),
-    [completed, mock],
-  )
-
-  const growthPercent = React.useMemo(
-    () => calcSessionsGrowth(completed),
-    [completed],
-  )
-
-  const dailyAverage = React.useMemo(
-    () => calcDailyAverage(completed.map((point) => point.count)),
-    [completed],
+    () => mergeSessionsVolume(sessionsVolume),
+    [sessionsVolume],
   )
 
   const isEmpty = React.useMemo(() => {
-    const total = completed.reduce((acc, point) => acc + point.count, 0)
-    return completed.length === 0 || total === 0
-  }, [completed])
+    const total = sessionsVolume.completed.reduce(
+      (acc, point) => acc + point.value,
+      0,
+    )
+    return sessionsVolume.completed.length === 0 || total === 0
+  }, [sessionsVolume])
 
   return (
     <Card className="dsh-sessions-card">
@@ -190,11 +182,13 @@ export const SessionsBarChart = React.memo(function SessionsBarChart({
             <div className="dsh-sessions-stats">
               <div className="dsh-sessions-stat">
                 <span className="dsh-sessions-stat-label">Crescimento</span>
-                <GrowthBadge value={growthPercent} />
+                <GrowthBadge value={sessionsStats.growthPercent} />
               </div>
               <div className="dsh-sessions-stat">
                 <span className="dsh-sessions-stat-label">Média diária</span>
-                <span className="dsh-sessions-stat-value">{dailyAverage}</span>
+                <span className="dsh-sessions-stat-value">
+                  {sessionsStats.dailyAverage}
+                </span>
               </div>
             </div>
             <div className="dsh-sessions-legend">
@@ -210,26 +204,7 @@ export const SessionsBarChart = React.memo(function SessionsBarChart({
       </CardHeader>
 
       <CardContent className="dsh-sessions-content">
-        {isLoading ? (
-          <div className="flex h-[250px] w-full items-center justify-center">
-            <Loader2 className="h-8 w-8 animate-spin text-muted-foreground" />
-          </div>
-        ) : isError ? (
-          <div className="dsh-sessions-state">
-            <div className="dsh-sessions-state-icon">
-              <AlertCircle className="size-6" />
-            </div>
-            <p className="text-sm font-medium text-foreground">
-              Erro ao carregar dados
-            </p>
-            <button
-              onClick={() => refetch()}
-              className="dsh-sessions-retry-btn"
-            >
-              <RefreshCcw size={12} /> Tentar novamente
-            </button>
-          </div>
-        ) : isEmpty ? (
+        {isEmpty ? (
           <div className="dsh-sessions-state">
             <div className="dsh-sessions-empty-icon">
               <CalendarOff className="size-5 text-muted-foreground/50" />

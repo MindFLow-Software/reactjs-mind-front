@@ -1,22 +1,17 @@
-import { useCallback, useMemo, useState } from 'react'
-import { useQueryClient } from '@tanstack/react-query'
-import { subDays, startOfDay, endOfDay } from 'date-fns'
-import {
-  calcDailyAverage,
-  calcSessionsGrowth,
-  sumDailyCounts,
-} from '@/pages/app/dashboard/shared/helpers'
-import { type DashboardPeriod, PERIOD_DAYS } from '../constants'
-import type { IDashboardGoal } from '@/pages/app/dashboard/shared/types'
-import type { IPsychologistDashboardData } from '../types'
-import { buildPsychologistMock } from '../mocks/psychologist-dashboard.mock'
-import { useDashboardData } from './use-dashboard-data'
-import { useSessionsBar } from './use-sessions-bar'
-import { useTodayAppointments } from './use-today-appointments'
-import { useWorkHours } from './use-work-hours'
+import { useState } from 'react'
+import { useQuery } from '@tanstack/react-query'
 
-export interface UsePsychologistDashboardReturn {
-  data: IPsychologistDashboardData
+import { getPsychologistDashboard } from '@/api/dashboard/get-psychologist-dashboard'
+import {
+  QUERY_GC_TIME,
+  QUERY_STALE_TIME,
+} from '@/pages/app/dashboard/shared/constants'
+import type { DashboardPeriod } from '@/pages/app/dashboard/shared/types'
+import type { IPsychologistDashboardData } from '@/types/dashboard'
+import { useActivePracticeContextStore } from '@/store/use-active-practice-context-store'
+
+export interface IUsePsychologistDashboard {
+  data?: IPsychologistDashboardData
   isLoading: boolean
   isError: boolean
   refetch: () => void
@@ -24,122 +19,18 @@ export interface UsePsychologistDashboardReturn {
   setPeriod: (period: DashboardPeriod) => void
 }
 
-function toGoalProgressPercent(value: number, target: number): number {
-  if (target === 0) return 0
-  return Math.min(Math.round((value / target) * 100), 100)
-}
-
-export function usePsychologistDashboard(): UsePsychologistDashboardReturn {
-  const queryClient = useQueryClient()
+export function usePsychologistDashboard(): IUsePsychologistDashboard {
   const [period, setPeriod] = useState<DashboardPeriod>('30d')
+  const practiceContextId = useActivePracticeContextStore(
+    (state) => state.activePracticeContextId,
+  )
 
-  const dateRange = useMemo(() => {
-    const end = new Date()
-    return {
-      startDate: startOfDay(subDays(end, PERIOD_DAYS[period])),
-      endDate: endOfDay(end),
-    }
-  }, [period])
-
-  const dashboard = useDashboardData()
-  const sessionsBar = useSessionsBar(period)
-  const todayAppointments = useTodayAppointments()
-  const workHours = useWorkHours(dateRange)
-
-  const mock = useMemo(() => buildPsychologistMock(period), [period])
-
-  const data = useMemo<IPsychologistDashboardData>(() => {
-    const completed = sessionsBar.data
-    const sessionsCompleted = sumDailyCounts(completed)
-    const newPatients = (dashboard.data?.newPatientsLast7Days ?? []).reduce(
-      (total, item) => total + item.newPatients,
-      0,
-    )
-    const activePatients = dashboard.data?.totalPatients ?? 0
-    const hoursWorked = Math.round(workHours.totalMinutes / 60)
-
-    const goals: IDashboardGoal[] = [
-      {
-        key: 'sessions',
-        label: 'Sessões',
-        value: sessionsCompleted,
-        target: mock.goalTargets.sessions,
-        unit: 'sessões',
-      },
-      {
-        key: 'hours',
-        label: 'Horas atendidas',
-        value: hoursWorked,
-        target: mock.goalTargets.hours,
-        unit: 'h',
-      },
-      {
-        key: 'active-patients',
-        label: 'Pacientes ativos',
-        value: activePatients,
-        target: mock.goalTargets.activePatients,
-        unit: 'pacientes',
-      },
-    ]
-
-    return {
-      summary: {
-        sessionsCompleted,
-        weeklyOccupancyPercent: mock.weeklyOccupancyPercent,
-        newPatients,
-        monthlyGoalProgressPercent: toGoalProgressPercent(
-          sessionsCompleted,
-          mock.goalTargets.sessions,
-        ),
-      },
-      goals,
-      sessionsVolume: {
-        completed,
-        cancelled: mock.sessionsVolume.cancelled,
-        rescheduled: mock.sessionsVolume.rescheduled,
-      },
-      sessionsStats: {
-        growthPercent: calcSessionsGrowth(completed),
-        dailyAverage: calcDailyAverage(completed.map((point) => point.count)),
-      },
-      agenda: {
-        today: todayAppointments.appointments,
-        tomorrow: todayAppointments.tomorrowAppointments,
-      },
-      insights: mock.insights,
-      attendance: mock.attendance,
-      analytics: {
-        ageRange: dashboard.data?.patientsByAge ?? [],
-        gender: dashboard.data?.patientsByGender ?? [],
-        weeklyOccupancyPercent: mock.weeklyOccupancyPercent,
-        retentionPercent: mock.retentionPercent,
-      },
-    }
-  }, [
-    dashboard.data,
-    sessionsBar.data,
-    todayAppointments.appointments,
-    todayAppointments.tomorrowAppointments,
-    workHours.totalMinutes,
-    mock,
-  ])
-
-  const isLoading =
-    dashboard.isLoading ||
-    sessionsBar.isLoading ||
-    todayAppointments.isLoading ||
-    workHours.isLoading
-
-  const isError =
-    dashboard.isError ||
-    sessionsBar.isError ||
-    todayAppointments.isError ||
-    workHours.isError
-
-  const refetch = useCallback(() => {
-    queryClient.invalidateQueries({ queryKey: ['dashboard'] })
-    sessionsBar.refetch()
-  }, [queryClient, sessionsBar])
+  const { data, isLoading, isError, refetch } = useQuery({
+    queryKey: ['dashboard', 'psychologist', { period, practiceContextId }],
+    queryFn: () => getPsychologistDashboard({ period }),
+    staleTime: QUERY_STALE_TIME,
+    gcTime: QUERY_GC_TIME,
+  })
 
   return {
     data,

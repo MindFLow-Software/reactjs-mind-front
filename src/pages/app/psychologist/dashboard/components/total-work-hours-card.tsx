@@ -1,37 +1,30 @@
 import { memo } from 'react'
 import { Clock } from 'lucide-react'
-import { useWorkHours } from '../hooks/use-work-hours'
-import { MONTHLY_GOAL_HOURS } from '../constants'
-import { formatTime } from '../helpers'
 import { MetricCard } from '@/components/metric-card'
+import type { IDashboardGoal } from '@/types/dashboard'
 
 interface TotalWorkHoursCardProps {
-  startDate?: Date
-  endDate?: Date
+  goal: IDashboardGoal
 }
 
 export const TotalWorkHoursCard = memo(function TotalWorkHoursCard({
-  startDate,
-  endDate,
+  goal,
 }: TotalWorkHoursCardProps) {
-  const { totalMinutes, progressPct, atGoal, isLoading, isError } =
-    useWorkHours({ startDate, endDate })
+  const atGoal = goal.percent >= 100
 
   return (
-    <MetricCard variant="stacked" accentColor="emerald" isLoading={isLoading}>
+    <MetricCard variant="stacked" accentColor="emerald">
       <MetricCard.Header
         icon={<Clock className="size-4 text-emerald-500" />}
         label="Horas atendidas"
         accentColor="emerald"
       />
-      <MetricCard.Body isError={isError}>
-        <MetricCard.Value>
-          {totalMinutes > 0 ? formatTime(totalMinutes) : '0h'}
-        </MetricCard.Value>
+      <MetricCard.Body>
+        <MetricCard.Value>{goal.current}h</MetricCard.Value>
         <MetricCard.Progress
-          value={progressPct}
+          value={goal.percent}
           atGoal={atGoal}
-          label={`meta mensal: ${MONTHLY_GOAL_HOURS}h`}
+          label={`meta mensal: ${goal.target}h`}
         />
       </MetricCard.Body>
     </MetricCard>

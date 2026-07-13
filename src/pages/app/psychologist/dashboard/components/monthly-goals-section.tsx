@@ -1,8 +1,14 @@
 import { Target } from 'lucide-react'
 
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from '@/components/ui/card'
 import { DashboardProgressBar } from '@/pages/app/dashboard/shared/components/dashboard-progress-bar'
-import type { IDashboardGoal } from '@/pages/app/dashboard/shared/types'
+import type { IDashboardGoal } from '@/types/dashboard'
 import './monthly-goals-section.css'
 
 interface MonthlyGoalsSectionProps {
@@ -18,17 +24,18 @@ export function MonthlyGoalsSection({ goals }: MonthlyGoalsSectionProps) {
         </div>
         <div>
           <CardTitle className="dsh-goals-title">Metas do mês</CardTitle>
-          <CardDescription>Acompanhe seu progresso em direção ao objetivo definido</CardDescription>
+          <CardDescription>
+            Acompanhe seu progresso em direção ao objetivo definido
+          </CardDescription>
         </div>
       </CardHeader>
       <CardContent className="flex justify-evenly gap-4">
         {goals.map((goal) => (
           <DashboardProgressBar
-            key={goal.key}
+            key={goal.label}
             label={goal.label}
-            value={goal.value}
+            value={goal.current}
             target={goal.target}
-            unit={goal.unit}
           />
         ))}
       </CardContent>

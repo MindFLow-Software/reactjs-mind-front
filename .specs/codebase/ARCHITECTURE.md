@@ -28,9 +28,13 @@ Forbidden architectural shortcuts:
 - Reusing creation modals/forms/schemas/hooks for editing through flags such as `isEditing`, `mode`, or `initialData`.
 - CSS embedded in TSX or pure feature CSS outside Tailwind `@layer`/`@apply`.
 - Chained or nested ternaries, especially inside JSX, unless there is no cleaner and more readable alternative.
-- Logged-in user profile reads outside `useAuth`.
+- Authenticated user data reads outside `useAuth`.
 - Duplicating a helper/utility function when an equivalent helper already exists.
 - Keeping a function local after it is used in two or more places.
+- Authenticated user data from any source other than `useAuth`, including `localStorage`, duplicate profile queries, route guards, API responses, or stale snapshots.
+- Date formatting, parsing, validation, comparison, or treatment outside `Time` from `src/utils/time.ts`.
+- Direct `date-fns` usage outside `Time`. `Time` must use `date-fns` internally for date methods.
+- Local utility logic when it belongs in an existing utility class. Add a static method to `Sanitizer`, `Normalizer`, `Time`, or the correct utility class first.
 - Enum-like `const` objects plus `typeof` aliases for closed domain values. Use native TypeScript enums.
 - Raw string literals for enum values. Use enum members such as `Honorific.MASC_DR`, not `'MASC_DR'`.
 - Reexports of any kind. Every type, enum, helper, constant, component, and hook must be exported from exactly one canonical module and imported directly from there.

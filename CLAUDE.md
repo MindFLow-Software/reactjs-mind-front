@@ -43,11 +43,14 @@ Required standards:
 - Each `.tsx` file should expose one main function when possible. Compound composition is the allowed exception.
 - Shared constants live in `src/constants`.
 - Shared/reusable components live in `src/components`.
-- Use existing utilities in `src/utils` (`Isness`, `Sanitizer`, `Normalizer`, `Time`, formatters, mappers) as the single source of truth for validation, formatting, normalization, and guards.
+- Use existing utility classes in `src/utils` (`Isness`, `Sanitizer`, `Normalizer`, `Time`, etc.) as the single source of truth for validation, formatting, normalization, date handling, and guards.
+- Date formatting, parsing, validation, comparison, and date treatment must always go through `Time` from `src/utils/time.ts`. Do not import or use `date-fns`, `Date` formatting logic, or ad hoc date helpers outside `Time`.
+- `Time` methods must use `date-fns` internally. If a needed date operation is missing, add a static method to `Time` first and use that method everywhere else.
 - Never chain or nest ternaries, especially inside JSX, unless there is no cleaner and more readable alternative. Prefer a named render function, `if`, `switch`, lookup map, or precomputed variable.
-- If an equivalent helper or utility already exists, it must be reused. Do not reimplement formatting, normalization, validation, guards, or mapping logic inline.
+- If an equivalent utility-class method already exists, it must be reused. Do not reimplement formatting, normalization, validation, guards, date handling, or mapping logic inline.
+- If related utility behavior is missing, add a static method to the correct utility class (`Sanitizer`, `Normalizer`, `Time`, etc.) before using it elsewhere.
 - Any function used in two or more places must be extracted to a helper class or helper/util/shared file and reused from there.
-- Logged-in user profile data must always come from `useAuth`. Do not read profile data from `localStorage`, duplicate profile queries, or pass stale user snapshots when `useAuth` is available.
+- Authenticated user data must always come from `useAuth`. Do not read authenticated user data from `localStorage`, duplicate profile queries, route guards, API responses, or stale user snapshots when `useAuth` is available.
 - Use native TypeScript `enum` for closed domain values. Do not create enum-like `const` objects plus `typeof` type aliases such as `export type Languages = (typeof Languages)[keyof typeof Languages]`; export `enum Languages` instead.
 - Always consume enum values through the enum member, never through raw string literals. Use `Honorific.MASC_DR`, not `'MASC_DR'`; use `AppointmentStatus.SCHEDULED`, not `'SCHEDULED'`.
 - Never reexport anything. Every symbol must be exported from exactly one module and imported directly from that source module. No barrel exports, no one-line compatibility wrappers, and no `import type { IExample } from './example'; export { IExample }`.
@@ -188,14 +191,14 @@ src/
     app/         # Authenticated routes
     auth/        # Public/auth routes
   types/         # Shared TypeScript types
-  utils/         # Pure formatting functions (formatCPF.ts, formatAge.ts)
+  utils/         # Utility classes for formatting, normalization, dates, guards
 ```
 
 ### Naming
 - Components: PascalCase (`PatientsList.tsx`)
 - Hooks: camelCase with `use` prefix (`use-patient-achievements.ts`)
 - API files: kebab-case verb-noun (`get-patients.ts`, `create-patient.ts`)
-- Utils: camelCase verb (`formatCPF`, `formatAge`)
+- Utils: PascalCase classes with static methods (`Sanitizer`, `Normalizer`, `Time`)
 
 ---
 
@@ -266,11 +269,12 @@ Claude must follow these patterns exactly. No deviations.
 - Do not scatter generic utility classes as global CSS rules — use Tailwind tokens directly in JSX.
 - `cn()` from `@/lib/utils` for all conditional class merging in JSX.
 
-### Masks & Formatters
+### Masks, Dates, Formatters
 
 - Input masking and normalization run on `onChange`, not in `useEffect`.
-- Always use the existing utilities: `formatCPF`, `formatPhone`, `formatCEP`, `formatDateInput`, `Normalizer`, or `date-fns`. Never write raw regex inline for a format that an existing utility already handles.
-- If a helper/util already covers the behavior, reuse it instead of creating a local variant.
+- Always use the existing utility classes: `Sanitizer`, `Normalizer`, `Time`, `Isness`, etc. Never write raw regex, date handling, or local formatting logic inline when a utility-class method can own it.
+- All date formatting, parsing, validation, comparison, and treatment must use `Time`. `Time` is the only place that may call `date-fns` for these concerns.
+- If a needed formatter, validator, sanitizer, normalizer, or date operation is missing, add a static method to the correct utility class first, then use it from the rest of the code.
 
 ### Constants, Helpers, Types
 
@@ -321,7 +325,7 @@ Patterns extracted from `src/pages/app/patients/patients-list/register-patients/
 - Components that own their own server state (`AttachmentsList`) call `useQuery` / `useMutation` directly — they do not receive data as props.
 - Atomic UI primitives (`SectionTitle`, `PillRadio`) accept only the minimum needed: icon + label, or options + value + onChange.
 - Wrap performance-sensitive leaf components with `memo()` and `useCallback` on their handlers (`UploadZone` is the example).
-- File-scoped helper functions used only within one component (`calcAge` in `step-basic-data.tsx`) stay in that file, not in `helpers.ts`.
+- File-scoped helper functions used only within one component may stay local only when they do not belong to an existing utility class. Date helpers such as age calculation must go in `Time`.
 
 ### Hook Composition
 
@@ -338,7 +342,7 @@ Patterns extracted from `src/pages/app/patients/patients-list/register-patients/
 - Validation mode is `"onTouched"` — errors appear after the user blurs a field, not on mount.
 - Every field uses the full shadcn Form anatomy: `FormField` → `FormItem` → `FormLabel` → `FormControl` → `FormMessage`. Never skip a layer.
 - Invalid state drives class changes via `fieldState.invalid` inside `cn()`: `cn("patient-input", fieldState.invalid && "border-red-600 focus-visible:ring-red-600/20")`.
-- Masking runs on `onChange`, not in effects. `formatCPF`, `formatPhone`, `formatCEP` are applied inline inside the `onChange` handler.
+- Masking runs on `onChange`, not in effects. Use utility-class methods from `Sanitizer`/`Normalizer` instead of inline masks or standalone local formatters.
 - Per-step validation uses a `STEP_FIELDS` map (in `use-patient-form-steps.ts`) to call `trigger(fields)` before advancing — do not validate the whole form on step change.
 - Default values are computed by a dedicated `buildPatientDefaults(patient?)` helper in `helpers.ts`. Never inline `defaultValues` in `useForm`.
 - Optional string fields default to `""`. Only `dateOfBirth` uses `null` as the empty sentinel.

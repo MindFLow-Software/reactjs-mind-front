@@ -17,8 +17,10 @@ These choices are mandatory during the refactor:
 - Enum definitions: no enum-like `const` objects plus `(typeof X)[keyof typeof X]` aliases; create a native enum instead.
 - Module exports: no reexports or barrel exports. Each symbol has one canonical exporting module.
 - React auth/profile state: `useAuth` is the only source for logged-in user profile data.
+- Authenticated user data: always read through `useAuth`, never through `localStorage`, duplicate profile queries, route guards, API responses, or stale snapshots when `useAuth` is available.
 - Conditional rendering: no chained or nested ternaries, especially inside JSX, unless there is no cleaner and more readable alternative.
-- Shared logic: existing helpers/utils must be reused; functions used in two or more places must be extracted to a helper/util/shared module.
+- Date handling: use `Time` from `src/utils/time.ts` for all date formatting, parsing, validation, comparison, and treatment. `Time` must use `date-fns` internally; no direct `date-fns` usage elsewhere for these concerns.
+- Shared logic: existing utility classes (`Sanitizer`, `Normalizer`, `Time`, `Isness`, etc.) must be reused. Missing related behavior must be added as a static method to the correct utility class before use.
 
 Do not introduce another state, form, validation, styling, or HTTP library without explicit approval.
 
@@ -65,7 +67,7 @@ Do not introduce another state, form, validation, styling, or HTTP library witho
 | Gráficos | Recharts | 2.15 |
 | Calendário | React Big Calendar | 1.19 |
 | Date picker | React Day Picker | 9.13 |
-| Manipulação de datas | date-fns | 4.1 |
+| Manipulação de datas | date-fns via `Time` only | 4.1 |
 | Máscaras de input | react-imask | 7.6 |
 | Geração de PDF | @react-pdf/renderer | 4.3 |
 | QR Code | qrcode.react | 4.2 |

@@ -27,7 +27,7 @@ src/
   shared/                      # cross-domain shared helpers only when utils/constants/hooks/components do not fit
   store/                       # global Zustand stores
   types/                       # backend-aligned entities/domains and native enums
-  utils/                       # pure utilities only; no stores, no API calls
+  utils/                       # utility classes only; no stores, no API calls
   validators/
     {domain}/
       {layer}/
@@ -42,6 +42,10 @@ Hard boundaries:
 - `src/api` must not contain React hooks or UI logic.
 - `src/hooks` must not contain API route implementations.
 - API route functions must not be called directly from pages/components if a query/mutation hook is required.
+- Authenticated user data must always be consumed through `useAuth`, not through local storage, duplicated profile queries, route guards, API responses, or stale snapshots.
+- Date formatting, parsing, validation, comparison, and treatment must always live behind static methods on `Time` from `src/utils/time.ts`.
+- `Time` must use `date-fns` internally for date methods. Do not use `date-fns` directly outside `Time` for these concerns.
+- Formatting, normalization, sanitization, validation, and guard logic must use utility-class static methods (`Sanitizer`, `Normalizer`, `Time`, `Isness`, etc.). Missing related behavior must be added to the correct utility class first.
 - Closed domain values must be native TypeScript enums, consumed as enum members such as `Honorific.MASC_DR`, not raw strings such as `'MASC_DR'`.
 - Do not create enum-like `const` objects plus `(typeof X)[keyof typeof X]` aliases. For example, `Languages` must be an enum, not a const object plus `export type Languages = ...`.
 - Reexports are forbidden. Each type, enum, helper, constant, component, and hook must be exported from exactly one canonical module; imports must point directly to that module.
@@ -227,9 +231,8 @@ src/
 │   └── domain files        # interfaces and request/response types; no reexports
 │
 └── utils/
-    ├── formatCPF.ts
-    ├── formatPhone.ts
-    ├── formatCEP.ts
-    ├── formatAGE.ts
-    └── mappers.ts          # ROLE_TRANSLATIONS, EXPERTISE_TRANSLATIONS
+    ├── sanitizer.ts        # Sanitizer static methods
+    ├── normalizer.ts       # Normalizer static methods
+    ├── time.ts             # Time static methods; date-fns usage stays here
+    └── isness.ts           # guard/static predicate helpers
 ```

@@ -4,11 +4,9 @@ import { ptBR } from 'date-fns/locale'
 import { CalendarDays, ArrowRight } from 'lucide-react'
 import { Link } from 'react-router-dom'
 import { Card, CardContent, CardHeader } from '@/components/ui/card'
-import { Skeleton } from '@/components/ui/skeleton'
 import { cn } from '@/lib/utils'
-import type { IAppointmentWithNames } from '@/types/appointment'
+import type { IDashboardAppointment } from '@/types/dashboard'
 import { AppointmentStatus } from '@/types/enums'
-import { useTodayAppointments } from '../hooks/use-today-appointments'
 import { formatTime } from '../helpers'
 import './today-agenda.css'
 
@@ -43,16 +41,13 @@ const STATUS_CONFIG: Record<string, { label: string; className: string }> = {
 }
 
 interface AgendaRowProps {
-  appt: IAppointmentWithNames
+  appt: IDashboardAppointment
 }
 
 function AgendaRow({ appt }: AgendaRowProps) {
   const time = format(new Date(appt.scheduledAt), 'HH:mm')
   const duration =
     appt.durationInMin != null ? formatTime(appt.durationInMin) : '—'
-  const patientName = appt.patient
-    ? `${appt.patient.firstName} ${appt.patient.lastName}`
-    : 'Paciente não informado'
   const status = STATUS_CONFIG[appt.status] ?? {
     label: 'Aguardando',
     className:
@@ -67,7 +62,7 @@ function AgendaRow({ appt }: AgendaRowProps) {
       </div>
 
       <div className="dsh-agenda-row-main">
-        <p className="dsh-agenda-row-name">{patientName}</p>
+        <p className="dsh-agenda-row-name">{appt.patientName}</p>
         {appt.diagnosis && (
           <p className="dsh-agenda-row-diagnosis">{appt.diagnosis}</p>
         )}
@@ -82,7 +77,7 @@ function AgendaRow({ appt }: AgendaRowProps) {
 
 interface AgendaGroupProps {
   label: string
-  appointments: IAppointmentWithNames[]
+  appointments: IDashboardAppointment[]
   emptyMessage: string
 }
 
@@ -103,20 +98,18 @@ function AgendaGroup({ label, appointments, emptyMessage }: AgendaGroupProps) {
   )
 }
 
-export function TodayAgenda() {
+interface TodayAgendaProps {
+  today: IDashboardAppointment[]
+  tomorrow: IDashboardAppointment[]
+}
+
+export function TodayAgenda({ today, tomorrow }: TodayAgendaProps) {
   const todayLabel = useMemo(
     () => format(new Date(), "d 'de' MMMM", { locale: ptBR }),
     [],
   )
 
-  const {
-    appointments: todayAppointments,
-    tomorrowAppointments,
-    isLoading,
-  } = useTodayAppointments()
-
-  const hasNoAppointments =
-    todayAppointments.length === 0 && tomorrowAppointments.length === 0
+  const hasNoAppointments = today.length === 0 && tomorrow.length === 0
 
   return (
     <Card className="dsh-agenda-card">
@@ -129,9 +122,8 @@ export function TodayAgenda() {
             <div>
               <p className="dsh-agenda-title">Agenda</p>
               <p className="dsh-agenda-subtitle">
-                {isLoading
-                  ? '...'
-                  : `${todayLabel} · ${todayAppointments.length} ${todayAppointments.length === 1 ? 'sessão hoje' : 'sessões hoje'}`}
+                {todayLabel} · {today.length}{' '}
+                {today.length === 1 ? 'sessão hoje' : 'sessões hoje'}
               </p>
             </div>
           </div>
@@ -143,20 +135,7 @@ export function TodayAgenda() {
       </CardHeader>
 
       <CardContent className="dsh-agenda-content">
-        {isLoading ? (
-          <div className="dsh-agenda-loading">
-            {[...Array(4)].map((_, i) => (
-              <div key={i} className="dsh-agenda-loading-row">
-                <Skeleton className="h-8 w-12" />
-                <div className="dsh-agenda-loading-lines">
-                  <Skeleton className="h-3.5 w-32" />
-                  <Skeleton className="h-3 w-20" />
-                </div>
-                <Skeleton className="h-5 w-20 rounded-md" />
-              </div>
-            ))}
-          </div>
-        ) : hasNoAppointments ? (
+        {hasNoAppointments ? (
           <div className="dsh-agenda-empty">
             <div className="dsh-agenda-empty-icon">
               <CalendarDays className="size-5 text-muted-foreground/50" />
@@ -172,12 +151,12 @@ export function TodayAgenda() {
           <div className="dsh-agenda-groups">
             <AgendaGroup
               label="Hoje"
-              appointments={todayAppointments}
+              appointments={today}
               emptyMessage="Nenhuma sessão hoje"
             />
             <AgendaGroup
               label="Amanhã"
-              appointments={tomorrowAppointments}
+              appointments={tomorrow}
               emptyMessage="Nenhuma sessão amanhã"
             />
           </div>

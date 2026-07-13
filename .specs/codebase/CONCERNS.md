@@ -26,8 +26,10 @@ The frontend currently has systemic architecture drift:
 - Forms are not consistently React Hook Form + Zod.
 - `any` exists in appointment, admin, finance, billing, auth, utilities, and popup code.
 - Chained/nested ternaries make JSX branches hard to audit and are forbidden unless no cleaner and more readable alternative exists.
-- Helper logic is duplicated instead of consistently reusing `src/utils`/shared helpers.
-- Logged-in profile data is sometimes read from stale local sources instead of `useAuth`.
+- Helper logic is duplicated instead of consistently reusing utility-class methods from `src/utils`.
+- Formatting, normalization, sanitization, validation, and guards are sometimes recreated locally instead of being added as static methods to `Sanitizer`, `Normalizer`, `Time`, `Isness`, or the correct utility class.
+- Date formatting/treatment must be centralized in `Time`; direct `date-fns`, manual `Date`, and local date helpers outside `Time` are architectural drift.
+- Logged-in/authenticated user data is sometimes read from stale local sources instead of `useAuth`.
 - Enum-like `const` objects and type aliases create avoidable drift where native TypeScript `enum` must be used.
 - Raw string enum values such as `'MASC_DR'` create drift; call sites must use enum members such as `Honorific.MASC_DR`.
 - Reexports hide ownership and create multiple import paths; every symbol must be exported from exactly one canonical module.

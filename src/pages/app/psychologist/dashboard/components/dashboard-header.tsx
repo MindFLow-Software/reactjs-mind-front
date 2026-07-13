@@ -4,25 +4,26 @@ import { ptBR } from 'date-fns/locale'
 import { useAuth } from '@/hooks/use-auth'
 import { translatedHonorific } from '@/constants/translated-honorific'
 import { DashboardPeriodSelector } from '@/pages/app/dashboard/shared/components/dashboard-period-selector'
+import type { IPsychologistDashboardData } from '@/types/dashboard'
 import type { DashboardPeriod } from '../constants'
 import { getGreeting } from '../helpers'
-import { useTodayAppointments } from '../hooks/use-today-appointments'
-import type { IPsychologistDashboardSummary } from '../types'
 import './dashboard-header.css'
 
 interface DashboardHeaderProps {
-  period: DashboardPeriod
-  onPeriodChange: (p: DashboardPeriod) => void
-  summary: IPsychologistDashboardSummary
+  periodControl: {
+    period: DashboardPeriod
+    onPeriodChange: (p: DashboardPeriod) => void
+  }
+  summary: IPsychologistDashboardData['summary']
+  todayCount: number
 }
 
 export function DashboardHeader({
-  period,
-  onPeriodChange,
+  periodControl: { period, onPeriodChange },
   summary,
+  todayCount,
 }: DashboardHeaderProps) {
   const { profile } = useAuth()
-  const { count: appointmentCount } = useTodayAppointments()
 
   const formattedDate = useMemo(
     () => format(new Date(), "EEEE, d 'de' MMMM 'de' yyyy", { locale: ptBR }),
@@ -44,8 +45,8 @@ export function DashboardHeader({
         </h1>
         <p className="dsh-header-date">
           {formattedDate}
-          {appointmentCount > 0 &&
-            ` · ${appointmentCount} ${appointmentCount === 1 ? 'sessão hoje' : 'sessões hoje'}`}
+          {todayCount > 0 &&
+            ` · ${todayCount} ${todayCount === 1 ? 'sessão hoje' : 'sessões hoje'}`}
         </p>
         <p className="dsh-header-summary">
           <span className="font-medium">{`${summary.sessionsCompleted} sessões concluídas`}</span>

@@ -23,9 +23,12 @@ Before calling a module done, verify:
 - Touched `.tsx` pages/components have CSS using `@reference`, `@layer`, and `@apply`.
 - Backend entity/DTO types match `docs/frontend-reference/*.md`.
 - No chained or nested ternaries, especially inside JSX, unless there is no cleaner and more readable alternative.
-- Existing helpers/utils are reused instead of reimplemented inline.
+- Authenticated user data is read through `useAuth`, not `localStorage`, duplicate profile queries, route guards, API responses, or stale snapshots.
+- Date formatting, parsing, validation, comparison, and treatment use `Time` from `src/utils/time.ts`.
+- `date-fns` is used by `Time` methods only for date concerns; no touched feature/component/hook imports `date-fns` directly.
+- Existing utility-class methods (`Sanitizer`, `Normalizer`, `Time`, `Isness`, etc.) are reused instead of reimplemented inline.
+- Missing related formatter/validator/normalizer/sanitizer/date behavior is added as a static method to the correct utility class before use.
 - Functions used in two or more places are extracted to a helper class or helper/util/shared file.
-- Logged-in user profile data is read through `useAuth`.
 - Closed domain values use native TypeScript `enum`, not exported `const` objects plus `typeof` aliases.
 - Enum values are consumed through enum members, for example `Honorific.MASC_DR`, not raw strings such as `'MASC_DR'`.
 - No reexports, barrel exports, or one-line compatibility wrapper exports. Every symbol is imported from its canonical source module.
