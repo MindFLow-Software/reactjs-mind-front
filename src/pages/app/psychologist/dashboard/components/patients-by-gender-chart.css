@@ -29,22 +29,6 @@
     @apply flex-1 px-6 pb-6;
   }
 
-  .dsh-gender-loading {
-    @apply flex h-[180px] items-center justify-center;
-  }
-
-  .dsh-gender-state {
-    @apply flex h-[180px] flex-col items-center justify-center gap-2 text-center;
-  }
-
-  .dsh-gender-state-icon {
-    @apply flex h-10 w-10 items-center justify-center rounded-full bg-muted/30;
-  }
-
-  .dsh-gender-retry-btn {
-    @apply flex items-center gap-1 text-xs font-semibold text-blue-500 hover:underline;
-  }
-
   .dsh-gender-data-row {
     @apply flex items-center gap-6;
   }

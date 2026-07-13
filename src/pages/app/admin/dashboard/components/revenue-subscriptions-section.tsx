@@ -8,7 +8,7 @@ import {
 } from 'lucide-react'
 
 import { Currency } from '@/utils/currency'
-import type { IAdminDashboardRevenue } from '../types'
+import type { IAdminDashboardData } from '@/types/dashboard'
 
 import { Card } from '@/components/ui/card'
 import { ChartContainer, type ChartConfig } from '@/components/ui/chart'
@@ -18,6 +18,8 @@ import { DashboardSection } from '@/pages/app/dashboard/shared/components/dashbo
 
 import './revenue-subscriptions-section.css'
 import { Area, AreaChart, XAxis, YAxis } from 'recharts'
+
+type IAdminDashboardRevenue = IAdminDashboardData['revenue']
 
 interface IRevenueSubscriptionsSection {
   revenue: IAdminDashboardRevenue

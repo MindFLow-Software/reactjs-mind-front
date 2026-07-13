@@ -4,18 +4,18 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { DashboardProgressBar } from '@/pages/app/dashboard/shared/components/dashboard-progress-bar'
 import { PatientsByAgeChart } from './patients-by-age-chart'
 import { PatientsByGenderChart } from './patients-by-gender-chart'
-import type { IPsychologistDashboardAnalytics } from '../types'
+import type { IPsychologistDashboardData } from '@/types/dashboard'
 import './analytics-section.css'
 
 interface AnalyticsSectionProps {
-  analytics: IPsychologistDashboardAnalytics
+  analytics: IPsychologistDashboardData['analytics']
 }
 
 export function AnalyticsSection({ analytics }: AnalyticsSectionProps) {
   return (
     <div className="dsh-analytics-root">
-      <PatientsByAgeChart />
-      <PatientsByGenderChart />
+      <PatientsByAgeChart ageRange={analytics.ageRange} />
+      <PatientsByGenderChart gender={analytics.gender} />
 
       <Card className="dsh-analytics-card">
         <CardHeader className="dsh-analytics-header">

@@ -2,8 +2,10 @@ import { CheckCircle2, CalendarClock, XCircle, Activity } from 'lucide-react'
 
 import { DashboardSection } from '@/pages/app/dashboard/shared/components/dashboard-section'
 import { MetricCard } from '@/components/metric-card'
-import type { IAdminDashboardActivity } from '../types'
+import type { IAdminDashboardData } from '@/types/dashboard'
 import './sessions-activity-section.css'
+
+type IAdminDashboardActivity = IAdminDashboardData['activity']
 
 interface SessionsActivitySectionProps {
   activity: IAdminDashboardActivity

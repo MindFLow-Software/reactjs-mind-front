@@ -6,8 +6,10 @@ import { type ChartConfig } from '@/components/ui/chart'
 import { calcGrowthPercentage } from '@/pages/app/dashboard/shared/helpers'
 import type { DashboardPeriod } from '@/pages/app/dashboard/shared/types'
 import { TimeSeriesBarChartCard } from './time-series-bar-chart-card'
-import type { IAdminDashboardGrowth, ITimeSeriesPoint } from '../types'
+import type { IAdminDashboardData, ITimeSeriesPoint } from '@/types/dashboard'
 import './growth-section.css'
+
+type IAdminDashboardGrowth = IAdminDashboardData['growth']
 
 interface GrowthSectionProps {
   growth: IAdminDashboardGrowth

@@ -5,11 +5,13 @@ import { DashboardSection } from '@/pages/app/dashboard/shared/components/dashbo
 import { ChartContainer, type ChartConfig } from '@/components/ui/chart'
 import { AdminStatCard } from './admin-stat-card'
 import { DemographicsPieChartCard } from './demographics-pie-chart-card'
-import type { IAdminDashboardPatients } from '../types'
+import type { IAdminDashboardData } from '@/types/dashboard'
 import './patients-analytics-section.css'
 import { PatientsByGenderChart } from './patients-by-age-chart'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Bar, BarChart, XAxis, YAxis } from 'recharts'
+
+type IAdminDashboardPatients = IAdminDashboardData['patients']
 
 const CHART_COLORS = [
   'var(--chart-1)',

@@ -29,18 +29,6 @@
     @apply flex-1 px-6 pb-6;
   }
 
-  .dsh-age-state {
-    @apply flex flex-col items-center justify-center gap-2 py-6 text-center;
-  }
-
-  .dsh-age-state-icon {
-    @apply flex h-10 w-10 items-center justify-center rounded-full bg-muted/30;
-  }
-
-  .dsh-age-retry-btn {
-    @apply flex items-center gap-1 text-xs font-semibold text-blue-500 hover:underline;
-  }
-
   .dsh-age-rows {
     @apply flex flex-col gap-4;
   }

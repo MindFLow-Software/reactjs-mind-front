@@ -1,7 +1,7 @@
 import { Layers } from 'lucide-react'
 
 import { ChartContainer, type ChartConfig } from '@/components/ui/chart'
-import type { IAdminDashboardPsychologists } from '../types'
+import type { IAdminDashboardData } from '@/types/dashboard'
 
 import { DashboardSection } from '@/pages/app/dashboard/shared/components/dashboard-section'
 import { PsychologistsGenderChart } from './psychologists-by-gender-chart'
@@ -11,6 +11,8 @@ import { PsychologistsAgeRangeChart } from './psychologists-by-age-chart'
 import './psychologists-analytics-section.css'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Bar, BarChart, XAxis, YAxis } from 'recharts'
+
+type IAdminDashboardPsychologists = IAdminDashboardData['psychologists']
 
 const CHART_COLORS = [
   'var(--chart-1)',

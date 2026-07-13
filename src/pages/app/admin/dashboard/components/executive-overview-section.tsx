@@ -14,7 +14,7 @@ import {
 } from 'lucide-react'
 
 import { Currency } from '@/utils/currency'
-import type { IAdminDashboardExecutive } from '../types'
+import type { IAdminDashboardData } from '@/types/dashboard'
 
 import { AdminStatCard } from './admin-stat-card'
 import { DashboardSection } from '@/pages/app/dashboard/shared/components/dashboard-section'
@@ -24,6 +24,8 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Badge } from '@/components/ui/badge'
 import { ChartContainer, type ChartConfig } from '@/components/ui/chart'
 import { Area, AreaChart } from 'recharts'
+
+type IAdminDashboardExecutive = IAdminDashboardData['executive']
 
 interface ExecutiveOverviewSectionProps {
   executive: IAdminDashboardExecutive
