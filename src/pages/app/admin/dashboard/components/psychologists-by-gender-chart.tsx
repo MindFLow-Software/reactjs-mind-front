@@ -1,18 +1,17 @@
 'use client'
 
 import * as React from 'react'
-import { useQuery } from '@tanstack/react-query'
-import { subDays, startOfDay, endOfDay } from 'date-fns'
 import { Users2 } from 'lucide-react'
 
 import { type ChartConfig } from '@/components/ui/chart'
-import { getPsychologistsGenderStats } from '@/api/psychologists/get-psychologists-gender-stats'
+import { Gender } from '@/types/enums'
+import type { IGenderItem } from '@/types/dashboard'
 import { DemographicsPieChartCard } from './demographics-pie-chart-card'
 
-const GENDER_TRANSLATIONS: Record<string, string> = {
-  FEMININE: 'Feminino',
-  MASCULINE: 'Masculino',
-  OTHER: 'Outros',
+const GENDER_TRANSLATIONS: Record<Gender, string> = {
+  [Gender.FEMININE]: 'Feminino',
+  [Gender.MASCULINE]: 'Masculino',
+  [Gender.OTHER]: 'Outros',
 }
 
 const CHART_COLORS = ['var(--chart-6)', 'var(--chart-2)', 'var(--chart-1)']
@@ -24,50 +23,22 @@ const chartConfig = {
 } satisfies ChartConfig
 
 interface PsychologistsGenderChartProps {
-  endDate: Date | undefined
+  isError: boolean
+  onRetry: () => void
+  isLoading: boolean
+  psychologistsByGender: IGenderItem[]
 }
 
 export function PsychologistsGenderChart({
-  endDate,
+  isError,
+  onRetry,
+  isLoading,
+  psychologistsByGender,
 }: PsychologistsGenderChartProps) {
-  const [timeRange] = React.useState('30d')
-
-  const { startDateToFetch, endDateToFetch } = React.useMemo(() => {
-    const referenceDate = endDate ? new Date(endDate) : new Date()
-    let daysToSubtract = 30
-
-    if (timeRange === '90d') daysToSubtract = 90
-    if (timeRange === '7d') daysToSubtract = 7
-
-    return {
-      startDateToFetch: startOfDay(subDays(referenceDate, daysToSubtract)),
-      endDateToFetch: endOfDay(referenceDate),
-    }
-  }, [timeRange, endDate])
-
-  const {
-    data: rawData,
-    isLoading,
-    isError,
-    refetch,
-  } = useQuery({
-    queryKey: [
-      'admin',
-      'psychologists-gender-stats',
-      startDateToFetch,
-      endDateToFetch,
-    ],
-    queryFn: () => getPsychologistsGenderStats(),
-    enabled: !!startDateToFetch && !!endDateToFetch,
-    staleTime: 1000 * 60 * 5,
-  })
-
   const { chartData, totalPsychologists, isEmpty } = React.useMemo(() => {
-    if (!rawData) return { chartData: [], totalPsychologists: 0, isEmpty: true }
-
-    const translatedData = rawData.map((item) => ({
+    const translatedData = (psychologistsByGender ?? []).map((item) => ({
       ...item,
-      gender: GENDER_TRANSLATIONS[item.gender] || item.gender,
+      gender: GENDER_TRANSLATIONS[item.gender] ?? item.gender,
     }))
 
     const total = translatedData.reduce((sum, item) => sum + item.count, 0)
@@ -77,7 +48,7 @@ export function PsychologistsGenderChart({
       totalPsychologists: total,
       isEmpty: translatedData.length === 0 || total === 0,
     }
-  }, [rawData])
+  }, [psychologistsByGender])
 
   return (
     <DemographicsPieChartCard
@@ -96,8 +67,8 @@ export function PsychologistsGenderChart({
         isLoading,
         isError,
         isEmpty,
-        onRetry: refetch,
-        label: 'Profissionais'
+        onRetry,
+        label: 'Profissionais',
       }}
       empty={{
         icon: <Users2 className="size-5 text-muted-foreground/50" />,

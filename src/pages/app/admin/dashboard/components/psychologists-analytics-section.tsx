@@ -98,7 +98,12 @@ export function PsychologistsAnalyticsSection({
           isLoading={false}
           psychologistsByAge={psychologists.byAge}
         />
-        <PsychologistsGenderChart endDate={undefined} />
+        <PsychologistsGenderChart
+          onRetry={noop}
+          isError={false}
+          isLoading={false}
+          psychologistsByGender={psychologists.byGender}
+        />
       </div>
 
       <div className="flex gap-4">
