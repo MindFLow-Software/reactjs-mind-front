@@ -7,7 +7,8 @@ import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardFooter, CardHeader } from '@/components/ui/card'
 import { Currency } from '@/utils/currency'
-import type { IPatientPsychologistCard } from '../types'
+import { translatedExpertise } from '@/constants/translated-expertise'
+import type { IPatientPsychologistCard } from '@/types/dashboard'
 import './psychologists-section.css'
 
 export interface IPsychologistsSection {
@@ -19,6 +20,8 @@ const SECTION_TITLE_BY_MODE: Record<'linked' | 'recommended', string> = {
   recommended: 'Psicólogos recomendados',
 }
 
+const MAX_RECOMMENDED = 3
+
 function getInitials(name: string): string {
   return name
     .split(' ')
@@ -29,16 +32,18 @@ function getInitials(name: string): string {
     .toUpperCase()
 }
 
-export function PsychologistsSection({
-  psychologists,
-}: IPsychologistsSection) {
+export function PsychologistsSection({ psychologists }: IPsychologistsSection) {
   const handleAction = useCallback(() => {
     toast.info('Ação ainda não disponível nesta versão.')
   }, [])
 
-  const mode = psychologists.some((psychologist) => psychologist.isLinked)
-    ? 'linked'
-    : 'recommended'
+  const linkedPsychologist = psychologists.find(
+    (psychologist) => psychologist.isLinked,
+  )
+  const mode = linkedPsychologist ? 'linked' : 'recommended'
+  const displayedPsychologists = linkedPsychologist
+    ? [linkedPsychologist]
+    : psychologists.slice(0, MAX_RECOMMENDED)
 
   return (
     <div className="ptd-psychologists-content">
@@ -47,16 +52,23 @@ export function PsychologistsSection({
       </span>
 
       <div className="ptd-psychologists-list">
-        {[...psychologists, ...psychologists].map((psychologist) => (
-          <Card key={psychologist.id} className="ptd-psychologist-card">
+        {displayedPsychologists.map((psychologist) => (
+          <Card
+            key={psychologist.psychologistProfileId}
+            className="ptd-psychologist-card"
+          >
             <CardHeader className="ptd-psychologist-header">
               <Avatar className="ptd-psychologist-avatar">
-                <AvatarFallback>{getInitials(psychologist.name)}</AvatarFallback>
+                <AvatarFallback>
+                  {getInitials(psychologist.professionalName)}
+                </AvatarFallback>
               </Avatar>
               <div className="ptd-psychologist-header-content">
-                <span className="ptd-psychologist-name">{psychologist.name}</span>
+                <span className="ptd-psychologist-name">
+                  {psychologist.professionalName}
+                </span>
                 <span className="ptd-psychologist-specialty">
-                  {psychologist.specialty}
+                  {translatedExpertise[psychologist.specialty]}
                 </span>
               </div>
             </CardHeader>

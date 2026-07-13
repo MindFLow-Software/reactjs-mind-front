@@ -16,4 +16,8 @@
   .ptd-goals-list {
     @apply flex flex-col gap-4;
   }
+
+  .ptd-goals-empty-text {
+    @apply text-sm text-muted-foreground;
+  }
 }

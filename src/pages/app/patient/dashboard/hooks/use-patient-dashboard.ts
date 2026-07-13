@@ -1,19 +1,21 @@
-import { useCallback, useMemo } from 'react'
-import { useQueryClient } from '@tanstack/react-query'
+import { useQuery } from '@tanstack/react-query'
 
-import { useAuth } from '@/hooks/use-auth'
-import { buildPatientMock } from '../mocks/patient-dashboard.mock'
-import type { IPatientDashboardData } from '../types'
+import { getPatientDashboard } from '@/api/dashboard/get-patient-dashboard'
+import {
+  QUERY_GC_TIME,
+  QUERY_STALE_TIME,
+} from '@/pages/app/dashboard/shared/constants'
+import type { IPatientDashboardInner } from '@/types/dashboard'
 
-export interface UsePatientDashboardReturn {
-  data: IPatientDashboardData
+export interface IUsePatientDashboard {
+  data: IPatientDashboardInner
   hasPatientProfile: boolean
   isLoading: boolean
   isError: boolean
   refetch: () => void
 }
 
-const EMPTY_DATA: IPatientDashboardData = {
+const EMPTY_DATA: IPatientDashboardInner = {
   patientName: '',
   nextSession: null,
   goals: [],
@@ -21,37 +23,25 @@ const EMPTY_DATA: IPatientDashboardData = {
   psychologists: [],
 }
 
-export function usePatientDashboard(): UsePatientDashboardReturn {
-  const queryClient = useQueryClient()
-  const { profile, isPending, isError } = useAuth()
+export function usePatientDashboard(): IUsePatientDashboard {
+  const {
+    data: payload,
+    isLoading,
+    isError,
+    refetch,
+  } = useQuery({
+    queryKey: ['dashboard', 'patient'],
+    queryFn: () => getPatientDashboard(),
+    staleTime: QUERY_STALE_TIME,
+    gcTime: QUERY_GC_TIME,
+  })
 
-  const patientProfile = profile?.patientProfiles[0]
-  const hasPatientProfile = Boolean(patientProfile)
-
-  const data = useMemo<IPatientDashboardData>(() => {
-    if (!profile || !patientProfile) {
-      return EMPTY_DATA
-    }
-
-    const mock = buildPatientMock(patientProfile)
-
-    return {
-      patientName: `${profile.firstName} ${profile.lastName}`,
-      nextSession: mock.nextSession,
-      goals: mock.goals,
-      journal: mock.journal,
-      psychologists: mock.psychologists,
-    }
-  }, [profile, patientProfile])
-
-  const refetch = useCallback(() => {
-    queryClient.invalidateQueries({ queryKey: ['profile'] })
-  }, [queryClient])
+  const hasPatientProfile = payload?.hasPatientProfile ?? false
 
   return {
-    data,
+    data: hasPatientProfile && payload ? payload.data : EMPTY_DATA,
     hasPatientProfile,
-    isLoading: isPending,
+    isLoading,
     isError,
     refetch,
   }

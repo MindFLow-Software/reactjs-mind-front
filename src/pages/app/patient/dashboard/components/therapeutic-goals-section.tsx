@@ -1,11 +1,9 @@
 import { Card, CardHeader, CardTitle } from '@/components/ui/card'
-import { DashboardProgressBar } from '@/pages/app/dashboard/shared/components/dashboard-progress-bar'
-import type { IDashboardGoal } from '@/pages/app/dashboard/shared/types'
 import './therapeutic-goals-section.css'
 import { Goal } from 'lucide-react'
 
 export interface TherapeuticGoalsSectionProps {
-  goals: IDashboardGoal[]
+  goals: unknown[]
 }
 
 export function TherapeuticGoalsSection({
@@ -18,17 +16,9 @@ export function TherapeuticGoalsSection({
         <CardTitle className="ptd-goals-title">Metas terapêuticas</CardTitle>
       </CardHeader>
 
-      <div className="ptd-goals-list">
-        {goals.map((goal) => (
-          <DashboardProgressBar
-            key={goal.key}
-            label={goal.label}
-            value={goal.value}
-            target={goal.target}
-            unit={goal.unit}
-          />
-        ))}
-      </div>
+      {goals.length === 0 && (
+        <p className="ptd-goals-empty-text">Nenhuma meta definida ainda.</p>
+      )}
     </Card>
   )
 }

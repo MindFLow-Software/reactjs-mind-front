@@ -4,7 +4,8 @@ import { Clock, MapPin, Play, Video } from 'lucide-react'
 import { toast } from 'sonner'
 
 import { Time } from '@/utils/time'
-import { SessionModality, type IPatientNextSession } from '../types'
+import { SessionModality } from '@/types/enums'
+import type { IPatientNextSession } from '@/types/dashboard'
 
 import { Card } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
@@ -40,11 +41,12 @@ export function NextSessionCard({ session }: NextSessionCardProps) {
       <div className="ptd-next-session-main">
         <div className="ptd-next-session-info">
           <span className="ptd-next-session-datetime">
-            {Time.toExtensiveReadableDateTime(new Date(session.date))}
+            {Time.toExtensiveReadableDateTime(new Date(session.scheduledAt))}
           </span>
           <div className="flex items-center gap-1">
             <span className="ptd-next-session-details">
-              {session.psychologistName}{' ·'} 
+              {session.psychologistName}
+              {' ·'}
             </span>
             <div className="ptd-next-session-meta">
               <Badge className="ptd-next-session-badge">
