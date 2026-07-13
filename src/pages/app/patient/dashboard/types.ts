@@ -1,9 +1,7 @@
 import type { IDashboardGoal } from '@/pages/app/dashboard/shared/types'
+import { SessionModality } from '@/types/enums'
 
-export enum SessionModality {
-  ONLINE = 'ONLINE',
-  PRESENTIAL = 'PRESENTIAL',
-}
+export { SessionModality }
 
 export interface IPatientNextSession {
   date: string

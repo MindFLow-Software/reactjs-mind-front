@@ -29,6 +29,17 @@ export enum Honorific {
   PHD = 'PHD',
 }
 
+export enum InsightSeverity {
+  INFO = 'INFO',
+  WARNING = 'WARNING',
+  CRITICAL = 'CRITICAL',
+}
+
+export enum SessionModality {
+  ONLINE = 'ONLINE',
+  PRESENTIAL = 'PRESENTIAL',
+}
+
 export const Languages = {
   PORTUGUESE: 'PORTUGUESE',
   ENGLISH: 'ENGLISH',

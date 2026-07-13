@@ -78,6 +78,31 @@ Use the **tlc-spec-driven** skill for all non-trivial tasks:
 
 Always create atomic commits per task. Never batch unrelated changes into one commit.
 
+### Mandatory `tasks.md` rule — model & effort per task
+
+Every task in **any** `tasks.md` (`T01`, `T02`, `T03`, …) MUST declare which Claude model and reasoning effort it should be implemented with. This is non-negotiable and applies **every time** a `tasks.md` is generated or edited — no task may exist without both fields.
+
+Place `model` and `effort` as the first two lines of the task, immediately under the title and before `What`/`Where`/`Depends on`/`Reuses`/etc.:
+
+```
+### T01 — Task title
+model: Opus 4.8
+effort: High
+
+**What**: ...
+**Where**: ...
+**Depends on**: ...
+```
+
+- `model`: one of `Opus 4.8`, `Sonnet 5`, `Haiku 4.5`, `Fable 5`.
+- `effort`: one of `Low`, `Medium`, `High`, `xHigh`, `Max`.
+
+Choose by task nature:
+
+- Architecture, type reshaping, multi-file reasoning, ambiguous logic → `Opus 4.8`, `High` or higher.
+- Standard component/hook/API implementation against a clear spec → `Sonnet 5`, `Medium`.
+- Mechanical edits, deletions, renames, docs/report files → `Haiku 4.5` (or `Sonnet 5`), `Low`.
+
 ---
 
 ## Stack

@@ -1,4 +1,5 @@
 import type { AgeRangeItem, GenderItem } from '@/types/dashboard'
+import { InsightSeverity } from '@/types/enums'
 
 export type DashboardPeriod = '7d' | '30d' | '90d' | 'year'
 
@@ -7,11 +8,7 @@ export interface PeriodOption {
   label: string
 }
 
-export enum InsightSeverity {
-  INFO = 'INFO',
-  WARNING = 'WARNING',
-  CRITICAL = 'CRITICAL',
-}
+export { InsightSeverity }
 
 export interface IDashboardInsight {
   id: string
