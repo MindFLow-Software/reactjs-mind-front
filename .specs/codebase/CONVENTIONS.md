@@ -27,14 +27,16 @@ Types:
 - Backend entities/domains must have a single source of truth in `src/types`.
 - API files may define action-specific request/response wrappers only when they are not reusable entities.
 - UI-only types must be explicitly named as view models and must not replace backend entities.
-- Use TypeScript `enum` whenever possible for closed domain values. Do not export enum-like `const` objects plus `typeof` type aliases when an `enum` fits; export `enum AppointmentStatus` and use `AppointmentStatus.SCHEDULED`.
+- Use native TypeScript `enum` for closed domain values. Do not create enum-like `const` objects plus `typeof` type aliases such as `export type Languages = (typeof Languages)[keyof typeof Languages]`; export `enum Languages` instead.
+- Always consume enum values through the enum member, never through raw string literals. Use `Honorific.MASC_DR`, not `'MASC_DR'`; use `AppointmentStatus.SCHEDULED`, not `'SCHEDULED'`.
+- Never reexport anything. Every symbol must be exported from exactly one module and imported directly from that source module. No barrel exports, no one-line compatibility wrappers, and no `import type { IExample } from './example'; export { IExample }`.
 - No `any`. Use backend-aligned types, `unknown` plus guards, or generics.
 
 Conditional logic:
 
-- Never chain or nest ternaries, especially inside JSX. This rule is absolute.
-- Two-state ternaries are allowed only when they stay simple and readable.
-- Three or more states must use a named render function, `switch`, lookup map, or precomputed variable.
+- Simple two-state ternaries are allowed only when they are the clearest option.
+- Never chain or nest ternaries, especially inside JSX, unless there is no cleaner and more readable alternative.
+- Three or more states must use a named render function, `if`, `switch`, lookup map, or precomputed variable.
 
 Reuse:
 
@@ -138,7 +140,7 @@ Referência canônica: `src/pages/app/patients/patients-list/register-patients/h
 
 ## Tipagem
 
-- Valores fechados de dominio devem usar `enum` TypeScript sempre que possivel:
+- Valores fechados de dominio devem usar `enum` TypeScript nativo:
   ```ts
   export enum AppointmentStatus {
     SCHEDULED = 'SCHEDULED',
@@ -146,9 +148,10 @@ Referência canônica: `src/pages/app/patients/patients-list/register-patients/h
     FINISHED = 'FINISHED',
   }
   ```
-- Usar `AppointmentStatus.SCHEDULED` nos call sites.
-- Nao exportar objeto `const` + type alias com `typeof AppointmentStatus[keyof typeof AppointmentStatus]` quando um `enum` atende.
-- `Record<string, string>` para dicionários de tradução.
+- Usar sempre o membro do enum nos call sites, por exemplo `AppointmentStatus.SCHEDULED` e `Honorific.MASC_DR`; nunca strings cruas como `'SCHEDULED'` ou `'MASC_DR'`.
+- Nao exportar objeto `const` + type alias com `typeof AppointmentStatus[keyof typeof AppointmentStatus]`; criar `enum` nativo.
+- Nunca reexportar tipos, enums, helpers, constantes, componentes ou hooks. Cada simbolo deve ter um unico arquivo exportador canonico, e todos os imports devem apontar diretamente para ele.
+- Dicionarios de traducao devem usar chaves tipadas pelo enum, por exemplo `Record<Honorific, string>`, nao `Record<string, string>`, quando as chaves sao valores de enum.
 - `?` para campos opcionais, nunca `| undefined` explícito desnecessário.
 
 ## Estilização
@@ -168,8 +171,8 @@ Referência canônica: `src/pages/app/patients/patients-list/register-patients/h
 
 ## Tradução de Enums
 
-- Centralizado em `src/constants` como `Record<string, string>` (ex: `translatedExpertise`, `translatedHonorific`).
-- Chaves em SCREAMING_SNAKE_CASE (valor do backend), valores em PT-BR.
+- Centralizado em `src/constants` como `Record<EnumName, string>` quando as chaves pertencem a um enum (ex: `translatedExpertise`, `translatedHonorific`).
+- Chaves devem ser membros do enum (`Honorific.MASC_DR`), nao strings cruas em SCREAMING_SNAKE_CASE.
 
 ## Formatadores
 

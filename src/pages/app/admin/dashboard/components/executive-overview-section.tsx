@@ -27,8 +27,6 @@ import { Area, AreaChart } from 'recharts'
 
 interface ExecutiveOverviewSectionProps {
   executive: IAdminDashboardExecutive
-  isLoading: boolean
-  isError: boolean
 }
 
 const chartData = [
@@ -47,8 +45,6 @@ const chartConfig = {} satisfies ChartConfig
 
 export function ExecutiveOverviewSection({
   executive,
-  isLoading,
-  isError,
 }: ExecutiveOverviewSectionProps) {
   return (
     <DashboardSection
@@ -205,14 +201,22 @@ export function ExecutiveOverviewSection({
           accent="blue"
           title="Psicólogos ativos"
           subtitle="Cadastrados na plataforma"
-          query={{ value: executive.psychologists, isLoading, isError }}
+          query={{
+            value: executive.psychologists,
+            isLoading: false,
+            isError: false,
+          }}
         />
         <AdminStatCard
           icon={<UserRound className="size-4" />}
           accent="blue"
           title="Pacientes ativos"
           subtitle="Cadastrados na plataforma"
-          query={{ value: executive.patients, isLoading, isError }}
+          query={{
+            value: executive.patients,
+            isLoading: false,
+            isError: false,
+          }}
         />
         <AdminStatCard
           icon={<CalendarCheck className="size-4" />}

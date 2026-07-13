@@ -1,4 +1,4 @@
-import type { AgeRangeItem, GenderItem } from '@/types/dashboard'
+import type { IAgeRangeItem, IGenderItem } from '@/types/dashboard'
 import { InsightSeverity } from '@/types/enums'
 
 export type DashboardPeriod = '7d' | '30d' | '90d' | 'year'
@@ -26,4 +26,4 @@ export interface IDashboardGoal {
   unit?: string
 }
 
-export type { AgeRangeItem, GenderItem }
+export type { IAgeRangeItem as AgeRangeItem, IGenderItem as GenderItem }

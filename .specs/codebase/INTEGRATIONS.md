@@ -36,7 +36,9 @@ Known contract reconciliation points:
 - `/psychologist/practice-context` vs `/psychologist/practice-contexts`.
 - `/auth/complete-registration` and Google OAuth completion flow.
 - `/patient-profiles/*` vs current patient/profile routes.
-- Appointment status enum values; closed domain values must use TypeScript `enum` whenever possible and be consumed as `AppointmentStatus.SCHEDULED`.
+- Appointment status enum values; closed domain values must use native TypeScript `enum` and be consumed as enum members such as `AppointmentStatus.SCHEDULED`, never raw strings such as `'SCHEDULED'`.
+- Any API payload, query parameter, schema default, and UI option value that represents an enum must use the enum member, for example `Honorific.MASC_DR`, not `'MASC_DR'`.
+- Integration symbols must be imported from their one canonical source module. Reexports, barrel exports, and compatibility wrapper exports are forbidden.
 
 ---
 

@@ -12,7 +12,7 @@ import {
 } from '@/components/ui/card'
 import { ChartContainer, type ChartConfig } from '@/components/ui/chart'
 
-import type { AgeRangeItem } from '@/types/dashboard'
+import type { IAgeRangeItem } from '@/types/dashboard'
 import { DashboardChartLoader } from '@/pages/app/dashboard/shared/components/dashboard-chart-loader'
 import { DashboardChartError } from '@/pages/app/dashboard/shared/components/dashboard-chart-error'
 import { DashboardChartEmpty } from '@/pages/app/dashboard/shared/components/dashboard-chart-empty'
@@ -33,7 +33,7 @@ interface IPatientsByGenderChart {
   isError: boolean
   onRetry: () => void
   isLoading: boolean
-  patientsByAge: AgeRangeItem[]
+  patientsByAge: IAgeRangeItem[]
 }
 
 export function PatientsByGenderChart({

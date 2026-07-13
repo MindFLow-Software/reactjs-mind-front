@@ -5,7 +5,7 @@ import { Users2 } from 'lucide-react'
 
 import { Bar, BarChart, Tooltip, XAxis, YAxis } from 'recharts'
 
-import type { AgeRangeItem } from '@/types/dashboard'
+import type { IAgeRangeItem } from '@/types/dashboard'
 
 import {
   Card,
@@ -40,7 +40,7 @@ interface IPsychologistsAgeRangeChart {
   isError: boolean
   onRetry: () => void
   isLoading: boolean
-  psychologistsByAge: AgeRangeItem[]
+  psychologistsByAge: IAgeRangeItem[]
 }
 
 export function PsychologistsAgeRangeChart({

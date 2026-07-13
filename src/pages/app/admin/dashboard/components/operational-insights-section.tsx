@@ -1,6 +1,6 @@
 import { DashboardSection } from '@/pages/app/dashboard/shared/components/dashboard-section'
 import { DashboardInsightCard } from '@/pages/app/dashboard/shared/components/dashboard-insight-card'
-import type { IDashboardInsight } from '@/pages/app/dashboard/shared/types'
+import type { IDashboardInsight } from '@/types/dashboard'
 import './operational-insights-section.css'
 
 interface OperationalInsightsSectionProps {
@@ -17,17 +17,12 @@ export function OperationalInsightsSection({
       description="Pontos de atenção que merecem ação da equipe"
     >
       <div className="adb-insights-grid">
-        {insights.map((insight) => (
+        {insights.map((insight, index) => (
           <DashboardInsightCard
-            key={insight.id}
+            key={`${insight.title}-${index}`}
             severity={insight.severity}
             title={insight.title}
             description={insight.description}
-            action={
-              insight.actionLabel
-                ? { label: insight.actionLabel, disabled: true }
-                : undefined
-            }
           />
         ))}
       </div>

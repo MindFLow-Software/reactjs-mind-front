@@ -92,8 +92,8 @@ export function PsychologistsAnalyticsSection({
         </Card>
         <PsychologistsAgeRangeChart
           onRetry={() => { }}
-          isError={psychologists.isError}
-          isLoading={psychologists.isLoading}
+          isError={false}
+          isLoading={false}
           psychologistsByAge={psychologists.byAge}
         />
         <PsychologistsGenderChart endDate={undefined} />

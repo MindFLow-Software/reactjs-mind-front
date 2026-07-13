@@ -22,11 +22,13 @@ Before calling a module done, verify:
 - Every POST/PUT/PATCH/DELETE is consumed through `useMutation`.
 - Touched `.tsx` pages/components have CSS using `@reference`, `@layer`, and `@apply`.
 - Backend entity/DTO types match `docs/frontend-reference/*.md`.
-- No chained or nested ternaries, especially inside JSX.
+- No chained or nested ternaries, especially inside JSX, unless there is no cleaner and more readable alternative.
 - Existing helpers/utils are reused instead of reimplemented inline.
 - Functions used in two or more places are extracted to a helper class or helper/util/shared file.
 - Logged-in user profile data is read through `useAuth`.
-- Closed domain values use TypeScript `enum` whenever possible, not exported `const` objects plus `typeof` aliases.
+- Closed domain values use native TypeScript `enum`, not exported `const` objects plus `typeof` aliases.
+- Enum values are consumed through enum members, for example `Honorific.MASC_DR`, not raw strings such as `'MASC_DR'`.
+- No reexports, barrel exports, or one-line compatibility wrapper exports. Every symbol is imported from its canonical source module.
 
 Manual smoke tests for the final refactor:
 

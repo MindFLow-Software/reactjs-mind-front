@@ -3,10 +3,7 @@ import { UserPlus, UserRoundPlus, Building2 } from 'lucide-react'
 import { DashboardSection } from '@/pages/app/dashboard/shared/components/dashboard-section'
 import { MetricCard } from '@/components/metric-card'
 import { type ChartConfig } from '@/components/ui/chart'
-import {
-  calcSessionsGrowth,
-  sumDailyCounts,
-} from '@/pages/app/dashboard/shared/helpers'
+import { calcGrowthPercentage } from '@/pages/app/dashboard/shared/helpers'
 import type { DashboardPeriod } from '@/pages/app/dashboard/shared/types'
 import { TimeSeriesBarChartCard } from './time-series-bar-chart-card'
 import type { IAdminDashboardGrowth, ITimeSeriesPoint } from '../types'
@@ -16,16 +13,26 @@ interface GrowthSectionProps {
   growth: IAdminDashboardGrowth
   period: DashboardPeriod
   onPeriodChange: (period: DashboardPeriod) => void
-  isLoading: boolean
-  isError: boolean
 }
 
 const psychologistsChartConfig = {
-  count: {
+  value: {
     label: 'Psicólogos',
     color: 'var(--chart-1)',
   },
 } satisfies ChartConfig
+
+function sumSeriesValues(series: ITimeSeriesPoint[]): number {
+  return series.reduce((total, point) => total + point.value, 0)
+}
+
+function calcSeriesGrowth(series: ITimeSeriesPoint[]): number {
+  if (series.length < 2) return 0
+  const mid = Math.floor(series.length / 2)
+  const previous = sumSeriesValues(series.slice(0, mid))
+  const current = sumSeriesValues(series.slice(mid))
+  return calcGrowthPercentage(current, previous)
+}
 
 function toTrendDirection(percent: number): 'up' | 'down' {
   return percent >= 0 ? 'up' : 'down'
@@ -35,15 +42,13 @@ export function GrowthSection({
   growth,
   period,
   onPeriodChange,
-  isLoading,
-  isError,
 }: GrowthSectionProps) {
-  const psychologistsTotal = sumDailyCounts(growth.newPsychologists)
-  const patientsTotal = sumDailyCounts(growth.newPatients)
-  const clinicsTotal = sumDailyCounts(growth.clinics)
+  const psychologistsTotal = sumSeriesValues(growth.newPsychologists)
+  const patientsTotal = sumSeriesValues(growth.newPatients)
+  const clinicsTotal = sumSeriesValues(growth.clinics)
 
-  const patientsGrowth = calcSessionsGrowth(growth.newPatients)
-  const clinicsGrowth = calcSessionsGrowth(growth.clinics)
+  const patientsGrowth = calcSeriesGrowth(growth.newPatients)
+  const clinicsGrowth = calcSeriesGrowth(growth.clinics)
 
   return (
     <DashboardSection
@@ -65,11 +70,11 @@ export function GrowthSection({
           }}
           chart={{
             config: psychologistsChartConfig,
-            dataKey: 'count',
-            color: psychologistsChartConfig.count.color,
+            dataKey: 'value',
+            color: psychologistsChartConfig.value.color,
             data: growth.newPsychologists,
-            isLoading,
-            isEmpty: isError || psychologistsTotal === 0,
+            isLoading: false,
+            isEmpty: psychologistsTotal === 0,
           }}
           empty={{
             icon: <UserPlus className="h-5 w-5 text-muted-foreground/50" />,
@@ -79,11 +84,7 @@ export function GrowthSection({
         />
 
         <div className="adb-growth-side">
-          <MetricCard
-            variant="stacked"
-            accentColor="blue"
-            isLoading={isLoading}
-          >
+          <MetricCard variant="stacked" accentColor="blue">
             <MetricCard.Header
               icon={<UserRoundPlus className="size-4 text-blue-600" />}
               label="Novos pacientes"

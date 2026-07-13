@@ -12,12 +12,17 @@ import { PatientsAnalyticsSection } from './components/patients-analytics-sectio
 import { OperationalInsightsSection } from './components/operational-insights-section'
 import { RevenueSubscriptionsSection } from './components/revenue-subscriptions-section'
 import { PsychologistsAnalyticsSection } from './components/psychologists-analytics-section'
+import {
+  DashboardSkeleton,
+  DashboardErrorState,
+} from '@/pages/app/dashboard/shared/components/dashboard-states'
 
 import './admin-dashboard.css'
 
 export function AdminDashboard() {
   const { setTitle } = useHeaderStore()
-  const { data, period, setPeriod } = useAdminDashboard()
+  const { data, isLoading, isError, refetch, period, setPeriod } =
+    useAdminDashboard()
 
   useEffect(() => {
     setTitle('Dashboard do Admin')
@@ -30,33 +35,31 @@ export function AdminDashboard() {
       <div className="adb-dashboard-root">
         <AdminDashboardHeader period={period} onPeriodChange={setPeriod} />
 
-        <ExecutiveOverviewSection
-          executive={data.executive}
-          isError={data.executive.isError}
-          isLoading={data.executive.isLoading}
-        />
+        {isLoading ? (
+          <DashboardSkeleton variant="page" />
+        ) : isError || !data ? (
+          <DashboardErrorState onRetry={refetch} />
+        ) : (
+          <>
+            <ExecutiveOverviewSection executive={data.executive} />
 
-        <GrowthSection
-          period={period}
-          growth={data.growth}
-          onPeriodChange={setPeriod}
-          isError={data.growth.isError}
-          isLoading={data.growth.isLoading}
-        />
+            <GrowthSection
+              period={period}
+              growth={data.growth}
+              onPeriodChange={setPeriod}
+            />
 
-        <RevenueSubscriptionsSection revenue={data.revenue} />
+            <RevenueSubscriptionsSection revenue={data.revenue} />
 
-        <SessionsActivitySection activity={data.activity} />
+            <SessionsActivitySection activity={data.activity} />
 
-        <PsychologistsAnalyticsSection psychologists={data.psychologists} />
+            <PsychologistsAnalyticsSection psychologists={data.psychologists} />
 
-        <PatientsAnalyticsSection
-          patients={data.patients}
-          isError={data.patients.isError}
-          isLoading={data.patients.isLoading}
-        />
+            <PatientsAnalyticsSection patients={data.patients} />
 
-        <OperationalInsightsSection insights={data.insights} />
+            <OperationalInsightsSection insights={data.insights} />
+          </>
+        )}
       </div>
     </>
   )

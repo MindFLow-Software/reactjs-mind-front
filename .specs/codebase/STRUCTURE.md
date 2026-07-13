@@ -26,7 +26,7 @@ src/
         helpers.ts             # local-only pure helpers, if needed
   shared/                      # cross-domain shared helpers only when utils/constants/hooks/components do not fit
   store/                       # global Zustand stores
-  types/                       # backend-aligned entities/domains
+  types/                       # backend-aligned entities/domains and native enums
   utils/                       # pure utilities only; no stores, no API calls
   validators/
     {domain}/
@@ -42,6 +42,9 @@ Hard boundaries:
 - `src/api` must not contain React hooks or UI logic.
 - `src/hooks` must not contain API route implementations.
 - API route functions must not be called directly from pages/components if a query/mutation hook is required.
+- Closed domain values must be native TypeScript enums, consumed as enum members such as `Honorific.MASC_DR`, not raw strings such as `'MASC_DR'`.
+- Do not create enum-like `const` objects plus `(typeof X)[keyof typeof X]` aliases. For example, `Languages` must be an enum, not a const object plus `export type Languages = ...`.
+- Reexports are forbidden. Each type, enum, helper, constant, component, and hook must be exported from exactly one canonical module; imports must point directly to that module.
 - Every `.tsx` page/component that owns markup must have its CSS counterpart or use an explicitly shared CSS file documented in the feature.
 - Feature-local `helpers.ts` may contain only helpers used by that feature.
 - Any pure function used by two or more files must move to `src/utils`, `src/shared`, or the established shared module for that domain.
@@ -220,8 +223,8 @@ src/
 │
 ├── types/
 │   ├── appointment.ts      # Appointment interface + AppointmentStatus enum + Request/Response
-│   ├── enum-gender.ts      # type Gender = "MASCULINE" | "FEMININE" | "OTHER"
-│   └── expertise.ts        # type Expertise, PsychologistRole, PatientRole
+│   ├── enums.ts            # native enums only; no enum-like const/type aliases
+│   └── domain files        # interfaces and request/response types; no reexports
 │
 └── utils/
     ├── formatCPF.ts

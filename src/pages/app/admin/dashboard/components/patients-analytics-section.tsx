@@ -35,14 +35,10 @@ const noop = () => {}
 
 interface PatientsAnalyticsSectionProps {
   patients: IAdminDashboardPatients
-  isLoading: boolean
-  isError: boolean
 }
 
 export function PatientsAnalyticsSection({
   patients,
-  isLoading,
-  isError,
 }: PatientsAnalyticsSectionProps) {
   const genderData = useMemo(
     () =>
@@ -71,14 +67,14 @@ export function PatientsAnalyticsSection({
           accent="blue"
           title="Pacientes ativos"
           subtitle="Cadastrados na plataforma"
-          query={{ value: patients.total, isLoading, isError }}
+          query={{ value: patients.total, isLoading: false, isError: false }}
         />
       </div>
 
       <div className="adb-pat-analytics-charts">
         <PatientsByGenderChart
-          isError={patients.isError}
-          isLoading={patients.isLoading}
+          isError={false}
+          isLoading={false}
           patientsByAge={patients.byAge}
           onRetry={noop}
         />

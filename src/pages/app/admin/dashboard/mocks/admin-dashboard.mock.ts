@@ -59,10 +59,10 @@ function buildDailySeries(
   return Array.from({ length: days }, (_, index) => {
     const date = subDays(referenceDate, days - index - 1)
     const wave = Math.sin((index + seed) / 3)
-    const count = Math.max(0, Math.round(amplitude + wave * amplitude))
+    const value = Math.max(0, Math.round(amplitude + wave * amplitude))
     return {
       date: formatISO(date, { representation: 'date' }),
-      count,
+      value,
     }
   })
 }
@@ -155,8 +155,6 @@ export function buildAdminMock(period: DashboardPeriod): IAdminDashboardMock {
       clinics: buildDailySeries(days, 3, 1),
     },
     revenue: {
-      isError: false,
-      isLoading: false,
       mrr: 4865000,
       premium: 214,
       freemium: 526,
@@ -165,8 +163,6 @@ export function buildAdminMock(period: DashboardPeriod): IAdminDashboardMock {
       churnPercent: 4,
     },
     activity: {
-      isError: false,
-      isLoading: false,
       completed: 1568,
       rescheduled: 187,
       canceled: 122,

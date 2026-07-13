@@ -44,11 +44,13 @@ Required standards:
 - Shared constants live in `src/constants`.
 - Shared/reusable components live in `src/components`.
 - Use existing utilities in `src/utils` (`Isness`, `Sanitizer`, `Normalizer`, `Time`, formatters, mappers) as the single source of truth for validation, formatting, normalization, and guards.
-- Never chain or nest ternaries, especially inside JSX. For three or more states, use a named render function, `switch`, lookup map, or precomputed variable.
+- Never chain or nest ternaries, especially inside JSX, unless there is no cleaner and more readable alternative. Prefer a named render function, `if`, `switch`, lookup map, or precomputed variable.
 - If an equivalent helper or utility already exists, it must be reused. Do not reimplement formatting, normalization, validation, guards, or mapping logic inline.
 - Any function used in two or more places must be extracted to a helper class or helper/util/shared file and reused from there.
 - Logged-in user profile data must always come from `useAuth`. Do not read profile data from `localStorage`, duplicate profile queries, or pass stale user snapshots when `useAuth` is available.
-- Use TypeScript `enum` whenever possible for closed domain values. Do not export enum-like `const` objects plus `typeof` type aliases when an `enum` fits; export `enum AppointmentStatus` and consume values as `AppointmentStatus.SCHEDULED`.
+- Use native TypeScript `enum` for closed domain values. Do not create enum-like `const` objects plus `typeof` type aliases such as `export type Languages = (typeof Languages)[keyof typeof Languages]`; export `enum Languages` instead.
+- Always consume enum values through the enum member, never through raw string literals. Use `Honorific.MASC_DR`, not `'MASC_DR'`; use `AppointmentStatus.SCHEDULED`, not `'SCHEDULED'`.
+- Never reexport anything. Every symbol must be exported from exactly one module and imported directly from that source module. No barrel exports, no one-line compatibility wrappers, and no `import type { IExample } from './example'; export { IExample }`.
 - No `any`, no duplicated entity definitions, no inline backend DTOs inside pages/components, no speculative abstractions.
 
 `src/pages/app/profiles` can be used as an inspiration for cleaner composition, but it is not exempt from these rules and still needs fixes called out in the refactor audit.
@@ -244,9 +246,9 @@ Claude must follow these patterns exactly. No deviations.
 
 ### Conditional Rendering
 
-- Two states: ternary is fine.
-- Three or more states: use a named `renderXyz` function with a `switch` statement.
-- Never chain or nest ternaries. This rule is absolute, especially inside JSX.
+- Simple two-state ternaries are allowed only when they are the clearest option.
+- Never chain or nest ternaries unless there is no cleaner and more readable alternative.
+- Three or more states must use a named `renderXyz` function, `if`, `switch`, lookup map, or precomputed variable.
 
 ### Hook Architecture
 
@@ -272,12 +274,14 @@ Claude must follow these patterns exactly. No deviations.
 
 ### Constants, Helpers, Types
 
-- Feature-level option arrays, step config, numeric limits, and branded type aliases live in `constants.ts` (or `constants.tsx` if JSX is needed). Use `as const` for literal type inference.
+- Feature-level option arrays, step config, and numeric limits live in `constants.ts` (or `constants.tsx` if JSX is needed). Closed domain values must be native TypeScript enums, not enum-like constants.
 - Pure transformation functions live in `helpers.ts`.
 - Pure functions used by two or more files must be promoted to a shared helper class or helper/util/shared file and imported by every caller.
 - Local constants used only in one file stay in that file — do not move them to `constants.ts` just for organization.
 - Entity types have a single source of truth in `src/types/`. Never redefine an entity type inside a feature — import it.
-- Prefer exported TypeScript enums for closed value sets, for example `export enum AppointmentStatus { SCHEDULED = "SCHEDULED" }`, and use `AppointmentStatus.SCHEDULED` at call sites.
+- Export native TypeScript enums for closed value sets, for example `export enum AppointmentStatus { SCHEDULED = "SCHEDULED" }`, and use `AppointmentStatus.SCHEDULED` at call sites.
+- Never define closed value types with `as const` plus `(typeof X)[keyof typeof X]`; use a native enum instead.
+- Never reexport types, enums, helpers, constants, components, or hooks. Move the export to the one canonical module and update imports to point there.
 
 ### Code Quality Checklist
 
@@ -353,6 +357,6 @@ Patterns extracted from `src/pages/app/patients/patients-list/register-patients/
 - Step components live in a `steps/` subfolder inside the feature directory.
 - Every `.tsx` file has a co-located `.css` file with the same base name (`step-basic-data.tsx` / `step-basic-data.css`).
 - CSS class names use a feature prefix (`rp-` for register-patients) to avoid global collisions.
-- Option arrays in `constants.ts` use `as const` for literal type inference (`GENDER_OPTIONS`, `MODALITY_OPTIONS`).
-- Branded type aliases for constrained values are exported from `constants.ts` (`StepId = 1 | 2 | 3 | 4`).
+- Option arrays in `constants.ts` may reference enum members, but must not define enum-like value sets themselves.
+- Branded type aliases for constrained non-domain values are exported from `constants.ts` (`StepId = 1 | 2 | 3 | 4`).
 - Local constants used only in one file (`FREQUENCY_OPTIONS` in `step-clinical.tsx`) stay in that file, not in `constants.ts`.
