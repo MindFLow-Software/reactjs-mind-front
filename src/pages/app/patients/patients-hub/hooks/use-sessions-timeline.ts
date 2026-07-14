@@ -1,7 +1,7 @@
 import { createElement, useCallback, useMemo, useState } from 'react'
 
 import type { ISessionItem } from '@/types/patient/session-item'
-import { SessionPDFTemplate } from '@/utils/session-pdf-template'
+import { SessionPDFTemplate } from '@/templates/pdf/session-pdf-template'
 import { usePdfExport } from './use-pdf-export'
 import { Normalizer } from '@/utils/normalizer'
 import { Time } from '@/utils/time'

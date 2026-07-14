@@ -10,7 +10,7 @@ import { translatedLanguages } from '@/constants/translated-languages'
 import type { IPsychologistProfile } from '@/types/psychologist/psychologist-profile'
 import { Honorific, Languages } from '@/types/shared/enums'
 import { useUpdatePsychologistProfile } from '../hooks/use-update-psychologist-profile'
-import { EXPERTISE_TRANSLATIONS } from '@/utils/mappers'
+import { translatedExpertise } from '@/constants/translated-expertise'
 
 import {
   updatePsychologistSchema,
@@ -215,7 +215,7 @@ export function EditPsychologistProfile({
                       </SelectTrigger>
                       <SelectContent>
                         <SelectGroup>
-                          {Object.entries(EXPERTISE_TRANSLATIONS).map(
+                          {Object.entries(translatedExpertise).map(
                             ([key, label]) => (
                               <SelectItem key={key} value={key}>
                                 {label}

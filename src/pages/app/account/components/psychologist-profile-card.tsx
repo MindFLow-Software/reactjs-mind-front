@@ -7,7 +7,9 @@ import { ArrowRight, ShieldCheck, UserRoundPen } from 'lucide-react'
 
 import { useAuth } from '@/hooks/use-auth'
 import { Mask } from '@/utils/mask'
-import { ROLE_TRANSLATIONS, EXPERTISE_TRANSLATIONS } from '@/utils/mappers'
+import { ROLE_TRANSLATIONS } from '@/utils/mappers'
+import { translatedExpertise } from '@/constants/translated-expertise'
+import { fn } from '@/utils/fn'
 
 import { Skeleton } from '@/components/ui/skeleton'
 import { Button } from '@/components/ui/button'
@@ -61,9 +63,11 @@ export function PsychologistProfileCard() {
     return ROLE_TRANSLATIONS[me.platformRole] || me.platformRole
   })()
 
-  const expertise = psychologistProfile?.expertise ?? ''
-  const translatedExpertise =
-    EXPERTISE_TRANSLATIONS[expertise] || expertise || 'Não informado'
+  const expertiseLabel = fn.one(
+    psychologistProfile?.expertise,
+    translatedExpertise,
+    'Não informado',
+  )
 
   const handleRedirectToCreatePsychologistProfile = () => {
     navigate('/onboarding/psychologist')
@@ -89,7 +93,7 @@ export function PsychologistProfileCard() {
             </h2>
             <div className="mt-1 flex items-center gap-2">
               <span className="text-sm font-medium text-blue-700 dark:text-blue-400">
-                {translatedExpertise}
+                {expertiseLabel}
               </span>
               <span className="h-1 w-1 rounded-full bg-muted-foreground" />
               <span className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">

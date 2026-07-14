@@ -1,5 +1,6 @@
 import type { IMeResponse } from '@/types/me/me-response'
 
+// Single caller (dashboard.tsx) — kept local per T26 review, not class-ified.
 export type RuntimeRole = 'BOTH' | 'PSYCHOLOGIST' | 'PATIENT' | 'NEW_USER'
 
 export function getRuntimeRole(

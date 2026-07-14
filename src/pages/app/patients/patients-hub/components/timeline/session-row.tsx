@@ -18,7 +18,7 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu'
-import { SessionPDFTemplate } from '@/utils/session-pdf-template'
+import { SessionPDFTemplate } from '@/templates/pdf/session-pdf-template'
 import { Normalizer } from '@/utils/normalizer'
 import { cn } from '@/lib/utils'
 

@@ -39,7 +39,7 @@ import {
 
 import { UploadZone } from './steps/upload-zone'
 import { StepBasicData } from './steps/step-basic-data'
-import { getGroupedFields } from '@/utils/get-grouped-schema-fields'
+import { schemaFields } from '@/utils/schema-fields'
 import { StepContactAddress } from './steps/step-contact-address'
 
 import './form-components.css'
@@ -151,7 +151,7 @@ export function RegisterPatients() {
           documents: [],
         }
 
-        const tabs = getGroupedFields<IRegisterPatientTabs>(
+        const tabs = schemaFields.getGrouped<IRegisterPatientTabs>(
           initialState,
           createPatientSchema,
         )

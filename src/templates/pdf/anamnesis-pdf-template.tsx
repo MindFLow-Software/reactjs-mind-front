@@ -15,7 +15,7 @@ import {
   renderInline,
 } from './anamnesis-pdf-template-helpers'
 
-interface AnamnesisPDFTemplateProps {
+interface IAnamnesisPDFTemplateProps {
   patientName: string
   content: string
   generatedAt: string
@@ -93,7 +93,7 @@ export function AnamnesisPDFTemplate({
   patientName,
   content,
   generatedAt,
-}: AnamnesisPDFTemplateProps) {
+}: IAnamnesisPDFTemplateProps) {
   const lines = content.split('\n')
 
   return (

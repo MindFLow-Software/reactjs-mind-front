@@ -1,19 +1,11 @@
+// Single caller (psychologist-profile-card.tsx) — kept local per T26 review, not class-ified.
 export const ROLE_TRANSLATIONS: Record<string, string> = {
   USER: 'Usuário',
   SUPPORT: 'Suporte',
   ADMIN: 'Administrador',
 }
 
-export const EXPERTISE_TRANSLATIONS: Record<string, string> = {
-  CLINICAL: 'Clínica',
-  SOCIAL: 'Social',
-  INFANT: 'Infantil',
-  JURIDICAL: 'Jurídica',
-  PSYCHOTHERAPIST: 'Psicoterapia',
-  NEUROPSYCHOLOGY: 'Neuropsicologia',
-  OTHER: 'Outros',
-}
-
+// Single caller (session-history-table.tsx) — kept local per T26 review, not class-ified.
 export const SESSION_STATUS_MAP: Record<
   string,
   { label: string; color: string }
@@ -45,34 +37,4 @@ export const FINISHED_SESSION_STATUSES = [
   'DONE',
   'CONCLUÍDA',
   'CONCLUIDO',
-] as const
-
-export const UF_LIST = [
-  'SP',
-  'RJ',
-  'MG',
-  'RS',
-  'PR',
-  'SC',
-  'BA',
-  'DF',
-  'GO',
-  'PE',
-  'CE',
-  'AM',
-  'PA',
-  'MA',
-  'PB',
-  'RN',
-  'AL',
-  'PI',
-  'ES',
-  'MT',
-  'MS',
-  'RO',
-  'TO',
-  'AC',
-  'AP',
-  'RR',
-  'SE',
 ] as const

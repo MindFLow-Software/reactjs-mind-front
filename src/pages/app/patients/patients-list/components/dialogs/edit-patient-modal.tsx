@@ -14,7 +14,7 @@ import { zodResolver } from '@hookform/resolvers/zod'
 import { usePatient } from '@/hooks/use-patient'
 import { useFormSteps } from '@/hooks/use-form-steps'
 import { useFileSelection } from '@/hooks/use-file-selection'
-import { getGroupedFields } from '@/utils/get-grouped-schema-fields'
+import { schemaFields } from '@/utils/schema-fields'
 import { useUpdatePatient } from './register-patients/hooks/use-update-patient'
 
 import {
@@ -167,7 +167,7 @@ export function EditPatientModal({ patientId }: IEditPatientModal) {
           documents: [],
         }
 
-        const tabs = getGroupedFields<IRegisterPatientTabs>(
+        const tabs = schemaFields.getGrouped<IRegisterPatientTabs>(
           initialState,
           updatePatientSchema,
         )

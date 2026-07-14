@@ -8,7 +8,7 @@ import { pdf } from '@react-pdf/renderer'
 import { Button } from '@/components/ui/button'
 import { Separator } from '@/components/ui/separator'
 import { toast } from 'sonner'
-import { SessionPDFTemplate } from '@/utils/session-pdf-template'
+import { SessionPDFTemplate } from '@/templates/pdf/session-pdf-template'
 
 interface EvolutionViewerProps {
   patientName: string
