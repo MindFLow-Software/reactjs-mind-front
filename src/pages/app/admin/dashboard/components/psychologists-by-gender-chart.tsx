@@ -5,7 +5,7 @@ import { Users2 } from 'lucide-react'
 
 import { type ChartConfig } from '@/components/ui/chart'
 import { Gender } from '@/types/shared/enums'
-import type { IGenderItem } from '@/types/dashboard'
+import type { IGenderItem } from '@/types/dashboard/gender-item'
 import { DemographicsPieChartCard } from './demographics-pie-chart-card'
 
 const GENDER_TRANSLATIONS: Record<Gender, string> = {

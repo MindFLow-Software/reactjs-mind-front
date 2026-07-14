@@ -1,5 +1,5 @@
 import { api } from '@/lib/axios'
-import type { IPsychologistProfile } from '@/types/psychologist'
+import type { IPsychologistProfile } from '@/types/psychologist/psychologist-profile'
 
 export const getProfileByCrp = async (crp: string) => {
   const response = await api.get<IPsychologistProfile>(

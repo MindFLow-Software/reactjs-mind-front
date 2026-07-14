@@ -6,12 +6,12 @@ import {
   ADMIN_PERIODS,
   PERIOD_DAYS,
 } from '@/pages/app/dashboard/shared/constants'
-import type { DashboardPeriod } from '@/pages/app/dashboard/shared/types'
+import type { IDashboardPeriod } from '@/pages/app/dashboard/shared/types'
 import './admin-dashboard-header.css'
 
 interface AdminDashboardHeaderProps {
-  period: DashboardPeriod
-  onPeriodChange: (period: DashboardPeriod) => void
+  period: IDashboardPeriod
+  onPeriodChange: (period: IDashboardPeriod) => void
 }
 
 export function AdminDashboardHeader({

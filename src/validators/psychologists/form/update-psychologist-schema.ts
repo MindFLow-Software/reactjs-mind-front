@@ -1,5 +1,4 @@
-import { Honorific } from '@/types/enums'
-import { Expertise, Languages } from '@/types/shared/enums'
+import { Expertise, Honorific, Languages } from '@/types/shared/enums'
 import { z } from 'zod'
 
 export const updatePsychologistSchema = z.object({

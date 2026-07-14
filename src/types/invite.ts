@@ -1,4 +1,5 @@
-import type { Honorific, PatientInviteStatus } from '@/types/enums'
+import type { PatientInviteStatus } from '@/types/enums'
+import type { Honorific } from '@/types/shared/enums'
 
 export interface RegistrationLinkInfo {
   expiresAt: string

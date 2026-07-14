@@ -5,7 +5,7 @@ import { Users2 } from 'lucide-react'
 
 import { Bar, BarChart, Tooltip, XAxis, YAxis } from 'recharts'
 
-import type { IAgeRangeItem } from '@/types/dashboard'
+import type { IAgeRangeItem } from '@/types/dashboard/age-range-item'
 
 import {
   Card,

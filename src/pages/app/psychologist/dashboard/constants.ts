@@ -1,6 +1,6 @@
-export type DashboardPeriod = '7d' | '30d' | '90d' | 'year'
+import type { IDashboardPeriod } from '@/pages/app/dashboard/shared/types'
 
-export const PERIOD_DAYS: Record<DashboardPeriod, number> = {
+export const PERIOD_DAYS: Record<IDashboardPeriod, number> = {
   '7d': 7,
   '30d': 30,
   '90d': 90,

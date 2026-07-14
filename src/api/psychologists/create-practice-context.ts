@@ -1,12 +1,10 @@
 import { api } from '@/lib/axios'
-import type {
-  CreatePracticeContextBody,
-  IPsychologistPracticeContext,
-} from '@/types/psychologist'
+import type { ICreatePracticeContextBody } from '@/types/psychologist/create-practice-context-body'
+import type { IPsychologistPracticeContext } from '@/types/psychologist/practice-context'
 import type { IMutationResult } from '@/types/shared/mutation-result'
 
 export async function createPracticeContext(
-  body: CreatePracticeContextBody,
+  body: ICreatePracticeContextBody,
 ): Promise<IMutationResult<IPsychologistPracticeContext>> {
   const response = await api.post<IPsychologistPracticeContext>(
     '/psychologist/practice-context',

@@ -1,10 +1,3 @@
-export enum Honorific {
-  MASC_DR = 'MASC_DR',
-  FEMININE_DR = 'FEMININE_DR',
-  MSC = 'MSC',
-  PHD = 'PHD',
-}
-
 export const PatientInviteStatus = {
   PENDING: 'PENDING',
   ACCEPTED: 'ACCEPTED',

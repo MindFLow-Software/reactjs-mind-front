@@ -3,10 +3,8 @@ import './practice-context-list-item.css'
 import { motion } from 'framer-motion'
 import { ArrowRight, Briefcase, Building2, Star } from 'lucide-react'
 
-import {
-  ContextType,
-  type IPsychologistPracticeContext,
-} from '@/types/psychologist'
+import { ContextType } from '@/types/psychologist/context-type'
+import type { IPsychologistPracticeContext } from '@/types/psychologist/practice-context'
 import { Currency } from '@/utils/currency'
 
 import { ContextMonogram } from './context-monogram'

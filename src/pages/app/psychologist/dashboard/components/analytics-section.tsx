@@ -4,7 +4,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { DashboardProgressBar } from '@/pages/app/dashboard/shared/components/dashboard-progress-bar'
 import { PatientsByAgeChart } from './patients-by-age-chart'
 import { PatientsByGenderChart } from './patients-by-gender-chart'
-import type { IPsychologistDashboardData } from '@/types/dashboard'
+import type { IPsychologistDashboardData } from '@/types/dashboard/psychologist-dashboard-data'
 import './analytics-section.css'
 
 interface AnalyticsSectionProps {

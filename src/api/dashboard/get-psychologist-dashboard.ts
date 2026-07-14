@@ -1,8 +1,6 @@
 import { api } from '@/lib/axios'
-import type {
-  IDashboardRangeParams,
-  IPsychologistDashboardData,
-} from '@/types/dashboard'
+import type { IDashboardRangeParams } from '@/types/dashboard/dashboard-range-params'
+import type { IPsychologistDashboardData } from '@/types/dashboard/psychologist-dashboard-data'
 
 export async function getPsychologistDashboard(
   params: IDashboardRangeParams,

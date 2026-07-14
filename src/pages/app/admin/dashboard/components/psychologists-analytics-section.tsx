@@ -1,7 +1,7 @@
 import { Layers } from 'lucide-react'
 
 import { ChartContainer, type ChartConfig } from '@/components/ui/chart'
-import type { IAdminDashboardData } from '@/types/dashboard'
+import type { IAdminDashboardData } from '@/types/dashboard/admin-dashboard-data'
 
 import { DashboardSection } from '@/pages/app/dashboard/shared/components/dashboard-section'
 import { PsychologistsGenderChart } from './psychologists-by-gender-chart'

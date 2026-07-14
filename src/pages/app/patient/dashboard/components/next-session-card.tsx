@@ -5,7 +5,7 @@ import { toast } from 'sonner'
 
 import { Time } from '@/utils/time'
 import { SessionModality } from '@/types/shared/enums'
-import type { IPatientNextSession } from '@/types/dashboard'
+import type { IPatientNextSession } from '@/types/dashboard/patient-next-session'
 
 import { Card } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'

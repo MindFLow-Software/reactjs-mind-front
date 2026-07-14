@@ -6,12 +6,9 @@ import { Loader2, User, Briefcase } from 'lucide-react'
 
 import { cn } from '@/lib/utils'
 
-import {
-  translatedLanguages,
-  type IPsychologistProfile,
-} from '@/types/psychologist'
-import { Honorific } from '@/types/enums'
-import { Languages } from '@/types/shared/enums'
+import { translatedLanguages } from '@/constants/translated-languages'
+import type { IPsychologistProfile } from '@/types/psychologist/psychologist-profile'
+import { Honorific, Languages } from '@/types/shared/enums'
 import { useUpdatePsychologistProfile } from '../hooks/use-update-psychologist-profile'
 import { EXPERTISE_TRANSLATIONS } from '@/utils/mappers'
 

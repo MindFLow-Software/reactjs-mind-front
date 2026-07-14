@@ -10,7 +10,7 @@ import {
 } from '@/components/ui/chart'
 import { DashboardChartEmpty } from '@/pages/app/dashboard/shared/components/dashboard-chart-empty'
 import { Gender } from '@/types/shared/enums'
-import type { IGenderItem } from '@/types/dashboard'
+import type { IGenderItem } from '@/types/dashboard/gender-item'
 import './patients-by-gender-chart.css'
 
 const GENDER_TRANSLATIONS: Record<Gender, string> = {

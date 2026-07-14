@@ -33,6 +33,13 @@ export enum SessionModality {
   PRESENTIAL = 'PRESENTIAL',
 }
 
+export enum Honorific {
+  MASC_DR = 'MASC_DR',
+  FEMININE_DR = 'FEMININE_DR',
+  MSC = 'MSC',
+  PHD = 'PHD',
+}
+
 export enum Languages {
   PORTUGUESE = 'PORTUGUESE',
   ENGLISH = 'ENGLISH',

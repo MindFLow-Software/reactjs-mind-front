@@ -14,7 +14,7 @@ import {
 } from 'lucide-react'
 
 import { Currency } from '@/utils/currency'
-import type { IAdminDashboardData } from '@/types/dashboard'
+import type { IAdminDashboardData } from '@/types/dashboard/admin-dashboard-data'
 
 import { AdminStatCard } from './admin-stat-card'
 import { DashboardSection } from '@/pages/app/dashboard/shared/components/dashboard-section'

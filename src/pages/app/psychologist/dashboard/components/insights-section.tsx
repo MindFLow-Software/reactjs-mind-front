@@ -8,7 +8,7 @@ import {
   CardTitle,
 } from '@/components/ui/card'
 import { DashboardInsightCard } from '@/pages/app/dashboard/shared/components/dashboard-insight-card'
-import type { IDashboardInsight } from '@/types/dashboard'
+import type { IDashboardInsight } from '@/types/dashboard/dashboard-insight'
 import './insights-section.css'
 
 interface InsightsSectionProps {

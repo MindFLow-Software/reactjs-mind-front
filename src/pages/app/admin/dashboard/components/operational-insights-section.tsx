@@ -1,6 +1,6 @@
 import { DashboardSection } from '@/pages/app/dashboard/shared/components/dashboard-section'
 import { DashboardInsightCard } from '@/pages/app/dashboard/shared/components/dashboard-insight-card'
-import type { IDashboardInsight } from '@/types/dashboard'
+import type { IDashboardInsight } from '@/types/dashboard/dashboard-insight'
 import './operational-insights-section.css'
 
 interface OperationalInsightsSectionProps {

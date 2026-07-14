@@ -8,7 +8,7 @@ import {
 } from 'lucide-react'
 
 import { Currency } from '@/utils/currency'
-import type { IAdminDashboardData } from '@/types/dashboard'
+import type { IAdminDashboardData } from '@/types/dashboard/admin-dashboard-data'
 
 import { Card } from '@/components/ui/card'
 import { ChartContainer, type ChartConfig } from '@/components/ui/chart'

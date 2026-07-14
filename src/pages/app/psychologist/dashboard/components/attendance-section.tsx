@@ -4,7 +4,7 @@ import type { LucideIcon } from 'lucide-react'
 import { Badge } from '@/components/ui/badge'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { cn } from '@/lib/utils'
-import type { IPsychologistDashboardData } from '@/types/dashboard'
+import type { IPsychologistDashboardData } from '@/types/dashboard/psychologist-dashboard-data'
 import './attendance-section.css'
 
 type IPsychologistDashboardAttendance = IPsychologistDashboardData['attendance']

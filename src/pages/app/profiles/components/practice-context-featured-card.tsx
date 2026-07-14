@@ -5,10 +5,8 @@ import { ArrowRight, Briefcase, Building2 } from 'lucide-react'
 
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardFooter, CardHeader } from '@/components/ui/card'
-import {
-  ContextType,
-  type IPsychologistPracticeContext,
-} from '@/types/psychologist'
+import { ContextType } from '@/types/psychologist/context-type'
+import type { IPsychologistPracticeContext } from '@/types/psychologist/practice-context'
 import { Currency } from '@/utils/currency'
 
 import { ContextMonogram } from './context-monogram'

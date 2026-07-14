@@ -1,4 +1,4 @@
-import type { IAnamnesisContent } from '@/types/clinical'
+import type { IAnamnesisContent } from '@/types/clinical/anamnesis-content'
 import type { AnamnesisBlock, SerializedBlock } from './anamnesis-types'
 
 export const DYNAMIC_TEMPLATE_PREFIX = '__ANAMNESIS_BLOCKS_V1__:'

@@ -8,7 +8,7 @@ import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardFooter, CardHeader } from '@/components/ui/card'
 import { Currency } from '@/utils/currency'
 import { translatedExpertise } from '@/constants/translated-expertise'
-import type { IPatientPsychologistCard } from '@/types/dashboard'
+import type { IPatientPsychologistCard } from '@/types/dashboard/patient-psychologist-card'
 import './psychologists-section.css'
 
 export interface IPsychologistsSection {

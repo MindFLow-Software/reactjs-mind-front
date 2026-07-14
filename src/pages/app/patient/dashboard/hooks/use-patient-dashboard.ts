@@ -5,7 +5,7 @@ import {
   QUERY_GC_TIME,
   QUERY_STALE_TIME,
 } from '@/pages/app/dashboard/shared/constants'
-import type { IPatientDashboardInner } from '@/types/dashboard'
+import type { IPatientDashboardInner } from '@/types/dashboard/patient-dashboard-inner'
 
 export interface IUsePatientDashboard {
   data: IPatientDashboardInner

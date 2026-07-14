@@ -12,7 +12,7 @@ import {
 } from '@/components/ui/card'
 import { ChartContainer, type ChartConfig } from '@/components/ui/chart'
 
-import type { IAgeRangeItem } from '@/types/dashboard'
+import type { IAgeRangeItem } from '@/types/dashboard/age-range-item'
 import { DashboardChartLoader } from '@/pages/app/dashboard/shared/components/dashboard-chart-loader'
 import { DashboardChartError } from '@/pages/app/dashboard/shared/components/dashboard-chart-error'
 import { DashboardChartEmpty } from '@/pages/app/dashboard/shared/components/dashboard-chart-empty'

@@ -1,8 +1,6 @@
 import type { Gender, PlatformRole } from '@/types/shared/enums'
-import type {
-  IPsychologistProfile,
-  IPsychologistPracticeContext,
-} from '@/types/psychologist'
+import type { IPsychologistProfile } from '@/types/psychologist/psychologist-profile'
+import type { IPsychologistPracticeContext } from '@/types/psychologist/practice-context'
 import type { IPatientProfile } from '@/types/patient-profile/patient-profile'
 import type { IClinicMemberContext } from '@/types/me/clinic-member-context'
 

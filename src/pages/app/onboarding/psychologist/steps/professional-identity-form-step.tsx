@@ -28,11 +28,10 @@ import { Badge } from '@/components/ui/badge'
 import { Textarea } from '@/components/ui/textarea'
 import { MaskedInput } from '@/components/maked-input'
 
-import { Expertise, Languages } from '@/types/shared/enums'
+import { Expertise, Honorific, Languages } from '@/types/shared/enums'
 import { translatedExpertise } from '@/constants/translated-expertise'
 import { createPsychologistProfileSchema } from '@/validators/psychologists/form/create-psychologist-profile-schema'
-import { Honorific } from '@/types/enums'
-import { translatedLanguages } from '@/types/psychologist'
+import { translatedLanguages } from '@/constants/translated-languages'
 
 type IcreatePsychologistProfile = z.infer<
   typeof createPsychologistProfileSchema

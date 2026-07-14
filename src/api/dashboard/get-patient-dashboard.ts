@@ -1,5 +1,5 @@
 import { api } from '@/lib/axios'
-import type { IPatientDashboardPayload } from '@/types/dashboard'
+import type { IPatientDashboardPayload } from '@/types/dashboard/patient-dashboard-payload'
 
 export async function getPatientDashboard(
   patientProfileId?: string,

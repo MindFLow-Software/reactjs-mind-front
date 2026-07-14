@@ -5,7 +5,7 @@ import { DashboardSection } from '@/pages/app/dashboard/shared/components/dashbo
 import { ChartContainer, type ChartConfig } from '@/components/ui/chart'
 import { AdminStatCard } from './admin-stat-card'
 import { DemographicsPieChartCard } from './demographics-pie-chart-card'
-import type { IAdminDashboardData } from '@/types/dashboard'
+import type { IAdminDashboardData } from '@/types/dashboard/admin-dashboard-data'
 import './patients-analytics-section.css'
 import { PatientsByGenderChart } from './patients-by-age-chart'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'

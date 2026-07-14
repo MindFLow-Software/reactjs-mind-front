@@ -6,20 +6,20 @@ import {
   QUERY_GC_TIME,
   QUERY_STALE_TIME,
 } from '@/pages/app/dashboard/shared/constants'
-import type { DashboardPeriod } from '@/pages/app/dashboard/shared/types'
-import type { IAdminDashboardData } from '@/types/dashboard'
+import type { IDashboardPeriod } from '@/pages/app/dashboard/shared/types'
+import type { IAdminDashboardData } from '@/types/dashboard/admin-dashboard-data'
 
 export interface IUseAdminDashboard {
   data?: IAdminDashboardData
   isLoading: boolean
   isError: boolean
   refetch: () => void
-  period: DashboardPeriod
-  setPeriod: (period: DashboardPeriod) => void
+  period: IDashboardPeriod
+  setPeriod: (period: IDashboardPeriod) => void
 }
 
 export function useAdminDashboard(): IUseAdminDashboard {
-  const [period, setPeriod] = useState<DashboardPeriod>('30d')
+  const [period, setPeriod] = useState<IDashboardPeriod>('30d')
 
   const { data, isLoading, isError, refetch } = useQuery({
     queryKey: ['dashboard', 'admin', { period }],

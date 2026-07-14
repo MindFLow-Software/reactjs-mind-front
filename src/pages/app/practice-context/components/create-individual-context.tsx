@@ -6,12 +6,10 @@ import { Briefcase, CircleCheck, Repeat2 } from 'lucide-react'
 
 import { zodResolver } from '@hookform/resolvers/zod'
 
-import {
-  ContextType,
-  SessionFormat,
-  translatedSessionFormat,
-  type CreatePracticeContextBody,
-} from '@/types/psychologist'
+import { translatedSessionFormat } from '@/constants/translated-session-format'
+import { ContextType } from '@/types/psychologist/context-type'
+import { SessionFormat } from '@/types/psychologist/session-format'
+import type { ICreatePracticeContextBody } from '@/types/psychologist/create-practice-context-body'
 
 import {
   Form,
@@ -42,14 +40,23 @@ import { PracticeContextHeader } from './practice-context-header'
 import { SessionFormatToggle } from './session-format-toggle'
 
 const SESSION_FORMAT_OPTIONS = [
-  { value: SessionFormat.ONLINE, label: translatedSessionFormat.ONLINE },
-  { value: SessionFormat.HYBRID, label: translatedSessionFormat.HYBRID },
-  { value: SessionFormat.IN_PERSON, label: translatedSessionFormat.IN_PERSON },
+  {
+    value: SessionFormat.ONLINE,
+    label: translatedSessionFormat[SessionFormat.ONLINE],
+  },
+  {
+    value: SessionFormat.HYBRID,
+    label: translatedSessionFormat[SessionFormat.HYBRID],
+  },
+  {
+    value: SessionFormat.IN_PERSON,
+    label: translatedSessionFormat[SessionFormat.IN_PERSON],
+  },
 ] as const
 
 type ICreateIndividualContext = {
   onGoBack: () => void
-  onCreatePracticeContext: (data: CreatePracticeContextBody) => void
+  onCreatePracticeContext: (data: ICreatePracticeContextBody) => void
   isSubmitting?: boolean
 }
 

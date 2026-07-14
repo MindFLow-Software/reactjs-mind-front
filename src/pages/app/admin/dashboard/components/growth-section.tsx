@@ -4,17 +4,18 @@ import { DashboardSection } from '@/pages/app/dashboard/shared/components/dashbo
 import { MetricCard } from '@/components/metric-card'
 import { type ChartConfig } from '@/components/ui/chart'
 import { calcGrowthPercentage } from '@/pages/app/dashboard/shared/helpers'
-import type { DashboardPeriod } from '@/pages/app/dashboard/shared/types'
+import type { IDashboardPeriod } from '@/pages/app/dashboard/shared/types'
 import { TimeSeriesBarChartCard } from './time-series-bar-chart-card'
-import type { IAdminDashboardData, ITimeSeriesPoint } from '@/types/dashboard'
+import type { IAdminDashboardData } from '@/types/dashboard/admin-dashboard-data'
+import type { ITimeSeriesPoint } from '@/types/dashboard/time-series-point'
 import './growth-section.css'
 
 type IAdminDashboardGrowth = IAdminDashboardData['growth']
 
 interface GrowthSectionProps {
   growth: IAdminDashboardGrowth
-  period: DashboardPeriod
-  onPeriodChange: (period: DashboardPeriod) => void
+  period: IDashboardPeriod
+  onPeriodChange: (period: IDashboardPeriod) => void
 }
 
 const psychologistsChartConfig = {
@@ -68,7 +69,7 @@ export function GrowthSection({
           }}
           timeRange={{
             value: period,
-            onChange: (value) => onPeriodChange(value as DashboardPeriod),
+            onChange: (value) => onPeriodChange(value as IDashboardPeriod),
           }}
           chart={{
             config: psychologistsChartConfig,

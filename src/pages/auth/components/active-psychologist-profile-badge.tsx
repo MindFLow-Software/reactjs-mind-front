@@ -2,7 +2,7 @@ import { useAuth } from '@/hooks/use-auth'
 import { ShieldCheck } from 'lucide-react'
 
 import { fn } from '@/utils/fn'
-import { Honorific } from '@/types/enums'
+import { Honorific } from '@/types/shared/enums'
 
 export function ActivePsychologistProfileBadge() {
   const { profile } = useAuth()

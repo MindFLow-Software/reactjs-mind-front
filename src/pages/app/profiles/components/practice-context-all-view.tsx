@@ -3,7 +3,7 @@ import './practice-context-all-view.css'
 import { motion } from 'framer-motion'
 import { ArrowRight, ChevronLeft, Plus, ShieldCheck } from 'lucide-react'
 
-import type { IPsychologistPracticeContext } from '@/types/psychologist'
+import type { IPsychologistPracticeContext } from '@/types/psychologist/practice-context'
 
 import { PracticeContextListItem } from './practice-context-list-item'
 

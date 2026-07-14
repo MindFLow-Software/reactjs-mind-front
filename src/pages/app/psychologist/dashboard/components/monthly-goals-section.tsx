@@ -8,7 +8,7 @@ import {
   CardTitle,
 } from '@/components/ui/card'
 import { DashboardProgressBar } from '@/pages/app/dashboard/shared/components/dashboard-progress-bar'
-import type { IDashboardGoal } from '@/types/dashboard'
+import type { IDashboardGoal } from '@/types/dashboard/dashboard-goal'
 import { EditGoalsDialog } from './edit-goals-dialog'
 import './monthly-goals-section.css'
 

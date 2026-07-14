@@ -1,7 +1,7 @@
 import './context-monogram.css'
 
 import { cn } from '@/lib/utils'
-import type { IPsychologistPracticeContext } from '@/types/psychologist'
+import type { IPsychologistPracticeContext } from '@/types/psychologist/practice-context'
 
 const CONTEXT_TYPE_LABELS: Record<string, string> = {
   CLINIC: 'Clinica Equipe',

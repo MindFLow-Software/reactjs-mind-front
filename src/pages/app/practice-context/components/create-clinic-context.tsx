@@ -1,11 +1,11 @@
 import './practice-context-shared.css'
 import { Repeat2 } from 'lucide-react'
 
-import type { CreatePracticeContextBody } from '@/types/psychologist'
+import type { ICreatePracticeContextBody } from '@/types/psychologist/create-practice-context-body'
 
 type ICreateClinicContext = {
   onGoBack: () => void
-  onCreatePracticeContext: (data: CreatePracticeContextBody) => void
+  onCreatePracticeContext: (data: ICreatePracticeContextBody) => void
 }
 
 export function CreateClinicContext({ onGoBack }: ICreateClinicContext) {

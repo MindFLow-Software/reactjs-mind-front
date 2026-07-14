@@ -14,7 +14,7 @@ import { ptBR } from 'date-fns/locale'
 
 import { getAnamnesis } from '@/api/patient-profiles/get-anamnesis'
 import { saveAnamnesis } from '@/api/patient-profiles/save-anamnesis'
-import type { IAnamnesisContent } from '@/types/clinical'
+import type { IAnamnesisContent } from '@/types/clinical/anamnesis-content'
 import { AnamnesisPDFTemplate } from '@/utils/anamnesis-pdf-template'
 
 import type { AnamnesisBlock } from '../components/anamnesis/anamnesis-types'

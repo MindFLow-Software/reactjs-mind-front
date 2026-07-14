@@ -1,19 +1,19 @@
 import { cn } from '@/lib/utils'
 import { PERIODS } from '../constants'
-import type { DashboardPeriod, PeriodOption } from '../types'
+import type { IDashboardPeriod, IPeriodOption } from '../types'
 import './dashboard-period-selector.css'
 
-interface DashboardPeriodSelectorProps {
-  value: DashboardPeriod
-  onChange: (period: DashboardPeriod) => void
-  options?: readonly PeriodOption[]
+type IDashboardPeriodSelector = {
+  value: IDashboardPeriod
+  onChange: (period: IDashboardPeriod) => void
+  options?: readonly IPeriodOption[]
 }
 
 export function DashboardPeriodSelector({
   value,
   onChange,
   options = PERIODS,
-}: DashboardPeriodSelectorProps) {
+}: IDashboardPeriodSelector) {
   return (
     <div className="dsh-period-selector-root">
       {options.map((option) => (

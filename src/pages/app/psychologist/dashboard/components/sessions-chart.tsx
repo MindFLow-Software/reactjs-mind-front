@@ -25,8 +25,9 @@ import {
   type ChartConfig,
 } from '@/components/ui/chart'
 import { cn } from '@/lib/utils'
-import type { ITimeSeriesPoint } from '@/types/dashboard'
-import { type DashboardPeriod, PERIOD_DAYS } from '../constants'
+import type { ITimeSeriesPoint } from '@/types/dashboard/time-series-point'
+import { PERIOD_DAYS } from '../constants'
+import type { IDashboardPeriod } from '@/pages/app/dashboard/shared/types'
 import './sessions-chart.css'
 
 interface SessionsVolumeProps {
@@ -41,7 +42,7 @@ interface SessionsStatsProps {
 }
 
 interface SessionsBarChartProps {
-  period: DashboardPeriod
+  period: IDashboardPeriod
   sessionsVolume: SessionsVolumeProps
   sessionsStats: SessionsStatsProps
 }
@@ -121,7 +122,7 @@ function mergeSessionsVolume({
   })
 }
 
-function getSubtitleLabel(period: DashboardPeriod): string {
+function getSubtitleLabel(period: IDashboardPeriod): string {
   return period === 'year'
     ? 'Último ano'
     : `Últimos ${PERIOD_DAYS[period]} dias`

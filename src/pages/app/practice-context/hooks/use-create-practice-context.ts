@@ -3,7 +3,7 @@ import { useApiMutation } from '@/hooks/use-api-mutation'
 import { queryKeys } from '@/constants/query-keys'
 import { createPracticeContext } from '@/api/psychologists/create-practice-context'
 import { useActivePracticeContextStore } from '@/store/use-active-practice-context-store'
-import type { IPsychologistPracticeContext } from '@/types/psychologist'
+import type { IPsychologistPracticeContext } from '@/types/psychologist/practice-context'
 import type { IMutationResult } from '@/types/shared/mutation-result'
 
 export function useCreatePracticeContext() {

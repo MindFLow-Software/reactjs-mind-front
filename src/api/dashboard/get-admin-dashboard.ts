@@ -1,8 +1,6 @@
 import { api } from '@/lib/axios'
-import type {
-  IAdminDashboardData,
-  IDashboardRangeParams,
-} from '@/types/dashboard'
+import type { IAdminDashboardData } from '@/types/dashboard/admin-dashboard-data'
+import type { IDashboardRangeParams } from '@/types/dashboard/dashboard-range-params'
 
 export async function getAdminDashboard(
   params: IDashboardRangeParams,

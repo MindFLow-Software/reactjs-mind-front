@@ -15,10 +15,8 @@ import { TitleIcon } from '@/components/title-icon'
 import { ActiveBadge } from '@/components/active-badge'
 
 import { Currency } from '@/utils/currency'
-import {
-  ContextType,
-  type IPsychologistPracticeContext,
-} from '@/types/psychologist'
+import { ContextType } from '@/types/psychologist/context-type'
+import type { IPsychologistPracticeContext } from '@/types/psychologist/practice-context'
 
 import './practice-context-card.css'
 

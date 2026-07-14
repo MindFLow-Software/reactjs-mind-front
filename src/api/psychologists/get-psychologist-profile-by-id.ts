@@ -1,5 +1,5 @@
 import { api } from '@/lib/axios'
-import type { IPsychologistProfile } from '@/types/psychologist'
+import type { IPsychologistProfile } from '@/types/psychologist/psychologist-profile'
 
 type IGetPsychologistProfileById = {
   psychologist: IPsychologistProfile

@@ -1,4 +1,4 @@
-import type { Honorific } from '@/types/enums'
+import type { Honorific } from '@/types/shared/enums'
 
 export type IclaimCanidate = {
   createdAt: Date

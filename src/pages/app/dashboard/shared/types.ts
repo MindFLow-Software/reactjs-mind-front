@@ -1,6 +1,6 @@
-export type DashboardPeriod = '7d' | '30d' | '90d' | 'year'
+export type IDashboardPeriod = '7d' | '30d' | '90d' | 'year'
 
-export interface PeriodOption {
-  value: DashboardPeriod
+export type IPeriodOption = {
+  value: IDashboardPeriod
   label: string
 }

@@ -4,15 +4,15 @@ import { ptBR } from 'date-fns/locale'
 import { useAuth } from '@/hooks/use-auth'
 import { translatedHonorific } from '@/constants/translated-honorific'
 import { DashboardPeriodSelector } from '@/pages/app/dashboard/shared/components/dashboard-period-selector'
-import type { IPsychologistDashboardData } from '@/types/dashboard'
-import type { DashboardPeriod } from '../constants'
+import type { IPsychologistDashboardData } from '@/types/dashboard/psychologist-dashboard-data'
+import type { IDashboardPeriod } from '@/pages/app/dashboard/shared/types'
 import { getGreeting } from '../helpers'
 import './dashboard-header.css'
 
 interface DashboardHeaderProps {
   periodControl: {
-    period: DashboardPeriod
-    onPeriodChange: (p: DashboardPeriod) => void
+    period: IDashboardPeriod
+    onPeriodChange: (p: IDashboardPeriod) => void
   }
   summary: IPsychologistDashboardData['summary']
   todayCount: number
