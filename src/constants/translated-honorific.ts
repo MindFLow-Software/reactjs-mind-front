@@ -1,4 +1,4 @@
-import { Honorific } from '@/types/psychologist'
+import { Honorific } from '@/types/enums'
 
 export const translatedHonorific = {
   [Honorific.MASC_DR]: 'Dr.',

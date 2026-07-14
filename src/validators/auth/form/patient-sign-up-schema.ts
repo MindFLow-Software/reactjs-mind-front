@@ -1,5 +1,5 @@
 import { z } from 'zod'
-import { Gender } from '@/types/patient'
+import { Gender } from '@/types/shared/enums'
 
 export const patientSignUpSchema = z.object({
   firstName: z.string().min(1, 'Nome é obrigatório'),

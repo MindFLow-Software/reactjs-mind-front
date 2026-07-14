@@ -10,7 +10,8 @@ import {
   translatedLanguages,
   type IPsychologistProfile,
 } from '@/types/psychologist'
-import { Honorific, Languages } from '@/types/enums'
+import { Honorific } from '@/types/enums'
+import { Languages } from '@/types/shared/enums'
 import { useUpdatePsychologistProfile } from '../hooks/use-update-psychologist-profile'
 import { EXPERTISE_TRANSLATIONS } from '@/utils/mappers'
 

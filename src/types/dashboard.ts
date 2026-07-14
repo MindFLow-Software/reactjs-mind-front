@@ -1,10 +1,10 @@
+import type { AppointmentStatus } from '@/types/enums'
 import type {
-  AppointmentStatus,
   Expertise,
   Gender,
   InsightSeverity,
   SessionModality,
-} from '@/types/enums'
+} from '@/types/shared/enums'
 import type { DashboardPeriod } from '@/pages/app/dashboard/shared/types'
 
 export type AgeRangeLabel = '0-17' | '18-25' | '26-35' | '36-50' | '51+'

@@ -1,16 +1,14 @@
 import axios from 'axios'
 import { env } from '@/env'
 import { useActivePracticeContextStore } from '@/store/use-active-practice-context-store'
-// import { useSessionStore } from '@/store/use-session-store'
-import type {
-  // ApiErrorCode,
-  ApiSuccessEnvelope,
-  ApiErrorEnvelope,
-} from '@/types/api'
+import type { IApiSuccessEnvelope } from '@/types/shared/api-success-envelope'
+import type { IApiErrorEnvelope } from '@/types/shared/api-error-envelope'
 
-// const API_ERROR_MESSAGES_PT: Partial<Record<ApiErrorCode, string>> = {
-//   PATIENT_ALREADY_EXISTS: 'Já existe um paciente com este CPF.',
-// }
+declare module 'axios' {
+  interface AxiosResponse {
+    apiMessage?: string | null
+  }
+}
 
 export const api = axios.create({
   baseURL: env.VITE_API_URL,
@@ -25,21 +23,20 @@ const SKIP_REDIRECT_PATHS = [
   '/google-oauth-complete',
 ]
 
-function isSuccessEnvelope(body: unknown): body is ApiSuccessEnvelope {
+function isSuccessEnvelope(body: unknown): body is IApiSuccessEnvelope {
   return (
     typeof body === 'object' &&
     body !== null &&
-    (body as ApiSuccessEnvelope).success === true &&
+    (body as IApiSuccessEnvelope).success === true &&
     'data' in (body as object)
   )
 }
 
-function isErrorEnvelope(body: unknown): body is ApiErrorEnvelope {
+function isErrorEnvelope(body: unknown): body is IApiErrorEnvelope {
   return (
     typeof body === 'object' &&
     body !== null &&
-    /* typeof (body as ApiErrorEnvelope).error?.code === 'string' && */
-    typeof (body as ApiErrorEnvelope).error?.message === 'string'
+    typeof (body as IApiErrorEnvelope).error?.message === 'string'
   )
 }
 
@@ -65,9 +62,8 @@ api.interceptors.response.use(
     if (!error.response) return Promise.reject(error)
 
     if (axios.isAxiosError(error) && isErrorEnvelope(error.response?.data)) {
-      const envelope = error.response!.data as ApiErrorEnvelope
+      const envelope = error.response!.data as IApiErrorEnvelope
       error.message = envelope?.message ?? envelope.error.message
-      // error.apiCode = envelope.statusCode
     }
 
     if (error.response.status === 401) {

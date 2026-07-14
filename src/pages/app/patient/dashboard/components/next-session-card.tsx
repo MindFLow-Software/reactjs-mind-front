@@ -4,7 +4,7 @@ import { Clock, MapPin, Play, Video } from 'lucide-react'
 import { toast } from 'sonner'
 
 import { Time } from '@/utils/time'
-import { SessionModality } from '@/types/enums'
+import { SessionModality } from '@/types/shared/enums'
 import type { IPatientNextSession } from '@/types/dashboard'
 
 import { Card } from '@/components/ui/card'

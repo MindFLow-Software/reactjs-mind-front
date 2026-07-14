@@ -1,8 +1,6 @@
-import type { Gender, PlatformRole } from '@/types/enums'
+import type { Gender, PlatformRole } from '@/types/shared/enums'
 
-export type { PlatformRole } from '@/types/enums'
-
-export interface IUser {
+export type IUser = {
   id: string
   firstName: string
   lastName: string

@@ -4,7 +4,7 @@ import * as React from 'react'
 import { Users2 } from 'lucide-react'
 
 import { type ChartConfig } from '@/components/ui/chart'
-import { Gender } from '@/types/enums'
+import { Gender } from '@/types/shared/enums'
 import type { IGenderItem } from '@/types/dashboard'
 import { DemographicsPieChartCard } from './demographics-pie-chart-card'
 

@@ -39,7 +39,7 @@ import {
   patientSignUpSchema,
   type PatientSignUpSchema,
 } from '@/validators/auth/form/patient-sign-up-schema'
-import { Gender } from '@/types/patient'
+import { Gender } from '@/types/shared/enums'
 
 function toISODate(date: Date): string {
   const year = date.getFullYear()

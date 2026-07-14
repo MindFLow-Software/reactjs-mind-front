@@ -1,6 +1,6 @@
 import { useNavigate } from 'react-router-dom'
 import { useApiMutation } from '@/hooks/use-api-mutation'
-import type { IMutationResult } from '@/types/api'
+import type { IMutationResult } from '@/types/shared/mutation-result'
 
 import { registerPatientViaRegistrationLink } from '@/api/registration-link/register-patient-via-registration-link'
 import type { RegisterPatientViaRegistrationLinkData } from '@/validators/register-patient-via-registration-link/form/register-patient-via-registration-link-schema'

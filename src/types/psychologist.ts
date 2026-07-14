@@ -1,7 +1,5 @@
-import type { Expertise } from './expertise'
-import { Honorific, Languages } from '@/types/enums'
-
-export { Honorific, Languages }
+import type { Honorific } from '@/types/enums'
+import type { Expertise, Languages } from '@/types/shared/enums'
 
 export const translatedLanguages = {
   PORTUGUESE: 'Português',

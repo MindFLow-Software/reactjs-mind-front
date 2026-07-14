@@ -1,7 +1,7 @@
 import { api } from '@/lib/axios'
 import type { UpdatePatientBody } from '@/types/patient'
 import type { IPatientProfile } from '@/types/patient-profile'
-import type { IMutationResult } from '@/types/api'
+import type { IMutationResult } from '@/types/shared/mutation-result'
 
 export type { UpdatePatientBody } from '@/types/patient'
 

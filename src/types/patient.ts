@@ -1,7 +1,5 @@
-import { Gender } from '@/types/enums'
 import type { IPatientProfile } from '@/types/patient-profile'
-
-export { Gender } from '@/types/enums'
+import type { Gender } from '@/types/shared/enums'
 
 export type IPatient = IPatientProfile & {
   name: string

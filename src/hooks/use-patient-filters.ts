@@ -2,7 +2,7 @@ import { z } from 'zod'
 import { useCallback } from 'react'
 import { useSearchParams } from 'react-router-dom'
 
-import { Gender } from '@/types/patient'
+import { Gender } from '@/types/shared/enums'
 
 type PatientStatus = 'ACTIVE' | 'REJECTED' | 'PENDING' | 'BLOCKED'
 

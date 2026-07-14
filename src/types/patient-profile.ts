@@ -1,4 +1,5 @@
-import type { Gender, PatientProfileStatus } from '@/types/enums'
+import type { PatientProfileStatus } from '@/types/enums'
+import type { Gender } from '@/types/shared/enums'
 
 export interface IPatientProfile {
   id: string

@@ -1,0 +1,41 @@
+export enum PlatformRole {
+  USER = 'USER',
+  ADMIN = 'ADMIN',
+  SUPPORT = 'SUPPORT',
+}
+
+export enum Gender {
+  OTHER = 'OTHER',
+  FEMININE = 'FEMININE',
+  MASCULINE = 'MASCULINE',
+}
+
+export enum Expertise {
+  OTHER = 'OTHER',
+  SOCIAL = 'SOCIAL',
+  INFANT = 'INFANT',
+  CLINICAL = 'CLINICAL',
+  JURIDICAL = 'JURIDICAL',
+  EDUCATIONAL = 'EDUCATIONAL',
+  ORGANIZATIONAL = 'ORGANIZATIONAL',
+  PSYCHOTHERAPIST = 'PSYCHOTHERAPIST',
+  NEUROPSYCHOLOGY = 'NEUROPSYCHOLOGY',
+}
+
+export enum InsightSeverity {
+  INFO = 'INFO',
+  WARNING = 'WARNING',
+  CRITICAL = 'CRITICAL',
+}
+
+export enum SessionModality {
+  ONLINE = 'ONLINE',
+  PRESENTIAL = 'PRESENTIAL',
+}
+
+export enum Languages {
+  PORTUGUESE = 'PORTUGUESE',
+  ENGLISH = 'ENGLISH',
+  SPANISH = 'SPANISH',
+  SIGNS = 'SIGNS',
+}

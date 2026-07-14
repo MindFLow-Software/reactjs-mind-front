@@ -1,4 +1,4 @@
-import type { Honorific } from './psychologist'
+import type { Honorific } from '@/types/enums'
 
 export type IclaimCanidate = {
   createdAt: Date

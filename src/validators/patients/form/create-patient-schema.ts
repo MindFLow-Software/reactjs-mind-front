@@ -1,5 +1,5 @@
 import { z } from 'zod'
-import { Gender } from '@/types/patient'
+import { Gender } from '@/types/shared/enums'
 import { cpfSchema } from '@/validators/shared/cpf-schema'
 import { dateOfBirthSchema } from '@/validators/shared/date-of-birth-schema'
 

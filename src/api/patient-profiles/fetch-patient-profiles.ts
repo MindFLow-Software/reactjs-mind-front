@@ -1,6 +1,7 @@
 import { api } from '@/lib/axios'
-import type { Gender, IPatient, IsessionVolume } from '@/types/patient'
-import type { PaginationMeta } from '@/types/pagination'
+import type { IPatient, IsessionVolume } from '@/types/patient'
+import type { Gender } from '@/types/shared/enums'
+import type { IPaginationMeta } from '@/types/shared/pagination-meta'
 
 export interface IgetPatientsQueryParams {
   pageIndex?: number
@@ -15,7 +16,7 @@ export interface IgetPatientsQueryParams {
 
 export interface IgetPatientProfilesResponse {
   patients: IPatient[]
-  meta: PaginationMeta
+  meta: IPaginationMeta
 }
 
 export async function fetchPatientProfiles({

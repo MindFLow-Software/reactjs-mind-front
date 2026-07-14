@@ -9,7 +9,7 @@ import {
   type ChartConfig,
 } from '@/components/ui/chart'
 import { DashboardChartEmpty } from '@/pages/app/dashboard/shared/components/dashboard-chart-empty'
-import { Gender } from '@/types/enums'
+import { Gender } from '@/types/shared/enums'
 import type { IGenderItem } from '@/types/dashboard'
 import './patients-by-gender-chart.css'
 

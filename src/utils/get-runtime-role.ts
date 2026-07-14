@@ -1,4 +1,4 @@
-import type { IMeResponse } from '@/types/me'
+import type { IMeResponse } from '@/types/me/me-response'
 
 export type RuntimeRole = 'BOTH' | 'PSYCHOLOGIST' | 'PATIENT' | 'NEW_USER'
 

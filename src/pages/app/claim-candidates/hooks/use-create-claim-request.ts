@@ -1,7 +1,7 @@
 import { useApiMutation } from '@/hooks/use-api-mutation'
 import { queryKeys } from '@/constants/query-keys'
 import { createClaimRequest } from '@/api/patient-profiles/create-claim-request'
-import type { IMutationResult } from '@/types/api'
+import type { IMutationResult } from '@/types/shared/mutation-result'
 import type { IPatientProfileClaimRequest } from '@/types/patient-profile-claim-request'
 
 export function useCreateClaimRequest() {

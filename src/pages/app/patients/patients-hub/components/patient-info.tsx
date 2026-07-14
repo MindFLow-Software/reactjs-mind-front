@@ -21,7 +21,7 @@ import './patient-info.css'
 import { Time } from '@/utils/time'
 import { formatCPF } from '@/utils/formatCPF'
 import { formatPhone } from '@/utils/formatPhone'
-import type { Gender } from '@/types/enums'
+import type { Gender } from '@/types/shared/enums'
 import { copyToClipboard } from '@/utils/copy-to-clipboard'
 import type { IPatientProfile } from '@/types/patient-profile'
 

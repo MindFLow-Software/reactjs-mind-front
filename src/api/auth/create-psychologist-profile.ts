@@ -3,7 +3,7 @@ import type {
   CreatePsychologistProfileBody,
   IPsychologistProfile,
 } from '@/types/psychologist'
-import type { IMutationResult } from '@/types/api'
+import type { IMutationResult } from '@/types/shared/mutation-result'
 
 export async function createPsychologistProfile(
   body: CreatePsychologistProfileBody,

@@ -17,6 +17,7 @@ import { StatusBadge } from '@/components/ui/status-badge'
 import './patient-details-header.css'
 import { copyToClipboard } from '@/utils/copy-to-clipboard'
 import { PatientProfileStatus } from '@/types/enums'
+import { AccountStatus } from '@/types/auth/account-status'
 import type { IPatientProfile } from '@/types/patient-profile'
 
 interface PatientDetailsHeaderProps {
@@ -65,7 +66,9 @@ export function PatientDetailsHeader({ patient }: PatientDetailsHeaderProps) {
               <h1 className="ph-patient-details-header__name">{fullName}</h1>
 
               <StatusBadge
-                status={isPatientActive ? 'ACTIVE' : 'BLOCKED'}
+                status={
+                  isPatientActive ? AccountStatus.ACTIVE : AccountStatus.BLOCKED
+                }
                 size="md"
               />
             </div>

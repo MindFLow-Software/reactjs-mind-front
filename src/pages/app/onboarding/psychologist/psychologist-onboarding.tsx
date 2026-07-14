@@ -19,8 +19,8 @@ import {
 } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 
-import { Expertise } from '@/types/expertise'
-import { Honorific } from '@/types/psychologist'
+import { Expertise } from '@/types/shared/enums'
+import { Honorific } from '@/types/enums'
 import { queryKeys } from '@/constants/query-keys'
 import { getProfile } from '@/api/auth/get-profile'
 import { ProfessionalIdentityFormStep } from './steps/professional-identity-form-step'

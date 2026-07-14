@@ -4,7 +4,7 @@ import { queryKeys } from '@/constants/query-keys'
 import { createPracticeContext } from '@/api/psychologists/create-practice-context'
 import { useActivePracticeContextStore } from '@/store/use-active-practice-context-store'
 import type { IPsychologistPracticeContext } from '@/types/psychologist'
-import type { IMutationResult } from '@/types/api'
+import type { IMutationResult } from '@/types/shared/mutation-result'
 
 export function useCreatePracticeContext() {
   const navigate = useNavigate()

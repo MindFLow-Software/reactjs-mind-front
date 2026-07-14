@@ -3,7 +3,7 @@ import { AlertTriangle, Info, OctagonAlert } from 'lucide-react'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader } from '@/components/ui/card'
-import { InsightSeverity } from '@/types/enums'
+import { InsightSeverity } from '@/types/shared/enums'
 import './dashboard-insight-card.css'
 
 interface DashboardInsightCardAction {

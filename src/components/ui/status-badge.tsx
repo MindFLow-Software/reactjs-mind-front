@@ -1,10 +1,8 @@
 import { ArrowDownToLine, Ban, Check, Clock } from 'lucide-react'
 
 import { cn } from '@/lib/utils'
-import type { AccountStatus } from '@/types/auth'
+import { AccountStatus } from '@/types/auth/account-status'
 import './status-badge.css'
-
-export type { AccountStatus }
 
 const STATUS_CONFIG: Record<
   AccountStatus,
@@ -16,28 +14,28 @@ const STATUS_CONFIG: Record<
     Icon: React.ComponentType<{ className?: string; strokeWidth?: number }>
   }
 > = {
-  ACTIVE: {
+  [AccountStatus.ACTIVE]: {
     label: 'Ativo',
     bg: 'bg-green-100',
     fg: 'text-green-800',
     ico: 'bg-green-600',
     Icon: Check,
   },
-  PENDING: {
+  [AccountStatus.PENDING]: {
     label: 'Avaliação',
     bg: 'bg-amber-100',
     fg: 'text-amber-800',
     ico: 'bg-amber-600',
     Icon: Clock,
   },
-  REJECTED: {
+  [AccountStatus.REJECTED]: {
     label: 'Rejeitado',
     bg: 'bg-red-100',
     fg: 'text-red-800',
     ico: 'bg-red-600',
     Icon: Ban,
   },
-  BLOCKED: {
+  [AccountStatus.BLOCKED]: {
     label: 'Inativo',
     bg: 'bg-cyan-100',
     fg: 'text-cyan-800',

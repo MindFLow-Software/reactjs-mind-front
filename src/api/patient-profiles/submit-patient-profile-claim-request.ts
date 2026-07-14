@@ -1,5 +1,5 @@
 import { api } from '@/lib/axios'
-import type { IMutationResult } from '@/types/api'
+import type { IMutationResult } from '@/types/shared/mutation-result'
 import type { IPatientProfileClaimRequest } from '@/types/patient-profile-claim-request'
 
 export type ClaimRequestAction = 'approve' | 'reject'

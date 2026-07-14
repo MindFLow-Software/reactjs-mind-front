@@ -1,18 +1,12 @@
-import type { Gender, PlatformRole } from '@/types/enums'
+import type { Gender, PlatformRole } from '@/types/shared/enums'
 import type {
   IPsychologistProfile,
   IPsychologistPracticeContext,
 } from '@/types/psychologist'
 import type { IPatientProfile } from '@/types/patient-profile'
+import type { IClinicMemberContext } from '@/types/me/clinic-member-context'
 
-export interface IClinicMemberContext {
-  id: string
-  clinicId: string | null
-  branchId: string | null
-  memberRole: string
-}
-
-export interface IMeResponse {
+export type IMeResponse = {
   id: string
   firstName: string
   lastName: string

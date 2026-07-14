@@ -1,6 +1,6 @@
 import { usePatientFilters } from '@/hooks/use-patient-filters'
 import type { PatientSortBy } from '@/hooks/use-patient-filters'
-import type { Gender } from '@/types/patient'
+import type { Gender } from '@/types/shared/enums'
 
 const STATUS_TO_IS_ACTIVE: Record<string, boolean> = {
   ACTIVE: true,

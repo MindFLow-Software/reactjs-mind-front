@@ -1,4 +1,4 @@
-import type { PaginationMeta } from '@/types/pagination'
+import type { IPaginationMeta } from '@/types/shared/pagination-meta'
 import type { IPatient } from '@/types/patient'
 
 type PatientStatus = 'ACTIVE' | 'REJECTED' | 'PENDING' | 'BLOCKED'
@@ -19,7 +19,7 @@ export interface PatientsMetrics {
 
 export interface PatientsListQueryResult {
   patients: IPatient[]
-  meta: PaginationMeta
+  meta: IPaginationMeta
   isLoading: boolean
   isFetching: boolean
 }

@@ -1,4 +1,4 @@
-import { Gender } from '@/types/enums'
+import { Gender } from '@/types/shared/enums'
 import type { IPatientProfile } from '@/types/patient-profile'
 import { formatCPF } from '@/utils/formatCPF'
 import { formatPhone } from '@/utils/formatPhone'
