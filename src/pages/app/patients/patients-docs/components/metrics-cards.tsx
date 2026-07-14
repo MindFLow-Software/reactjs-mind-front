@@ -1,6 +1,6 @@
 import { FolderOpen, HardDrive, Clock, Archive } from 'lucide-react'
 import { cn } from '@/lib/utils'
-import { formatFileSize } from '@/utils/format-file-size'
+import { Files } from '@/utils/files'
 import type { IAttachmentListMeta } from '@/types/attachment/attachment-list-meta'
 import './metrics-cards.css'
 
@@ -31,7 +31,7 @@ interface MetricsCardsProps {
 
 export function MetricsCards({ meta }: MetricsCardsProps) {
   const storageLabel =
-    meta.totalStorageSize > 0 ? formatFileSize(meta.totalStorageSize) : '0 B'
+    meta.totalStorageSize > 0 ? Files.formatSize(meta.totalStorageSize) : '0 B'
 
   return (
     <div className="pd-metric-grid">

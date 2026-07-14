@@ -3,7 +3,7 @@ import { memo } from 'react'
 import { useDropzone } from 'react-dropzone'
 import { CloudUpload, FileText, X } from 'lucide-react'
 import { cn } from '@/lib/utils'
-import { formatFileSize } from '@/utils/format-file-size'
+import { Files } from '@/utils/files'
 import { MAX_DOC_FILES } from '../constants'
 
 interface UploadZoneProps {
@@ -53,7 +53,7 @@ export const UploadZone = memo(
                 <FileText className="size-4 shrink-0 text-blue-600" />
                 <span className="rp-upload-file-name">{file.name}</span>
                 <span className="rp-upload-file-size">
-                  {formatFileSize(file.size)}
+                  {Files.formatSize(file.size)}
                 </span>
                 <button
                   type="button"

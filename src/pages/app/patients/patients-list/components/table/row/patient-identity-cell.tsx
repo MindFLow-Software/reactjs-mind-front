@@ -1,6 +1,6 @@
 import { TableCell } from '@/components/ui/table'
 import { UserAvatar } from '@/components/user-avatar'
-import { formatCPF } from '@/utils/formatCPF'
+import { Mask } from '@/utils/mask'
 import type { IPatient } from '@/types/patient/patient'
 
 interface PatientIdentityCellProps {
@@ -25,7 +25,7 @@ export function PatientIdentityCell({ patient }: PatientIdentityCellProps) {
         <div className="ptr-identity-info">
           <span className="ptr-identity-name">{fullName}</span>
           <span className="ptr-identity-cpf">
-            {patient.cpf ? formatCPF(patient.cpf) : '—'}
+            {patient.cpf ? Mask.cpf(patient.cpf) : '—'}
           </span>
         </div>
       </div>

@@ -17,7 +17,6 @@ import { Input } from '@/components/ui/input'
 import { Time } from '@/utils/time'
 import { Normalizer } from '@/utils/normalizer'
 import { GENDER_OPTIONS } from '../constants'
-import { formatDateInput } from '@/utils/formatDateInput'
 import type { CreatePatientFormData } from '@/validators/patients/form/create-patient-schema'
 import type { IPatientProfile } from '@/types/patient-profile/patient-profile'
 
@@ -49,7 +48,7 @@ export function StepBasicData({ onAvatarSelect, patient }: StepBasicDataProps) {
     e: ChangeEvent<HTMLInputElement>,
     fieldOnChange: (v: Date | null) => void,
   ) {
-    const val = formatDateInput(e.target.value)
+    const val = Time.maskDateInput(e.target.value)
     setBirthInput(val)
 
     if (val.length === 10) {

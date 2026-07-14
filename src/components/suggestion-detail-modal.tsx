@@ -6,7 +6,7 @@ import { Link2, MessageCircle, TriangleAlert } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import type { ISuggestion } from '@/types/suggestion/suggestion'
 import { DialogPortal, DialogOverlay } from '@/components/ui/dialog'
-import { copyToClipboard } from '@/utils/copy-to-clipboard'
+import { Clipboard } from '@/utils/clipboard'
 import { SuggestionDetailBanner } from '@/components/suggestion-detail-banner'
 import { SuggestionDetailHeader } from '@/components/suggestion-detail-header'
 import { SuggestionDetailMain } from '@/components/suggestion-detail-main'
@@ -30,7 +30,7 @@ export function SuggestionDetailModalContent({
     name: string
   } | null>(null)
 
-  const handleCopyLink = () => copyToClipboard(window.location.href)
+  const handleCopyLink = () => Clipboard.copy(window.location.href)
 
   return (
     <DialogPortal>

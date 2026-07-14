@@ -6,8 +6,7 @@ import { useNavigate } from 'react-router-dom'
 import { ArrowRight, ShieldCheck, UserRoundPen } from 'lucide-react'
 
 import { useAuth } from '@/hooks/use-auth'
-import { formatCPF } from '@/utils/formatCPF'
-import { formatPhone } from '@/utils/formatPhone'
+import { Mask } from '@/utils/mask'
 import { ROLE_TRANSLATIONS, EXPERTISE_TRANSLATIONS } from '@/utils/mappers'
 
 import { Skeleton } from '@/components/ui/skeleton'
@@ -118,12 +117,12 @@ export function PsychologistProfileCard() {
 
           <div>
             <p className="pf-stat-label">telefone</p>
-            <p className="pf-stat-value">{formatPhone(me.phoneNumber)}</p>
+            <p className="pf-stat-value">{Mask.phone(me.phoneNumber)}</p>
           </div>
 
           <div>
             <p className="pf-stat-label">cpf</p>
-            <p className="pf-stat-value">{formatCPF(me.cpf)}</p>
+            <p className="pf-stat-value">{Mask.cpf(me.cpf)}</p>
           </div>
 
           <div>

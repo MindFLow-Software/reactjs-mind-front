@@ -6,9 +6,7 @@ import { ptBR } from 'date-fns/locale'
 import { toast } from 'sonner'
 import { getPatientAttachments } from '@/api/attachments/get-patient-attachments'
 import { deleteAttachment } from '@/api/attachments/delete-attachment'
-import { handleFileDownload } from '@/utils/handle-file-download'
-import { formatFileSize } from '@/utils/format-file-size'
-import { getFileKind, FILE_KIND_STYLES } from '@/utils/file-helpers'
+import { Files } from '@/utils/files'
 import { cn } from '@/lib/utils'
 import { Button } from '@/components/ui/button'
 import { DeleteActionButton } from './delete-attachments-button'
@@ -38,8 +36,8 @@ function AttachmentsBody({
   return (
     <div className="rp-att-grid">
       {attachments.map((file) => {
-        const kind = getFileKind(file.type ?? '')
-        const fileStyle = FILE_KIND_STYLES[kind]
+        const kind = Files.kind(file.type ?? '')
+        const fileStyle = Files.KIND_STYLES[kind]
         const uploadDate = format(parseISO(file.uploadedAt), 'dd/MM/yyyy', {
           locale: ptBR,
         })
@@ -61,7 +59,7 @@ function AttachmentsBody({
             <div className="min-w-0 flex-1">
               <p className="rp-att-name">{file.filename}</p>
               <div className="rp-att-meta">
-                <span>{formatFileSize(file.size)}</span>
+                <span>{Files.formatSize(file.size)}</span>
                 <span className="size-1.5 shrink-0 rounded-full bg-border" />
                 <span>Enviado {uploadDate}</span>
               </div>
@@ -82,7 +80,7 @@ function AttachmentsBody({
                 variant="ghost"
                 size="icon"
                 title="Baixar"
-                onClick={() => handleFileDownload(file.id, file.filename)}
+                onClick={() => Files.download(file.id, file.filename)}
                 className="h-[28px] w-[28px] rounded-[5px]"
               >
                 <Download className="size-3.5" />

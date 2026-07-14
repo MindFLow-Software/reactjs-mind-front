@@ -10,7 +10,7 @@ import {
   DialogTitle,
   DialogDescription,
 } from '@/components/ui/dialog'
-import { handleFileDownload } from '@/utils/handle-file-download'
+import { Files } from '@/utils/files'
 import type { IAttachmentPatientItem } from '@/types/attachment/attachment-patient-item'
 import './simple-preview-modal.css'
 
@@ -113,7 +113,7 @@ export function SimplePreviewModal({ file, onClose }: SimplePreviewModalProps) {
           <Button
             size="sm"
             className="ph-preview__download-btn"
-            onClick={() => handleFileDownload(id, fileName)}
+            onClick={() => Files.download(id, fileName)}
           >
             <ArrowDownToLine className="size-3.5" />
             Baixar {downloadLabel}

@@ -6,7 +6,7 @@ import { cn } from '@/lib/utils'
 import type { ISuggestion } from '@/types/suggestion/suggestion'
 import { Textarea } from '@/components/ui/textarea'
 import { buildAttachmentUrl } from '@/components/suggestion-detail-config'
-import { getInitials } from '@/utils/get-initials'
+import { Normalizer } from '@/utils/normalizer'
 import './suggestion-detail-main.css'
 
 interface AttachmentPreviewTarget {
@@ -24,7 +24,7 @@ export function SuggestionDetailMain({
   onPreviewAttachment,
 }: SuggestionDetailMainProps) {
   const [comment, setComment] = useState('')
-  const initials = getInitials(item.psychologistName)
+  const initials = Normalizer.initials(item.psychologistName)
 
   return (
     <div className="sdm-main">

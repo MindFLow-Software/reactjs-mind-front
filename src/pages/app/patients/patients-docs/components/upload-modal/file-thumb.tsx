@@ -1,14 +1,14 @@
 import { cn } from '@/lib/utils'
-import { getFileMimeGroup, MIME_GRADIENT } from '@/utils/file-helpers'
+import { Files } from '@/utils/files'
 
 interface FileThumbProps {
   type: string
 }
 
 export function FileThumb({ type }: FileThumbProps) {
-  const group = getFileMimeGroup(type)
+  const group = Files.mimeGroup(type)
   return (
-    <div className={cn('pd-up-thumb', MIME_GRADIENT[group])}>
+    <div className={cn('pd-up-thumb', Files.MIME_GRADIENT[group])}>
       <span className="pd-up-thumb-ext">{group}</span>
     </div>
   )

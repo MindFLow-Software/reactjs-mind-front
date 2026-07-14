@@ -1,7 +1,9 @@
 import { Badge } from '@/components/ui/badge'
 import { TableCell } from '@/components/ui/table'
 import { cn } from '@/lib/utils'
-import { GENDER_CONFIG } from '@/utils/gender-config'
+import { GENDER_CONFIG } from '@/constants/gender-config'
+import { fn } from '@/utils/fn'
+import { Gender } from '@/types/shared/enums'
 import type { IPatient } from '@/types/patient/patient'
 
 interface PatientGenderCellProps {
@@ -9,8 +11,7 @@ interface PatientGenderCellProps {
 }
 
 export function PatientGenderCell({ gender }: PatientGenderCellProps) {
-  const genderCfg =
-    GENDER_CONFIG[gender as keyof typeof GENDER_CONFIG] ?? GENDER_CONFIG.OTHER
+  const genderCfg = fn.one(gender, GENDER_CONFIG, GENDER_CONFIG[Gender.OTHER])
 
   return (
     <TableCell className="ptr-cell-gender">

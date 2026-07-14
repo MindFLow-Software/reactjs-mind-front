@@ -65,9 +65,17 @@ export class Time {
   }
 
   static isFuture(date: Date | null | undefined) {
-    console.log('date: ', date)
     if (!date) return false
     return isFuture(date)
+  }
+
+  static maskDateInput(value: string) {
+    const digits = Normalizer.digits(value).slice(0, 8)
+
+    if (digits.length <= 2) return digits
+    if (digits.length <= 4) return `${digits.slice(0, 2)}/${digits.slice(2)}`
+
+    return `${digits.slice(0, 2)}/${digits.slice(2, 4)}/${digits.slice(4)}`
   }
 
   static textToDate(value: string) {
@@ -109,7 +117,6 @@ export class Time {
     if (!isValid(date)) return ''
 
     const year = date.getFullYear()
-    if (year <= this.minDate.getFullYear()) return ''
     if (year <= this.minDate.getFullYear()) return ''
 
     return format(date, 'dd/MM/yyyy')

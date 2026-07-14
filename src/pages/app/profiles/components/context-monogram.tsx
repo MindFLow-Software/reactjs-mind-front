@@ -1,20 +1,12 @@
 import './context-monogram.css'
 
 import { cn } from '@/lib/utils'
+import { Normalizer } from '@/utils/normalizer'
 import type { IPsychologistPracticeContext } from '@/types/psychologist/practice-context'
 
 const CONTEXT_TYPE_LABELS: Record<string, string> = {
   CLINIC: 'Clinica Equipe',
   INDIVIDUAL: 'At Ind',
-}
-
-function getInitials(context: IPsychologistPracticeContext): string {
-  const name = context.nickname ?? CONTEXT_TYPE_LABELS[context.contextType]
-  return name
-    .split(/\s+/)
-    .slice(0, 2)
-    .map((w) => w[0]?.toUpperCase() ?? '')
-    .join('')
 }
 
 interface ContextMonogramProps {
@@ -28,7 +20,8 @@ export function ContextMonogram({
   size,
   showPip,
 }: ContextMonogramProps) {
-  const initials = getInitials(context)
+  const name = context.nickname ?? CONTEXT_TYPE_LABELS[context.contextType]
+  const initials = Normalizer.initials(name)
 
   return (
     <div

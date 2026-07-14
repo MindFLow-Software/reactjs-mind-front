@@ -1,5 +1,5 @@
 import { Trash2, CheckCircle2, AlertCircle, Loader2 } from 'lucide-react'
-import { formatFileSize } from '@/utils/format-file-size'
+import { Files } from '@/utils/files'
 import type { FileItem } from '@/hooks/use-upload'
 import { FileThumb } from './file-thumb'
 
@@ -31,7 +31,7 @@ export function FileList({ files, onRemove, onClear }: FileListProps) {
             <p className="pd-up-item-name">{item.file.name}</p>
             <div className="pd-up-item-meta">
               <p className="pd-up-item-size">
-                {formatFileSize(item.file.size)}
+                {Files.formatSize(item.file.size)}
               </p>
               {item.status === 'error' && (
                 <p className="pd-up-item-error">{item.error}</p>

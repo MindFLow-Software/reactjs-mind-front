@@ -34,14 +34,8 @@ import {
 } from '@/components/ui/alert-dialog'
 import { cn } from '@/lib/utils'
 import { env } from '@/env'
-import { handleFileDownload } from '@/utils/handle-file-download'
-import { formatFileSize } from '@/utils/format-file-size'
+import { Files } from '@/utils/files'
 import type { IAttachmentListItem as Attachment } from '@/types/attachment/attachment-list-item'
-import {
-  getFileKind,
-  getFileLabel,
-  FILE_KIND_STYLES,
-} from '@/utils/file-helpers'
 import './preview-drawer.css'
 
 const BACKEND_URL = env.VITE_API_URL
@@ -56,8 +50,8 @@ export function PreviewDrawer({ doc, onClose, onDelete }: PreviewDrawerProps) {
   if (!doc) return null
 
   const { id, filename, contentType, sizeInBytes, uploadedAt, patient } = doc
-  const kind = getFileKind(contentType)
-  const style = FILE_KIND_STYLES[kind]
+  const kind = Files.kind(contentType)
+  const style = Files.KIND_STYLES[kind]
   const fileUrl = `${BACKEND_URL}/attachments/${id}`
   const ext = filename.split('.').pop()?.toUpperCase().slice(0, 4) ?? 'FILE'
 
@@ -77,7 +71,7 @@ export function PreviewDrawer({ doc, onClose, onDelete }: PreviewDrawerProps) {
           <div className="min-w-0 flex-1">
             <SheetTitle className="pd-prev-title">{filename}</SheetTitle>
             <SheetDescription className="pd-prev-desc">
-              {getFileLabel(contentType)} · {formatFileSize(sizeInBytes)}
+              {Files.label(contentType)} · {Files.formatSize(sizeInBytes)}
             </SheetDescription>
           </div>
           <button
@@ -120,7 +114,7 @@ export function PreviewDrawer({ doc, onClose, onDelete }: PreviewDrawerProps) {
               <Button
                 size="sm"
                 className="mt-2 cursor-pointer gap-2"
-                onClick={() => handleFileDownload(id, filename)}
+                onClick={() => Files.download(id, filename)}
               >
                 <Download className="size-3.5" />
                 Baixar arquivo
@@ -156,14 +150,14 @@ export function PreviewDrawer({ doc, onClose, onDelete }: PreviewDrawerProps) {
                 <HardDrive className="size-3" /> Tamanho
               </p>
               <p className="pd-prev-info-value font-mono">
-                {formatFileSize(sizeInBytes)}
+                {Files.formatSize(sizeInBytes)}
               </p>
             </div>
             <div>
               <p className="pd-prev-info-label">
                 <FileType className="size-3" /> Tipo
               </p>
-              <p className="pd-prev-info-value">{getFileLabel(contentType)}</p>
+              <p className="pd-prev-info-value">{Files.label(contentType)}</p>
             </div>
           </div>
         </div>
@@ -172,7 +166,7 @@ export function PreviewDrawer({ doc, onClose, onDelete }: PreviewDrawerProps) {
         <div className="pd-prev-footer">
           <Button
             className="pd-prev-download"
-            onClick={() => handleFileDownload(id, filename)}
+            onClick={() => Files.download(id, filename)}
           >
             <Download className="size-3.5" />
             Baixar

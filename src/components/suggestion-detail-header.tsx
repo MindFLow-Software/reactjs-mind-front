@@ -9,8 +9,8 @@ import { cn } from '@/lib/utils'
 import type { ISuggestion } from '@/types/suggestion/suggestion'
 import { DialogTitle } from '@/components/ui/dialog'
 import { SUGGESTION_CATEGORY_DISPLAY } from '@/constants/suggestion-category-display'
-import { getInitials } from '@/utils/get-initials'
-import { copyToClipboard } from '@/utils/copy-to-clipboard'
+import { Normalizer } from '@/utils/normalizer'
+import { Clipboard } from '@/utils/clipboard'
 import './suggestion-detail-header.css'
 
 interface SuggestionDetailHeaderProps {
@@ -29,7 +29,7 @@ export function SuggestionDetailHeader({
   const isLiked = userId ? item.likes?.includes(userId) : false
   const isImplemented = item.status === 'IMPLEMENTED'
   const cat = SUGGESTION_CATEGORY_DISPLAY[item.category]
-  const initials = getInitials(item.psychologistName)
+  const initials = Normalizer.initials(item.psychologistName)
 
   const formattedDate = format(
     new Date(item.createdAt),
@@ -42,7 +42,7 @@ export function SuggestionDetailHeader({
   })
 
   const handleToggleFollow = () => setIsFollowing((v) => !v)
-  const handleCopyLink = () => copyToClipboard(window.location.href)
+  const handleCopyLink = () => Clipboard.copy(window.location.href)
 
   return (
     <div className="sdm-header">

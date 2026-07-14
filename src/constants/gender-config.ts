@@ -1,19 +1,20 @@
 import { Mars, Venus, Users } from 'lucide-react'
+import { Gender } from '@/types/shared/enums'
 
 export const GENDER_CONFIG = {
-  MASCULINE: {
+  [Gender.MASCULINE]: {
     label: 'Masculino',
     icon: Mars,
     className:
       'bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-400 border-0',
   },
-  FEMININE: {
+  [Gender.FEMININE]: {
     label: 'Feminino',
     icon: Venus,
     className:
       'bg-pink-100 text-pink-700 dark:bg-pink-900/30 dark:text-pink-400 border-0',
   },
-  OTHER: {
+  [Gender.OTHER]: {
     label: 'Outro',
     icon: Users,
     className:

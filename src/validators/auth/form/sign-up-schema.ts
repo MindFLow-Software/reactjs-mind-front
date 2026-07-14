@@ -1,5 +1,5 @@
 import { z } from 'zod'
-import { isValidCPF } from '@/utils/validate-cpf'
+import { is } from '@/utils/isness'
 
 const today = new Date()
 const minDate = new Date(
@@ -27,7 +27,7 @@ export const signUpSchema = z.object({
   cpf: z
     .string()
     .min(11, 'CPF incompleto')
-    .refine((v) => isValidCPF(v), 'CPF inválido'),
+    .refine((v) => is.cpf(v), 'CPF inválido'),
   gender: z.enum(['MASCULINE', 'FEMININE', 'OTHER'], {
     message: 'Obrigatório',
   }),

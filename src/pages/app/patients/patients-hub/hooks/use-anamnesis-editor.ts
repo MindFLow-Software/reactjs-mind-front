@@ -30,7 +30,7 @@ import {
   writeAnamnesisDraft,
 } from '../components/anamnesis/anamnesis-draft-storage'
 import { usePdfExport } from './use-pdf-export'
-import { copyToClipboard } from '@/utils/copy-to-clipboard'
+import { Clipboard } from '@/utils/clipboard'
 
 interface EditorState {
   blocks: AnamnesisBlock[]
@@ -237,7 +237,7 @@ export function useAnamnesisEditor({
   }, [patientId])
 
   const onCopy = useCallback(async () => {
-    copyToClipboard(content)
+    Clipboard.copy(content)
     setCopied(true)
   }, [content])
 

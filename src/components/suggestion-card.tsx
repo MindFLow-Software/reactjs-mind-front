@@ -6,7 +6,7 @@ import type { ISuggestion } from '@/types/suggestion/suggestion'
 import { Dialog, DialogTrigger } from '@/components/ui/dialog'
 import { SuggestionDetailModalContent } from '@/components/suggestion-detail-modal'
 import { SUGGESTION_CATEGORY_DISPLAY } from '@/constants/suggestion-category-display'
-import { getInitials } from '@/utils/get-initials'
+import { Normalizer } from '@/utils/normalizer'
 import './suggestion-card.css'
 
 interface SuggestionCardProps {
@@ -19,7 +19,7 @@ export function SuggestionCard({ item, userId, onLike }: SuggestionCardProps) {
   const isLiked = userId ? item.likes?.includes(userId) : false
   const isImplemented = item.status === 'IMPLEMENTED'
   const cat = SUGGESTION_CATEGORY_DISPLAY[item.category]
-  const initials = getInitials(item.psychologistName)
+  const initials = Normalizer.initials(item.psychologistName)
 
   return (
     <Dialog>

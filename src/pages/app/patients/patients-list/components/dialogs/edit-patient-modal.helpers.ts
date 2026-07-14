@@ -1,7 +1,6 @@
 import { Gender } from '@/types/shared/enums'
 import type { IPatientProfile } from '@/types/patient-profile/patient-profile'
-import { formatCPF } from '@/utils/formatCPF'
-import { formatPhone } from '@/utils/formatPhone'
+import { Mask } from '@/utils/mask'
 import type { UpdatePatientFormData } from '@/validators/patients/form/update-patient-schema'
 
 export function buildPatientUpdateDefaults(
@@ -10,9 +9,9 @@ export function buildPatientUpdateDefaults(
   return {
     firstName: patient.firstName,
     lastName: patient.lastName,
-    phoneNumber: patient.phoneNumber ? formatPhone(patient.phoneNumber) : '',
+    phoneNumber: patient.phoneNumber ? Mask.phone(patient.phoneNumber) : '',
     email: patient.email ?? '',
-    cpf: patient.cpf ? formatCPF(patient.cpf) : '',
+    cpf: patient.cpf ? Mask.cpf(patient.cpf) : '',
     gender: patient.gender ?? Gender.OTHER,
     dateOfBirth: patient.dateOfBirth ? new Date(patient.dateOfBirth) : null,
     profileImageUrl: patient.profileImageUrl ?? undefined,

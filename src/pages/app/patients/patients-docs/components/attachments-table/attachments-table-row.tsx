@@ -21,10 +21,8 @@ import {
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu'
 import { cn } from '@/lib/utils'
-import { handleFileDownload } from '@/utils/handle-file-download'
-import { formatFileSize } from '@/utils/format-file-size'
+import { Files } from '@/utils/files'
 import type { IAttachmentListItem as Attachment } from '@/types/attachment/attachment-list-item'
-import { getFileKind, FILE_KIND_STYLES, TYPE_BADGE } from '@/utils/file-helpers'
 import './attachments-table-row.css'
 
 interface AttachmentsTableRowProps {
@@ -43,8 +41,8 @@ function DocThumb({
   contentType: string
   filename: string
 }) {
-  const kind = getFileKind(contentType)
-  const style = FILE_KIND_STYLES[kind]
+  const kind = Files.kind(contentType)
+  const style = Files.KIND_STYLES[kind]
   const ext =
     filename.split('.').pop()?.toUpperCase().slice(0, 4) ?? style.label
 
@@ -77,8 +75,8 @@ export function AttachmentsTableRow({
 }: AttachmentsTableRowProps) {
   const { id, filename, contentType, sizeInBytes, uploadedAt, patient } =
     attachment
-  const kind = getFileKind(contentType)
-  const badge = TYPE_BADGE[kind]
+  const kind = Files.kind(contentType)
+  const badge = Files.TYPE_BADGE[kind]
 
   return (
     <TooltipProvider delayDuration={200}>
@@ -115,7 +113,9 @@ export function AttachmentsTableRow({
                   {filename}
                 </TooltipContent>
               </Tooltip>
-              <p className="pd-row-name-size">{formatFileSize(sizeInBytes)}</p>
+              <p className="pd-row-name-size">
+                {Files.formatSize(sizeInBytes)}
+              </p>
             </div>
           </div>
         </TableCell>
@@ -141,7 +141,7 @@ export function AttachmentsTableRow({
 
         {/* Size */}
         <TableCell>
-          <span className="pd-row-size">{formatFileSize(sizeInBytes)}</span>
+          <span className="pd-row-size">{Files.formatSize(sizeInBytes)}</span>
         </TableCell>
 
         {/* Date */}
@@ -192,7 +192,7 @@ export function AttachmentsTableRow({
                   variant="ghost"
                   size="icon"
                   className="pd-row-action pd-row-action-download"
-                  onClick={() => handleFileDownload(id, filename)}
+                  onClick={() => Files.download(id, filename)}
                 >
                   <Download className="size-3.5" />
                 </Button>
@@ -230,7 +230,7 @@ export function AttachmentsTableRow({
                 </DropdownMenuItem>
                 <DropdownMenuItem
                   className="pd-row-menu-item"
-                  onClick={() => handleFileDownload(id, filename)}
+                  onClick={() => Files.download(id, filename)}
                 >
                   <Download className="size-3.5" />
                   Baixar

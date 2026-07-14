@@ -6,7 +6,7 @@ import { Loader2, QrCode, Copy, Check, RefreshCw, Sparkles } from 'lucide-react'
 
 import { cn } from '@/lib/utils'
 
-import { copyToClipboard } from '@/utils/copy-to-clipboard'
+import { Clipboard } from '@/utils/clipboard'
 import { useActiveRegistrationLink } from '@/hooks/use-active-registration-link'
 import { useGenerateRegistrationLink } from '../../hooks/use-generate-registration-link'
 
@@ -29,7 +29,7 @@ export function GenerateInviteModal() {
   const registrationLink = data?.registrationLink
 
   function handleCopyToClipboard() {
-    copyToClipboard(registrationLink?.url)
+    Clipboard.copy(registrationLink?.url)
     setCopied(true)
     setTimeout(() => setCopied(false), 2000)
   }

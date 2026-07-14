@@ -15,7 +15,7 @@ import { UserAvatar } from '@/components/user-avatar'
 import { StatusBadge } from '@/components/ui/status-badge'
 
 import './patient-details-header.css'
-import { copyToClipboard } from '@/utils/copy-to-clipboard'
+import { Clipboard } from '@/utils/clipboard'
 import { PatientProfileStatus } from '@/types/patient-profile/patient-profile-status'
 import { AccountStatus } from '@/types/auth/account-status'
 import type { IPatientProfile } from '@/types/patient-profile/patient-profile'
@@ -79,7 +79,7 @@ export function PatientDetailsHeader({ patient }: PatientDetailsHeaderProps) {
                 <TooltipTrigger asChild>
                   <Button
                     variant="ghost"
-                    onClick={() => copyToClipboard(shortId)}
+                    onClick={() => Clipboard.copy(shortId)}
                     className="ph-patient-details-header__id-btn"
                   >
                     ID: {shortId}

@@ -1,6 +1,6 @@
 import { Mail, Phone } from 'lucide-react'
 import { TableCell } from '@/components/ui/table'
-import { formatPhone } from '@/utils/formatPhone'
+import { Mask } from '@/utils/mask'
 
 interface PatientContactCellProps {
   email: string | null | undefined
@@ -17,7 +17,7 @@ export function PatientContactCell({
         <div className="ptr-contact-line">
           <Phone className="ptr-contact-icon" aria-hidden="true" />
           <span className="ptr-contact-text">
-            {phoneNumber ? formatPhone(phoneNumber) : '—'}
+            {phoneNumber ? Mask.phone(phoneNumber) : '—'}
           </span>
         </div>
         <div className="ptr-contact-line">

@@ -16,8 +16,7 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from '@/components/ui/alert-dialog'
-import { handleFileDownload } from '@/utils/handle-file-download'
-import { formatFileSize } from '@/utils/format-file-size'
+import { Files } from '@/utils/files'
 import { cn } from '@/lib/utils'
 import type { IAttachmentPatientItem } from '@/types/attachment/attachment-patient-item'
 
@@ -63,7 +62,7 @@ export const FileCard = memo(function FileCard({
             {file.filename}
           </p>
           <p className="ph-file-card__meta">
-            {formatFileSize(file.size)} · {dateLabel}
+            {Files.formatSize(file.size)} · {dateLabel}
           </p>
         </div>
 
@@ -83,7 +82,7 @@ export const FileCard = memo(function FileCard({
             onClick={(e) => {
               e.preventDefault()
               e.stopPropagation()
-              handleFileDownload(file.id, file.filename)
+              Files.download(file.id, file.filename)
             }}
           >
             <ArrowDownToLine className="ph-file-card__action-icon" />

@@ -7,6 +7,7 @@ import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardFooter, CardHeader } from '@/components/ui/card'
 import { Currency } from '@/utils/currency'
+import { Normalizer } from '@/utils/normalizer'
 import { translatedExpertise } from '@/constants/translated-expertise'
 import type { IPatientPsychologistCard } from '@/types/dashboard/patient-psychologist-card'
 import './psychologists-section.css'
@@ -21,16 +22,6 @@ const SECTION_TITLE_BY_MODE: Record<'linked' | 'recommended', string> = {
 }
 
 const MAX_RECOMMENDED = 3
-
-function getInitials(name: string): string {
-  return name
-    .split(' ')
-    .filter(Boolean)
-    .slice(0, 2)
-    .map((part) => part[0])
-    .join('')
-    .toUpperCase()
-}
 
 export function PsychologistsSection({ psychologists }: IPsychologistsSection) {
   const handleAction = useCallback(() => {
@@ -60,7 +51,7 @@ export function PsychologistsSection({ psychologists }: IPsychologistsSection) {
             <CardHeader className="ptd-psychologist-header">
               <Avatar className="ptd-psychologist-avatar">
                 <AvatarFallback>
-                  {getInitials(psychologist.professionalName)}
+                  {Normalizer.initials(psychologist.professionalName)}
                 </AvatarFallback>
               </Avatar>
               <div className="ptd-psychologist-header-content">

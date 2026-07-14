@@ -9,7 +9,7 @@ import {
   FormMessage,
 } from '@/components/ui/form'
 import { cn } from '@/lib/utils'
-import { formatPhone } from '@/utils/formatPhone'
+import { Mask } from '@/utils/mask'
 
 import './step-contact-address.css'
 import type { CreatePatientFormData } from '@/validators/patients/form/create-patient-schema'
@@ -36,7 +36,7 @@ export function StepContactAddress() {
                       id="phoneNumber"
                       value={field.value ?? ''}
                       onChange={(e) =>
-                        field.onChange(formatPhone(e.target.value))
+                        field.onChange(Mask.phone(e.target.value))
                       }
                       onBlur={field.onBlur}
                       ref={field.ref}

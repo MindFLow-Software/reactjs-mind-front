@@ -19,10 +19,9 @@ import { CardSection } from './card-section'
 
 import './patient-info.css'
 import { Time } from '@/utils/time'
-import { formatCPF } from '@/utils/formatCPF'
-import { formatPhone } from '@/utils/formatPhone'
+import { Mask } from '@/utils/mask'
 import type { Gender } from '@/types/shared/enums'
-import { copyToClipboard } from '@/utils/copy-to-clipboard'
+import { Clipboard } from '@/utils/clipboard'
 import type { IPatientProfile } from '@/types/patient-profile/patient-profile'
 
 interface PatientInfoProps {
@@ -124,8 +123,8 @@ export function PatientInfo({ patient }: PatientInfoProps) {
     ? Time.toBrazilianFormat(new Date(patient.dateOfBirth))
     : null
 
-  const cpf = formatCPF(patient?.cpf)
-  const phone = formatPhone(patient?.phoneNumber)
+  const cpf = Mask.cpf(patient?.cpf)
+  const phone = Mask.phone(patient?.phoneNumber)
 
   return (
     <div className="ph-patient-info">
@@ -153,7 +152,7 @@ export function PatientInfo({ patient }: PatientInfoProps) {
                   <span className="font-mono tabular-nums">{dateOfBirth}</span>
                   <button
                     type="button"
-                    onClick={() => copyToClipboard(dateOfBirth)}
+                    onClick={() => Clipboard.copy(dateOfBirth)}
                     className="ph-copy-btn"
                   >
                     <Copy className="size-3" />
