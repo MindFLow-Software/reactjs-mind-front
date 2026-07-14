@@ -1,5 +1,5 @@
 import { Gender } from '@/types/shared/enums'
-import type { IPatientProfile } from '@/types/patient-profile'
+import type { IPatientProfile } from '@/types/patient-profile/patient-profile'
 import { formatCPF } from '@/utils/formatCPF'
 import { formatPhone } from '@/utils/formatPhone'
 import type { UpdatePatientFormData } from '@/validators/patients/form/update-patient-schema'

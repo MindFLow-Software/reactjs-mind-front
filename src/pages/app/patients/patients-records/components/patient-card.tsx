@@ -4,7 +4,7 @@ import { ptBR } from 'date-fns/locale'
 
 import { Card, CardContent } from '@/components/ui/card'
 import { UserAvatar } from '@/components/user-avatar'
-import type { IPatient } from '@/types/patient'
+import type { IPatient } from '@/types/patient/patient'
 import './patient-card.css'
 
 interface PatientCardProps {

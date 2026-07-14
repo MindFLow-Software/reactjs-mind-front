@@ -1,5 +1,5 @@
 import { api } from '@/lib/axios'
-import type { AppointmentStatus } from '@/types/enums'
+import type { AppointmentStatus } from '@/types/appointment/appointment-status'
 import type { IMutationResult } from '@/types/shared/mutation-result'
 
 export interface UpdateAppointmentRequest {

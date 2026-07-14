@@ -19,13 +19,13 @@ import {
 import { handleFileDownload } from '@/utils/handle-file-download'
 import { formatFileSize } from '@/utils/format-file-size'
 import { cn } from '@/lib/utils'
-import type { AttachmentPatientItem } from '@/types/attachment'
+import type { IAttachmentPatientItem } from '@/types/attachment/attachment-patient-item'
 
 import './file-card.css'
 
 interface FileCardProps {
-  file: AttachmentPatientItem
-  onPreview: (file: AttachmentPatientItem) => void
+  file: IAttachmentPatientItem
+  onPreview: (file: IAttachmentPatientItem) => void
   onDelete: (id: string) => void
 }
 

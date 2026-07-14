@@ -1,4 +1,4 @@
-import type { IAttachment } from './attachment'
+import type { IAttachment } from '@/types/attachment/attachment'
 
 export const DocumentType = {
   RG: 'RG',

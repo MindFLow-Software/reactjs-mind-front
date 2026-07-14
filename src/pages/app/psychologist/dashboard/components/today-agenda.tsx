@@ -6,7 +6,7 @@ import { Link } from 'react-router-dom'
 import { Card, CardContent, CardHeader } from '@/components/ui/card'
 import { cn } from '@/lib/utils'
 import type { IDashboardAppointment } from '@/types/dashboard'
-import { AppointmentStatus } from '@/types/enums'
+import { AppointmentStatus } from '@/types/appointment/appointment-status'
 import { formatTime } from '../helpers'
 import './today-agenda.css'
 

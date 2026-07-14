@@ -1,5 +1,5 @@
 import { api } from '@/lib/axios'
-import type { IPatientProfile } from '@/types/patient-profile'
+import type { IPatientProfile } from '@/types/patient-profile/patient-profile'
 import type { IMutationResult } from '@/types/shared/mutation-result'
 
 export interface CreateOwnPatientProfileBody {

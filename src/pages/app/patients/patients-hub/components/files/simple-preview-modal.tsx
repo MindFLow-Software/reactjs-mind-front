@@ -11,13 +11,13 @@ import {
   DialogDescription,
 } from '@/components/ui/dialog'
 import { handleFileDownload } from '@/utils/handle-file-download'
-import type { AttachmentPatientItem } from '@/types/attachment'
+import type { IAttachmentPatientItem } from '@/types/attachment/attachment-patient-item'
 import './simple-preview-modal.css'
 
 const IMAGE_EXTENSIONS = /\.(jpg|jpeg|png|webp|gif)$/i
 
 interface SimplePreviewModalProps {
-  file: AttachmentPatientItem | null
+  file: IAttachmentPatientItem | null
   onClose: () => void
 }
 

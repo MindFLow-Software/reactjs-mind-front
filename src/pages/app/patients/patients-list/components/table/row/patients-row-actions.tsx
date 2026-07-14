@@ -26,8 +26,8 @@ import {
   TooltipContent,
   TooltipTrigger,
 } from '@/components/ui/tooltip'
-import { PatientProfileStatus } from '@/types/enums'
-import type { IPatient } from '@/types/patient'
+import { PatientProfileStatus } from '@/types/patient-profile/patient-profile-status'
+import type { IPatient } from '@/types/patient/patient'
 import { usePatientQueueStore } from '@/store/use-patient-queue-store'
 
 import { EditPatientModal } from '../../dialogs/edit-patient-modal'

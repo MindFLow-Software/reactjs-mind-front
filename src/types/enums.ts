@@ -5,25 +5,6 @@ export enum Honorific {
   PHD = 'PHD',
 }
 
-export const AppointmentStatus = {
-  SCHEDULED: 'SCHEDULED',
-  ATTENDING: 'ATTENDING',
-  FINISHED: 'FINISHED',
-  CANCELED: 'CANCELED',
-  NOT_ATTEND: 'NOT_ATTEND',
-  RESCHEDULED: 'RESCHEDULED',
-} as const
-export type AppointmentStatus =
-  (typeof AppointmentStatus)[keyof typeof AppointmentStatus]
-
-export const PatientProfileStatus = {
-  ACTIVE: 'ACTIVE',
-  INACTIVE: 'INACTIVE',
-  ARCHIVED: 'ARCHIVED',
-} as const
-export type PatientProfileStatus =
-  (typeof PatientProfileStatus)[keyof typeof PatientProfileStatus]
-
 export const PatientInviteStatus = {
   PENDING: 'PENDING',
   ACCEPTED: 'ACCEPTED',

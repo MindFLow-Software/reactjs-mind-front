@@ -3,7 +3,7 @@ import type {
   IPsychologistProfile,
   IPsychologistPracticeContext,
 } from '@/types/psychologist'
-import type { IPatientProfile } from '@/types/patient-profile'
+import type { IPatientProfile } from '@/types/patient-profile/patient-profile'
 import type { IClinicMemberContext } from '@/types/me/clinic-member-context'
 
 export type IMeResponse = {

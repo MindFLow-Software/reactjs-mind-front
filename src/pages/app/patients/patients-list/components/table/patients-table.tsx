@@ -23,7 +23,7 @@ import type {
   PatientSortOrder,
 } from '@/hooks/use-patient-filters'
 import { cn } from '@/lib/utils'
-import type { IPatient } from '@/types/patient'
+import type { IPatient } from '@/types/patient/patient'
 
 export interface SortState {
   by: PatientSortBy

@@ -16,9 +16,9 @@ import { StatusBadge } from '@/components/ui/status-badge'
 
 import './patient-details-header.css'
 import { copyToClipboard } from '@/utils/copy-to-clipboard'
-import { PatientProfileStatus } from '@/types/enums'
+import { PatientProfileStatus } from '@/types/patient-profile/patient-profile-status'
 import { AccountStatus } from '@/types/auth/account-status'
-import type { IPatientProfile } from '@/types/patient-profile'
+import type { IPatientProfile } from '@/types/patient-profile/patient-profile'
 
 interface PatientDetailsHeaderProps {
   patient: Pick<

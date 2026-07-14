@@ -16,7 +16,7 @@ import { type IAppointmentListItem } from '@/api/appointments/get-appointments'
 import { useAppointmentsList } from './hooks/use-appointments-list'
 import { useCancelAppointment } from './hooks/use-cancel-appointment'
 import { useRescheduleAppointment } from './hooks/use-reschedule-appointment'
-import type { AppointmentStatus } from '@/types/enums'
+import type { AppointmentStatus } from '@/types/appointment/appointment-status'
 import { useHeaderStore } from '@/store/use-header-store'
 import { AppointmentsTableFilters } from './components/appointments-table-filters'
 

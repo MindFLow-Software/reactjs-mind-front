@@ -1,6 +1,6 @@
 import { api } from '@/lib/axios'
-import type { IAppointment } from '@/types/appointment'
-import type { AppointmentStatus } from '@/types/enums'
+import type { IAppointment } from '@/types/appointment/appointment'
+import type { AppointmentStatus } from '@/types/appointment/appointment-status'
 
 export interface IAppointmentListItem extends IAppointment {
   patientName: string

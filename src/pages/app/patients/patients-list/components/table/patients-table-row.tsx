@@ -2,7 +2,7 @@ import { memo } from 'react'
 import { Checkbox } from '@/components/ui/checkbox'
 import { TableCell, TableRow } from '@/components/ui/table'
 import { TooltipProvider } from '@/components/ui/tooltip'
-import type { IPatient } from '@/types/patient'
+import type { IPatient } from '@/types/patient/patient'
 
 import { PatientStatusBadge } from './patient-status-badge'
 import { PatientIdentityCell } from './row/patient-identity-cell'

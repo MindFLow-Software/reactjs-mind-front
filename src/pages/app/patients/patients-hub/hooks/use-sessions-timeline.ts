@@ -1,6 +1,6 @@
 import { createElement, useCallback, useMemo, useState } from 'react'
 
-import type { SessionItem } from '@/types/patient'
+import type { ISessionItem } from '@/types/patient/session-item'
 import { SessionPDFTemplate } from '@/utils/session-pdf-template'
 import { usePdfExport } from './use-pdf-export'
 import { Normalizer } from '@/utils/normalizer'
@@ -13,14 +13,14 @@ const STATUS_MATCH: Record<string, (status: string) => boolean> = {
   NOT_ATTEND: (status) => status === 'NOT_ATTEND',
 }
 
-function getSessionDate(session: SessionItem): Date {
+function getSessionDate(session: ISessionItem): Date {
   return new Date(session.sessionDate ?? session.createdAt)
 }
 
 interface UseSessionsTimelineReturn {
   search: string
   statusFilter: string
-  filteredSessions: SessionItem[]
+  filteredSessions: ISessionItem[]
   isExporting: boolean
   setSearch: (query: string) => void
   setStatusFilter: (s: string) => void
@@ -28,7 +28,7 @@ interface UseSessionsTimelineReturn {
 }
 
 export function useSessionsTimeline(
-  sessions: SessionItem[],
+  sessions: ISessionItem[],
   patientName: string,
 ): UseSessionsTimelineReturn {
   const [search, setSearchState] = useState('')

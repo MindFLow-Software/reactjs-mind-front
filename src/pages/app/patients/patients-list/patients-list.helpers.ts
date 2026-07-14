@@ -1,5 +1,5 @@
-import { PatientProfileStatus } from '@/types/enums'
-import type { IPatient } from '@/types/patient'
+import { PatientProfileStatus } from '@/types/patient-profile/patient-profile-status'
+import type { IPatient } from '@/types/patient/patient'
 import { Normalizer } from '@/utils/normalizer'
 import type { IpatientsQueryParams } from './hooks/use-patients-query-params'
 import type { PatientSortBy } from '@/hooks/use-patient-filters'

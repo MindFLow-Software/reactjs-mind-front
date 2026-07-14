@@ -1,5 +1,6 @@
 import { api } from '@/lib/axios'
-import type { IPatient, IsessionVolume } from '@/types/patient'
+import type { IPatient } from '@/types/patient/patient'
+import type { ISessionVolume } from '@/types/patient/session-volume'
 import type { Gender } from '@/types/shared/enums'
 import type { IPaginationMeta } from '@/types/shared/pagination-meta'
 
@@ -11,7 +12,7 @@ export interface IgetPatientsQueryParams {
   isActive?: boolean
   orderBy?: string
   order?: 'asc' | 'desc'
-  sessionVolume?: IsessionVolume | null
+  sessionVolume?: ISessionVolume | null
 }
 
 export interface IgetPatientProfilesResponse {

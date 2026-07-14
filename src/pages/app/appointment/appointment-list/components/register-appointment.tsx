@@ -46,6 +46,7 @@ import {
   FormMessage,
 } from '@/components/ui/form'
 import { cn } from '@/lib/utils'
+import { AppointmentStatus } from '@/types/appointment/appointment-status'
 
 import {
   createAppointmentSchema,
@@ -85,7 +86,7 @@ function buildDefaultValues(initialDate?: Date): CreateAppointmentData {
     diagnosis: '',
     content: '',
     scheduledAt: buildScheduledAt(initialDate, time),
-    status: 'SCHEDULED',
+    status: AppointmentStatus.SCHEDULED,
   }
 }
 

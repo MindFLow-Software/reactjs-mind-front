@@ -1,5 +1,5 @@
 import { api } from '@/lib/axios'
-import type { IPatientProfile } from '@/types/patient-profile'
+import type { IPatientProfile } from '@/types/patient-profile/patient-profile'
 
 export interface IgetPatientProfileByCpfResponse {
   patient: IPatientProfile | null

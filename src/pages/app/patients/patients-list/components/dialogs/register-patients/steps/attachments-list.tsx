@@ -12,11 +12,11 @@ import { getFileKind, FILE_KIND_STYLES } from '@/utils/file-helpers'
 import { cn } from '@/lib/utils'
 import { Button } from '@/components/ui/button'
 import { DeleteActionButton } from './delete-attachments-button'
-import type { AttachmentPatientItem } from '@/types/attachment'
+import type { IAttachmentPatientItem } from '@/types/attachment/attachment-patient-item'
 
 interface AttachmentsBodyProps {
   isLoading: boolean
-  attachments: AttachmentPatientItem[] | undefined
+  attachments: IAttachmentPatientItem[] | undefined
   isRemoving: boolean
   onRemove: (id: string) => Promise<unknown>
 }

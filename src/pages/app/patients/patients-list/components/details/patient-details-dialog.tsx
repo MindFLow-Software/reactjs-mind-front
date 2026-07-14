@@ -5,7 +5,7 @@ import { useQuery } from '@tanstack/react-query'
 import { Loader2 } from 'lucide-react'
 
 import { getPatientProfileDetails } from '@/api/patient-profiles/get-patient-profile-details'
-import type { SessionItem } from '@/types/patient'
+import type { ISessionItem } from '@/types/patient/session-item'
 import {
   DialogContent,
   DialogDescription,
@@ -26,7 +26,7 @@ interface PatientDetailsDialogProps {
 
 export function PatientDetailsDialog({ patientId }: PatientDetailsDialogProps) {
   const [pageIndex, setPageIndex] = useState(0)
-  const [selectedSession, setSelectedSession] = useState<SessionItem | null>(
+  const [selectedSession, setSelectedSession] = useState<ISessionItem | null>(
     null,
   )
 

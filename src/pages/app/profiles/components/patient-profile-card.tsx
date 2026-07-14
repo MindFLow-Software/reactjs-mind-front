@@ -14,8 +14,8 @@ import { TitleIcon } from '@/components/title-icon'
 import { ActiveBadge } from '@/components/active-badge'
 
 import { Time } from '@/utils/time'
-import { PatientProfileStatus } from '@/types/enums'
-import type { IPatientProfile } from '@/types/patient-profile'
+import { PatientProfileStatus } from '@/types/patient-profile/patient-profile-status'
+import type { IPatientProfile } from '@/types/patient-profile/patient-profile'
 
 import './patient-profile-card.css'
 

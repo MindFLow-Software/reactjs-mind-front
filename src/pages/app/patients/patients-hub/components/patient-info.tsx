@@ -23,7 +23,7 @@ import { formatCPF } from '@/utils/formatCPF'
 import { formatPhone } from '@/utils/formatPhone'
 import type { Gender } from '@/types/shared/enums'
 import { copyToClipboard } from '@/utils/copy-to-clipboard'
-import type { IPatientProfile } from '@/types/patient-profile'
+import type { IPatientProfile } from '@/types/patient-profile/patient-profile'
 
 interface PatientInfoProps {
   patient: Pick<

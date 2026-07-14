@@ -1,4 +1,4 @@
-import { AppointmentStatus } from '@/types/enums'
+import { AppointmentStatus } from '@/types/appointment/appointment-status'
 
 export const translatedAppointmentStatus: Record<AppointmentStatus, string> = {
   [AppointmentStatus.SCHEDULED]: 'Agendado',

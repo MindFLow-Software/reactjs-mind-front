@@ -4,20 +4,20 @@ import { toast } from 'sonner'
 
 import { deleteAttachment } from '@/api/attachments/delete-attachment'
 import { getPatientAttachments } from '@/api/attachments/get-patient-attachments'
-import type { AttachmentPatientItem } from '@/types/attachment'
+import type { IAttachmentPatientItem } from '@/types/attachment/attachment-patient-item'
 import type { FileTypeFilter } from '../components/files/file-type-filter'
 import { getFileType } from '../components/files/file-type-filter'
 
 interface UsePatientFilesReturn {
-  attachments: AttachmentPatientItem[]
-  filtered: AttachmentPatientItem[]
+  attachments: IAttachmentPatientItem[]
+  filtered: IAttachmentPatientItem[]
   counts: Record<FileTypeFilter, number>
   typeFilter: FileTypeFilter
-  previewFile: AttachmentPatientItem | null
+  previewFile: IAttachmentPatientItem | null
   isLoading: boolean
   isDeleting: boolean
   setTypeFilter: (f: FileTypeFilter) => void
-  openPreview: (file: AttachmentPatientItem) => void
+  openPreview: (file: IAttachmentPatientItem) => void
   closePreview: () => void
   handleDelete: (attachmentId: string) => void
 }
@@ -25,7 +25,7 @@ interface UsePatientFilesReturn {
 export function usePatientFiles(patientId: string): UsePatientFilesReturn {
   const queryClient = useQueryClient()
   const [typeFilter, setTypeFilterState] = useState<FileTypeFilter>('all')
-  const [previewFile, setPreviewFile] = useState<AttachmentPatientItem | null>(
+  const [previewFile, setPreviewFile] = useState<IAttachmentPatientItem | null>(
     null,
   )
 
@@ -77,7 +77,7 @@ export function usePatientFiles(patientId: string): UsePatientFilesReturn {
     setTypeFilterState(f)
   }, [])
 
-  const openPreview = useCallback((file: AttachmentPatientItem) => {
+  const openPreview = useCallback((file: IAttachmentPatientItem) => {
     setPreviewFile(file)
   }, [])
 

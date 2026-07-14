@@ -1,7 +1,7 @@
-import type { PatientProfileStatus } from '@/types/enums'
+import type { PatientProfileStatus } from '@/types/patient-profile/patient-profile-status'
 import type { Gender } from '@/types/shared/enums'
 
-export interface IPatientProfile {
+export type IPatientProfile = {
   id: string
   userId: string | null
   psychologistPracticeContextId: string | null
@@ -16,10 +16,4 @@ export interface IPatientProfile {
   status: PatientProfileStatus
   archivedAt: string | null
   createdAt: string
-}
-
-export interface IPatientProfileAccessCode {
-  code: string
-  expiresAt: string
-  patientProfileId: string
 }

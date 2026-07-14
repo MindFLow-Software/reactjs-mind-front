@@ -2,7 +2,7 @@ import { Badge } from '@/components/ui/badge'
 import { TableCell } from '@/components/ui/table'
 import { cn } from '@/lib/utils'
 import { GENDER_CONFIG } from '@/utils/gender-config'
-import type { IPatient } from '@/types/patient'
+import type { IPatient } from '@/types/patient/patient'
 
 interface PatientGenderCellProps {
   gender: IPatient['gender']

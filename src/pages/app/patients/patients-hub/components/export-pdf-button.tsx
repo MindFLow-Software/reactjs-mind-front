@@ -5,12 +5,12 @@ import { Download, Loader2 } from 'lucide-react'
 
 import { Button } from '@/components/ui/button'
 import { usePdfExport } from '../hooks/use-pdf-export'
-import type { SessionItem } from '@/types/patient'
+import type { ISessionItem } from '@/types/patient/session-item'
 
 import { Normalizer } from '@/utils/normalizer'
 
 interface ExportButtonProps {
-  session: SessionItem
+  session: ISessionItem
   patientName: string
   document: ReactElement
 }

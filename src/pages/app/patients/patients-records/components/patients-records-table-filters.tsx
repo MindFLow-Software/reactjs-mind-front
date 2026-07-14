@@ -18,7 +18,7 @@ import {
   SelectValue,
   SelectGroup,
 } from '@/components/ui/select'
-import type { IsessionVolume } from '@/types/patient'
+import type { ISessionVolume } from '@/types/patient/session-volume'
 import { PatientsSearchInput } from '../../components/patients-search-input'
 import './patients-records-table-filters.css'
 
@@ -30,7 +30,7 @@ interface FilterControl<T> {
 interface PatientsRecordsTableFiltersProps {
   search: FilterControl<string>
   gender: FilterControl<string>
-  sessionOrder: FilterControl<IsessionVolume>
+  sessionOrder: FilterControl<ISessionVolume>
   onClearFilters: () => void
 }
 
@@ -90,7 +90,7 @@ export function PatientsRecordsTableFilters({
           {/* Sessões */}
           <Select
             value={sessionOrder.value}
-            onValueChange={(v) => sessionOrder.onChange(v as IsessionVolume)}
+            onValueChange={(v) => sessionOrder.onChange(v as ISessionVolume)}
           >
             <SelectTrigger className="pr-flt-select">
               <div className="pr-flt-select-inner">

@@ -23,12 +23,12 @@ import {
   FINISHED_SESSION_STATUSES,
   getSessionStatusLabel,
 } from '@/utils/mappers'
-import type { SessionItem } from '@/types/patient'
+import type { ISessionItem } from '@/types/patient/session-item'
 
 interface SessionHistoryTableProps {
-  sessions: SessionItem[]
+  sessions: ISessionItem[]
   pagination: IPaginationState
-  onSelectSession: (session: SessionItem) => void
+  onSelectSession: (session: ISessionItem) => void
 }
 
 function isFinishedSession(status: string): boolean {

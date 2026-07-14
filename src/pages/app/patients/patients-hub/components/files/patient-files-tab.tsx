@@ -7,7 +7,7 @@ import { toast } from 'sonner'
 
 import { getPatientAttachments } from '@/api/attachments/get-patient-attachments'
 import { deleteAttachment } from '@/api/attachments/delete-attachment'
-import type { AttachmentPatientItem } from '@/types/attachment'
+import type { IAttachmentPatientItem } from '@/types/attachment/attachment-patient-item'
 import { FileUploadZone } from './file-upload-zone'
 import { FileTypeFilter, getFileType } from './file-type-filter'
 import type { FileTypeFilter as FileTypeFilterEnum } from './file-type-filter'
@@ -26,7 +26,7 @@ export function PatientFilesTab({ patientId }: { patientId: string }) {
   const queryClient = useQueryClient()
 
   const [typeFilter, setTypeFilter] = useState<FileTypeFilterEnum>('all')
-  const [previewFile, setPreviewFile] = useState<AttachmentPatientItem | null>(
+  const [previewFile, setPreviewFile] = useState<IAttachmentPatientItem | null>(
     null,
   )
 

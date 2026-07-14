@@ -1,4 +1,4 @@
-import type { AppointmentStatus } from '@/types/enums'
+import type { AppointmentStatus } from '@/types/appointment/appointment-status'
 import type {
   Expertise,
   Gender,

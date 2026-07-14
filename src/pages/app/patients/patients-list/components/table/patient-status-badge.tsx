@@ -1,6 +1,6 @@
 import { Badge } from '@/components/ui/badge'
 import { translatedPatientProfileStatus } from '@/constants/translated-patient-profile-status'
-import { PatientProfileStatus } from '@/types/enums'
+import { PatientProfileStatus } from '@/types/patient-profile/patient-profile-status'
 import { fn } from '@/utils/fn'
 
 type IpatientStatusBadge = {

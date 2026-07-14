@@ -1,7 +1,7 @@
 import { useState } from 'react'
 
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
-import { PatientProfileStatus } from '@/types/enums'
+import { PatientProfileStatus } from '@/types/patient-profile/patient-profile-status'
 import type { IgetPatientProfileDetailsResponse } from '@/api/patient-profiles/get-patient-profile-details'
 
 import { PatientDetailsHeader } from './patient-details-header'

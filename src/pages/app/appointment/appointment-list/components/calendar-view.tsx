@@ -23,7 +23,7 @@ import {
 import { Button } from '@/components/ui/button'
 import { cn } from '@/lib/utils'
 import { type IAppointmentListItem } from '@/api/appointments/get-appointments'
-import { AppointmentStatus } from '@/types/enums'
+import { AppointmentStatus } from '@/types/appointment/appointment-status'
 import { translatedAppointmentStatus } from '@/constants/translated-appointment-status'
 
 import './calendar-view.css'

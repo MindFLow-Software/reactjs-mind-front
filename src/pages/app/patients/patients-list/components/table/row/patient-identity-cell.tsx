@@ -1,7 +1,7 @@
 import { TableCell } from '@/components/ui/table'
 import { UserAvatar } from '@/components/user-avatar'
 import { formatCPF } from '@/utils/formatCPF'
-import type { IPatient } from '@/types/patient'
+import type { IPatient } from '@/types/patient/patient'
 
 interface PatientIdentityCellProps {
   patient: Pick<

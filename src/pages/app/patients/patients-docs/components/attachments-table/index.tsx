@@ -14,7 +14,7 @@ import { Skeleton } from '@/components/ui/skeleton'
 import { Checkbox } from '@/components/ui/checkbox'
 import { AttachmentsTableRow } from './attachments-table-row'
 import { BulkDeleteAction } from '../bulk-delete-action'
-import type { AttachmentListItem as Attachment } from '@/types/attachment'
+import type { IAttachmentListItem as Attachment } from '@/types/attachment/attachment-list-item'
 import './attachments-table.css'
 
 interface AttachmentsTableProps {

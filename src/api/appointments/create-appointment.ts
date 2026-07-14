@@ -1,11 +1,11 @@
 import { api } from '@/lib/axios'
-import type { RegisterAppointmentResponse } from '@/types/appointment'
+import type { IRegisterAppointmentResponse } from '@/types/appointment/register-appointment-response'
 import type { CreateAppointmentData } from '@/validators/appointments/form/create-appointment-schema'
 
 export async function registerAppointment(
   data: CreateAppointmentData,
-): Promise<RegisterAppointmentResponse> {
-  const response = await api.post<RegisterAppointmentResponse>(
+): Promise<IRegisterAppointmentResponse> {
+  const response = await api.post<IRegisterAppointmentResponse>(
     '/appointments',
     data,
   )

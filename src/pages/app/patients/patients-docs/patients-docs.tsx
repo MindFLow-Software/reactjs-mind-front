@@ -8,7 +8,7 @@ import { Pagination } from '@/components/pagination'
 import { useHeaderStore } from '@/store/use-header-store'
 import { PatientsDataBlock } from '../components/patients-data-block'
 import { PatientsPageShell } from '../components/patients-page-shell'
-import type { AttachmentListItem as Attachment } from '@/types/attachment'
+import type { IAttachmentListItem as Attachment } from '@/types/attachment/attachment-list-item'
 
 import { useAttachmentsFilters } from '@/hooks/use-attachments-filters'
 import { useAttachmentsListQuery } from './hooks/use-attachments-list-query'

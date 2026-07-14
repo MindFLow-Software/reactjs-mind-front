@@ -1,5 +1,5 @@
 import type { IPaginationMeta } from '@/types/shared/pagination-meta'
-import type { IPatient } from '@/types/patient'
+import type { IPatient } from '@/types/patient/patient'
 
 type PatientStatus = 'ACTIVE' | 'REJECTED' | 'PENDING' | 'BLOCKED'
 
