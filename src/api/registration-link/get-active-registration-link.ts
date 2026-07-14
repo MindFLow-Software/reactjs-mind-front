@@ -1,8 +1,8 @@
 import { api } from '@/lib/axios'
-import type { RegistrationLink } from '@/types/invite'
+import type { IRegistrationLink } from '@/types/invite/registration-link'
 
-interface IGetActiveRegistrationLink {
-  registrationLink: RegistrationLink
+type IGetActiveRegistrationLink = {
+  registrationLink: IRegistrationLink
 }
 
 export async function getActiveRegistrationLink(): Promise<IGetActiveRegistrationLink> {

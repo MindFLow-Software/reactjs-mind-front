@@ -1,13 +1,13 @@
 import { api } from '@/lib/axios'
-import type { IclaimCanidate } from '@/types/claim-candidates'
+import type { IClaimCandidate } from '@/types/claim/claim-candidate'
 
-type IclaimCandidatesResponse = {
-  candidates: IclaimCanidate[]
+type IClaimCandidatesResponse = {
+  candidates: IClaimCandidate[]
 }
 
 export const fetchClaimCandidates =
-  async (): Promise<IclaimCandidatesResponse> => {
-    const response = await api.get<IclaimCandidatesResponse>(
+  async (): Promise<IClaimCandidatesResponse> => {
+    const response = await api.get<IClaimCandidatesResponse>(
       '/me/patient-profiles/claim-candidates',
     )
     return response.data

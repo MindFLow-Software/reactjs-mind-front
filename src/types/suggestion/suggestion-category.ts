@@ -1,0 +1,8 @@
+export enum SuggestionCategory {
+  UI_UX = 'UI_UX',
+  SCHEDULING = 'SCHEDULING',
+  REPORTS = 'REPORTS',
+  PRIVACY_LGPD = 'PRIVACY_LGPD',
+  INTEGRATIONS = 'INTEGRATIONS',
+  OTHERS = 'OTHERS',
+}

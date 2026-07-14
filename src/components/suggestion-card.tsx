@@ -2,7 +2,7 @@
 
 import { ChevronUp, Check } from 'lucide-react'
 import { cn } from '@/lib/utils'
-import type { ISuggestion } from '@/types/suggestion'
+import type { ISuggestion } from '@/types/suggestion/suggestion'
 import { Dialog, DialogTrigger } from '@/components/ui/dialog'
 import { SuggestionDetailModalContent } from '@/components/suggestion-detail-modal'
 import { SUGGESTION_CATEGORY_DISPLAY } from '@/constants/suggestion-category-display'

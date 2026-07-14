@@ -1,6 +1,6 @@
 import { api } from '@/lib/axios'
 import type { IMutationResult } from '@/types/shared/mutation-result'
-import type { IPatientProfileClaimRequest } from '@/types/patient-profile-claim-request'
+import type { IPatientProfileClaimRequest } from '@/types/claim/patient-profile-claim-request'
 
 export async function createClaimRequest(
   patientProfileId: string,

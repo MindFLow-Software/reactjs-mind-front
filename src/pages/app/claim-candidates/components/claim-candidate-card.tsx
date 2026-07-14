@@ -6,12 +6,12 @@ import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardFooter, CardHeader } from '@/components/ui/card'
 import { translatedHonorific } from '@/constants/translated-honorific'
-import type { IclaimCanidate } from '@/types/claim-candidates'
+import type { IClaimCandidate } from '@/types/claim/claim-candidate'
 
 import './claim-candidate-card.css'
 
 interface ClaimCandidateCardProps {
-  candidate: IclaimCanidate
+  candidate: IClaimCandidate
   isDisabled: boolean
   onRequestClaim: (patientProfileId: string) => void
 }

@@ -5,7 +5,7 @@ import {
   type ISubmitPatientProfileClaimRequestParams,
 } from '@/api/patient-profiles/submit-patient-profile-claim-request'
 import type { IMutationResult } from '@/types/shared/mutation-result'
-import type { IPatientProfileClaimRequest } from '@/types/patient-profile-claim-request'
+import type { IPatientProfileClaimRequest } from '@/types/claim/patient-profile-claim-request'
 
 interface UseSubmitClaimRequestOptions {
   onReviewed?: () => void

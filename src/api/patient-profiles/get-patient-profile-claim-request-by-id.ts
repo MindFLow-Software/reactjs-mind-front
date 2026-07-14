@@ -1,5 +1,5 @@
 import { api } from '@/lib/axios'
-import type { IPatientProfileClaimRequestDetail } from '@/types/patient-profile-claim-request'
+import type { IPatientProfileClaimRequestDetail } from '@/types/claim/patient-profile-claim-request-detail'
 
 type IgetPatientProfileClaimRequestByIdResponse = {
   request: IPatientProfileClaimRequestDetail | null

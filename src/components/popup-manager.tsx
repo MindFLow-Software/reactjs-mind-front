@@ -1,7 +1,7 @@
 'use client'
 
 import { useCallback } from 'react'
-import { PopupType } from '@/types/enums'
+import { PopupType } from '@/types/popup/popup-type'
 import { useUnseenPopups } from './popups/hooks/use-unseen-popups'
 import { useMarkPopupViewed } from './popups/hooks/use-mark-popup-viewed'
 import { WelcomeModal } from './popups/welcome-modal'

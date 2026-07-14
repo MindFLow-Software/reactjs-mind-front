@@ -1,5 +1,5 @@
 import { api } from '@/lib/axios'
-import type { IPatientInviteMetadata } from '@/types/invite'
+import type { IPatientInviteMetadata } from '@/types/invite/patient-invite-metadata'
 
 export const validatePatientInvite = async (
   token: string | undefined,

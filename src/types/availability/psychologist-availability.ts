@@ -1,4 +1,4 @@
-export interface IPsychologistAvailability {
+export type IPsychologistAvailability = {
   id: string
   psychologistPracticeContextId: string
   dayOfWeek: number

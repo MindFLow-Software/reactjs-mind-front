@@ -9,7 +9,7 @@ import {
   TooltipContent,
   TooltipTrigger,
 } from '@/components/ui/tooltip'
-import type { IPatientProfileClaimRequest } from '@/types/patient-profile-claim-request'
+import type { IPatientProfileClaimRequest } from '@/types/claim/patient-profile-claim-request'
 
 import { ClaimRequestStatusBadge } from './claim-request-status-badge'
 

@@ -3,7 +3,7 @@
 import { useState } from 'react'
 import { MessageCircle, Paperclip, AtSign, Bold, Eye } from 'lucide-react'
 import { cn } from '@/lib/utils'
-import type { ISuggestion } from '@/types/suggestion'
+import type { ISuggestion } from '@/types/suggestion/suggestion'
 import { Textarea } from '@/components/ui/textarea'
 import { buildAttachmentUrl } from '@/components/suggestion-detail-config'
 import { getInitials } from '@/utils/get-initials'

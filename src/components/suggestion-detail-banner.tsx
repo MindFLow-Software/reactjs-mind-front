@@ -2,7 +2,7 @@
 
 import { Link2, ChevronRight, Check } from 'lucide-react'
 import { cn } from '@/lib/utils'
-import type { SuggestionStatus } from '@/types/enums'
+import type { SuggestionStatus } from '@/types/suggestion/suggestion-status'
 import {
   SUGGESTION_STATUS_DISPLAY,
   SUGGESTION_BANNER_STEPS,

@@ -6,7 +6,7 @@ import {
 import { toast } from 'sonner'
 import { toggleSuggestionLike } from '@/api/suggestions/toggle-suggestion-like'
 import { getApiErrorMessage } from '@/lib/get-api-error-message'
-import type { ISuggestion } from '@/types/suggestion'
+import type { ISuggestion } from '@/types/suggestion/suggestion'
 
 interface UseToggleSuggestionLikeOptions {
   userId?: string

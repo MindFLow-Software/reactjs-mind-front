@@ -1,4 +1,4 @@
-import type { SuggestionStatus } from '@/types/enums'
+import type { SuggestionStatus } from '@/types/suggestion/suggestion-status'
 
 export interface SuggestionStatusDisplay {
   label: string

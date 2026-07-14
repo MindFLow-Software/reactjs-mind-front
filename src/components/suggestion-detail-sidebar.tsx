@@ -11,7 +11,7 @@ import {
 import { format, formatDistanceToNow } from 'date-fns'
 import { ptBR } from 'date-fns/locale'
 import { cn } from '@/lib/utils'
-import type { ISuggestion } from '@/types/suggestion'
+import type { ISuggestion } from '@/types/suggestion/suggestion'
 import {
   SUGGESTION_TIMELINE_STEPS,
   SUGGESTION_TIMELINE_PROGRESS,

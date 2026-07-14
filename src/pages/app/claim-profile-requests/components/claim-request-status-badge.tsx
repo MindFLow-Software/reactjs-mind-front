@@ -2,7 +2,7 @@ import { CircleCheck, CircleX, Clock } from 'lucide-react'
 
 import { fn } from '@/utils/fn'
 import { Badge } from '@/components/ui/badge'
-import { ClaimRequestStatus } from '@/types/enums'
+import { ClaimRequestStatus } from '@/types/claim/claim-request-status'
 import { translatedClaimRequestStatus } from '@/constants/translated-claim-request-status'
 
 import './claim-request-status-badge.css'

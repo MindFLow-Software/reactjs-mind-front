@@ -1,4 +1,4 @@
-import type { SuggestionCategory } from '@/types/enums'
+import type { SuggestionCategory } from '@/types/suggestion/suggestion-category'
 
 export interface SuggestionCategoryDisplay {
   label: string

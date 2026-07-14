@@ -1,14 +1,7 @@
-import type { PopupType } from '@/types/enums'
+import type { PopupStatus } from '@/types/popup/popup-status'
+import type { PopupType } from '@/types/popup/popup-type'
 
-export const PopupStatus = {
-  DRAFT: 'DRAFT',
-  ACTIVE: 'ACTIVE',
-  PAUSED: 'PAUSED',
-  ARCHIVED: 'ARCHIVED',
-} as const
-export type PopupStatus = (typeof PopupStatus)[keyof typeof PopupStatus]
-
-export interface IPopup {
+export type IPopup = {
   id: string
   internalName: string
   title: string | null

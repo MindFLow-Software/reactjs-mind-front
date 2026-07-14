@@ -4,7 +4,7 @@ import './welcome-modal.css'
 import { useState, useEffect, useCallback } from 'react'
 import { X, ChevronRight, Brain } from 'lucide-react'
 import { Button } from '@/components/ui/button'
-import type { IPopup } from '@/types/popup'
+import type { IPopup } from '@/types/popup/popup'
 import { cn } from '@/lib/utils'
 
 interface WelcomeModalProps {

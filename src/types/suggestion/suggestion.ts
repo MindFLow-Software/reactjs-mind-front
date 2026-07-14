@@ -1,6 +1,7 @@
-import type { SuggestionCategory, SuggestionStatus } from '@/types/enums'
+import type { SuggestionCategory } from '@/types/suggestion/suggestion-category'
+import type { SuggestionStatus } from '@/types/suggestion/suggestion-status'
 
-export interface ISuggestion {
+export type ISuggestion = {
   id: string
   psychologistProfileId: string
   psychologistName: string | null

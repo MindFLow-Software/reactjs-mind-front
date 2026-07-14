@@ -47,7 +47,7 @@ import {
 } from '@/components/ui/dialog'
 import { getSuggestions } from '@/api/suggestions/get-suggestions'
 import type { UpdateSuggestionParams } from '@/api/suggestions/update-suggestion-status'
-import type { ISuggestion } from '@/types/suggestion'
+import type { ISuggestion } from '@/types/suggestion/suggestion'
 import {
   Tooltip,
   TooltipContent,

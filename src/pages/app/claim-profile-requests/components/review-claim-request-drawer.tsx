@@ -12,7 +12,7 @@ import {
 import { Button } from '@/components/ui/button'
 import { TitleIcon } from '@/components/title-icon'
 import { SecurityNotice } from '@/components/security-notice'
-import { ClaimRequestStatus } from '@/types/enums'
+import { ClaimRequestStatus } from '@/types/claim/claim-request-status'
 import type { ClaimRequestAction } from '@/api/patient-profiles/submit-patient-profile-claim-request'
 
 import { ClaimComparisonCard } from './claim-comparison-card'

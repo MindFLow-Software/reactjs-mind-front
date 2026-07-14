@@ -29,7 +29,7 @@ import {
   editSuggestionSchema,
   type EditSuggestionSchema,
 } from '@/validators/suggestions/form/edit-suggestion-schema'
-import type { ISuggestion } from '@/types/suggestion'
+import type { ISuggestion } from '@/types/suggestion/suggestion'
 import type { UpdateSuggestionParams } from '@/api/suggestions/update-suggestion-status'
 import { translatedSuggestionCategory } from '@/constants/translated-suggestion-category'
 import './edit-suggestion-form.css'

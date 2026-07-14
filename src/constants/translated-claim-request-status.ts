@@ -1,4 +1,4 @@
-import { ClaimRequestStatus } from '@/types/enums'
+import { ClaimRequestStatus } from '@/types/claim/claim-request-status'
 
 export const translatedClaimRequestStatus = {
   [ClaimRequestStatus.APPROVED]: 'Aprovado',

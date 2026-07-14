@@ -5,7 +5,7 @@ import { useEffect, useState, useCallback, useMemo } from 'react'
 import { createPortal } from 'react-dom'
 import { X } from 'lucide-react'
 import { cn } from '@/lib/utils'
-import type { IPopup } from '@/types/popup'
+import type { IPopup } from '@/types/popup/popup'
 import {
   ACHIEVEMENT_VARIANTS,
   CONFETTI_COLORS,

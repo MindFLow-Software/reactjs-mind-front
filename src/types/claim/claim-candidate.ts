@@ -1,6 +1,6 @@
 import type { Honorific } from '@/types/shared/enums'
 
-export type IclaimCanidate = {
+export type IClaimCandidate = {
   createdAt: Date
   patientCpf: string
   patientProfileId: string

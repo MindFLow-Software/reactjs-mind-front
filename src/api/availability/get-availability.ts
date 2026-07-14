@@ -1,5 +1,5 @@
 import { api } from '@/lib/axios'
-import type { IPsychologistAvailability } from '@/types/availability'
+import type { IPsychologistAvailability } from '@/types/availability/psychologist-availability'
 
 export async function getAvailability(): Promise<IPsychologistAvailability[]> {
   const response = await api.get<IPsychologistAvailability[]>('/availabilities')
