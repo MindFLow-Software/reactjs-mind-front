@@ -6,7 +6,10 @@ import { Loader2, User, Briefcase } from 'lucide-react'
 
 import { cn } from '@/lib/utils'
 
-import { translatedLanguages, type IPsychologistProfile } from '@/types/psychologist'
+import {
+  translatedLanguages,
+  type IPsychologistProfile,
+} from '@/types/psychologist'
 import { Honorific, Languages } from '@/types/enums'
 import { useUpdatePsychologistProfile } from '../hooks/use-update-psychologist-profile'
 import { EXPERTISE_TRANSLATIONS } from '@/utils/mappers'
@@ -24,7 +27,6 @@ import {
   DialogDescription,
   DialogClose,
 } from '@/components/ui/dialog'
-
 
 import {
   Select,
@@ -111,7 +113,8 @@ export function EditPsychologistProfile({
     )
   }
 
-  const { mutateAsync: updateProfileFn, isPending } = useUpdatePsychologistProfile()
+  const { mutateAsync: updateProfileFn, isPending } =
+    useUpdatePsychologistProfile()
 
   async function onSubmit(data: UpdatePsychologistData) {
     await updateProfileFn(data)
@@ -171,12 +174,12 @@ export function EditPsychologistProfile({
                 render={({ field }) => (
                   <Field className="gap-1 w-full">
                     <FieldLabel htmlFor="honorific">Honorífico(a)</FieldLabel>
-                    <Select
-                      value={field.value}
-                      onValueChange={field.onChange}
-                    >
+                    <Select value={field.value} onValueChange={field.onChange}>
                       <SelectTrigger>
-                        <SelectValue id="honorific" placeholder="Honorífico(a)" />
+                        <SelectValue
+                          id="honorific"
+                          placeholder="Honorífico(a)"
+                        />
                       </SelectTrigger>
                       <SelectContent>
                         <SelectGroup>
@@ -264,7 +267,7 @@ export function EditPsychologistProfile({
                           className={cn(
                             'acc-edit-badge',
                             selectedLanguages.includes(language) &&
-                            'acc-edit-badge-selected',
+                              'acc-edit-badge-selected',
                           )}
                         >
                           {translatedLanguages[language]}

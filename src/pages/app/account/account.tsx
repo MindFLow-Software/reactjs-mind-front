@@ -66,9 +66,7 @@ export function MockPsychologistProfilePage() {
       <Helmet title="Minha Conta" />
 
       <div className="acc-page-root">
-        {psychologist && (
-          <PsychologistProfileCard />
-        )}
+        {psychologist && <PsychologistProfileCard />}
 
         <div className="acc-page-heatmap-wrap">
           <ActivityHeatmap />

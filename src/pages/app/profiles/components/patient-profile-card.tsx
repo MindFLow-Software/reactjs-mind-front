@@ -38,7 +38,9 @@ export function PatientProfileCard({ profile, onSelect }: IPatientProfileCard) {
             <User />
           </TitleIcon>
           <div>
-            <CardTitle className="text-sm text-foreground">{fullName}</CardTitle>
+            <CardTitle className="text-sm text-foreground">
+              {fullName}
+            </CardTitle>
             <CardDescription className="flex items-center gap-1 text-sm text-muted-foreground">
               {subtitle}
               {isLinked && <BadgeCheck size={16} className="text-green-500" />}

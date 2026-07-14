@@ -57,7 +57,11 @@ import { Button } from '@/components/ui/button'
 import { Calendar } from '@/components/ui/calendar'
 import { Separator } from '@/components/ui/separator'
 import { MaskedInput } from '@/components/maked-input'
-import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover'
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from '@/components/ui/popover'
 
 type IParams = {
   hash: string
@@ -71,26 +75,25 @@ export function RegisterPatientViaRegistrationLinkPage() {
   const [showPassword, setShowPassword] = useState(false)
 
   const { data: registrationLinkInfo, isError } = useRegistrationLink(hash)
-  const { registerPatientViaRegistrationLink, isRegisteringPatient } = useRegisterPatientViaRegistrationLink(hash)
+  const { registerPatientViaRegistrationLink, isRegisteringPatient } =
+    useRegisterPatientViaRegistrationLink(hash)
 
   if (isError) navigate('/sign-in')
 
   const form = useForm<RegisterPatientViaRegistrationLinkData>({
-    resolver: zodResolver(registerPatientViaRegistrationLinkSchema) as Resolver<RegisterPatientViaRegistrationLinkData>,
+    resolver: zodResolver(
+      registerPatientViaRegistrationLinkSchema,
+    ) as Resolver<RegisterPatientViaRegistrationLinkData>,
     defaultValues: {
       firstName: '',
       lastName: '',
-    }
+    },
   })
 
   const {
     control,
     handleSubmit,
-    formState: {
-      errors,
-      isDirty,
-      isValid
-    },
+    formState: { errors, isDirty, isValid },
   } = form
 
   const togglePasswordVisibility = useCallback(
@@ -115,8 +118,9 @@ export function RegisterPatientViaRegistrationLinkPage() {
             Crie sua conta para iniciar seu acompanhamento
           </CardTitle>
           <CardDescription className="text-center">
-            Preencha seus dados para criar sua conta. Ao finalizar,
-            seu perfil será vinculado automaticamente ao profissional responsável pelo convite.
+            Preencha seus dados para criar sua conta. Ao finalizar, seu perfil
+            será vinculado automaticamente ao profissional responsável pelo
+            convite.
           </CardDescription>
         </div>
         <div className="flex items-center gap-2 border rounded-md py-2 px-4">
@@ -126,7 +130,9 @@ export function RegisterPatientViaRegistrationLinkPage() {
           <div className="flex flex-col gap-1">
             <p className="text-sm font-medium">{`${honorifc} ${registrationLinkInfo?.professionalName}`}</p>
             <div>
-              <p className="text-xs text-muted-foreground">CRP {registrationLinkInfo?.psychologistCrp}</p>
+              <p className="text-xs text-muted-foreground">
+                CRP {registrationLinkInfo?.psychologistCrp}
+              </p>
               <p className="text-xs text-muted-foreground">
                 Você está realizando o cadastro por convite desta profissional.
               </p>
@@ -147,7 +153,9 @@ export function RegisterPatientViaRegistrationLinkPage() {
                   control={control}
                   render={({ field }) => (
                     <Field className="gap-1">
-                      <FieldLabel className="text-xs font-medium text-foreground/70">Nome</FieldLabel>
+                      <FieldLabel className="text-xs font-medium text-foreground/70">
+                        Nome
+                      </FieldLabel>
                       <Input
                         {...field}
                         type="text"
@@ -163,7 +171,9 @@ export function RegisterPatientViaRegistrationLinkPage() {
                   control={control}
                   render={({ field }) => (
                     <Field className="gap-1">
-                      <FieldLabel className="text-xs font-medium text-foreground/70">Sobrenome</FieldLabel>
+                      <FieldLabel className="text-xs font-medium text-foreground/70">
+                        Sobrenome
+                      </FieldLabel>
                       <Input
                         {...field}
                         type="text"
@@ -182,7 +192,9 @@ export function RegisterPatientViaRegistrationLinkPage() {
                   control={control}
                   render={({ field }) => (
                     <Field className="gap-1">
-                      <FieldLabel className="text-xs font-medium text-foreground/70">Email</FieldLabel>
+                      <FieldLabel className="text-xs font-medium text-foreground/70">
+                        Email
+                      </FieldLabel>
                       <Input
                         {...field}
                         type="email"
@@ -198,11 +210,13 @@ export function RegisterPatientViaRegistrationLinkPage() {
                   control={control}
                   render={({ field }) => (
                     <Field className="gap-1">
-                      <FieldLabel className="text-xs font-medium text-foreground/70">Senha</FieldLabel>
+                      <FieldLabel className="text-xs font-medium text-foreground/70">
+                        Senha
+                      </FieldLabel>
                       <div className="relative">
                         <Input
                           {...field}
-                          type={showPassword ? "text" : "password"}
+                          type={showPassword ? 'text' : 'password'}
                           placeholder="Crie uma senha segura"
                           className={cn(errors.password && 'border-red-500')}
                         />
@@ -213,9 +227,15 @@ export function RegisterPatientViaRegistrationLinkPage() {
                             absolute right-2.5 top-1/2 -translate-y-1/2 text-muted-foreground
                             hover:text-foreground cursor-pointer transition-colors outline-none rounded-sm
                           "
-                          aria-label={showPassword ? 'Ocultar senha' : 'Mostrar senha'}
+                          aria-label={
+                            showPassword ? 'Ocultar senha' : 'Mostrar senha'
+                          }
                         >
-                          {showPassword ? <EyeOff size={15} /> : <Eye size={15} />}
+                          {showPassword ? (
+                            <EyeOff size={15} />
+                          ) : (
+                            <Eye size={15} />
+                          )}
                         </button>
                       </div>
                       <FieldError>{errors.password?.message}</FieldError>
@@ -230,26 +250,43 @@ export function RegisterPatientViaRegistrationLinkPage() {
                   control={control}
                   render={({ field }) => (
                     <Field className="gap-1">
-                      <FieldLabel className="text-xs font-medium text-foreground/70">Gênero</FieldLabel>
-                      <Select value={field.value} onValueChange={field.onChange}>
+                      <FieldLabel className="text-xs font-medium text-foreground/70">
+                        Gênero
+                      </FieldLabel>
+                      <Select
+                        value={field.value}
+                        onValueChange={field.onChange}
+                      >
                         <SelectTrigger className="w-full cursor-pointer">
                           <SelectValue placeholder="Selecione uma opção" />
                         </SelectTrigger>
                         <SelectContent>
                           <SelectGroup>
-                            <SelectItem value="FEMININE" className="cursor-pointer">
+                            <SelectItem
+                              value="FEMININE"
+                              className="cursor-pointer"
+                            >
                               <div className="flex items-center gap-2">
-                                <Venus className="size-3.5 text-rose-500" /> Feminino
+                                <Venus className="size-3.5 text-rose-500" />{' '}
+                                Feminino
                               </div>
                             </SelectItem>
-                            <SelectItem value="MASCULINE" className="cursor-pointer">
+                            <SelectItem
+                              value="MASCULINE"
+                              className="cursor-pointer"
+                            >
                               <div className="flex items-center gap-2">
-                                <Mars className="size-3.5 text-blue-500" /> Masculino
+                                <Mars className="size-3.5 text-blue-500" />{' '}
+                                Masculino
                               </div>
                             </SelectItem>
-                            <SelectItem value="OTHER" className="cursor-pointer">
+                            <SelectItem
+                              value="OTHER"
+                              className="cursor-pointer"
+                            >
                               <div className="flex items-center gap-2">
-                                <Users className="size-3.5 text-violet-500" /> Outro
+                                <Users className="size-3.5 text-violet-500" />{' '}
+                                Outro
                               </div>
                             </SelectItem>
                           </SelectGroup>
@@ -273,7 +310,9 @@ export function RegisterPatientViaRegistrationLinkPage() {
                   control={control}
                   render={({ field }) => (
                     <Field className="gap-1">
-                      <FieldLabel className="text-xs font-medium text-foreground/70">Telefone</FieldLabel>
+                      <FieldLabel className="text-xs font-medium text-foreground/70">
+                        Telefone
+                      </FieldLabel>
                       <MaskedInput
                         {...field}
                         type="text"
@@ -294,7 +333,9 @@ export function RegisterPatientViaRegistrationLinkPage() {
                   render={({ field }) => (
                     <Popover>
                       <Field className="gap-1">
-                        <FieldLabel className="text-xs font-medium text-foreground/70">Data de nascimento</FieldLabel>
+                        <FieldLabel className="text-xs font-medium text-foreground/70">
+                          Data de nascimento
+                        </FieldLabel>
                         <div className="relative">
                           <Input
                             placeholder="DD/MM/AAAA"
@@ -355,7 +396,9 @@ export function RegisterPatientViaRegistrationLinkPage() {
                   control={control}
                   render={({ field }) => (
                     <Field className="gap-1">
-                      <FieldLabel className="text-xs font-medium text-foreground/70">CPF</FieldLabel>
+                      <FieldLabel className="text-xs font-medium text-foreground/70">
+                        CPF
+                      </FieldLabel>
                       <MaskedInput
                         value={field.value}
                         inputRef={field.ref}
@@ -388,7 +431,8 @@ export function RegisterPatientViaRegistrationLinkPage() {
       <CardFooter className="items-start gap-1 p-0">
         <ShieldCheck size={16} className="text-green-500" />
         <p className="text-[11px] text-muted-foreground">
-          Seus dados serão utilizados apenas para criar sua conta e organizar seu acompanhamento profissional.
+          Seus dados serão utilizados apenas para criar sua conta e organizar
+          seu acompanhamento profissional.
         </p>
       </CardFooter>
     </Card>

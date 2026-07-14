@@ -84,7 +84,8 @@ export function PatientSignUpForm({
       })
       await signIn({ email: data.email, password: data.password })
 
-      const { psychologistPracticeContextId } = await getRegistrationLinkByHash(hash)
+      const { psychologistPracticeContextId } =
+        await getRegistrationLinkByHash(hash)
       await createOwnPatientProfile({ psychologistPracticeContextId })
     },
   })
@@ -95,7 +96,7 @@ export function PatientSignUpForm({
         await registerPatient(data)
         clearActivePracticeContextId()
         toast.success('Cadastro realizado!')
-        navigate('/patient-dashboard')
+        navigate('/patient/dashboard')
       } catch (error) {
         toast.error(getApiErrorMessage(error, 'Erro ao criar conta.'))
       }

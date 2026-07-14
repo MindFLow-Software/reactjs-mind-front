@@ -1,0 +1,19 @@
+@reference "../../../../../global.css";
+
+@layer components {
+  .dsh-header-root {
+    @apply flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between;
+  }
+
+  .dsh-header-title {
+    @apply text-3xl font-bold text-black;
+  }
+
+  .dsh-header-date {
+    @apply mt-1 text-sm capitalize text-muted-foreground;
+  }
+
+  .dsh-header-summary {
+    @apply mt-2 text-sm text-foreground/80;
+  }
+}

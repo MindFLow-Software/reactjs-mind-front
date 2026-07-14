@@ -38,11 +38,7 @@ function ProfilesLayout({
             Você pode usar a plataforma como psicólogo, paciente ou ambos.
           </p>
         </header>
-        <Button
-          size="icon"
-          variant="ghost"
-          onClick={() => signOut()}
-        >
+        <Button size="icon" variant="ghost" onClick={() => signOut()}>
           <LogOut size={16} />
         </Button>
       </div>

@@ -1,0 +1,43 @@
+@reference "../../../../../global.css";
+
+@layer components {
+  .adb-bar-card {
+    @apply flex flex-col overflow-hidden rounded-2xl;
+  }
+
+  .adb-bar-card-header {
+    @apply flex! items-stretch justify-between p-0;
+  }
+
+  .adb-bar-header-main {
+    @apply flex flex-1 flex-col;
+  }
+
+  .adb-bar-title {
+    @apply text-base font-semibold uppercase tracking-wider text-foreground;
+  }
+
+  .adb-bar-header-subtitle {
+    @apply text-sm text-muted-foreground;
+  }
+
+  .adb-bar-total-block {
+    @apply relative z-30 flex flex-1 flex-col justify-center gap-1 text-right;
+  }
+
+  .adb-bar-total-label {
+    @apply text-[10px] font-medium uppercase tracking-wider text-muted-foreground;
+  }
+
+  .adb-bar-total-value {
+    @apply text-xl font-bold leading-none text-foreground sm:text-2xl;
+  }
+
+  .adb-bar-content {
+    @apply flex flex-1 flex-col pl-0!;
+  }
+
+  .adb-bar-chart-wrap {
+    @apply flex flex-1 h-full max-h-[300px] w-full items-center justify-center;
+  }
+}

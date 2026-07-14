@@ -1,0 +1,11 @@
+@reference "../../../../../global.css";
+
+@layer components {
+  .adb-pat-analytics-metric {
+    @apply grid grid-cols-1 gap-4 sm:grid-cols-2;
+  }
+
+  .adb-pat-analytics-charts {
+    @apply mt-4 grid grid-cols-1 gap-4 xl:grid-cols-3;
+  }
+}

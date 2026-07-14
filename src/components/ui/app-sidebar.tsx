@@ -45,7 +45,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
         items: [
           {
             title: 'Dashboard',
-            url: isAdmin ? '/admin-dashboard' : '/dashboard',
+            url: isAdmin ? '/admin/dashboard' : '/dashboard',
           },
         ],
       },
@@ -110,7 +110,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
         title: 'Administração',
         url: '#',
         icon: ShieldCheck,
-        items: [{ title: 'Visão Geral Admin', url: '/admin-dashboard' }],
+        items: [{ title: 'Visão Geral Admin', url: '/admin/dashboard' }],
       })
 
       baseNav.push({

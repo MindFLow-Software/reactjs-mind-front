@@ -1,57 +1,33 @@
-import { useState, useEffect } from 'react'
-import { Helmet } from 'react-helmet-async'
-import { subDays } from 'date-fns'
+import { Navigate } from 'react-router-dom'
 
-import { useHeaderStore } from '@/store/use-header-store'
-import { DashboardHeader } from './components/dashboard-header'
-import { type DashboardPeriod, PERIOD_DAYS } from './constants'
-import { MonthPatientsAmountCard } from './components/month-patients-amount-card'
-import { PatientsAmountCard } from './components/patients-amount-card'
-import { TotalWorkHoursCard } from './components/total-work-hours-card'
-import { TodayAgenda } from './components/today-agenda'
-import { QuickActions } from './components/quick-actions'
-import { SessionsBarChart } from './components/sessions-chart'
-import { PatientsByAgeChart } from './components/patients-by-age-chart'
-import { PatientsByGenderChart } from './components/patients-by-gender-chart'
-import './dashboard.css'
+import { useAuth } from '@/hooks/use-auth'
+import { BrandedLoader } from '@/components/branded-loader'
+import { useActivePracticeContextStore } from '@/store/use-active-practice-context-store'
+import { getRuntimeRole } from '@/utils/get-runtime-role'
+import { PlatformRole } from '@/types/enums'
 
-export function Dashboard() {
-  const { setTitle } = useHeaderStore()
-  const [period, setPeriod] = useState<DashboardPeriod>('30d')
+const RUNTIME_ROLE_TARGET: Record<ReturnType<typeof getRuntimeRole>, string> = {
+  PATIENT: '/profiles',
+  PSYCHOLOGIST: '/profiles',
+  BOTH: '/profiles',
+  NEW_USER: '/profiles',
+}
 
-  useEffect(() => {
-    setTitle('Dashboard')
-  }, [setTitle])
+export function DashboardRedirect() {
+  const { profile, isPending } = useAuth()
+  const { activePracticeContextId } = useActivePracticeContextStore()
 
-  const endDate = new Date()
-  const startDate = subDays(endDate, PERIOD_DAYS[period])
+  if (isPending) {
+    return <BrandedLoader message="Redirecionando..." />
+  }
 
-  return (
-    <>
-      <Helmet title="Dashboard" />
+  if (profile?.platformRole === PlatformRole.ADMIN) {
+    return <Navigate to="/admin/dashboard" replace />
+  }
 
-      <div className="dsh-root">
-        <DashboardHeader period={period} onPeriodChange={setPeriod} />
+  if (activePracticeContextId) {
+    return <Navigate to="/psychologist/dashboard" replace />
+  }
 
-        <div className="dsh-top-grid">
-          <PatientsAmountCard />
-          <MonthPatientsAmountCard startDate={startDate} endDate={endDate} />
-          <TotalWorkHoursCard startDate={startDate} endDate={endDate} />
-        </div>
-
-        <div className="dsh-mid-grid">
-          <div className="dsh-mid-grid-chart">
-            <SessionsBarChart period={period} />
-          </div>
-          <TodayAgenda />
-        </div>
-
-        <div className="dsh-bottom-grid">
-          <PatientsByAgeChart />
-          <PatientsByGenderChart />
-          <QuickActions />
-        </div>
-      </div>
-    </>
-  )
+  return <Navigate to={RUNTIME_ROLE_TARGET[getRuntimeRole(profile)]} replace />
 }

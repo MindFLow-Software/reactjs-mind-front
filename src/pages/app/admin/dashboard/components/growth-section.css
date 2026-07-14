@@ -1,0 +1,11 @@
+@reference "../../../../../global.css";
+
+@layer components {
+  .adb-growth-grid {
+    @apply flex gap-4;
+  }
+
+  .adb-growth-side {
+    @apply flex flex-col gap-4 w-full max-w-80 h-full max-h-[464px] overflow-y-scroll;
+  }
+}

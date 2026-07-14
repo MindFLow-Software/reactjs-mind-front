@@ -14,7 +14,7 @@ interface IuseFormSteps {
 }
 
 export function useFormSteps({
-  stepsLength
+  stepsLength,
 }: IuseFormSteps): IUseFormStepsReturn {
   const [step, setStep] = useState<number>(1)
 

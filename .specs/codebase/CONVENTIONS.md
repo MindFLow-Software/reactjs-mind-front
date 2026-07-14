@@ -27,20 +27,30 @@ Types:
 - Backend entities/domains must have a single source of truth in `src/types`.
 - API files may define action-specific request/response wrappers only when they are not reusable entities.
 - UI-only types must be explicitly named as view models and must not replace backend entities.
-- Use TypeScript `enum` whenever possible for closed domain values. Do not export enum-like `const` objects plus `typeof` type aliases when an `enum` fits; export `enum AppointmentStatus` and use `AppointmentStatus.SCHEDULED`.
+- Use native TypeScript `enum` for closed domain values. Do not create enum-like `const` objects plus `typeof` type aliases such as `export type Languages = (typeof Languages)[keyof typeof Languages]`; export `enum Languages` instead.
+- Always consume enum values through the enum member, never through raw string literals. Use `Honorific.MASC_DR`, not `'MASC_DR'`; use `AppointmentStatus.SCHEDULED`, not `'SCHEDULED'`.
+- Never reexport anything. Every symbol must be exported from exactly one module and imported directly from that source module. No barrel exports, no one-line compatibility wrappers, and no `import type { IExample } from './example'; export { IExample }`.
 - No `any`. Use backend-aligned types, `unknown` plus guards, or generics.
 
 Conditional logic:
 
-- Never chain or nest ternaries, especially inside JSX. This rule is absolute.
-- Two-state ternaries are allowed only when they stay simple and readable.
-- Three or more states must use a named render function, `switch`, lookup map, or precomputed variable.
+- Simple two-state ternaries are allowed only when they are the clearest option.
+- Never chain or nest ternaries, especially inside JSX, unless there is no cleaner and more readable alternative.
+- Three or more states must use a named render function, `if`, `switch`, lookup map, or precomputed variable.
 
 Reuse:
 
-- If an equivalent helper or utility exists, reuse it. Do not reimplement formatting, normalization, validation, guards, or mapping logic inline.
+- If an equivalent utility-class method exists, reuse it. Do not reimplement formatting, normalization, validation, guards, date handling, or mapping logic inline.
+- Always use the utility classes in `src/utils` (`Sanitizer`, `Normalizer`, `Time`, `Isness`, etc.) instead of recreating local functions or duplicated code.
+- If related utility behavior is missing, add a static method to the correct utility class before using it elsewhere.
 - Any function used in two or more places must be extracted to a helper class or helper/util/shared file and reused from there.
 - Shared reusable helpers belong in `src/utils`, `src/shared`, or the closest established shared location for that domain.
+
+Dates and time:
+
+- Date formatting, parsing, validation, comparison, and date treatment must always use `Time` from `src/utils/time.ts`.
+- Do not import or use `date-fns`, manual `Date` formatting, or ad hoc date helpers outside `Time`.
+- `Time` methods must use `date-fns` internally. If a needed date operation is missing, add a static method to `Time` first and use that method everywhere else.
 
 Validators and forms:
 
@@ -57,7 +67,7 @@ Components and hooks:
 - Creation and editing flows must be separate. Never reuse a create modal/form/schema/hook for edit mode.
 - Reusable API/filter logic becomes hooks.
 - Shared hooks live in `src/hooks`; feature-only hooks live next to the feature.
-- Logged-in user profile data must always come from `useAuth`. Do not read profile data from `localStorage`, duplicate profile queries, or pass stale user snapshots when `useAuth` is available.
+- Authenticated user data must always come from `useAuth`. Do not read authenticated user data from `localStorage`, duplicate profile queries, route guards, API responses, or stale user snapshots when `useAuth` is available.
 - Global state uses Zustand and must live in one consistent store location. Do not put stores in `src/utils`.
 - Each `.tsx` file should expose one main function when possible. Compound components are the allowed exception.
 
@@ -138,7 +148,7 @@ Referência canônica: `src/pages/app/patients/patients-list/register-patients/h
 
 ## Tipagem
 
-- Valores fechados de dominio devem usar `enum` TypeScript sempre que possivel:
+- Valores fechados de dominio devem usar `enum` TypeScript nativo:
   ```ts
   export enum AppointmentStatus {
     SCHEDULED = 'SCHEDULED',
@@ -146,9 +156,10 @@ Referência canônica: `src/pages/app/patients/patients-list/register-patients/h
     FINISHED = 'FINISHED',
   }
   ```
-- Usar `AppointmentStatus.SCHEDULED` nos call sites.
-- Nao exportar objeto `const` + type alias com `typeof AppointmentStatus[keyof typeof AppointmentStatus]` quando um `enum` atende.
-- `Record<string, string>` para dicionários de tradução.
+- Usar sempre o membro do enum nos call sites, por exemplo `AppointmentStatus.SCHEDULED` e `Honorific.MASC_DR`; nunca strings cruas como `'SCHEDULED'` ou `'MASC_DR'`.
+- Nao exportar objeto `const` + type alias com `typeof AppointmentStatus[keyof typeof AppointmentStatus]`; criar `enum` nativo.
+- Nunca reexportar tipos, enums, helpers, constantes, componentes ou hooks. Cada simbolo deve ter um unico arquivo exportador canonico, e todos os imports devem apontar diretamente para ele.
+- Dicionarios de traducao devem usar chaves tipadas pelo enum, por exemplo `Record<Honorific, string>`, nao `Record<string, string>`, quando as chaves sao valores de enum.
 - `?` para campos opcionais, nunca `| undefined` explícito desnecessário.
 
 ## Estilização
@@ -168,16 +179,15 @@ Referência canônica: `src/pages/app/patients/patients-list/register-patients/h
 
 ## Tradução de Enums
 
-- Centralizado em `src/constants` como `Record<string, string>` (ex: `translatedExpertise`, `translatedHonorific`).
-- Chaves em SCREAMING_SNAKE_CASE (valor do backend), valores em PT-BR.
+- Centralizado em `src/constants` como `Record<EnumName, string>` quando as chaves pertencem a um enum (ex: `translatedExpertise`, `translatedHonorific`).
+- Chaves devem ser membros do enum (`Honorific.MASC_DR`), nao strings cruas em SCREAMING_SNAKE_CASE.
 
 ## Formatadores
 
 Em `src/utils/`:
-- `formatCPF(raw: string): string`
-- `formatPhone(raw: string): string`
-- `formatCEP(raw: string): string`
-- `formatAGE(birthDate: string): number`
+- Usar classes utilitarias com metodos estaticos (`Sanitizer`, `Normalizer`, `Time`, `Isness`, etc.).
+- Datas: sempre via `Time`; `date-fns` so pode ser usado dentro de `src/utils/time.ts`.
+- Se faltar um formatador, validador, normalizador, sanitizador ou tratativa de data, adicionar o metodo estatico na classe utilitaria correta antes de usar no codigo.
 
 ## Importações
 

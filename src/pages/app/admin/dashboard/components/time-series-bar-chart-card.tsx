@@ -62,10 +62,33 @@ export function TimeSeriesBarChartCard<
     <Card className="adb-tschart-card">
       <CardHeader className="adb-tschart-header">
         <div className="adb-tschart-header-main">
-          <CardTitle className="adb-tschart-title">{header.title}</CardTitle>
-          <CardDescription className="text-sm text-muted-foreground">
-            {header.description}
-          </CardDescription>
+          <div>
+            <CardTitle className="adb-tschart-title">{header.title}</CardTitle>
+            <CardDescription className="text-sm text-muted-foreground">
+              {header.description}
+            </CardDescription>
+          </div>
+          <Select value={timeRange.value} onValueChange={timeRange.onChange}>
+            <SelectTrigger
+              className="adb-tschart-select-trigger"
+              aria-label="Selecionar período"
+            >
+              <SelectValue placeholder="Período" />
+            </SelectTrigger>
+            <SelectContent className="adb-tschart-select-content">
+              <SelectGroup>
+                <SelectItem value="90d" className="adb-tschart-select-item">
+                  90 dias
+                </SelectItem>
+                <SelectItem value="30d" className="adb-tschart-select-item">
+                  30 dias
+                </SelectItem>
+                <SelectItem value="7d" className="adb-tschart-select-item">
+                  7 dias
+                </SelectItem>
+              </SelectGroup>
+            </SelectContent>
+          </Select>
         </div>
         <div className="adb-tschart-header-aside">
           <div className="adb-tschart-total-block">
@@ -73,29 +96,6 @@ export function TimeSeriesBarChartCard<
             <span className="adb-tschart-total-value">
               {header.total.toLocaleString()}
             </span>
-          </div>
-          <div className="flex items-center pr-4">
-            <Select value={timeRange.value} onValueChange={timeRange.onChange}>
-              <SelectTrigger
-                className="adb-tschart-select-trigger"
-                aria-label="Selecionar período"
-              >
-                <SelectValue placeholder="Período" />
-              </SelectTrigger>
-              <SelectContent className="adb-tschart-select-content">
-                <SelectGroup>
-                  <SelectItem value="90d" className="adb-tschart-select-item">
-                    90 dias
-                  </SelectItem>
-                  <SelectItem value="30d" className="adb-tschart-select-item">
-                    30 dias
-                  </SelectItem>
-                  <SelectItem value="7d" className="adb-tschart-select-item">
-                    7 dias
-                  </SelectItem>
-                </SelectGroup>
-              </SelectContent>
-            </Select>
           </div>
         </div>
       </CardHeader>

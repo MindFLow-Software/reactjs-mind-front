@@ -3,13 +3,14 @@ import { lazy, Suspense } from 'react'
 import { AppLayout } from './pages/_layouts/app'
 import { AuthLayout } from './pages/_layouts/auth'
 import { PatientsList } from './pages/app/patients/patients-list/patients-list'
-import { Dashboard } from './pages/app/dashboard/dashboard'
+import { PsychologistDashboard } from './pages/app/psychologist/dashboard/psychologist-dashboard'
+import { DashboardRedirect } from './pages/app/dashboard/dashboard'
 import { NotFound } from './pages/404'
 import { SignIn } from './pages/auth/sign-in'
 import { SignUp } from './pages/auth/sign-up'
 import { GoogleOAuthSuccess } from './pages/auth/google-oauth-success'
 import { ProfilesPage } from './pages/app/profiles/profiles-page'
-import { PatientDashboard } from './pages/app/patient-dashboard/patient-dashboard'
+import { PatientDashboard } from './pages/app/patient/dashboard/patient-dashboard'
 import { AppointmentsList } from './pages/app/appointment/appointment-list/appointment-list'
 import { MockPsychologistProfilePage } from './pages/app/account/account'
 import { LandingPage } from './pages/landing-page/landing-page'
@@ -155,8 +156,25 @@ export const router = createBrowserRouter([
     children: [
       {
         path: '/dashboard',
+        element: <DashboardRedirect />,
+      },
+      {
+        path: '/psychologist/dashboard',
         loader: practiceContextGuard,
-        element: <Dashboard />,
+        element: <PsychologistDashboard />,
+      },
+      {
+        path: '/admin/dashboard',
+        element: (
+          <AdminRoute>
+            <AdminDashboard />
+          </AdminRoute>
+        ),
+      },
+      {
+        path: '/patient/dashboard',
+        loader: patientDashboardGuard,
+        element: <PatientDashboard />,
       },
       {
         path: '/dashboard-finance',
@@ -203,14 +221,10 @@ export const router = createBrowserRouter([
         element: <AvailabilityPage />,
       },
       { path: '/account', element: <MockPsychologistProfilePage /> },
-      { path: '/approvals', loader: () => redirect('/admin-dashboard') },
+      { path: '/approvals', loader: () => redirect('/admin/dashboard') },
       {
         path: '/admin-dashboard',
-        element: (
-          <AdminRoute>
-            <AdminDashboard />
-          </AdminRoute>
-        ),
+        loader: () => redirect('/admin/dashboard'),
       },
       {
         path: '/admin-suggestions',
@@ -238,11 +252,8 @@ export const router = createBrowserRouter([
       },
 
       {
-        // TODO: patient-dashboard is going to be same /dashboard route,
-        // and a switch case inside the page to render the correct component
         path: '/patient-dashboard',
-        loader: patientDashboardGuard,
-        element: <PatientDashboard />,
+        loader: () => redirect('/patient/dashboard'),
       },
     ],
   },

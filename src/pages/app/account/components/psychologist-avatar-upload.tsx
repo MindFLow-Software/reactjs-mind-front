@@ -60,7 +60,7 @@ export function PsychologistAvatarUpload({
       setPreviewUrl(objectUrl)
       try {
         await uploadPhoto(file)
-      } catch { }
+      } catch {}
     }
   }
 

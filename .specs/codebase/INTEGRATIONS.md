@@ -22,9 +22,16 @@ React Query:
 
 Auth/profile data:
 
-- Logged-in user profile data must always come from `useAuth`.
-- Do not read logged-in profile data directly from `localStorage`.
+- Authenticated user data must always come from `useAuth`.
+- Do not read authenticated user data directly from `localStorage`, route guards, API responses, duplicate profile queries, or stale snapshots when `useAuth` is available.
 - Do not duplicate profile queries or pass stale user snapshots when `useAuth` is available.
+
+Dates and utility classes:
+
+- Date formatting, parsing, validation, comparison, and date treatment must always use `Time` from `src/utils/time.ts`.
+- Do not import or use `date-fns`, manual `Date` formatting, or ad hoc date helpers outside `Time`.
+- `Time` methods must use `date-fns` internally. Missing date behavior must be added as a static `Time` method before use.
+- Formatting, normalization, sanitization, and validation must use the existing utility classes (`Sanitizer`, `Normalizer`, `Time`, `Isness`, etc.). Missing related behavior must be added as a static method to the correct utility class.
 
 Practice context:
 
@@ -36,7 +43,9 @@ Known contract reconciliation points:
 - `/psychologist/practice-context` vs `/psychologist/practice-contexts`.
 - `/auth/complete-registration` and Google OAuth completion flow.
 - `/patient-profiles/*` vs current patient/profile routes.
-- Appointment status enum values; closed domain values must use TypeScript `enum` whenever possible and be consumed as `AppointmentStatus.SCHEDULED`.
+- Appointment status enum values; closed domain values must use native TypeScript `enum` and be consumed as enum members such as `AppointmentStatus.SCHEDULED`, never raw strings such as `'SCHEDULED'`.
+- Any API payload, query parameter, schema default, and UI option value that represents an enum must use the enum member, for example `Honorific.MASC_DR`, not `'MASC_DR'`.
+- Integration symbols must be imported from their one canonical source module. Reexports, barrel exports, and compatibility wrapper exports are forbidden.
 
 ---
 
