@@ -69,6 +69,14 @@ export class Files {
     other: { bg: 'bg-muted', text: 'text-muted-foreground', label: 'Arquivo' },
   }
 
+  static attachmentUrl = (id: string): string => {
+    const base =
+      (import.meta.env.VITE_API_URL as string | undefined)?.trim() ??
+      'http://localhost:8080'
+
+    return `${base}/attachments/${id}`
+  }
+
   static formatSize = (bytes: number | null | undefined): string => {
     if (!bytes) return '—'
     if (bytes < 1024) return `${bytes} bytes`

@@ -21,10 +21,6 @@ interface SimplePreviewModalProps {
   onClose: () => void
 }
 
-const buildAttachmentUrl = (id: string) => {
-  return `${import.meta.env.VITE_API_URL}/attachments/${id}`
-}
-
 const isImageMime = (mime: string, name: string) => {
   return mime.includes('image') || IMAGE_EXTENSIONS.test(name)
 }
@@ -37,7 +33,7 @@ export function SimplePreviewModal({ file, onClose }: SimplePreviewModalProps) {
   if (!file) return null
 
   const { id } = file
-  const fileUrl = useMemo(() => buildAttachmentUrl(id), [id])
+  const fileUrl = useMemo(() => Files.attachmentUrl(id), [id])
   const fileName = file.filename
   const fileMime = file.type.toLowerCase()
   const lowerFileName = fileName.toLowerCase()

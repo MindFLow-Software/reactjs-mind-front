@@ -2,6 +2,7 @@ import { ptBR } from 'date-fns/locale'
 import {
   differenceInYears,
   format,
+  formatDistanceToNow,
   isAfter,
   isFuture,
   isValid,
@@ -12,6 +13,12 @@ import { Normalizer } from './normalizer'
 export class Time {
   static now() {
     return startOfDay(new Date())
+  }
+
+  static parse(value: Date | string | null | undefined) {
+    if (!value) return null
+    const date = typeof value === 'string' ? new Date(value) : value
+    return isValid(date) ? date : null
   }
 
   static today = new Date()
@@ -62,6 +69,24 @@ export class Time {
     })
 
     return dateFormatted
+  }
+
+  static toShortMonthDate(date: Date | string | null | undefined) {
+    const parsed = Time.parse(date)
+    if (!parsed) return ''
+
+    return format(parsed, "dd 'de' MMM. 'de' yyyy", { locale: ptBR })
+  }
+
+  static toRelativeFromNow(date: Date | string | null | undefined) {
+    const parsed = Time.parse(date)
+    if (!parsed) return ''
+
+    return formatDistanceToNow(parsed, { addSuffix: true, locale: ptBR })
+  }
+
+  static toRelativeFromNowShort(date: Date | string | null | undefined) {
+    return Time.toRelativeFromNow(date).replace('há ', '').replace('em ', '')
   }
 
   static isFuture(date: Date | null | undefined) {
