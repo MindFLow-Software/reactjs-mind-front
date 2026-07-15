@@ -1,0 +1,15 @@
+@reference "../../../../../../../global.css";
+
+@layer components {
+  .pdd-reg-table {
+    @apply rounded-lg border bg-card;
+  }
+
+  .pdd-reg-label {
+    @apply py-3 font-medium text-muted-foreground;
+  }
+
+  .pdd-reg-value {
+    @apply py-3 text-right;
+  }
+}

@@ -1,0 +1,16 @@
+@reference "../../../../../../../global.css";
+
+@layer components {
+  .pdd-field-masked {
+    @apply pointer-events-none h-auto w-full border-none bg-transparent p-0 text-right font-medium tabular-nums text-foreground;
+    @apply focus:outline-none disabled:opacity-100;
+  }
+
+  .pdd-field-empty {
+    @apply text-xs font-normal italic text-muted-foreground/60;
+  }
+
+  .pdd-field-value {
+    @apply font-medium text-foreground;
+  }
+}

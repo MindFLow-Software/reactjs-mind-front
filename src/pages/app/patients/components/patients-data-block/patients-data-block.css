@@ -1,0 +1,31 @@
+@reference "../../../../../global.css";
+
+@layer components {
+  .pdb-root {
+    @apply flex flex-col gap-4;
+  }
+
+  .pdb-header {
+    @apply flex items-start justify-between gap-4;
+  }
+
+  .pdb-heading {
+    @apply flex min-w-0 flex-col gap-1;
+  }
+
+  .pdb-title {
+    @apply text-base font-semibold tracking-tight;
+  }
+
+  .pdb-description {
+    @apply text-sm text-muted-foreground;
+  }
+
+  .pdb-actions {
+    @apply flex shrink-0 items-center gap-2;
+  }
+
+  .pdb-content {
+    @apply w-full;
+  }
+}

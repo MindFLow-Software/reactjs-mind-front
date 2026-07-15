@@ -1,0 +1,71 @@
+@reference "../../../../../../../global.css";
+
+@layer components {
+  .ev-root {
+    @apply mx-auto flex w-full min-w-0 max-w-full flex-col gap-6 overflow-x-hidden py-2;
+  }
+
+  .ev-back-btn {
+    @apply -ml-2 h-8 cursor-pointer gap-1.5 px-2 text-muted-foreground transition-colors hover:text-foreground;
+  }
+
+  .ev-back-label {
+    @apply text-xs font-medium;
+  }
+
+  .ev-heading {
+    @apply flex min-w-0 flex-col gap-1;
+  }
+
+  .ev-title-row {
+    @apply flex items-center gap-2 text-foreground;
+  }
+
+  .ev-title-icon {
+    @apply h-5 w-5 text-muted-foreground;
+  }
+
+  .ev-title {
+    @apply text-xl font-semibold tracking-tight;
+  }
+
+  .ev-meta {
+    @apply mt-3 flex min-w-0 items-center justify-between gap-3 text-sm;
+  }
+
+  .ev-meta-patient {
+    @apply min-w-0 text-muted-foreground;
+  }
+
+  .ev-meta-patient-name {
+    @apply font-medium text-foreground/80 [overflow-wrap:anywhere];
+  }
+
+  .ev-meta-date {
+    @apply shrink-0 tabular-nums text-muted-foreground;
+  }
+
+  .ev-separator {
+    @apply bg-border;
+  }
+
+  .ev-content {
+    @apply min-h-[180px] max-w-full overflow-x-hidden rounded-lg bg-muted/20 px-3 py-4 sm:px-4;
+  }
+
+  .ev-content-text {
+    @apply whitespace-pre-wrap font-serif text-lg leading-relaxed text-foreground/80 [overflow-wrap:anywhere];
+  }
+
+  .ev-footer {
+    @apply flex flex-col items-center justify-between gap-6 pt-2 sm:flex-row;
+  }
+
+  .ev-footer-note {
+    @apply max-w-sm text-[11px] italic leading-relaxed text-muted-foreground;
+  }
+
+  .ev-export-btn {
+    @apply h-10 w-full cursor-pointer gap-2 px-8 shadow-sm transition-all sm:w-auto;
+  }
+}

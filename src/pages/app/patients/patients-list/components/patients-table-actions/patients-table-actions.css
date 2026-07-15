@@ -1,0 +1,9 @@
+@reference "../../../../../../global.css";
+
+@layer components {
+  .pta-btn {
+    @apply flex h-8 cursor-pointer items-center gap-2 rounded-lg border border-border
+           bg-background px-3 text-xs font-medium shadow-sm transition-all
+           hover:-translate-y-px hover:bg-muted active:scale-[0.98];
+  }
+}

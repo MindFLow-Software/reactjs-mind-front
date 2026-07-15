@@ -35,9 +35,11 @@ export class Time {
     this.today.getDate(),
   )
 
-  static toBrazilianFormat(date: Date) {
-    // if (!date || !isValid(date)) return
-    return format(date, 'dd/MM/yyyy', { locale: ptBR })
+  static toBrazilianFormat(date: Date | string | null | undefined) {
+    const parsed = Time.parse(date)
+    if (!parsed) return ''
+
+    return format(parsed, 'dd/MM/yyyy', { locale: ptBR })
   }
 
   static toAmericanFormat(date: Date | null | undefined) {
@@ -45,14 +47,12 @@ export class Time {
     return format(new Date(), 'yyyy/MM/dd')
   }
 
-  static calculateAge(date: Date | null | undefined) {
-    if (!date || !isValid(date)) return null
+  static calculateAge(date: Date | string | null | undefined) {
+    const birth = Time.parse(date)
+    if (!birth) return null
 
-    const now = new Date()
-    const birth = new Date(date)
-
-    const age = differenceInYears(now, birth)
-    const suffix = age > 1 ? 'anos' : 'ano'
+    const age = differenceInYears(new Date(), birth)
+    const suffix = age === 1 ? 'ano' : 'anos'
 
     return `${age} ${suffix}`
   }
@@ -69,6 +69,27 @@ export class Time {
     if (!parsed) return ''
 
     return format(parsed, "EEEE 'às' HH:mm", { locale: ptBR })
+  }
+
+  static toShortDateTime(date: Date | string | null | undefined) {
+    const parsed = Time.parse(date)
+    if (!parsed) return ''
+
+    return format(parsed, 'dd/MM/yy HH:mm', { locale: ptBR })
+  }
+
+  static toFileStamp(date: Date | string | null | undefined) {
+    const parsed = Time.parse(date)
+    if (!parsed) return ''
+
+    return format(parsed, 'dd-MM-yyyy')
+  }
+
+  static timestamp(date: Date | string | null | undefined) {
+    const parsed = Time.parse(date)
+    if (!parsed) return 0
+
+    return parsed.getTime()
   }
 
   static toShortMonthDate(date: Date | string | null | undefined) {

@@ -1,12 +1,7 @@
-const STATUS_TOGGLE_DISABLED_REASON =
-  'Alterar status de pacientes está temporariamente indisponível.'
+import { STATUS_TOGGLE_DISABLED_REASON } from '../constants'
+import type { IUsePatientStatusGuard } from '../patients-list.types'
 
-export interface UsePatientStatusGuardReturn {
-  isToggleDisabled: boolean
-  disabledReason: string
-}
-
-export function usePatientStatusGuard(): UsePatientStatusGuardReturn {
+export function usePatientStatusGuard(): IUsePatientStatusGuard {
   return {
     isToggleDisabled: true,
     disabledReason: STATUS_TOGGLE_DISABLED_REASON,

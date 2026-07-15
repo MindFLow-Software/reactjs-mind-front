@@ -1,0 +1,35 @@
+@reference "../../../../../../../global.css";
+
+@layer components {
+  .ptbe-cell {
+    @apply py-20;
+  }
+
+  .ptbe-body {
+    @apply flex flex-col items-center justify-center gap-3 text-center;
+  }
+
+  .ptbe-icon-box {
+    @apply rounded-full bg-muted p-4;
+  }
+
+  .ptbe-icon {
+    @apply h-8 w-8 text-muted-foreground/40;
+  }
+
+  .ptbe-text {
+    @apply flex flex-col gap-1;
+  }
+
+  .ptbe-title {
+    @apply text-sm font-medium;
+  }
+
+  .ptbe-description {
+    @apply text-xs text-muted-foreground;
+  }
+
+  .ptbe-action {
+    @apply cursor-pointer;
+  }
+}

@@ -120,19 +120,23 @@ export class Files {
     return 'Arquivo'
   }
 
+  static saveBlob = (blob: Blob, filename: string) => {
+    const url = window.URL.createObjectURL(blob)
+    const link = document.createElement('a')
+
+    link.href = url
+    link.setAttribute('download', filename)
+    document.body.appendChild(link)
+    link.click()
+
+    link.remove()
+    window.URL.revokeObjectURL(url)
+  }
+
   static download = async (fileKey: string, filename: string) => {
     try {
       const blob = await getAttachmentBlob(fileKey)
-      const url = window.URL.createObjectURL(blob)
-      const link = document.createElement('a')
-
-      link.href = url
-      link.setAttribute('download', filename)
-      document.body.appendChild(link)
-      link.click()
-
-      link.remove()
-      window.URL.revokeObjectURL(url)
+      Files.saveBlob(blob, filename)
     } catch (error) {
       console.error('Erro ao processar download:', error)
     }

@@ -1,0 +1,27 @@
+@reference "../../../../../../../global.css";
+
+@layer components {
+  .ptbh-button {
+    @apply flex cursor-pointer items-center gap-0 uppercase tracking-wider transition-colors;
+  }
+
+  .ptbh-button--active {
+    @apply text-foreground;
+  }
+
+  .ptbh-button--idle {
+    @apply hover:text-foreground/70;
+  }
+
+  .ptbh-icon {
+    @apply ml-1.5 size-3 shrink-0;
+  }
+
+  .ptbh-icon--active {
+    @apply text-primary;
+  }
+
+  .ptbh-icon--idle {
+    @apply text-muted-foreground/50;
+  }
+}

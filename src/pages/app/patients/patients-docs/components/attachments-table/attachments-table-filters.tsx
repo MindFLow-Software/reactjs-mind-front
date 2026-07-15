@@ -13,7 +13,7 @@ import {
 import { usePatientsWithAttachments } from '../../hooks/use-patients-with-attachments'
 import { DatePickerWithRange } from '../date-picker-with-range'
 import { type DateRange } from 'react-day-picker'
-import { PatientsSearchInput } from '../../../components/patients-search-input'
+import { PatientsSearchInput } from '../../../components/patients-search-input/patients-search-input'
 import { cn } from '@/lib/utils'
 import './attachments-table-filters.css'
 

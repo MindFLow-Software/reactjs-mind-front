@@ -1,0 +1,87 @@
+@reference "../../../../../../../global.css";
+
+@layer components {
+  .rp-modal {
+    @apply flex! max-h-[92vh] w-full max-w-[800px]! flex-col gap-0! overflow-hidden p-0! sm:rounded-xl;
+  }
+
+  .rp-modal-header {
+    @apply flex shrink-0 items-start gap-3.5 border-b border-border bg-card px-[22px] pb-[14px] pt-[18px];
+  }
+
+  .rp-modal-icon-box {
+    @apply flex h-10 w-10 shrink-0 items-center justify-center rounded-[10px]
+           border border-blue-200 bg-blue-50 dark:border-blue-800 dark:bg-blue-950/40;
+  }
+
+  .rp-modal-heading {
+    @apply flex flex-1 flex-col gap-2;
+  }
+
+  .rp-modal-title {
+    @apply font-title text-[18px] font-bold tracking-[-0.01em] text-foreground;
+  }
+
+  .rp-modal-subtitle {
+    @apply mt-0.5 text-[12px] text-muted-foreground;
+  }
+
+  .rp-modal-stepper {
+    @apply flex shrink-0 items-stretch border-b border-border bg-card px-[22px];
+  }
+
+  .rp-modal-tab {
+    @apply -mb-px flex flex-1 cursor-pointer items-center justify-center gap-[7px] border-b-2
+           px-3 py-[10px] text-[13px] font-semibold transition-colors duration-120;
+  }
+
+  .rp-modal-tab-required {
+    @apply ml-0.5 text-[11px] text-red-600;
+  }
+
+  .rp-modal-tab-badge {
+    @apply flex h-[18px] w-[18px] shrink-0 items-center justify-center
+           rounded-full text-[11px] font-bold transition-colors;
+  }
+
+  .rp-modal-tab-badge--active {
+    @apply bg-blue-600 text-white;
+  }
+
+  .rp-modal-tab-badge--done {
+    @apply bg-emerald-500 text-white;
+  }
+
+  .rp-modal-tab-badge--pending {
+    @apply bg-muted text-muted-foreground;
+  }
+
+  .rp-modal-progress-track {
+    @apply h-[3px] shrink-0 overflow-hidden bg-muted;
+  }
+
+  .rp-modal-progress-fill {
+    @apply h-full bg-blue-600 transition-[width] duration-300 ease-out;
+  }
+
+  .rp-modal-body {
+    @apply min-h-0 flex-1 overflow-y-auto px-[22px] py-5;
+  }
+
+  .rp-modal-footer {
+    @apply flex shrink-0 justify-end gap-2 border-t border-border bg-muted/50 px-[22px] py-[14px];
+  }
+
+  .rp-btn-secondary {
+    @apply flex cursor-pointer items-center gap-1 rounded-[6px] border border-border
+           bg-card px-[14px] py-2 text-[13px] font-semibold text-foreground
+           transition-colors hover:bg-muted/50;
+  }
+
+  .rp-btn-primary {
+    @apply flex cursor-pointer items-center gap-2 rounded-[6px] bg-blue-600
+           px-[14px] py-2 text-[13px] font-semibold text-white transition-all
+           hover:bg-blue-700 hover:shadow-[0_4px_10px_rgba(30,111,217,.18)]
+           disabled:cursor-not-allowed disabled:opacity-60;
+  }
+}

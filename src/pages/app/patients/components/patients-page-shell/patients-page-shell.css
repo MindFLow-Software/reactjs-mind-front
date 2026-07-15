@@ -1,0 +1,31 @@
+@reference "../../../../../global.css";
+
+@layer components {
+  .pps-surface {
+    @apply rounded-xl border border-border/70 bg-card/70 p-4 shadow-sm backdrop-blur-sm md:p-6;
+  }
+
+  .pps-root {
+    @apply flex flex-col gap-4;
+  }
+
+  .pps-header {
+    @apply flex flex-col justify-between gap-4 border-l-4 border-primary py-2 pl-5 lg:flex-row lg:items-center;
+  }
+
+  .pps-heading {
+    @apply flex flex-col gap-1;
+  }
+
+  .pps-title {
+    @apply flex items-center gap-3 text-2xl font-bold tracking-tight;
+  }
+
+  .pps-description {
+    @apply text-sm text-muted-foreground;
+  }
+
+  .pps-actions {
+    @apply shrink-0;
+  }
+}

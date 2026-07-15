@@ -3,18 +3,18 @@ import { useQueryClient } from '@tanstack/react-query'
 import { uploadAttachment } from '@/api/attachments/upload-attachment'
 import { uploadAvatar } from '@/api/attachments/upload-avatar'
 
-export interface UsePatientAttachmentsUploadParams {
+type IPatientAttachmentsUploadParams = {
   targetId: string
   avatarFile: File | null
   files: File[]
 }
 
-export interface UsePatientAttachmentsUploadReturn {
-  uploadAll: (params: UsePatientAttachmentsUploadParams) => Promise<void>
+type IUsePatientAttachmentsUpload = {
+  uploadAll: (params: IPatientAttachmentsUploadParams) => Promise<void>
   isUploading: boolean
 }
 
-export function usePatientAttachmentsUpload(): UsePatientAttachmentsUploadReturn {
+export function usePatientAttachmentsUpload(): IUsePatientAttachmentsUpload {
   const queryClient = useQueryClient()
   const [isUploading, setIsUploading] = useState(false)
 
@@ -23,7 +23,7 @@ export function usePatientAttachmentsUpload(): UsePatientAttachmentsUploadReturn
       targetId,
       avatarFile,
       files,
-    }: UsePatientAttachmentsUploadParams) => {
+    }: IPatientAttachmentsUploadParams) => {
       setIsUploading(true)
 
       try {

@@ -7,7 +7,7 @@ import { getApiErrorMessage } from '@/lib/get-api-error-message'
 import type { UpdatePatientFormData } from '@/validators/patients/form/update-patient-schema'
 import { usePatientAttachmentsUpload } from './use-patient-attachments-upload'
 
-export interface UseUpdatePatientOptions {
+type IUseUpdatePatient = {
   patientId: string
   avatarFile: File | null
   files: File[]
@@ -19,7 +19,7 @@ export function useUpdatePatient({
   avatarFile,
   files,
   onSuccess,
-}: UseUpdatePatientOptions) {
+}: IUseUpdatePatient) {
   const queryClient = useQueryClient()
   const { uploadAll, isUploading } = usePatientAttachmentsUpload()
 

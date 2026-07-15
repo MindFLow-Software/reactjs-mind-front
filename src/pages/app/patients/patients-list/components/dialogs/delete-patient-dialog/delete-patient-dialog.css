@@ -1,0 +1,6 @@
+@reference "../../../../../../../global.css";
+
+/* The dialog chrome is owned by the shared PatientStatusDialog; this wrapper
+   only binds the archive mode to the patients-list flow. */
+@layer components {
+}

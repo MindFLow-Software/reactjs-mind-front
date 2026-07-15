@@ -1,127 +1,38 @@
 import './patients-list.css'
-import { useEffect, useState } from 'react'
+import { useCallback, useEffect, useState } from 'react'
 import { Helmet } from 'react-helmet-async'
-import {
-  Clock,
-  Upload,
-  QrCode,
-  Columns3,
-  Activity,
-  Download,
-  UsersRound,
-  UserRoundPlus,
-} from 'lucide-react'
+import { UsersRound } from 'lucide-react'
 
-import { Button } from '@/components/ui/button'
 import { Dialog } from '@/components/ui/dialog'
 import { Pagination } from '@/components/pagination/pagination'
+import { useHeaderStore } from '@/store/use-header-store'
 
-import { MetricCard } from '@/components/metric-card/metric-card'
-import { PatientsTable } from './components/table/patients-table'
+import { PatientsPageShell } from '../components/patients-page-shell/patients-page-shell'
+import { PatientsDataBlock } from '../components/patients-data-block/patients-data-block'
+
+import { PatientsMetrics } from './components/patients-metrics/patients-metrics'
+import { PatientsListActions } from './components/patients-list-actions/patients-list-actions'
+import { PatientsTableActions } from './components/patients-table-actions/patients-table-actions'
+import { PatientsTable } from './components/table/patients-table/patients-table'
+import { PatientsTableEmpty } from './components/table/patients-table-empty/patients-table-empty'
+import { PatientsTableFilters } from './components/table/patients-table-filters/patients-table-filters'
 import { RegisterPatients } from './components/dialogs/register-patients/register-patients'
-import { PatientsPageShell } from '../components/patients-page-shell'
-import { PatientsDataBlock } from '../components/patients-data-block'
-import { GenerateInviteModal } from './components/dialogs/generate-invite-modal'
-import { PatientsTableFilters } from './components/table/patients-table-filters'
+import { GenerateInviteModal } from './components/dialogs/generate-invite-modal/generate-invite-modal'
+
 import {
   hasActiveFilters,
   calcTotalPatients,
   formatPatientsShowing,
 } from './patients-list.helpers'
-
-import { useHeaderStore } from '@/store/use-header-store'
-import { usePatientFilters } from '@/hooks/use-patient-filters'
+import { usePatientFilters } from './hooks/use-patient-filters'
 import { usePatientsMetrics } from './hooks/use-patients-metrics'
 import { usePatientsListQuery } from './hooks/use-patients-list-query'
-
-type IregisterModal = {
-  isOpen: boolean
-}
-
-type IpageShellHeader = {
-  primaryAction: () => void
-  secondaryAction: () => void
-  terciaryAction: () => void
-}
-
-type IpageDataBlockHeader = {
-  primaryAction: () => void
-  secondaryAction: () => void
-}
-
-function PageShellHeader({
-  primaryAction,
-  secondaryAction,
-  terciaryAction,
-}: IpageShellHeader) {
-  return (
-    <div className="pl-header-actions">
-      <Button
-        disabled
-        type="button"
-        variant="outline"
-        onClick={primaryAction}
-        className="pl-action-btn"
-      >
-        <Upload className="size-4" />
-        Importar
-      </Button>
-      <Button
-        type="button"
-        variant="outline"
-        onClick={secondaryAction}
-        className="pl-action-btn"
-      >
-        <QrCode className="size-4" />
-        <span>Link de auto-cadastro</span>
-      </Button>
-      <Button type="button" className="pl-primary-btn" onClick={terciaryAction}>
-        <UserRoundPlus className="size-4" />
-        <span>Cadastrar paciente</span>
-      </Button>
-    </div>
-  )
-}
-
-function PageDataBlockHeader({
-  primaryAction,
-  secondaryAction,
-}: IpageDataBlockHeader) {
-  return (
-    <>
-      <Button
-        disabled
-        size="sm"
-        type="button"
-        variant="outline"
-        onClick={primaryAction}
-        className="pl-table-action-btn"
-      >
-        <Download className="size-3.5" />
-        <span>Exportar</span>
-      </Button>
-      <Button
-        disabled
-        size="sm"
-        type="button"
-        variant="outline"
-        onClick={secondaryAction}
-        className="pl-table-action-btn"
-      >
-        <Columns3 className="size-3.5" />
-        <span>Colunas</span>
-      </Button>
-    </>
-  )
-}
 
 export function PatientsList() {
   const { setTitle } = useHeaderStore()
 
   const [isInviteOpen, setIsInviteOpen] = useState(false)
-  const [registerModalData, setRegisterModalData] = useState<IregisterModal>({
-    isOpen: false,
-  })
+  const [isRegisterOpen, setIsRegisterOpen] = useState(false)
 
   const { filters, setPage, setSort, clearFilters } = usePatientFilters()
   const { patients, meta, isLoading, isFetching } = usePatientsListQuery()
@@ -129,11 +40,18 @@ export function PatientsList() {
     activeCount,
     archivedCount,
     newPatientsCount,
-    isLoading: loadingMetrics,
+    isLoading: isLoadingMetrics,
   } = usePatientsMetrics()
 
   const totalPatients = calcTotalPatients(meta.perPage, meta.totalCount)
   const filtersActive = hasActiveFilters(filters.filter, filters.status)
+
+  const openInvite = useCallback(() => setIsInviteOpen(true), [])
+  const openRegister = useCallback(() => setIsRegisterOpen(true), [])
+
+  const sort = filters.sortBy
+    ? { by: filters.sortBy, order: filters.order, onSort: setSort }
+    : undefined
 
   useEffect(() => {
     setTitle('Pacientes')
@@ -149,49 +67,22 @@ export function PatientsList() {
           description="Gerencie sua base de pacientes — busque, filtre, abra prontuários e mantenha tudo atualizado."
           icon={<UsersRound className="size-6 text-blue-600" />}
         >
-          <PageShellHeader
-            primaryAction={() => {}}
-            secondaryAction={() => setIsInviteOpen(true)}
-            terciaryAction={() => setRegisterModalData({ isOpen: true })}
+          <PatientsListActions
+            onInvite={openInvite}
+            onRegister={openRegister}
           />
         </PatientsPageShell.Header>
 
         <PatientsPageShell.Content>
-          <div className="pl-metrics-grid">
-            <MetricCard isLoading={isLoading}>
-              <MetricCard.Icon bg="bg-blue-500/10">
-                <UsersRound className="size-6 text-blue-600" />
-              </MetricCard.Icon>
-              <MetricCard.Value>{meta.totalCount}</MetricCard.Value>
-              <MetricCard.Label>Total de pacientes</MetricCard.Label>
-            </MetricCard>
-
-            <MetricCard isLoading={loadingMetrics}>
-              <MetricCard.Icon bg="bg-emerald-500/10">
-                <Activity className="size-6 text-emerald-600" />
-              </MetricCard.Icon>
-              <MetricCard.Value>{activeCount}</MetricCard.Value>
-              <MetricCard.Label>Ativos</MetricCard.Label>
-              <MetricCard.Trend direction="up">24%</MetricCard.Trend>
-            </MetricCard>
-
-            <MetricCard isLoading={loadingMetrics}>
-              <MetricCard.Icon bg="bg-red-500/10">
-                <Clock className="size-6 text-red-500" />
-              </MetricCard.Icon>
-              <MetricCard.Value>{archivedCount}</MetricCard.Value>
-              <MetricCard.Label>Arquivados</MetricCard.Label>
-            </MetricCard>
-
-            <MetricCard isLoading={loadingMetrics}>
-              <MetricCard.Icon bg="bg-violet-500/10">
-                <UserRoundPlus className="size-6 text-violet-600" />
-              </MetricCard.Icon>
-              <MetricCard.Value>{newPatientsCount}</MetricCard.Value>
-              <MetricCard.Label>Novos (30 dias)</MetricCard.Label>
-              <MetricCard.Trend direction="up">24%</MetricCard.Trend>
-            </MetricCard>
-          </div>
+          <PatientsMetrics
+            counts={{
+              totalCount: meta.totalCount,
+              activeCount,
+              archivedCount,
+              newPatientsCount,
+            }}
+            state={{ isLoadingTotal: isLoading, isLoadingMetrics }}
+          />
 
           <div className="pl-table-section">
             <PatientsDataBlock>
@@ -202,10 +93,7 @@ export function PatientsList() {
                   meta.totalCount,
                 )}
               >
-                <PageDataBlockHeader
-                  primaryAction={() => {}}
-                  secondaryAction={() => {}}
-                />
+                <PatientsTableActions />
               </PatientsDataBlock.Header>
 
               <PatientsDataBlock.Toolbar>
@@ -213,23 +101,17 @@ export function PatientsList() {
               </PatientsDataBlock.Toolbar>
 
               <PatientsDataBlock.Content>
-                <PatientsTable
-                  patients={patients}
-                  isLoading={isLoading}
-                  perPage={filters.perPage}
-                  hasActiveFilters={filtersActive}
-                  sort={
-                    filters.sortBy
-                      ? {
-                          by: filters.sortBy,
-                          order: filters.order,
-                          onSort: setSort,
-                        }
-                      : undefined
-                  }
-                  onClearFilters={clearFilters}
-                  onRegister={() => setRegisterModalData({ isOpen: true })}
-                />
+                <PatientsTable sort={sort}>
+                  <PatientsTable.Body
+                    patients={patients}
+                    state={{ isLoading, perPage: filters.perPage }}
+                  >
+                    <PatientsTableEmpty
+                      filters={{ active: filtersActive, onClear: clearFilters }}
+                      onRegister={openRegister}
+                    />
+                  </PatientsTable.Body>
+                </PatientsTable>
               </PatientsDataBlock.Content>
 
               <PatientsDataBlock.Footer>
@@ -248,10 +130,7 @@ export function PatientsList() {
         </PatientsPageShell.Content>
       </PatientsPageShell>
 
-      <Dialog
-        open={registerModalData.isOpen}
-        onOpenChange={() => setRegisterModalData({ isOpen: false })}
-      >
+      <Dialog open={isRegisterOpen} onOpenChange={setIsRegisterOpen}>
         <RegisterPatients />
       </Dialog>
 

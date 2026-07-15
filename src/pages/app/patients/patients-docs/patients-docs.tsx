@@ -6,8 +6,8 @@ import { FolderOpen, Download, Upload } from 'lucide-react'
 
 import { Pagination } from '@/components/pagination/pagination'
 import { useHeaderStore } from '@/store/use-header-store'
-import { PatientsDataBlock } from '../components/patients-data-block'
-import { PatientsPageShell } from '../components/patients-page-shell'
+import { PatientsDataBlock } from '../components/patients-data-block/patients-data-block'
+import { PatientsPageShell } from '../components/patients-page-shell/patients-page-shell'
 import type { IAttachmentListItem as Attachment } from '@/types/attachment/attachment-list-item'
 
 import { useAttachmentsFilters } from '@/hooks/use-attachments-filters'

@@ -1,0 +1,27 @@
+@reference "../../../../../../../global.css";
+
+@layer components {
+  .ptbls-row {
+    @apply hover:bg-transparent;
+  }
+
+  .ptbls-stack {
+    @apply flex flex-col gap-1.5;
+  }
+
+  .ptbls-identity {
+    @apply flex items-center gap-3;
+  }
+
+  .ptbls-avatar {
+    @apply h-8 w-8 shrink-0 rounded-full;
+  }
+
+  .ptbls-actions {
+    @apply flex items-center justify-end gap-1;
+  }
+
+  .ptbls-action {
+    @apply h-8 w-8 rounded-md;
+  }
+}

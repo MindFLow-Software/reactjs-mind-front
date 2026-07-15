@@ -21,7 +21,11 @@ import { PsychologistAvatarUpload } from './psychologist-avatar-upload'
 
 import './psychologist-profile-card.css'
 import { Badge } from '@/components/ui/badge'
-import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip'
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipTrigger,
+} from '@/components/ui/tooltip'
 
 export function PsychologistProfileCard() {
   const navigate = useNavigate()
@@ -98,25 +102,23 @@ export function PsychologistProfileCard() {
               <h2 className="truncate text-xl font-bold text-foreground">
                 {professionalName}
               </h2>
-                <Dialog open={isEditOpen} onOpenChange={setIsEditOpen}>
-                  <DialogTrigger>
-                    <Tooltip>
-                        <TooltipTrigger asChild>
-                          <button className="size-fit">
-                            <SquarePen size={16} />
-                          </button>
-                        </TooltipTrigger>
-                        <TooltipContent>
-                          Editar Perfil
-                        </TooltipContent>
-                    </Tooltip>
-                  </DialogTrigger>
+              <Dialog open={isEditOpen} onOpenChange={setIsEditOpen}>
+                <DialogTrigger>
+                  <Tooltip>
+                    <TooltipTrigger asChild>
+                      <button className="size-fit">
+                        <SquarePen size={16} />
+                      </button>
+                    </TooltipTrigger>
+                    <TooltipContent>Editar Perfil</TooltipContent>
+                  </Tooltip>
+                </DialogTrigger>
 
-                  <EditPsychologistProfile
-                    onClose={() => setIsEditOpen(false)}
-                    psychologistProfileId={psychologistProfile?.id ?? null}
-                    />
-                </Dialog>
+                <EditPsychologistProfile
+                  onClose={() => setIsEditOpen(false)}
+                  psychologistProfileId={psychologistProfile?.id ?? null}
+                />
+              </Dialog>
             </div>
             <div className="mt-1 flex items-center gap-2">
               <span className="text-sm font-medium text-blue-700 dark:text-blue-400">

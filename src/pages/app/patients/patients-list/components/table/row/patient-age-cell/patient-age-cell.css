@@ -1,0 +1,19 @@
+@reference "../../../../../../../../global.css";
+
+@layer components {
+  .ptr-age {
+    @apply flex flex-col gap-0.5;
+  }
+
+  .ptr-age-value {
+    @apply text-sm font-bold tabular-nums;
+  }
+
+  .ptr-age-dob {
+    @apply flex items-center gap-1 text-[10px] text-muted-foreground;
+  }
+
+  .ptr-age-dob-icon {
+    @apply size-2.5;
+  }
+}

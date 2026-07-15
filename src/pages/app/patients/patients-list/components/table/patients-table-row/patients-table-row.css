@@ -1,0 +1,12 @@
+@reference "../../../../../../../global.css";
+
+@layer components {
+  .ptr-row {
+    @apply transition-colors hover:bg-muted/40;
+  }
+
+  /* Single source for the tooltip copy rendered from the row cells. */
+  .ptr-tooltip-text {
+    @apply text-xs;
+  }
+}

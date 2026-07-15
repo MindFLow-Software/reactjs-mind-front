@@ -19,7 +19,7 @@ import {
   SelectGroup,
 } from '@/components/ui/select'
 import type { ISessionVolume } from '@/types/patient/session-volume'
-import { PatientsSearchInput } from '../../components/patients-search-input'
+import { PatientsSearchInput } from '../../components/patients-search-input/patients-search-input'
 import './patients-records-table-filters.css'
 
 interface FilterControl<T> {

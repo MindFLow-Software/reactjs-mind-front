@@ -1,0 +1,47 @@
+@reference "../../../../../../../global.css";
+
+@layer components {
+  .pdd-history {
+    @apply flex flex-col gap-4;
+  }
+
+  .pdd-history-title {
+    @apply flex items-center gap-2 px-1 text-sm font-bold;
+  }
+
+  .pdd-history-table {
+    @apply rounded-md border;
+  }
+
+  .pdd-history-head {
+    @apply text-xs uppercase;
+  }
+
+  .pdd-history-date {
+    @apply whitespace-nowrap text-xs tabular-nums;
+  }
+
+  .pdd-history-theme {
+    @apply max-w-[180px] truncate text-xs italic text-muted-foreground;
+  }
+
+  .pdd-history-status {
+    @apply text-right text-[10px] font-bold uppercase;
+  }
+
+  .pdd-history-empty {
+    @apply h-24 text-center italic text-muted-foreground;
+  }
+
+  .pdd-history-total-label {
+    @apply py-4 text-xs text-muted-foreground;
+  }
+
+  .pdd-history-total-value {
+    @apply py-4 text-right font-bold;
+  }
+
+  .pdd-history-view-btn {
+    @apply h-7 w-7 cursor-pointer;
+  }
+}

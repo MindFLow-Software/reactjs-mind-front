@@ -1,0 +1,11 @@
+@reference "../../../../../../../../global.css";
+
+@layer components {
+  .ptr-last-session-value {
+    @apply cursor-default text-xs font-medium;
+  }
+
+  .ptr-last-session-empty {
+    @apply text-xs text-muted-foreground;
+  }
+}
