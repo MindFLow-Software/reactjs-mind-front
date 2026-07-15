@@ -1,0 +1,39 @@
+@reference "../../../../global.css";
+
+@layer components {
+  .sdm-banner-step-wrap {
+    @apply flex shrink-0 items-center gap-1;
+  }
+
+  .sdm-banner-step-inner {
+    @apply flex items-center gap-1;
+  }
+
+  .sdm-banner-step {
+    @apply flex size-4 shrink-0 items-center justify-center rounded-full text-[9px] font-bold;
+  }
+
+  .sdm-banner-step-done {
+    @apply text-white;
+  }
+
+  .sdm-banner-step-current {
+    @apply bg-blue-500 text-white ring-2 ring-blue-500/30 ring-offset-1 ring-offset-transparent;
+  }
+
+  .sdm-banner-step-pending {
+    @apply bg-slate-100 text-slate-500 dark:bg-slate-700 dark:text-slate-400;
+  }
+
+  .sdm-banner-step-chevron {
+    @apply size-3 shrink-0 text-slate-300 dark:text-slate-600;
+  }
+
+  .sdm-banner-step-current-blob {
+    @apply block size-1.5 rounded-full bg-white;
+  }
+
+  .sdm-banner-step-label {
+    @apply hidden whitespace-nowrap text-[11px] font-medium lg:block;
+  }
+}

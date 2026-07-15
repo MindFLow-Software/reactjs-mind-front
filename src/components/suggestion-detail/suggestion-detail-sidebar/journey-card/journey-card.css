@@ -1,0 +1,15 @@
+@reference "../../../../global.css";
+
+@layer components {
+  .sdm-journey-label-block {
+    @apply mb-4 block;
+  }
+
+  .sdm-journey-track {
+    @apply relative;
+  }
+
+  .sdm-journey-rail {
+    @apply absolute left-[12px] top-3 bottom-3 w-px bg-border;
+  }
+}

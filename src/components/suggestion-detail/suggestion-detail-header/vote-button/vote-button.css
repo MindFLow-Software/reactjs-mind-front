@@ -1,0 +1,24 @@
+@reference "../../../../global.css";
+
+@layer components {
+  .sdm-vote {
+    @apply flex w-16 min-h-[72px] shrink-0 cursor-pointer flex-col items-center justify-center gap-1 rounded-[6px] border-[1.5px] px-1 py-2.5 transition-all active:scale-95;
+  }
+
+  .sdm-vote-liked {
+    @apply border-blue-500 bg-blue-50 text-blue-600 dark:bg-blue-950/30 dark:text-blue-400;
+  }
+
+  .sdm-vote-default {
+    @apply border-slate-200 bg-slate-50 text-slate-500 hover:border-blue-500 hover:bg-blue-50 hover:text-blue-600;
+    @apply dark:border-border dark:bg-muted/50 dark:hover:border-blue-500 dark:hover:bg-blue-950/30 dark:hover:text-blue-400;
+  }
+
+  .sdm-vote-count {
+    @apply text-[20px] font-bold leading-none tabular-nums;
+  }
+
+  .sdm-vote-caption {
+    @apply text-[9px] font-bold uppercase tracking-[0.06em];
+  }
+}

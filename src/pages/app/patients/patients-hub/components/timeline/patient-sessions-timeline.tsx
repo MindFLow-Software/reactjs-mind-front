@@ -3,7 +3,7 @@
 import { useMemo, useState } from 'react'
 import { History } from 'lucide-react'
 
-import { Pagination } from '@/components/pagination'
+import { Pagination } from '@/components/pagination/pagination'
 
 import { MonthGroup } from './month-group'
 import { TimelineFilterBar } from './timeline-filter-bar'

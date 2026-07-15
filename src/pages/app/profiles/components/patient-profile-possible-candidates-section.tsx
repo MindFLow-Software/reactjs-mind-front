@@ -10,7 +10,7 @@ import {
   CardTitle,
 } from '@/components/ui/card'
 
-import { TitleIcon } from '@/components/title-icon'
+import { TitleIcon } from '@/components/title-icon/title-icon'
 import { ProfileSectionHeader } from './profile-section-header'
 
 import './patient-profile-possible-candidates-section.css'

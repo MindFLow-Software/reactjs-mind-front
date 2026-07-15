@@ -1,0 +1,27 @@
+@reference "../../../global.css";
+
+@layer components {
+  .sdm-banner {
+    @apply flex h-10 shrink-0 items-center gap-2.5 border-b border-border/60 px-5;
+  }
+
+  .sdm-banner-blob {
+    @apply size-2 shrink-0 rounded-full;
+  }
+
+  .sdm-banner-label {
+    @apply text-[11.5px] font-bold tracking-[0.07em] shrink-0;
+  }
+
+  .sdm-banner-separator {
+    @apply shrink-0 text-slate-300 dark:text-slate-600;
+  }
+
+  .sdm-banner-steps {
+    @apply hidden min-w-0 flex-1 items-center gap-1 overflow-hidden sm:flex;
+  }
+
+  .sdm-banner-code {
+    @apply flex shrink-0 items-center gap-1 font-mono text-[11px] text-slate-500 dark:text-slate-400;
+  }
+}

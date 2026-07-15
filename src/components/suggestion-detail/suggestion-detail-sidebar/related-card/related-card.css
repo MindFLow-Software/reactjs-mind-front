@@ -1,0 +1,23 @@
+@reference "../../../../global.css";
+
+@layer components {
+  .sdm-related-card {
+    @apply flex flex-col gap-3;
+  }
+
+  .sdm-related-list {
+    @apply flex flex-col gap-1;
+  }
+
+  .sdm-related {
+    @apply -mx-1.5 flex w-full cursor-pointer items-start gap-2 rounded-lg p-1.5 text-left transition-colors hover:bg-muted/50;
+  }
+
+  .sdm-related-votes {
+    @apply mt-px w-8 shrink-0 text-[13px] font-bold tabular-nums text-muted-foreground;
+  }
+
+  .sdm-related-title {
+    @apply line-clamp-2 text-[12.5px] leading-[1.4] text-foreground;
+  }
+}

@@ -1,0 +1,19 @@
+@reference "../../../global.css";
+
+@layer components {
+  .sia-avatar {
+    @apply flex shrink-0 items-center justify-center rounded-full bg-blue-100 font-bold text-blue-700 dark:bg-blue-900/50 dark:text-blue-300;
+  }
+
+  .sia-avatar-sm {
+    @apply size-[18px] border border-blue-200 text-[8px] dark:border-blue-800;
+  }
+
+  .sia-avatar-md {
+    @apply size-7 border-2 border-card text-[9px];
+  }
+
+  .sia-avatar-lg {
+    @apply size-8 border border-blue-200 text-[11px] dark:border-blue-800;
+  }
+}

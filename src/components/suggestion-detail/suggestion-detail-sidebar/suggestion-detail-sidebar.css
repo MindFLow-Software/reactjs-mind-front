@@ -1,0 +1,15 @@
+@reference "../../../global.css";
+
+@layer components {
+  .sdm-sidebar {
+    @apply flex shrink-0 flex-col gap-[18px] overflow-y-auto border-t border-border bg-slate-50 p-[18px] dark:bg-muted/20 md:w-[290px] md:border-t-0 md:border-l scrollbar-thin scrollbar-thumb-border hover:scrollbar-thumb-muted-foreground/30;
+  }
+
+  .sdm-card {
+    @apply rounded-xl border border-border bg-card p-4;
+  }
+
+  .sdm-card-label {
+    @apply block text-[11px] font-bold uppercase tracking-[0.06em] text-muted-foreground;
+  }
+}

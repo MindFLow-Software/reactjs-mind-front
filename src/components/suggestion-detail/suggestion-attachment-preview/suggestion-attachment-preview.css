@@ -1,0 +1,40 @@
+@reference "../../../global.css";
+
+@layer components {
+  .sdm-preview {
+    @apply absolute inset-0 z-20 flex flex-col overflow-hidden rounded-2xl;
+    background-color: var(--attachment-preview-bg);
+  }
+
+  .sdm-preview-head {
+    @apply flex shrink-0 items-center gap-3 px-5 py-4;
+  }
+
+  .sdm-preview-name {
+    @apply min-w-0 flex-1 truncate text-sm font-semibold text-white;
+  }
+
+  .sdm-preview-close {
+    @apply flex size-8 shrink-0 cursor-pointer items-center justify-center rounded-full border border-white/25 text-white/60 transition-colors hover:border-white/50 hover:text-white;
+  }
+
+  .sdm-preview-rule {
+    @apply h-[3px] shrink-0 bg-blue-600;
+  }
+
+  .sdm-preview-body {
+    @apply flex flex-1 items-center justify-center overflow-hidden p-4;
+  }
+
+  .sdm-preview-img {
+    @apply max-h-full max-w-full object-contain;
+  }
+
+  .sdm-preview-foot {
+    @apply flex shrink-0 justify-start px-5 py-3;
+  }
+
+  .sdm-preview-dismiss {
+    @apply cursor-pointer text-[11px] font-semibold uppercase tracking-[0.1em] text-white/40 transition-colors hover:text-white;
+  }
+}

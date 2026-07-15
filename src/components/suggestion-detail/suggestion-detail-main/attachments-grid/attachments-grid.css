@@ -1,0 +1,41 @@
+@reference "../../../../global.css";
+
+@layer components {
+  .sdm-attachments {
+    @apply flex flex-col gap-2.5;
+  }
+
+  .sdm-attachments-head {
+    @apply flex items-center gap-1.5;
+  }
+
+  .sdm-attachments-grid {
+    @apply grid gap-2;
+    grid-template-columns: repeat(auto-fill, minmax(130px, 1fr));
+  }
+
+  .sdm-attachment {
+    @apply relative cursor-pointer overflow-hidden rounded-lg bg-gradient-to-br from-blue-100 to-blue-200 dark:from-blue-950/40 dark:to-blue-900/40;
+    aspect-ratio: 4 / 3;
+  }
+
+  .sdm-attachment-img {
+    @apply absolute inset-0 size-full object-cover;
+  }
+
+  .sdm-attachment-overlay {
+    @apply absolute inset-0 flex items-center justify-center bg-black/0 transition-colors group-hover:bg-black/40;
+  }
+
+  .sdm-attachment-eye {
+    @apply size-5 text-white opacity-0 drop-shadow transition-opacity group-hover:opacity-100;
+  }
+
+  .sdm-attachment-caption {
+    @apply absolute inset-x-0 bottom-0 flex h-8 items-end bg-gradient-to-t from-black/70 to-transparent px-2 pb-1;
+  }
+
+  .sdm-attachment-name {
+    @apply truncate text-[10px] font-medium text-white;
+  }
+}

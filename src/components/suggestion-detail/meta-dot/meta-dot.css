@@ -1,0 +1,7 @@
+@reference "../../../global.css";
+
+@layer components {
+  .sdm-meta-dot {
+    @apply size-[3px] shrink-0 rounded-full bg-slate-300 dark:bg-slate-600;
+  }
+}

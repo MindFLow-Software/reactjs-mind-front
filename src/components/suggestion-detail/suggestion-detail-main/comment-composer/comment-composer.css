@@ -1,0 +1,43 @@
+@reference "../../../../global.css";
+
+@layer components {
+  .sdm-composer-row {
+    @apply flex gap-2.5;
+  }
+
+  .sdm-composer {
+    @apply flex-1 overflow-hidden rounded-xl border border-border bg-card transition-all focus-within:border-blue-600 focus-within:ring-[3px] focus-within:ring-blue-600/[.18];
+  }
+
+  .sdm-composer-input {
+    @apply max-h-[120px] min-h-[64px] resize-none border-none bg-transparent text-[13px] shadow-none focus-visible:ring-0;
+  }
+
+  .sdm-composer-toolbar {
+    @apply flex items-center gap-2 border-t border-border bg-muted/30 px-3 py-2;
+  }
+
+  .sdm-composer-tool {
+    @apply text-muted-foreground transition-colors hover:text-foreground;
+  }
+
+  .sdm-composer-hint {
+    @apply ml-1 hidden text-[11px] text-muted-foreground sm:block;
+  }
+
+  .sdm-composer-spacer {
+    @apply flex-1;
+  }
+
+  .sdm-composer-submit {
+    @apply rounded-lg bg-blue-600 px-3 py-1 text-[12px] font-semibold text-white;
+  }
+
+  .sdm-composer-submit-ready {
+    @apply cursor-pointer transition-colors hover:bg-blue-700;
+  }
+
+  .sdm-composer-submit-idle {
+    @apply cursor-not-allowed opacity-50;
+  }
+}

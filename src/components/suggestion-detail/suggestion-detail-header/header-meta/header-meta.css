@@ -1,0 +1,31 @@
+@reference "../../../../global.css";
+
+@layer components {
+  .sdm-meta {
+    @apply flex flex-wrap items-center gap-2;
+  }
+
+  .sdm-pill {
+    @apply inline-flex shrink-0 items-center gap-1 rounded-full px-2 py-0.5 text-[11px] font-semibold;
+  }
+
+  .sdm-pill-dot {
+    @apply size-1.5 shrink-0 rounded-full;
+  }
+
+  .sdm-meta-author {
+    @apply flex items-center gap-1.5;
+  }
+
+  .sdm-meta-text {
+    @apply text-[11.5px] text-muted-foreground;
+  }
+
+  .sdm-meta-strong {
+    @apply font-semibold text-foreground;
+  }
+
+  .sdm-meta-comments {
+    @apply flex items-center gap-1 text-[11.5px] text-muted-foreground;
+  }
+}

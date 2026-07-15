@@ -10,8 +10,8 @@ import {
 } from '@/components/ui/card'
 
 import { Button } from '@/components/ui/button'
-import { TitleIcon } from '@/components/title-icon'
-import { ActiveBadge } from '@/components/active-badge'
+import { TitleIcon } from '@/components/title-icon/title-icon'
+import { ActiveBadge } from '@/components/active-badge/active-badge'
 
 import { Time } from '@/utils/time'
 import { PatientProfileStatus } from '@/types/patient-profile/patient-profile-status'

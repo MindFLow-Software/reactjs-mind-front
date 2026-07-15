@@ -18,7 +18,10 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from '@/components/ui/tooltip'
-import { Pagination, type IPaginationState } from '@/components/pagination'
+import {
+  Pagination,
+  type IPaginationState,
+} from '@/components/pagination/pagination'
 import {
   FINISHED_SESSION_STATUSES,
   getSessionStatusLabel,
