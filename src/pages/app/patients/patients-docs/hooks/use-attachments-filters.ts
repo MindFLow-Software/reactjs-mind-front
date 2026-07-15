@@ -1,7 +1,23 @@
 import { useEffect, useState } from 'react'
 import type { DateRange } from 'react-day-picker'
 
-export function useAttachmentsFilters() {
+export type IUseAttachmentsFiltersReturn = {
+  pageIndex: number
+  setPageIndex: (val: number) => void
+  search: string
+  setSearch: (val: string) => void
+  debouncedSearch: string
+  patientId: string
+  setPatientId: (val: string) => void
+  date: DateRange | undefined
+  setDate: (val: DateRange | undefined) => void
+  contentType: string | undefined
+  setContentType: (val: string | undefined) => void
+  clearFilters: () => void
+  hasActiveFilters: boolean
+}
+
+export function useAttachmentsFilters(): IUseAttachmentsFiltersReturn {
   const [pageIndex, setPageIndexState] = useState(0)
   const [search, setSearch] = useState('')
   const [debouncedSearch, setDebouncedSearch] = useState('')

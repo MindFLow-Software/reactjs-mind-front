@@ -10,7 +10,7 @@ import { PatientsDataBlock } from '../components/patients-data-block/patients-da
 import { PatientsPageShell } from '../components/patients-page-shell/patients-page-shell'
 import type { IAttachmentListItem as Attachment } from '@/types/attachment/attachment-list-item'
 
-import { useAttachmentsFilters } from '@/hooks/use-attachments-filters'
+import { useAttachmentsFilters } from './hooks/use-attachments-filters'
 import { useAttachmentsListQuery } from './hooks/use-attachments-list-query'
 import { useDeleteAttachment } from './hooks/use-delete-attachment'
 import { MetricsCards } from './components/metrics-cards'
@@ -95,26 +95,17 @@ export function PatientDocuments() {
               />
 
               <PatientsDataBlock.Toolbar>
-                <AttachmentsTableFilters
-                  search={filters.search}
-                  onSearchChange={filters.setSearch}
-                  patientId={filters.patientId}
-                  onPatientChange={filters.setPatientId}
-                  date={filters.date}
-                  onDateChange={filters.setDate}
-                  contentType={filters.contentType}
-                  onContentTypeChange={filters.setContentType}
-                  onClearFilters={filters.clearFilters}
-                />
+                <AttachmentsTableFilters filters={filters} />
               </PatientsDataBlock.Toolbar>
 
               <PatientsDataBlock.Content>
                 <AttachmentsTable
-                  attachments={attachments}
-                  isLoading={isLoading}
-                  onDelete={removeAttachment}
-                  onPreview={setPreviewDoc}
-                  previewDocId={previewDoc?.id}
+                  data={{ attachments, isLoading }}
+                  selection={{
+                    previewDocId: previewDoc?.id,
+                    onPreview: setPreviewDoc,
+                    onDelete: removeAttachment,
+                  }}
                 />
               </PatientsDataBlock.Content>
 

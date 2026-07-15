@@ -1,7 +1,9 @@
 import { MoveLeft } from 'lucide-react'
 import { useNavigate } from 'react-router-dom'
 
-import { PatientNavigationControls } from '../../patients-records/components/patient-navigation-controls'
+import { PatientNavigationControls } from '../../../patients-records/components/patient-navigation-controls/patient-navigation-controls'
+
+import './hub-top-bar.css'
 
 interface HubTopBarProps {
   queue: {
@@ -28,10 +30,12 @@ export function HubTopBar({ queue }: HubTopBarProps) {
 
       {showNavigation && (
         <PatientNavigationControls
-          prevId={queue.prevId}
-          nextId={queue.nextId}
-          current={queue.currentIndex + 1}
-          total={queue.total}
+          queue={{
+            prevId: queue.prevId,
+            nextId: queue.nextId,
+            current: queue.currentIndex + 1,
+            total: queue.total,
+          }}
         />
       )}
     </div>

@@ -1,7 +1,6 @@
 'use client'
 
 import { CalendarIcon } from 'lucide-react'
-import { format } from 'date-fns'
 import { ptBR } from 'date-fns/locale'
 import { type DateRange } from 'react-day-picker'
 
@@ -13,12 +12,21 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from '@/components/ui/popover'
+import { Time } from '@/utils/time'
 import './date-picker-with-range.css'
 
 interface DatePickerWithRangeProps {
   className?: string
   date: DateRange | undefined
   onDateChange: (date: DateRange | undefined) => void
+}
+
+function renderDateLabel(date: DateRange | undefined) {
+  if (!date?.from) return <span>Selecione um período</span>
+
+  if (!date.to) return Time.toBrazilianFormat(date.from)
+
+  return `${Time.toBrazilianFormat(date.from)} - ${Time.toBrazilianFormat(date.to)}`
 }
 
 export function DatePickerWithRange({
@@ -40,18 +48,7 @@ export function DatePickerWithRange({
             )}
           >
             <CalendarIcon className="mr-2 size-4" />
-            {date?.from ? (
-              date.to ? (
-                <>
-                  {format(date.from, 'dd/MM/yyyy', { locale: ptBR })} -{' '}
-                  {format(date.to, 'dd/MM/yyyy', { locale: ptBR })}
-                </>
-              ) : (
-                format(date.from, 'dd/MM/yyyy', { locale: ptBR })
-              )
-            ) : (
-              <span>Selecione um período</span>
-            )}
+            {renderDateLabel(date)}
           </Button>
         </PopoverTrigger>
         <PopoverContent className="w-auto p-0" align="start">

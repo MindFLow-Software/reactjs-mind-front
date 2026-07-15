@@ -1,5 +1,5 @@
 import type { IAnamnesisContent } from '@/types/clinical/anamnesis-content'
-import type { AnamnesisBlock, SerializedBlock } from './anamnesis-types'
+import type { IAnamnesisBlock, ISerializedBlock } from './anamnesis-types'
 
 export const DYNAMIC_TEMPLATE_PREFIX = '__ANAMNESIS_BLOCKS_V1__:'
 export const SINGLE_BLOCK_TITLE = 'Anamnese'
@@ -26,9 +26,9 @@ export function removeLeadingHeading(content: string | undefined): string {
 }
 
 export function createBlock(
-  raw: SerializedBlock,
+  raw: ISerializedBlock,
   index: number,
-): AnamnesisBlock {
+): IAnamnesisBlock {
   const cleanTitle = raw.title?.trim() || `Seção ${index + 1}`
   const normalizedContent = removeLeadingHeading(raw.content)
   return {
@@ -38,7 +38,7 @@ export function createBlock(
   }
 }
 
-export function parseMarkdownBlocks(content: string): AnamnesisBlock[] {
+export function parseMarkdownBlocks(content: string): IAnamnesisBlock[] {
   if (!content.trim()) {
     return [{ id: crypto.randomUUID(), title: SINGLE_BLOCK_TITLE, content: '' }]
   }
@@ -55,7 +55,7 @@ export function parseMarkdownBlocks(content: string): AnamnesisBlock[] {
     ]
   }
 
-  const blocks: AnamnesisBlock[] = []
+  const blocks: IAnamnesisBlock[] = []
   matches.forEach((match, index) => {
     const headingStart = match.index ?? 0
     const heading = match[0]
@@ -77,14 +77,14 @@ export function parseMarkdownBlocks(content: string): AnamnesisBlock[] {
   return blocks
 }
 
-export function buildInitialBlocks(data: IAnamnesisContent): AnamnesisBlock[] {
+export function buildInitialBlocks(data: IAnamnesisContent): IAnamnesisBlock[] {
   const raw = data.medicalHistory ?? ''
 
   if (raw.startsWith(DYNAMIC_TEMPLATE_PREFIX)) {
     try {
       const parsed = JSON.parse(
         raw.slice(DYNAMIC_TEMPLATE_PREFIX.length),
-      ) as SerializedBlock[]
+      ) as ISerializedBlock[]
       if (Array.isArray(parsed) && parsed.length > 0) {
         return parsed.map((block, index) => createBlock(block, index))
       }
@@ -105,7 +105,7 @@ export function buildInitialBlocks(data: IAnamnesisContent): AnamnesisBlock[] {
   return parseMarkdownBlocks(legacySections.join('\n\n'))
 }
 
-export function normalizeBlocks(blocks: AnamnesisBlock[]): AnamnesisBlock[] {
+export function normalizeBlocks(blocks: IAnamnesisBlock[]): IAnamnesisBlock[] {
   if (blocks.length === 0) {
     return [{ id: crypto.randomUUID(), title: SINGLE_BLOCK_TITLE, content: '' }]
   }
@@ -117,7 +117,7 @@ export function normalizeBlocks(blocks: AnamnesisBlock[]): AnamnesisBlock[] {
   }))
 }
 
-export function buildContentFromBlocks(blocks: AnamnesisBlock[]): string {
+export function buildContentFromBlocks(blocks: IAnamnesisBlock[]): string {
   return blocks
     .map((block, index) => {
       const title = block.title.trim() || `Seção ${index + 1}`
@@ -128,7 +128,7 @@ export function buildContentFromBlocks(blocks: AnamnesisBlock[]): string {
     .trim()
 }
 
-export function toApiData(blocks: AnamnesisBlock[]): IAnamnesisContent {
+export function toApiData(blocks: IAnamnesisBlock[]): IAnamnesisContent {
   const normalized = normalizeBlocks(blocks)
   const serialized = `${DYNAMIC_TEMPLATE_PREFIX}${JSON.stringify(
     normalized.map((block, index) => ({

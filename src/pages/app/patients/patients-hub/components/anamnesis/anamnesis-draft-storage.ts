@@ -1,4 +1,4 @@
-import type { AnamnesisBlock, AnamnesisDraft } from './anamnesis-types'
+import type { IAnamnesisBlock, IAnamnesisDraft } from './anamnesis-types'
 import { createBlock } from './anamnesis-utils'
 
 const DRAFT_KEY_PREFIX = 'anamnesis-draft:'
@@ -6,11 +6,11 @@ const DRAFT_KEY_PREFIX = 'anamnesis-draft:'
 const draftKey = (patientId: string): string =>
   `${DRAFT_KEY_PREFIX}${patientId}`
 
-export function readAnamnesisDraft(patientId: string): AnamnesisBlock[] {
+export function readAnamnesisDraft(patientId: string): IAnamnesisBlock[] {
   try {
     const raw = localStorage.getItem(draftKey(patientId))
     if (!raw) return []
-    const parsed = JSON.parse(raw) as AnamnesisDraft
+    const parsed = JSON.parse(raw) as IAnamnesisDraft
     if (!Array.isArray(parsed?.blocks)) return []
     return parsed.blocks.map((block, index) => createBlock(block, index))
   } catch {
@@ -21,9 +21,9 @@ export function readAnamnesisDraft(patientId: string): AnamnesisBlock[] {
 
 export function writeAnamnesisDraft(
   patientId: string,
-  blocks: AnamnesisBlock[],
+  blocks: IAnamnesisBlock[],
 ): void {
-  const draft: AnamnesisDraft = { blocks, updatedAt: Date.now() }
+  const draft: IAnamnesisDraft = { blocks, updatedAt: Date.now() }
   localStorage.setItem(draftKey(patientId), JSON.stringify(draft))
 }
 

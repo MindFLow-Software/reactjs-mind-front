@@ -17,23 +17,85 @@ import { BulkDeleteAction } from '../bulk-delete-action'
 import type { IAttachmentListItem as Attachment } from '@/types/attachment/attachment-list-item'
 import './attachments-table.css'
 
-interface AttachmentsTableProps {
+interface AttachmentsTableData {
   attachments: Attachment[]
   isLoading: boolean
-  onDelete: (id: string) => void
-  onPreview: (doc: Attachment) => void
-  previewDocId?: string
   perPage?: number
 }
 
-export function AttachmentsTable({
-  attachments,
-  isLoading,
-  onDelete,
-  onPreview,
-  previewDocId,
-  perPage = 10,
-}: AttachmentsTableProps) {
+interface AttachmentsTableSelection {
+  previewDocId?: string
+  onPreview: (doc: Attachment) => void
+  onDelete: (id: string) => void
+}
+
+interface AttachmentsTableProps {
+  data: AttachmentsTableData
+  selection: AttachmentsTableSelection
+}
+
+function AttachmentsTableSkeletonRow({ index }: { index: number }) {
+  return (
+    <TableRow key={`sk-${index}`}>
+      <TableCell className="px-4">
+        <Skeleton className="h-4 w-4 rounded" />
+      </TableCell>
+      <TableCell>
+        <div className="flex items-center gap-3">
+          <Skeleton className="h-11 w-9 rounded-md" />
+          <div className="flex flex-col gap-1.5">
+            <Skeleton className="h-3 w-[140px]" />
+            <Skeleton className="h-2.5 w-[60px]" />
+          </div>
+        </div>
+      </TableCell>
+      <TableCell>
+        <div className="flex items-center gap-2">
+          <Skeleton className="h-8 w-8 rounded-full" />
+          <Skeleton className="h-3 w-[100px]" />
+        </div>
+      </TableCell>
+      <TableCell>
+        <Skeleton className="h-3 w-[60px]" />
+      </TableCell>
+      <TableCell>
+        <Skeleton className="h-3 w-[80px]" />
+      </TableCell>
+      <TableCell>
+        <Skeleton className="h-5 w-[60px] rounded-full" />
+      </TableCell>
+      <TableCell className="text-right pr-4">
+        <div className="flex justify-end gap-1.5">
+          <Skeleton className="h-7 w-7 rounded-md" />
+          <Skeleton className="h-7 w-7 rounded-md" />
+          <Skeleton className="h-7 w-7 rounded-md" />
+        </div>
+      </TableCell>
+    </TableRow>
+  )
+}
+
+function AttachmentsTableEmptyRow({ columnCount }: { columnCount: number }) {
+  return (
+    <TableRow>
+      <TableCell colSpan={columnCount} className="pd-tbl-empty-cell">
+        <div className="pd-tbl-empty">
+          <div className="pd-tbl-empty-icon">
+            <Paperclip className="size-9 text-muted-foreground/30" />
+          </div>
+          <p className="pd-tbl-empty-title">Nenhum documento encontrado.</p>
+          <p className="pd-tbl-empty-sub">
+            Ajuste os filtros ou envie um novo arquivo.
+          </p>
+        </div>
+      </TableCell>
+    </TableRow>
+  )
+}
+
+export function AttachmentsTable({ data, selection }: AttachmentsTableProps) {
+  const { attachments, isLoading, perPage = 10 } = data
+  const { previewDocId, onPreview, onDelete } = selection
   const [selectedIds, setSelectedIds] = useState<string[]>([])
   const columnCount = 7
 
@@ -60,13 +122,37 @@ export function AttachmentsTable({
     setSelectedIds([])
   }, [selectedIds, onDelete])
 
+  function renderBody() {
+    if (isLoading) {
+      return Array.from({ length: perPage }).map((_, i) => (
+        <AttachmentsTableSkeletonRow key={`sk-${i}`} index={i} />
+      ))
+    }
+
+    if (attachments.length === 0) {
+      return <AttachmentsTableEmptyRow columnCount={columnCount} />
+    }
+
+    return attachments.map((doc) => (
+      <AttachmentsTableRow
+        key={doc.id}
+        attachment={doc}
+        selection={{
+          isSelected: selectedIds.includes(doc.id),
+          isActivePreview: previewDocId === doc.id,
+          onSelectChange: (checked) => handleToggleSelect(doc.id, checked),
+        }}
+        actions={{ onDelete, onPreview }}
+      />
+    ))
+  }
+
   return (
     <div className="pd-tbl-root">
       {selectedIds.length > 0 && (
         <BulkDeleteAction
-          selectedCount={selectedIds.length}
+          selection={{ count: selectedIds.length, isDeleting: false }}
           onConfirm={handleBulkDelete}
-          isDeleting={false}
           onClear={() => setSelectedIds([])}
         />
       )}
@@ -102,78 +188,7 @@ export function AttachmentsTable({
             </TableRow>
           </TableHeader>
 
-          <TableBody>
-            {isLoading ? (
-              Array.from({ length: perPage }).map((_, i) => (
-                <TableRow key={`sk-${i}`}>
-                  <TableCell className="px-4">
-                    <Skeleton className="h-4 w-4 rounded" />
-                  </TableCell>
-                  <TableCell>
-                    <div className="flex items-center gap-3">
-                      <Skeleton className="h-11 w-9 rounded-md" />
-                      <div className="flex flex-col gap-1.5">
-                        <Skeleton className="h-3 w-[140px]" />
-                        <Skeleton className="h-2.5 w-[60px]" />
-                      </div>
-                    </div>
-                  </TableCell>
-                  <TableCell>
-                    <div className="flex items-center gap-2">
-                      <Skeleton className="h-8 w-8 rounded-full" />
-                      <Skeleton className="h-3 w-[100px]" />
-                    </div>
-                  </TableCell>
-                  <TableCell>
-                    <Skeleton className="h-3 w-[60px]" />
-                  </TableCell>
-                  <TableCell>
-                    <Skeleton className="h-3 w-[80px]" />
-                  </TableCell>
-                  <TableCell>
-                    <Skeleton className="h-5 w-[60px] rounded-full" />
-                  </TableCell>
-                  <TableCell className="text-right pr-4">
-                    <div className="flex justify-end gap-1.5">
-                      <Skeleton className="h-7 w-7 rounded-md" />
-                      <Skeleton className="h-7 w-7 rounded-md" />
-                      <Skeleton className="h-7 w-7 rounded-md" />
-                    </div>
-                  </TableCell>
-                </TableRow>
-              ))
-            ) : attachments.length > 0 ? (
-              attachments.map((doc) => (
-                <AttachmentsTableRow
-                  key={doc.id}
-                  attachment={doc}
-                  isSelected={selectedIds.includes(doc.id)}
-                  isActivePreview={previewDocId === doc.id}
-                  onSelectChange={(checked) =>
-                    handleToggleSelect(doc.id, checked)
-                  }
-                  onDelete={onDelete}
-                  onPreview={onPreview}
-                />
-              ))
-            ) : (
-              <TableRow>
-                <TableCell colSpan={columnCount} className="pd-tbl-empty-cell">
-                  <div className="pd-tbl-empty">
-                    <div className="pd-tbl-empty-icon">
-                      <Paperclip className="size-9 text-muted-foreground/30" />
-                    </div>
-                    <p className="pd-tbl-empty-title">
-                      Nenhum documento encontrado.
-                    </p>
-                    <p className="pd-tbl-empty-sub">
-                      Ajuste os filtros ou envie um novo arquivo.
-                    </p>
-                  </div>
-                </TableCell>
-              </TableRow>
-            )}
-          </TableBody>
+          <TableBody>{renderBody()}</TableBody>
         </Table>
       </div>
     </div>

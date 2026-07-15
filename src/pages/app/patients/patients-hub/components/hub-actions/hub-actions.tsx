@@ -9,15 +9,22 @@ import {
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu'
 
+import './hub-actions.css'
+
 export function HubActions() {
   return (
     <div className="phd-actions">
-      <Button variant="outline" size="sm" className="phd-action-export">
+      <Button
+        variant="outline"
+        size="sm"
+        className="phd-action-export"
+        disabled
+      >
         <Download className="size-3.5" />
         <span className="hidden md:inline">Exportar</span>
       </Button>
 
-      <Button size="sm" className="phd-action-primary">
+      <Button size="sm" className="phd-action-primary" disabled>
         <Plus className="size-3.5" />
         <span>Nova Sessao</span>
       </Button>
@@ -29,11 +36,11 @@ export function HubActions() {
           </Button>
         </DropdownMenuTrigger>
         <DropdownMenuContent align="end" className="w-48">
-          <DropdownMenuItem className="phd-menu-item">
+          <DropdownMenuItem className="phd-menu-item" disabled>
             <Printer className="size-4" /> Imprimir prontuario
           </DropdownMenuItem>
           <DropdownMenuSeparator />
-          <DropdownMenuItem className="phd-menu-item-danger">
+          <DropdownMenuItem className="phd-menu-item-danger" disabled>
             <Trash2 className="size-4" /> Arquivar paciente
           </DropdownMenuItem>
         </DropdownMenuContent>

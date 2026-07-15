@@ -19,27 +19,31 @@ import {
   SelectGroup,
 } from '@/components/ui/select'
 import type { ISessionVolume } from '@/types/patient/session-volume'
-import { PatientsSearchInput } from '../../components/patients-search-input/patients-search-input'
+import { PatientsSearchInput } from '../../../components/patients-search-input/patients-search-input'
 import './patients-records-table-filters.css'
 
-interface FilterControl<T> {
+type IFilterControl<T> = {
   value: T
   onChange: (value: T) => void
 }
 
-interface PatientsRecordsTableFiltersProps {
-  search: FilterControl<string>
-  gender: FilterControl<string>
-  sessionOrder: FilterControl<ISessionVolume>
+type IPatientsRecordsTableFiltersValues = {
+  search: IFilterControl<string>
+  gender: IFilterControl<string>
+  sessionOrder: IFilterControl<ISessionVolume>
+}
+
+type IPatientsRecordsTableFilters = {
+  filters: IPatientsRecordsTableFiltersValues
   onClearFilters: () => void
 }
 
 export function PatientsRecordsTableFilters({
-  search,
-  gender,
-  sessionOrder,
+  filters,
   onClearFilters,
-}: PatientsRecordsTableFiltersProps) {
+}: IPatientsRecordsTableFilters) {
+  const { search, gender, sessionOrder } = filters
+
   const hasAnyFilter =
     search.value !== '' ||
     gender.value !== 'all' ||
@@ -67,7 +71,7 @@ export function PatientsRecordsTableFilters({
               <SelectGroup>
                 <SelectItem value="all" className="cursor-pointer py-2.5">
                   <div className="pr-flt-option">
-                    <VenusAndMars className="h-4 w-4 text-slate-500" />
+                    <VenusAndMars className="h-4 w-4 text-muted-foreground" />
                     <span>Todos Gêneros</span>
                   </div>
                 </SelectItem>
@@ -101,7 +105,7 @@ export function PatientsRecordsTableFilters({
               <SelectGroup>
                 <SelectItem value="all" className="cursor-pointer py-2.5">
                   <div className="pr-flt-option">
-                    <History className="h-4 w-4 text-slate-500" />
+                    <History className="h-4 w-4 text-muted-foreground" />
                     <span>Total Sessões</span>
                   </div>
                 </SelectItem>

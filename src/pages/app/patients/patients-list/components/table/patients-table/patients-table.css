@@ -2,7 +2,7 @@
 
 @layer components {
   .ptbl-card {
-    @apply overflow-hidden border p-0;
+    @apply overflow-hidden border p-0!;
   }
 
   .ptbl-head-row {

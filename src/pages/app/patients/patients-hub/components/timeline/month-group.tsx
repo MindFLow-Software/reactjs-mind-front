@@ -1,9 +1,9 @@
 import { SessionRow } from './session-row'
-import type { Session } from './timeline.helpers'
+import type { ITimelineSessionItem } from './timeline.helpers'
 
 interface MonthGroupProps {
   month: string
-  sessions: Session[]
+  sessions: ITimelineSessionItem[]
   patientName: string
 }
 

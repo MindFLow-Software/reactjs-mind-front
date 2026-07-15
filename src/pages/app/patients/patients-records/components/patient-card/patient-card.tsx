@@ -1,18 +1,17 @@
 import { Clock, ChevronRight } from 'lucide-react'
-import { formatDistanceToNow, parseISO } from 'date-fns'
-import { ptBR } from 'date-fns/locale'
 
 import { Card, CardContent } from '@/components/ui/card'
 import { UserAvatar } from '@/components/user-avatar/user-avatar'
+import { Time } from '@/utils/time'
 import type { IPatient } from '@/types/patient/patient'
 import './patient-card.css'
 
-interface PatientCardProps {
+type IPatientCard = {
   patient: IPatient
   onOpen: (id: string) => void
 }
 
-export function PatientCard({ patient, onOpen }: PatientCardProps) {
+export function PatientCard({ patient, onOpen }: IPatientCard) {
   return (
     <Card className="group pr-card" onClick={() => onOpen(patient.id)}>
       <CardContent className="pr-card-body">
@@ -33,13 +32,7 @@ export function PatientCard({ patient, onOpen }: PatientCardProps) {
             <div className="pr-card-meta">
               <Clock className="size-3 text-blue-500/70" />
               {patient.lastSessionAt
-                ? `Ultima sessao: ${formatDistanceToNow(
-                    parseISO(patient.lastSessionAt),
-                    {
-                      addSuffix: true,
-                      locale: ptBR,
-                    },
-                  )}`
+                ? `Ultima sessao: ${Time.toRelativeFromNow(patient.lastSessionAt)}`
                 : 'Sem sessoes registradas'}
             </div>
           </div>

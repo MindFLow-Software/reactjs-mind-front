@@ -2,7 +2,7 @@
 
 @layer components {
   .mc-card {
-    @apply relative min-h-36 max-h-40 w-full rounded-md border bg-card shadow-sm;
+    @apply relative min-h-36 max-h-40 w-full rounded-md border bg-card shadow-sm px-4!;
   }
 
   .mc-card-grid {}
@@ -18,7 +18,7 @@
   }
 
   .mc-content {
-    @apply relative px-0;
+    @apply relative px-0!;
   }
 
   .mc-content-grid {

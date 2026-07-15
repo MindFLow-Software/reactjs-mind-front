@@ -7,6 +7,11 @@ import { getPatientAttachments } from '@/api/attachments/get-patient-attachments
 import type { IAttachmentPatientItem } from '@/types/attachment/attachment-patient-item'
 import type { FileTypeFilter } from '../components/files/file-type-filter'
 import { getFileType } from '../components/files/file-type-filter'
+import { Time } from '@/utils/time'
+
+export function patientAttachmentsQueryKey(patientId: string) {
+  return ['patient-hub', patientId, 'attachments'] as const
+}
 
 interface UsePatientFilesReturn {
   attachments: IAttachmentPatientItem[]
@@ -30,7 +35,7 @@ export function usePatientFiles(patientId: string): UsePatientFilesReturn {
   )
 
   const { data: attachments = [], isLoading } = useQuery({
-    queryKey: ['patient-hub', patientId, 'attachments'],
+    queryKey: patientAttachmentsQueryKey(patientId),
     queryFn: () => getPatientAttachments(patientId),
     enabled: Boolean(patientId),
   })
@@ -38,8 +43,7 @@ export function usePatientFiles(patientId: string): UsePatientFilesReturn {
   const sorted = useMemo(
     () =>
       [...attachments].sort(
-        (a, b) =>
-          new Date(b.uploadedAt).getTime() - new Date(a.uploadedAt).getTime(),
+        (a, b) => Time.timestamp(b.uploadedAt) - Time.timestamp(a.uploadedAt),
       ),
     [attachments],
   )
@@ -66,7 +70,7 @@ export function usePatientFiles(patientId: string): UsePatientFilesReturn {
     mutationFn: deleteAttachment,
     onSuccess: () => {
       queryClient.invalidateQueries({
-        queryKey: ['patient-hub', patientId, 'attachments'],
+        queryKey: patientAttachmentsQueryKey(patientId),
       })
       toast.success('Arquivo removido.')
     },

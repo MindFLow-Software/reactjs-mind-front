@@ -9,13 +9,13 @@ import { getPatientProfileDetails } from '@/api/patient-profiles/get-patient-pro
 import { useHeaderStore } from '@/store/use-header-store'
 import { usePatientQueueStore } from '@/store/use-patient-queue-store'
 
-import { PatientsDetailsLoading } from './components/loading'
+import { PatientsDetailsLoading } from './components/loading/loading'
 import { PatientsDataBlock } from '../components/patients-data-block/patients-data-block'
 import { PatientsPageShell } from '../components/patients-page-shell/patients-page-shell'
-import { HubActions } from './components/hub-actions'
-import { HubTopBar } from './components/hub-top-bar'
-import { PatientHubTabs } from './components/patient-hub-tabs'
-import { PatientDetailsError } from './components/patient-details-error'
+import { HubActions } from './components/hub-actions/hub-actions'
+import { HubTopBar } from './components/hub-top-bar/hub-top-bar'
+import { PatientHubTabs } from './components/patient-hub-tabs/patient-hub-tabs'
+import { PatientDetailsError } from './components/patient-details-error/patient-details-error'
 import { usePatientQueue } from './hooks/use-patient-queue'
 import './patients-details.css'
 

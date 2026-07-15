@@ -1,8 +1,6 @@
 'use client'
 
 import { Trash2, Download, Eye, MoreHorizontal } from 'lucide-react'
-import { format } from 'date-fns'
-import { ptBR } from 'date-fns/locale'
 
 import { Button } from '@/components/ui/button'
 import { TableCell, TableRow } from '@/components/ui/table'
@@ -22,16 +20,31 @@ import {
 } from '@/components/ui/dropdown-menu'
 import { cn } from '@/lib/utils'
 import { Files } from '@/utils/files'
+import { Time } from '@/utils/time'
 import type { IAttachmentListItem as Attachment } from '@/types/attachment/attachment-list-item'
 import './attachments-table-row.css'
 
-interface AttachmentsTableRowProps {
-  attachment: Attachment
+interface AttachmentsTableRowSelection {
   isSelected: boolean
   isActivePreview: boolean
   onSelectChange: (checked: boolean) => void
+}
+
+interface AttachmentsTableRowActions {
   onDelete: (id: string) => void
   onPreview: (doc: Attachment) => void
+}
+
+interface AttachmentsTableRowProps {
+  attachment: Attachment
+  selection: AttachmentsTableRowSelection
+  actions: AttachmentsTableRowActions
+}
+
+function getRowStateClassName(isActivePreview: boolean, isSelected: boolean) {
+  if (isActivePreview) return 'pd-row-active'
+  if (isSelected) return 'pd-row-selected'
+  return 'pd-row-idle'
 }
 
 function DocThumb({
@@ -67,12 +80,11 @@ function PatientAvatar({
 
 export function AttachmentsTableRow({
   attachment,
-  isSelected,
-  isActivePreview,
-  onSelectChange,
-  onDelete,
-  onPreview,
+  selection,
+  actions,
 }: AttachmentsTableRowProps) {
+  const { isSelected, isActivePreview, onSelectChange } = selection
+  const { onDelete, onPreview } = actions
   const { id, filename, contentType, sizeInBytes, uploadedAt, patient } =
     attachment
   const kind = Files.kind(contentType)
@@ -84,11 +96,7 @@ export function AttachmentsTableRow({
         onClick={() => onPreview(attachment)}
         className={cn(
           'group pd-row',
-          isActivePreview
-            ? 'pd-row-active'
-            : isSelected
-              ? 'pd-row-selected'
-              : 'pd-row-idle',
+          getRowStateClassName(isActivePreview, isSelected),
         )}
       >
         <TableCell className="px-4" onClick={(e) => e.stopPropagation()}>
@@ -148,13 +156,11 @@ export function AttachmentsTableRow({
         <TableCell>
           <div className="flex flex-col">
             <span className="pd-row-date">
-              {uploadedAt
-                ? format(new Date(uploadedAt), 'dd/MM/yyyy', { locale: ptBR })
-                : '—'}
+              {uploadedAt ? Time.toBrazilianFormat(uploadedAt) : '—'}
             </span>
             {uploadedAt && (
               <span className="pd-row-time">
-                {format(new Date(uploadedAt), 'HH:mm')}
+                {Time.toHourMinute(uploadedAt)}
               </span>
             )}
           </div>

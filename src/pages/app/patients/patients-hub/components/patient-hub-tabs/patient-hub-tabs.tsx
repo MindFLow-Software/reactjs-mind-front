@@ -4,12 +4,13 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { PatientProfileStatus } from '@/types/patient-profile/patient-profile-status'
 import type { IgetPatientProfileDetailsResponse } from '@/api/patient-profiles/get-patient-profile-details'
 
-import { PatientDetailsHeader } from './patient-details-header'
-import { PatientInfo } from './patient-info'
-import { AnamnesisForm } from './anamnesis/anamnesis-form'
-import { PatientSessionsTimeline } from './timeline/patient-sessions-timeline'
-import { PatientFilesTab } from './files/patient-files-tab'
-import { PatientResumeTab } from './patient-resume-tab'
+import { PatientDetailsHeader } from '../patient-details-header/patient-details-header'
+import { PatientInfo } from '../patient-info/patient-info'
+import { AnamnesisForm } from '../anamnesis/anamnesis-form'
+import { PatientSessionsTimeline } from '../timeline/patient-sessions-timeline'
+import { PatientFilesTab } from '../files/patient-files-tab'
+import { PatientResumeTab } from '../patient-resume-tab/patient-resume-tab'
+import './patient-hub-tabs.css'
 
 type PatientDetails = NonNullable<IgetPatientProfileDetailsResponse['patient']>
 type DetailsMeta = IgetPatientProfileDetailsResponse['meta']
@@ -83,10 +84,8 @@ export function PatientHubTabs({ patient, timeline }: PatientHubTabsProps) {
         <TabsContent value="timeline" className="phd-tab-content">
           <PatientSessionsTimeline
             sessions={patient.sessions}
-            meta={timeline.meta}
-            pageIndex={timeline.pageIndex}
-            onPageChange={timeline.onPageChange}
             patientName={patientName}
+            pagination={timeline}
           />
         </TabsContent>
 

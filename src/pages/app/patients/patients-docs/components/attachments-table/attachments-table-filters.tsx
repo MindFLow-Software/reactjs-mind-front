@@ -12,9 +12,9 @@ import {
 } from '@/components/ui/select'
 import { usePatientsWithAttachments } from '../../hooks/use-patients-with-attachments'
 import { DatePickerWithRange } from '../date-picker-with-range'
-import { type DateRange } from 'react-day-picker'
 import { PatientsSearchInput } from '../../../components/patients-search-input/patients-search-input'
 import { cn } from '@/lib/utils'
+import type { IUseAttachmentsFiltersReturn } from '../../hooks/use-attachments-filters'
 import './attachments-table-filters.css'
 
 const FILE_TYPE_CHIPS = [
@@ -25,28 +25,23 @@ const FILE_TYPE_CHIPS = [
 ] as const
 
 interface AttachmentsTableFiltersProps {
-  search: string
-  onSearchChange: (value: string) => void
-  patientId: string
-  onPatientChange: (value: string) => void
-  date: DateRange | undefined
-  onDateChange: (date: DateRange | undefined) => void
-  contentType: string | undefined
-  onContentTypeChange: (value: string | undefined) => void
-  onClearFilters: () => void
+  filters: IUseAttachmentsFiltersReturn
 }
 
 export function AttachmentsTableFilters({
-  search,
-  onSearchChange,
-  patientId,
-  onPatientChange,
-  date,
-  onDateChange,
-  contentType,
-  onContentTypeChange,
-  onClearFilters,
+  filters,
 }: AttachmentsTableFiltersProps) {
+  const {
+    search,
+    setSearch,
+    patientId,
+    setPatientId,
+    date,
+    setDate,
+    contentType,
+    setContentType,
+    clearFilters,
+  } = filters
   const { data: patients, isLoading } = usePatientsWithAttachments()
 
   const isPatientSelected = patientId && patientId !== 'all'
@@ -63,7 +58,7 @@ export function AttachmentsTableFilters({
             <button
               key={chip.label}
               type="button"
-              onClick={() => onContentTypeChange(chip.value)}
+              onClick={() => setContentType(chip.value)}
               className={cn(
                 'pd-flt-chip',
                 isActive ? 'pd-flt-chip-active' : 'pd-flt-chip-idle',
@@ -80,10 +75,10 @@ export function AttachmentsTableFilters({
         <PatientsSearchInput
           placeholder="Buscar por nome, arquivo..."
           value={search}
-          onChange={(e) => onSearchChange(e.target.value)}
+          onChange={(e) => setSearch(e.target.value)}
         />
 
-        <Select value={patientId} onValueChange={onPatientChange}>
+        <Select value={patientId} onValueChange={setPatientId}>
           <SelectTrigger
             className={cn(
               'pd-flt-select',
@@ -131,7 +126,7 @@ export function AttachmentsTableFilters({
 
         <DatePickerWithRange
           date={date}
-          onDateChange={onDateChange}
+          onDateChange={setDate}
           className="min-w-[220px]"
         />
 
@@ -140,7 +135,7 @@ export function AttachmentsTableFilters({
             variant="ghost"
             size="sm"
             type="button"
-            onClick={onClearFilters}
+            onClick={clearFilters}
             className="pd-flt-clear"
           >
             <XCircle className="size-4" />

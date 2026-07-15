@@ -10,14 +10,12 @@ import { TimelineFilterBar } from './timeline-filter-bar'
 import {
   CHIPS,
   groupByMonth,
-  type Session,
+  type ITimelineSessionItem,
   type StatusFilter,
 } from './timeline.helpers'
 import './patient-sessions-timeline.css'
 
-interface PatientSessionsTimelineProps {
-  sessions: Session[]
-  patientName: string
+interface PatientSessionsTimelinePagination {
   meta: {
     totalCount: number
     perPage: number
@@ -26,13 +24,18 @@ interface PatientSessionsTimelineProps {
   onPageChange: (newIndex: number) => void
 }
 
+interface PatientSessionsTimelineProps {
+  sessions: ITimelineSessionItem[]
+  patientName: string
+  pagination: PatientSessionsTimelinePagination
+}
+
 export function PatientSessionsTimeline({
   sessions,
   patientName,
-  meta,
-  pageIndex,
-  onPageChange,
+  pagination,
 }: PatientSessionsTimelineProps) {
+  const { meta, pageIndex, onPageChange } = pagination
   const [statusFilter, setStatusFilter] = useState<StatusFilter>('all')
   const [searchText, setSearchText] = useState('')
 

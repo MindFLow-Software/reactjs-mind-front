@@ -1,14 +1,12 @@
-import { format } from 'date-fns'
-import { ptBR } from 'date-fns/locale'
+import { Time } from '@/utils/time'
+import type { ISessionItem } from '@/types/patient/session-item'
 
-export interface Session {
-  id: string
-  sessionDate?: string | Date | null
-  createdAt: string | Date
+// Status is widened to `string`: the timeline filters/badges match against
+// English status codes (FINISHED/CANCELED/...) while `ISessionItem.status`
+// is currently typed as the PT-BR display labels. Flagged for a product
+// decision on the real contract; kept identical to prior behavior here.
+export type ITimelineSessionItem = Omit<ISessionItem, 'status'> & {
   status: string
-  theme?: string | null
-  content?: string | null
-  duration?: string | number | null
 }
 
 export type StatusFilter = 'all' | 'FINISHED' | 'CANCELED' | 'NOT_ATTEND'
@@ -46,17 +44,17 @@ export const CHIPS: {
   },
 ]
 
-export function getSessionDate(session: Session): Date {
-  return new Date(session.sessionDate ?? session.createdAt)
+export function getSessionDate(session: ITimelineSessionItem): Date | null {
+  return Time.parse(session.sessionDate ?? session.createdAt)
 }
 
-export function groupByMonth(sessions: Session[]): [string, Session[]][] {
-  const sessionsMap = new Map<string, Session[]>()
+export function groupByMonth(
+  sessions: ITimelineSessionItem[],
+): [string, ITimelineSessionItem[]][] {
+  const sessionsMap = new Map<string, ITimelineSessionItem[]>()
 
   for (const session of sessions) {
-    const key = format(getSessionDate(session), 'MMMM yyyy', {
-      locale: ptBR,
-    }).toUpperCase()
+    const key = Time.toMonthYearUppercase(getSessionDate(session))
 
     const existingSessions = sessionsMap.get(key) ?? []
     sessionsMap.set(key, [...existingSessions, session])

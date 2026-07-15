@@ -13,10 +13,6 @@ const STATUS_MATCH: Record<string, (status: string) => boolean> = {
   NOT_ATTEND: (status) => status === 'NOT_ATTEND',
 }
 
-function getSessionDate(session: ISessionItem): Date {
-  return new Date(session.sessionDate ?? session.createdAt)
-}
-
 interface UseSessionsTimelineReturn {
   search: string
   statusFilter: string
@@ -61,7 +57,9 @@ export function useSessionsTimeline(
   const exportToPdf = useCallback(async () => {
     const first = filteredSessions[0]
     if (!first) return
-    const dateFormatted = Time.toReadableDateTime(getSessionDate(first))
+    const dateFormatted = Time.toReadableDateTime(
+      first.sessionDate ?? first.createdAt,
+    )
     await exportPdfDoc(
       createElement(SessionPDFTemplate, {
         psychologist: { name: '', crp: '' },

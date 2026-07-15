@@ -15,10 +15,10 @@ import { usePatientQueueStore } from '@/store/use-patient-queue-store'
 import { PatientsDataBlock } from '../components/patients-data-block/patients-data-block'
 import { PatientsPageShell } from '../components/patients-page-shell/patients-page-shell'
 import { usePatientRecordsFilters } from '@/hooks/use-patient-records-filters'
-import { PatientCard } from './components/patient-card'
-import { RecordsSkeleton } from './components/records-skeleton'
-import { RecordsEmptyState } from './components/records-empty-state'
-import { PatientsRecordsTableFilters } from './components/patients-records-table-filters'
+import { PatientCard } from './components/patient-card/patient-card'
+import { RecordsSkeleton } from './components/records-skeleton/records-skeleton'
+import { RecordsEmptyState } from './components/records-empty-state/records-empty-state'
+import { PatientsRecordsTableFilters } from './components/patients-records-table-filters/patients-records-table-filters'
 import './patients-records.css'
 
 export default function PatientsRecords() {
@@ -91,11 +91,13 @@ export default function PatientsRecords() {
             />
             <PatientsDataBlock.Toolbar>
               <PatientsRecordsTableFilters
-                search={{ value: search, onChange: setSearch }}
-                gender={{ value: gender, onChange: setGender }}
-                sessionOrder={{
-                  value: sessionOrder,
-                  onChange: setSessionOrder,
+                filters={{
+                  search: { value: search, onChange: setSearch },
+                  gender: { value: gender, onChange: setGender },
+                  sessionOrder: {
+                    value: sessionOrder,
+                    onChange: setSessionOrder,
+                  },
                 }}
                 onClearFilters={clearFilters}
               />

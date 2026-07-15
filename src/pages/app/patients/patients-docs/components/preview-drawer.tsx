@@ -11,9 +11,6 @@ import {
   HardDrive,
   FileType,
 } from 'lucide-react'
-import { format } from 'date-fns'
-import { ptBR } from 'date-fns/locale'
-
 import {
   Sheet,
   SheetContent,
@@ -33,17 +30,62 @@ import {
   AlertDialogTrigger,
 } from '@/components/ui/alert-dialog'
 import { cn } from '@/lib/utils'
-import { env } from '@/env'
-import { Files } from '@/utils/files'
+import { Files, type FileKind } from '@/utils/files'
+import { Time } from '@/utils/time'
 import type { IAttachmentListItem as Attachment } from '@/types/attachment/attachment-list-item'
 import './preview-drawer.css'
-
-const BACKEND_URL = env.VITE_API_URL
 
 interface PreviewDrawerProps {
   doc: Attachment | null
   onClose: () => void
   onDelete: (id: string) => void
+}
+
+function renderPreviewArea(
+  kind: FileKind,
+  fileUrl: string,
+  filename: string,
+  onDownload: () => void,
+) {
+  switch (kind) {
+    case 'image':
+      return (
+        <img
+          src={fileUrl}
+          alt={filename}
+          className="pd-prev-img"
+          loading="lazy"
+        />
+      )
+    case 'pdf':
+      return (
+        <iframe
+          src={`${fileUrl}#toolbar=0&navpanes=0`}
+          className="pd-prev-iframe"
+          title={`Preview de ${filename}`}
+        />
+      )
+    default:
+      return (
+        <div className="pd-prev-unsupported">
+          <div className="pd-prev-unsupported-icon">
+            <FileText className="size-7 text-muted-foreground/40" />
+          </div>
+          <p className="pd-prev-unsupported-title">Formato não suportado</p>
+          <p className="pd-prev-unsupported-sub">
+            Baixe o arquivo para abri-lo no aplicativo correto.
+          </p>
+          <Button
+            size="sm"
+            className="mt-2 cursor-pointer gap-2"
+            onClick={onDownload}
+          >
+            <Download className="size-3.5" />
+            Baixar arquivo
+          </Button>
+        </div>
+      )
+  }
 }
 
 export function PreviewDrawer({ doc, onClose, onDelete }: PreviewDrawerProps) {
@@ -52,7 +94,7 @@ export function PreviewDrawer({ doc, onClose, onDelete }: PreviewDrawerProps) {
   const { id, filename, contentType, sizeInBytes, uploadedAt, patient } = doc
   const kind = Files.kind(contentType)
   const style = Files.KIND_STYLES[kind]
-  const fileUrl = `${BACKEND_URL}/attachments/${id}`
+  const fileUrl = Files.attachmentUrl(id)
   const ext = filename.split('.').pop()?.toUpperCase().slice(0, 4) ?? 'FILE'
 
   return (
@@ -89,37 +131,8 @@ export function PreviewDrawer({ doc, onClose, onDelete }: PreviewDrawerProps) {
             <Loader2 className="size-6 animate-spin text-muted-foreground/20" />
           </div>
 
-          {kind === 'image' ? (
-            <img
-              src={fileUrl}
-              alt={filename}
-              className="pd-prev-img"
-              loading="lazy"
-            />
-          ) : kind === 'pdf' ? (
-            <iframe
-              src={`${fileUrl}#toolbar=0&navpanes=0`}
-              className="pd-prev-iframe"
-              title={`Preview de ${filename}`}
-            />
-          ) : (
-            <div className="pd-prev-unsupported">
-              <div className="pd-prev-unsupported-icon">
-                <FileText className="size-7 text-muted-foreground/40" />
-              </div>
-              <p className="pd-prev-unsupported-title">Formato não suportado</p>
-              <p className="pd-prev-unsupported-sub">
-                Baixe o arquivo para abri-lo no aplicativo correto.
-              </p>
-              <Button
-                size="sm"
-                className="mt-2 cursor-pointer gap-2"
-                onClick={() => Files.download(id, filename)}
-              >
-                <Download className="size-3.5" />
-                Baixar arquivo
-              </Button>
-            </div>
+          {renderPreviewArea(kind, fileUrl, filename, () =>
+            Files.download(id, filename),
           )}
         </div>
 
@@ -140,9 +153,7 @@ export function PreviewDrawer({ doc, onClose, onDelete }: PreviewDrawerProps) {
                 <Calendar className="size-3" /> Enviado em
               </p>
               <p className="pd-prev-info-value">
-                {uploadedAt
-                  ? format(new Date(uploadedAt), 'dd/MM/yyyy', { locale: ptBR })
-                  : '—'}
+                {uploadedAt ? Time.toBrazilianFormat(uploadedAt) : '—'}
               </p>
             </div>
             <div>

@@ -15,7 +15,7 @@ import {
 
 import { cn } from '@/lib/utils'
 import { Button } from '@/components/ui/button'
-import { CardSection } from './card-section'
+import { CardSection } from '../card-section/card-section'
 
 import './patient-info.css'
 import { Time } from '@/utils/time'
@@ -82,6 +82,7 @@ function CardActionButton({
         variant="ghost"
         size="sm"
         onClick={onClick}
+        disabled={!onClick}
         className="ph-card-action-edit"
       >
         {icon}
@@ -91,7 +92,12 @@ function CardActionButton({
   }
 
   return (
-    <Button type="button" onClick={onClick} className="ph-card-action-add">
+    <Button
+      type="button"
+      onClick={onClick}
+      disabled={!onClick}
+      className="ph-card-action-add"
+    >
       <Plus className="size-3.5" />
       {label}
     </Button>
@@ -116,11 +122,9 @@ function FieldRow({
 }
 
 export function PatientInfo({ patient }: PatientInfoProps) {
-  const age = Time.calculateAge(
-    patient?.dateOfBirth ? new Date(patient.dateOfBirth) : null,
-  )
+  const age = Time.calculateAge(patient?.dateOfBirth)
   const dateOfBirth = patient?.dateOfBirth
-    ? Time.toBrazilianFormat(new Date(patient.dateOfBirth))
+    ? Time.toBrazilianFormat(patient.dateOfBirth)
     : null
 
   const cpf = Mask.cpf(patient?.cpf)
@@ -131,17 +135,19 @@ export function PatientInfo({ patient }: PatientInfoProps) {
       <div className="ph-patient-info__grid">
         {/* Identificação */}
         <CardSection
-          icon={<User className="size-4 text-blue-600" />}
-          iconBg="bg-blue-50 dark:bg-blue-950/30"
-          title="Identificação"
-          subtitle="Dados pessoais e contato"
-          action={
-            <CardActionButton
-              variant="edit"
-              label="Editar"
-              icon={<SquarePen className="size-3.5" />}
-            />
-          }
+          header={{
+            icon: <User className="size-4 text-blue-600" />,
+            iconBg: 'bg-blue-50 dark:bg-blue-950/30',
+            title: 'Identificação',
+            subtitle: 'Dados pessoais e contato',
+            action: (
+              <CardActionButton
+                variant="edit"
+                label="Editar"
+                icon={<SquarePen className="size-3.5" />}
+              />
+            ),
+          }}
         >
           <FieldRow label="Idade" value={age ?? DASH} />
           <FieldRow
@@ -200,17 +206,19 @@ export function PatientInfo({ patient }: PatientInfoProps) {
 
         {/* Atendimento */}
         <CardSection
-          icon={<Activity className="size-4 text-emerald-600" />}
-          iconBg="bg-emerald-50 dark:bg-emerald-950/30"
-          title="Atendimento"
-          subtitle="Modalidade, frequência e valores"
-          action={
-            <CardActionButton
-              variant="edit"
-              label="Editar"
-              icon={<SquarePen className="size-3.5" />}
-            />
-          }
+          header={{
+            icon: <Activity className="size-4 text-emerald-600" />,
+            iconBg: 'bg-emerald-50 dark:bg-emerald-950/30',
+            title: 'Atendimento',
+            subtitle: 'Modalidade, frequência e valores',
+            action: (
+              <CardActionButton
+                variant="edit"
+                label="Editar"
+                icon={<SquarePen className="size-3.5" />}
+              />
+            ),
+          }}
         >
           <FieldRow
             label="Modalidade"
@@ -234,21 +242,23 @@ export function PatientInfo({ patient }: PatientInfoProps) {
 
       {/* Endereço */}
       <CardSection
-        icon={<MapPin className="size-4 text-violet-600" />}
-        iconBg="bg-violet-50 dark:bg-violet-950/30"
-        title="Endereço"
-        subtitle="Localização do paciente"
-        action={
-          <CardActionButton
-            variant="edit"
-            label="Adicionar"
-            icon={<Plus className="size-3.5" />}
-          />
-        }
+        header={{
+          icon: <MapPin className="size-4 text-violet-600" />,
+          iconBg: 'bg-violet-50 dark:bg-violet-950/30',
+          title: 'Endereço',
+          subtitle: 'Localização do paciente',
+          action: (
+            <CardActionButton
+              variant="edit"
+              label="Adicionar"
+              icon={<Plus className="size-3.5" />}
+            />
+          ),
+        }}
       >
         <div className="ph-address-empty">
           Endereço não cadastrado.&nbsp;
-          <button type="button" className="ph-address-empty__link">
+          <button type="button" className="ph-address-empty__link" disabled>
             Adicionar agora
           </button>
         </div>

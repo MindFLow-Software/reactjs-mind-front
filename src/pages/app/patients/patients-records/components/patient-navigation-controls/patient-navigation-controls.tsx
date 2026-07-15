@@ -3,20 +3,22 @@ import { useNavigate } from 'react-router-dom'
 import { Button } from '@/components/ui/button'
 import './patient-navigation-controls.css'
 
-interface PatientNavigationControlsProps {
+type IPatientNavigationControlsQueue = {
   prevId: string | null
   nextId: string | null
   current: number
   total: number
 }
 
+type IPatientNavigationControls = {
+  queue: IPatientNavigationControlsQueue
+}
+
 export function PatientNavigationControls({
-  prevId,
-  nextId,
-  current,
-  total,
-}: PatientNavigationControlsProps) {
+  queue,
+}: IPatientNavigationControls) {
   const navigate = useNavigate()
+  const { prevId, nextId, current, total } = queue
 
   return (
     <div className="pr-nav-root">

@@ -144,14 +144,14 @@ export function AnamnesisForm({
     <AnamnesisEditorContext.Provider value={contextValue}>
       <div className="w-full flex flex-col gap-4">
         <AnamnesisHeader
-          onGeneratePDF={exportToPdf}
-          onCopy={onCopy}
           pdf={{
             isExporting,
             exportedSuccessfully: pdfExportedSuccessfully,
             isCopyDisabled: !content.trim(),
+            copied,
+            onGeneratePDF: exportToPdf,
+            onCopy,
           }}
-          copied={copied}
         />
 
         <AnamnesisToolbar />

@@ -29,17 +29,70 @@ const isPdfMime = (mime: string, name: string) => {
   return mime.includes('pdf') || name.endsWith('.pdf')
 }
 
+function getDownloadLabel(isImage: boolean, isPDF: boolean): string {
+  if (isImage) return 'Imagem'
+  if (isPDF) return 'PDF'
+  return 'Arquivo'
+}
+
+function renderPreviewBody(
+  isImage: boolean,
+  isPDF: boolean,
+  fileUrl: string,
+  fileName: string,
+) {
+  if (isImage) {
+    return (
+      <img
+        src={fileUrl}
+        alt={fileName}
+        className="ph-preview__img"
+        loading="lazy"
+        onError={(e) => {
+          e.currentTarget.style.display = 'none'
+        }}
+      />
+    )
+  }
+
+  if (isPDF) {
+    return (
+      <iframe
+        src={`${fileUrl}#toolbar=0&navpanes=0&scrollbar=0`}
+        className="ph-preview__iframe"
+        title="Visualização de PDF"
+      />
+    )
+  }
+
+  return (
+    <div className="ph-preview__unsupported">
+      <div className="ph-preview__unsupported-icon-wrap">
+        <FileText className="ph-preview__unsupported-icon" />
+      </div>
+      <p className="ph-preview__unsupported-title">Formato não suportado</p>
+      <p className="ph-preview__unsupported-desc">
+        Não é possível visualizar este tipo de arquivo. Faça o download para
+        abri-lo.
+      </p>
+    </div>
+  )
+}
+
 export function SimplePreviewModal({ file, onClose }: SimplePreviewModalProps) {
+  const fileUrl = useMemo(
+    () => (file ? Files.attachmentUrl(file.id) : ''),
+    [file],
+  )
+
   if (!file) return null
 
-  const { id } = file
-  const fileUrl = useMemo(() => Files.attachmentUrl(id), [id])
-  const fileName = file.filename
+  const { id, filename: fileName } = file
   const fileMime = file.type.toLowerCase()
   const lowerFileName = fileName.toLowerCase()
   const isImage = isImageMime(fileMime, lowerFileName)
   const isPDF = !isImage && isPdfMime(fileMime, lowerFileName)
-  const downloadLabel = isImage ? 'Imagem' : isPDF ? 'PDF' : 'Arquivo'
+  const downloadLabel = getDownloadLabel(isImage, isPDF)
 
   return (
     <Dialog open={Boolean(file)} onOpenChange={onClose}>
@@ -65,36 +118,7 @@ export function SimplePreviewModal({ file, onClose }: SimplePreviewModalProps) {
             <Loader2 className="ph-preview__loader-icon" />
           </div>
 
-          {isImage ? (
-            <img
-              src={fileUrl}
-              alt={fileName}
-              className="ph-preview__img"
-              loading="lazy"
-              onError={(e) => {
-                e.currentTarget.style.display = 'none'
-              }}
-            />
-          ) : isPDF ? (
-            <iframe
-              src={`${fileUrl}#toolbar=0&navpanes=0&scrollbar=0`}
-              className="ph-preview__iframe"
-              title="Visualização de PDF"
-            />
-          ) : (
-            <div className="ph-preview__unsupported">
-              <div className="ph-preview__unsupported-icon-wrap">
-                <FileText className="ph-preview__unsupported-icon" />
-              </div>
-              <p className="ph-preview__unsupported-title">
-                Formato não suportado
-              </p>
-              <p className="ph-preview__unsupported-desc">
-                Não é possível visualizar este tipo de arquivo. Faça o download
-                para abri-lo.
-              </p>
-            </div>
-          )}
+          {renderPreviewBody(isImage, isPDF, fileUrl, fileName)}
         </div>
 
         <div className="ph-preview__footer">

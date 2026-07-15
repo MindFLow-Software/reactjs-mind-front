@@ -2,8 +2,6 @@
 
 import { useState, memo } from 'react'
 import { Eye, ArrowDownToLine, Trash2 } from 'lucide-react'
-import { format } from 'date-fns'
-import { ptBR } from 'date-fns/locale'
 
 import { Button } from '@/components/ui/button'
 import {
@@ -17,6 +15,7 @@ import {
   AlertDialogTitle,
 } from '@/components/ui/alert-dialog'
 import { Files } from '@/utils/files'
+import { Time } from '@/utils/time'
 import { cn } from '@/lib/utils'
 import type { IAttachmentPatientItem } from '@/types/attachment/attachment-patient-item'
 
@@ -47,7 +46,7 @@ export const FileCard = memo(function FileCard({
 
   const badge = getTypeBadge(file.type)
   const dateLabel = file.uploadedAt
-    ? format(new Date(file.uploadedAt), 'dd MMM yyyy', { locale: ptBR })
+    ? Time.toDayMonthYearAbbrev(file.uploadedAt)
     : '—'
 
   return (

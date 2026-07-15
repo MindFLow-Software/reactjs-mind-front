@@ -4,7 +4,7 @@ import type { ReactElement } from 'react'
 import { Download, Loader2 } from 'lucide-react'
 
 import { Button } from '@/components/ui/button'
-import { usePdfExport } from '../hooks/use-pdf-export'
+import { usePdfExport } from '../../hooks/use-pdf-export'
 import type { ISessionItem } from '@/types/patient/session-item'
 
 import { Normalizer } from '@/utils/normalizer'

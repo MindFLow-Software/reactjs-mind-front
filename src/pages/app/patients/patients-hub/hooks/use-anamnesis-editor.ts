@@ -9,15 +9,13 @@ import {
 } from 'react'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { toast } from 'sonner'
-import { format } from 'date-fns'
-import { ptBR } from 'date-fns/locale'
 
 import { getAnamnesis } from '@/api/patient-profiles/get-anamnesis'
 import { saveAnamnesis } from '@/api/patient-profiles/save-anamnesis'
 import type { IAnamnesisContent } from '@/types/clinical/anamnesis-content'
 import { AnamnesisPDFTemplate } from '@/templates/pdf/anamnesis-pdf-template'
 
-import type { AnamnesisBlock } from '../components/anamnesis/anamnesis-types'
+import type { IAnamnesisBlock } from '../components/anamnesis/anamnesis-types'
 import {
   buildContentFromBlocks,
   buildInitialBlocks,
@@ -31,21 +29,22 @@ import {
 } from '../components/anamnesis/anamnesis-draft-storage'
 import { usePdfExport } from './use-pdf-export'
 import { Clipboard } from '@/utils/clipboard'
+import { Time } from '@/utils/time'
 
 interface EditorState {
-  blocks: AnamnesisBlock[]
+  blocks: IAnamnesisBlock[]
   activeBlockId: string | null
   hydrated: boolean
   hasLocalDraft: boolean
 }
 
 type EditorAction =
-  | { type: 'HYDRATE'; blocks: AnamnesisBlock[]; hasLocalDraft: boolean }
+  | { type: 'HYDRATE'; blocks: IAnamnesisBlock[]; hasLocalDraft: boolean }
   | { type: 'SET_ACTIVE_BLOCK'; id: string | null }
-  | { type: 'UPDATE_BLOCK'; id: string; updates: Partial<AnamnesisBlock> }
-  | { type: 'ADD_BLOCK'; block: AnamnesisBlock }
+  | { type: 'UPDATE_BLOCK'; id: string; updates: Partial<IAnamnesisBlock> }
+  | { type: 'ADD_BLOCK'; block: IAnamnesisBlock }
   | { type: 'DELETE_BLOCK'; id: string }
-  | { type: 'DISCARD_DRAFT'; blocks: AnamnesisBlock[] }
+  | { type: 'DISCARD_DRAFT'; blocks: IAnamnesisBlock[] }
   | { type: 'SET_HAS_LOCAL_DRAFT'; value: boolean }
 
 const INITIAL_EDITOR_STATE: EditorState = {
@@ -97,7 +96,7 @@ interface UseAnamnesisEditorOptions {
 }
 
 interface UseAnamnesisEditorReturn {
-  blocks: AnamnesisBlock[]
+  blocks: IAnamnesisBlock[]
   activeBlockId: string | null
   hasLocalDraft: boolean
   hydrated: boolean
@@ -107,7 +106,7 @@ interface UseAnamnesisEditorReturn {
   pdfExportedSuccessfully: boolean
   content: string
   setActiveBlockId: (id: string | null) => void
-  updateBlock: (id: string, updates: Partial<AnamnesisBlock>) => void
+  updateBlock: (id: string, updates: Partial<IAnamnesisBlock>) => void
   addBlock: () => void
   deleteBlock: (id: string) => void
   discardDraft: () => void
@@ -126,7 +125,7 @@ export function useAnamnesisEditor({
   const [copied, setCopied] = useState(false)
 
   const lastPersistedHash = useRef('')
-  const serverBlocksRef = useRef<AnamnesisBlock[]>([])
+  const serverBlocksRef = useRef<IAnamnesisBlock[]>([])
 
   const { data } = useQuery({
     queryKey: ['patient-hub', patientId, 'anamnesis'],
@@ -212,14 +211,14 @@ export function useAnamnesisEditor({
   }, [])
 
   const updateBlock = useCallback(
-    (id: string, updates: Partial<AnamnesisBlock>) => {
+    (id: string, updates: Partial<IAnamnesisBlock>) => {
       dispatch({ type: 'UPDATE_BLOCK', id, updates })
     },
     [],
   )
 
   const addBlock = useCallback(() => {
-    const block: AnamnesisBlock = {
+    const block: IAnamnesisBlock = {
       id: crypto.randomUUID(),
       title: 'Nova Seção',
       content: '',
@@ -243,9 +242,7 @@ export function useAnamnesisEditor({
 
   const exportToPdf = useCallback(async () => {
     if (!content.trim()) return
-    const generatedAt = format(new Date(), "dd/MM/yyyy 'às' HH:mm", {
-      locale: ptBR,
-    })
+    const generatedAt = Time.toReadableDateTime(new Date())
     await exportPdfDoc(
       createElement(AnamnesisPDFTemplate, {
         patientName,

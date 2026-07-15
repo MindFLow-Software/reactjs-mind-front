@@ -1,6 +1,4 @@
 import { createElement, useCallback } from 'react'
-import { format } from 'date-fns'
-import { ptBR } from 'date-fns/locale'
 import {
   Clock,
   Copy,
@@ -20,13 +18,18 @@ import {
 } from '@/components/ui/dropdown-menu'
 import { SessionPDFTemplate } from '@/templates/pdf/session-pdf-template'
 import { Normalizer } from '@/utils/normalizer'
+import { Time } from '@/utils/time'
 import { cn } from '@/lib/utils'
 
 import { usePdfExport } from '../../hooks/use-pdf-export'
-import { STATUS_DOT, getSessionDate, type Session } from './timeline.helpers'
+import {
+  STATUS_DOT,
+  getSessionDate,
+  type ITimelineSessionItem,
+} from './timeline.helpers'
 
 interface SessionRowProps {
-  session: Session
+  session: ITimelineSessionItem
   patientName: string
 }
 
@@ -40,9 +43,7 @@ export function SessionRow({ session, patientName }: SessionRowProps) {
   const isMissed = session.status === 'NOT_ATTEND'
 
   const handleExportPDF = useCallback(async () => {
-    const dateFormatted = format(date, "dd/MM/yyyy 'às' HH:mm", {
-      locale: ptBR,
-    })
+    const dateFormatted = Time.toReadableDateTime(date)
 
     const filename = `Evolucao-${Normalizer.toSnakeCase(patientName)}-${session.id.substring(0, 5)}.pdf`
     setFilename(filename)
@@ -72,8 +73,10 @@ export function SessionRow({ session, patientName }: SessionRowProps) {
       <div className="pst-session-card group">
         <div className="pst-session-top-row">
           <div className="pst-session-meta">
-            <span className="pst-session-date">{format(date, 'dd/MM')}</span>
-            <span className="pst-session-time">{format(date, 'HH:mm')}</span>
+            <span className="pst-session-date">
+              {Time.toShortDayMonth(date)}
+            </span>
+            <span className="pst-session-time">{Time.toHourMinute(date)}</span>
             {session.duration && (
               <span className="pst-session-duration">
                 <Clock className="pst-session-duration-icon" />

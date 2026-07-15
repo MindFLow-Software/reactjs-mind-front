@@ -1,21 +1,16 @@
-export interface SerializedBlock {
+export type ISerializedBlock = {
   id?: string
   title?: string
   content?: string
 }
 
-export interface AnamnesisBlock {
+export type IAnamnesisBlock = {
   id: string
   title: string
   content: string
 }
 
-export interface SectionAnchor {
-  id: string
-  label: string
-}
-
-export interface AnamnesisDraft {
-  blocks: SerializedBlock[]
+export type IAnamnesisDraft = {
+  blocks: ISerializedBlock[]
   updatedAt: number
 }

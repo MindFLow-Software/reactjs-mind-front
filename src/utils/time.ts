@@ -190,6 +190,24 @@ export class Time {
     return format(parsed, 'dd MMM', { locale: ptBR })
   }
 
+  static toDayMonthYearAbbrev(date: Date | string | null | undefined) {
+    const parsed = Time.parse(date)
+    if (!parsed) return ''
+
+    return format(parsed, 'dd MMM yyyy', { locale: ptBR })
+  }
+
+  static toShortDayMonth(date: Date | string | null | undefined) {
+    const parsed = Time.parse(date)
+    if (!parsed) return ''
+
+    return format(parsed, 'dd/MM')
+  }
+
+  static toMonthYearUppercase(date: Date | string | null | undefined) {
+    return Time.toLongMonthYear(date).toUpperCase()
+  }
+
   static toDayMonthLong(date: Date | string | null | undefined) {
     const parsed = Time.parse(date)
     if (!parsed) return ''

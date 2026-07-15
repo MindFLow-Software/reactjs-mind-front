@@ -1,23 +1,27 @@
 import { useRef } from 'react'
 import { CloudUpload } from 'lucide-react'
 import { cn } from '@/lib/utils'
+import './drop-zone.css'
 
-interface DropZoneProps {
-  isDragging: boolean
+interface DropZoneDragHandlers {
   onDragEnter: React.DragEventHandler
   onDragLeave: React.DragEventHandler
   onDrop: React.DragEventHandler
+}
+
+interface DropZoneProps {
+  isDragging: boolean
+  dragHandlers: DropZoneDragHandlers
   onFilesSelected: (files: FileList) => void
 }
 
 export function DropZone({
   isDragging,
-  onDragEnter,
-  onDragLeave,
-  onDrop,
+  dragHandlers,
   onFilesSelected,
 }: DropZoneProps) {
   const inputRef = useRef<HTMLInputElement>(null)
+  const { onDragEnter, onDragLeave, onDrop } = dragHandlers
 
   return (
     <>

@@ -1,0 +1,23 @@
+@reference "../../../../../../global.css";
+
+@layer components {
+  .phd-header-wrap {
+    @apply pb-5;
+  }
+
+  .phd-tabs {
+    @apply w-full min-w-0;
+  }
+
+  .phd-tabs-list {
+    @apply flex h-auto w-full flex-wrap gap-1 rounded-xl bg-muted/40 p-1 lg:w-auto;
+  }
+
+  .phd-tab-trigger {
+    @apply cursor-pointer rounded-md px-4 py-1.5 text-xs;
+  }
+
+  .phd-tab-content {
+    @apply mt-4;
+  }
+}

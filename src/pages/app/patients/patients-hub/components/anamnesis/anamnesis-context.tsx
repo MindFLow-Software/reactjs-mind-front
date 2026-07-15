@@ -1,5 +1,5 @@
 import { createContext, useContext } from 'react'
-import type { AnamnesisBlock } from './anamnesis-types'
+import type { IAnamnesisBlock } from './anamnesis-types'
 
 export type SaveStatus = 'synced' | 'pending' | 'draft'
 
@@ -14,7 +14,7 @@ interface AnamnesisEditorContextValue {
   canDeleteBlocks: boolean
   activeBlockId: string | null
   sections: AnamnesisSection[]
-  updateBlock: (id: string, updates: Partial<AnamnesisBlock>) => void
+  updateBlock: (id: string, updates: Partial<IAnamnesisBlock>) => void
   deleteBlock: (id: string) => void
   setActiveBlockId: (id: string | null) => void
   jumpToBlock: (id: string) => void
