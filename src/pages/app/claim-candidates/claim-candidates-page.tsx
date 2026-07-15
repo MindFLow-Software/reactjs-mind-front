@@ -11,7 +11,7 @@ import {
 } from '@/components/ui/card'
 import { SecurityNotice } from '@/components/security-notice/security-notice'
 
-import { ClaimCandidateCard } from './components/claim-candidate-card'
+import { ClaimCandidateCard } from './components/claim-candidate-card/claim-candidate-card'
 import { useClaimCandidates } from './hooks/use-claim-candidates'
 import { useCreateClaimRequest } from './hooks/use-create-claim-request'
 

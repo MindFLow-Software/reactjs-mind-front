@@ -1,0 +1,39 @@
+@reference "../../../../global.css";
+
+@layer components {
+  .lp-int-section {
+    @apply relative overflow-hidden border-t border-slate-100 bg-[#F7F9FF] scroll-mt-20;
+  }
+
+  .lp-int-glow {
+    @apply pointer-events-none absolute inset-0;
+    background: radial-gradient(
+      ellipse 70% 60% at 50% 40%,
+      rgba(37, 99, 235, 0.07) 0%,
+      transparent 70%
+    );
+  }
+
+  .lp-int-heading {
+    @apply mb-5 max-w-[580px] text-[clamp(30px,4vw,54px)] font-semibold leading-[1.15] tracking-tight text-slate-900;
+  }
+
+  .lp-int-subtitle {
+    @apply mb-9 max-w-[420px] text-[15.5px] font-light leading-relaxed text-slate-500;
+  }
+
+  .lp-int-cta {
+    @apply inline-flex items-center gap-2 rounded-xl px-7 py-3.5 text-[14.5px] font-semibold text-white transition-all duration-200 hover:-translate-y-0.5;
+    background: linear-gradient(135deg, #2563eb 0%, #3b82f6 100%);
+    box-shadow: 0 4px 20px rgba(37, 99, 235, 0.35),
+      0 1px 4px rgba(37, 99, 235, 0.2);
+  }
+
+  .lp-pill-col-left {
+    @apply absolute inset-y-0 left-0 hidden w-[280px] lg:block;
+  }
+
+  .lp-pill-col-right {
+    @apply absolute inset-y-0 right-0 hidden w-[280px] lg:block;
+  }
+}

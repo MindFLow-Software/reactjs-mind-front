@@ -9,8 +9,8 @@ import { toast } from 'sonner'
 import { useHeaderStore } from '@/store/use-header-store'
 import { getSuggestions } from '@/api/suggestions/get-suggestions'
 import { updateSuggestionStatus } from '@/api/suggestions/update-suggestion-status'
-import { RoadmapCard } from './components/roadmap-card'
-import { RoadmapFilters } from './components/roadmap-filters'
+import { RoadmapCard } from './components/roadmap-card/roadmap-card'
+import { RoadmapFilters } from './components/roadmap-filters/roadmap-filters'
 import './suggestions-management.css'
 
 export function SuggestionsManagement() {

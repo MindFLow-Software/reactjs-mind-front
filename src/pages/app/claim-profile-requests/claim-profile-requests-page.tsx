@@ -16,8 +16,8 @@ import { Drawer } from '@/components/ui/drawer'
 import { Card, CardContent } from '@/components/ui/card'
 import { SecurityNotice } from '@/components/security-notice/security-notice'
 
-import { ClaimRequestRow } from './components/claim-request-row'
-import { ReviewClaimRequestDrawer } from './components/review-claim-request-drawer'
+import { ClaimRequestRow } from './components/claim-request-row/claim-request-row'
+import { ReviewClaimRequestDrawer } from './components/review-claim-request-drawer/review-claim-request-drawer'
 import { useClaimProfileRequests } from './hooks/use-claim-profile-requests'
 
 import './claim-profile-requests-page.css'
