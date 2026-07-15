@@ -12,7 +12,7 @@ import { translatedExpertise } from '@/constants/translated-expertise'
 import type { IPatientPsychologistCard } from '@/types/dashboard/patient-psychologist-card'
 import './psychologists-section.css'
 
-export interface IPsychologistsSection {
+type IPsychologistsSection = {
   psychologists: IPatientPsychologistCard[]
 }
 

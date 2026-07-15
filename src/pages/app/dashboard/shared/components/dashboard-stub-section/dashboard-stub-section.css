@@ -1,0 +1,19 @@
+@reference "../../../../../../global.css";
+
+@layer components {
+  .dsh-stub-card {
+    @apply flex flex-col gap-4 p-4!;
+  }
+
+  .dsh-stub-header {
+    @apply flex! items-center gap-2 px-0!;
+  }
+
+  .dsh-stub-title {
+    @apply text-sm! font-semibold text-foreground;
+  }
+
+  .dsh-stub-empty-text {
+    @apply text-sm text-muted-foreground;
+  }
+}

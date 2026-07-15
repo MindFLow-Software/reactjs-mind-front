@@ -13,11 +13,11 @@ import { Button } from '@/components/ui/button'
 
 import './next-session-card.css'
 
-export interface NextSessionCardProps {
+type INextSessionCard = {
   session: IPatientNextSession | null
 }
 
-export function NextSessionCard({ session }: NextSessionCardProps) {
+export function NextSessionCard({ session }: INextSessionCard) {
   const handleReschedule = useCallback(() => {
     toast.info('Reagendamento ainda não disponível nesta versão.')
   }, [])
@@ -41,7 +41,7 @@ export function NextSessionCard({ session }: NextSessionCardProps) {
       <div className="ptd-next-session-main">
         <div className="ptd-next-session-info">
           <span className="ptd-next-session-datetime">
-            {Time.toExtensiveReadableDateTime(new Date(session.scheduledAt))}
+            {Time.toExtensiveReadableDateTime(session.scheduledAt)}
           </span>
           <div className="flex items-center gap-1">
             <span className="ptd-next-session-details">

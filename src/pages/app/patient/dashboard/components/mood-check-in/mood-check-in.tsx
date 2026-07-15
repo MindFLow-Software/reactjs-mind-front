@@ -4,7 +4,7 @@ import { Card } from '@/components/ui/card'
 import { cn } from '@/lib/utils'
 import './mood-check-in.css'
 
-interface IMoodOption {
+type IMoodOption = {
   emoji: string
   label: string
 }

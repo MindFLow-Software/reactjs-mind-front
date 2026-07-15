@@ -7,7 +7,7 @@ import {
 } from '@/pages/app/dashboard/shared/constants'
 import type { IPatientDashboardInner } from '@/types/dashboard/patient-dashboard-inner'
 
-export interface IUsePatientDashboard {
+export type IUsePatientDashboard = {
   data: IPatientDashboardInner
   hasPatientProfile: boolean
   isLoading: boolean

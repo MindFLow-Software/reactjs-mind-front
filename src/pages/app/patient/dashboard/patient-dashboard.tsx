@@ -10,11 +10,11 @@ import { DashboardSkeleton } from '@/pages/app/dashboard/shared/components/dashb
 import { DashboardEmptyState } from '@/pages/app/dashboard/shared/components/dashboard-empty-state/dashboard-empty-state'
 import { DashboardErrorState } from '@/pages/app/dashboard/shared/components/dashboard-error-state/dashboard-error-state'
 
-import { MoodCheckIn } from './components/mood-check-in'
-import { NextSessionCard } from './components/next-session-card'
-import { PsychologistsSection } from './components/psychologists-section'
-import { RecentJournalSection } from './components/recent-journal-section'
-import { TherapeuticGoalsSection } from './components/therapeutic-goals-section'
+import { MoodCheckIn } from './components/mood-check-in/mood-check-in'
+import { NextSessionCard } from './components/next-session-card/next-session-card'
+import { PsychologistsSection } from './components/psychologists-section/psychologists-section'
+import { RecentJournalSection } from './components/recent-journal-section/recent-journal-section'
+import { TherapeuticGoalsSection } from './components/therapeutic-goals-section/therapeutic-goals-section'
 
 import './patient-dashboard.css'
 
@@ -91,7 +91,7 @@ export function PatientDashboard() {
   )
 }
 
-interface ResolveStateArgs {
+type IResolveState = {
   isLoading: boolean
   isError: boolean
   hasPatientProfile: boolean
@@ -101,7 +101,7 @@ function resolveState({
   isLoading,
   isError,
   hasPatientProfile,
-}: ResolveStateArgs): PatientDashboardState {
+}: IResolveState): PatientDashboardState {
   if (isLoading) return 'loading'
   if (isError) return 'error'
   if (!hasPatientProfile) return 'empty'
