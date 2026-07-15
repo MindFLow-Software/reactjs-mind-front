@@ -1,6 +1,6 @@
 import { useLayoutEffect } from 'react'
 import { Outlet } from 'react-router-dom'
-import { AuthLeftPanel } from '@/pages/auth/components/auth-left-panel'
+import { AuthLeftPanel } from '@/pages/auth/components/auth-left-panel/auth-left-panel'
 
 export function AuthLayout() {
   useLayoutEffect(() => {

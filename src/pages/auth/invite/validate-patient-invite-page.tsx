@@ -12,7 +12,7 @@ import {
 
 import { Button } from '@/components/ui/button'
 
-import { InviteLoadingState } from './components/invite-loading-state'
+import { InviteLoadingState } from './components/invite-loading-state/invite-loading-state'
 import { useValidatePatientInvite } from './hooks/use-validate-patient-invite'
 import { formatInviteExpiresAt } from './helpers'
 

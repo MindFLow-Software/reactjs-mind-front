@@ -2,8 +2,8 @@ import { Helmet } from 'react-helmet-async'
 
 import { useAuth } from '@/hooks/use-auth'
 import { BrandedLoader } from '@/components/branded-loader/branded-loader'
-import { AuthHeading } from './components/auth-heading'
-import { SignInForm } from './components/sign-in-form'
+import { AuthHeading } from './components/auth-heading/auth-heading'
+import { SignInForm } from './components/sign-in-form/sign-in-form'
 import './sign-in.css'
 
 export function SignIn() {

@@ -1,0 +1,19 @@
+@reference "../../../../../global.css";
+
+@layer components {
+  .ca-feat-stats {
+    @apply grid grid-cols-3 gap-px overflow-hidden rounded-[10px] bg-border;
+  }
+
+  .ca-feat-stat {
+    @apply flex flex-col gap-[3px] bg-muted/40 px-[13px] py-[11px];
+  }
+
+  .ca-feat-stat-label {
+    @apply text-[9.5px] font-bold tracking-[0.06em] text-muted-foreground uppercase;
+  }
+
+  .ca-feat-stat-value {
+    @apply text-[15px] font-bold tabular-nums text-foreground;
+  }
+}

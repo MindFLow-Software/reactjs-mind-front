@@ -6,13 +6,13 @@ import { Briefcase, Building2 } from 'lucide-react'
 import { ContextType } from '@/types/psychologist/context-type'
 import type { ICreatePracticeContextBody } from '@/types/psychologist/create-practice-context-body'
 
-import { CreateClinicContext } from './components/create-clinic-context'
-import { CreateIndividualContext } from './components/create-individual-context'
-import { PracticeContextHeader } from './components/practice-context-header'
+import { CreateClinicContext } from './components/create-clinic-context/create-clinic-context'
+import { CreateIndividualContext } from './components/create-individual-context/create-individual-context'
+import { PracticeContextHeader } from './components/practice-context-header/practice-context-header'
 import {
   PracticeTypeCard,
   type IPracticeTypeCardOption,
-} from './components/practice-type-card'
+} from './components/practice-type-card/practice-type-card'
 import { useCreatePracticeContext } from './hooks/use-create-practice-context'
 
 export function PracticeContextPage() {

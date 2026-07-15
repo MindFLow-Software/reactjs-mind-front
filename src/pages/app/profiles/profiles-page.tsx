@@ -7,12 +7,12 @@ import { useSignOut } from '@/hooks/use-sign-out'
 
 import { Button } from '@/components/ui/button'
 
-import { ProfileSectionHeader } from './components/profile-section-header'
-import { PatientProfileSection } from './components/patient-profile-section'
+import { ProfileSectionHeader } from './components/profile-section-header/profile-section-header'
+import { PatientProfileSection } from './components/patient-profile-section/patient-profile-section'
 import { PsychologistProfileCard } from '../account/components/psychologist-profile-card/psychologist-profile-card'
-import { CreatePatientProfileCard } from './components/create-patient-profile-card'
-import { PsychologistPracticeContextsSection } from './components/psychologist-practice-contexts-section'
-import { PatientProfilePossibleCandidatesSection } from './components/patient-profile-possible-candidates-section'
+import { CreatePatientProfileCard } from './components/create-patient-profile-card/create-patient-profile-card'
+import { PsychologistPracticeContextsSection } from './components/psychologist-practice-contexts-section/psychologist-practice-contexts-section'
+import { PatientProfilePossibleCandidatesSection } from './components/patient-profile-possible-candidates-section/patient-profile-possible-candidates-section'
 
 import './profiles-page.css'
 
