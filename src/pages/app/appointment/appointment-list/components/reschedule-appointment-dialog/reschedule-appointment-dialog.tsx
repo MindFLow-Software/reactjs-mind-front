@@ -1,8 +1,7 @@
-'use client'
-
 import { useState } from 'react'
 import { ptBR } from 'date-fns/locale'
 import { CalendarClock, Loader2 } from 'lucide-react'
+
 import { Button } from '@/components/ui/button'
 import { Calendar } from '@/components/ui/calendar'
 import { Input } from '@/components/ui/input'
@@ -13,8 +12,13 @@ import {
   DialogHeader,
   DialogTitle,
 } from '@/components/ui/dialog'
+import { Time } from '@/utils/time'
 
-interface RescheduleAppointmentDialogProps {
+import './reschedule-appointment-dialog.css'
+
+const DEFAULT_TIME = '08:00'
+
+type IRescheduleAppointmentDialog = {
   patientName: string
   isRescheduling: boolean
   onClose: () => void
@@ -26,25 +30,22 @@ export function RescheduleAppointmentDialog({
   isRescheduling,
   onClose,
   onReschedule,
-}: RescheduleAppointmentDialogProps) {
+}: IRescheduleAppointmentDialog) {
   const [selectedDate, setSelectedDate] = useState<Date | undefined>(new Date())
-  const [selectedTime, setSelectedTime] = useState('08:00')
+  const [selectedTime, setSelectedTime] = useState(DEFAULT_TIME)
 
   async function handleConfirm() {
-    if (!selectedDate) return
-
-    const [hours, minutes] = selectedTime.split(':').map(Number)
-    const finalDate = new Date(selectedDate)
-    finalDate.setHours(hours, minutes)
+    const finalDate = Time.atTime(selectedDate, selectedTime)
+    if (!finalDate) return
 
     await onReschedule(finalDate)
   }
 
   return (
-    <DialogContent className="max-w-md">
+    <DialogContent className="rad-dialog">
       <DialogHeader>
-        <div className="flex items-center gap-2 text-blue-600 mb-2">
-          <CalendarClock className="h-5 w-5" />
+        <div className="rad-title-row">
+          <CalendarClock className="size-5" />
           <DialogTitle>Remarcar Sessão</DialogTitle>
         </div>
         <DialogDescription>
@@ -52,24 +53,27 @@ export function RescheduleAppointmentDialog({
         </DialogDescription>
       </DialogHeader>
 
-      <div className="flex flex-col gap-4 py-4">
-        <div className="border rounded-md p-2 bg-muted/20">
+      <div className="rad-body">
+        <div className="rad-calendar-shell">
           <Calendar
             mode="single"
             selected={selectedDate}
             onSelect={setSelectedDate}
             locale={ptBR}
-            disabled={{ before: new Date() }} // Não permite datas passadas
+            disabled={{ before: Time.now() }}
           />
         </div>
 
-        <div className="flex items-center gap-4">
-          <label className="text-sm font-medium">Horário:</label>
+        <div className="rad-time-row">
+          <label className="rad-time-label" htmlFor="reschedule-time">
+            Horário:
+          </label>
           <Input
+            id="reschedule-time"
             type="time"
             value={selectedTime}
-            onChange={(e) => setSelectedTime(e.target.value)}
-            className="w-32"
+            onChange={(event) => setSelectedTime(event.target.value)}
+            className="rad-time-input"
           />
         </div>
       </div>
@@ -81,10 +85,10 @@ export function RescheduleAppointmentDialog({
         <Button
           onClick={handleConfirm}
           disabled={isRescheduling || !selectedDate}
-          className="bg-blue-600 hover:bg-blue-700"
+          className="rad-confirm-btn"
         >
           {isRescheduling ? (
-            <Loader2 className="h-4 w-4 animate-spin" />
+            <Loader2 className="size-4 animate-spin" />
           ) : (
             'Confirmar Nova Data'
           )}

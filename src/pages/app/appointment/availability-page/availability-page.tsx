@@ -1,14 +1,15 @@
-'use client'
-
 import { useEffect } from 'react'
 import { Helmet } from 'react-helmet-async'
 import { useQuery } from '@tanstack/react-query'
 import { CalendarClock, Info, Loader2 } from 'lucide-react'
-
 import { toast } from 'sonner'
+
 import { getAvailability } from '@/api/availability/get-availability'
 import { useHeaderStore } from '@/store/use-header-store'
-import { ScheduleManager } from './components/schedule-manager'
+
+import { ScheduleManager } from './components/schedule-manager/schedule-manager'
+
+import './availability-page.css'
 
 export function AvailabilityPage() {
   const { setTitle } = useHeaderStore()
@@ -27,36 +28,47 @@ export function AvailabilityPage() {
   }, [setTitle])
 
   useEffect(() => {
-    if (isError) {
-      toast.error('Não foi possível carregar sua agenda atual.')
-    }
+    if (isError) toast.error('Não foi possível carregar sua agenda atual.')
   }, [isError])
+
+  function renderContent() {
+    if (isLoading) {
+      return (
+        <div className="avp-loading">
+          <Loader2 className="avp-loading-icon" />
+          <p className="avp-loading-text">Carregando sua agenda...</p>
+        </div>
+      )
+    }
+
+    return (
+      <div className="avp-content">
+        <ScheduleManager defaultData={initialData ?? []} />
+      </div>
+    )
+  }
 
   return (
     <>
       <Helmet title="Horários de Atendimento" />
 
-      <div className="flex flex-col gap-5 mt-6 px-2 pb-8">
-        <header className="flex flex-col gap-2">
-          <div className="flex items-center gap-3">
-            <CalendarClock className="w-8 h-8 text-primary" />
-            <h1 className="text-3xl font-bold tracking-tight text-foreground">
-              Minha Agenda de Atendimento
-            </h1>
+      <div className="avp-root">
+        <header className="avp-header">
+          <div className="avp-header-row">
+            <CalendarClock className="avp-header-icon" />
+            <h1 className="avp-header-title">Minha Agenda de Atendimento</h1>
           </div>
-          <p className="text-muted-foreground text-sm">
+          <p className="avp-header-subtitle">
             Configure os horários recorrentes em que você estará disponível para
             novos agendamentos.
           </p>
         </header>
 
-        <div className="bg-primary/5 border-l-4 border-primary p-4 flex gap-3 rounded-r-xl">
-          <Info className="text-primary shrink-0 size-5" />
-          <div className="flex flex-col gap-1">
-            <p className="text-sm text-foreground font-semibold">
-              Como funciona?
-            </p>
-            <p className="text-xs text-muted-foreground leading-relaxed">
+        <div className="avp-info">
+          <Info className="avp-info-icon" />
+          <div className="avp-info-body">
+            <p className="avp-info-title">Como funciona?</p>
+            <p className="avp-info-text">
               Os horários definidos aqui serão usados para gerar os slots
               disponíveis para seus pacientes. Se você tiver um agendamento já
               marcado, aquele horário será removido automaticamente da lista de
@@ -65,20 +77,9 @@ export function AvailabilityPage() {
           </div>
         </div>
 
-        <div className="border-t border-border" />
+        <div className="avp-divider" />
 
-        {isLoading ? (
-          <div className="flex flex-col items-center justify-center py-32 gap-4">
-            <Loader2 className="animate-spin h-10 w-10 text-primary" />
-            <p className="text-sm text-muted-foreground animate-pulse">
-              Carregando sua agenda...
-            </p>
-          </div>
-        ) : (
-          <div className="animate-in fade-in slide-in-from-bottom-4 duration-500">
-            <ScheduleManager defaultData={initialData ?? []} />
-          </div>
-        )}
+        {renderContent()}
       </div>
     </>
   )

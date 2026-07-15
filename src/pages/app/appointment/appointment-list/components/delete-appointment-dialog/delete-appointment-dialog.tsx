@@ -8,7 +8,7 @@ import {
 } from '@/components/ui/dialog'
 import { Button } from '@/components/ui/button'
 
-interface DeleteAppointmentDialogProps {
+type IDeleteAppointmentDialog = {
   isDeleting: boolean
   onClose: () => void
   onDelete: () => Promise<void>
@@ -18,7 +18,7 @@ export function DeleteAppointmentDialog({
   isDeleting,
   onClose,
   onDelete,
-}: DeleteAppointmentDialogProps) {
+}: IDeleteAppointmentDialog) {
   return (
     <DialogContent className="max-w-md">
       <DialogHeader>

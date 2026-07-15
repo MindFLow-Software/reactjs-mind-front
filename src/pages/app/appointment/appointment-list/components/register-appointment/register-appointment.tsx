@@ -1,9 +1,6 @@
-'use client'
-
 import { useState } from 'react'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
-import { format } from 'date-fns'
 import { ptBR } from 'date-fns/locale'
 import {
   CalendarIcon,
@@ -46,40 +43,32 @@ import {
   FormMessage,
 } from '@/components/ui/form'
 import { cn } from '@/lib/utils'
+import { Time } from '@/utils/time'
 import { AppointmentStatus } from '@/types/appointment/appointment-status'
 
 import {
   createAppointmentSchema,
   type CreateAppointmentData,
 } from '@/validators/appointments/form/create-appointment-schema'
-import { usePatientLookup } from '../hooks/use-patient-lookup'
-import { useRegisterAppointment } from '../hooks/use-register-appointment'
+import { usePatientLookup } from '../../hooks/use-patient-lookup'
+import { useRegisterAppointment } from '../../hooks/use-register-appointment'
 
 import './register-appointment.css'
 
 const MAX_CONTENT_LENGTH = 200
+const MAX_DIAGNOSIS_LENGTH = 90
 
-interface RegisterAppointmentProps {
+type IRegisterAppointment = {
   initialDate?: Date
   onSuccess?: () => void
 }
 
 function buildScheduledAt(date: Date | undefined, time: string): string {
-  if (!date || !time) return ''
-
-  const [hours, minutes] = time.split(':').map(Number)
-  const combined = new Date(date)
-  combined.setHours(hours, minutes, 0, 0)
-
-  return combined.toISOString()
+  return Time.atTime(date, time)?.toISOString() ?? ''
 }
 
 function buildDefaultValues(initialDate?: Date): CreateAppointmentData {
-  const time = initialDate
-    ? `${String(initialDate.getHours()).padStart(2, '0')}:${String(
-        initialDate.getMinutes(),
-      ).padStart(2, '0')}`
-    : ''
+  const time = Time.toHourMinute(initialDate)
 
   return {
     patientProfileId: '',
@@ -93,16 +82,12 @@ function buildDefaultValues(initialDate?: Date): CreateAppointmentData {
 export function RegisterAppointment({
   initialDate,
   onSuccess,
-}: RegisterAppointmentProps) {
+}: IRegisterAppointment) {
   const { patients, isLoading: isLoadingPatients } = usePatientLookup()
 
   const [pickerDate, setPickerDate] = useState<Date | undefined>(initialDate)
   const [pickerTime, setPickerTime] = useState(() =>
-    initialDate
-      ? `${String(initialDate.getHours()).padStart(2, '0')}:${String(
-          initialDate.getMinutes(),
-        ).padStart(2, '0')}`
-      : '',
+    Time.toHourMinute(initialDate),
   )
 
   const form = useForm<CreateAppointmentData>({
@@ -124,6 +109,32 @@ export function RegisterAppointment({
 
   const contentLength = watch('content')?.length ?? 0
 
+  function renderPatientOptions() {
+    if (isLoadingPatients) {
+      return (
+        <div className="ra-select-state">
+          <Loader2 className="size-5 animate-spin text-muted-foreground" />
+        </div>
+      )
+    }
+
+    if (patients.length === 0) {
+      return (
+        <div className="ra-select-empty">Nenhum paciente ativo encontrado</div>
+      )
+    }
+
+    return patients.map((patient) => (
+      <SelectItem
+        key={patient.id}
+        value={patient.id}
+        className="cursor-pointer"
+      >
+        {patient.name}
+      </SelectItem>
+    ))
+  }
+
   function handleDateSelect(selectedDate: Date | undefined) {
     setPickerDate(selectedDate)
     setValue('scheduledAt', buildScheduledAt(selectedDate, pickerTime), {
@@ -143,7 +154,7 @@ export function RegisterAppointment({
   }
 
   return (
-    <DialogContent className="max-h-[90vh] max-w-2xl overflow-y-auto">
+    <DialogContent className="ra-dialog">
       <DialogHeader className="flex flex-col gap-1.5">
         <DialogTitle className="text-xl font-semibold">
           Novo Agendamento
@@ -154,10 +165,7 @@ export function RegisterAppointment({
       </DialogHeader>
 
       <Form {...form}>
-        <form
-          onSubmit={handleSubmit(onSubmit)}
-          className="flex flex-col gap-5 pt-2"
-        >
+        <form onSubmit={handleSubmit(onSubmit)} className="ra-form">
           <FormField
             control={control}
             name="patientProfileId"
@@ -186,27 +194,7 @@ export function RegisterAppointment({
                       />
                     </SelectTrigger>
                     <SelectContent className="max-h-[280px]">
-                      <SelectGroup>
-                        {isLoadingPatients ? (
-                          <div className="flex items-center justify-center py-4">
-                            <Loader2 className="h-5 w-5 animate-spin text-muted-foreground" />
-                          </div>
-                        ) : patients.length > 0 ? (
-                          patients.map((patient) => (
-                            <SelectItem
-                              key={patient.id}
-                              value={patient.id}
-                              className="cursor-pointer"
-                            >
-                              {patient.name}
-                            </SelectItem>
-                          ))
-                        ) : (
-                          <div className="px-3 py-4 text-sm text-muted-foreground text-center">
-                            Nenhum paciente ativo encontrado
-                          </div>
-                        )}
-                      </SelectGroup>
+                      <SelectGroup>{renderPatientOptions()}</SelectGroup>
                     </SelectContent>
                   </Select>
                 </FormControl>
@@ -229,7 +217,7 @@ export function RegisterAppointment({
                     {...field}
                     id="diagnosis"
                     placeholder="ex: Ansiedade generalizada"
-                    maxLength={90}
+                    maxLength={MAX_DIAGNOSIS_LENGTH}
                     className={cn(
                       'ra-input',
                       fieldState.invalid &&
@@ -256,9 +244,7 @@ export function RegisterAppointment({
                     className="ra-input w-full justify-start font-normal bg-transparent cursor-pointer"
                   >
                     {pickerDate ? (
-                      format(pickerDate, "dd 'de' MMMM, yyyy", {
-                        locale: ptBR,
-                      })
+                      Time.toDayLongMonthYear(pickerDate)
                     ) : (
                       <span>Selecione a data</span>
                     )}
@@ -269,9 +255,7 @@ export function RegisterAppointment({
                     mode="single"
                     selected={pickerDate}
                     onSelect={handleDateSelect}
-                    disabled={(day) =>
-                      day < new Date(new Date().setHours(0, 0, 0, 0))
-                    }
+                    disabled={(day) => day < Time.now()}
                     locale={ptBR}
                     initialFocus
                   />
@@ -321,7 +305,7 @@ export function RegisterAppointment({
                     className="resize-none"
                   />
                 </FormControl>
-                <div className="flex justify-end text-xs text-muted-foreground">
+                <div className="ra-counter">
                   <span>
                     {contentLength}/{MAX_CONTENT_LENGTH}
                   </span>
@@ -333,7 +317,7 @@ export function RegisterAppointment({
           <div className="pt-3">
             <Button
               type="submit"
-              className="h-11 w-full font-medium cursor-pointer"
+              className="ra-submit-btn"
               disabled={isPending || !isValid}
             >
               {isPending ? (

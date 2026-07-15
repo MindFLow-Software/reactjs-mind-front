@@ -1,6 +1,5 @@
-'use client'
-
 import { AlertTriangle, Loader2 } from 'lucide-react'
+
 import { Button } from '@/components/ui/button'
 import {
   DialogContent,
@@ -10,7 +9,9 @@ import {
   DialogTitle,
 } from '@/components/ui/dialog'
 
-interface CancelAppointmentDialogProps {
+import './cancel-appointment-dialog.css'
+
+type ICancelAppointmentDialog = {
   patientName: string
   isCancelling: boolean
   onClose: () => void
@@ -22,12 +23,12 @@ export function CancelAppointmentDialog({
   isCancelling,
   onClose,
   onCancel,
-}: CancelAppointmentDialogProps) {
+}: ICancelAppointmentDialog) {
   return (
-    <DialogContent className="max-w-[400px]">
+    <DialogContent className="cad-dialog">
       <DialogHeader>
-        <div className="flex items-center gap-2 text-orange-600 mb-2">
-          <AlertTriangle className="h-5 w-5" />
+        <div className="cad-title-row">
+          <AlertTriangle className="size-5" />
           <DialogTitle>Cancelar Sessão</DialogTitle>
         </div>
         <DialogDescription>
@@ -45,10 +46,10 @@ export function CancelAppointmentDialog({
           variant="destructive"
           onClick={onCancel}
           disabled={isCancelling}
-          className="bg-orange-600 hover:bg-orange-700"
+          className="cad-confirm-btn"
         >
           {isCancelling ? (
-            <Loader2 className="h-4 w-4 animate-spin" />
+            <Loader2 className="size-4 animate-spin" />
           ) : (
             'Confirmar Cancelamento'
           )}

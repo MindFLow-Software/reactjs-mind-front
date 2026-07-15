@@ -4,7 +4,7 @@ import {
   type GetAvailableSlotsResponse,
 } from '@/api/appointments/get-available-slots'
 
-export interface UseAvailableSlotsParams {
+export type IUseAvailableSlotsParams = {
   psychologistPracticeContextId: string | null
   date: string | null
 }
@@ -12,7 +12,7 @@ export interface UseAvailableSlotsParams {
 export function useAvailableSlots({
   psychologistPracticeContextId,
   date,
-}: UseAvailableSlotsParams): UseQueryResult<GetAvailableSlotsResponse, Error> {
+}: IUseAvailableSlotsParams): UseQueryResult<GetAvailableSlotsResponse, Error> {
   return useQuery<GetAvailableSlotsResponse, Error>({
     queryKey: [
       'appointments',

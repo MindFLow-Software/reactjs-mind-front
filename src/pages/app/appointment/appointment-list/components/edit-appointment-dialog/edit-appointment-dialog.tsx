@@ -1,9 +1,5 @@
-'use client'
-
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
-import { format } from 'date-fns'
-import { ptBR } from 'date-fns/locale'
 import {
   CalendarClock,
   Trash2,
@@ -31,21 +27,27 @@ import {
   FormMessage,
 } from '@/components/ui/form'
 import { cn } from '@/lib/utils'
+import { Time } from '@/utils/time'
+import { AppointmentStatus } from '@/types/appointment/appointment-status'
 
 import type { IAppointmentListItem } from '@/api/appointments/get-appointments'
 import {
   updateAppointmentSchema,
   type UpdateAppointmentData,
 } from '@/validators/appointments/form/update-appointment-schema'
-import { useUpdateAppointment } from '../hooks/use-update-appointment'
+import { useUpdateAppointment } from '../../hooks/use-update-appointment'
 
 import './edit-appointment-dialog.css'
 
-interface EditAppointmentProps {
+export type IEditAppointmentTriggers = {
+  onCancel: () => void
+  onReschedule: () => void
+}
+
+type IEditAppointment = {
   appointment: IAppointmentListItem
   onClose: () => void
-  onCancelTrigger: () => void
-  onRescheduleTrigger: () => void
+  triggers: IEditAppointmentTriggers
 }
 
 function buildDefaultValues(
@@ -60,13 +62,11 @@ function buildDefaultValues(
 export function EditAppointment({
   appointment,
   onClose,
-  onCancelTrigger,
-  onRescheduleTrigger,
-}: EditAppointmentProps) {
-  const isCanceled = appointment.status === 'CANCELED'
-  const scheduledAt = appointment.scheduledAt
-    ? new Date(appointment.scheduledAt)
-    : undefined
+  triggers,
+}: IEditAppointment) {
+  const isCanceled = appointment.status === AppointmentStatus.CANCELED
+  const scheduledAtLabel =
+    Time.toReadableDateTime(appointment.scheduledAt) || 'Não definido'
 
   const form = useForm<UpdateAppointmentData>({
     resolver: zodResolver(updateAppointmentSchema),
@@ -88,20 +88,19 @@ export function EditAppointment({
   }
 
   return (
-    <DialogContent className="max-h-[95vh] max-w-2xl p-0 flex flex-col overflow-hidden border-none shadow-2xl bg-card rounded-xl">
-      {/* HEADER */}
-      <div className="px-8 pt-8 pb-6 border-b border-border/40 bg-card shrink-0">
-        <div className="flex items-center gap-4">
-          <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-primary/10 text-primary shadow-inner">
+    <DialogContent className="ea-dialog">
+      <div className="ea-header">
+        <div className="ea-header-row">
+          <div className="ea-header-icon">
             <CalendarClock className="size-6" />
           </div>
           <div className="flex flex-col">
-            <DialogTitle className="text-xl font-bold tracking-tight text-foreground/90">
+            <DialogTitle className="ea-title">
               Detalhes do Agendamento
             </DialogTitle>
-            <DialogDescription className="text-xs font-medium text-muted-foreground/80 uppercase tracking-wider">
+            <DialogDescription className="ea-subtitle">
               Sessão agendada com:{' '}
-              <span className="text-black font-extrabold">
+              <span className="ea-subtitle-name">
                 {appointment.patientName}
               </span>
             </DialogDescription>
@@ -109,20 +108,19 @@ export function EditAppointment({
         </div>
       </div>
 
-      {/* AÇÕES CRÍTICAS */}
-      <div className="px-8 py-5 bg-muted/20 border-b border-border/40 shrink-0">
+      <div className="ea-actions">
         {isCanceled && (
-          <div className="flex items-center gap-2 mb-4 p-3 bg-destructive/10 border border-destructive/20 rounded-lg text-destructive text-xs font-semibold">
+          <div className="ea-canceled-alert">
             <AlertCircle className="size-4" />
             Agendamento cancelado. Apenas a remarcação está disponível.
           </div>
         )}
-        <div className="grid grid-cols-2 gap-4">
+        <div className="ea-actions-grid">
           <Button
             type="button"
             variant="outline"
             className="ea-action-btn ea-action-btn--primary"
-            onClick={onRescheduleTrigger}
+            onClick={triggers.onReschedule}
           >
             <Clock className="h-3.5 w-3.5" />
             Remarcar Horário
@@ -133,7 +131,7 @@ export function EditAppointment({
             variant="outline"
             disabled={isCanceled}
             className="ea-action-btn ea-action-btn--destructive"
-            onClick={onCancelTrigger}
+            onClick={triggers.onCancel}
           >
             <Trash2 className="h-3.5 w-3.5" />
             Cancelar Sessão
@@ -142,14 +140,10 @@ export function EditAppointment({
       </div>
 
       <Form {...form}>
-        <form
-          onSubmit={handleSubmit(onSubmit)}
-          className="flex flex-1 flex-col min-h-0"
-        >
-          {/* ÁREA DE CONTEÚDO COM SCROLL */}
-          <div className="flex-1 overflow-y-auto px-8 pb-8 pt-6 min-h-0">
-            <div className="grid grid-cols-1 gap-6">
-              {/* PACIENTE (não editável — vínculo fixo do agendamento) */}
+        <form onSubmit={handleSubmit(onSubmit)} className="ea-form">
+          <div className="ea-scroll-area">
+            <div className="ea-fields">
+              {/* Paciente não é editável — vínculo fixo do agendamento */}
               <div>
                 <span className="ea-field-label">Paciente</span>
                 <div className="ea-readonly-display">
@@ -163,11 +157,7 @@ export function EditAppointment({
                 <span className="ea-field-label">Data e Horário</span>
                 <div className="ea-readonly-display">
                   <Clock className="size-4 text-primary/60" />
-                  {scheduledAt
-                    ? format(scheduledAt, "dd/MM/yyyy 'às' HH:mm", {
-                        locale: ptBR,
-                      })
-                    : 'Não definido'}
+                  {scheduledAtLabel}
                 </div>
               </div>
 
@@ -192,7 +182,7 @@ export function EditAppointment({
                           )}
                         />
                       </FormControl>
-                      <FileText className="absolute left-3 top-1/2 -translate-y-1/2 size-4 text-muted-foreground/40" />
+                      <FileText className="ea-input-icon" />
                     </div>
                     <FormMessage />
                   </FormItem>
@@ -223,20 +213,19 @@ export function EditAppointment({
             </div>
           </div>
 
-          {/* FOOTER */}
-          <div className="px-8 py-5 border-t border-border/40 bg-muted/10 flex items-center justify-end gap-3 shrink-0">
+          <div className="ea-footer">
             <Button
               type="button"
               variant="outline"
               onClick={onClose}
-              className="cursor-pointer w-full sm:w-auto min-w-[120px] font-bold"
+              className="ea-footer-btn"
             >
               Fechar
             </Button>
             <Button
               type="submit"
               disabled={isPending || !isDirty || !isValid}
-              className="cursor-pointer bg-blue-600 hover:bg-blue-700 w-full sm:w-auto min-w-[150px] font-bold"
+              className="ea-submit-btn"
             >
               {isPending ? (
                 <>

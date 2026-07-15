@@ -1,0 +1,27 @@
+@reference "../../../../../../global.css";
+
+@layer components {
+  .sm-root {
+    @apply overflow-hidden rounded-xl border border-border bg-card shadow-md transition-colors;
+  }
+
+  .sm-header {
+    @apply flex flex-col items-start justify-between gap-4 border-b border-border bg-muted/30 p-4 sm:flex-row sm:items-center;
+  }
+
+  .sm-title {
+    @apply text-base font-bold uppercase tracking-wider text-foreground;
+  }
+
+  .sm-subtitle {
+    @apply text-xs text-muted-foreground;
+  }
+
+  .sm-save-btn {
+    @apply w-full cursor-pointer rounded-xl bg-emerald-600 px-6 py-2.5 text-xs font-bold uppercase tracking-widest text-white shadow-lg shadow-emerald-900/20 transition-all hover:bg-emerald-700 active:scale-95 disabled:cursor-not-allowed disabled:opacity-60 disabled:active:scale-100 sm:w-auto;
+  }
+
+  .sm-days {
+    @apply divide-y divide-border bg-card;
+  }
+}

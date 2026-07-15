@@ -1,0 +1,67 @@
+@reference "../../../../global.css";
+
+@layer components {
+  .avp-root {
+    @apply mt-6 flex flex-col gap-5 px-2 pb-8;
+  }
+
+  .avp-header {
+    @apply flex flex-col gap-2;
+  }
+
+  .avp-header-row {
+    @apply flex items-center gap-3;
+  }
+
+  .avp-header-icon {
+    @apply size-8 text-primary;
+  }
+
+  .avp-header-title {
+    @apply text-3xl font-bold tracking-tight text-foreground;
+  }
+
+  .avp-header-subtitle {
+    @apply text-sm text-muted-foreground;
+  }
+
+  .avp-info {
+    @apply flex gap-3 rounded-r-xl border-l-4 border-primary bg-primary/5 p-4;
+  }
+
+  .avp-info-icon {
+    @apply size-5 shrink-0 text-primary;
+  }
+
+  .avp-info-body {
+    @apply flex flex-col gap-1;
+  }
+
+  .avp-info-title {
+    @apply text-sm font-semibold text-foreground;
+  }
+
+  .avp-info-text {
+    @apply text-xs leading-relaxed text-muted-foreground;
+  }
+
+  .avp-divider {
+    @apply border-t border-border;
+  }
+
+  .avp-loading {
+    @apply flex flex-col items-center justify-center gap-4 py-32;
+  }
+
+  .avp-loading-icon {
+    @apply size-10 animate-spin text-primary;
+  }
+
+  .avp-loading-text {
+    @apply animate-pulse text-sm text-muted-foreground;
+  }
+
+  .avp-content {
+    @apply animate-in fade-in slide-in-from-bottom-4 duration-500;
+  }
+}
