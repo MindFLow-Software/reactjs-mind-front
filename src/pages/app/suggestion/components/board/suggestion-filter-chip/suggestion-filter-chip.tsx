@@ -3,14 +3,14 @@
 import { cn } from '@/lib/utils'
 import './suggestion-filter-chip.css'
 
-interface SuggestionFilterChipData {
+type ISuggestionFilterChipData = {
   label: string
   count: number
   dot?: string
 }
 
-interface SuggestionFilterChipProps {
-  data: SuggestionFilterChipData
+type ISuggestionFilterChip = {
+  data: ISuggestionFilterChipData
   isActive: boolean
   onClick: () => void
 }
@@ -19,7 +19,7 @@ export function SuggestionFilterChip({
   data,
   isActive,
   onClick,
-}: SuggestionFilterChipProps) {
+}: ISuggestionFilterChip) {
   return (
     <button
       type="button"

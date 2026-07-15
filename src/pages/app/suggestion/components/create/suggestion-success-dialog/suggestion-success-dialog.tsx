@@ -11,11 +11,11 @@ import {
 import { Button } from '@/components/ui/button'
 import './suggestion-success-dialog.css'
 
-interface SuggestionSuccessProps {
+type ISuggestionSuccessDialog = {
   onClose: () => void
 }
 
-export function SuggestionSuccess({ onClose }: SuggestionSuccessProps) {
+export function SuggestionSuccessDialog({ onClose }: ISuggestionSuccessDialog) {
   return (
     <DialogContent className="css-success-content">
       <div className="css-success-header">
@@ -30,11 +30,11 @@ export function SuggestionSuccess({ onClose }: SuggestionSuccessProps) {
           </div>
 
           <div className="flex flex-col gap-2">
-            <DialogTitle className="text-2xl font-bold text-slate-900 flex items-center justify-center gap-2 animate-in fade-in slide-in-from-bottom-3 duration-500 delay-100">
+            <DialogTitle className="text-2xl font-bold text-foreground flex items-center justify-center gap-2 animate-in fade-in slide-in-from-bottom-3 duration-500 delay-100">
               Sugestão Enviada!
               <Sparkles className="size-5 text-amber-500 fill-amber-400 animate-in spin-in duration-700 delay-300" />
             </DialogTitle>
-            <DialogDescription className="text-slate-600 text-center text-base pt-1 text-balance mx-auto animate-in fade-in slide-in-from-bottom-2 duration-500 delay-200">
+            <DialogDescription className="text-muted-foreground text-center text-base pt-1 text-balance mx-auto animate-in fade-in slide-in-from-bottom-2 duration-500 delay-200">
               Muito obrigado pelo seu feedback. Sua ideia é fundamental para
               evoluirmos a plataforma.
             </DialogDescription>
@@ -42,14 +42,14 @@ export function SuggestionSuccess({ onClose }: SuggestionSuccessProps) {
         </DialogHeader>
       </div>
 
-      <div className="p-8 flex flex-col gap-6 bg-white">
+      <div className="p-8 flex flex-col gap-6 bg-card">
         <div className="css-success-steps">
           <div className="flex items-start gap-4">
             <div className="flex flex-col gap-1.5 flex-1">
-              <p className="text-sm font-semibold text-slate-900">
+              <p className="text-sm font-semibold text-foreground">
                 Próximos passos
               </p>
-              <p className="text-sm text-slate-600 leading-relaxed">
+              <p className="text-sm text-muted-foreground leading-relaxed">
                 Nossa equipe analisará sua sugestão. Se aprovada, ela aparecerá
                 no board em até{' '}
                 <span className="font-semibold text-blue-600">48 horas</span>.

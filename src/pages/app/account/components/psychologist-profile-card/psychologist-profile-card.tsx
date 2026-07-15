@@ -16,8 +16,8 @@ import { Button } from '@/components/ui/button'
 import { Dialog, DialogTrigger } from '@/components/ui/dialog'
 import { ProfileCard } from '@/components/profile-card'
 
-import { EditPsychologistProfile } from './edit-psychologist-profile-dialog'
-import { PsychologistAvatarUpload } from './psychologist-avatar-upload'
+import { EditPsychologistProfile } from '../edit-psychologist-profile-dialog/edit-psychologist-profile-dialog'
+import { PsychologistAvatarUpload } from '../psychologist-avatar-upload/psychologist-avatar-upload'
 
 import './psychologist-profile-card.css'
 import { Badge } from '@/components/ui/badge'

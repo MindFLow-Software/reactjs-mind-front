@@ -13,21 +13,24 @@ import './suggestion-column.css'
 
 const PAGE_SIZE = 5
 
-interface SuggestionColumnProps {
+type IColumnMeta = {
   title: string
   icon: React.ReactNode
   badgeClass: string
+}
+
+type ISuggestionColumn = {
+  column: IColumnMeta
   suggestions?: ISuggestion[]
   isLoading: boolean
 }
 
 export function SuggestionColumn({
-  title,
-  icon,
-  badgeClass,
+  column,
   suggestions = [],
   isLoading,
-}: SuggestionColumnProps) {
+}: ISuggestionColumn) {
+  const { title, icon, badgeClass } = column
   const [visibleCount, setVisibleCount] = useState(PAGE_SIZE)
 
   const { data: profile } = useQuery({
@@ -45,6 +48,52 @@ export function SuggestionColumn({
   const visible = sortedSuggestions.slice(0, visibleCount)
   const remaining = sortedSuggestions.length - visibleCount
 
+  function renderColumnBody() {
+    if (isLoading) {
+      return (
+        <div className="flex flex-col gap-3">
+          {[1, 2, 3].map((i) => (
+            <div key={i} className="scol-skeleton" />
+          ))}
+        </div>
+      )
+    }
+
+    if (sortedSuggestions.length === 0) {
+      return (
+        <div className="scol-empty">
+          <p className="text-center p-6 text-muted-foreground text-xs italic font-medium">
+            Nenhuma sugestão por aqui...
+          </p>
+        </div>
+      )
+    }
+
+    return (
+      <div className="flex flex-col gap-3">
+        {visible.map((item) => (
+          <SuggestionCard
+            key={item.id}
+            item={item}
+            userId={profile?.id}
+            onLike={toggleLike}
+          />
+        ))}
+
+        {remaining > 0 && (
+          <button
+            type="button"
+            onClick={() => setVisibleCount((c) => c + PAGE_SIZE)}
+            className="scol-load-more"
+          >
+            <ChevronDown className="size-3.5" />
+            Ver mais {Math.min(remaining, PAGE_SIZE)}
+          </button>
+        )}
+      </div>
+    )
+  }
+
   return (
     <div className="scol-root">
       <header className="scol-header">
@@ -55,43 +104,7 @@ export function SuggestionColumn({
         </span>
       </header>
 
-      <div className="scol-body">
-        {isLoading ? (
-          <div className="flex flex-col gap-3">
-            {[1, 2, 3].map((i) => (
-              <div key={i} className="scol-skeleton" />
-            ))}
-          </div>
-        ) : sortedSuggestions.length === 0 ? (
-          <div className="scol-empty">
-            <p className="text-center p-6 text-muted-foreground text-xs italic font-medium">
-              Nenhuma sugestão por aqui...
-            </p>
-          </div>
-        ) : (
-          <div className="flex flex-col gap-3">
-            {visible.map((item) => (
-              <SuggestionCard
-                key={item.id}
-                item={item}
-                userId={profile?.id}
-                onLike={toggleLike}
-              />
-            ))}
-
-            {remaining > 0 && (
-              <button
-                type="button"
-                onClick={() => setVisibleCount((c) => c + PAGE_SIZE)}
-                className="scol-load-more"
-              >
-                <ChevronDown className="size-3.5" />
-                Ver mais {Math.min(remaining, PAGE_SIZE)}
-              </button>
-            )}
-          </div>
-        )}
-      </div>
+      <div className="scol-body">{renderColumnBody()}</div>
     </div>
   )
 }

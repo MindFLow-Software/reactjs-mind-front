@@ -20,18 +20,18 @@ import {
   createSuggestionSchema,
   type CreateSuggestionSchema,
 } from '@/validators/suggestions/form/create-suggestion-schema'
-import { SuggestionAttachments } from './suggestion-attachments'
-import { SuggestionSuccess } from './suggestion-success-dialog'
-import { SuggestionCategoryPicker } from './suggestion-category-picker'
-import { SUGGESTION_DESCRIPTION_MIN } from './create-suggestion-constants'
-import { useCreateSuggestion } from './hooks/use-create-suggestion'
+import { SuggestionAttachments } from '../suggestion-attachments/suggestion-attachments'
+import { SuggestionSuccessDialog } from '../suggestion-success-dialog/suggestion-success-dialog'
+import { SuggestionCategoryPicker } from '../suggestion-category-picker/suggestion-category-picker'
+import { SUGGESTION_DESCRIPTION_MIN } from '../create-suggestion-constants'
+import { useCreateSuggestion } from '../hooks/use-create-suggestion'
 import './create-suggestion.css'
 
-interface CreateSuggestionProps {
+type ICreateSuggestion = {
   onSuccess: () => void
 }
 
-export function CreateSuggestion({ onSuccess }: CreateSuggestionProps) {
+export function CreateSuggestion({ onSuccess }: ICreateSuggestion) {
   const [files, setFiles] = useState<File[]>([])
   const [isSubmitted, setIsSubmitted] = useState(false)
 
@@ -60,7 +60,7 @@ export function CreateSuggestion({ onSuccess }: CreateSuggestionProps) {
 
   if (isSubmitted) {
     return (
-      <SuggestionSuccess
+      <SuggestionSuccessDialog
         onClose={() => {
           setIsSubmitted(false)
           setFiles([])

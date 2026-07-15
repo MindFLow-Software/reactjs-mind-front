@@ -13,7 +13,7 @@ import { Button } from '@/components/ui/button'
 import { FieldSet } from '@/components/ui/field'
 import './suggestion-attachments.css'
 
-interface SuggestionAttachmentsProps {
+type ISuggestionAttachments = {
   files: File[]
   onFileChange: (files: File[]) => void
 }
@@ -26,7 +26,7 @@ const getFileIcon = (type: string) => {
 }
 
 export const SuggestionAttachments = memo(
-  ({ files, onFileChange }: SuggestionAttachmentsProps) => {
+  ({ files, onFileChange }: ISuggestionAttachments) => {
     const fileInputRef = useRef<HTMLInputElement>(null)
 
     const triggerFileInput = () => fileInputRef.current?.click()

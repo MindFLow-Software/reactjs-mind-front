@@ -10,7 +10,7 @@ import type { IgetMeResponse } from '@/api/auth/get-profile'
 import { useSessionStore } from '@/store/use-session-store'
 
 import './psychologist-avatar-upload.css'
-interface AvatarUploadProps {
+type IPsychologistAvatarUpload = {
   currentImage?: string | null
   fullName: string
 }
@@ -18,7 +18,7 @@ interface AvatarUploadProps {
 export function PsychologistAvatarUpload({
   currentImage,
   fullName,
-}: AvatarUploadProps) {
+}: IPsychologistAvatarUpload) {
   const queryClient = useQueryClient()
 
   const fileInputRef = useRef<HTMLInputElement>(null)

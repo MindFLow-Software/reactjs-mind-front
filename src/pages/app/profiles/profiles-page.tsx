@@ -9,7 +9,7 @@ import { Button } from '@/components/ui/button'
 
 import { ProfileSectionHeader } from './components/profile-section-header'
 import { PatientProfileSection } from './components/patient-profile-section'
-import { PsychologistProfileCard } from '../account/components/psychologist-profile-card'
+import { PsychologistProfileCard } from '../account/components/psychologist-profile-card/psychologist-profile-card'
 import { CreatePatientProfileCard } from './components/create-patient-profile-card'
 import { PsychologistPracticeContextsSection } from './components/psychologist-practice-contexts-section'
 import { PatientProfilePossibleCandidatesSection } from './components/patient-profile-possible-candidates-section'

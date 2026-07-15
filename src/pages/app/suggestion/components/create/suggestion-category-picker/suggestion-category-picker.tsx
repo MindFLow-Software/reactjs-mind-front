@@ -4,10 +4,10 @@ import { cn } from '@/lib/utils'
 import {
   CREATE_SUGGESTION_CATEGORIES,
   type SuggestionCategoryValue,
-} from './create-suggestion-constants'
+} from '../create-suggestion-constants'
 import './suggestion-category-picker.css'
 
-interface SuggestionCategoryPickerProps {
+type ISuggestionCategoryPicker = {
   value?: SuggestionCategoryValue
   onChange: (value: SuggestionCategoryValue) => void
 }
@@ -15,7 +15,7 @@ interface SuggestionCategoryPickerProps {
 export function SuggestionCategoryPicker({
   value,
   onChange,
-}: SuggestionCategoryPickerProps) {
+}: ISuggestionCategoryPicker) {
   return (
     <div className="grid grid-cols-3 gap-2.5">
       {CREATE_SUGGESTION_CATEGORIES.map((cat) => {

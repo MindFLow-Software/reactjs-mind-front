@@ -9,7 +9,7 @@ import { cn } from '@/lib/utils'
 import { translatedLanguages } from '@/constants/translated-languages'
 import type { IPsychologistProfile } from '@/types/psychologist/psychologist-profile'
 import { Honorific, Languages } from '@/types/shared/enums'
-import { useUpdatePsychologistProfile } from '../hooks/use-update-psychologist-profile'
+import { useUpdatePsychologistProfile } from '../../hooks/use-update-psychologist-profile'
 import { translatedExpertise } from '@/constants/translated-expertise'
 
 import {
@@ -54,7 +54,7 @@ import './edit-psychologist-profile-dialog.css'
 import { usePsychologistProfile } from '@/hooks/use-psychologist-profile'
 import { useEffect } from 'react'
 
-interface IEditPsychologistProfile {
+type IEditPsychologistProfile = {
   onClose: () => void
   psychologistProfileId: string | null
 }

@@ -8,8 +8,8 @@ import { Loader2, RefreshCw } from 'lucide-react'
 import { useHeaderStore } from '@/store/use-header-store'
 import { getProfile } from '@/api/auth/get-profile'
 import { Button } from '@/components/ui/button'
-import { PsychologistProfileCard } from './components/psychologist-profile-card'
-import { ActivityHeatmap } from './components/activity-heatmap'
+import { PsychologistProfileCard } from './components/psychologist-profile-card/psychologist-profile-card'
+import { ActivityHeatmap } from './components/activity-heatmap/activity-heatmap'
 import './account.css'
 
 export function MockPsychologistProfilePage() {

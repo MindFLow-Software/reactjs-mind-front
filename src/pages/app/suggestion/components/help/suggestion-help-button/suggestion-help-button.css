@@ -1,4 +1,4 @@
-@reference "../../../../../global.css";
+@reference "../../../../../../global.css";
 
 @layer components {
   .shb-fab {

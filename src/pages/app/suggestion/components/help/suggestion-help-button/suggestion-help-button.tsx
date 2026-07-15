@@ -75,7 +75,7 @@ export function SuggestionHelpButton() {
             </DialogTrigger>
             <TooltipContent
               side="left"
-              className="bg-slate-900 text-white border-none text-xs font-semibold px-3 py-2 mb-2"
+              className="border-none text-xs font-semibold px-3 py-2 mb-2"
             >
               Comunidade MindFlow
             </TooltipContent>
