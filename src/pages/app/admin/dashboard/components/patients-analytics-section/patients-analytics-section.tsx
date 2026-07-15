@@ -12,7 +12,6 @@ import {
 } from '../admin-stat-card/admin-stat-card'
 import { GenderDistributionChart } from '../gender-distribution-chart/gender-distribution-chart'
 import { StateDistributionChart } from '../state-distribution-chart/state-distribution-chart'
-import { PatientsGeographyChart } from '../patients-geography-chart/patients-geography-chart'
 
 import './patients-analytics-section.css'
 
