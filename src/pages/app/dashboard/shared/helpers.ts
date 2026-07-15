@@ -1,7 +1,9 @@
+import { Time } from '@/utils/time'
+
 export function getGreeting(): string {
-  const h = new Date().getHours()
-  if (h >= 5 && h < 12) return 'Bom dia'
-  if (h >= 12 && h < 18) return 'Boa tarde'
+  const hour = Time.currentHour()
+  if (hour >= 5 && hour < 12) return 'Bom dia'
+  if (hour >= 12 && hour < 18) return 'Boa tarde'
   return 'Boa noite'
 }
 

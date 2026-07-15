@@ -1,11 +1,18 @@
 import { UserPlus } from 'lucide-react'
 
-import { ChartCard } from '@/components/chart-card/chart-card'
+import {
+  ChartCard,
+  type IChartCardSeries,
+} from '@/components/chart-card/chart-card'
 import { ADMIN_PERIODS } from '@/pages/app/dashboard/shared/constants'
 import type { IDashboardPeriod } from '@/pages/app/dashboard/shared/types'
 import type { ITimeSeriesPoint } from '@/types/dashboard/time-series-point'
 
 import { ADMIN_CHART_COLORS } from '../../constants'
+
+const GROWTH_SERIES: readonly IChartCardSeries<ITimeSeriesPoint>[] = [
+  { dataKey: 'value', color: ADMIN_CHART_COLORS[0], label: 'Novos cadastros' },
+]
 
 type IGrowthFlowChart = {
   data: ITimeSeriesPoint[]
@@ -34,11 +41,7 @@ export function GrowthFlowChart({ data, total, period }: IGrowthFlowChart) {
       <ChartCard.Total label="Novos cadastros" value={total} />
 
       <ChartCard.Body>
-        <ChartCard.TimeSeriesBar
-          data={data}
-          dataKey="value"
-          color={ADMIN_CHART_COLORS[0]}
-        />
+        <ChartCard.TimeSeriesBar data={data} series={GROWTH_SERIES} />
       </ChartCard.Body>
 
       <ChartCard.Empty

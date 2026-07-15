@@ -3,16 +3,14 @@ import { MapPin } from 'lucide-react'
 import {
   ChartCard,
   ChartCardBarLayout,
+  CHART_CARD_PIE_KEYS,
+  type IChartCardPieDatum,
 } from '@/components/chart-card/chart-card'
 
-import {
-  ADMIN_CHART_COLORS,
-  ADMIN_PIE_KEYS,
-  type IAdminPieDatum,
-} from '../../constants'
+import { ADMIN_CHART_COLORS } from '../../constants'
 
 // Backend has no per-state breakdown endpoint yet; bars are placeholder values.
-const PLACEHOLDER_STATES: IAdminPieDatum[] = [
+const PLACEHOLDER_STATES: IChartCardPieDatum[] = [
   { name: 'SP', count: 25 },
   { name: 'RJ', count: 18 },
   { name: 'MG', count: 12 },
@@ -38,7 +36,7 @@ export function StateDistributionChart({
       <ChartCard.Body>
         <ChartCard.Bar
           data={PLACEHOLDER_STATES}
-          keys={ADMIN_PIE_KEYS}
+          keys={CHART_CARD_PIE_KEYS}
           bar={{
             color: ADMIN_CHART_COLORS[0],
             layout: ChartCardBarLayout.HORIZONTAL,

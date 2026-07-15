@@ -10,7 +10,7 @@ import type { IDashboardPeriod } from '@/pages/app/dashboard/shared/types'
 import type { IPsychologistDashboardData } from '@/types/dashboard/psychologist-dashboard-data'
 import { useActivePracticeContextStore } from '@/store/use-active-practice-context-store'
 
-export interface IUsePsychologistDashboard {
+export type IUsePsychologistDashboard = {
   data?: IPsychologistDashboardData
   isLoading: boolean
   isError: boolean

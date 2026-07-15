@@ -9,6 +9,10 @@
     @apply col-start-1 row-start-1 flex flex-row items-center justify-between gap-4 p-0;
   }
 
+  .cc-header-main {
+    @apply flex items-center gap-3;
+  }
+
   .cc-header-text {
     @apply flex flex-col justify-center gap-1;
   }

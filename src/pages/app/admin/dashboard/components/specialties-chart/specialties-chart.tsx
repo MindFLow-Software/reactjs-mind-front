@@ -1,15 +1,15 @@
 import { useMemo } from 'react'
 import { Layers } from 'lucide-react'
 
-import { ChartCard } from '@/components/chart-card/chart-card'
+import {
+  ChartCard,
+  CHART_CARD_PIE_KEYS,
+  type IChartCardPieDatum,
+} from '@/components/chart-card/chart-card'
 import { sumDailyCounts } from '@/pages/app/dashboard/shared/helpers'
 import type { ISpecialtyStat } from '@/types/dashboard/specialty-stat'
 
-import {
-  ADMIN_CHART_COLORS,
-  ADMIN_PIE_KEYS,
-  type IAdminPieDatum,
-} from '../../constants'
+import { ADMIN_CHART_COLORS } from '../../constants'
 
 type ISpecialtiesChart = {
   data: ISpecialtyStat[]
@@ -18,7 +18,7 @@ type ISpecialtiesChart = {
 export function SpecialtiesChart({ data }: ISpecialtiesChart) {
   const slices = useMemo(
     () =>
-      (data ?? []).map<IAdminPieDatum>((item) => ({
+      (data ?? []).map<IChartCardPieDatum>((item) => ({
         name: item.specialty,
         count: item.count,
       })),
@@ -41,14 +41,14 @@ export function SpecialtiesChart({ data }: ISpecialtiesChart) {
         <ChartCard.Pie
           data={slices}
           colors={ADMIN_CHART_COLORS}
-          keys={ADMIN_PIE_KEYS}
+          keys={CHART_CARD_PIE_KEYS}
         >
           <ChartCard.Total label="Abordagens" value={total} />
         </ChartCard.Pie>
         <ChartCard.Legend
           data={slices}
           colors={ADMIN_CHART_COLORS}
-          keys={ADMIN_PIE_KEYS}
+          keys={CHART_CARD_PIE_KEYS}
         />
       </ChartCard.Body>
 

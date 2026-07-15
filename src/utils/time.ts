@@ -1,11 +1,16 @@
 import { ptBR } from 'date-fns/locale'
 import {
+  addMinutes,
   differenceInYears,
   format,
   formatDistanceToNow,
+  getHours,
   isAfter,
   isFuture,
   isValid,
+  setHours,
+  setMinutes,
+  setSeconds,
   startOfDay,
   subDays,
 } from 'date-fns'
@@ -52,24 +57,18 @@ export class Time {
     return `${age} ${suffix}`
   }
 
-  static toReadableDateTime(date: Date | null | undefined) {
-    if (!date || !isValid(date)) return ''
+  static toReadableDateTime(date: Date | string | null | undefined) {
+    const parsed = Time.parse(date)
+    if (!parsed) return ''
 
-    const dateFormatted = format(date, "dd/MM/yyyy 'às' HH:mm", {
-      locale: ptBR,
-    })
-
-    return dateFormatted
+    return format(parsed, "dd/MM/yyyy 'às' HH:mm", { locale: ptBR })
   }
 
-  static toExtensiveReadableDateTime(date: Date | null | undefined) {
-    if (!date || !isValid(date)) return ''
+  static toExtensiveReadableDateTime(date: Date | string | null | undefined) {
+    const parsed = Time.parse(date)
+    if (!parsed) return ''
 
-    const dateFormatted = format(date, "EEEE 'às' HH:mm", {
-      locale: ptBR,
-    })
-
-    return dateFormatted
+    return format(parsed, "EEEE 'às' HH:mm", { locale: ptBR })
   }
 
   static toShortMonthDate(date: Date | string | null | undefined) {
@@ -84,6 +83,69 @@ export class Time {
     if (!parsed) return ''
 
     return format(parsed, "d 'de' MMM", { locale: ptBR })
+  }
+
+  static toDayLongMonth(date: Date | string | null | undefined) {
+    const parsed = Time.parse(date)
+    if (!parsed) return ''
+
+    return format(parsed, "d 'de' MMMM", { locale: ptBR })
+  }
+
+  static toDayLongMonthYear(date: Date | string | null | undefined) {
+    const parsed = Time.parse(date)
+    if (!parsed) return ''
+
+    return format(parsed, "dd 'de' MMMM, yyyy", { locale: ptBR })
+  }
+
+  static toLongMonthYear(date: Date | string | null | undefined) {
+    const parsed = Time.parse(date)
+    if (!parsed) return ''
+
+    return format(parsed, 'MMMM yyyy', { locale: ptBR })
+  }
+
+  static toHourCompact(date: Date | string | null | undefined) {
+    const parsed = Time.parse(date)
+    if (!parsed) return ''
+
+    return format(parsed, "HH'h'", { locale: ptBR })
+  }
+
+  static atTime(date: Date | string | null | undefined, time: string) {
+    const parsed = Time.parse(date)
+    if (!parsed || !time) return null
+
+    const [hours, minutes] = time.split(':').map(Number)
+    if (!Number.isFinite(hours) || !Number.isFinite(minutes)) return null
+
+    return setSeconds(setMinutes(setHours(parsed, hours), minutes), 0)
+  }
+
+  static addMinutes(date: Date | string | null | undefined, minutes: number) {
+    const parsed = Time.parse(date)
+    if (!parsed) return null
+
+    return addMinutes(parsed, minutes)
+  }
+
+  static toWeekdayLongDate(date: Date | string | null | undefined) {
+    const parsed = Time.parse(date)
+    if (!parsed) return ''
+
+    return format(parsed, "EEEE, d 'de' MMMM 'de' yyyy", { locale: ptBR })
+  }
+
+  static toHourMinute(date: Date | string | null | undefined) {
+    const parsed = Time.parse(date)
+    if (!parsed) return ''
+
+    return format(parsed, 'HH:mm', { locale: ptBR })
+  }
+
+  static currentHour() {
+    return getHours(new Date())
   }
 
   static toDayShortMonthYear(date: Date | string | null | undefined) {

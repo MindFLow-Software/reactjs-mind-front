@@ -1,0 +1,23 @@
+@reference "../../global.css";
+
+@layer components {
+  .ib-root {
+    @apply flex size-9 shrink-0 items-center justify-center rounded-full ring-1;
+  }
+
+  .ib-blue {
+    @apply bg-blue-500/10 text-blue-600 ring-blue-500/20;
+  }
+
+  .ib-violet {
+    @apply bg-violet-500/10 text-violet-600 ring-violet-500/20;
+  }
+
+  .ib-emerald {
+    @apply bg-emerald-500/10 text-emerald-600 ring-emerald-500/20;
+  }
+
+  .ib-amber {
+    @apply bg-amber-500/10 text-amber-600 ring-amber-500/20;
+  }
+}

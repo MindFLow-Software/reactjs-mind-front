@@ -52,6 +52,16 @@ export type IChartCardKeys<T> = {
   value: keyof T & string
 }
 
+export type IChartCardPieDatum = {
+  name: string
+  count: number
+}
+
+export const CHART_CARD_PIE_KEYS: IChartCardKeys<IChartCardPieDatum> = {
+  name: 'name',
+  value: 'count',
+}
+
 type IChartCardContextValue = {
   state: IChartCardState
   onRetry?: () => void
@@ -74,6 +84,7 @@ type IChartCardRootProps = {
 type IChartCardHeaderProps = {
   title: string
   description: string
+  icon?: ReactNode
   children?: ReactNode
 }
 
@@ -121,10 +132,15 @@ type IChartCardBarProps<T extends object> = {
   bar?: IChartCardBarOptions
 }
 
-type IChartCardTimeSeriesBarProps<T extends { date: string } & object> = {
-  data: T[]
+export type IChartCardSeries<T> = {
   dataKey: keyof T & string
   color: string
+  label?: string
+}
+
+type IChartCardTimeSeriesBarProps<T extends { date: string } & object> = {
+  data: T[]
+  series: readonly IChartCardSeries<T>[]
 }
 
 type IChartCardTimeRangeOption<T extends string> = {
@@ -161,15 +177,19 @@ function ChartCardRoot({ state, onRetry, children }: IChartCardRootProps) {
 function ChartCardHeader({
   title,
   description,
+  icon,
   children,
 }: IChartCardHeaderProps) {
   return (
     <CardHeader className="cc-header">
-      <div className="cc-header-text">
-        <CardTitle className="cc-title">{title}</CardTitle>
-        <CardDescription className="cc-description">
-          {description}
-        </CardDescription>
+      <div className="cc-header-main">
+        {icon}
+        <div className="cc-header-text">
+          <CardTitle className="cc-title">{title}</CardTitle>
+          <CardDescription className="cc-description">
+            {description}
+          </CardDescription>
+        </div>
       </div>
       {children}
     </CardHeader>
@@ -374,13 +394,15 @@ function ChartCardBar<T extends object>({
 
 function ChartCardTimeSeriesBar<T extends { date: string } & object>({
   data,
-  dataKey,
-  color,
+  series,
 }: IChartCardTimeSeriesBarProps<T>) {
-  const config = useMemo<ChartConfig>(
-    () => ({ [dataKey]: { color } }),
-    [dataKey, color],
-  )
+  const config = useMemo<ChartConfig>(() => {
+    const entries = series.map(
+      ({ dataKey, color, label }) => [dataKey, { color, label }] as const,
+    )
+
+    return Object.fromEntries(entries)
+  }, [series])
 
   return (
     <ChartContainer config={config} className="cc-timeseries-container">
@@ -409,7 +431,14 @@ function ChartCardTimeSeriesBar<T extends { date: string } & object>({
             />
           }
         />
-        <Bar dataKey={dataKey} fill={color} radius={[4, 4, 0, 0]} />
+        {series.map(({ dataKey, color }) => (
+          <Bar
+            key={dataKey}
+            dataKey={dataKey}
+            fill={color}
+            radius={[4, 4, 0, 0]}
+          />
+        ))}
       </BarChart>
     </ChartContainer>
   )

@@ -1,17 +1,16 @@
 import { useMemo } from 'react'
 import { Users2 } from 'lucide-react'
 
-import { ChartCard } from '@/components/chart-card/chart-card'
-import { GENDER_CONFIG } from '@/constants/gender-config'
+import {
+  ChartCard,
+  CHART_CARD_PIE_KEYS,
+  type IChartCardPieDatum,
+} from '@/components/chart-card/chart-card'
+import { GENDER_CONFIG, GENDER_SLICE_COLOR } from '@/constants/gender-config'
 import { sumDailyCounts } from '@/pages/app/dashboard/shared/helpers'
 import type { IGenderItem } from '@/types/dashboard/gender-item'
 
-import {
-  ADMIN_PIE_KEYS,
-  AdminAnalyticsSubject,
-  GENDER_SLICE_COLOR,
-  type IAdminPieDatum,
-} from '../../constants'
+import { AdminAnalyticsSubject } from '../../constants'
 
 type IGenderChartCopy = {
   title: string
@@ -50,7 +49,7 @@ export function GenderDistributionChart({
     const items = data ?? []
 
     return {
-      slices: items.map<IAdminPieDatum>((item) => ({
+      slices: items.map<IChartCardPieDatum>((item) => ({
         name: GENDER_CONFIG[item.gender]?.label ?? item.gender,
         count: item.count,
       })),
@@ -68,10 +67,14 @@ export function GenderDistributionChart({
       <ChartCard.Total label="Total Geral" value={total} />
 
       <ChartCard.Body>
-        <ChartCard.Pie data={slices} colors={colors} keys={ADMIN_PIE_KEYS}>
+        <ChartCard.Pie data={slices} colors={colors} keys={CHART_CARD_PIE_KEYS}>
           <ChartCard.Total label={copy.centerLabel} value={total} />
         </ChartCard.Pie>
-        <ChartCard.Legend data={slices} colors={colors} keys={ADMIN_PIE_KEYS} />
+        <ChartCard.Legend
+          data={slices}
+          colors={colors}
+          keys={CHART_CARD_PIE_KEYS}
+        />
       </ChartCard.Body>
 
       <ChartCard.Empty

@@ -1,6 +1,12 @@
 import { Mars, Venus, Users } from 'lucide-react'
 import { Gender } from '@/types/shared/enums'
 
+export const GENDER_SLICE_COLOR: Record<Gender, string> = {
+  [Gender.FEMININE]: 'var(--gender-feminine)',
+  [Gender.MASCULINE]: 'var(--gender-masculine)',
+  [Gender.OTHER]: 'var(--gender-other)',
+}
+
 export const GENDER_CONFIG = {
   [Gender.MASCULINE]: {
     label: 'Masculino',
