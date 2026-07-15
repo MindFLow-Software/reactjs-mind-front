@@ -1,18 +1,20 @@
 'use client'
 
-import './welcome-modal.css'
 import { useState, useEffect, useCallback } from 'react'
 import { X, ChevronRight, Brain } from 'lucide-react'
-import { Button } from '@/components/ui/button'
-import type { IPopup } from '@/types/popup/popup'
-import { cn } from '@/lib/utils'
 
-interface WelcomeModalProps {
+import { cn } from '@/lib/utils'
+import type { IPopup } from '@/types/popup/popup'
+import { Button } from '@/components/ui/button'
+
+import './welcome-modal.css'
+
+type IWelcomeModal = {
   popup: IPopup
   onClose: (action: string) => void
 }
 
-export function WelcomeModal({ popup, onClose }: WelcomeModalProps) {
+export function WelcomeModal({ popup, onClose }: IWelcomeModal) {
   const [isOpen, setIsOpen] = useState(false)
 
   useEffect(() => {
@@ -46,28 +48,18 @@ export function WelcomeModal({ popup, onClose }: WelcomeModalProps) {
       >
         <button
           onClick={() => handleClose('closed')}
-          className="cursor-pointer absolute right-4 top-4 z-10 flex h-7 w-7 items-center justify-center rounded-full text-slate-400 transition-all duration-200 hover:bg-slate-100 hover:text-slate-600"
+          className="wm-close-btn"
           aria-label="Fechar modal"
         >
           <X className="h-4 w-4" />
         </button>
 
-        <div className="relative overflow-hidden rounded-2xl bg-white shadow-2xl shadow-slate-900/10">
-          <div
-            className="absolute inset-0 opacity-[0.4]"
-            style={{
-              backgroundImage: `
-                                linear-gradient(to right, var(--welcome-grid-line) 1px, transparent 1px),
-                                linear-gradient(to bottom, var(--welcome-grid-line) 1px, transparent 1px)
-                            `,
-              backgroundSize: '28px 28px',
-            }}
-          />
+        <div className="wm-card">
+          <div className="wm-grid-bg" />
+          <div className="wm-glow" />
 
-          <div className="absolute inset-x-0 top-0 h-44 bg-gradient-to-b from-sky-300/80 via-blue-300/55 to-transparent rounded-t-xl" />
-
-          <div className="relative px-8 py-10 sm:px-10 sm:py-12">
-            <div className="mb-6 flex justify-center">
+          <div className="wm-content">
+            <div className="wm-icon-wrap">
               <div
                 className={cn(
                   'wm-icon-box',
@@ -84,9 +76,7 @@ export function WelcomeModal({ popup, onClose }: WelcomeModalProps) {
                 isOpen ? 'wm-badge-open' : 'wm-badge-closed',
               )}
             >
-              <span className="inline-flex items-center rounded-full bg-white px-4 py-1.5 text-xs font-medium text-slate-500 border border-slate-100 shadow-sm">
-                Bem-vindo ao MindFlush
-              </span>
+              <span className="wm-badge-pill">Bem-vindo ao MindFlush</span>
             </div>
 
             <h1
@@ -114,9 +104,9 @@ export function WelcomeModal({ popup, onClose }: WelcomeModalProps) {
                 isOpen ? 'wm-button-open' : 'wm-button-closed',
               )}
             >
-              <span className="relative z-10 flex items-center justify-center gap-2">
+              <span className="wm-button-content">
                 {popup.ctaText || 'Começar Agora'}
-                <span className="flex h-6 w-6 items-center justify-center rounded-full bg-white/20 transition-transform duration-300 group-hover:translate-x-0.5">
+                <span className="wm-button-icon">
                   <ChevronRight className="h-4 w-4" />
                 </span>
               </span>

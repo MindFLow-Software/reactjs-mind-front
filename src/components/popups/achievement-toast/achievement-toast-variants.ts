@@ -1,8 +1,13 @@
 import { Trophy, Star, Zap, Crown, type LucideIcon } from 'lucide-react'
 
-export type AchievementVariant = 'bronze' | 'silver' | 'gold' | 'platinum'
+export enum AchievementVariant {
+  BRONZE = 'bronze',
+  SILVER = 'silver',
+  GOLD = 'gold',
+  PLATINUM = 'platinum',
+}
 
-interface AchievementVariantStyle {
+type IAchievementVariantStyle = {
   label: string
   bg: string
   border: string
@@ -16,17 +21,41 @@ interface AchievementVariantStyle {
 }
 
 export const CONFETTI_COLORS: Record<AchievementVariant, string[]> = {
-  bronze: ['#D97706', '#F59E0B', '#FBBF24', '#FCD34D', '#FEF3C7'],
-  silver: ['#64748B', '#94A3B8', '#CBD5E1', '#E2E8F0', '#F1F5F9'],
-  gold: ['#EAB308', '#FACC15', '#FDE047', '#FEF08A', '#FEF9C3'],
-  platinum: ['#06B6D4', '#22D3EE', '#67E8F9', '#A5F3FC', '#CFFAFE'],
+  [AchievementVariant.BRONZE]: [
+    '#D97706',
+    '#F59E0B',
+    '#FBBF24',
+    '#FCD34D',
+    '#FEF3C7',
+  ],
+  [AchievementVariant.SILVER]: [
+    '#64748B',
+    '#94A3B8',
+    '#CBD5E1',
+    '#E2E8F0',
+    '#F1F5F9',
+  ],
+  [AchievementVariant.GOLD]: [
+    '#EAB308',
+    '#FACC15',
+    '#FDE047',
+    '#FEF08A',
+    '#FEF9C3',
+  ],
+  [AchievementVariant.PLATINUM]: [
+    '#06B6D4',
+    '#22D3EE',
+    '#67E8F9',
+    '#A5F3FC',
+    '#CFFAFE',
+  ],
 }
 
 export const ACHIEVEMENT_VARIANTS: Record<
   AchievementVariant,
-  AchievementVariantStyle
+  IAchievementVariantStyle
 > = {
-  bronze: {
+  [AchievementVariant.BRONZE]: {
     label: 'Bronze',
     bg: 'bg-gradient-to-br from-amber-50 to-orange-50 dark:from-amber-950/80 dark:to-orange-950/60',
     border: 'border-amber-300/60 dark:border-amber-700/50',
@@ -38,7 +67,7 @@ export const ACHIEVEMENT_VARIANTS: Record<
     shimmer: 'from-amber-200/0 via-amber-200/50 to-amber-200/0',
     Icon: Star,
   },
-  silver: {
+  [AchievementVariant.SILVER]: {
     label: 'Prata',
     bg: 'bg-gradient-to-br from-slate-50 to-gray-100 dark:from-slate-900/80 dark:to-gray-900/60',
     border: 'border-slate-300/60 dark:border-slate-600/50',
@@ -50,7 +79,7 @@ export const ACHIEVEMENT_VARIANTS: Record<
     shimmer: 'from-slate-200/0 via-slate-200/50 to-slate-200/0',
     Icon: Zap,
   },
-  gold: {
+  [AchievementVariant.GOLD]: {
     label: 'Ouro',
     bg: 'bg-gradient-to-br from-yellow-50 to-amber-50 dark:from-yellow-950/80 dark:to-amber-950/60',
     border: 'border-yellow-400/60 dark:border-yellow-600/50',
@@ -62,7 +91,7 @@ export const ACHIEVEMENT_VARIANTS: Record<
     shimmer: 'from-yellow-200/0 via-yellow-200/60 to-yellow-200/0',
     Icon: Trophy,
   },
-  platinum: {
+  [AchievementVariant.PLATINUM]: {
     label: 'Platina',
     bg: 'bg-gradient-to-br from-cyan-50 to-sky-50 dark:from-cyan-950/80 dark:to-sky-950/60',
     border: 'border-cyan-400/60 dark:border-cyan-600/50',

@@ -1,0 +1,99 @@
+@reference "../../../global.css";
+
+@keyframes at-shimmer-sweep {
+  0% {
+    transform: translateX(-100%);
+  }
+  100% {
+    transform: translateX(100%);
+  }
+}
+
+@keyframes at-shrink {
+  from {
+    transform: scaleX(1);
+  }
+  to {
+    transform: scaleX(0);
+  }
+}
+
+@layer components {
+  .at-toast-viewport {
+    @apply pointer-events-none fixed top-6 right-6 z-9999 flex w-full max-w-[340px] justify-end;
+  }
+
+  .at-toast {
+    @apply pointer-events-auto relative w-full overflow-hidden rounded-2xl border backdrop-blur-xl transition-all duration-700 ease-[cubic-bezier(0.23,1,0.32,1)];
+  }
+
+  .at-toast-open {
+    @apply translate-x-0 scale-100 opacity-100 shadow-2xl;
+  }
+
+  .at-toast-closed {
+    @apply translate-x-12 scale-95 opacity-0;
+  }
+
+  .at-confetti-layer {
+    @apply pointer-events-none absolute inset-0 overflow-hidden;
+  }
+
+  .at-shimmer-bar {
+    @apply absolute inset-x-0 top-0 h-px bg-gradient-to-r;
+    animation: at-shimmer-sweep 2s infinite;
+  }
+
+  .at-body {
+    @apply relative p-4;
+  }
+
+  .at-row {
+    @apply flex items-start gap-4;
+  }
+
+  .at-icon-box {
+    @apply relative flex h-12 w-12 shrink-0 items-center justify-center rounded-xl shadow-lg;
+  }
+
+  .at-icon {
+    @apply h-6 w-6 text-white drop-shadow-md;
+  }
+
+  .at-text-col {
+    @apply flex min-w-0 flex-1 flex-col gap-1;
+  }
+
+  .at-label {
+    @apply inline-flex w-fit items-center gap-1.5 rounded-full bg-black/5 px-2 py-0.5 text-[10px] font-black tracking-widest uppercase dark:bg-white/10;
+  }
+
+  .at-label-dot {
+    @apply inline-block h-1.5 w-1.5 animate-pulse rounded-full bg-current;
+  }
+
+  .at-title {
+    @apply text-sm leading-tight font-bold text-foreground;
+  }
+
+  .at-description {
+    @apply line-clamp-2 text-xs leading-relaxed text-muted-foreground;
+  }
+
+  .at-close-btn {
+    @apply shrink-0 cursor-pointer rounded-lg p-1.5 text-muted-foreground/40 transition-all hover:bg-black/5 hover:text-foreground;
+  }
+
+  .at-close-icon {
+    @apply h-4 w-4 transition-transform group-hover:scale-110;
+  }
+
+  .at-progress-track {
+    @apply h-1 bg-black/5 dark:bg-white/5;
+  }
+
+  .at-progress-fill {
+    @apply h-full origin-left bg-gradient-to-r;
+    animation: at-shrink linear forwards;
+  }
+}
