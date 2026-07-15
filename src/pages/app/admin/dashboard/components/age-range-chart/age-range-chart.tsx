@@ -56,8 +56,9 @@ export function AgeRangeChart({ subject, data }: IAgeRangeChart) {
       <ChartCard.Header
         title="Faixa Etária"
         description="Distribuição por idade"
-      />
-      <ChartCard.Total label={copy.totalLabel} value={total} />
+      >
+        <ChartCard.Total label={copy.totalLabel} value={total} />
+      </ChartCard.Header>
 
       <ChartCard.Body>
         <ChartCard.Bar

@@ -65,7 +65,7 @@ export function PatientsAnalyticsSection({
           total={regionTotal}
         />
 
-        <PatientsGeographyChart data={patients.byRegion} />
+        {/* <PatientsGeographyChart data={patients.byRegion} /> */}
       </div>
     </DashboardSection>
   )

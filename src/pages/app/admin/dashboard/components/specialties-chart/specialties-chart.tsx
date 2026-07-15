@@ -34,8 +34,9 @@ export function SpecialtiesChart({ data }: ISpecialtiesChart) {
       <ChartCard.Header
         title="Especialidades"
         description="Abordagens terapêuticas mais frequentes"
-      />
-      <ChartCard.Total label="Total Geral" value={total} />
+      >
+        <ChartCard.Total label="Total Geral" value={total} />
+      </ChartCard.Header>
 
       <ChartCard.Body>
         <ChartCard.Pie

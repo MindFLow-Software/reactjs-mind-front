@@ -2,11 +2,11 @@
 
 @layer components {
   .cc-card {
-    @apply grid flex-1 grid-cols-[1fr_auto] content-start gap-x-4 gap-y-4 overflow-hidden rounded-2xl border-border bg-card py-4 shadow-sm;
+    @apply flex-1 content-start p-4!;
   }
 
   .cc-header {
-    @apply col-start-1 row-start-1 flex flex-row items-center justify-between gap-4 p-0;
+    @apply flex! flex-row items-center justify-between gap-4 p-0!;
   }
 
   .cc-header-main {
@@ -14,7 +14,7 @@
   }
 
   .cc-header-text {
-    @apply flex flex-col justify-center gap-1;
+    @apply flex flex-col justify-center gap-0!;
   }
 
   .cc-select-trigger {
@@ -38,7 +38,7 @@
   }
 
   .cc-total {
-    @apply col-start-2 row-start-1 flex flex-col justify-center gap-1 text-right;
+    @apply w-fit flex flex-col justify-center gap-1 text-right;
   }
 
   .cc-total-label {
@@ -62,7 +62,7 @@
   }
 
   .cc-body {
-    @apply col-span-2 row-start-2 flex flex-1 flex-col bg-card p-0;
+    @apply pl-0!;
   }
 
   .cc-loading {
@@ -98,23 +98,19 @@
   }
 
   .cc-chart-wrap {
-    @apply relative flex min-h-[250px] flex-1 items-center justify-center;
+    @apply relative flex min-h-[300px] flex-1 items-center justify-center;
   }
 
   .cc-chart-container {
-    @apply mx-auto aspect-square h-[250px] w-full;
+    @apply mx-auto aspect-square h-[300px] w-full;
   }
 
   .cc-pie-cell {
     @apply cursor-pointer outline-none transition-opacity hover:opacity-80;
   }
 
-  .cc-bar-wrap {
-    @apply flex h-full max-h-[300px] w-full flex-1 items-center justify-center;
-  }
-
   .cc-bar-container {
-    @apply mx-auto aspect-square size-full;
+    @apply mx-auto aspect-square h-[300px] w-full;
   }
 
   .cc-timeseries-container {

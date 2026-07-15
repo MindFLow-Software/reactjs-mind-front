@@ -2,7 +2,7 @@
 
 @layer components {
   .gim-content {
-    @apply max-w-xl! gap-0 overflow-hidden rounded-2xl p-0;
+    @apply max-w-xl! gap-0 overflow-hidden rounded-2xl p-0!;
   }
 
   .gim-header {

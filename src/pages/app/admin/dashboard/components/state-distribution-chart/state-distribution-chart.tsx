@@ -30,13 +30,21 @@ export function StateDistributionChart({
       <ChartCard.Header
         title="Distribuição por estado"
         description={description}
-      />
-      <ChartCard.Total label="Total Geral" value={total} />
+      >
+        <ChartCard.Total label="Total Geral" value={total} />
+      </ChartCard.Header>
 
       <ChartCard.Body>
-        <ChartCard.Bar
-          data={PLACEHOLDER_STATES}
-          keys={CHART_CARD_PIE_KEYS}
+        <ChartCard.Bar<{ region: string, count: number }>
+          data={[
+            { region: "SP", count: 25 },
+            { region: "RJ", count: 18 },
+            { region: "MG", count: 12 },
+          ]}
+          keys={{
+            name: 'region',
+            value: 'count',
+          }}
           bar={{
             color: ADMIN_CHART_COLORS[0],
             layout: ChartCardBarLayout.HORIZONTAL,

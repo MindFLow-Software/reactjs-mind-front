@@ -76,7 +76,7 @@ export function PatientsTableFilters({ isFetching }: IPatientsTableFilters) {
             className="ptf-search-clear"
             aria-label="Limpar busca"
           >
-            <X className="h-3.5 w-3.5" />
+            <X className="size-3.5" />
           </button>
         )}
       </div>

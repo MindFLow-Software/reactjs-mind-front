@@ -25,7 +25,7 @@ export function PsychologistDashboard() {
     usePsychologistDashboard()
 
   useEffect(() => {
-    setTitle('Dashboard')
+    setTitle('Visão Geral')
   }, [setTitle])
 
   function renderContent() {

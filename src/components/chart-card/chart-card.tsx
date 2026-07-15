@@ -1,4 +1,4 @@
-import type { ReactNode } from 'react'
+import type { ComponentProps, ReactNode } from 'react'
 import { useMemo, useContext, createContext } from 'react'
 import {
   Bar,
@@ -40,6 +40,7 @@ import {
 import { Time } from '@/utils/time'
 
 import './chart-card.css'
+import { cn } from '@/lib/utils'
 
 export type IChartCardState = {
   isLoading: boolean
@@ -75,42 +76,42 @@ const ChartCardContext = createContext<IChartCardContextValue>({
 
 const ChartCardSlotContext = createContext<ChartCardSlot>('header')
 
-type IChartCardRootProps = {
+type IChartCardRoot = {
   state: IChartCardState
   onRetry?: () => void
   children: ReactNode
 }
 
-type IChartCardHeaderProps = {
+type IChartCardHeader = ComponentProps<'header'> & {
   title: string
   description: string
   icon?: ReactNode
   children?: ReactNode
 }
 
-type IChartCardTotalProps = {
+type IChartCardTotal = ComponentProps<'div'> & {
   label: string
   value: number
 }
 
-type IChartCardBodyProps = {
+type IChartCardBody = {
   children: ReactNode
 }
 
-type IChartCardPieProps<T extends object> = {
+type IChartCardPie<T extends object> = {
   data: T[]
   colors: string[]
   keys: IChartCardKeys<T>
   children?: ReactNode
 }
 
-type IChartCardLegendProps<T extends object> = {
+type IChartCardLegend<T extends object> = {
   data: T[]
   colors: string[]
   keys: IChartCardKeys<T>
 }
 
-type IChartCardEmptyProps = {
+type IChartCardEmpty = {
   icon: ReactNode
   title: string
   subtitle: string
@@ -126,7 +127,7 @@ type IChartCardBarOptions = {
   layout?: ChartCardBarLayout
 }
 
-type IChartCardBarProps<T extends object> = {
+type IChartCardBar<T extends object> = {
   data: T[]
   keys: IChartCardKeys<T>
   bar?: IChartCardBarOptions
@@ -138,7 +139,7 @@ export type IChartCardSeries<T> = {
   label?: string
 }
 
-type IChartCardTimeSeriesBarProps<T extends { date: string } & object> = {
+type IChartCardTimeSeriesBar<T extends { date: string } & object> = {
   data: T[]
   series: readonly IChartCardSeries<T>[]
 }
@@ -148,7 +149,7 @@ type IChartCardTimeRangeOption<T extends string> = {
   label: string
 }
 
-type IChartCardTimeRangeProps<T extends string> = {
+type IChartCardTimeRange<T extends string> = {
   value: T
   onChange: (value: T) => void
   options: readonly IChartCardTimeRangeOption<T>[]
@@ -164,7 +165,7 @@ function sumValues<T extends object>(data: T[], valueKey: keyof T & string) {
   return data.reduce((total, item) => total + Number(item[valueKey]), 0)
 }
 
-function ChartCardRoot({ state, onRetry, children }: IChartCardRootProps) {
+function ChartCardRoot({ state, onRetry, children }: IChartCardRoot) {
   const context = useMemo(() => ({ state, onRetry }), [state, onRetry])
 
   return (
@@ -179,9 +180,10 @@ function ChartCardHeader({
   description,
   icon,
   children,
-}: IChartCardHeaderProps) {
+  className,
+}: IChartCardHeader) {
   return (
-    <CardHeader className="cc-header">
+    <CardHeader className={cn('cc-header', className)}>
       <div className="cc-header-main">
         {icon}
         <div className="cc-header-text">
@@ -200,7 +202,7 @@ function ChartCardTimeRange<T extends string>({
   value,
   onChange,
   options,
-}: IChartCardTimeRangeProps<T>) {
+}: IChartCardTimeRange<T>) {
   return (
     <Select value={value} onValueChange={(next) => onChange(next as T)}>
       <SelectTrigger
@@ -226,16 +228,16 @@ function ChartCardTimeRange<T extends string>({
   )
 }
 
-function ChartCardTotalHeader({ label, value }: IChartCardTotalProps) {
+function ChartCardTotalHeader({ label, value, className }: IChartCardTotal) {
   return (
-    <div className="cc-total">
+    <div className={cn('cc-total', className)}>
       <span className="cc-total-label">{label}</span>
       <span className="cc-total-value">{value.toLocaleString()}</span>
     </div>
   )
 }
 
-function ChartCardTotalCenter({ label, value }: IChartCardTotalProps) {
+function ChartCardTotalCenter({ label, value }: IChartCardTotal) {
   return (
     <div className="cc-total-center">
       <span className="cc-total-center-value">{value.toLocaleString()}</span>
@@ -244,13 +246,14 @@ function ChartCardTotalCenter({ label, value }: IChartCardTotalProps) {
   )
 }
 
-function ChartCardTotal({ label, value }: IChartCardTotalProps) {
+function ChartCardTotal({ label, value, ...props }: IChartCardTotal) {
   const slot = useContext(ChartCardSlotContext)
 
-  if (slot === 'center')
+  if (slot === 'center') {
     return <ChartCardTotalCenter label={label} value={value} />
+  }
 
-  return <ChartCardTotalHeader label={label} value={value} />
+  return <ChartCardTotalHeader label={label} value={value} {...props} />
 }
 
 function ChartCardLoading() {
@@ -279,7 +282,7 @@ function ChartCardError() {
   )
 }
 
-function ChartCardBodyContent({ children }: IChartCardBodyProps) {
+function ChartCardBodyContent({ children }: IChartCardBody) {
   const { state } = useContext(ChartCardContext)
 
   if (state.isLoading) return <ChartCardLoading />
@@ -288,11 +291,7 @@ function ChartCardBodyContent({ children }: IChartCardBodyProps) {
   return <>{children}</>
 }
 
-function ChartCardBody({ children }: IChartCardBodyProps) {
-  const { state } = useContext(ChartCardContext)
-
-  if (state.isEmpty && !state.isLoading && !state.isError) return null
-
+function ChartCardBody({ children }: IChartCardBody) {
   return (
     <CardContent className="cc-body">
       <ChartCardBodyContent>{children}</ChartCardBodyContent>
@@ -305,7 +304,7 @@ function ChartCardPie<T extends object>({
   colors,
   keys,
   children,
-}: IChartCardPieProps<T>) {
+}: IChartCardPie<T>) {
   const config = useMemo<ChartConfig>(() => {
     const entries = data.map(
       (item, index) =>
@@ -355,31 +354,16 @@ function ChartCardPie<T extends object>({
   )
 }
 
-function ChartCardBar<T extends object>({
-  data,
-  keys,
-  bar,
-}: IChartCardBarProps<T>) {
+function ChartCardBar<T extends object>({ data, keys, bar }: IChartCardBar<T>) {
   const layout = bar?.layout ?? ChartCardBarLayout.VERTICAL
   const isHorizontal = layout === ChartCardBarLayout.HORIZONTAL
 
-  const axes = isHorizontal ? (
-    <>
-      <XAxis dataKey={keys.value} type="number" allowDecimals={false} />
-      <YAxis dataKey={keys.name} type="category" />
-    </>
-  ) : (
-    <>
-      <XAxis dataKey={keys.name} />
-      <YAxis tickCount={5} allowDecimals={false} />
-    </>
-  )
-
   return (
-    <div className="cc-bar-wrap">
-      <ChartContainer config={{}} className="cc-bar-container">
-        <BarChart data={data} layout={isHorizontal ? 'vertical' : 'horizontal'}>
-          {axes}
+    <ChartContainer config={{}} className="cc-bar-container">
+      {isHorizontal ? (
+        <BarChart data={data} layout="vertical">
+          <XAxis dataKey={keys.value} type="number" allowDecimals={false} />
+          <YAxis type="category" dataKey={keys.name} />
           <Tooltip />
           <Bar
             dataKey={keys.value}
@@ -387,15 +371,30 @@ function ChartCardBar<T extends object>({
             radius={BAR_RADIUS[layout]}
           />
         </BarChart>
-      </ChartContainer>
-    </div>
+      ) : (
+        <BarChart data={data} layout="horizontal">
+          <XAxis dataKey={keys.name} />
+          <YAxis tickCount={5} allowDecimals={false} />
+          <Tooltip />
+          <Bar
+            dataKey={keys.value}
+            fill={bar?.color ?? 'var(--chart-1)'}
+            radius={BAR_RADIUS[layout]}
+          />
+        </BarChart>
+      )}
+    </ChartContainer>
   )
 }
 
 function ChartCardTimeSeriesBar<T extends { date: string } & object>({
   data,
   series,
-}: IChartCardTimeSeriesBarProps<T>) {
+}: IChartCardTimeSeriesBar<T>) {
+  const { state: { isError, isEmpty } } = useContext(ChartCardContext)
+
+  if (isError || isEmpty) return null
+
   const config = useMemo<ChartConfig>(() => {
     const entries = series.map(
       ({ dataKey, color, label }) => [dataKey, { color, label }] as const,
@@ -448,7 +447,7 @@ function ChartCardLegend<T extends object>({
   data,
   colors,
   keys,
-}: IChartCardLegendProps<T>) {
+}: IChartCardLegend<T>) {
   const total = sumValues(data, keys.value) || 1
 
   return (
@@ -473,7 +472,7 @@ function ChartCardLegend<T extends object>({
   )
 }
 
-function ChartCardEmpty({ icon, title, subtitle }: IChartCardEmptyProps) {
+function ChartCardEmpty({ icon, title, subtitle }: IChartCardEmpty) {
   const { state } = useContext(ChartCardContext)
 
   if (state.isLoading || state.isError || !state.isEmpty) return null

@@ -29,16 +29,17 @@ export function GrowthFlowChart({ data, total, period }: IGrowthFlowChart) {
       state={{ isLoading: false, isError: false, isEmpty: total === 0 }}
     >
       <ChartCard.Header
+        className="flex"
         title="Fluxo de psicólogos"
         description="Novos profissionais integrados à plataforma"
       >
-        <ChartCard.TimeRange
-          value={period.value}
-          onChange={period.onChange}
-          options={ADMIN_PERIODS}
-        />
+          <ChartCard.TimeRange
+            value={period.value}
+            onChange={period.onChange}
+            options={ADMIN_PERIODS}
+          />
       </ChartCard.Header>
-      <ChartCard.Total label="Novos cadastros" value={total} />
+      <ChartCard.Total label="Novos cadastros" value={total} className="self-start text-left" />
 
       <ChartCard.Body>
         <ChartCard.TimeSeriesBar data={data} series={GROWTH_SERIES} />
