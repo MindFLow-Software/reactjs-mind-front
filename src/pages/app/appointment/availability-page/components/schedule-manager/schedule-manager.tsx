@@ -49,11 +49,6 @@ export function ScheduleManager({ defaultData }: IScheduleManager) {
 
   const [schedule, setSchedule] = useState<IWeeklySchedule>(buildEmptySchedule)
 
-  useEffect(() => {
-    if (defaultData.length === 0) return
-    setSchedule(buildScheduleFrom(defaultData))
-  }, [defaultData])
-
   const addSlot = useCallback((day: number) => {
     setSchedule((prev) => ({ ...prev, [day]: [...prev[day], DEFAULT_SLOT] }))
   }, [])
@@ -98,6 +93,15 @@ export function ScheduleManager({ defaultData }: IScheduleManager) {
 
     saveAvailability(allSlots)
   }
+
+  useEffect(() => {
+    if (!defaultData || !Array.isArray(defaultData)) return
+    if (defaultData.length === 0) return
+
+    console.log('length: ', defaultData.length)
+    console.log('here')
+    setSchedule(buildScheduleFrom(defaultData))
+  }, [defaultData])
 
   return (
     <div className="sm-root">

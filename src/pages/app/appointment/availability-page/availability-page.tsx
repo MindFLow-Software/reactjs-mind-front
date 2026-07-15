@@ -31,23 +31,6 @@ export function AvailabilityPage() {
     if (isError) toast.error('Não foi possível carregar sua agenda atual.')
   }, [isError])
 
-  function renderContent() {
-    if (isLoading) {
-      return (
-        <div className="avp-loading">
-          <Loader2 className="avp-loading-icon" />
-          <p className="avp-loading-text">Carregando sua agenda...</p>
-        </div>
-      )
-    }
-
-    return (
-      <div className="avp-content">
-        <ScheduleManager defaultData={initialData ?? []} />
-      </div>
-    )
-  }
-
   return (
     <>
       <Helmet title="Horários de Atendimento" />
@@ -79,7 +62,16 @@ export function AvailabilityPage() {
 
         <div className="avp-divider" />
 
-        {renderContent()}
+        {isLoading ? (
+          <div className="avp-loading">
+            <Loader2 className="avp-loading-icon" />
+            <p className="avp-loading-text">Carregando sua agenda...</p>
+          </div>
+        ) : (
+          <div className="avp-content">
+            <ScheduleManager defaultData={initialData ?? []} />
+          </div>
+        )}
       </div>
     </>
   )
