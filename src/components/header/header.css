@@ -1,0 +1,63 @@
+@reference "../../global.css";
+
+@layer components {
+  .hdr-root {
+    @apply sticky top-0 z-50 flex h-16 shrink-0 items-center gap-4 border-b bg-card/95 px-6 backdrop-blur supports-backdrop-filter:bg-card/60;
+  }
+
+  .hdr-crumbs-left {
+    @apply flex items-center gap-2;
+  }
+
+  .hdr-nav {
+    @apply flex items-center gap-2 text-sm;
+  }
+
+  .hdr-brand-link {
+    @apply hidden text-muted-foreground transition-colors hover:text-foreground sm:inline-block;
+  }
+
+  .hdr-slash {
+    @apply hidden h-4 w-4 text-muted-foreground/50 sm:inline-block;
+  }
+
+  .hdr-slash-visible {
+    @apply h-4 w-4 text-muted-foreground/50;
+  }
+
+  .hdr-crumb {
+    @apply transition-colors duration-300;
+  }
+
+  .hdr-crumb-muted {
+    @apply text-muted-foreground hover:text-foreground;
+  }
+
+  .hdr-crumb-current {
+    @apply font-semibold text-foreground;
+  }
+
+  .hdr-subtitle {
+    @apply animate-in fade-in slide-in-from-left-2 font-semibold text-foreground duration-300 hover:text-blue-600 transition-colors;
+  }
+
+  .hdr-subtitle-static {
+    @apply animate-in fade-in slide-in-from-left-2 font-semibold text-foreground duration-300;
+  }
+
+  .hdr-spacer {
+    @apply flex-1;
+  }
+
+  .hdr-actions {
+    @apply flex items-center gap-4;
+  }
+
+  .hdr-bell-btn {
+    @apply relative text-muted-foreground hover:text-foreground;
+  }
+
+  .hdr-bell-dot {
+    @apply absolute top-2.5 right-2.5 h-2 w-2 rounded-full border-2 border-background bg-red-600;
+  }
+}

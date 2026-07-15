@@ -3,7 +3,7 @@ import './practice-type-card.css'
 import type { ElementType } from 'react'
 import { ArrowRight } from 'lucide-react'
 
-import { TitleIcon } from '@/components/title-icon'
+import { TitleIcon } from '@/components/title-icon/title-icon'
 import { cn } from '@/lib/utils'
 
 export interface IPracticeTypeCardOption {

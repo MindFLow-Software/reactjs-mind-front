@@ -1,0 +1,23 @@
+@reference "../../global.css";
+
+@layer components {
+  .ua-avatar {
+    @apply border shrink-0 bg-muted;
+  }
+
+  .ua-image {
+    @apply object-cover;
+  }
+
+  .ua-fallback {
+    @apply font-semibold;
+  }
+
+  .ua-fallback-default {
+    @apply text-muted-foreground;
+  }
+
+  .ua-fallback-colored {
+    @apply border-0;
+  }
+}

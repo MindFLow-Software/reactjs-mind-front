@@ -26,7 +26,7 @@ import {
 import { Input } from '@/components/ui/input'
 import { Badge } from '@/components/ui/badge'
 import { Textarea } from '@/components/ui/textarea'
-import { MaskedInput } from '@/components/maked-input'
+import { MaskedInput } from '@/components/maked-input/maked-input'
 
 import { Expertise, Honorific, Languages } from '@/types/shared/enums'
 import { translatedExpertise } from '@/constants/translated-expertise'

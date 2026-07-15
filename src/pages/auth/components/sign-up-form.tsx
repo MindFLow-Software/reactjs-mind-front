@@ -43,9 +43,9 @@ import {
 import { Input } from '@/components/ui/input'
 import { Button } from '@/components/ui/button'
 import { Calendar } from '@/components/ui/calendar'
-import { MaskedInput } from '@/components/maked-input'
+import { MaskedInput } from '@/components/maked-input/maked-input'
 import { GoogleAuthButton } from './google-auth-button'
-import { PasswordStrength } from '@/components/password-strength'
+import { PasswordStrength } from '@/components/password-strength/password-strength'
 
 import { Time } from '@/utils/time'
 import { signIn } from '@/api/auth/sign-in'

@@ -11,7 +11,7 @@ import {
   TooltipTrigger,
 } from '@/components/ui/tooltip'
 import { Button } from '@/components/ui/button'
-import { UserAvatar } from '@/components/user-avatar'
+import { UserAvatar } from '@/components/user-avatar/user-avatar'
 import { StatusBadge } from '@/components/ui/status-badge'
 
 import './patient-details-header.css'
@@ -42,8 +42,7 @@ export function PatientDetailsHeader({ patient }: PatientDetailsHeaderProps) {
         <div className="ph-patient-details-header__row">
           <div className="ph-patient-details-header__avatar-wrap">
             <UserAvatar
-              src={patient.profileImageUrl}
-              name={fullName}
+              identity={{ src: patient.profileImageUrl, name: fullName }}
               className="ph-patient-details-header__avatar"
             />
 

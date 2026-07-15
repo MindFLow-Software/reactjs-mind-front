@@ -1,5 +1,5 @@
-import { Header } from '@/components/header'
-import { PopupManager } from '@/components/popup-manager'
+import { Header } from '@/components/header/header'
+import { PopupManager } from '@/components/popup-manager/popup-manager'
 import { AppSidebar } from '@/components/ui/app-sidebar'
 import { SidebarProvider, SidebarInset } from '@/components/ui/sidebar'
 import { Outlet } from 'react-router-dom'

@@ -56,7 +56,7 @@ import { Input } from '@/components/ui/input'
 import { Button } from '@/components/ui/button'
 import { Calendar } from '@/components/ui/calendar'
 import { Separator } from '@/components/ui/separator'
-import { MaskedInput } from '@/components/maked-input'
+import { MaskedInput } from '@/components/maked-input/maked-input'
 import {
   Popover,
   PopoverContent,

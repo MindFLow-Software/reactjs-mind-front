@@ -4,7 +4,7 @@ import { useEffect, useState } from 'react'
 import { Helmet } from 'react-helmet-async'
 import { FolderOpen, Download, Upload } from 'lucide-react'
 
-import { Pagination } from '@/components/pagination'
+import { Pagination } from '@/components/pagination/pagination'
 import { useHeaderStore } from '@/store/use-header-store'
 import { PatientsDataBlock } from '../components/patients-data-block'
 import { PatientsPageShell } from '../components/patients-page-shell'

@@ -24,7 +24,7 @@ import './step-basic-data.css'
 import { SectionTitle } from './section-title'
 import { PillRadio } from './pill-radio'
 import { PatientAvatarUpload } from './patient-avatar-upload'
-import { MaskedInput } from '@/components/maked-input'
+import { MaskedInput } from '@/components/maked-input/maked-input'
 
 interface StepBasicDataProps {
   onAvatarSelect: (f: File | null) => void

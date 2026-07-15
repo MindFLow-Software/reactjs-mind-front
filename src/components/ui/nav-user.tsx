@@ -38,7 +38,7 @@ import {
 } from '@/components/ui/sidebar'
 
 import { Skeleton } from '@/components/ui/skeleton'
-import { UserAvatar } from '@/components/user-avatar'
+import { UserAvatar } from '@/components/user-avatar/user-avatar'
 
 import './nav-user.css'
 
@@ -72,8 +72,7 @@ export function NavUser() {
                 <Skeleton className="nu-avatar-skeleton" />
               ) : (
                 <UserAvatar
-                  src={profileImage}
-                  name={name}
+                  identity={{ src: profileImage, name }}
                   size="md"
                   className="nu-avatar"
                 />
@@ -109,8 +108,7 @@ export function NavUser() {
               <DropdownMenuLabel className="nu-label">
                 <div className="nu-label-inner">
                   <UserAvatar
-                    src={profileImage}
-                    name={name}
+                    identity={{ src: profileImage, name }}
                     size="md"
                     className="nu-avatar"
                   />

@@ -26,8 +26,8 @@ import {
 import { Form } from '@/components/ui/form'
 import { Input } from '@/components/ui/input'
 import { Button } from '@/components/ui/button'
-import { MaskedInput } from '@/components/maked-input'
-import { PasswordStrength } from '@/components/password-strength'
+import { MaskedInput } from '@/components/maked-input/maked-input'
+import { PasswordStrength } from '@/components/password-strength/password-strength'
 
 import {
   registerViaPatientInviteSchema,

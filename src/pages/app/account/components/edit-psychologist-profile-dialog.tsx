@@ -48,7 +48,7 @@ import { Badge } from '@/components/ui/badge'
 import { Input } from '@/components/ui/input'
 import { Button } from '@/components/ui/button'
 import { Textarea } from '@/components/ui/textarea'
-import { MaskedInput } from '@/components/maked-input'
+import { MaskedInput } from '@/components/maked-input/maked-input'
 
 import './edit-psychologist-profile-dialog.css'
 import { usePsychologistProfile } from '@/hooks/use-psychologist-profile'

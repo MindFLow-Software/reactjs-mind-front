@@ -1,0 +1,23 @@
+@reference "../../global.css";
+
+@layer components {
+  .ab-badge-active {
+    @apply bg-green-50 text-green-700 dark:bg-green-950/30 dark:text-green-400;
+  }
+
+  .ab-badge-inactive {
+    @apply bg-red-50 text-red-600 dark:bg-red-950/30 dark:text-red-400;
+  }
+
+  .ab-dot {
+    @apply size-1.5 shrink-0 rounded-full;
+  }
+
+  .ab-dot-active {
+    @apply bg-green-500;
+  }
+
+  .ab-dot-inactive {
+    @apply bg-red-400;
+  }
+}

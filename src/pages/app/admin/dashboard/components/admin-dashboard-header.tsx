@@ -1,7 +1,7 @@
 import { format, subDays } from 'date-fns'
 import { ptBR } from 'date-fns/locale'
 
-import { DashboardPeriodSelector } from '@/pages/app/dashboard/shared/components/dashboard-period-selector'
+import { DashboardPeriodSelector } from '@/pages/app/dashboard/shared/components/dashboard-period-selector/dashboard-period-selector'
 import {
   ADMIN_PERIODS,
   PERIOD_DAYS,

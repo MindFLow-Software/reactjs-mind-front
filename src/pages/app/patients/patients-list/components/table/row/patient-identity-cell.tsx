@@ -1,5 +1,5 @@
 import { TableCell } from '@/components/ui/table'
-import { UserAvatar } from '@/components/user-avatar'
+import { UserAvatar } from '@/components/user-avatar/user-avatar'
 import { Mask } from '@/utils/mask'
 import type { IPatient } from '@/types/patient/patient'
 
@@ -17,10 +17,12 @@ export function PatientIdentityCell({ patient }: PatientIdentityCellProps) {
     <TableCell className="ptr-cell-identity">
       <div className="ptr-identity">
         <UserAvatar
-          src={patient.profileImageUrl}
-          name={fullName}
+          identity={{
+            src: patient.profileImageUrl,
+            name: fullName,
+            colorSeed: patient.id,
+          }}
           size="md"
-          colorSeed={patient.id}
         />
         <div className="ptr-identity-info">
           <span className="ptr-identity-name">{fullName}</span>

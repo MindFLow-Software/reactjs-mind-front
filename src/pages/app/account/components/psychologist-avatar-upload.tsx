@@ -5,7 +5,7 @@ import { Camera, Upload, Loader2 } from 'lucide-react'
 import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { toast } from 'sonner'
 import { uploadAvatar } from '@/api/attachments/upload-avatar'
-import { UserAvatar } from '@/components/user-avatar'
+import { UserAvatar } from '@/components/user-avatar/user-avatar'
 import type { IgetMeResponse } from '@/api/auth/get-profile'
 import { useSessionStore } from '@/store/use-session-store'
 
@@ -71,8 +71,7 @@ export function PsychologistAvatarUpload({
         onClick={() => !isPending && fileInputRef.current?.click()}
       >
         <UserAvatar
-          src={previewUrl || currentImage}
-          name={fullName}
+          identity={{ src: previewUrl || currentImage, name: fullName }}
           className="acc-avatar-image"
         />
         <div className="acc-avatar-badge">

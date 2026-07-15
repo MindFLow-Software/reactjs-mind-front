@@ -2,7 +2,7 @@ import './patient-avatar-upload.css'
 import { useEffect, useMemo, useRef, type ChangeEvent } from 'react'
 import { Camera } from 'lucide-react'
 import { useImagePreview } from '@/hooks/use-image-preview'
-import { UserAvatar } from '@/components/user-avatar'
+import { UserAvatar } from '@/components/user-avatar/user-avatar'
 
 interface IPatientAvatarUpload {
   onFileSelect: (f: File | null) => void
@@ -55,9 +55,7 @@ export function PatientAvatarUpload({
         onClick={() => !isLoading && inputRef.current?.click()}
       >
         <UserAvatar
-          src={displayUrl}
-          name={fullName}
-          colorSeed={avatarId}
+          identity={{ src: displayUrl, name: fullName, colorSeed: avatarId }}
           className="size-full"
         />
         <div

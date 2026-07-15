@@ -14,9 +14,9 @@ import {
 
 import { Button } from '@/components/ui/button'
 import { Dialog } from '@/components/ui/dialog'
-import { Pagination } from '@/components/pagination'
+import { Pagination } from '@/components/pagination/pagination'
 
-import { MetricCard } from '@/components/metric-card'
+import { MetricCard } from '@/components/metric-card/metric-card'
 import { PatientsTable } from './components/table/patients-table'
 import { RegisterPatients } from './components/dialogs/register-patients/register-patients'
 import { PatientsPageShell } from '../components/patients-page-shell'

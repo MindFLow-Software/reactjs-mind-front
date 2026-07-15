@@ -1,7 +1,7 @@
 import { Navigate, Outlet, useLocation } from 'react-router-dom'
 
 import { useAuth } from '@/hooks/use-auth'
-import { BrandedLoader } from '@/components/branded-loader'
+import { BrandedLoader } from '@/components/branded-loader/branded-loader'
 
 export function ProtectedRoute({ children }: { children?: React.ReactNode }) {
   const { isAuthenticated, isPending } = useAuth()

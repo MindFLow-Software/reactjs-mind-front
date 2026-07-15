@@ -1,0 +1,15 @@
+@reference "../../global.css";
+
+@layer components {
+  .ti-root {
+    @apply flex size-10 shrink-0 items-center justify-center rounded-md;
+  }
+
+  .ti-primary {
+    @apply bg-blue-50 text-blue-600 dark:bg-blue-950/30 dark:text-blue-400;
+  }
+
+  .ti-secondary {
+    @apply bg-teal-50 text-teal-600 dark:bg-teal-950/30 dark:text-teal-400;
+  }
+}

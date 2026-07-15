@@ -5,7 +5,7 @@ import { AxiosError } from 'axios'
 // import { getProfile } from '@/api/psychologists/get-profile'
 // import { refreshSession } from '@/api/auth/refresh-session'
 // import { useSessionStore } from '@/store/use-session-store'
-import { BrandedLoader } from '@/components/branded-loader'
+import { BrandedLoader } from '@/components/branded-loader/branded-loader'
 
 export function GoogleOAuthSuccess() {
   const navigate = useNavigate()

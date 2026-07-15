@@ -35,7 +35,7 @@ import {
   createPsychologistPracticeContextSchema,
   type ICreatePsychologistPracticeContext,
 } from '@/validators/psychologists/form/create-practice-context-schema'
-import { TitleIcon } from '@/components/title-icon'
+import { TitleIcon } from '@/components/title-icon/title-icon'
 import { PracticeContextHeader } from './practice-context-header'
 import { SessionFormatToggle } from './session-format-toggle'
 

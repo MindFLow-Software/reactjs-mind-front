@@ -3,7 +3,7 @@ import { formatDistanceToNow, parseISO } from 'date-fns'
 import { ptBR } from 'date-fns/locale'
 
 import { Card, CardContent } from '@/components/ui/card'
-import { UserAvatar } from '@/components/user-avatar'
+import { UserAvatar } from '@/components/user-avatar/user-avatar'
 import type { IPatient } from '@/types/patient/patient'
 import './patient-card.css'
 
@@ -18,8 +18,10 @@ export function PatientCard({ patient, onOpen }: PatientCardProps) {
       <CardContent className="pr-card-body">
         <div className="pr-card-main">
           <UserAvatar
-            src={patient.profileImageUrl}
-            name={`${patient.firstName} ${patient.lastName}`}
+            identity={{
+              src: patient.profileImageUrl,
+              name: `${patient.firstName} ${patient.lastName}`,
+            }}
             size="lg"
             className="border-blue-100 shadow-sm"
           />

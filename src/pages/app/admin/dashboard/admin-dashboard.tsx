@@ -12,10 +12,8 @@ import { PatientsAnalyticsSection } from './components/patients-analytics-sectio
 import { OperationalInsightsSection } from './components/operational-insights-section'
 import { RevenueSubscriptionsSection } from './components/revenue-subscriptions-section'
 import { PsychologistsAnalyticsSection } from './components/psychologists-analytics-section'
-import {
-  DashboardSkeleton,
-  DashboardErrorState,
-} from '@/pages/app/dashboard/shared/components/dashboard-states'
+import { DashboardSkeleton } from '@/pages/app/dashboard/shared/components/dashboard-skeleton/dashboard-skeleton'
+import { DashboardErrorState } from '@/pages/app/dashboard/shared/components/dashboard-error-state/dashboard-error-state'
 
 import './admin-dashboard.css'
 

@@ -9,7 +9,7 @@ import {
   CardContent,
   CardDescription,
 } from '@/components/ui/card'
-import { SecurityNotice } from '@/components/security-notice'
+import { SecurityNotice } from '@/components/security-notice/security-notice'
 
 import { ClaimCandidateCard } from './components/claim-candidate-card'
 import { useClaimCandidates } from './hooks/use-claim-candidates'

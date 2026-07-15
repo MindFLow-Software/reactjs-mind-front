@@ -14,7 +14,7 @@ import {
 
 import { Drawer } from '@/components/ui/drawer'
 import { Card, CardContent } from '@/components/ui/card'
-import { SecurityNotice } from '@/components/security-notice'
+import { SecurityNotice } from '@/components/security-notice/security-notice'
 
 import { ClaimRequestRow } from './components/claim-request-row'
 import { ReviewClaimRequestDrawer } from './components/review-claim-request-drawer'
