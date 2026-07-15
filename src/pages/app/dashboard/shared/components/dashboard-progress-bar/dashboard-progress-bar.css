@@ -1,12 +1,12 @@
-@reference "../../../../../global.css";
+@reference "../../../../../../global.css";
 
 @layer components {
   .dsh-progress-bar-root {
-    @apply flex flex-col gap-1.5 flex-1;
+    @apply flex flex-1 flex-col gap-1.5;
   }
 
   .dsh-progress-bar-header {
-    @apply flex items-center gap-4 justify-between;
+    @apply flex items-center justify-between gap-4;
   }
 
   .dsh-progress-bar-label {
@@ -14,7 +14,7 @@
   }
 
   .dsh-progress-bar-value {
-    @apply text-xs text-muted-foreground tabular-nums;
+    @apply text-xs tabular-nums text-muted-foreground;
   }
 
   .dsh-progress-bar-track {

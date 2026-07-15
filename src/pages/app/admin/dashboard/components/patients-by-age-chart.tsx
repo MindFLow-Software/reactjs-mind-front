@@ -13,11 +13,9 @@ import {
 import { ChartContainer, type ChartConfig } from '@/components/ui/chart'
 
 import type { IAgeRangeItem } from '@/types/dashboard/age-range-item'
-import { DashboardChartLoader } from '@/pages/app/dashboard/shared/components/dashboard-chart-loader'
-import { DashboardChartError } from '@/pages/app/dashboard/shared/components/dashboard-chart-error'
-import { DashboardChartEmpty } from '@/pages/app/dashboard/shared/components/dashboard-chart-empty'
-
-
+import { DashboardChartLoader } from '@/pages/app/dashboard/shared/components/dashboard-chart-loader/dashboard-chart-loader'
+import { DashboardChartError } from '@/pages/app/dashboard/shared/components/dashboard-chart-error/dashboard-chart-error'
+import { DashboardChartEmpty } from '@/pages/app/dashboard/shared/components/dashboard-chart-empty/dashboard-chart-empty'
 
 const chartConfig = {} satisfies ChartConfig
 
@@ -56,9 +54,7 @@ export function PatientsByGenderChart({
     <Card className="adb-bar-card">
       <CardHeader className="adb-bar-card-header">
         <div className="adb-bar-header-main">
-          <CardTitle className="adb-bar-title">
-            Faixa Etária
-          </CardTitle>
+          <CardTitle className="adb-bar-title">Faixa Etária</CardTitle>
           <CardDescription className="adb-bar-header-subtitle">
             Distribuição por idade
           </CardDescription>
@@ -69,30 +65,35 @@ export function PatientsByGenderChart({
         </div>
       </CardHeader>
       <CardContent className="adb-bar-content">
-        {isLoading
-          ? (<DashboardChartLoader />)
-          : isError ? (<DashboardChartError onRetry={onRetry} />)
-            : isEmpty ? (
-              <DashboardChartEmpty
-                icon={<CalendarRange />}
-                title="Sem dados etários"
-                subtitle="Nenhum paciente com idade registrada"
-              />
-            ) : (
-              <div className="adb-bar-chart-wrap">
-                <ChartContainer
-                  config={chartConfig}
-                  className="mx-auto aspect-square size-full"
-                >
-                  <BarChart data={patientsByAge}>
-                    <XAxis dataKey="range" />
-                    <YAxis tickCount={5} allowDecimals={false} />
-                    <Tooltip />
-                    <Bar dataKey="count" fill={CHART_COLORS[chartColor]} radius={[10, 10, 0, 0]} />
-                  </BarChart>
-                </ChartContainer>
-              </div>
-            )}
+        {isLoading ? (
+          <DashboardChartLoader />
+        ) : isError ? (
+          <DashboardChartError onRetry={onRetry} />
+        ) : isEmpty ? (
+          <DashboardChartEmpty
+            icon={<CalendarRange />}
+            title="Sem dados etários"
+            subtitle="Nenhum paciente com idade registrada"
+          />
+        ) : (
+          <div className="adb-bar-chart-wrap">
+            <ChartContainer
+              config={chartConfig}
+              className="mx-auto aspect-square size-full"
+            >
+              <BarChart data={patientsByAge}>
+                <XAxis dataKey="range" />
+                <YAxis tickCount={5} allowDecimals={false} />
+                <Tooltip />
+                <Bar
+                  dataKey="count"
+                  fill={CHART_COLORS[chartColor]}
+                  radius={[10, 10, 0, 0]}
+                />
+              </BarChart>
+            </ChartContainer>
+          </div>
+        )}
       </CardContent>
     </Card>
   )

@@ -1,19 +1,19 @@
-@reference "../../../../../global.css";
+@reference "../../../../../../global.css";
 
 @layer components {
-  .dsh-empty-state {
+  .dsh-chart-empty-root {
     @apply flex h-[300px] flex-col items-center justify-center text-center;
   }
 
-  .dsh-empty-state-icon {
+  .dsh-chart-empty-icon {
     @apply mb-3 flex h-12 w-12 items-center justify-center rounded-full bg-muted/30;
   }
 
-  .dsh-empty-state-title {
+  .dsh-chart-empty-title {
     @apply text-sm font-medium text-foreground;
   }
 
-  .dsh-empty-state-subtitle {
+  .dsh-chart-empty-subtitle {
     @apply mt-1 text-xs text-muted-foreground;
   }
 }

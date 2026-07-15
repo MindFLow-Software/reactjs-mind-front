@@ -1,6 +1,10 @@
 import { cn } from '@/lib/utils'
-import { PERIODS } from '../constants'
-import type { IDashboardPeriod, IPeriodOption } from '../types'
+import { PERIODS } from '@/pages/app/dashboard/shared/constants'
+import type {
+  IDashboardPeriod,
+  IPeriodOption,
+} from '@/pages/app/dashboard/shared/types'
+
 import './dashboard-period-selector.css'
 
 type IDashboardPeriodSelector = {

@@ -1,7 +1,7 @@
 import { UserPlus, UserRoundPlus, Building2 } from 'lucide-react'
 
-import { DashboardSection } from '@/pages/app/dashboard/shared/components/dashboard-section'
-import { MetricCard } from '@/components/metric-card'
+import { DashboardSection } from '@/pages/app/dashboard/shared/components/dashboard-section/dashboard-section'
+import { MetricCard } from '@/components/metric-card/metric-card'
 import { type ChartConfig } from '@/components/ui/chart'
 import { calcGrowthPercentage } from '@/pages/app/dashboard/shared/helpers'
 import type { IDashboardPeriod } from '@/pages/app/dashboard/shared/types'
@@ -55,9 +55,12 @@ export function GrowthSection({
 
   return (
     <DashboardSection
-      index="02"
-      title="Crescimento"
-      description="Novos psicólogos, pacientes e clínicas no período selecionado"
+      header={{
+        index: '02',
+        title: 'Crescimento',
+        description:
+          'Novos psicólogos, pacientes e clínicas no período selecionado',
+      }}
     >
       <div className="adb-growth-grid">
         <TimeSeriesBarChartCard<ITimeSeriesPoint>

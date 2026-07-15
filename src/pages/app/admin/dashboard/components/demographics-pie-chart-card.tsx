@@ -112,7 +112,6 @@ export function DemographicsPieChartCard<T extends object>({
                     outerRadius={90}
                     stroke="var(--card)"
                     paddingAngle={2}
-
                   >
                     {chart.data?.map((_, index) => (
                       <Cell
@@ -125,8 +124,12 @@ export function DemographicsPieChartCard<T extends object>({
                 </PieChart>
               </ChartContainer>
               <div className="pointer-events-none absolute inset-0 flex flex-col items-center justify-center">
-                <span className="text-2xl font-semibold text-foreground">{header.total}</span>
-                <span className="text-[11px] text-muted-foreground">{chart.label}</span>
+                <span className="text-2xl font-semibold text-foreground">
+                  {header.total}
+                </span>
+                <span className="text-[11px] text-muted-foreground">
+                  {chart.label}
+                </span>
               </div>
             </div>
 

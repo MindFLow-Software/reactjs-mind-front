@@ -4,19 +4,19 @@ import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader } from '@/components/ui/card'
 import { InsightSeverity } from '@/types/shared/enums'
+import type { IDashboardInsight } from '@/types/dashboard/dashboard-insight'
+
 import './dashboard-insight-card.css'
 
-interface DashboardInsightCardAction {
+type IDashboardInsightCardAction = {
   label: string
   onClick?: () => void
   disabled?: boolean
 }
 
-interface DashboardInsightCardProps {
-  severity: InsightSeverity
-  title: string
-  description: string
-  action?: DashboardInsightCardAction
+type IDashboardInsightCard = {
+  insight: IDashboardInsight
+  action?: IDashboardInsightCardAction
 }
 
 const SEVERITY_CONFIG: Record<
@@ -44,25 +44,23 @@ const SEVERITY_CONFIG: Record<
 }
 
 export function DashboardInsightCard({
-  severity,
-  title,
-  description,
+  insight,
   action,
-}: DashboardInsightCardProps) {
-  const config = SEVERITY_CONFIG[severity]
+}: IDashboardInsightCard) {
+  const config = SEVERITY_CONFIG[insight.severity]
   const Icon = config.icon
 
   return (
     <Card className="dsh-insight-card-root">
       <CardHeader className="flex justify-between">
-        <p className="dsh-insight-card-title">{title}</p>
+        <p className="dsh-insight-card-title">{insight.title}</p>
         <Badge className={config.badgeClassName}>
           <Icon className="size-3" />
           {config.label}
         </Badge>
       </CardHeader>
       <CardContent className="dsh-insight-card-content">
-        <p className="dsh-insight-card-description">{description}</p>
+        <p className="dsh-insight-card-description">{insight.description}</p>
         {action && (
           <Button
             size="sm"

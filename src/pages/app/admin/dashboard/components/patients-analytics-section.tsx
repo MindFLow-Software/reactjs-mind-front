@@ -1,14 +1,20 @@
 import { useMemo } from 'react'
 import { UserRound, Users2, MapPin } from 'lucide-react'
 
-import { DashboardSection } from '@/pages/app/dashboard/shared/components/dashboard-section'
+import { DashboardSection } from '@/pages/app/dashboard/shared/components/dashboard-section/dashboard-section'
 import { ChartContainer, type ChartConfig } from '@/components/ui/chart'
 import { AdminStatCard } from './admin-stat-card'
 import { DemographicsPieChartCard } from './demographics-pie-chart-card'
 import type { IAdminDashboardData } from '@/types/dashboard/admin-dashboard-data'
 import './patients-analytics-section.css'
 import { PatientsByGenderChart } from './patients-by-age-chart'
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from '@/components/ui/card'
 import { Bar, BarChart, XAxis, YAxis } from 'recharts'
 
 type IAdminDashboardPatients = IAdminDashboardData['patients']
@@ -59,9 +65,12 @@ export function PatientsAnalyticsSection({
 
   return (
     <DashboardSection
-      index="06"
-      title="Pacientes"
-      description="Total ativo na plataforma e perfil demográfico dos pacientes"
+      header={{
+        index: '06',
+        title: 'Pacientes',
+        description:
+          'Total ativo na plataforma e perfil demográfico dos pacientes',
+      }}
     >
       <div className="adb-pat-analytics-metric">
         <AdminStatCard
@@ -116,7 +125,9 @@ export function PatientsAnalyticsSection({
               </CardDescription>
             </div>
             <div className="flex flex-col text-right">
-              <span className="text-[10px] font-medium uppercase tracking-wider text-muted-foreground">Total Geral</span>
+              <span className="text-[10px] font-medium uppercase tracking-wider text-muted-foreground">
+                Total Geral
+              </span>
               <span className="text-2xl font-bold">{regionTotal} </span>
             </div>
           </CardHeader>
@@ -127,9 +138,9 @@ export function PatientsAnalyticsSection({
             >
               <BarChart
                 data={[
-                  { region: "SP", count: 25 },
-                  { region: "RJ", count: 18 },
-                  { region: "MG", count: 12 },
+                  { region: 'SP', count: 25 },
+                  { region: 'RJ', count: 18 },
+                  { region: 'MG', count: 12 },
                 ]}
                 layout="vertical"
               >

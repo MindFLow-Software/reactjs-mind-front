@@ -10,8 +10,8 @@ import {
 } from '@/components/ui/drawer'
 
 import { Button } from '@/components/ui/button'
-import { TitleIcon } from '@/components/title-icon'
-import { SecurityNotice } from '@/components/security-notice'
+import { TitleIcon } from '@/components/title-icon/title-icon'
+import { SecurityNotice } from '@/components/security-notice/security-notice'
 import { ClaimRequestStatus } from '@/types/claim/claim-request-status'
 import type { ClaimRequestAction } from '@/api/patient-profiles/submit-patient-profile-claim-request'
 

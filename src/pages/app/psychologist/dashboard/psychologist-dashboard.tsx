@@ -2,11 +2,9 @@ import { useEffect } from 'react'
 import { Helmet } from 'react-helmet-async'
 
 import { useHeaderStore } from '@/store/use-header-store'
-import { DashboardSection } from '@/pages/app/dashboard/shared/components/dashboard-section'
-import {
-  DashboardSkeleton,
-  DashboardErrorState,
-} from '@/pages/app/dashboard/shared/components/dashboard-states'
+import { DashboardSection } from '@/pages/app/dashboard/shared/components/dashboard-section/dashboard-section'
+import { DashboardSkeleton } from '@/pages/app/dashboard/shared/components/dashboard-skeleton/dashboard-skeleton'
+import { DashboardErrorState } from '@/pages/app/dashboard/shared/components/dashboard-error-state/dashboard-error-state'
 import { DashboardHeader } from './components/dashboard-header'
 import { usePsychologistDashboard } from './hooks/use-psychologist-dashboard'
 import { MonthPatientsAmountCard } from './components/month-patients-amount-card'
@@ -50,9 +48,11 @@ export function PsychologistDashboard() {
             />
 
             <DashboardSection
-              index="01"
-              title="Visão geral"
-              description="Indicadores principais do período"
+              header={{
+                index: '01',
+                title: 'Visão geral',
+                description: 'Indicadores principais do período',
+              }}
             >
               <div className="dsh-overview-grid">
                 {activePatientsGoal && (
@@ -67,9 +67,11 @@ export function PsychologistDashboard() {
             </DashboardSection>
 
             <DashboardSection
-              index="02"
-              title="Sessões"
-              description="Volume de atendimentos e agenda próxima"
+              header={{
+                index: '02',
+                title: 'Sessões',
+                description: 'Volume de atendimentos e agenda próxima',
+              }}
             >
               <div className="dsh-sessions-grid">
                 <div className="dsh-sessions-grid-chart">
@@ -87,9 +89,11 @@ export function PsychologistDashboard() {
             </DashboardSection>
 
             <DashboardSection
-              index="03"
-              title="Metas e comparecimento"
-              description="Progresso mensal, presença e recomendações"
+              header={{
+                index: '03',
+                title: 'Metas e comparecimento',
+                description: 'Progresso mensal, presença e recomendações',
+              }}
             >
               <div className="dsh-goals-content">
                 <MonthlyGoalsSection goals={data.goals} />
@@ -101,9 +105,11 @@ export function PsychologistDashboard() {
             </DashboardSection>
 
             <DashboardSection
-              index="04"
-              title="Análise de pacientes"
-              description="Perfil demográfico, ocupação e retenção"
+              header={{
+                index: '04',
+                title: 'Análise de pacientes',
+                description: 'Perfil demográfico, ocupação e retenção',
+              }}
             >
               <AnalyticsSection analytics={data.analytics} />
             </DashboardSection>

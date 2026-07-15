@@ -16,11 +16,11 @@ import {
 } from '@/components/ui/card'
 import { ChartContainer, type ChartConfig } from '@/components/ui/chart'
 
-import { DashboardChartEmpty } from '@/pages/app/dashboard/shared/components/dashboard-chart-empty'
-import { DashboardChartError } from '@/pages/app/dashboard/shared/components/dashboard-chart-error'
-import { DashboardChartLoader } from '@/pages/app/dashboard/shared/components/dashboard-chart-loader'
+import { DashboardChartEmpty } from '@/pages/app/dashboard/shared/components/dashboard-chart-empty/dashboard-chart-empty'
+import { DashboardChartError } from '@/pages/app/dashboard/shared/components/dashboard-chart-error/dashboard-chart-error'
+import { DashboardChartLoader } from '@/pages/app/dashboard/shared/components/dashboard-chart-loader/dashboard-chart-loader'
 
-import "./psychologists-by-age-chart.css"
+import './psychologists-by-age-chart.css'
 
 const chartConfig = {
   psychologists: {
@@ -47,13 +47,15 @@ export function PsychologistsAgeRangeChart({
   isError,
   onRetry,
   isLoading,
-  psychologistsByAge
+  psychologistsByAge,
 }: IPsychologistsAgeRangeChart) {
   const { totalPsychologists, isEmpty } = React.useMemo(() => {
-    const total = psychologistsByAge?.reduce((sum, item) => sum + item.count, 0) ?? 0
+    const total =
+      psychologistsByAge?.reduce((sum, item) => sum + item.count, 0) ?? 0
     return {
       totalPsychologists: total,
-      isEmpty: !psychologistsByAge || psychologistsByAge.length === 0 || total === 0,
+      isEmpty:
+        !psychologistsByAge || psychologistsByAge.length === 0 || total === 0,
     }
   }, [psychologistsByAge])
 
@@ -63,9 +65,7 @@ export function PsychologistsAgeRangeChart({
     <Card className="adb-bar-card">
       <CardHeader className="adb-bar-card-header">
         <div className="adb-bar-header-main">
-          <CardTitle className="adb-bar-title">
-            Faixa Etária
-          </CardTitle>
+          <CardTitle className="adb-bar-title">Faixa Etária</CardTitle>
           <CardDescription className="adb-bar-header-subtitle">
             Distribuição por idade
           </CardDescription>
@@ -76,29 +76,34 @@ export function PsychologistsAgeRangeChart({
         </div>
       </CardHeader>
       <CardContent className="adb-bar-content">
-        {isLoading
-          ? ( <DashboardChartLoader /> )
-          : isError ? (<DashboardChartError onRetry={onRetry} />)
-          : isEmpty ? (
-            <DashboardChartEmpty
-              icon={<Users2 />}
-              title="Sem dados demográficos"
-              subtitle="Nenhum psicólogo cadastrado no sistema"
-            />
-          ) : (
-            <div className="adb-bar-chart-wrap">
-              <ChartContainer
-                config={chartConfig}
-                className="mx-auto aspect-square size-full"
-              >
-                <BarChart data={psychologistsByAge}>
-                  <XAxis dataKey="range" />
-                  <YAxis tickCount={5} allowDecimals={false} />
-                  <Tooltip />
-                  <Bar dataKey="count" fill={CHART_COLORS[chartColor]} radius={[10, 10, 0, 0]} />
-                </BarChart>
-              </ChartContainer>
-            </div>
+        {isLoading ? (
+          <DashboardChartLoader />
+        ) : isError ? (
+          <DashboardChartError onRetry={onRetry} />
+        ) : isEmpty ? (
+          <DashboardChartEmpty
+            icon={<Users2 />}
+            title="Sem dados demográficos"
+            subtitle="Nenhum psicólogo cadastrado no sistema"
+          />
+        ) : (
+          <div className="adb-bar-chart-wrap">
+            <ChartContainer
+              config={chartConfig}
+              className="mx-auto aspect-square size-full"
+            >
+              <BarChart data={psychologistsByAge}>
+                <XAxis dataKey="range" />
+                <YAxis tickCount={5} allowDecimals={false} />
+                <Tooltip />
+                <Bar
+                  dataKey="count"
+                  fill={CHART_COLORS[chartColor]}
+                  radius={[10, 10, 0, 0]}
+                />
+              </BarChart>
+            </ChartContainer>
+          </div>
         )}
       </CardContent>
     </Card>

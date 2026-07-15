@@ -13,8 +13,8 @@ import type { IAdminDashboardData } from '@/types/dashboard/admin-dashboard-data
 import { Card } from '@/components/ui/card'
 import { ChartContainer, type ChartConfig } from '@/components/ui/chart'
 
-import { MetricCard } from '@/components/metric-card'
-import { DashboardSection } from '@/pages/app/dashboard/shared/components/dashboard-section'
+import { MetricCard } from '@/components/metric-card/metric-card'
+import { DashboardSection } from '@/pages/app/dashboard/shared/components/dashboard-section/dashboard-section'
 
 import './revenue-subscriptions-section.css'
 import { Area, AreaChart, XAxis, YAxis } from 'recharts'
@@ -28,17 +28,17 @@ interface IRevenueSubscriptionsSection {
 const chartConfig = {} satisfies ChartConfig
 
 const chartData = [
-  { date: "2024-04-01", revenue: 970 },
-  { date: "2024-04-02", revenue: 1050 },
-  { date: "2024-04-03", revenue: 2420 },
-  { date: "2024-04-04", revenue: 2420 },
-  { date: "2024-04-05", revenue: 3500 },
-  { date: "2024-04-06", revenue: 7000 },
-  { date: "2024-04-07", revenue: 9000 },
-  { date: "2024-04-08", revenue: 9500 },
-  { date: "2024-04-09", revenue: 9975 },
-  { date: "2024-04-10", revenue: 15023 },
-  { date: "2024-04-12", revenue: 18976 },
+  { date: '2024-04-01', revenue: 970 },
+  { date: '2024-04-02', revenue: 1050 },
+  { date: '2024-04-03', revenue: 2420 },
+  { date: '2024-04-04', revenue: 2420 },
+  { date: '2024-04-05', revenue: 3500 },
+  { date: '2024-04-06', revenue: 7000 },
+  { date: '2024-04-07', revenue: 9000 },
+  { date: '2024-04-08', revenue: 9500 },
+  { date: '2024-04-09', revenue: 9975 },
+  { date: '2024-04-10', revenue: 15023 },
+  { date: '2024-04-12', revenue: 18976 },
 ]
 
 export function RevenueSubscriptionsSection({
@@ -46,47 +46,42 @@ export function RevenueSubscriptionsSection({
 }: IRevenueSubscriptionsSection) {
   return (
     <DashboardSection
-      index="03"
-      title="Receita & Assinaturas"
-      description="Indicadores financeiros e de assinatura no período selecionado"
+      header={{
+        index: '03',
+        title: 'Receita & Assinaturas',
+        description:
+          'Indicadores financeiros e de assinatura no período selecionado',
+      }}
     >
       <div className="adb-revenue-content">
         <Card className="adb-revenue-area-chart-contianer">
           <ChartContainer
-              config={chartConfig}
-              className="adb-revenue-area-chart"
-            >
-              <AreaChart data={chartData}>
-                <defs>
-                  <linearGradient id="fillDesktop" x1="0" y1="0" x2="0" y2="1">
-                    <stop
-                      offset="5%"
-                      stopColor="#bbf7d0"
-                      stopOpacity={1.0}
-                    />
-                    <stop
-                      offset="95%"
-                      stopColor="#bbf7d0"
-                      stopOpacity={0.1}
-                    />
-                  </linearGradient>
-                </defs>
-                <XAxis
-                  dataKey="date"
-                  tickLine={false}
-                  axisLine={false}
-                  minTickGap={32}
-                />
+            config={chartConfig}
+            className="adb-revenue-area-chart"
+          >
+            <AreaChart data={chartData}>
+              <defs>
+                <linearGradient id="fillDesktop" x1="0" y1="0" x2="0" y2="1">
+                  <stop offset="5%" stopColor="#bbf7d0" stopOpacity={1.0} />
+                  <stop offset="95%" stopColor="#bbf7d0" stopOpacity={0.1} />
+                </linearGradient>
+              </defs>
+              <XAxis
+                dataKey="date"
+                tickLine={false}
+                axisLine={false}
+                minTickGap={32}
+              />
 
-                <YAxis />
-                <Area
-                  dataKey="revenue"
-                  type="natural"
-                  fill="url(#fillDesktop)"
-                  stroke="#22c55e"
-                />
-              </AreaChart>
-            </ChartContainer>
+              <YAxis />
+              <Area
+                dataKey="revenue"
+                type="natural"
+                fill="url(#fillDesktop)"
+                stroke="#22c55e"
+              />
+            </AreaChart>
+          </ChartContainer>
         </Card>
         <div className="adb-revenue-side">
           <MetricCard variant="stacked" accentColor="emerald">

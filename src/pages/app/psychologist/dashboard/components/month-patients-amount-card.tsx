@@ -1,6 +1,6 @@
 import { memo } from 'react'
 import { CalendarCheck } from 'lucide-react'
-import { MetricCard } from '@/components/metric-card'
+import { MetricCard } from '@/components/metric-card/metric-card'
 
 interface MonthPatientsAmountCardProps {
   sessionsCompleted: number

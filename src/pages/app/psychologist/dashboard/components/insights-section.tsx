@@ -7,7 +7,7 @@ import {
   CardHeader,
   CardTitle,
 } from '@/components/ui/card'
-import { DashboardInsightCard } from '@/pages/app/dashboard/shared/components/dashboard-insight-card'
+import { DashboardInsightCard } from '@/pages/app/dashboard/shared/components/dashboard-insight-card/dashboard-insight-card'
 import type { IDashboardInsight } from '@/types/dashboard/dashboard-insight'
 import './insights-section.css'
 
@@ -31,12 +31,7 @@ export function InsightsSection({ insights }: InsightsSectionProps) {
       </CardHeader>
       <CardContent className="dsh-insights-content">
         {insights.map((insight) => (
-          <DashboardInsightCard
-            key={insight.title}
-            severity={insight.severity}
-            title={insight.title}
-            description={insight.description}
-          />
+          <DashboardInsightCard key={insight.title} insight={insight} />
         ))}
       </CardContent>
     </Card>

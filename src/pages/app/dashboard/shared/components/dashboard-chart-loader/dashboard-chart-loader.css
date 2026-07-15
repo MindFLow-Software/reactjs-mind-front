@@ -1,0 +1,11 @@
+@reference "../../../../../../global.css";
+
+@layer components {
+  .dsh-chart-loader-container {
+    @apply flex size-full items-center justify-center;
+  }
+
+  .dsh-chart-loader-icon {
+    @apply size-8 animate-spin text-muted-foreground;
+  }
+}

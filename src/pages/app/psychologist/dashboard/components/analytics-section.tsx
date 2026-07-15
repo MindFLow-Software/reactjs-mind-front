@@ -1,7 +1,7 @@
 import { Activity } from 'lucide-react'
 
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
-import { DashboardProgressBar } from '@/pages/app/dashboard/shared/components/dashboard-progress-bar'
+import { DashboardProgressBar } from '@/pages/app/dashboard/shared/components/dashboard-progress-bar/dashboard-progress-bar'
 import { PatientsByAgeChart } from './patients-by-age-chart'
 import { PatientsByGenderChart } from './patients-by-gender-chart'
 import type { IPsychologistDashboardData } from '@/types/dashboard/psychologist-dashboard-data'
@@ -31,16 +31,20 @@ export function AnalyticsSection({ analytics }: AnalyticsSectionProps) {
         <CardContent className="dsh-analytics-content">
           <DashboardProgressBar
             label="Ocupação semanal"
-            value={analytics.weeklyOccupancyPercent}
-            target={100}
-            unit="%"
+            metric={{
+              value: analytics.weeklyOccupancyPercent,
+              target: 100,
+              unit: '%',
+            }}
             tone="violet"
           />
           <DashboardProgressBar
             label="Retenção de pacientes"
-            value={analytics.retentionPercent}
-            target={100}
-            unit="%"
+            metric={{
+              value: analytics.retentionPercent,
+              target: 100,
+              unit: '%',
+            }}
             tone="blue"
           />
         </CardContent>

@@ -2,7 +2,13 @@ import { CalendarCheck, CalendarX, RotateCcw } from 'lucide-react'
 import type { LucideIcon } from 'lucide-react'
 
 import { Badge } from '@/components/ui/badge'
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from '@/components/ui/card'
 import { cn } from '@/lib/utils'
 import type { IPsychologistDashboardData } from '@/types/dashboard/psychologist-dashboard-data'
 import './attendance-section.css'

@@ -17,10 +17,16 @@ import { Currency } from '@/utils/currency'
 import type { IAdminDashboardData } from '@/types/dashboard/admin-dashboard-data'
 
 import { AdminStatCard } from './admin-stat-card'
-import { DashboardSection } from '@/pages/app/dashboard/shared/components/dashboard-section'
+import { DashboardSection } from '@/pages/app/dashboard/shared/components/dashboard-section/dashboard-section'
 
 import './executive-overview-section.css'
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
 import { ChartContainer, type ChartConfig } from '@/components/ui/chart'
 import { Area, AreaChart } from 'recharts'
@@ -32,15 +38,15 @@ interface ExecutiveOverviewSectionProps {
 }
 
 const chartData = [
-  { date: "2024-04-01", desktop: 222, mobile: 150 },
-  { date: "2024-04-02", desktop: 97, mobile: 180 },
-  { date: "2024-04-03", desktop: 167, mobile: 120 },
-  { date: "2024-04-04", desktop: 242, mobile: 260 },
-  { date: "2024-04-05", desktop: 373, mobile: 290 },
-  { date: "2024-04-06", desktop: 301, mobile: 340 },
-  { date: "2024-04-07", desktop: 245, mobile: 180 },
-  { date: "2024-04-08", desktop: 409, mobile: 320 },
-  { date: "2024-04-09", desktop: 59, mobile: 110 },
+  { date: '2024-04-01', desktop: 222, mobile: 150 },
+  { date: '2024-04-02', desktop: 97, mobile: 180 },
+  { date: '2024-04-03', desktop: 167, mobile: 120 },
+  { date: '2024-04-04', desktop: 242, mobile: 260 },
+  { date: '2024-04-05', desktop: 373, mobile: 290 },
+  { date: '2024-04-06', desktop: 301, mobile: 340 },
+  { date: '2024-04-07', desktop: 245, mobile: 180 },
+  { date: '2024-04-08', desktop: 409, mobile: 320 },
+  { date: '2024-04-09', desktop: 59, mobile: 110 },
 ]
 
 const chartConfig = {} satisfies ChartConfig
@@ -50,9 +56,12 @@ export function ExecutiveOverviewSection({
 }: ExecutiveOverviewSectionProps) {
   return (
     <DashboardSection
-      index="01"
-      title="Visão executiva"
-      description="Indicadores principais da plataforma no período selecionado"
+      header={{
+        index: '01',
+        title: 'Visão executiva',
+        description:
+          'Indicadores principais da plataforma no período selecionado',
+      }}
     >
       <div className="flex gap-4">
         <Card className="relative flex flex-row! gap-2 w-full max-w-1/2 pb-0">
@@ -83,15 +92,21 @@ export function ExecutiveOverviewSection({
             </CardHeader>
             <CardContent className="grid grid-cols-3 border-t border-border pt-2 px-0!">
               <div className="flex flex-col">
-                <span className="text-muted-foreground text-[11px] tracking-wider uppercase">Hoje</span>
+                <span className="text-muted-foreground text-[11px] tracking-wider uppercase">
+                  Hoje
+                </span>
                 <span className="text-sm font-medium">1284</span>
               </div>
               <div className="flex flex-col">
-                <span className="text-muted-foreground text-[11px] tracking-wider uppercase">Semana</span>
+                <span className="text-muted-foreground text-[11px] tracking-wider uppercase">
+                  Semana
+                </span>
                 <span className="text-sm font-medium">8940</span>
               </div>
               <div className="flex flex-col">
-                <span className="text-muted-foreground text-[11px] tracking-wider uppercase">Concluídas</span>
+                <span className="text-muted-foreground text-[11px] tracking-wider uppercase">
+                  Concluídas
+                </span>
                 <span className="text-sm font-medium">92.1%</span>
               </div>
             </CardContent>
@@ -104,16 +119,8 @@ export function ExecutiveOverviewSection({
             <AreaChart data={chartData}>
               <defs>
                 <linearGradient id="fillDesktop1" x1="0" y1="0" x2="0" y2="1">
-                  <stop
-                    offset="5%"
-                    stopColor="#3b82f6"
-                    stopOpacity={1.0}
-                  />
-                  <stop
-                    offset="95%"
-                    stopColor="#3b82f6"
-                    stopOpacity={0.1}
-                  />
+                  <stop offset="5%" stopColor="#3b82f6" stopOpacity={1.0} />
+                  <stop offset="95%" stopColor="#3b82f6" stopOpacity={0.1} />
                 </linearGradient>
               </defs>
               <Area
@@ -154,15 +161,21 @@ export function ExecutiveOverviewSection({
             </CardHeader>
             <CardContent className="grid grid-cols-3 border-t border-border pt-2 px-0!">
               <div className="flex flex-col">
-                <span className="text-muted-foreground text-[11px] tracking-wider uppercase">Premium</span>
+                <span className="text-muted-foreground text-[11px] tracking-wider uppercase">
+                  Premium
+                </span>
                 <span className="text-sm font-medium">3842</span>
               </div>
               <div className="flex flex-col">
-                <span className="text-muted-foreground text-[11px] tracking-wider uppercase">Conversão</span>
+                <span className="text-muted-foreground text-[11px] tracking-wider uppercase">
+                  Conversão
+                </span>
                 <span className="text-sm font-medium">14.6%</span>
               </div>
               <div className="flex flex-col">
-                <span className="text-muted-foreground text-[11px] tracking-wider uppercase">Churn</span>
+                <span className="text-muted-foreground text-[11px] tracking-wider uppercase">
+                  Churn
+                </span>
                 <span className="text-sm font-medium">2.1%</span>
               </div>
             </CardContent>
@@ -175,16 +188,8 @@ export function ExecutiveOverviewSection({
             <AreaChart data={chartData}>
               <defs>
                 <linearGradient id="fillDesktop" x1="0" y1="0" x2="0" y2="1">
-                  <stop
-                    offset="5%"
-                    stopColor="#bbf7d0"
-                    stopOpacity={1.0}
-                  />
-                  <stop
-                    offset="95%"
-                    stopColor="#bbf7d0"
-                    stopOpacity={0.1}
-                  />
+                  <stop offset="5%" stopColor="#bbf7d0" stopOpacity={1.0} />
+                  <stop offset="95%" stopColor="#bbf7d0" stopOpacity={0.1} />
                 </linearGradient>
               </defs>
               <Area

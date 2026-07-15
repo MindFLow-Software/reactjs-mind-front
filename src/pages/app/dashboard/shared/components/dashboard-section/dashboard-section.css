@@ -1,4 +1,4 @@
-@reference "../../../../../global.css";
+@reference "../../../../../../global.css";
 
 @layer components {
   .dsh-section-root {
@@ -14,15 +14,11 @@
   }
 
   .dsh-section-index {
-    @apply text-muted-foreground font-medium;
+    @apply font-medium text-muted-foreground;
   }
 
   .dsh-section-description {
     @apply text-sm text-muted-foreground;
-  }
-
-  .dsh-section-action {
-    @apply self-start;
   }
 
   .dsh-section-separator {

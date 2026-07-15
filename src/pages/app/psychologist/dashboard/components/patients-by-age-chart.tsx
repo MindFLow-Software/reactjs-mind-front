@@ -1,7 +1,7 @@
 import * as React from 'react'
 import { Users } from 'lucide-react'
 import { Card, CardContent, CardHeader } from '@/components/ui/card'
-import { DashboardChartEmpty } from '@/pages/app/dashboard/shared/components/dashboard-chart-empty'
+import { DashboardChartEmpty } from '@/pages/app/dashboard/shared/components/dashboard-chart-empty/dashboard-chart-empty'
 import type { IAgeRangeItem } from '@/types/dashboard/age-range-item'
 import './patients-by-age-chart.css'
 

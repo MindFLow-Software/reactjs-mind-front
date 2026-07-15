@@ -2,7 +2,7 @@ import { Calendar, ClipboardCheck } from 'lucide-react'
 
 import { Time } from '@/utils/time'
 import { Button } from '@/components/ui/button'
-import { UserAvatar } from '@/components/user-avatar'
+import { UserAvatar } from '@/components/user-avatar/user-avatar'
 import { TableCell, TableRow } from '@/components/ui/table'
 import {
   Tooltip,
@@ -31,10 +31,12 @@ export function ClaimRequestRow({
       <TableCell>
         <div className="flex items-center gap-2">
           <UserAvatar
-            src=""
-            name={request.requesterFirstName}
+            identity={{
+              src: '',
+              name: request.requesterFirstName,
+              colorSeed: request.id,
+            }}
             size="md"
-            colorSeed={request.id}
           />
           <div className="flex flex-col">
             <span className="font-medium">{request.requesterFirstName}</span>

@@ -3,13 +3,19 @@ import { Layers } from 'lucide-react'
 import { ChartContainer, type ChartConfig } from '@/components/ui/chart'
 import type { IAdminDashboardData } from '@/types/dashboard/admin-dashboard-data'
 
-import { DashboardSection } from '@/pages/app/dashboard/shared/components/dashboard-section'
+import { DashboardSection } from '@/pages/app/dashboard/shared/components/dashboard-section/dashboard-section'
 import { PsychologistsGenderChart } from './psychologists-by-gender-chart'
 import { DemographicsPieChartCard } from './demographics-pie-chart-card'
 import { PsychologistsAgeRangeChart } from './psychologists-by-age-chart'
 
 import './psychologists-analytics-section.css'
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from '@/components/ui/card'
 import { Bar, BarChart, XAxis, YAxis } from 'recharts'
 
 type IAdminDashboardPsychologists = IAdminDashboardData['psychologists']
@@ -28,7 +34,7 @@ const distributionChartConfig = {
   },
 } satisfies ChartConfig
 
-const noop = () => { }
+const noop = () => {}
 
 interface PsychologistsAnalyticsSectionProps {
   psychologists: IAdminDashboardPsychologists
@@ -52,9 +58,12 @@ export function PsychologistsAnalyticsSection({
 
   return (
     <DashboardSection
-      index="05"
-      title="Análise de psicólogos"
-      description="Perfil demográfico, atividade e especialidades dos profissionais"
+      header={{
+        index: '05',
+        title: 'Análise de psicólogos',
+        description:
+          'Perfil demográfico, atividade e especialidades dos profissionais',
+      }}
     >
       <div className="adb-psy-analytics-charts">
         <Card>
@@ -77,23 +86,28 @@ export function PsychologistsAnalyticsSection({
                   <span className="size-2.5 rounded-full bg-green-600" />
                   Ativos
                 </span>
-                <span className="tabular-nums font-medium text-foreground">{active}</span>
+                <span className="tabular-nums font-medium text-foreground">
+                  {active}
+                </span>
               </li>
               <li className="flex items-center justify-between text-sm">
                 <span className="inline-flex items-center gap-2 text-foreground">
                   <span className="size-2.5 rounded-full bg-red-500" />
                   Sem atividade (30d)
                 </span>
-                <span className="tabular-nums font-medium text-foreground">{inactive}</span>
+                <span className="tabular-nums font-medium text-foreground">
+                  {inactive}
+                </span>
               </li>
             </ul>
             <p className="mt-3 text-xs text-muted-foreground">
-              Base total: <span className="font-medium text-foreground">{total}</span>
+              Base total:{' '}
+              <span className="font-medium text-foreground">{total}</span>
             </p>
           </CardContent>
         </Card>
         <PsychologistsAgeRangeChart
-          onRetry={() => { }}
+          onRetry={() => {}}
           isError={false}
           isLoading={false}
           psychologistsByAge={psychologists.byAge}
@@ -116,7 +130,9 @@ export function PsychologistsAnalyticsSection({
               </CardDescription>
             </div>
             <div className="flex flex-col text-right">
-              <span className="text-[10px] font-medium uppercase tracking-wider text-muted-foreground">Total Geral</span>
+              <span className="text-[10px] font-medium uppercase tracking-wider text-muted-foreground">
+                Total Geral
+              </span>
               <span className="text-2xl font-bold">{stateTotal} </span>
             </div>
           </CardHeader>
@@ -127,9 +143,9 @@ export function PsychologistsAnalyticsSection({
             >
               <BarChart
                 data={[
-                  { region: "SP", count: 25 },
-                  { region: "RJ", count: 18 },
-                  { region: "MG", count: 12 },
+                  { region: 'SP', count: 25 },
+                  { region: 'RJ', count: 18 },
+                  { region: 'MG', count: 12 },
                 ]}
                 layout="vertical"
               >
@@ -163,7 +179,7 @@ export function PsychologistsAnalyticsSection({
             isError: false,
             isEmpty: specialtyTotal === 0,
             onRetry: noop,
-            label: 'Abordagens'
+            label: 'Abordagens',
           }}
           empty={{
             icon: <Layers className="size-5 text-muted-foreground/50" />,

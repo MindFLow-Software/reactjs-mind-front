@@ -1,7 +1,7 @@
 import { Navigate } from 'react-router-dom'
 
 import { useAuth } from '@/hooks/use-auth'
-import { BrandedLoader } from '@/components/branded-loader'
+import { BrandedLoader } from '@/components/branded-loader/branded-loader'
 import { useActivePracticeContextStore } from '@/store/use-active-practice-context-store'
 import { getRuntimeRole } from '@/utils/get-runtime-role'
 import { PlatformRole } from '@/types/shared/enums'

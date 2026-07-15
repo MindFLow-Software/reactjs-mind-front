@@ -1,6 +1,6 @@
 import { memo } from 'react'
 import { Clock } from 'lucide-react'
-import { MetricCard } from '@/components/metric-card'
+import { MetricCard } from '@/components/metric-card/metric-card'
 import type { IDashboardGoal } from '@/types/dashboard/dashboard-goal'
 
 interface TotalWorkHoursCardProps {

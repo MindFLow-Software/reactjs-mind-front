@@ -1,7 +1,7 @@
 import { CheckCircle2, CalendarClock, XCircle, Activity } from 'lucide-react'
 
-import { DashboardSection } from '@/pages/app/dashboard/shared/components/dashboard-section'
-import { MetricCard } from '@/components/metric-card'
+import { DashboardSection } from '@/pages/app/dashboard/shared/components/dashboard-section/dashboard-section'
+import { MetricCard } from '@/components/metric-card/metric-card'
 import type { IAdminDashboardData } from '@/types/dashboard/admin-dashboard-data'
 import './sessions-activity-section.css'
 
@@ -16,9 +16,12 @@ export function SessionsActivitySection({
 }: SessionsActivitySectionProps) {
   return (
     <DashboardSection
-      index="04"
-      title="Sessões & Atividade"
-      description="Volume de sessões e atividade de usuários no período selecionado"
+      header={{
+        index: '04',
+        title: 'Sessões & Atividade',
+        description:
+          'Volume de sessões e atividade de usuários no período selecionado',
+      }}
     >
       <div className="adb-activity-content">
         <MetricCard variant="stacked" accentColor="emerald">

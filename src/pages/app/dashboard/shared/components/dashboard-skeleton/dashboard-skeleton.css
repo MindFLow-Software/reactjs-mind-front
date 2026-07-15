@@ -1,4 +1,4 @@
-@reference "../../../../../global.css";
+@reference "../../../../../../global.css";
 
 @layer components {
   .dsh-skeleton-metrics-grid {
@@ -27,17 +27,5 @@
 
   .dsh-skeleton-page-header {
     @apply h-16 w-full rounded-md;
-  }
-
-  .dsh-error-state-root {
-    @apply flex flex-col items-center justify-center gap-2 rounded-md border border-dashed border-border p-8 text-center;
-  }
-
-  .dsh-error-state-icon {
-    @apply size-6 text-red-500;
-  }
-
-  .dsh-error-state-message {
-    @apply text-sm font-medium text-foreground;
   }
 }
