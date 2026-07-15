@@ -1,0 +1,11 @@
+@reference "../../../../../../global.css";
+
+@layer components {
+  .adb-revenue-chart-card {
+    @apply flex-1 px-3;
+  }
+
+  .adb-revenue-chart {
+    @apply aspect-square h-full w-full;
+  }
+}

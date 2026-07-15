@@ -9,6 +9,8 @@
     @apply px-6 pb-6;
   }
 
+  .acc-verified-badge { }
+
   .acc-profile-header {
     @apply flex flex-col items-center px-6 pt-6 pb-4 gap-5 w-full md:flex-row md:items-end;
     @apply h-34 bg-linear-to-r from-purple-500 via-indigo-500 to-blue-600 ;
@@ -40,5 +42,15 @@
 
   .acc-profile-edit-icon {
     @apply rounded-lg bg-blue-100 p-2 text-blue-600 transition-transform group-hover:scale-110 dark:bg-blue-900/40;
+  }
+
+  .acc-profile-btn {
+    @apply flex-1!;
+  }
+
+  .acc-profile-btn--primary {}
+
+  .acc-profile-btn--secondary {
+    @apply size-8;
   }
 }

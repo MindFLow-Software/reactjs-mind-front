@@ -9,7 +9,7 @@ import {
 import type { IDashboardPeriod } from '@/pages/app/dashboard/shared/types'
 import type { IAdminDashboardData } from '@/types/dashboard/admin-dashboard-data'
 
-export interface IUseAdminDashboard {
+export type IUseAdminDashboard = {
   data?: IAdminDashboardData
   isLoading: boolean
   isError: boolean

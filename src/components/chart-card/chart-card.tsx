@@ -1,6 +1,16 @@
 import type { ReactNode } from 'react'
 import { useMemo, useContext, createContext } from 'react'
-import { Cell, Pie, PieChart } from 'recharts'
+import {
+  Bar,
+  BarChart,
+  CartesianGrid,
+  Cell,
+  Pie,
+  PieChart,
+  Tooltip,
+  XAxis,
+  YAxis,
+} from 'recharts'
 import { Loader2, RefreshCcw, AlertCircle } from 'lucide-react'
 
 import {
@@ -17,6 +27,17 @@ import {
   ChartTooltipContent,
   type ChartConfig,
 } from '@/components/ui/chart'
+
+import {
+  Select,
+  SelectGroup,
+  SelectItem,
+  SelectValue,
+  SelectContent,
+  SelectTrigger,
+} from '@/components/ui/select'
+
+import { Time } from '@/utils/time'
 
 import './chart-card.css'
 
@@ -53,6 +74,7 @@ type IChartCardRootProps = {
 type IChartCardHeaderProps = {
   title: string
   description: string
+  children?: ReactNode
 }
 
 type IChartCardTotalProps = {
@@ -83,6 +105,45 @@ type IChartCardEmptyProps = {
   subtitle: string
 }
 
+export enum ChartCardBarLayout {
+  VERTICAL = 'VERTICAL',
+  HORIZONTAL = 'HORIZONTAL',
+}
+
+type IChartCardBarOptions = {
+  color?: string
+  layout?: ChartCardBarLayout
+}
+
+type IChartCardBarProps<T extends object> = {
+  data: T[]
+  keys: IChartCardKeys<T>
+  bar?: IChartCardBarOptions
+}
+
+type IChartCardTimeSeriesBarProps<T extends { date: string } & object> = {
+  data: T[]
+  dataKey: keyof T & string
+  color: string
+}
+
+type IChartCardTimeRangeOption<T extends string> = {
+  value: T
+  label: string
+}
+
+type IChartCardTimeRangeProps<T extends string> = {
+  value: T
+  onChange: (value: T) => void
+  options: readonly IChartCardTimeRangeOption<T>[]
+}
+
+const BAR_RADIUS: Record<ChartCardBarLayout, [number, number, number, number]> =
+  {
+    [ChartCardBarLayout.VERTICAL]: [10, 10, 0, 0],
+    [ChartCardBarLayout.HORIZONTAL]: [0, 10, 10, 0],
+  }
+
 function sumValues<T extends object>(data: T[], valueKey: keyof T & string) {
   return data.reduce((total, item) => total + Number(item[valueKey]), 0)
 }
@@ -97,14 +158,51 @@ function ChartCardRoot({ state, onRetry, children }: IChartCardRootProps) {
   )
 }
 
-function ChartCardHeader({ title, description }: IChartCardHeaderProps) {
+function ChartCardHeader({
+  title,
+  description,
+  children,
+}: IChartCardHeaderProps) {
   return (
     <CardHeader className="cc-header">
-      <CardTitle className="cc-title">{title}</CardTitle>
-      <CardDescription className="cc-description">
-        {description}
-      </CardDescription>
+      <div className="cc-header-text">
+        <CardTitle className="cc-title">{title}</CardTitle>
+        <CardDescription className="cc-description">
+          {description}
+        </CardDescription>
+      </div>
+      {children}
     </CardHeader>
+  )
+}
+
+function ChartCardTimeRange<T extends string>({
+  value,
+  onChange,
+  options,
+}: IChartCardTimeRangeProps<T>) {
+  return (
+    <Select value={value} onValueChange={(next) => onChange(next as T)}>
+      <SelectTrigger
+        className="cc-select-trigger"
+        aria-label="Selecionar período"
+      >
+        <SelectValue placeholder="Período" />
+      </SelectTrigger>
+      <SelectContent className="cc-select-content">
+        <SelectGroup>
+          {options.map((option) => (
+            <SelectItem
+              key={option.value}
+              value={option.value}
+              className="cc-select-item"
+            >
+              {option.label}
+            </SelectItem>
+          ))}
+        </SelectGroup>
+      </SelectContent>
+    </Select>
   )
 }
 
@@ -237,6 +335,86 @@ function ChartCardPie<T extends object>({
   )
 }
 
+function ChartCardBar<T extends object>({
+  data,
+  keys,
+  bar,
+}: IChartCardBarProps<T>) {
+  const layout = bar?.layout ?? ChartCardBarLayout.VERTICAL
+  const isHorizontal = layout === ChartCardBarLayout.HORIZONTAL
+
+  const axes = isHorizontal ? (
+    <>
+      <XAxis dataKey={keys.value} type="number" allowDecimals={false} />
+      <YAxis dataKey={keys.name} type="category" />
+    </>
+  ) : (
+    <>
+      <XAxis dataKey={keys.name} />
+      <YAxis tickCount={5} allowDecimals={false} />
+    </>
+  )
+
+  return (
+    <div className="cc-bar-wrap">
+      <ChartContainer config={{}} className="cc-bar-container">
+        <BarChart data={data} layout={isHorizontal ? 'vertical' : 'horizontal'}>
+          {axes}
+          <Tooltip />
+          <Bar
+            dataKey={keys.value}
+            fill={bar?.color ?? 'var(--chart-1)'}
+            radius={BAR_RADIUS[layout]}
+          />
+        </BarChart>
+      </ChartContainer>
+    </div>
+  )
+}
+
+function ChartCardTimeSeriesBar<T extends { date: string } & object>({
+  data,
+  dataKey,
+  color,
+}: IChartCardTimeSeriesBarProps<T>) {
+  const config = useMemo<ChartConfig>(
+    () => ({ [dataKey]: { color } }),
+    [dataKey, color],
+  )
+
+  return (
+    <ChartContainer config={config} className="cc-timeseries-container">
+      <BarChart accessibilityLayer data={data} margin={{ left: 12, right: 12 }}>
+        <CartesianGrid
+          vertical={false}
+          strokeDasharray="3 3"
+          stroke="var(--border)"
+        />
+        <XAxis
+          dataKey="date"
+          tickLine={false}
+          axisLine={false}
+          tickMargin={8}
+          minTickGap={32}
+          stroke="var(--muted-foreground)"
+          fontSize={12}
+          tickFormatter={Time.toDayMonthAbbrev}
+        />
+        <ChartTooltip
+          cursor={false}
+          content={
+            <ChartTooltipContent
+              labelFormatter={Time.toDayMonthLong}
+              indicator="dashed"
+            />
+          }
+        />
+        <Bar dataKey={dataKey} fill={color} radius={[4, 4, 0, 0]} />
+      </BarChart>
+    </ChartContainer>
+  )
+}
+
 function ChartCardLegend<T extends object>({
   data,
   colors,
@@ -282,9 +460,12 @@ function ChartCardEmpty({ icon, title, subtitle }: IChartCardEmptyProps) {
 
 export const ChartCard = Object.assign(ChartCardRoot, {
   Header: ChartCardHeader,
+  TimeRange: ChartCardTimeRange,
   Total: ChartCardTotal,
   Body: ChartCardBody,
   Pie: ChartCardPie,
+  Bar: ChartCardBar,
+  TimeSeriesBar: ChartCardTimeSeriesBar,
   Legend: ChartCardLegend,
   Empty: ChartCardEmpty,
 })

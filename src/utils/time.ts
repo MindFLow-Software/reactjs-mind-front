@@ -7,6 +7,7 @@ import {
   isFuture,
   isValid,
   startOfDay,
+  subDays,
 } from 'date-fns'
 import { Normalizer } from './normalizer'
 
@@ -76,6 +77,48 @@ export class Time {
     if (!parsed) return ''
 
     return format(parsed, "dd 'de' MMM. 'de' yyyy", { locale: ptBR })
+  }
+
+  static toDayShortMonth(date: Date | string | null | undefined) {
+    const parsed = Time.parse(date)
+    if (!parsed) return ''
+
+    return format(parsed, "d 'de' MMM", { locale: ptBR })
+  }
+
+  static toDayShortMonthYear(date: Date | string | null | undefined) {
+    const parsed = Time.parse(date)
+    if (!parsed) return ''
+
+    return format(parsed, "d 'de' MMM 'de' yyyy", { locale: ptBR })
+  }
+
+  static toDayShortMonthAtTime(date: Date | string | null | undefined) {
+    const parsed = Time.parse(date)
+    if (!parsed) return ''
+
+    return format(parsed, "d 'de' MMM 'às' HH:mm", { locale: ptBR })
+  }
+
+  static toDayMonthAbbrev(date: Date | string | null | undefined) {
+    const parsed = Time.parse(date)
+    if (!parsed) return ''
+
+    return format(parsed, 'dd MMM', { locale: ptBR })
+  }
+
+  static toDayMonthLong(date: Date | string | null | undefined) {
+    const parsed = Time.parse(date)
+    if (!parsed) return ''
+
+    return format(parsed, "dd 'de' MMMM", { locale: ptBR })
+  }
+
+  static subtractDays(date: Date | string | null | undefined, days: number) {
+    const parsed = Time.parse(date)
+    if (!parsed) return null
+
+    return subDays(parsed, days)
   }
 
   static toRelativeFromNow(date: Date | string | null | undefined) {

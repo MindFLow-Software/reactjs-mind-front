@@ -1,7 +1,0 @@
-@reference "../../../../../global.css";
-
-@layer components {
-  .adb-insights-grid {
-    @apply grid grid-cols-1 gap-4 md:grid-cols-2 xl:grid-cols-3;
-  }
-}

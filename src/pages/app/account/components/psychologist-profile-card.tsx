@@ -3,7 +3,7 @@
 import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 
-import { ArrowRight, ShieldCheck, UserRoundPen } from 'lucide-react'
+import { ArrowRight, ShieldCheck, SquarePen, UserRoundPen } from 'lucide-react'
 
 import { useAuth } from '@/hooks/use-auth'
 import { Mask } from '@/utils/mask'
@@ -20,6 +20,8 @@ import { EditPsychologistProfile } from './edit-psychologist-profile-dialog'
 import { PsychologistAvatarUpload } from './psychologist-avatar-upload'
 
 import './psychologist-profile-card.css'
+import { Badge } from '@/components/ui/badge'
+import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip'
 
 export function PsychologistProfileCard() {
   const navigate = useNavigate()
@@ -73,6 +75,10 @@ export function PsychologistProfileCard() {
     navigate('/onboarding/psychologist')
   }
 
+  const handleRedirectToAddPsychologistPracticeContext = () => {
+    navigate('/profiles/context')
+  }
+
   return (
     <ProfileCard>
       <ProfileCard.Header
@@ -88,9 +94,30 @@ export function PsychologistProfileCard() {
           />
 
           <div className="min-w-0 flex-1">
-            <h2 className="truncate text-xl font-bold text-foreground">
-              {professionalName}
-            </h2>
+            <div className="flex items-center gap-2">
+              <h2 className="truncate text-xl font-bold text-foreground">
+                {professionalName}
+              </h2>
+                <Dialog open={isEditOpen} onOpenChange={setIsEditOpen}>
+                  <DialogTrigger>
+                    <Tooltip>
+                        <TooltipTrigger asChild>
+                          <button className="size-fit">
+                            <SquarePen size={16} />
+                          </button>
+                        </TooltipTrigger>
+                        <TooltipContent>
+                          Editar Perfil
+                        </TooltipContent>
+                    </Tooltip>
+                  </DialogTrigger>
+
+                  <EditPsychologistProfile
+                    onClose={() => setIsEditOpen(false)}
+                    psychologistProfileId={psychologistProfile?.id ?? null}
+                    />
+                </Dialog>
+            </div>
             <div className="mt-1 flex items-center gap-2">
               <span className="text-sm font-medium text-blue-700 dark:text-blue-400">
                 {expertiseLabel}
@@ -103,13 +130,13 @@ export function PsychologistProfileCard() {
           </div>
 
           {hasPsychologistProfile && (
-            <div className="acc-verified-badge">
+            <Badge variant="outline" className="acc-verified-badge">
               <ShieldCheck
                 size={14}
                 className="text-blue-600 dark:text-blue-400"
               />
               Conta Verificada
-            </div>
+            </Badge>
           )}
         </div>
 
@@ -147,19 +174,14 @@ export function PsychologistProfileCard() {
 
       <ProfileCard.Footer>
         {hasPsychologistProfile ? (
-          <Dialog open={isEditOpen} onOpenChange={setIsEditOpen}>
-            <DialogTrigger asChild>
-              <Button type="button" className="pf-cta-btn pf-cta-btn--primary">
-                Editar Perfil
-                <ArrowRight size={16} />
-              </Button>
-            </DialogTrigger>
-
-            <EditPsychologistProfile
-              onClose={() => setIsEditOpen(false)}
-              psychologistProfileId={psychologistProfile?.id ?? null}
-            />
-          </Dialog>
+          <Button
+            type="button"
+            className="acc-profile-btn acc-profile-btn--primary"
+            onClick={handleRedirectToAddPsychologistPracticeContext}
+          >
+            Adicionar Contexto
+            <ArrowRight size={16} />
+          </Button>
         ) : (
           <Button
             type="button"

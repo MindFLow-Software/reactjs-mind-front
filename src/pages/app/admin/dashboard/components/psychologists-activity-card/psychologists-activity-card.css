@@ -1,0 +1,51 @@
+@reference "../../../../../../global.css";
+
+@layer components {
+  .adb-psy-activity-content {
+    @apply py-2;
+  }
+
+  .adb-psy-activity-track {
+    @apply flex h-3 w-full overflow-hidden rounded-full bg-red-500;
+  }
+
+  .adb-psy-activity-fill {
+    @apply h-full bg-green-600;
+  }
+
+  .adb-psy-activity-list {
+    @apply mt-4 space-y-2.5;
+  }
+
+  .adb-psy-activity-item {
+    @apply flex items-center justify-between text-sm;
+  }
+
+  .adb-psy-activity-legend {
+    @apply inline-flex items-center gap-2 text-foreground;
+  }
+
+  .adb-psy-activity-dot {
+    @apply size-2.5 rounded-full;
+  }
+
+  .adb-psy-activity-dot--active {
+    @apply bg-green-600;
+  }
+
+  .adb-psy-activity-dot--inactive {
+    @apply bg-red-500;
+  }
+
+  .adb-psy-activity-count {
+    @apply font-medium tabular-nums text-foreground;
+  }
+
+  .adb-psy-activity-total {
+    @apply mt-3 text-xs text-muted-foreground;
+  }
+
+  .adb-psy-activity-total-value {
+    @apply font-medium text-foreground;
+  }
+}

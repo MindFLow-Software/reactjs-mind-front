@@ -1,0 +1,91 @@
+@reference "../../../../../../global.css";
+
+@layer components {
+  .adb-exec-card {
+    @apply relative w-full max-w-1/2 flex-row! gap-2 pb-0;
+  }
+
+  .adb-exec-accent-bar {
+    @apply absolute left-0 top-0 h-1 w-full;
+  }
+
+  .adb-exec-accent-bar--blue {
+    @apply bg-blue-500;
+  }
+
+  .adb-exec-accent-bar--green {
+    @apply bg-green-500;
+  }
+
+  .adb-exec-main {
+    @apply flex max-w-3/5 flex-1 flex-col gap-8 px-4;
+  }
+
+  .adb-exec-header {
+    @apply px-0! pb-2;
+  }
+
+  .adb-exec-topline {
+    @apply flex items-center gap-2;
+  }
+
+  .adb-exec-icon {
+    @apply flex w-fit items-center justify-center rounded-full p-1.5;
+  }
+
+  .adb-exec-icon--blue {
+    @apply bg-blue-200 text-blue-500;
+  }
+
+  .adb-exec-icon--green {
+    @apply bg-green-200 text-green-500;
+  }
+
+  .adb-exec-label {
+    @apply text-xs font-medium text-muted-foreground;
+  }
+
+  .adb-exec-value-row {
+    @apply flex items-baseline gap-2;
+  }
+
+  .adb-exec-value {
+    @apply text-3xl;
+  }
+
+  .adb-exec-badge {
+    @apply p-1 py-0.5 text-[10px];
+  }
+
+  .adb-exec-badge--up {
+    @apply bg-green-100 text-green-500 dark:bg-green-950/40;
+  }
+
+  .adb-exec-badge--down {
+    @apply bg-red-100 text-red-500 dark:bg-red-950/40;
+  }
+
+  .adb-exec-value-caption {
+    @apply text-[10px];
+  }
+
+  .adb-exec-stats {
+    @apply grid grid-cols-3 border-t border-border px-0! pt-2;
+  }
+
+  .adb-exec-stat {
+    @apply flex flex-col;
+  }
+
+  .adb-exec-stat-label {
+    @apply text-[11px] uppercase tracking-wider text-muted-foreground;
+  }
+
+  .adb-exec-stat-value {
+    @apply text-sm font-medium;
+  }
+
+  .adb-exec-chart {
+    @apply aspect-square h-[200px] w-full max-w-2/5;
+  }
+}

@@ -1,7 +1,0 @@
-@reference "../../../../../global.css";
-
-@layer components {
-  .adb-exec-content {
-    @apply flex gap-4 overflow-x-scroll pb-1;
-  }
-}
