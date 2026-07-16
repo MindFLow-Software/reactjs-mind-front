@@ -1,0 +1,11 @@
+@reference "../../../global.css";
+
+@layer components {
+  .vr-room-shell {
+    @apply flex flex-col gap-4 mt-6;
+  }
+
+  .vr-room-timer-slot {
+    @apply flex justify-center;
+  }
+}

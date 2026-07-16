@@ -3,10 +3,11 @@
 import { useState, useCallback, useEffect } from 'react'
 import { Helmet } from 'react-helmet-async'
 
-import { AppointmentAddForm } from './components/appointment-add-form'
-import { SessionTimer } from './components/SessionTimer'
+import { AppointmentAddForm } from './components/appointment-add-form/appointment-add-form'
+import { SessionTimer } from './components/session-timer/session-timer'
 import { useHeaderStore } from '@/store/use-header-store'
-import { SessionNotesEditor } from './components/session-notes-editor'
+import { SessionNotesEditor } from './components/session-notes-editor/session-notes-editor'
+import './appoinmets-room.css'
 
 export function AppointmentsRoom() {
   const { setTitle } = useHeaderStore()
@@ -36,8 +37,8 @@ export function AppointmentsRoom() {
     <>
       <Helmet title="Sala de Atendimento" />
 
-      <div className="flex flex-col gap-4 mt-6">
-        <div className="flex justify-center">
+      <div className="vr-room-shell">
+        <div className="vr-room-timer-slot">
           <SessionTimer isActive={isSessionActive} />
         </div>
 

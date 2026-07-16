@@ -1,7 +1,0 @@
-@reference "../../global.css";
-
-@layer components {
-  .nl-link {
-    @apply flex items-center gap-1.5 text-sm font-medium text-muted-foreground hover:text-foreground data-[current=true]:text-foreground;
-  }
-}
