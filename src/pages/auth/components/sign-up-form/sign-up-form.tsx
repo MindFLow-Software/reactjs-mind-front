@@ -52,7 +52,6 @@ import { signIn } from '@/api/auth/sign-in'
 import { Normalizer } from '@/utils/normalizer'
 import { createUser } from '@/api/auth/create-user'
 import { getApiErrorMessage } from '@/lib/get-api-error-message'
-// import { useSessionStore } from '@/store/use-session-store'
 import {
   createUserSchema,
   type CreateUserData,
@@ -115,7 +114,6 @@ function SectionHeading({ children }: { children: React.ReactNode }) {
 
 export function SignUpForm() {
   const navigate = useNavigate()
-  // const setSession = useSessionStore((state) => state.setSession)
 
   const [dobInputValue, setDobInputValue] = useState('')
   const [showPassword, setShowPassword] = useState(false)
@@ -154,7 +152,6 @@ export function SignUpForm() {
       })
     },
     onSuccess: async (_, { email, password }) => {
-      // setSession(profile)
       await signIn({ email, password })
       toast.success('Conta criada com sucesso!')
       navigate('/profiles')

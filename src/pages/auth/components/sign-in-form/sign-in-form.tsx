@@ -13,9 +13,7 @@ import { Input } from '@/components/ui/input'
 import { Field, FieldError, FieldLabel } from '@/components/ui/field'
 
 import { signIn } from '@/api/auth/sign-in'
-// import { getProfile } from '@/api/psychologists/get-profile'
 import { getApiErrorMessage } from '@/lib/get-api-error-message'
-// import { useSessionStore } from '@/store/use-session-store'
 import { GoogleAuthButton } from '../google-auth-button/google-auth-button'
 import {
   signInSchema,
@@ -43,7 +41,6 @@ export const SignInForm = memo(function SignInForm({
 }) {
   const navigate = useNavigate()
   const [searchParams] = useSearchParams()
-  // const setSession = useSessionStore((state) => state.setSession)
 
   const prefersReduced = useReducedMotion()
   const [showPassword, setShowPassword] = useState(false)

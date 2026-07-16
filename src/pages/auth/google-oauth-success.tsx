@@ -2,14 +2,10 @@ import { useEffect, useRef } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { toast } from 'sonner'
 import { AxiosError } from 'axios'
-// import { getProfile } from '@/api/psychologists/get-profile'
-// import { refreshSession } from '@/api/auth/refresh-session'
-// import { useSessionStore } from '@/store/use-session-store'
 import { BrandedLoader } from '@/components/branded-loader/branded-loader'
 
 export function GoogleOAuthSuccess() {
   const navigate = useNavigate()
-  // const setSession = useSessionStore((state) => state.setSession)
   const called = useRef(false)
 
   useEffect(() => {
