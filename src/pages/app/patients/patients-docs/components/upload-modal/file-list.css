@@ -1,0 +1,71 @@
+@reference "../../../../../../global.css";
+
+@layer components {
+  .pd-up-list {
+    @apply shrink-0 flex flex-col gap-2;
+  }
+
+  .pd-up-list-head {
+    @apply flex items-center justify-between;
+  }
+
+  .pd-up-list-count {
+    @apply text-[12px] font-semibold tracking-wider text-muted-foreground uppercase;
+  }
+
+  .pd-up-list-clear {
+    @apply cursor-pointer text-[12px] text-muted-foreground transition-colors hover:text-destructive;
+  }
+
+  .pd-up-item {
+    @apply flex items-center gap-3 rounded-lg border border-border bg-card p-3;
+  }
+
+  .pd-up-item-body {
+    @apply min-w-0 flex-1 flex flex-col gap-1;
+  }
+
+  .pd-up-item-name {
+    @apply truncate text-[13px] font-semibold text-foreground;
+  }
+
+  .pd-up-item-meta {
+    @apply flex items-center gap-2;
+  }
+
+  .pd-up-item-size {
+    @apply text-[11px] text-muted-foreground;
+  }
+
+  .pd-up-item-error {
+    @apply text-[11px] font-medium text-destructive;
+  }
+
+  .pd-up-progress {
+    @apply h-1 w-full overflow-hidden rounded-full bg-muted;
+  }
+
+  .pd-up-progress-bar {
+    @apply h-full rounded-full bg-primary transition-all duration-300;
+  }
+
+  .pd-up-progress-done {
+    @apply h-1 w-full rounded-full bg-green-500/30;
+  }
+
+  .pd-up-progress-done-bar {
+    @apply h-full w-full rounded-full bg-green-500;
+  }
+
+  .pd-up-progress-error {
+    @apply h-1 w-full rounded-full bg-destructive/30;
+  }
+
+  .pd-up-progress-error-bar {
+    @apply h-full w-full rounded-full bg-destructive;
+  }
+
+  .pd-up-item-remove {
+    @apply flex h-6 w-6 cursor-pointer items-center justify-center rounded-md text-muted-foreground transition-colors hover:bg-destructive/10 hover:text-destructive;
+  }
+}

@@ -1,0 +1,23 @@
+@reference "../../../../../../../global.css";
+
+@layer components {
+  .pdd-avg-item {
+    @apply border-sky-200 dark:border-sky-900 dark:bg-sky-950/10;
+  }
+
+  .pdd-avg-media {
+    @apply text-sky-600;
+  }
+
+  .pdd-avg-title {
+    @apply text-sm font-semibold;
+  }
+
+  .pdd-avg-desc {
+    @apply text-xs text-muted-foreground;
+  }
+
+  .pdd-avg-value {
+    @apply text-lg font-bold text-sky-700;
+  }
+}

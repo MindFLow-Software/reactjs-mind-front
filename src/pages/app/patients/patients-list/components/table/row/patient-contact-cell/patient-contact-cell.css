@@ -1,0 +1,19 @@
+@reference "../../../../../../../../global.css";
+
+@layer components {
+  .ptr-contact {
+    @apply flex flex-col gap-1;
+  }
+
+  .ptr-contact-line {
+    @apply flex items-center gap-1.5;
+  }
+
+  .ptr-contact-icon {
+    @apply size-3 shrink-0 text-muted-foreground;
+  }
+
+  .ptr-contact-text {
+    @apply text-xs font-medium;
+  }
+}

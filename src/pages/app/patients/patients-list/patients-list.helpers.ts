@@ -1,10 +1,25 @@
-import { PatientProfileStatus } from '@/types/enums'
-import type { IPatient } from '@/types/patient'
+import { PatientProfileStatus } from '@/types/patient-profile/patient-profile-status'
+import type { IPatient } from '@/types/patient/patient'
 import { Normalizer } from '@/utils/normalizer'
-import type { IpatientsQueryParams } from './hooks/use-patients-query-params'
-import type { PatientSortBy } from '@/hooks/use-patient-filters'
+import { Time } from '@/utils/time'
+import {
+  PatientSortBy,
+  PatientSortOrder,
+  PatientStatusFilter,
+  type IPatientsQueryParams,
+} from './patients-list.types'
 
-type PatientStatus = 'ACTIVE' | 'REJECTED' | 'PENDING' | 'BLOCKED'
+type IPatientComparator = (a: IPatient, b: IPatient) => number
+
+const COMPARATORS: Record<PatientSortBy, IPatientComparator> = {
+  [PatientSortBy.NAME]: (a, b) => a.name.localeCompare(b.name),
+  [PatientSortBy.AGE]: (a, b) =>
+    Time.timestamp(a.dateOfBirth) - Time.timestamp(b.dateOfBirth),
+  [PatientSortBy.GENDER]: (a, b) => a.gender.localeCompare(b.gender),
+  [PatientSortBy.STATUS]: (a, b) => a.status.localeCompare(b.status),
+  [PatientSortBy.LAST_SESSION]: (a, b) =>
+    Time.timestamp(a.lastSessionAt) - Time.timestamp(b.lastSessionAt),
+}
 
 export function formatPatientsShowing(showing: number, total: number): string {
   return `Mostrando ${showing} de ${total} pacientes`
@@ -16,7 +31,7 @@ export function calcTotalPatients(perPage: number, total: number): number {
 
 export function hasActiveFilters(
   filter: string,
-  status: PatientStatus | null,
+  status: PatientStatusFilter | null,
 ): boolean {
   return filter.length > 0 || status !== null
 }
@@ -46,42 +61,15 @@ function matchesStatus(patient: IPatient, isActive?: boolean): boolean {
 
 function matchesGender(
   patient: IPatient,
-  gender?: IpatientsQueryParams['gender'],
+  gender?: IPatientsQueryParams['gender'],
 ): boolean {
   if (!gender) return true
   return patient.gender === gender
 }
 
-function compareByColumn(
-  a: IPatient,
-  b: IPatient,
-  column: PatientSortBy,
-): number {
-  switch (column) {
-    case 'name':
-      return a.name.localeCompare(b.name)
-    case 'age':
-      return (
-        (a.dateOfBirth ? new Date(a.dateOfBirth).getTime() : 0) -
-        (b.dateOfBirth ? new Date(b.dateOfBirth).getTime() : 0)
-      )
-    case 'gender':
-      return a.gender.localeCompare(b.gender)
-    case 'status':
-      return a.status.localeCompare(b.status)
-    case 'lastSession':
-      return (
-        (a.lastSessionAt ? new Date(a.lastSessionAt).getTime() : 0) -
-        (b.lastSessionAt ? new Date(b.lastSessionAt).getTime() : 0)
-      )
-    default:
-      return 0
-  }
-}
-
 export function filterAndSortPatients(
   patients: IPatient[],
-  params: IpatientsQueryParams,
+  params: IPatientsQueryParams,
 ): IPatient[] {
   const filtered = patients.filter(
     (patient) =>
@@ -90,9 +78,9 @@ export function filterAndSortPatients(
       matchesGender(patient, params.gender),
   )
 
-  if (!params.orderBy) return filtered
+  const compare = params.orderBy ? COMPARATORS[params.orderBy] : null
+  if (!compare) return filtered
 
-  const orderBy = params.orderBy
-  const sorted = [...filtered].sort((a, b) => compareByColumn(a, b, orderBy))
-  return params.order === 'desc' ? sorted.reverse() : sorted
+  const sorted = [...filtered].sort(compare)
+  return params.order === PatientSortOrder.DESC ? sorted.reverse() : sorted
 }

@@ -4,17 +4,17 @@ import { cn } from '@/lib/utils'
 
 import './anamnesis-header.css'
 
-interface PdfState {
+type PdfState = {
   isExporting: boolean
   exportedSuccessfully: boolean
   isCopyDisabled: boolean
-}
-
-interface AnamnesisHeaderProps {
-  pdf: PdfState
   copied: boolean
   onGeneratePDF: () => void
   onCopy: () => void
+}
+
+type AnamnesisHeaderProps = {
+  pdf: PdfState
 }
 
 function renderPdfButtonContent(
@@ -47,12 +47,9 @@ function renderPdfButtonContent(
   )
 }
 
-export function AnamnesisHeader({
-  pdf,
-  copied,
-  onGeneratePDF,
-  onCopy,
-}: AnamnesisHeaderProps) {
+export function AnamnesisHeader({ pdf }: AnamnesisHeaderProps) {
+  const { isExporting, exportedSuccessfully, isCopyDisabled, copied } = pdf
+
   return (
     <div className="ph-anamnesis-header">
       <div className="ph-anamnesis-header__title-wrap">
@@ -66,22 +63,22 @@ export function AnamnesisHeader({
         <Button
           type="button"
           size="sm"
-          onClick={onGeneratePDF}
-          disabled={pdf.isExporting || pdf.isCopyDisabled}
+          onClick={pdf.onGeneratePDF}
+          disabled={isExporting || isCopyDisabled}
           className={cn(
             'ph-anamnesis-header__pdf-btn',
-            pdf.isExporting && 'ph-anamnesis-header__pdf-btn--exporting',
-            pdf.exportedSuccessfully && 'ph-anamnesis-header__pdf-btn--success',
+            isExporting && 'ph-anamnesis-header__pdf-btn--exporting',
+            exportedSuccessfully && 'ph-anamnesis-header__pdf-btn--success',
           )}
         >
-          {renderPdfButtonContent(pdf.isExporting, pdf.exportedSuccessfully)}
+          {renderPdfButtonContent(isExporting, exportedSuccessfully)}
         </Button>
 
         <Button
           type="button"
           size="sm"
-          onClick={onCopy}
-          disabled={pdf.isCopyDisabled}
+          onClick={pdf.onCopy}
+          disabled={isCopyDisabled}
           className={cn(
             'ph-anamnesis-header__copy-btn',
             copied && 'ph-anamnesis-header__copy-btn--copied',

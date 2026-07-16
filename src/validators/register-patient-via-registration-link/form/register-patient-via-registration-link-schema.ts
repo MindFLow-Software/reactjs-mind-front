@@ -1,4 +1,4 @@
-import { Gender } from '@/types/enums'
+import { Gender } from '@/types/shared/enums'
 import z from 'zod'
 
 const passwordRegex =

@@ -1,0 +1,60 @@
+@reference "../../../../../../global.css";
+
+@layer components {
+  .ptd-next-session-card {
+    @apply flex h-full flex-col flex-1 gap-2! border-0 p-4!;
+    background: linear-gradient(
+      135deg,
+      #63B59A 0%,
+      #47B1AE 100%
+    );
+  }
+
+  .ptd-next-session--empty {
+    @apply items-center justify-center text-center;
+  }
+
+  .ptd-next-session-empty-text {
+    @apply text-sm text-white/80;
+  }
+
+  .ptd-next-session-label {
+    @apply text-xs font-semibold uppercase tracking-wide text-white/90;
+  }
+
+  .ptd-next-session-main {
+    @apply flex flex-col justify-center gap-2 my-3;
+  }
+
+  .ptd-next-session-info {
+    @apply flex flex-col gap-0.5;
+  }
+
+  .ptd-next-session-datetime {
+    @apply text-2xl font-medium text-white/90;
+  }
+
+  .ptd-next-session-details {
+    @apply text-sm text-white/80 tracking-wider;
+  }
+
+  .ptd-next-session-meta {
+    @apply flex flex-wrap gap-2;
+  }
+
+  .ptd-next-session-badge {
+    @apply border-white! bg-white/20! text-white;
+  }
+
+  .ptd-next-session-actions {
+    @apply mt-auto flex flex-wrap gap-2;
+  }
+
+  .ptd-next-session-action-btn {
+    @apply flex gap-2 w-fit;
+  }
+
+  .ptd-next-session-action-btn--secondary {
+    @apply w-fit bg-white/10! text-white border border-white hover:bg-white/30!;
+  }
+}

@@ -1,11 +1,13 @@
-import { useCallback } from 'react'
+import { useCallback, useMemo } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { Loader2 } from 'lucide-react'
 
 import { useAuth } from '@/hooks/use-auth'
 import { useActivePracticeContextStore } from '@/store/use-active-practice-context-store'
 
-import { PracticeContextAllView } from './components/practice-context-all-view'
+import { PracticeContextAllView } from './components/practice-context-all-view/practice-context-all-view'
+
+import './context-selection-page.css'
 
 export function ContextSelectionPage() {
   const navigate = useNavigate()
@@ -32,6 +34,15 @@ export function ContextSelectionPage() {
 
   const handleAdd = useCallback(() => navigate('/profiles/context'), [navigate])
 
+  const actions = useMemo(
+    () => ({
+      onEnter: handleEnter,
+      onViewMain: handleViewMain,
+      onAdd: handleAdd,
+    }),
+    [handleEnter, handleViewMain, handleAdd],
+  )
+
   if (isPending) {
     return (
       <div className="min-h-screen w-full bg-background flex items-center justify-center text-muted-foreground">
@@ -44,9 +55,7 @@ export function ContextSelectionPage() {
     <PracticeContextAllView
       contexts={practiceContexts}
       activeContextId={activePracticeContextId}
-      onEnter={handleEnter}
-      onViewMain={handleViewMain}
-      onAdd={handleAdd}
+      actions={actions}
     />
   )
 }

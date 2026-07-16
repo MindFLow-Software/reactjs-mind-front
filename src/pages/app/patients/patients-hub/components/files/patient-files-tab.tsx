@@ -1,18 +1,13 @@
 'use client'
 
-import { useState, useMemo } from 'react'
-import { useQuery, useQueryClient, useMutation } from '@tanstack/react-query'
 import { Loader2, FileSearch } from 'lucide-react'
-import { toast } from 'sonner'
 
-import { getPatientAttachments } from '@/api/attachments/get-patient-attachments'
-import { deleteAttachment } from '@/api/attachments/delete-attachment'
-import type { AttachmentPatientItem } from '@/types/attachment'
 import { FileUploadZone } from './file-upload-zone'
-import { FileTypeFilter, getFileType } from './file-type-filter'
+import { FileTypeFilter } from './file-type-filter'
 import type { FileTypeFilter as FileTypeFilterEnum } from './file-type-filter'
 import { FileCard } from './file-card'
 import { SimplePreviewModal } from './simple-preview-modal'
+import { usePatientFiles } from '../../hooks/use-patient-files'
 import './patient-files-tab.css'
 
 const EMPTY_LABEL: Record<FileTypeFilterEnum, string> = {
@@ -23,58 +18,52 @@ const EMPTY_LABEL: Record<FileTypeFilterEnum, string> = {
 }
 
 export function PatientFilesTab({ patientId }: { patientId: string }) {
-  const queryClient = useQueryClient()
+  const {
+    filtered,
+    counts,
+    typeFilter,
+    previewFile,
+    isLoading,
+    setTypeFilter,
+    openPreview,
+    closePreview,
+    handleDelete,
+  } = usePatientFiles(patientId)
 
-  const [typeFilter, setTypeFilter] = useState<FileTypeFilterEnum>('all')
-  const [previewFile, setPreviewFile] = useState<AttachmentPatientItem | null>(
-    null,
-  )
+  function renderFiles() {
+    if (isLoading) {
+      return (
+        <div className="ph-files-tab__loading">
+          <Loader2 className="ph-files-tab__loading-icon" />
+          <p className="ph-files-tab__loading-label">
+            Sincronizando arquivos...
+          </p>
+        </div>
+      )
+    }
 
-  const { data: attachments = [], isLoading } = useQuery({
-    queryKey: ['patient-attachments', patientId],
-    queryFn: () => getPatientAttachments(patientId),
-    enabled: Boolean(patientId),
-  })
+    if (filtered.length === 0) {
+      return (
+        <div className="ph-files-tab__empty">
+          <FileSearch className="ph-files-tab__empty-icon" />
+          <p className="ph-files-tab__empty-label">{EMPTY_LABEL[typeFilter]}</p>
+        </div>
+      )
+    }
 
-  // ToDo: sort on backend, not on front
-  const sorted = useMemo(
-    () =>
-      [...attachments].sort(
-        (a, b) =>
-          new Date(b.uploadedAt).getTime() - new Date(a.uploadedAt).getTime(),
-      ),
-    [attachments],
-  )
-
-  const counts = useMemo<Record<FileTypeFilterEnum, number>>(
-    () => ({
-      all: sorted.length,
-      pdf: sorted.filter((f) => getFileType(f.type) === 'pdf').length,
-      image: sorted.filter((f) => getFileType(f.type) === 'image').length,
-      audio: sorted.filter((f) => getFileType(f.type) === 'audio').length,
-    }),
-    [sorted],
-  )
-
-  // ToDo: filter on backend, not on front
-  const filtered = useMemo(
-    () =>
-      typeFilter === 'all'
-        ? sorted
-        : sorted.filter((f) => getFileType(f.type) === typeFilter),
-    [sorted, typeFilter],
-  )
-
-  const { mutate: removeFile } = useMutation({
-    mutationFn: deleteAttachment,
-    onSuccess: () => {
-      queryClient.invalidateQueries({
-        queryKey: ['patient-attachments', patientId],
-      })
-      toast.success('Arquivo removido.')
-    },
-    onError: () => toast.error('Erro ao remover arquivo.'),
-  })
+    return (
+      <div className="ph-files-tab__grid">
+        {filtered.map((file) => (
+          <FileCard
+            key={file.id}
+            file={file}
+            onPreview={openPreview}
+            onDelete={handleDelete}
+          />
+        ))}
+      </div>
+    )
+  }
 
   return (
     <div className="ph-files-tab">
@@ -86,35 +75,9 @@ export function PatientFilesTab({ patientId }: { patientId: string }) {
         onFilterChange={setTypeFilter}
       />
 
-      {isLoading ? (
-        <div className="ph-files-tab__loading">
-          <Loader2 className="ph-files-tab__loading-icon" />
-          <p className="ph-files-tab__loading-label">
-            Sincronizando arquivos...
-          </p>
-        </div>
-      ) : filtered.length === 0 ? (
-        <div className="ph-files-tab__empty">
-          <FileSearch className="ph-files-tab__empty-icon" />
-          <p className="ph-files-tab__empty-label">{EMPTY_LABEL[typeFilter]}</p>
-        </div>
-      ) : (
-        <div className="ph-files-tab__grid">
-          {filtered.map((file) => (
-            <FileCard
-              key={file.id}
-              file={file}
-              onPreview={setPreviewFile}
-              onDelete={removeFile}
-            />
-          ))}
-        </div>
-      )}
+      {renderFiles()}
 
-      <SimplePreviewModal
-        file={previewFile}
-        onClose={() => setPreviewFile(null)}
-      />
+      <SimplePreviewModal file={previewFile} onClose={closePreview} />
     </div>
   )
 }

@@ -1,6 +1,6 @@
 import { useQuery } from '@tanstack/react-query'
 import { getPatientProfileById } from '@/api/patient-profiles/get-patient-profile-by-id'
-import type { IPatientProfile } from '@/types/patient-profile'
+import type { IPatientProfile } from '@/types/patient-profile/patient-profile'
 
 type IusePatient = {
   patient: IPatientProfile | null

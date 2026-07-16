@@ -30,4 +30,14 @@ export class Normalizer {
     if (!value || typeof value !== 'string') return ''
     return value.replace(/\s/g, '_')
   }
+
+  static initials = (name: string | null | undefined): string => {
+    if (!name || typeof name !== 'string') return ''
+    return name
+      .split(' ')
+      .slice(0, 2)
+      .map((part) => part[0] ?? '')
+      .join('')
+      .toUpperCase()
+  }
 }

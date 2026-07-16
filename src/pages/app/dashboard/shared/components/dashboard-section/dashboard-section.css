@@ -1,0 +1,31 @@
+@reference "../../../../../../global.css";
+
+@layer components {
+  .dsh-section-root {
+    @apply flex flex-col gap-4;
+  }
+
+  .dsh-section-header {
+    @apply flex flex-col gap-1 sm:flex-row sm:items-start sm:justify-between;
+  }
+
+  .dsh-section-title {
+    @apply text-lg font-semibold text-foreground;
+  }
+
+  .dsh-section-index {
+    @apply font-medium text-muted-foreground;
+  }
+
+  .dsh-section-description {
+    @apply text-sm text-muted-foreground;
+  }
+
+  .dsh-section-separator {
+    @apply bg-border;
+  }
+
+  .dsh-section-content {
+    @apply flex flex-col gap-4;
+  }
+}

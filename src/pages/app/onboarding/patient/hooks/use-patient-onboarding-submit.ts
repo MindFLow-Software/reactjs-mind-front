@@ -6,7 +6,7 @@ import { claimPatientProfileByAccessCode } from '@/api/patient-profiles/claim-pa
 import { createOwnPatientProfile } from '@/api/patient-profiles/create-own-patient-profile'
 import type { CreatePatientProfileByAccessCodeData } from '@/validators/patient-profile/form/create-patient-profile-by-access-code-schema'
 
-interface UsePatientOnboardingSubmitReturn {
+type UsePatientOnboardingSubmitReturn = {
   submit: (data: CreatePatientProfileByAccessCodeData) => Promise<void>
   isSubmitting: boolean
 }

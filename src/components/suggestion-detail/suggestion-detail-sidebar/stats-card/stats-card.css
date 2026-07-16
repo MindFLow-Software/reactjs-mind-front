@@ -1,0 +1,35 @@
+@reference "../../../../global.css";
+
+@layer components {
+  .sdm-stats-card {
+    @apply overflow-hidden p-0!;
+  }
+
+  .sdm-stats-grid {
+    @apply grid grid-cols-2;
+  }
+
+  .sdm-stat {
+    @apply p-3;
+  }
+
+  .sdm-stat-divider-right {
+    @apply border-r border-border;
+  }
+
+  .sdm-stat-divider-bottom {
+    @apply border-b border-border;
+  }
+
+  .sdm-stat-head {
+    @apply mb-0.5 flex items-center gap-1 text-muted-foreground;
+  }
+
+  .sdm-stat-label {
+    @apply text-[10px] font-medium;
+  }
+
+  .sdm-stat-value {
+    @apply text-[15px] font-bold tabular-nums text-foreground;
+  }
+}

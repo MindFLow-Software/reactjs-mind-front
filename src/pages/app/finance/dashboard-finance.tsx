@@ -3,12 +3,12 @@
 import { Helmet } from 'react-helmet-async'
 
 import { useHeaderStore } from '@/store/use-header-store'
-import { PendingPaymentsCard } from './components/pending-payments-card'
-import { AverageTicketCard } from './components/average-ticket-card'
+import { PendingPaymentsCard } from './components/pending-payments-card/pending-payments-card'
+import { AverageTicketCard } from './components/average-ticket-card/average-ticket-card'
 import { useEffect } from 'react'
-import { MonthlyRevenueCard } from './components/monthly-revenue-card'
-import { TransactionStatusOverview } from './components/transaction-status-overview'
-import { TransactionsValueChart } from './components/transactions-value-chart'
+import { MonthlyRevenueCard } from './components/monthly-revenue-card/monthly-revenue-card'
+import { TransactionStatusOverview } from './components/transaction-status-overview/transaction-status-overview'
+import { TransactionsValueChart } from './components/transactions-value-chart/transactions-value-chart'
 import './dashboard-finance.css'
 
 export function DashboardFinance() {

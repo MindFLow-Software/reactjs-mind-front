@@ -1,5 +1,5 @@
 import { api } from '@/lib/axios'
-import type { IMutationResult } from '@/types/api'
+import type { IMutationResult } from '@/types/shared/mutation-result'
 
 import type { RegisterPatientViaRegistrationLinkData } from '@/validators/register-patient-via-registration-link/form/register-patient-via-registration-link-schema'
 

@@ -1,0 +1,88 @@
+@reference "../../../../../../../global.css";
+
+@layer components {
+  .gim-content {
+    @apply max-w-xl! gap-0 overflow-hidden rounded-2xl p-0!;
+  }
+
+  .gim-header {
+    @apply border-b border-border bg-muted/40 px-6 py-5;
+  }
+
+  .gim-title {
+    @apply flex items-center gap-3 text-base font-semibold text-foreground;
+  }
+
+  .gim-title-icon {
+    @apply flex size-9 shrink-0 items-center justify-center rounded-xl bg-primary text-primary-foreground;
+  }
+
+  .gim-description {
+    @apply pl-12 pt-0.5 text-sm text-muted-foreground;
+  }
+
+  .gim-body {
+    @apply p-6;
+  }
+
+  .gim-blank {
+    @apply flex flex-col items-center justify-center gap-5 py-10;
+  }
+
+  .gim-blank-icon-box {
+    @apply flex h-20 w-20 items-center justify-center rounded-2xl bg-muted;
+  }
+
+  .gim-blank-icon {
+    @apply h-9 w-9 text-muted-foreground/40;
+  }
+
+  .gim-blank-text {
+    @apply max-w-xs text-center text-sm leading-relaxed text-muted-foreground;
+  }
+
+  .gim-generate-btn {
+    @apply w-full max-w-xs cursor-pointer gap-2 font-medium;
+  }
+
+  .gim-link-view {
+    @apply flex flex-col items-center gap-5;
+  }
+
+  .gim-qr-box {
+    @apply rounded-2xl border border-border bg-card p-5 shadow-sm;
+  }
+
+  .gim-qr-hint {
+    @apply text-center text-xs text-muted-foreground;
+  }
+
+  .gim-link-actions {
+    @apply flex w-full flex-col gap-2;
+  }
+
+  .gim-link-row {
+    @apply flex items-center gap-2 rounded-lg border border-border bg-muted/30 px-3 py-2;
+  }
+
+  .gim-link-url {
+    @apply min-w-0 flex-1 select-all overflow-x-auto whitespace-nowrap font-mono text-xs text-muted-foreground;
+  }
+
+  .gim-copy-btn {
+    @apply inline-flex h-7 w-20 shrink-0 cursor-pointer items-center justify-center gap-1.5
+           rounded-md text-xs font-medium transition-colors;
+  }
+
+  .gim-copy-btn--idle {
+    @apply bg-secondary text-secondary-foreground hover:bg-secondary/70;
+  }
+
+  .gim-copy-btn--copied {
+    @apply bg-emerald-500/10 text-emerald-600 dark:bg-emerald-500/15 dark:text-emerald-400;
+  }
+
+  .gim-refresh-btn {
+    @apply w-full cursor-pointer gap-2 text-muted-foreground hover:text-foreground;
+  }
+}

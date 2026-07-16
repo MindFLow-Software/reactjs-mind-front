@@ -6,7 +6,7 @@ import { cn } from '@/lib/utils'
 
 import { CHIPS, type StatusFilter } from './timeline.helpers'
 
-interface TimelineFilterBarProps {
+type TimelineFilterBarProps = {
   search: {
     value: string
     onChange: (value: string) => void

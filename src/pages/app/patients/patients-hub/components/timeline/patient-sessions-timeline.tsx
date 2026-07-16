@@ -3,21 +3,19 @@
 import { useMemo, useState } from 'react'
 import { History } from 'lucide-react'
 
-import { Pagination } from '@/components/pagination'
+import { Pagination } from '@/components/pagination/pagination'
 
 import { MonthGroup } from './month-group'
 import { TimelineFilterBar } from './timeline-filter-bar'
 import {
   CHIPS,
   groupByMonth,
-  type Session,
+  type ITimelineSessionItem,
   type StatusFilter,
 } from './timeline.helpers'
 import './patient-sessions-timeline.css'
 
-interface PatientSessionsTimelineProps {
-  sessions: Session[]
-  patientName: string
+type PatientSessionsTimelinePagination = {
   meta: {
     totalCount: number
     perPage: number
@@ -26,13 +24,18 @@ interface PatientSessionsTimelineProps {
   onPageChange: (newIndex: number) => void
 }
 
+type PatientSessionsTimelineProps = {
+  sessions: ITimelineSessionItem[]
+  patientName: string
+  pagination: PatientSessionsTimelinePagination
+}
+
 export function PatientSessionsTimeline({
   sessions,
   patientName,
-  meta,
-  pageIndex,
-  onPageChange,
+  pagination,
 }: PatientSessionsTimelineProps) {
+  const { meta, pageIndex, onPageChange } = pagination
   const [statusFilter, setStatusFilter] = useState<StatusFilter>('all')
   const [searchText, setSearchText] = useState('')
 

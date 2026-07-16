@@ -1,5 +1,5 @@
 import { api } from '@/lib/axios'
-import type { ISuggestion } from '@/types/suggestion'
+import type { ISuggestion } from '@/types/suggestion/suggestion'
 
 export async function getMostVotedSuggestions() {
   const { data } = await api.get<ISuggestion[]>(

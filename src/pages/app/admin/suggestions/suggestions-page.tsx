@@ -7,9 +7,9 @@ import { LayoutGrid } from 'lucide-react'
 import { useHeaderStore } from '@/store/use-header-store'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 
-import { MostVotedSuggestionsCard } from './components/most-voted-suggestions-card'
-import { PendingSuggestionsModeration } from './components/pending-suggestions-moderation'
-import { SuggestionRanking } from './components/ranking-table'
+import { MostVotedSuggestionsCard } from './components/most-voted-suggestions-card/most-voted-suggestions-card'
+import { PendingSuggestionsModeration } from './components/pending-suggestions-moderation/pending-suggestions-moderation'
+import { SuggestionRanking } from './components/ranking-table/ranking-table'
 import './suggestions-page.css'
 
 export function AdminSuggestionsPage() {

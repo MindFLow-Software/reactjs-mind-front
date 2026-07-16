@@ -1,0 +1,19 @@
+@reference "../../../../../../global.css";
+
+@layer components {
+  .phd-error {
+    @apply flex h-[400px] flex-col items-center justify-center gap-4;
+  }
+
+  .phd-error-icon {
+    @apply h-10 w-10 text-destructive/50;
+  }
+
+  .phd-error-title {
+    @apply font-medium text-destructive;
+  }
+
+  .phd-error-subtitle {
+    @apply text-sm text-muted-foreground;
+  }
+}

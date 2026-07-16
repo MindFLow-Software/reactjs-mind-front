@@ -1,7 +1,7 @@
 import { api } from '@/lib/axios'
-import type { IMutationResult } from '@/types/api'
+import type { IMutationResult } from '@/types/shared/mutation-result'
 
-export interface UpdateSuggestionParams {
+export type UpdateSuggestionParams = {
   id: string
   status?: string
   title?: string

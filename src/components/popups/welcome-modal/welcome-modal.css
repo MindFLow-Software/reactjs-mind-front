@@ -1,0 +1,124 @@
+@reference "../../../global.css";
+
+@layer components {
+  .wm-overlay {
+    @apply fixed inset-0 z-50 flex items-center justify-center p-4 transition-all duration-300;
+  }
+  .wm-overlay-open {
+    @apply bg-slate-900/25 backdrop-blur-sm opacity-100;
+  }
+  .wm-overlay-closed {
+    @apply bg-slate-900/0 backdrop-blur-none opacity-0 pointer-events-none;
+  }
+
+  .wm-container {
+    @apply relative w-full max-w-2xl transition-all duration-500 ease-[cubic-bezier(0.34,1.56,0.64,1)];
+  }
+  .wm-container-open {
+    @apply scale-100 opacity-100 translate-y-0;
+  }
+  .wm-container-closed {
+    @apply scale-90 opacity-0 translate-y-8;
+  }
+
+  .wm-close-btn {
+    @apply cursor-pointer absolute right-4 top-4 z-10 flex h-7 w-7 items-center justify-center rounded-full text-muted-foreground transition-all duration-200 hover:bg-muted hover:text-foreground;
+  }
+
+  .wm-card {
+    @apply relative overflow-hidden rounded-2xl bg-card shadow-2xl shadow-black/10;
+  }
+
+  .wm-grid-bg {
+    @apply absolute inset-0 opacity-40;
+    background-image:
+      linear-gradient(to right, var(--welcome-grid-line) 1px, transparent 1px),
+      linear-gradient(to bottom, var(--welcome-grid-line) 1px, transparent 1px);
+    background-size: 28px 28px;
+  }
+
+  .wm-glow {
+    @apply absolute inset-x-0 top-0 h-44 rounded-t-xl bg-gradient-to-b from-sky-300/80 via-blue-300/55 to-transparent;
+  }
+
+  .wm-content {
+    @apply relative px-8 py-10 sm:px-10 sm:py-12;
+  }
+
+  .wm-icon-wrap {
+    @apply mb-6 flex justify-center;
+  }
+
+  .wm-icon-box {
+    @apply flex h-16 w-16 items-center justify-center rounded-xl border border-border bg-card shadow-md
+           transition-all duration-500 delay-100;
+  }
+  .wm-icon-box-open {
+    @apply scale-100 opacity-100;
+  }
+  .wm-icon-box-closed {
+    @apply scale-75 opacity-0;
+  }
+
+  .wm-badge {
+    @apply mb-5 flex justify-center transition-all duration-500 delay-150;
+  }
+  .wm-badge-open {
+    @apply translate-y-0 opacity-100;
+  }
+  .wm-badge-closed {
+    @apply translate-y-3 opacity-0;
+  }
+
+  .wm-badge-pill {
+    @apply inline-flex items-center rounded-full border border-border bg-card px-4 py-1.5 text-xs font-medium text-muted-foreground shadow-sm;
+  }
+
+  .wm-title {
+    @apply mb-4 text-center text-xl font-semibold tracking-tight text-foreground
+           transition-all duration-500 delay-200 text-balance;
+  }
+  .wm-title-open {
+    @apply translate-y-0 opacity-100;
+  }
+  .wm-title-closed {
+    @apply translate-y-3 opacity-0;
+  }
+
+  .wm-body {
+    @apply mb-8 text-center text-muted-foreground leading-relaxed text-sm transition-all duration-500 delay-300 text-pretty;
+  }
+  .wm-body a {
+    @apply text-foreground/80 underline underline-offset-2 decoration-border;
+  }
+  .wm-body a:hover {
+    @apply decoration-muted-foreground;
+  }
+  .wm-body-open {
+    @apply translate-y-0 opacity-100;
+  }
+  .wm-body-closed {
+    @apply translate-y-3 opacity-0;
+  }
+
+  .wm-button {
+    @apply cursor-pointer relative w-full overflow-hidden rounded-full bg-gradient-to-r
+           from-blue-500 to-blue-700 py-6 text-sm font-semibold text-white shadow-lg shadow-blue-500/25
+           transition-all duration-300 hover:shadow-xl hover:shadow-blue-500/30 hover:from-blue-600
+           hover:to-blue-800 border-0 delay-500;
+  }
+  .wm-button-open {
+    @apply translate-y-0 opacity-100;
+  }
+  .wm-button-closed {
+    @apply translate-y-4 opacity-0;
+  }
+
+  .wm-button-content {
+    @apply relative z-10 flex items-center justify-center gap-2;
+  }
+
+  .wm-button-icon {
+    @apply flex h-6 w-6 items-center justify-center rounded-full bg-white/20 transition-transform duration-300 group-hover:translate-x-0.5;
+  }
+}

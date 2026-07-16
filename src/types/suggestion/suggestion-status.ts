@@ -1,0 +1,8 @@
+export enum SuggestionStatus {
+  PENDING = 'PENDING',
+  OPEN = 'OPEN',
+  UNDER_REVIEW = 'UNDER_REVIEW',
+  PLANNED = 'PLANNED',
+  IMPLEMENTED = 'IMPLEMENTED',
+  REJECTED = 'REJECTED',
+}

@@ -13,13 +13,13 @@ import './patient-status-dialog.css'
 
 type PatientStatusMode = 'archive' | 'reactivate'
 
-interface PatientStatusAction {
+type PatientStatusAction = {
   onConfirm: () => Promise<void>
   onClose: () => void
   isPending: boolean
 }
 
-interface PatientStatusDialogProps {
+type PatientStatusDialogProps = {
   mode: PatientStatusMode
   fullName: string
   action: PatientStatusAction

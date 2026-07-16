@@ -1,0 +1,127 @@
+@reference "../../global.css";
+
+@layer components {
+  .mc-card {
+    @apply relative min-h-36 max-h-40 w-full rounded-md border bg-card shadow-sm px-4!;
+  }
+
+  .mc-card-grid {}
+
+  .mc-card-stacked {}
+
+  .mc-card-md {
+    @apply max-w-80 shrink-0;
+  }
+
+  .mc-accent-bar {
+    @apply absolute inset-x-0 top-0 h-1 bg-linear-to-r;
+  }
+
+  .mc-content {
+    @apply relative px-0!;
+  }
+
+  .mc-content-grid {
+    @apply grid grid-cols-[48px_1fr] items-start gap-x-4 gap-y-1;
+  }
+
+  .mc-content-stacked {
+    @apply flex flex-col;
+  }
+
+  .mc-icon {
+    @apply row-span-2 flex size-12 shrink-0 items-center justify-center rounded-full;
+  }
+
+  .mc-header {
+    @apply flex! items-center! gap-3 p-0!;
+  }
+
+  .mc-header-icon {
+    @apply flex size-9 shrink-0 items-center justify-center rounded-full ring-1;
+  }
+
+  .mc-header-label {
+    @apply text-sm font-semibold leading-tight text-foreground;
+  }
+
+  .mc-value-skeleton {
+    @apply h-8 w-14;
+  }
+
+  .mc-value-skeleton-stacked {
+    @apply mt-3 h-9 w-24;
+  }
+
+  .mc-value {
+    @apply font-bold leading-none tabular-nums;
+  }
+
+  .mc-value-grid {
+    @apply text-xl;
+  }
+
+  .mc-value-stacked {
+    @apply mt-3 text-2xl;
+  }
+
+  .mc-label {
+    @apply text-sm font-medium text-muted-foreground;
+  }
+
+  .mc-trend-stacked {
+    @apply mt-2 flex items-center gap-1.5;
+  }
+
+  .mc-trend-badge {
+    @apply inline-flex items-center gap-1 rounded-md px-1.5 py-0.5 text-xs font-semibold;
+  }
+
+  .mc-trend-up {
+    @apply bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-400;
+  }
+
+  .mc-trend-down {
+    @apply bg-red-100 text-red-700 dark:bg-red-900/30 dark:text-red-400;
+  }
+
+  .mc-trend-label {
+    @apply text-xs text-muted-foreground;
+  }
+
+  .mc-trend-action {
+    @apply absolute -top-1 -right-2 flex items-center gap-1.5 rounded-4xl px-1 py-0.5 text-xs font-medium;
+  }
+
+  .mc-progress-loading {
+    @apply mt-2 flex flex-col gap-2;
+  }
+
+  .mc-progress-loading-bar {
+    @apply h-1.5 w-full rounded-full;
+  }
+
+  .mc-progress-row {
+    @apply mt-2 flex items-center gap-1.5;
+  }
+
+  .mc-progress-track {
+    @apply mt-2 h-1.5 w-full overflow-hidden rounded-full bg-muted;
+  }
+
+  .mc-progress-fill {
+    @apply h-full rounded-full transition-all;
+  }
+
+  .mc-body-error {
+    @apply flex flex-col gap-2;
+  }
+
+  .mc-body-error-row {
+    @apply flex items-center gap-2 text-red-500;
+  }
+
+  .mc-retry-btn {
+    @apply flex cursor-pointer items-center gap-1 text-xs font-semibold text-blue-500 hover:underline;
+  }
+}

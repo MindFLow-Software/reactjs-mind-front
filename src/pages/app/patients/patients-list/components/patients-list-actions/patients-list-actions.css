@@ -1,0 +1,19 @@
+@reference "../../../../../../global.css";
+
+@layer components {
+  .pla-root {
+    @apply flex items-center gap-2;
+  }
+
+  .pla-action-btn {
+    @apply flex h-9 cursor-pointer gap-2 rounded-xl border border-border bg-background px-4
+           text-[13px] font-medium shadow-sm transition-all
+           hover:-translate-y-px hover:bg-muted active:scale-[0.98];
+  }
+
+  .pla-primary-btn {
+    @apply flex h-9 cursor-pointer items-center gap-2 rounded-xl bg-blue-600 px-4
+           text-[13px] font-medium text-white shadow-[0_2px_8px_rgba(37,99,235,0.25)]
+           transition-all hover:-translate-y-px hover:bg-blue-700 active:scale-[0.98];
+  }
+}

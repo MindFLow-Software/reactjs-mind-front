@@ -1,9 +1,9 @@
 import { api } from '@/lib/axios'
-import type { IMutationResult } from '@/types/api'
+import type { IMutationResult } from '@/types/shared/mutation-result'
 
 export type PatientInviteResponseAction = 'accept' | 'reject'
 
-export interface ISubmitPatientInviteResponseParams {
+export type ISubmitPatientInviteResponseParams = {
   token: string | undefined
   action: PatientInviteResponseAction
 }

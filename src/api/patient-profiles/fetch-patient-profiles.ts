@@ -1,8 +1,10 @@
 import { api } from '@/lib/axios'
-import type { Gender, IPatient, IsessionVolume } from '@/types/patient'
-import type { PaginationMeta } from '@/types/pagination'
+import type { IPatient } from '@/types/patient/patient'
+import type { ISessionVolume } from '@/types/patient/session-volume'
+import type { Gender } from '@/types/shared/enums'
+import type { IPaginationMeta } from '@/types/shared/pagination-meta'
 
-export interface IgetPatientsQueryParams {
+export type IgetPatientsQueryParams = {
   pageIndex?: number
   perPage?: number
   filter?: string
@@ -10,12 +12,12 @@ export interface IgetPatientsQueryParams {
   isActive?: boolean
   orderBy?: string
   order?: 'asc' | 'desc'
-  sessionVolume?: IsessionVolume | null
+  sessionVolume?: ISessionVolume | null
 }
 
-export interface IgetPatientProfilesResponse {
+export type IgetPatientProfilesResponse = {
   patients: IPatient[]
-  meta: PaginationMeta
+  meta: IPaginationMeta
 }
 
 export async function fetchPatientProfiles({

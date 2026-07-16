@@ -1,0 +1,75 @@
+@reference "../../../../../global.css";
+
+@layer components {
+  .vr-timer-card {
+    @apply w-full border-none shadow-[0_8px_30px_rgb(0,0,0,0.04)] bg-card rounded-xl p-8 flex flex-col items-center justify-center transition-all duration-500;
+  }
+
+  .vr-timer-body {
+    @apply relative z-10 w-full max-w-md flex flex-col items-center gap-6;
+  }
+
+  .vr-timer-header {
+    @apply flex justify-between w-full items-center px-4;
+  }
+
+  .vr-timer-status-icon {
+    @apply p-1.5 rounded-md transition-colors;
+  }
+
+  .vr-timer-status-label {
+    @apply text-[10px] font-bold text-muted-foreground uppercase tracking-widest;
+  }
+
+  .vr-timer-clock {
+    @apply flex items-center gap-2 bg-muted/50 px-3 py-1 rounded-full border border-border/40;
+  }
+
+  .vr-timer-clock-time {
+    @apply text-[11px] font-bold text-foreground/70 tabular-nums;
+  }
+
+  .vr-timer-ring-wrap {
+    @apply relative flex items-center justify-center;
+  }
+
+  .vr-timer-ring-svg {
+    @apply transform -rotate-90 w-64 h-64 sm:w-72 sm:h-72;
+  }
+
+  .vr-timer-ring-progress {
+    @apply transition-colors duration-500;
+  }
+
+  .vr-timer-readout {
+    @apply absolute flex flex-col items-center justify-center text-center;
+  }
+
+  .vr-timer-readout-value {
+    @apply text-6xl font-black tracking-tighter tabular-nums leading-none transition-colors duration-500;
+  }
+
+  .vr-timer-goal-label {
+    @apply text-[10px] font-bold text-muted-foreground uppercase tracking-[0.2em];
+  }
+
+  .vr-timer-goal-value {
+    @apply px-3 py-0.5 rounded-full bg-muted text-muted-foreground text-[11px] font-bold tabular-nums;
+  }
+
+  .vr-timer-progress-row {
+    @apply w-full flex flex-col gap-3 px-4;
+  }
+
+  .vr-timer-progress-meta {
+    @apply flex justify-between items-end text-[10px] font-bold text-muted-foreground uppercase tracking-wider;
+  }
+
+  .vr-timer-progress-track {
+    @apply w-full h-2 bg-muted/30 rounded-full overflow-hidden border border-border/20;
+  }
+
+  .vr-timer-progress-fill {
+    @apply h-full transition-all duration-700 ease-out;
+  }
+}

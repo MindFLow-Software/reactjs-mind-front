@@ -30,7 +30,7 @@
   }
 
   .pf-card-footer {
-    @apply pb-4 mt-auto;
+    @apply flex gap-2 pb-4 mt-auto;
   }
 
   /* Feature bullet list — shared by patient-card.tsx and psychologist-card.tsx */

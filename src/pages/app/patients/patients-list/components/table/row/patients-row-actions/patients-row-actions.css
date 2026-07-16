@@ -1,0 +1,27 @@
+@reference "../../../../../../../../global.css";
+
+@layer components {
+  .ptr-actions {
+    @apply flex items-center justify-end gap-0.5;
+  }
+
+  .ptr-action-btn {
+    @apply size-8 cursor-pointer text-muted-foreground hover:text-foreground;
+  }
+
+  .ptr-action-icon {
+    @apply size-4;
+  }
+
+  .ptr-menu-item {
+    @apply cursor-pointer;
+  }
+
+  .ptr-menu-item-archive {
+    @apply cursor-pointer text-destructive focus:text-destructive;
+  }
+
+  .ptr-menu-item-reactivate {
+    @apply cursor-pointer text-emerald-700 focus:text-emerald-700 dark:text-emerald-400 dark:focus:text-emerald-400;
+  }
+}

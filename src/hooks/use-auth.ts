@@ -1,7 +1,7 @@
 import { useQuery } from '@tanstack/react-query'
 
 import { getProfile } from '@/api/auth/get-profile'
-import type { IMeResponse } from '@/types/me'
+import type { IMeResponse } from '@/types/me/me-response'
 
 type IuseAuth = {
   isError: boolean

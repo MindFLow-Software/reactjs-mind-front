@@ -1,0 +1,35 @@
+@reference "../../../../../../global.css";
+
+/* Single source for the patient form field styling — shared by every step of
+   the create and edit flows. */
+@layer components {
+  .patient-input {
+    @apply h-[38px] border-border text-[13.5px] text-foreground;
+    @apply placeholder:text-muted-foreground;
+    @apply focus-visible:border-blue-600 focus-visible:ring-[3px] focus-visible:ring-blue-600/18;
+  }
+
+  .patient-input--invalid {
+    @apply border-red-600 focus-visible:ring-red-600/20;
+  }
+
+  .patient-form-grid-2 {
+    @apply grid grid-cols-2 items-start gap-x-3.5 gap-y-3;
+  }
+
+  .patient-form-grid-3 {
+    @apply grid grid-cols-3 items-start gap-x-3.5 gap-y-3;
+  }
+
+  .patient-field-hint {
+    @apply text-[10.5px] font-medium text-muted-foreground;
+  }
+
+  .patient-icon-prefix {
+    @apply pointer-events-none absolute left-3 top-1/2 size-[14px] -translate-y-1/2 text-muted-foreground;
+  }
+
+  .patient-value-hint {
+    @apply mt-1 text-[11.5px] text-muted-foreground;
+  }
+}

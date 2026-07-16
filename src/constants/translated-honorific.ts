@@ -1,6 +1,6 @@
-import { Honorific } from '@/types/psychologist'
+import { Honorific } from '@/types/shared/enums'
 
-export const translatedHonorific = {
+export const translatedHonorific: Record<Honorific, string> = {
   [Honorific.MASC_DR]: 'Dr.',
   [Honorific.FEMININE_DR]: 'Dra.',
   [Honorific.MSC]: 'MSc.',

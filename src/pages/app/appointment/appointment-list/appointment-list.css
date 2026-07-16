@@ -1,0 +1,31 @@
+@reference "../../../../global.css";
+
+@layer components {
+  .apl-root {
+    @apply mt-6 flex h-[calc(100vh-10rem)] flex-col gap-5;
+  }
+
+  .apl-calendar-shell {
+    @apply relative flex-1 overflow-hidden rounded-xl border border-border bg-card shadow-sm;
+  }
+
+  .apl-calendar-skeleton-wrap {
+    @apply h-full p-4;
+  }
+
+  .apl-calendar-skeleton {
+    @apply h-full w-full rounded-lg;
+  }
+
+  .apl-error {
+    @apply flex h-[400px] flex-col items-center justify-center gap-4;
+  }
+
+  .apl-error-text {
+    @apply font-medium text-destructive;
+  }
+
+  .apl-error-retry {
+    @apply cursor-pointer text-sm text-muted-foreground underline hover:text-foreground;
+  }
+}

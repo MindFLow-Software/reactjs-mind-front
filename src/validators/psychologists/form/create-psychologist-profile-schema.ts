@@ -1,6 +1,5 @@
 import z from 'zod'
-import { Expertise } from '@/types/expertise'
-import { Honorific, Languages } from '@/types/psychologist'
+import { Expertise, Honorific, Languages } from '@/types/shared/enums'
 
 export const createPsychologistProfileSchema = z.object({
   professionalName: z.string().min(1, 'Obrigatório'),

@@ -21,13 +21,14 @@ import { getSuggestions } from '@/api/suggestions/get-suggestions'
 import { Input } from '@/components/ui/input'
 import { Button } from '@/components/ui/button'
 import { Dialog, DialogTrigger } from '@/components/ui/dialog'
-import { StatCard } from '@/components/stat-card'
+import { StatCard } from '@/components/stat-card/stat-card'
 import { cn } from '@/lib/utils'
-import type { SuggestionCategory } from '@/types/enums'
-import { SuggestionColumn } from './components/board/suggestion-column'
-import { SuggestionFilterChip } from './components/board/suggestion-filter-chip'
-import { CreateSuggestion } from './components/create/create-suggestion'
-import { SuggestionHelpButton } from './components/help/suggestion-help-button'
+import type { SuggestionCategory } from '@/types/suggestion/suggestion-category'
+import type { SuggestionStatus } from '@/types/suggestion/suggestion-status'
+import { SuggestionColumn } from './components/board/suggestion-column/suggestion-column'
+import { SuggestionFilterChip } from './components/board/suggestion-filter-chip/suggestion-filter-chip'
+import { CreateSuggestion } from './components/create/create-suggestion/create-suggestion'
+import { SuggestionHelpButton } from './components/help/suggestion-help-button/suggestion-help-button'
 import {
   SUGGESTION_FILTER_CATEGORIES,
   SUGGESTION_COLUMN_CONFIG,
@@ -55,7 +56,7 @@ export function SuggestionPage() {
 
   const totalCount = suggestions?.length ?? 0
 
-  const filterByStatus = (status: SuggestionCategory | string) => {
+  const filterByStatus = (status: SuggestionStatus) => {
     let filtered = suggestions?.filter((s) => s.status === status) ?? []
     if (selectedCategory)
       filtered = filtered.filter((s) => s.category === selectedCategory)
@@ -206,9 +207,11 @@ export function SuggestionPage() {
             return (
               <SuggestionColumn
                 key={column.status}
-                title={column.title}
-                icon={<Icon className={cn('size-4', column.iconColor)} />}
-                badgeClass={column.badgeClass}
+                column={{
+                  title: column.title,
+                  icon: <Icon className={cn('size-4', column.iconColor)} />,
+                  badgeClass: column.badgeClass,
+                }}
                 suggestions={filterByStatus(column.status)}
                 isLoading={isLoading}
               />

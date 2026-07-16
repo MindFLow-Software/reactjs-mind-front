@@ -1,0 +1,27 @@
+@reference "../../../../../../global.css";
+
+@layer components {
+  .dsh-insight-card-root {
+    @apply border bg-card shadow-sm pb-2! gap-0!;
+  }
+
+  .dsh-insight-card-content {
+    @apply flex flex-col gap-2 p-4;
+  }
+
+  .dsh-insight-card-header {
+    @apply flex items-center justify-between;
+  }
+
+  .dsh-insight-card-title {
+    @apply text-sm font-semibold text-foreground;
+  }
+
+  .dsh-insight-card-description {
+    @apply text-sm text-muted-foreground;
+  }
+
+  .dsh-insight-card-action {
+    @apply mt-1 w-fit;
+  }
+}

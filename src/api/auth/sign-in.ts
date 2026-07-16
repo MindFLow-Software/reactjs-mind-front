@@ -1,7 +1,7 @@
 import { api } from '@/lib/axios'
-import type { ISessionRawResponse } from '@/types/api'
+import type { ISessionRawResponse } from '@/types/shared/session-raw-response'
 
-export interface SignInBody {
+export type SignInBody = {
   email: string
   password: string
 }

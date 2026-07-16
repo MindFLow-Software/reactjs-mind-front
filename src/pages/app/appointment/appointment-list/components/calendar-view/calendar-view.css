@@ -1,0 +1,191 @@
+@reference "../../../../../../global.css";
+
+@layer components {
+  .cv-container {
+    @apply flex h-full flex-col overflow-hidden rounded-xl border border-border bg-card;
+  }
+
+  /* ── toolbar ─────────────────────────────────────────────────────── */
+
+  .cv-toolbar {
+    @apply flex flex-col items-center justify-between gap-4 border-b border-border bg-muted/10 p-4 sm:flex-row;
+  }
+
+  .cv-toolbar-nav {
+    @apply flex items-center gap-4;
+  }
+
+  .cv-toolbar-group {
+    @apply flex rounded-lg border border-border bg-background p-1;
+  }
+
+  .cv-toolbar-nav-btn {
+    @apply size-7;
+  }
+
+  .cv-toolbar-title {
+    @apply text-sm font-bold uppercase tracking-widest text-foreground;
+  }
+
+  .cv-toolbar-actions {
+    @apply flex items-center gap-2;
+  }
+
+  .cv-toolbar-today {
+    @apply h-8 text-[10px] font-bold uppercase;
+  }
+
+  .cv-toolbar-view-btn {
+    @apply h-7 px-3 text-[10px] font-bold uppercase;
+  }
+
+  /* ── legend ──────────────────────────────────────────────────────── */
+
+  .cv-legend {
+    @apply flex flex-wrap items-center gap-4 border-t border-border bg-muted/30 px-5 py-3;
+  }
+
+  .cv-legend-item {
+    @apply flex items-center gap-1.5;
+  }
+
+  /* ── react-big-calendar shell overrides ─────────────────────────── */
+
+  .cv-container .rbc-calendar {
+    font-family: inherit;
+    @apply border-none! bg-transparent;
+  }
+
+  .cv-container .rbc-header {
+    @apply border-b border-border! bg-muted capitalize text-foreground;
+    padding: 12px 8px !important;
+    font-weight: 600 !important;
+    font-size: 13px;
+  }
+
+  .cv-container .rbc-time-view,
+  .cv-container .rbc-month-view {
+    @apply overflow-hidden rounded-xl border border-border! bg-card;
+  }
+
+  .cv-container .rbc-event {
+    @apply border-none! bg-transparent! p-0!;
+  }
+
+  .cv-container .rbc-off-range-bg {
+    @apply bg-muted!;
+    opacity: 0.5;
+  }
+
+  .cv-container .rbc-today {
+    @apply bg-primary/5!;
+  }
+
+  .cv-container .rbc-event-label {
+    @apply hidden!;
+  }
+
+  .cv-container .rbc-month-view .rbc-event {
+    @apply mb-px block truncate overflow-hidden rounded-[4px] whitespace-nowrap;
+    padding: 1px 6px !important;
+    font-size: 11px !important;
+    min-height: 18px !important;
+  }
+
+  .cv-container .rbc-event-content {
+    @apply overflow-hidden truncate whitespace-nowrap;
+  }
+
+  /* ── event card ──────────────────────────────────────────────────── */
+
+  .cv-event {
+    @apply flex h-full w-full cursor-pointer flex-col rounded-r-md border-l-[3px] px-2 py-1 transition-all;
+  }
+
+  .cv-event-body {
+    @apply flex items-center gap-1.5 overflow-hidden;
+  }
+
+  .cv-event-dot {
+    @apply size-1.5 shrink-0 rounded-full;
+  }
+
+  .cv-event-label {
+    @apply truncate text-[10px] font-bold leading-tight;
+  }
+
+  /* ── legend ──────────────────────────────────────────────────────── */
+
+  .cv-legend-dot {
+    @apply size-2 rounded-full;
+  }
+
+  .cv-legend-label {
+    @apply text-[10px] font-bold uppercase text-muted-foreground;
+  }
+
+  /* ── status colors — block (bg + border + label text) ──────────── */
+
+  .cv-status-scheduled {
+    @apply bg-blue-50 border-l-blue-500 dark:bg-blue-950/50;
+  }
+  .cv-status-scheduled .cv-event-label {
+    @apply text-blue-700 dark:text-blue-300;
+  }
+
+  .cv-status-rescheduled {
+    @apply bg-purple-50 border-l-purple-500 dark:bg-purple-950/50;
+  }
+  .cv-status-rescheduled .cv-event-label {
+    @apply text-purple-700 dark:text-purple-300;
+  }
+
+  .cv-status-attending {
+    @apply bg-amber-50 border-l-amber-500 dark:bg-amber-950/50;
+  }
+  .cv-status-attending .cv-event-label {
+    @apply text-amber-700 dark:text-amber-300;
+  }
+
+  .cv-status-finished {
+    @apply bg-emerald-50 border-l-emerald-500 dark:bg-emerald-950/50;
+  }
+  .cv-status-finished .cv-event-label {
+    @apply text-emerald-700 dark:text-emerald-300;
+  }
+
+  .cv-status-canceled {
+    @apply bg-rose-50 border-l-rose-500 dark:bg-rose-950/50;
+  }
+  .cv-status-canceled .cv-event-label {
+    @apply text-rose-700 dark:text-rose-300;
+  }
+
+  .cv-status-not-attend {
+    @apply bg-slate-50 border-l-slate-400 dark:bg-slate-900/50;
+  }
+  .cv-status-not-attend .cv-event-label {
+    @apply text-slate-600 dark:text-slate-400;
+  }
+
+  /* ── status colors — dot (event marker + legend swatch) ─────────── */
+
+  .cv-dot-scheduled {
+    @apply bg-blue-500;
+  }
+  .cv-dot-rescheduled {
+    @apply bg-purple-500;
+  }
+  .cv-dot-attending {
+    @apply bg-amber-500;
+  }
+  .cv-dot-finished {
+    @apply bg-emerald-500;
+  }
+  .cv-dot-canceled {
+    @apply bg-rose-500;
+  }
+  .cv-dot-not-attend {
+    @apply bg-slate-400;
+  }
+}

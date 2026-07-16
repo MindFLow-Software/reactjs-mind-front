@@ -9,15 +9,13 @@ import {
 } from 'react'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { toast } from 'sonner'
-import { format } from 'date-fns'
-import { ptBR } from 'date-fns/locale'
 
 import { getAnamnesis } from '@/api/patient-profiles/get-anamnesis'
 import { saveAnamnesis } from '@/api/patient-profiles/save-anamnesis'
-import type { IAnamnesisContent } from '@/types/clinical'
-import { AnamnesisPDFTemplate } from '@/utils/anamnesis-pdf-template'
+import type { IAnamnesisContent } from '@/types/clinical/anamnesis-content'
+import { AnamnesisPDFTemplate } from '@/templates/pdf/anamnesis-pdf-template'
 
-import type { AnamnesisBlock } from '../components/anamnesis/anamnesis-types'
+import type { IAnamnesisBlock } from '../components/anamnesis/anamnesis-types'
 import {
   buildContentFromBlocks,
   buildInitialBlocks,
@@ -30,22 +28,23 @@ import {
   writeAnamnesisDraft,
 } from '../components/anamnesis/anamnesis-draft-storage'
 import { usePdfExport } from './use-pdf-export'
-import { copyToClipboard } from '@/utils/copy-to-clipboard'
+import { Clipboard } from '@/utils/clipboard'
+import { Time } from '@/utils/time'
 
-interface EditorState {
-  blocks: AnamnesisBlock[]
+type EditorState = {
+  blocks: IAnamnesisBlock[]
   activeBlockId: string | null
   hydrated: boolean
   hasLocalDraft: boolean
 }
 
 type EditorAction =
-  | { type: 'HYDRATE'; blocks: AnamnesisBlock[]; hasLocalDraft: boolean }
+  | { type: 'HYDRATE'; blocks: IAnamnesisBlock[]; hasLocalDraft: boolean }
   | { type: 'SET_ACTIVE_BLOCK'; id: string | null }
-  | { type: 'UPDATE_BLOCK'; id: string; updates: Partial<AnamnesisBlock> }
-  | { type: 'ADD_BLOCK'; block: AnamnesisBlock }
+  | { type: 'UPDATE_BLOCK'; id: string; updates: Partial<IAnamnesisBlock> }
+  | { type: 'ADD_BLOCK'; block: IAnamnesisBlock }
   | { type: 'DELETE_BLOCK'; id: string }
-  | { type: 'DISCARD_DRAFT'; blocks: AnamnesisBlock[] }
+  | { type: 'DISCARD_DRAFT'; blocks: IAnamnesisBlock[] }
   | { type: 'SET_HAS_LOCAL_DRAFT'; value: boolean }
 
 const INITIAL_EDITOR_STATE: EditorState = {
@@ -91,13 +90,13 @@ function editorReducer(state: EditorState, action: EditorAction): EditorState {
   }
 }
 
-interface UseAnamnesisEditorOptions {
+type UseAnamnesisEditorOptions = {
   patientId: string
   patientName?: string
 }
 
-interface UseAnamnesisEditorReturn {
-  blocks: AnamnesisBlock[]
+type UseAnamnesisEditorReturn = {
+  blocks: IAnamnesisBlock[]
   activeBlockId: string | null
   hasLocalDraft: boolean
   hydrated: boolean
@@ -107,7 +106,7 @@ interface UseAnamnesisEditorReturn {
   pdfExportedSuccessfully: boolean
   content: string
   setActiveBlockId: (id: string | null) => void
-  updateBlock: (id: string, updates: Partial<AnamnesisBlock>) => void
+  updateBlock: (id: string, updates: Partial<IAnamnesisBlock>) => void
   addBlock: () => void
   deleteBlock: (id: string) => void
   discardDraft: () => void
@@ -126,16 +125,17 @@ export function useAnamnesisEditor({
   const [copied, setCopied] = useState(false)
 
   const lastPersistedHash = useRef('')
-  const serverBlocksRef = useRef<AnamnesisBlock[]>([])
+  const serverBlocksRef = useRef<IAnamnesisBlock[]>([])
 
   const { data } = useQuery({
     queryKey: ['patient-hub', patientId, 'anamnesis'],
     queryFn: () => getAnamnesis(patientId),
   })
 
-  const { mutate, isPending } = useMutation({
-    mutationFn: (newData: IAnamnesisContent) =>
-      saveAnamnesis(patientId, newData),
+  const { mutate: save, isPending } = useMutation({
+    mutationFn: (newData: IAnamnesisContent) => {
+      return saveAnamnesis(patientId, newData)
+    },
     onSuccess: async (_, vars) => {
       lastPersistedHash.current = JSON.stringify(vars)
       dispatch({ type: 'SET_HAS_LOCAL_DRAFT', value: false })
@@ -151,15 +151,23 @@ export function useAnamnesisEditor({
 
   const normalizedBlocks = useMemo(() => normalizeBlocks(blocks), [blocks])
   const payload = useMemo(() => toApiData(normalizedBlocks), [normalizedBlocks])
+  const payloadHash = JSON.stringify(payload)
+
   const content = useMemo(
     () => buildContentFromBlocks(normalizedBlocks),
     [normalizedBlocks],
   )
-  const payloadHash = JSON.stringify(payload)
 
   // Data load + local draft recovery
   useEffect(() => {
-    if (!data) return
+    if (!data) {
+      dispatch({
+        type: 'HYDRATE',
+        blocks: [],
+        hasLocalDraft: false,
+      })
+      return
+    }
 
     const serverBlocks = normalizeBlocks(buildInitialBlocks(data))
     const serverHash = JSON.stringify(toApiData(serverBlocks))
@@ -194,10 +202,10 @@ export function useAnamnesisEditor({
 
     if (payloadHash !== lastPersistedHash.current) {
       dispatch({ type: 'SET_HAS_LOCAL_DRAFT', value: true })
-      const timer = setTimeout(() => mutate(payload), 1000)
+      const timer = setTimeout(() => save(payload), 1000)
       return () => clearTimeout(timer)
     }
-  }, [payloadHash, hydrated, mutate, payload, normalizedBlocks, patientId])
+  }, [payloadHash, hydrated, save, payload, normalizedBlocks, patientId])
 
   const {
     isExporting,
@@ -212,14 +220,14 @@ export function useAnamnesisEditor({
   }, [])
 
   const updateBlock = useCallback(
-    (id: string, updates: Partial<AnamnesisBlock>) => {
+    (id: string, updates: Partial<IAnamnesisBlock>) => {
       dispatch({ type: 'UPDATE_BLOCK', id, updates })
     },
     [],
   )
 
   const addBlock = useCallback(() => {
-    const block: AnamnesisBlock = {
+    const block: IAnamnesisBlock = {
       id: crypto.randomUUID(),
       title: 'Nova Seção',
       content: '',
@@ -237,15 +245,13 @@ export function useAnamnesisEditor({
   }, [patientId])
 
   const onCopy = useCallback(async () => {
-    copyToClipboard(content)
+    Clipboard.copy(content)
     setCopied(true)
   }, [content])
 
   const exportToPdf = useCallback(async () => {
     if (!content.trim()) return
-    const generatedAt = format(new Date(), "dd/MM/yyyy 'às' HH:mm", {
-      locale: ptBR,
-    })
+    const generatedAt = Time.toReadableDateTime(new Date())
     await exportPdfDoc(
       createElement(AnamnesisPDFTemplate, {
         patientName,

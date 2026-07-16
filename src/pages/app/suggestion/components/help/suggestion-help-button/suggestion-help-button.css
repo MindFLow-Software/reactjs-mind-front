@@ -1,0 +1,23 @@
+@reference "../../../../../../global.css";
+
+@layer components {
+  .shb-fab {
+    @apply relative flex items-center justify-center size-12 rounded-full text-white bg-gradient-to-br from-blue-600 to-indigo-600 shadow-xl hover:shadow-2xl hover:scale-110 transition-all active:scale-95 border-2 border-white/30 dark:border-white/10 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 cursor-pointer;
+  }
+
+  .shb-header {
+    @apply p-6 pb-4 bg-muted/50 border-b border-border;
+  }
+
+  .shb-header-icon {
+    @apply p-3 rounded-xl bg-card shadow-sm;
+  }
+
+  .shb-step {
+    @apply p-6 flex gap-4 transition-all duration-300 hover:bg-muted/50 hover:shadow-sm;
+  }
+
+  .shb-step-icon {
+    @apply size-11 rounded-xl flex items-center justify-center shrink-0 transition-transform group-hover:-translate-y-0.5;
+  }
+}

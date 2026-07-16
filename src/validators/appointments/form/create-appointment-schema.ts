@@ -1,5 +1,5 @@
 import { z } from 'zod'
-import { AppointmentStatus } from '@/types/enums'
+import { AppointmentStatus } from '@/types/appointment/appointment-status'
 
 export const createAppointmentSchema = z.object({
   patientProfileId: z.string().uuid('ID do paciente inválido'),

@@ -1,12 +1,10 @@
 import { api } from '@/lib/axios'
-import type { RegistrationLinkInfo } from '@/types/invite'
-
-export type { RegistrationLinkInfo } from '@/types/invite'
+import type { IRegistrationLinkInfo } from '@/types/invite/registration-link-info'
 
 export async function getRegistrationLinkByHash(
   hash: string | undefined,
-): Promise<RegistrationLinkInfo> {
-  const response = await api.get<RegistrationLinkInfo>(
+): Promise<IRegistrationLinkInfo> {
+  const response = await api.get<IRegistrationLinkInfo>(
     `/registration-links/${hash}`,
   )
   return response.data

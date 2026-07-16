@@ -1,0 +1,15 @@
+@reference "../../../../../../global.css";
+
+@layer components {
+  .dsh-page-error-root {
+    @apply flex flex-col items-center justify-center gap-2 rounded-md border border-dashed border-border p-8 text-center;
+  }
+
+  .dsh-page-error-icon {
+    @apply size-6 text-red-500;
+  }
+
+  .dsh-page-error-message {
+    @apply text-sm font-medium text-foreground;
+  }
+}

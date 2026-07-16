@@ -1,0 +1,79 @@
+@reference "../../../../../../global.css";
+
+@layer components {
+  .adr-root {
+    @apply rounded-lg border border-border bg-card transition-all hover:border-border/80 hover:shadow-sm;
+  }
+
+  .adr-body {
+    @apply flex flex-col gap-4 p-4 sm:flex-row sm:items-start;
+  }
+
+  .adr-day {
+    @apply flex shrink-0 items-center gap-3 sm:w-32;
+  }
+
+  .adr-day-badge {
+    @apply flex size-10 items-center justify-center rounded-lg bg-primary text-sm font-bold text-primary-foreground transition-colors;
+  }
+
+  .adr-day-badge--empty {
+    @apply bg-muted text-muted-foreground;
+  }
+
+  .adr-day-name {
+    @apply font-medium text-foreground;
+  }
+
+  .adr-day-count {
+    @apply text-xs text-muted-foreground;
+  }
+
+  .adr-slots {
+    @apply min-w-0 flex-1;
+  }
+
+  .adr-slots-list {
+    @apply flex flex-wrap gap-2;
+  }
+
+  .adr-empty {
+    @apply flex items-center justify-center rounded-lg border-2 border-dashed border-border bg-muted/30 px-4 py-3;
+  }
+
+  .adr-empty-text {
+    @apply text-sm text-muted-foreground;
+  }
+
+  .adr-add-btn {
+    @apply h-9 w-full gap-1.5 text-xs sm:w-auto;
+  }
+
+  .adr-slot {
+    @apply flex items-center gap-2 rounded-lg border border-border bg-muted/50 px-3 py-2 transition-all hover:bg-muted;
+  }
+
+  .adr-slot-grip {
+    @apply hidden size-4 shrink-0 text-muted-foreground/50 sm:block;
+  }
+
+  .adr-slot-clock {
+    @apply size-4 shrink-0 text-muted-foreground;
+  }
+
+  .adr-slot-times {
+    @apply flex items-center gap-2;
+  }
+
+  .adr-slot-input {
+    @apply w-[90px] rounded-md border border-input bg-background px-2 py-1 text-sm font-medium focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-1;
+  }
+
+  .adr-slot-separator {
+    @apply text-sm text-muted-foreground;
+  }
+
+  .adr-slot-remove {
+    @apply ml-1 size-7 shrink-0 text-muted-foreground opacity-0 transition-opacity hover:bg-destructive/10 hover:text-destructive group-hover/card:opacity-100;
+  }
+}

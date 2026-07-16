@@ -19,15 +19,14 @@ import {
 } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 
-import { Expertise } from '@/types/expertise'
-import { Honorific } from '@/types/psychologist'
+import { Expertise, Honorific } from '@/types/shared/enums'
 import { queryKeys } from '@/constants/query-keys'
 import { getProfile } from '@/api/auth/get-profile'
-import { ProfessionalIdentityFormStep } from './steps/professional-identity-form-step'
+import { ProfessionalIdentityFormStep } from './steps/professional-identity-form-step/professional-identity-form-step'
 import { createPsychologistProfileSchema } from '@/validators/psychologists/form/create-psychologist-profile-schema'
 import { useCreatePsychologistProfile } from './hooks/use-create-psychologist-profile'
 
-type IcreatePsychologistProfile = z.infer<
+type ICreatePsychologistProfile = z.infer<
   typeof createPsychologistProfileSchema
 >
 
@@ -46,10 +45,10 @@ export function PsychologistOnboardingPage() {
     queryFn: getProfile,
   })
 
-  const methods = useForm<IcreatePsychologistProfile>({
+  const methods = useForm<ICreatePsychologistProfile>({
     resolver: zodResolver(
       createPsychologistProfileSchema,
-    ) as Resolver<IcreatePsychologistProfile>,
+    ) as Resolver<ICreatePsychologistProfile>,
     defaultValues: {
       professionalName: '',
       crp: '',
@@ -98,7 +97,7 @@ export function PsychologistOnboardingPage() {
     useCreatePsychologistProfile()
 
   const handleCreatePsychologistProfile = async (
-    data: IcreatePsychologistProfile,
+    data: ICreatePsychologistProfile,
   ) => {
     await mutateAsync(data)
   }

@@ -1,6 +1,6 @@
 import { z } from 'zod'
 import { cpfSchema } from '@/validators/shared/cpf-schema'
-import { Gender } from '@/types/enums'
+import { Gender } from '@/types/shared/enums'
 
 const cpfField = z.preprocess(
   (v) => (v === '' ? undefined : v),

@@ -1,0 +1,19 @@
+@reference "../../../../../../../global.css";
+
+@layer components {
+  .pdd-content {
+    @apply max-h-[90vh] w-full max-w-xl! overflow-y-auto overflow-x-hidden;
+  }
+
+  .pdd-loading {
+    @apply flex max-h-[90vh] max-w-xl! items-center justify-center p-20;
+  }
+
+  .pdd-body {
+    @apply flex flex-col gap-8;
+  }
+
+  .pdd-title {
+    @apply flex items-center gap-2;
+  }
+}

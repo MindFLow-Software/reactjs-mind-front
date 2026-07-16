@@ -1,7 +1,7 @@
 import { create } from 'zustand'
 import { persist, createJSONStorage } from 'zustand/middleware'
 
-interface ActivePracticeContextState {
+type ActivePracticeContextState = {
   activePracticeContextId: string | null
   setActivePracticeContextId: (id: string) => void
   clearActivePracticeContextId: () => void

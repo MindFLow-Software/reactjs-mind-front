@@ -26,7 +26,8 @@ Required standards:
 - Every API function imports and uses `api` from `@/lib/axios`. No raw `fetch`, no raw `axios`, no `api.*` calls inside pages/components/hooks.
 - Every API request/response is fully typed and aligned with backend entities. Reuse domain/entity types whenever possible.
 - Frontend entity/domain types must match backend entities exactly, except for explicitly documented UI-only view models.
-- Interfaces use `I` + PascalCase, for example `IUser`, `IPatient`, `IAppointmentResponse`.
+- Types use `type` + `I` + PascalCase, for example `type IUser = {}`, `type IPatient = {}`, `type IAppointmentResponse = {}`. Never use `interface` for first-party types, except where TypeScript module augmentation requires declaration merging (e.g. `declare module 'axios'`). `src/components/ui/*` shadcn primitives are exempt and may keep `interface`.
+- Every first-party component gets its own folder holding its `.tsx`, its `.css`, and any component-local files (hooks, types, constants, helpers). Applies to `src/components/*` and to feature-local subcomponents alike (a flat `steps/step-basic-data.tsx` becomes `steps/step-basic-data/step-basic-data.tsx` + `.css`). `src/components/ui/*` shadcn primitives are not restructured.
 - GET requests are consumed through `useQuery`.
 - POST, PUT, PATCH, and DELETE requests are consumed through `useMutation`.
 - Every mutation success and error path displays backend-provided guidance/message through Sonner.
@@ -53,6 +54,8 @@ Required standards:
 - Authenticated user data must always come from `useAuth`. Do not read authenticated user data from `localStorage`, duplicate profile queries, route guards, API responses, or stale user snapshots when `useAuth` is available.
 - Use native TypeScript `enum` for closed domain values. Do not create enum-like `const` objects plus `typeof` type aliases such as `export type Languages = (typeof Languages)[keyof typeof Languages]`; export `enum Languages` instead.
 - Always consume enum values through the enum member, never through raw string literals. Use `Honorific.MASC_DR`, not `'MASC_DR'`; use `AppointmentStatus.SCHEDULED`, not `'SCHEDULED'`.
+- Enum placement follows consumer count: an enum used by a single domain's types lives co-located in that domain's `src/types/{domain}/*.ts` file (companion co-location, the one exception to one-export-per-file); an enum consumed across 2+ domains lives in `src/types/shared/enums.ts`. Grep importers before placing a new enum — a "single-consumer" enum with hidden second consumers goes to `shared/enums.ts`.
+- Components with shared loading/error/empty state (chart cards, data blocks) use one generic composed component with namespace composition and a React context carrying the shared state, rather than three separate boolean props threaded through every child. `ChartCard` (`state={{ isLoading, isError, isEmpty }}` + `ChartCard.Header`/`.Body`/`.Empty`/etc.) is the canonical pattern — `state` is the one allowed grouped object for related flags.
 - Never reexport anything. Every symbol must be exported from exactly one module and imported directly from that source module. No barrel exports, no one-line compatibility wrappers, and no `import type { IExample } from './example'; export { IExample }`.
 - No `any`, no duplicated entity definitions, no inline backend DTOs inside pages/components, no speculative abstractions.
 
@@ -257,7 +260,7 @@ Claude must follow these patterns exactly. No deviations.
 
 - Each cross-cutting concern gets its own hook: data fetching, form steps, submission, filters, file selection, address lookup.
 - Feature-local hooks live in a `hooks/` subfolder inside the feature directory, not in global `src/hooks/`, unless they are reused across multiple features.
-- Hook options and return shapes have explicit interfaces when not trivial (`UsePatientFormStepsOptions`, `UsePatientFormStepsReturn`).
+- Hook options and return shapes have explicit `type` declarations when not trivial (`IUsePatientFormStepsOptions`, `IUsePatientFormStepsReturn`).
 - Hooks receive RHF primitives (`trigger`, `setValue`) as options instead of owning the form instance — hooks augment the form, they do not create it.
 - All handlers returned from hooks are wrapped with `useCallback`.
 - The root orchestrator composes all hooks and passes results down as props. Step/child components never call feature-level hooks directly.
@@ -294,7 +297,7 @@ Every new or refactored piece of code must be:
 - **Lean**: no unused state, no speculative abstractions, no code for hypothetical future requirements.
 - **Performant**: wrap stable callbacks in `useCallback`; wrap expensive pure renders in `memo`.
 - **Readable**: short blocks, clear names, linear flow, minimal nesting.
-- **Typed without `any`**: explicit interfaces; entity types imported from `src/types/`.
+- **Typed without `any`**: explicit `type` declarations with `I` prefix; entity types imported from `src/types/`.
 - **Single-source-of-truth**: one canonical definition per entity type.
 - **Comment-free for obvious logic**: one short line at most when the WHY is non-obvious.
 - **JSX-duplication-free**: extract before reusing — never copy-paste JSX.
@@ -316,7 +319,7 @@ Every new or refactored piece of code must be:
 
 ## Feature Patterns — register-patients
 
-Patterns extracted from `src/pages/app/patients/patients-list/register-patients/`. Use this as the canonical reference for multi-step form features.
+Patterns extracted from `src/pages/app/patients/patients-list/register-patients/`. Use this as the canonical reference for multi-step form features, **except for the flat `steps/` file layout below, which is superseded by the folder-per-component rule** (every step becomes its own folder: `steps/step-basic-data/step-basic-data.tsx` + `.css`, not a flat `steps/step-basic-data.tsx`).
 
 ### Component Structure
 
@@ -331,7 +334,7 @@ Patterns extracted from `src/pages/app/patients/patients-list/register-patients/
 
 - Each cross-cutting concern gets its own hook: `useFormSteps` (navigation), `usePatientSubmit` (submission), `useCepLookup` (address lookup), `useFileSelection` (file state).
 - Feature-local hooks live in a `hooks/` subfolder inside the feature directory, not in global `src/hooks/`.
-- Hook options and return shapes are always typed as explicit interfaces (`UsePatientFormStepsOptions`, `UsePatientFormStepsReturn`).
+- Hook options and return shapes are always typed as explicit `type` declarations (`IUsePatientFormStepsOptions`, `IUsePatientFormStepsReturn`).
 - Hooks receive React Hook Form primitives (`trigger`, `setValue`) as options instead of owning the form instance — hooks augment the form, they do not create it.
 - All handlers returned from hooks are wrapped with `useCallback` (`handleNext`, `handleBack`, `goToStep`).
 - The root component composes hooks and passes results as props. Step components never call feature-level hooks directly.
@@ -358,8 +361,8 @@ Patterns extracted from `src/pages/app/patients/patients-list/register-patients/
 ### File Organization
 
 - Feature root holds: `register-patients.tsx` (orchestrator), `constants.ts` (step config, option arrays, limits), `helpers.ts` (pure functions), `form-components.css` (shared form CSS).
-- Step components live in a `steps/` subfolder inside the feature directory.
-- Every `.tsx` file has a co-located `.css` file with the same base name (`step-basic-data.tsx` / `step-basic-data.css`).
+- Step components live in a `steps/` subfolder inside the feature directory, one folder per step (`steps/step-basic-data/`) per the folder-per-component rule — not the flat `steps/step-basic-data.tsx` layout this pattern originally shipped with.
+- Every `.tsx` file has a co-located `.css` file with the same base name in its own folder (`steps/step-basic-data/step-basic-data.tsx` / `step-basic-data.css`).
 - CSS class names use a feature prefix (`rp-` for register-patients) to avoid global collisions.
 - Option arrays in `constants.ts` may reference enum members, but must not define enum-like value sets themselves.
 - Branded type aliases for constrained non-domain values are exported from `constants.ts` (`StepId = 1 | 2 | 3 | 4`).

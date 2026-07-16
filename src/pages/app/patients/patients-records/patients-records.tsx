@@ -12,13 +12,13 @@ import {
 } from '@/api/patient-profiles/fetch-patient-profiles'
 import { useHeaderStore } from '@/store/use-header-store'
 import { usePatientQueueStore } from '@/store/use-patient-queue-store'
-import { PatientsDataBlock } from '../components/patients-data-block'
-import { PatientsPageShell } from '../components/patients-page-shell'
+import { PatientsDataBlock } from '../components/patients-data-block/patients-data-block'
+import { PatientsPageShell } from '../components/patients-page-shell/patients-page-shell'
 import { usePatientRecordsFilters } from '@/hooks/use-patient-records-filters'
-import { PatientCard } from './components/patient-card'
-import { RecordsSkeleton } from './components/records-skeleton'
-import { RecordsEmptyState } from './components/records-empty-state'
-import { PatientsRecordsTableFilters } from './components/patients-records-table-filters'
+import { PatientCard } from './components/patient-card/patient-card'
+import { RecordsSkeleton } from './components/records-skeleton/records-skeleton'
+import { RecordsEmptyState } from './components/records-empty-state/records-empty-state'
+import { PatientsRecordsTableFilters } from './components/patients-records-table-filters/patients-records-table-filters'
 import './patients-records.css'
 
 export default function PatientsRecords() {
@@ -73,6 +73,19 @@ export default function PatientsRecords() {
     })
   }
 
+  function renderRecords() {
+    if (isLoading) return <RecordsSkeleton />
+    if (patients.length === 0) return <RecordsEmptyState />
+
+    return patients.map((patient) => (
+      <PatientCard
+        key={patient.id}
+        patient={patient}
+        onOpen={handleOpenRecord}
+      />
+    ))
+  }
+
   return (
     <>
       <Helmet title="Prontuarios de Pacientes" />
@@ -91,31 +104,19 @@ export default function PatientsRecords() {
             />
             <PatientsDataBlock.Toolbar>
               <PatientsRecordsTableFilters
-                search={{ value: search, onChange: setSearch }}
-                gender={{ value: gender, onChange: setGender }}
-                sessionOrder={{
-                  value: sessionOrder,
-                  onChange: setSessionOrder,
+                filters={{
+                  search: { value: search, onChange: setSearch },
+                  gender: { value: gender, onChange: setGender },
+                  sessionOrder: {
+                    value: sessionOrder,
+                    onChange: setSessionOrder,
+                  },
                 }}
                 onClearFilters={clearFilters}
               />
             </PatientsDataBlock.Toolbar>
             <PatientsDataBlock.Content>
-              <div className="pr-grid">
-                {isLoading ? (
-                  <RecordsSkeleton />
-                ) : patients.length > 0 ? (
-                  patients.map((patient) => (
-                    <PatientCard
-                      key={patient.id}
-                      patient={patient}
-                      onOpen={handleOpenRecord}
-                    />
-                  ))
-                ) : (
-                  <RecordsEmptyState />
-                )}
-              </div>
+              <div className="pr-grid">{renderRecords()}</div>
             </PatientsDataBlock.Content>
           </PatientsDataBlock>
         </PatientsPageShell.Content>

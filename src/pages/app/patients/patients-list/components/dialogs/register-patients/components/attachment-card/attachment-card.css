@@ -1,0 +1,46 @@
+@reference "../../../../../../../../../global.css";
+
+@layer components {
+  .rp-att-card {
+    @apply flex items-start gap-2.5 rounded-[8px] border border-border bg-card p-[10px]
+           transition-all hover:border-blue-200 hover:bg-blue-50 hover:shadow-sm
+           dark:hover:border-blue-800 dark:hover:bg-blue-950/30;
+  }
+
+  .rp-att-badge {
+    @apply relative flex h-11 w-9 shrink-0 items-center justify-center rounded-[4px]
+           bg-gradient-to-br text-[9px] font-black uppercase tracking-[0.04em] text-white;
+  }
+
+  /* Folded-corner triangle — border-color needs 4 distinct values, which no
+     Tailwind utility expresses. */
+  .rp-att-badge-fold {
+    @apply absolute right-0 top-0 h-0 w-0 border-solid;
+    border-width: 9px 9px 0 0;
+    border-color: white white transparent transparent;
+  }
+
+  .rp-att-info {
+    @apply min-w-0 flex-1;
+  }
+
+  .rp-att-name {
+    @apply truncate text-[12.5px] font-semibold text-foreground;
+  }
+
+  .rp-att-meta {
+    @apply mt-0.5 flex items-center gap-1.5 text-[11px] text-muted-foreground;
+  }
+
+  .rp-att-meta-dot {
+    @apply size-1.5 shrink-0 rounded-full bg-border;
+  }
+
+  .rp-att-actions {
+    @apply flex shrink-0 items-center gap-0.5;
+  }
+
+  .rp-att-action {
+    @apply h-[28px] w-[28px] rounded-[5px];
+  }
+}

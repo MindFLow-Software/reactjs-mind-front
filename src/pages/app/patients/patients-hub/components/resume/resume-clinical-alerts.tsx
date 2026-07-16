@@ -13,7 +13,7 @@ import { cn } from '@/lib/utils'
 
 type AlertType = 'warning' | 'neutral' | 'ok'
 
-interface AlertData {
+type AlertData = {
   type: AlertType
   tag: string
   title: string

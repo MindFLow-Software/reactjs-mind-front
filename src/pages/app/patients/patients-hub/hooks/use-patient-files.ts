@@ -4,20 +4,25 @@ import { toast } from 'sonner'
 
 import { deleteAttachment } from '@/api/attachments/delete-attachment'
 import { getPatientAttachments } from '@/api/attachments/get-patient-attachments'
-import type { AttachmentPatientItem } from '@/types/attachment'
+import type { IAttachmentPatientItem } from '@/types/attachment/attachment-patient-item'
 import type { FileTypeFilter } from '../components/files/file-type-filter'
 import { getFileType } from '../components/files/file-type-filter'
+import { Time } from '@/utils/time'
 
-interface UsePatientFilesReturn {
-  attachments: AttachmentPatientItem[]
-  filtered: AttachmentPatientItem[]
+export function patientAttachmentsQueryKey(patientId: string) {
+  return ['patient-hub', patientId, 'attachments'] as const
+}
+
+type UsePatientFilesReturn = {
+  attachments: IAttachmentPatientItem[]
+  filtered: IAttachmentPatientItem[]
   counts: Record<FileTypeFilter, number>
   typeFilter: FileTypeFilter
-  previewFile: AttachmentPatientItem | null
+  previewFile: IAttachmentPatientItem | null
   isLoading: boolean
   isDeleting: boolean
   setTypeFilter: (f: FileTypeFilter) => void
-  openPreview: (file: AttachmentPatientItem) => void
+  openPreview: (file: IAttachmentPatientItem) => void
   closePreview: () => void
   handleDelete: (attachmentId: string) => void
 }
@@ -25,12 +30,12 @@ interface UsePatientFilesReturn {
 export function usePatientFiles(patientId: string): UsePatientFilesReturn {
   const queryClient = useQueryClient()
   const [typeFilter, setTypeFilterState] = useState<FileTypeFilter>('all')
-  const [previewFile, setPreviewFile] = useState<AttachmentPatientItem | null>(
+  const [previewFile, setPreviewFile] = useState<IAttachmentPatientItem | null>(
     null,
   )
 
   const { data: attachments = [], isLoading } = useQuery({
-    queryKey: ['patient-hub', patientId, 'attachments'],
+    queryKey: patientAttachmentsQueryKey(patientId),
     queryFn: () => getPatientAttachments(patientId),
     enabled: Boolean(patientId),
   })
@@ -38,8 +43,7 @@ export function usePatientFiles(patientId: string): UsePatientFilesReturn {
   const sorted = useMemo(
     () =>
       [...attachments].sort(
-        (a, b) =>
-          new Date(b.uploadedAt).getTime() - new Date(a.uploadedAt).getTime(),
+        (a, b) => Time.timestamp(b.uploadedAt) - Time.timestamp(a.uploadedAt),
       ),
     [attachments],
   )
@@ -66,7 +70,7 @@ export function usePatientFiles(patientId: string): UsePatientFilesReturn {
     mutationFn: deleteAttachment,
     onSuccess: () => {
       queryClient.invalidateQueries({
-        queryKey: ['patient-hub', patientId, 'attachments'],
+        queryKey: patientAttachmentsQueryKey(patientId),
       })
       toast.success('Arquivo removido.')
     },
@@ -77,7 +81,7 @@ export function usePatientFiles(patientId: string): UsePatientFilesReturn {
     setTypeFilterState(f)
   }, [])
 
-  const openPreview = useCallback((file: AttachmentPatientItem) => {
+  const openPreview = useCallback((file: IAttachmentPatientItem) => {
     setPreviewFile(file)
   }, [])
 

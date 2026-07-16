@@ -1,0 +1,23 @@
+@reference "../../../../../global.css";
+
+@layer components {
+  .vr-add-form-status-live {
+    @apply flex items-center gap-2 text-green-700;
+  }
+
+  .vr-add-form-status-live-dot {
+    @apply w-2 h-2 rounded-full bg-green-500 animate-pulse;
+  }
+
+  .vr-add-form-status-idle {
+    @apply flex items-center gap-2;
+  }
+
+  .vr-add-form-field-label {
+    @apply text-sm font-medium text-foreground/80 flex items-center gap-2;
+  }
+
+  .vr-add-form-warning {
+    @apply flex items-center gap-2.5 p-3 bg-amber-50 border border-amber-200/60 rounded-lg animate-in fade-in zoom-in duration-200;
+  }
+}

@@ -1,0 +1,7 @@
+@reference "../../../../../../global.css";
+
+@layer components {
+  .pr-skel-card {
+    @apply h-[72px] w-full rounded-xl;
+  }
+}

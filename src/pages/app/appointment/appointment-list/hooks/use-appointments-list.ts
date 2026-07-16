@@ -4,9 +4,9 @@ import {
   type GetAppointmentsResponse,
 } from '@/api/appointments/get-appointments'
 import { queryKeys } from '@/constants/query-keys'
-import type { AppointmentStatus } from '@/types/enums'
+import type { AppointmentStatus } from '@/types/appointment/appointment-status'
 
-export interface UseAppointmentsListParams {
+export type IUseAppointmentsListParams = {
   pageIndex: number
   perPage: number
   status: AppointmentStatus | null
@@ -14,7 +14,7 @@ export interface UseAppointmentsListParams {
 }
 
 export function useAppointmentsList(
-  params: UseAppointmentsListParams,
+  params: IUseAppointmentsListParams,
 ): UseQueryResult<GetAppointmentsResponse, Error> {
   return useQuery<GetAppointmentsResponse, Error>({
     queryKey: queryKeys.appointments({ ...params }),

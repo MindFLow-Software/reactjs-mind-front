@@ -1,0 +1,7 @@
+@reference "../../../../../../global.css";
+
+@layer components {
+  .pme-grid {
+    @apply grid grid-cols-2 gap-4 px-6 pb-0 pt-2 lg:grid-cols-4;
+  }
+}

@@ -1,3 +1,4 @@
+// Single caller (markdown-editor.tsx) — kept local per T26 review, not class-ified.
 function esc(s: string): string {
   return s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
 }

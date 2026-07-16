@@ -1,7 +1,7 @@
 import { api } from '@/lib/axios'
-import type { ISuggestion } from '@/types/suggestion'
+import type { ISuggestion } from '@/types/suggestion/suggestion'
 
-interface GetSuggestionsParams {
+type GetSuggestionsParams = {
   category?: string
   status?: string | string[]
   sortBy?: string

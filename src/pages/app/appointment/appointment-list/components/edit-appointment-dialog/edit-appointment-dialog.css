@@ -1,0 +1,103 @@
+@reference "../../../../../../global.css";
+
+@layer components {
+  .ea-dialog {
+    @apply flex max-h-[95vh] max-w-2xl flex-col overflow-hidden rounded-xl border-none bg-card p-0 shadow-2xl;
+  }
+
+  .ea-header {
+    @apply shrink-0 border-b border-border/40 bg-card px-8 pb-6 pt-8;
+  }
+
+  .ea-header-row {
+    @apply flex items-center gap-4;
+  }
+
+  .ea-header-icon {
+    @apply flex size-12 items-center justify-center rounded-xl bg-primary/10 text-primary shadow-inner;
+  }
+
+  .ea-title {
+    @apply text-xl font-bold tracking-tight text-foreground/90;
+  }
+
+  .ea-subtitle {
+    @apply text-xs font-medium uppercase tracking-wider text-muted-foreground/80;
+  }
+
+  .ea-subtitle-name {
+    @apply font-extrabold text-foreground;
+  }
+
+  .ea-actions {
+    @apply shrink-0 border-b border-border/40 bg-muted/20 px-8 py-5;
+  }
+
+  .ea-canceled-alert {
+    @apply mb-4 flex items-center gap-2 rounded-lg border border-destructive/20 bg-destructive/10 p-3 text-xs font-semibold text-destructive;
+  }
+
+  .ea-actions-grid {
+    @apply grid grid-cols-2 gap-4;
+  }
+
+  .ea-form {
+    @apply flex min-h-0 flex-1 flex-col;
+  }
+
+  .ea-scroll-area {
+    @apply min-h-0 flex-1 overflow-y-auto px-8 pb-8 pt-6;
+  }
+
+  .ea-fields {
+    @apply grid grid-cols-1 gap-6;
+  }
+
+  .ea-input-icon {
+    @apply absolute left-3 top-1/2 size-4 -translate-y-1/2 text-muted-foreground/40;
+  }
+
+  .ea-footer {
+    @apply flex shrink-0 items-center justify-end gap-3 border-t border-border/40 bg-muted/10 px-8 py-5;
+  }
+
+  .ea-footer-btn {
+    @apply w-full min-w-[120px] cursor-pointer font-bold sm:w-auto;
+  }
+
+  .ea-submit-btn {
+    @apply w-full min-w-[150px] cursor-pointer bg-blue-600 font-bold hover:bg-blue-700 sm:w-auto;
+  }
+
+  .ea-field-label {
+    @apply text-[10px] font-bold uppercase tracking-widest text-muted-foreground/70;
+  }
+
+  .ea-readonly-display {
+    @apply mt-2 flex h-11 items-center gap-2 rounded-lg border border-border/50
+           bg-muted/30 px-4 text-sm font-semibold text-foreground/80;
+  }
+
+  .ea-input {
+    @apply h-11 rounded-lg border-border text-sm text-foreground;
+    @apply focus-visible:border-blue-600 focus-visible:ring-[3px] focus-visible:ring-blue-600/[.18];
+  }
+
+  .ea-textarea {
+    @apply resize-none rounded-xl border-border p-4 text-sm leading-relaxed text-foreground;
+    @apply focus-visible:border-blue-600 focus-visible:ring-[3px] focus-visible:ring-blue-600/[.18];
+  }
+
+  .ea-action-btn {
+    @apply h-10 rounded-lg font-bold text-xs uppercase tracking-tight
+           transition-all gap-2 shadow-sm bg-card disabled:opacity-50;
+  }
+
+  .ea-action-btn--primary {
+    @apply border-primary/20 text-primary hover:bg-primary/5 hover:text-primary;
+  }
+
+  .ea-action-btn--destructive {
+    @apply border-destructive/20 text-destructive hover:bg-destructive/5 hover:text-destructive;
+  }
+}

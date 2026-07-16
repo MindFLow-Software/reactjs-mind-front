@@ -20,7 +20,7 @@ const CHIPS: { key: FileTypeFilter; label: string }[] = [
   { key: 'audio', label: 'Áudios' },
 ]
 
-interface FileTypeFilterProps {
+type FileTypeFilterProps = {
   filter: FileTypeFilter
   counts: Record<FileTypeFilter, number>
   onFilterChange: (f: FileTypeFilter) => void

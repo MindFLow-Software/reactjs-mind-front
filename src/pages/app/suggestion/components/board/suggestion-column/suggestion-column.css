@@ -1,0 +1,35 @@
+@reference "../../../../../../global.css";
+
+@layer components {
+  .scol-root {
+    @apply flex flex-col w-full h-full min-h-0 overflow-hidden;
+  }
+
+  .scol-header {
+    @apply px-1 pb-3 flex items-center gap-2 shrink-0;
+  }
+
+  .scol-title {
+    @apply flex-1 uppercase tracking-widest text-[11px] font-bold text-foreground truncate;
+  }
+
+  .scol-badge {
+    @apply text-xs font-bold px-2.5 py-0.5 rounded-full tabular-nums;
+  }
+
+  .scol-body {
+    @apply flex-1 overflow-y-auto min-h-0 py-0.5 scroll-smooth scrollbar-thin scrollbar-thumb-border hover:scrollbar-thumb-muted-foreground/20;
+  }
+
+  .scol-skeleton {
+    @apply h-[110px] bg-muted/50 animate-pulse rounded-xl;
+  }
+
+  .scol-empty {
+    @apply flex flex-col items-center justify-center h-32 opacity-50;
+  }
+
+  .scol-load-more {
+    @apply w-full flex items-center justify-center gap-1.5 py-2.5 rounded-xl text-xs font-semibold text-muted-foreground border border-dashed border-border hover:border-border/80 hover:bg-muted/50 transition-all cursor-pointer;
+  }
+}

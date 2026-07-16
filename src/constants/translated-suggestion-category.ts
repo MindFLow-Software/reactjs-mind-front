@@ -1,4 +1,4 @@
-import { SuggestionCategory } from '@/types/enums'
+import { SuggestionCategory } from '@/types/suggestion/suggestion-category'
 
 export const translatedSuggestionCategory: Record<SuggestionCategory, string> =
   {

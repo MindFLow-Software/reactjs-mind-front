@@ -6,6 +6,7 @@ import { toast } from 'sonner'
 import { uploadAttachment } from '@/api/attachments/upload-attachment'
 import { uploadFileSchema } from '@/validators/attachments/form/upload-attachment-schema'
 import { cn } from '@/lib/utils'
+import { patientAttachmentsQueryKey } from '../../hooks/use-patient-files'
 
 import './file-upload-zone.css'
 
@@ -15,7 +16,7 @@ const DROPZONE_ACCEPT = {
   'application/pdf': [],
 } satisfies Record<string, string[]>
 
-interface FileUploadZoneProps {
+type FileUploadZoneProps = {
   patientId: string
 }
 
@@ -27,7 +28,7 @@ export function FileUploadZone({ patientId }: FileUploadZoneProps) {
     onSuccess: () => {
       toast.success('Arquivo enviado!')
       queryClient.invalidateQueries({
-        queryKey: ['patient-attachments', patientId],
+        queryKey: patientAttachmentsQueryKey(patientId),
       })
     },
     onError: () => toast.error('Erro ao enviar arquivo.'),

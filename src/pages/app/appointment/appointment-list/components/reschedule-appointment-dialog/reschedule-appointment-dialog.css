@@ -1,0 +1,35 @@
+@reference "../../../../../../global.css";
+
+@layer components {
+  .rad-dialog {
+    @apply max-w-md;
+  }
+
+  .rad-title-row {
+    @apply mb-2 flex items-center gap-2 text-blue-600 dark:text-blue-400;
+  }
+
+  .rad-body {
+    @apply flex flex-col gap-4 py-4;
+  }
+
+  .rad-calendar-shell {
+    @apply rounded-md border border-border bg-muted/20 p-2;
+  }
+
+  .rad-time-row {
+    @apply flex items-center gap-4;
+  }
+
+  .rad-time-label {
+    @apply text-sm font-medium;
+  }
+
+  .rad-time-input {
+    @apply w-32;
+  }
+
+  .rad-confirm-btn {
+    @apply bg-blue-600 hover:bg-blue-700;
+  }
+}

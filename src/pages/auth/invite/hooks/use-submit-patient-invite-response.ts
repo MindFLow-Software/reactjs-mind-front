@@ -1,7 +1,7 @@
 import { useNavigate } from 'react-router-dom'
 import { useApiMutation } from '@/hooks/use-api-mutation'
 import { submitPatientInviteResponse } from '@/api/patient-profiles/submit-patient-invite-response'
-import type { IMutationResult } from '@/types/api'
+import type { IMutationResult } from '@/types/shared/mutation-result'
 import type { ISubmitPatientInviteResponseParams } from '@/api/patient-profiles/submit-patient-invite-response'
 
 export function useSubmitPatientInviteResponse() {

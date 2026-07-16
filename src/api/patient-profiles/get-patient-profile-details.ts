@@ -1,19 +1,15 @@
 import { api } from '@/lib/axios'
-import type { SessionItem } from '@/types/patient'
-import type { IPatientProfile } from '@/types/patient-profile'
+import type { IPatientDetailsMeta } from '@/types/patient/patient-details-meta'
+import type { ISessionItem } from '@/types/patient/session-item'
+import type { IPatientProfile } from '@/types/patient-profile/patient-profile'
 
 type IextendedPatientProfile = IPatientProfile & {
-  sessions: SessionItem[]
+  sessions: ISessionItem[]
 }
 
-export interface IgetPatientProfileDetailsResponse {
+export type IgetPatientProfileDetailsResponse = {
   patient: IextendedPatientProfile | null
-  meta: {
-    pageIndex: number
-    perPage: number
-    totalCount: number
-    averageDuration: number | null
-  }
+  meta: IPatientDetailsMeta
 }
 
 export async function getPatientProfileDetails(

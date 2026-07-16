@@ -1,7 +1,7 @@
 import { Helmet } from 'react-helmet-async'
 
-import { AuthHeading } from './components/auth-heading'
-import { SignUpForm } from './components/sign-up-form'
+import { AuthHeading } from './components/auth-heading/auth-heading'
+import { SignUpForm } from './components/sign-up-form/sign-up-form'
 import './sign-up.css'
 
 export function SignUp() {

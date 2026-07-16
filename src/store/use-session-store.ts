@@ -1,9 +1,9 @@
 import { create } from 'zustand'
 import { persist, createJSONStorage } from 'zustand/middleware'
 import { useActivePracticeContextStore } from '@/store/use-active-practice-context-store'
-import type { IUser } from '@/types/user'
+import type { IUser } from '@/types/user/user'
 
-interface ISessionState {
+type ISessionState = {
   isAuthenticated: boolean
   user: IUser | null
   setSession: (user: IUser) => void

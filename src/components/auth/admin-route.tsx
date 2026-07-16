@@ -1,8 +1,8 @@
 import { Navigate } from 'react-router-dom'
 
 import { useAuth } from '@/hooks/use-auth'
-import { BrandedLoader } from '@/components/branded-loader'
-import { PlatformRole } from '@/types/enums'
+import { BrandedLoader } from '@/components/branded-loader/branded-loader'
+import { PlatformRole } from '@/types/shared/enums'
 
 export function AdminRoute({ children }: { children: React.ReactNode }) {
   const { profile, isPending } = useAuth()

@@ -1,0 +1,15 @@
+@reference "../../../../../../../../../global.css";
+
+@layer components {
+  .rp-section-title {
+    @apply mb-[10px] flex items-center gap-[7px];
+  }
+
+  .rp-section-title__icon {
+    @apply size-[13px] shrink-0 text-blue-600;
+  }
+
+  .rp-section-title__label {
+    @apply text-[11px] font-bold uppercase tracking-[0.06em] text-muted-foreground;
+  }
+}

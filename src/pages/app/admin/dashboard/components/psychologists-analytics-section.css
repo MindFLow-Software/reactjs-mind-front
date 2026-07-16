@@ -1,7 +1,0 @@
-@reference "../../../../../global.css";
-
-@layer components {
-  .adb-psy-analytics-charts {
-    @apply mt-4 grid grid-cols-1 gap-4 xl:grid-cols-3;
-  }
-}

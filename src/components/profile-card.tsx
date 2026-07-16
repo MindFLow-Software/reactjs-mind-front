@@ -1,7 +1,7 @@
 import type { ReactNode } from 'react'
 
 import { cn } from '@/lib/utils'
-import { TitleIcon } from '@/components/title-icon'
+import { TitleIcon } from '@/components/title-icon/title-icon'
 import { Card, CardContent, CardFooter, CardHeader } from '@/components/ui/card'
 
 import './profile-card.css'

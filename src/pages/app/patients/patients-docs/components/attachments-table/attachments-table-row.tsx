@@ -1,8 +1,6 @@
 'use client'
 
 import { Trash2, Download, Eye, MoreHorizontal } from 'lucide-react'
-import { format } from 'date-fns'
-import { ptBR } from 'date-fns/locale'
 
 import { Button } from '@/components/ui/button'
 import { TableCell, TableRow } from '@/components/ui/table'
@@ -21,19 +19,32 @@ import {
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu'
 import { cn } from '@/lib/utils'
-import { handleFileDownload } from '@/utils/handle-file-download'
-import { formatFileSize } from '@/utils/format-file-size'
-import type { AttachmentListItem as Attachment } from '@/types/attachment'
-import { getFileKind, FILE_KIND_STYLES, TYPE_BADGE } from '@/utils/file-helpers'
+import { Files } from '@/utils/files'
+import { Time } from '@/utils/time'
+import type { IAttachmentListItem as Attachment } from '@/types/attachment/attachment-list-item'
 import './attachments-table-row.css'
 
-interface AttachmentsTableRowProps {
-  attachment: Attachment
+type AttachmentsTableRowSelection = {
   isSelected: boolean
   isActivePreview: boolean
   onSelectChange: (checked: boolean) => void
+}
+
+type AttachmentsTableRowActions = {
   onDelete: (id: string) => void
   onPreview: (doc: Attachment) => void
+}
+
+type AttachmentsTableRowProps = {
+  attachment: Attachment
+  selection: AttachmentsTableRowSelection
+  actions: AttachmentsTableRowActions
+}
+
+function getRowStateClassName(isActivePreview: boolean, isSelected: boolean) {
+  if (isActivePreview) return 'pd-row-active'
+  if (isSelected) return 'pd-row-selected'
+  return 'pd-row-idle'
 }
 
 function DocThumb({
@@ -43,8 +54,8 @@ function DocThumb({
   contentType: string
   filename: string
 }) {
-  const kind = getFileKind(contentType)
-  const style = FILE_KIND_STYLES[kind]
+  const kind = Files.kind(contentType)
+  const style = Files.KIND_STYLES[kind]
   const ext =
     filename.split('.').pop()?.toUpperCase().slice(0, 4) ?? style.label
 
@@ -69,16 +80,15 @@ function PatientAvatar({
 
 export function AttachmentsTableRow({
   attachment,
-  isSelected,
-  isActivePreview,
-  onSelectChange,
-  onDelete,
-  onPreview,
+  selection,
+  actions,
 }: AttachmentsTableRowProps) {
+  const { isSelected, isActivePreview, onSelectChange } = selection
+  const { onDelete, onPreview } = actions
   const { id, filename, contentType, sizeInBytes, uploadedAt, patient } =
     attachment
-  const kind = getFileKind(contentType)
-  const badge = TYPE_BADGE[kind]
+  const kind = Files.kind(contentType)
+  const badge = Files.TYPE_BADGE[kind]
 
   return (
     <TooltipProvider delayDuration={200}>
@@ -86,11 +96,7 @@ export function AttachmentsTableRow({
         onClick={() => onPreview(attachment)}
         className={cn(
           'group pd-row',
-          isActivePreview
-            ? 'pd-row-active'
-            : isSelected
-              ? 'pd-row-selected'
-              : 'pd-row-idle',
+          getRowStateClassName(isActivePreview, isSelected),
         )}
       >
         <TableCell className="px-4" onClick={(e) => e.stopPropagation()}>
@@ -115,7 +121,9 @@ export function AttachmentsTableRow({
                   {filename}
                 </TooltipContent>
               </Tooltip>
-              <p className="pd-row-name-size">{formatFileSize(sizeInBytes)}</p>
+              <p className="pd-row-name-size">
+                {Files.formatSize(sizeInBytes)}
+              </p>
             </div>
           </div>
         </TableCell>
@@ -141,20 +149,18 @@ export function AttachmentsTableRow({
 
         {/* Size */}
         <TableCell>
-          <span className="pd-row-size">{formatFileSize(sizeInBytes)}</span>
+          <span className="pd-row-size">{Files.formatSize(sizeInBytes)}</span>
         </TableCell>
 
         {/* Date */}
         <TableCell>
           <div className="flex flex-col">
             <span className="pd-row-date">
-              {uploadedAt
-                ? format(new Date(uploadedAt), 'dd/MM/yyyy', { locale: ptBR })
-                : '—'}
+              {uploadedAt ? Time.toBrazilianFormat(uploadedAt) : '—'}
             </span>
             {uploadedAt && (
               <span className="pd-row-time">
-                {format(new Date(uploadedAt), 'HH:mm')}
+                {Time.toHourMinute(uploadedAt)}
               </span>
             )}
           </div>
@@ -192,7 +198,7 @@ export function AttachmentsTableRow({
                   variant="ghost"
                   size="icon"
                   className="pd-row-action pd-row-action-download"
-                  onClick={() => handleFileDownload(id, filename)}
+                  onClick={() => Files.download(id, filename)}
                 >
                   <Download className="size-3.5" />
                 </Button>
@@ -230,7 +236,7 @@ export function AttachmentsTableRow({
                 </DropdownMenuItem>
                 <DropdownMenuItem
                   className="pd-row-menu-item"
-                  onClick={() => handleFileDownload(id, filename)}
+                  onClick={() => Files.download(id, filename)}
                 >
                   <Download className="size-3.5" />
                   Baixar

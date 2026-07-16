@@ -3,7 +3,7 @@ import { Textarea } from '@/components/ui/textarea'
 import { Button } from '@/components/ui/button'
 import { Trash2, Check } from 'lucide-react'
 import { cn } from '@/lib/utils'
-import type { AnamnesisBlock } from './anamnesis-types'
+import type { IAnamnesisBlock } from './anamnesis-types'
 import { useAnamnesisContext } from './anamnesis-context'
 import type { SaveStatus } from './anamnesis-context'
 
@@ -36,8 +36,8 @@ function renderSaveStatus(status: SaveStatus) {
   }
 }
 
-interface EditorBlockProps {
-  block: AnamnesisBlock
+type EditorBlockProps = {
+  block: IAnamnesisBlock
   index: number
   isActive: boolean
 }

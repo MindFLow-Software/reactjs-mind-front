@@ -1,0 +1,60 @@
+@reference "../../../../../global.css";
+
+@layer components {
+  .acc-edit-content {
+    @apply max-h-[80vh] max-w-2xl! overflow-y-scroll overflow-x-hidden;
+  }
+
+  .acc-edit-header {
+    @apply flex flex-row! items-start gap-3.5 border-b border-border pb-4;
+  }
+
+  .acc-edit-icon-box {
+    @apply flex h-10 w-10 shrink-0 items-center justify-center rounded-[10px]
+          border border-blue-200 bg-blue-50 dark:border-blue-800 dark:bg-blue-950/40;
+  }
+
+  .acc-edit-title {
+    @apply font-title text-[18px] font-bold tracking-[-0.01em] text-foreground;
+  }
+
+  .acc-edit-subtitle {
+    @apply mt-0.5 text-[12px] text-muted-foreground;
+  }
+
+  .acc-edit-section {
+    @apply flex flex-col gap-4 border-t border-muted/40 pt-4;
+  }
+
+  .acc-edit-section-heading {
+    @apply flex items-center gap-2 px-1 text-muted-foreground;
+  }
+
+  .acc-edit-section-title {
+    @apply text-[11px] font-bold uppercase tracking-widest;
+  }
+
+  .acc-edit-input {
+    @apply bg-secondary/30;
+  }
+
+  .acc-edit-input-icon {
+    @apply absolute left-3 top-2.5 h-4 w-4 text-muted-foreground;
+  }
+
+  .acc-edit-badge {
+    @apply px-2 py-1 cursor-pointer;
+  }
+
+  .acc-edit-badge-selected {
+    @apply bg-violet-200 border border-violet-500 text-violet-500;
+  }
+
+  .acc-edit-footer {
+    @apply flex items-center justify-end gap-3 border-t border-muted/40 pt-6;
+  }
+
+  .acc-edit-submit-btn {
+    @apply cursor-pointer bg-blue-600 px-8 shadow-md hover:bg-blue-700;
+  }
+}

@@ -1,6 +1,6 @@
 import { api } from '@/lib/axios'
 
-import type { IMeResponse } from '@/types/me'
+import type { IMeResponse } from '@/types/me/me-response'
 
 export type IgetMeResponse = IMeResponse
 

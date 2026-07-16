@@ -1,64 +1,91 @@
 import { FolderOpen, HardDrive, Clock, Archive } from 'lucide-react'
 import { cn } from '@/lib/utils'
-import { formatFileSize } from '@/utils/format-file-size'
-import type { AttachmentListMeta } from '@/types/attachment'
+import { Files } from '@/utils/files'
+import type { IAttachmentListMeta } from '@/types/attachment/attachment-list-meta'
 import './metrics-cards.css'
 
-interface MetricCardProps {
-  icon: React.ReactNode
-  iconBg: string
-  value: string | number
-  label: string
-  sub?: string
+function MetricCardIcon({
+  className,
+  children,
+}: {
+  className?: string
+  children: React.ReactNode
+}) {
+  return <div className={cn('pd-metric-icon', className)}>{children}</div>
 }
 
-function MetricCard({ icon, iconBg, value, label, sub }: MetricCardProps) {
-  return (
-    <div className="pd-metric-card">
-      <div className={cn('pd-metric-icon', iconBg)}>{icon}</div>
-      <div className="pd-metric-body">
-        <span className="pd-metric-value">{value}</span>
-        <span className="pd-metric-label">{label}</span>
-        {sub && <span className="pd-metric-sub">{sub}</span>}
-      </div>
-    </div>
-  )
+function MetricCardValue({ children }: { children: React.ReactNode }) {
+  return <span className="pd-metric-value">{children}</span>
 }
 
-interface MetricsCardsProps {
-  meta: AttachmentListMeta
+function MetricCardLabel({ children }: { children: React.ReactNode }) {
+  return <span className="pd-metric-label">{children}</span>
+}
+
+function MetricCardSub({ children }: { children: React.ReactNode }) {
+  return <span className="pd-metric-sub">{children}</span>
+}
+
+function MetricCardRoot({ children }: { children: React.ReactNode }) {
+  return <div className="pd-metric-card">{children}</div>
+}
+
+export const MetricCard = Object.assign(MetricCardRoot, {
+  Icon: MetricCardIcon,
+  Value: MetricCardValue,
+  Label: MetricCardLabel,
+  Sub: MetricCardSub,
+})
+
+type MetricsCardsProps = {
+  meta: IAttachmentListMeta
 }
 
 export function MetricsCards({ meta }: MetricsCardsProps) {
   const storageLabel =
-    meta.totalStorageSize > 0 ? formatFileSize(meta.totalStorageSize) : '0 B'
+    meta.totalStorageSize > 0 ? Files.formatSize(meta.totalStorageSize) : '0 B'
 
   return (
     <div className="pd-metric-grid">
-      <MetricCard
-        icon={<FolderOpen className="size-5 text-blue-600" />}
-        iconBg="bg-blue-500/10"
-        value={meta.totalCount}
-        label="Total de arquivos"
-      />
-      <MetricCard
-        icon={<HardDrive className="size-5 text-emerald-600" />}
-        iconBg="bg-emerald-500/10"
-        value={storageLabel}
-        label="Armazenamento usado"
-      />
-      <MetricCard
-        icon={<Clock className="size-5 text-amber-600" />}
-        iconBg="bg-amber-500/10"
-        value="—"
-        label="Pendentes de revisão"
-      />
-      <MetricCard
-        icon={<Archive className="size-5 text-muted-foreground" />}
-        iconBg="bg-muted"
-        value="—"
-        label="Arquivados (90+ dias)"
-      />
+      <MetricCard>
+        <MetricCard.Icon className="bg-blue-500/10">
+          <FolderOpen className="size-5 text-blue-600" />
+        </MetricCard.Icon>
+        <div className="pd-metric-body">
+          <MetricCard.Value>{meta.totalCount}</MetricCard.Value>
+          <MetricCard.Label>Total de arquivos</MetricCard.Label>
+        </div>
+      </MetricCard>
+
+      <MetricCard>
+        <MetricCard.Icon className="bg-emerald-500/10">
+          <HardDrive className="size-5 text-emerald-600" />
+        </MetricCard.Icon>
+        <div className="pd-metric-body">
+          <MetricCard.Value>{storageLabel}</MetricCard.Value>
+          <MetricCard.Label>Armazenamento usado</MetricCard.Label>
+        </div>
+      </MetricCard>
+
+      <MetricCard>
+        <MetricCard.Icon className="bg-amber-500/10">
+          <Clock className="size-5 text-amber-600" />
+        </MetricCard.Icon>
+        <div className="pd-metric-body">
+          <MetricCard.Value>—</MetricCard.Value>
+          <MetricCard.Label>Pendentes de revisão</MetricCard.Label>
+        </div>
+      </MetricCard>
+
+      <MetricCard>
+        <MetricCard.Icon className="bg-muted">
+          <Archive className="size-5 text-muted-foreground" />
+        </MetricCard.Icon>
+        <div className="pd-metric-body">
+          <MetricCard.Value>—</MetricCard.Value>
+          <MetricCard.Label>Arquivados (90+ dias)</MetricCard.Label>
+        </div>
+      </MetricCard>
     </div>
   )
 }

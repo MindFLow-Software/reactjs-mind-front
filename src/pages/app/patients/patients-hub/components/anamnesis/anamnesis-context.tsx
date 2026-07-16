@@ -1,20 +1,20 @@
 import { createContext, useContext } from 'react'
-import type { AnamnesisBlock } from './anamnesis-types'
+import type { IAnamnesisBlock } from './anamnesis-types'
 
 export type SaveStatus = 'synced' | 'pending' | 'draft'
 
-export interface AnamnesisSection {
+export type AnamnesisSection = {
   id: string
   label: string
   wordCount: number
 }
 
-interface AnamnesisEditorContextValue {
+type AnamnesisEditorContextValue = {
   saveStatus: SaveStatus
   canDeleteBlocks: boolean
   activeBlockId: string | null
   sections: AnamnesisSection[]
-  updateBlock: (id: string, updates: Partial<AnamnesisBlock>) => void
+  updateBlock: (id: string, updates: Partial<IAnamnesisBlock>) => void
   deleteBlock: (id: string) => void
   setActiveBlockId: (id: string | null) => void
   jumpToBlock: (id: string) => void

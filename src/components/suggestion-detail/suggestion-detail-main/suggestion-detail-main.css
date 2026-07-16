@@ -1,0 +1,35 @@
+@reference "../../../global.css";
+
+@layer components {
+  .sdm-main {
+    @apply flex min-w-0 flex-1 flex-col gap-5 overflow-y-auto px-[22px] pt-[6px] pb-[22px] scrollbar-thin scrollbar-thumb-border hover:scrollbar-thumb-muted-foreground/30;
+  }
+
+  .sdm-description {
+    @apply mt-4 rounded-[10px] border border-slate-100 bg-slate-50 p-[14px] dark:border-border dark:bg-muted/30;
+  }
+
+  .sdm-description-text {
+    @apply whitespace-pre-wrap break-words text-[14px] leading-[1.6] text-slate-800 dark:text-foreground;
+  }
+
+  .sdm-section-label {
+    @apply text-[11px] font-bold uppercase tracking-[0.06em] text-muted-foreground;
+  }
+
+  .sdm-count-badge {
+    @apply rounded-full bg-muted px-1.5 py-0.5 text-[10.5px] font-semibold text-muted-foreground;
+  }
+
+  .sdm-discussion {
+    @apply flex flex-col gap-3;
+  }
+
+  .sdm-discussion-head {
+    @apply flex items-center gap-1.5;
+  }
+
+  .sdm-discussion-empty {
+    @apply py-6 text-center text-[12px] italic text-muted-foreground;
+  }
+}

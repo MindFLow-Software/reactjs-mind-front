@@ -1,0 +1,11 @@
+@reference "../../../../../../global.css";
+
+@layer components {
+  .pd-up-thumb {
+    @apply flex h-10 w-8 shrink-0 items-end justify-center overflow-hidden rounded-md bg-linear-to-br;
+  }
+
+  .pd-up-thumb-ext {
+    @apply mb-0.5 text-[7px] font-bold text-white/80;
+  }
+}

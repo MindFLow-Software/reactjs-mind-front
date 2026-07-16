@@ -2,12 +2,12 @@ import { useQuery } from '@tanstack/react-query'
 import { fetchPatientProfiles } from '@/api/patient-profiles/fetch-patient-profiles'
 import { queryKeys } from '@/constants/query-keys'
 import { filterAndSortPatients } from '../patients-list.helpers'
-import type { PatientsListQueryResult } from '../patients-list.types'
+import type { IPatientsListQueryResult } from '../patients-list.types'
 import { usePatientsQueryParams } from './use-patients-query-params'
 
 const DEFAULT_META = { pageIndex: 0, perPage: 10, totalCount: 0 }
 
-export function usePatientsListQuery(): PatientsListQueryResult {
+export function usePatientsListQuery(): IPatientsListQueryResult {
   const params = usePatientsQueryParams()
   const { pageIndex, perPage } = params
 

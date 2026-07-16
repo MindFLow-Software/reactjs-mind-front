@@ -1,5 +1,5 @@
 import { api } from '@/lib/axios'
-import type { IPopup } from '@/types/popup'
+import type { IPopup } from '@/types/popup/popup'
 
 export async function fetchUnseenPopups(): Promise<IPopup[]> {
   const response = await api.get<{ popups: IPopup[] }>('/popups/unseen')

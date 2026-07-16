@@ -1,0 +1,15 @@
+@reference "../../../../../../global.css";
+
+@layer components {
+  .adm-dialog {
+    @apply rounded-xl border-none bg-card p-0 shadow-2xl;
+  }
+
+  .adm-dialog--sm {
+    @apply max-w-[400px];
+  }
+
+  .adm-dialog--md {
+    @apply max-w-md;
+  }
+}

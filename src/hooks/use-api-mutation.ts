@@ -8,14 +8,14 @@ import {
 import { toast } from 'sonner'
 import { getApiErrorMessage } from '@/lib/get-api-error-message'
 
-interface UseApiMutationOptions<
+type UseApiMutationOptions<
   TResult extends { message: string | null },
   TVars,
-> extends UseMutationOptions<TResult, unknown, TVars> {
+> = {
   successFallback?: string
   errorFallback?: string
   invalidateKeys?: QueryKey[]
-}
+} & UseMutationOptions<TResult, unknown, TVars>
 
 export function useApiMutation<
   TResult extends { message: string | null },

@@ -1,6 +1,6 @@
 import { api } from '@/lib/axios'
 
-export interface DailySessionMetric {
+export type DailySessionMetric = {
   date: string // ISO Date
   count: number
 }

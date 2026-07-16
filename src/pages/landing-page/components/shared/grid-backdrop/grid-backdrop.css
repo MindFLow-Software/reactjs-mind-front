@@ -1,0 +1,13 @@
+@reference "../../../../../global.css";
+
+@layer components {
+  .lp-grid-backdrop {
+    @apply pointer-events-none absolute inset-0;
+    background-image: linear-gradient(
+        rgba(37, 99, 235, 0.05) 1px,
+        transparent 1px
+      ),
+      linear-gradient(90deg, rgba(37, 99, 235, 0.05) 1px, transparent 1px);
+    background-size: 60px 60px;
+  }
+}

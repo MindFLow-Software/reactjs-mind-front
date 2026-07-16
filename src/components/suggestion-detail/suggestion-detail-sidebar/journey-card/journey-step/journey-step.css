@@ -1,0 +1,43 @@
+@reference "../../../../../global.css";
+
+@layer components {
+  .sdm-journey-step {
+    @apply relative flex items-center gap-3 py-2 pl-8;
+  }
+
+  .sdm-timeline-node {
+    @apply absolute left-0 z-10 flex size-[26px] shrink-0 items-center justify-center rounded-full border-2;
+  }
+
+  .sdm-timeline-node-done {
+    @apply border-emerald-500 bg-emerald-500 text-white;
+  }
+
+  .sdm-timeline-node-current {
+    @apply animate-pulse border-blue-500 bg-blue-500 text-white;
+  }
+
+  .sdm-timeline-node-pending {
+    @apply border-border bg-card;
+  }
+
+  .sdm-timeline-blob {
+    @apply size-1.5 rounded-full bg-border;
+  }
+
+  .sdm-journey-body-pending {
+    @apply opacity-40;
+  }
+
+  .sdm-journey-label {
+    @apply text-[12.5px] font-semibold leading-tight text-muted-foreground;
+  }
+
+  .sdm-journey-label-active {
+    @apply text-foreground;
+  }
+
+  .sdm-journey-date {
+    @apply mt-0.5 text-[11px] tabular-nums text-muted-foreground;
+  }
+}

@@ -1,20 +1,20 @@
-import type { DashboardPeriod, PeriodOption } from './types'
+import type { IDashboardPeriod, IPeriodOption } from './types'
 
-export const PERIODS: readonly PeriodOption[] = [
-  { value: '7d' as DashboardPeriod, label: '7 dias' },
-  { value: '30d' as DashboardPeriod, label: '30 dias' },
-  { value: '90d' as DashboardPeriod, label: '90 dias' },
-  { value: 'year' as DashboardPeriod, label: 'Ano' },
+export const PERIODS: readonly IPeriodOption[] = [
+  { value: '7d' as IDashboardPeriod, label: '7 dias' },
+  { value: '30d' as IDashboardPeriod, label: '30 dias' },
+  { value: '90d' as IDashboardPeriod, label: '90 dias' },
+  { value: 'year' as IDashboardPeriod, label: 'Ano' },
 ] as const
 
-export const ADMIN_PERIODS: readonly PeriodOption[] = [
-  { value: '7d' as DashboardPeriod, label: '7 dias' },
-  { value: '30d' as DashboardPeriod, label: '30 dias' },
-  { value: '90d' as DashboardPeriod, label: '90 dias' },
-  { value: 'year' as DashboardPeriod, label: '1 ano' },
+export const ADMIN_PERIODS: readonly IPeriodOption[] = [
+  { value: '7d' as IDashboardPeriod, label: '7 dias' },
+  { value: '30d' as IDashboardPeriod, label: '30 dias' },
+  { value: '90d' as IDashboardPeriod, label: '90 dias' },
+  { value: 'year' as IDashboardPeriod, label: '1 ano' },
 ] as const
 
-export const PERIOD_DAYS: Record<DashboardPeriod, number> = {
+export const PERIOD_DAYS: Record<IDashboardPeriod, number> = {
   '7d': 7,
   '30d': 30,
   '90d': 90,

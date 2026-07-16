@@ -2,8 +2,6 @@
 
 import { useState, memo } from 'react'
 import { Eye, ArrowDownToLine, Trash2 } from 'lucide-react'
-import { format } from 'date-fns'
-import { ptBR } from 'date-fns/locale'
 
 import { Button } from '@/components/ui/button'
 import {
@@ -16,16 +14,16 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from '@/components/ui/alert-dialog'
-import { handleFileDownload } from '@/utils/handle-file-download'
-import { formatFileSize } from '@/utils/format-file-size'
+import { Files } from '@/utils/files'
+import { Time } from '@/utils/time'
 import { cn } from '@/lib/utils'
-import type { AttachmentPatientItem } from '@/types/attachment'
+import type { IAttachmentPatientItem } from '@/types/attachment/attachment-patient-item'
 
 import './file-card.css'
 
-interface FileCardProps {
-  file: AttachmentPatientItem
-  onPreview: (file: AttachmentPatientItem) => void
+type FileCardProps = {
+  file: IAttachmentPatientItem
+  onPreview: (file: IAttachmentPatientItem) => void
   onDelete: (id: string) => void
 }
 
@@ -48,7 +46,7 @@ export const FileCard = memo(function FileCard({
 
   const badge = getTypeBadge(file.type)
   const dateLabel = file.uploadedAt
-    ? format(new Date(file.uploadedAt), 'dd MMM yyyy', { locale: ptBR })
+    ? Time.toDayMonthYearAbbrev(file.uploadedAt)
     : '—'
 
   return (
@@ -63,7 +61,7 @@ export const FileCard = memo(function FileCard({
             {file.filename}
           </p>
           <p className="ph-file-card__meta">
-            {formatFileSize(file.size)} · {dateLabel}
+            {Files.formatSize(file.size)} · {dateLabel}
           </p>
         </div>
 
@@ -83,7 +81,7 @@ export const FileCard = memo(function FileCard({
             onClick={(e) => {
               e.preventDefault()
               e.stopPropagation()
-              handleFileDownload(file.id, file.filename)
+              Files.download(file.id, file.filename)
             }}
           >
             <ArrowDownToLine className="ph-file-card__action-icon" />

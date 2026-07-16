@@ -44,7 +44,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
         icon: Home,
         items: [
           {
-            title: 'Dashboard',
+            title: 'Visão Geral',
             url: isAdmin ? '/admin/dashboard' : '/dashboard',
           },
         ],

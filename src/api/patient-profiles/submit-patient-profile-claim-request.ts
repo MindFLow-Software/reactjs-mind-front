@@ -1,10 +1,10 @@
 import { api } from '@/lib/axios'
-import type { IMutationResult } from '@/types/api'
-import type { IPatientProfileClaimRequest } from '@/types/patient-profile-claim-request'
+import type { IMutationResult } from '@/types/shared/mutation-result'
+import type { IPatientProfileClaimRequest } from '@/types/claim/patient-profile-claim-request'
 
 export type ClaimRequestAction = 'approve' | 'reject'
 
-export interface ISubmitPatientProfileClaimRequestParams {
+export type ISubmitPatientProfileClaimRequestParams = {
   claimRequestId: string | null
   action: ClaimRequestAction
 }

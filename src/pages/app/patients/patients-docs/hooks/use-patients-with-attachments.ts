@@ -1,7 +1,7 @@
 import { useQuery } from '@tanstack/react-query'
 import { getPatientsWithAttachments } from '@/api/patient-profiles/patient-with-attachment'
 
-interface UsePatientsWithAttachmentsOptions {
+type UsePatientsWithAttachmentsOptions = {
   enabled?: boolean
 }
 

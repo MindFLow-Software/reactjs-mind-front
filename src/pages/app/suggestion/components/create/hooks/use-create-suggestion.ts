@@ -4,13 +4,13 @@ import { createSuggestion } from '@/api/suggestions/create-suggestion'
 import { getApiErrorMessage } from '@/lib/get-api-error-message'
 import type { CreateSuggestionSchema } from '@/validators/suggestions/form/create-suggestion-schema'
 
-interface UseCreateSuggestionOptions {
+type UseCreateSuggestionOptions = {
   onSuccess: () => void
 }
 
-interface CreateSuggestionVariables extends CreateSuggestionSchema {
+type CreateSuggestionVariables = {
   files: File[]
-}
+} & CreateSuggestionSchema
 
 export function useCreateSuggestion({ onSuccess }: UseCreateSuggestionOptions) {
   const queryClient = useQueryClient()

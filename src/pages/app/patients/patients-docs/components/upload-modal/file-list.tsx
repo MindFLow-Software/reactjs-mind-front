@@ -1,12 +1,68 @@
 import { Trash2, CheckCircle2, AlertCircle, Loader2 } from 'lucide-react'
-import { formatFileSize } from '@/utils/format-file-size'
-import type { FileItem } from '@/hooks/use-upload'
+import { Files } from '@/utils/files'
+import { FileStatus, type IFileItem } from '../../hooks/use-upload'
 import { FileThumb } from './file-thumb'
+import './file-list.css'
 
-interface FileListProps {
-  files: FileItem[]
+type FileListProps = {
+  files: IFileItem[]
   onRemove: (id: string) => void
   onClear: () => void
+}
+
+function FileItemStatusIcon({
+  item,
+  onRemove,
+}: {
+  item: IFileItem
+  onRemove: (id: string) => void
+}) {
+  switch (item.status) {
+    case FileStatus.UPLOADING:
+      return <Loader2 className="size-4 animate-spin text-primary" />
+    case FileStatus.DONE:
+      return <CheckCircle2 className="size-4 text-green-600" />
+    case FileStatus.ERROR:
+      return <AlertCircle className="size-4 text-destructive" />
+    case FileStatus.PENDING:
+      return (
+        <button
+          type="button"
+          onClick={() => onRemove(item.id)}
+          className="pd-up-item-remove"
+        >
+          <Trash2 className="size-3.5" />
+        </button>
+      )
+  }
+}
+
+function FileItemProgressBar({ item }: { item: IFileItem }) {
+  switch (item.status) {
+    case FileStatus.UPLOADING:
+      return (
+        <div className="pd-up-progress">
+          <div
+            className="pd-up-progress-bar"
+            style={{ width: `${item.progress}%` }}
+          />
+        </div>
+      )
+    case FileStatus.DONE:
+      return (
+        <div className="pd-up-progress-done">
+          <div className="pd-up-progress-done-bar" />
+        </div>
+      )
+    case FileStatus.ERROR:
+      return (
+        <div className="pd-up-progress-error">
+          <div className="pd-up-progress-error-bar" />
+        </div>
+      )
+    case FileStatus.PENDING:
+      return null
+  }
 }
 
 export function FileList({ files, onRemove, onClear }: FileListProps) {
@@ -31,52 +87,18 @@ export function FileList({ files, onRemove, onClear }: FileListProps) {
             <p className="pd-up-item-name">{item.file.name}</p>
             <div className="pd-up-item-meta">
               <p className="pd-up-item-size">
-                {formatFileSize(item.file.size)}
+                {Files.formatSize(item.file.size)}
               </p>
-              {item.status === 'error' && (
+              {item.status === FileStatus.ERROR && (
                 <p className="pd-up-item-error">{item.error}</p>
               )}
             </div>
 
-            {item.status === 'uploading' && (
-              <div className="pd-up-progress">
-                <div
-                  className="pd-up-progress-bar"
-                  style={{ width: `${item.progress}%` }}
-                />
-              </div>
-            )}
-            {item.status === 'done' && (
-              <div className="pd-up-progress-done">
-                <div className="pd-up-progress-done-bar" />
-              </div>
-            )}
-            {item.status === 'error' && (
-              <div className="pd-up-progress-error">
-                <div className="pd-up-progress-error-bar" />
-              </div>
-            )}
+            <FileItemProgressBar item={item} />
           </div>
 
           <div className="shrink-0">
-            {item.status === 'uploading' && (
-              <Loader2 className="size-4 animate-spin text-primary" />
-            )}
-            {item.status === 'done' && (
-              <CheckCircle2 className="size-4 text-green-600" />
-            )}
-            {item.status === 'error' && (
-              <AlertCircle className="size-4 text-destructive" />
-            )}
-            {item.status === 'pending' && (
-              <button
-                type="button"
-                onClick={() => onRemove(item.id)}
-                className="pd-up-item-remove"
-              >
-                <Trash2 className="size-3.5" />
-              </button>
-            )}
+            <FileItemStatusIcon item={item} onRemove={onRemove} />
           </div>
         </div>
       ))}

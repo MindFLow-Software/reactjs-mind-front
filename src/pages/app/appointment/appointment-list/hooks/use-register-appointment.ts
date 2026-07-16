@@ -3,13 +3,13 @@ import { AxiosError } from 'axios'
 import { toast } from 'sonner'
 import { registerAppointment } from '@/api/appointments/create-appointment'
 
-export interface UseRegisterAppointmentOptions {
+export type IUseRegisterAppointmentOptions = {
   onSuccess?: () => void
 }
 
 export function useRegisterAppointment({
   onSuccess,
-}: UseRegisterAppointmentOptions) {
+}: IUseRegisterAppointmentOptions) {
   const queryClient = useQueryClient()
 
   return useMutation({

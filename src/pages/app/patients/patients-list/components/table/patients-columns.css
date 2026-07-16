@@ -1,0 +1,37 @@
+@reference "../../../../../../global.css";
+
+/* Single source for the patients-table column geometry — shared by the head
+   cells, the row cells and the loading skeleton so the three stay aligned. */
+@layer components {
+  .ptc-checkbox {
+    @apply w-[44px] pl-4;
+  }
+
+  .ptc-identity {
+    @apply min-w-[180px];
+  }
+
+  .ptc-status {
+    @apply w-[120px];
+  }
+
+  .ptc-contact {
+    @apply min-w-[200px];
+  }
+
+  .ptc-last-session {
+    @apply hidden w-[140px] lg:table-cell;
+  }
+
+  .ptc-age {
+    @apply hidden w-[110px] xl:table-cell;
+  }
+
+  .ptc-gender {
+    @apply hidden w-[110px] xl:table-cell;
+  }
+
+  .ptc-actions {
+    @apply w-[110px] pr-3;
+  }
+}

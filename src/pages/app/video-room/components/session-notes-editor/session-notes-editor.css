@@ -1,0 +1,80 @@
+@reference "../../../../../global.css";
+
+@layer components {
+  .vr-notes-toolbar-btn {
+    @apply relative flex h-8 w-8 items-center justify-center rounded-md transition-all duration-150
+      text-muted-foreground hover:bg-secondary hover:text-foreground
+      disabled:cursor-not-allowed disabled:opacity-40
+      focus:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-1;
+  }
+
+  .vr-notes-shell {
+    @apply relative w-full rounded-xl border bg-card transition-all duration-300;
+  }
+
+  .vr-notes-header {
+    @apply flex items-center justify-between border-b border-border/50 px-4 py-3;
+  }
+
+  .vr-notes-header-icon {
+    @apply flex h-8 w-8 items-center justify-center rounded-lg transition-colors;
+  }
+
+  .vr-notes-toolbar {
+    @apply flex items-center gap-1 border-b border-border/50 px-3 py-2 transition-opacity;
+  }
+
+  .vr-notes-font-size-control {
+    @apply flex items-center rounded-md border border-border bg-background;
+  }
+
+  .vr-notes-font-size-btn {
+    @apply flex h-7 w-7 items-center justify-center text-muted-foreground transition-colors hover:bg-secondary hover:text-foreground disabled:opacity-40;
+  }
+
+  .vr-notes-font-size-value {
+    @apply flex w-10 items-center justify-center border-x border-border;
+  }
+
+  .vr-notes-divider {
+    @apply mx-2 h-5 w-px bg-border;
+  }
+
+  .vr-notes-stats {
+    @apply ml-auto flex items-center gap-4 pr-1;
+  }
+
+  .vr-notes-word-count {
+    @apply flex items-center gap-1.5 text-xs text-muted-foreground;
+  }
+
+  .vr-notes-char-progress {
+    @apply flex items-center gap-2;
+  }
+
+  .vr-notes-char-progress-track {
+    @apply h-1.5 w-16 overflow-hidden rounded-full bg-secondary;
+  }
+
+  .vr-notes-char-progress-fill {
+    @apply h-full rounded-full transition-all duration-300;
+  }
+
+  .vr-notes-char-count {
+    @apply min-w-[60px] text-right font-mono text-xs text-muted-foreground;
+  }
+
+  .vr-notes-textarea {
+    @apply w-full min-h-[400px] resize-none bg-transparent px-6 py-5 font-serif leading-relaxed text-foreground
+      placeholder:text-muted-foreground/50
+      outline-none transition-all;
+  }
+
+  .vr-notes-caret {
+    @apply pointer-events-none absolute left-6 top-5 flex items-center gap-2 text-muted-foreground/40;
+  }
+
+  .vr-notes-footer {
+    @apply flex items-center justify-between border-t border-border/50 px-4 py-2.5;
+  }
+}

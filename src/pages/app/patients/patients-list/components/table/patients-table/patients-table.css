@@ -1,0 +1,15 @@
+@reference "../../../../../../../global.css";
+
+@layer components {
+  .ptbl-card {
+    @apply overflow-hidden border p-0!;
+  }
+
+  .ptbl-head-row {
+    @apply bg-muted/30 hover:bg-muted/30;
+  }
+
+  .ptbl-head {
+    @apply whitespace-nowrap text-[11px] font-semibold uppercase tracking-wider text-muted-foreground;
+  }
+}

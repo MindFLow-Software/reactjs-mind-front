@@ -21,12 +21,12 @@ import {
 } from '@/components/ui/select'
 import { cn } from '@/lib/utils'
 import { usePatientsWithAttachments } from '../../hooks/use-patients-with-attachments'
-import { useUpload } from '@/hooks/use-upload'
+import { useUpload } from '../../hooks/use-upload'
 import { DropZone } from './drop-zone'
 import { FileList } from './file-list'
 import './upload-modal.css'
 
-interface UploadModalProps {
+type UploadModalProps = {
   open: boolean
   onClose: () => void
 }
@@ -107,9 +107,11 @@ export function UploadModal({ open, onClose }: UploadModalProps) {
         <div className="pd-up-body">
           <DropZone
             isDragging={isDragging}
-            onDragEnter={handleDragEnter}
-            onDragLeave={handleDragLeave}
-            onDrop={handleDrop}
+            dragHandlers={{
+              onDragEnter: handleDragEnter,
+              onDragLeave: handleDragLeave,
+              onDrop: handleDrop,
+            }}
             onFilesSelected={addFiles}
           />
 

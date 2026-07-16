@@ -1,5 +1,5 @@
 import { api } from '@/lib/axios'
-import type { IAnamnesisContent } from '@/types/clinical'
+import type { IAnamnesisContent } from '@/types/clinical/anamnesis-content'
 
 export async function saveAnamnesis(
   patientProfileId: string,

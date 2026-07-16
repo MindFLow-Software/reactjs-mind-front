@@ -4,19 +4,19 @@ import { toast } from 'sonner'
 import { fetchPatientProfiles } from '@/api/patient-profiles/fetch-patient-profiles'
 import { queryKeys } from '@/constants/query-keys'
 
-export interface IPatientOption {
+export type IPatientOption = {
   id: string
   name: string
 }
 
-export interface UsePatientLookupReturn {
+export type IUsePatientLookupReturn = {
   patients: IPatientOption[]
   isLoading: boolean
 }
 
 const PATIENT_LOOKUP_PARAMS = { pageIndex: 0, perPage: 1000 }
 
-export function usePatientLookup(): UsePatientLookupReturn {
+export function usePatientLookup(): IUsePatientLookupReturn {
   const { data, isLoading, isError } = useQuery({
     queryKey: queryKeys.patients(PATIENT_LOOKUP_PARAMS),
     queryFn: () => fetchPatientProfiles(PATIENT_LOOKUP_PARAMS),

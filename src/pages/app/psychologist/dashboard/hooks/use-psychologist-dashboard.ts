@@ -6,21 +6,21 @@ import {
   QUERY_GC_TIME,
   QUERY_STALE_TIME,
 } from '@/pages/app/dashboard/shared/constants'
-import type { DashboardPeriod } from '@/pages/app/dashboard/shared/types'
-import type { IPsychologistDashboardData } from '@/types/dashboard'
+import type { IDashboardPeriod } from '@/pages/app/dashboard/shared/types'
+import type { IPsychologistDashboardData } from '@/types/dashboard/psychologist-dashboard-data'
 import { useActivePracticeContextStore } from '@/store/use-active-practice-context-store'
 
-export interface IUsePsychologistDashboard {
+export type IUsePsychologistDashboard = {
   data?: IPsychologistDashboardData
   isLoading: boolean
   isError: boolean
   refetch: () => void
-  period: DashboardPeriod
-  setPeriod: (period: DashboardPeriod) => void
+  period: IDashboardPeriod
+  setPeriod: (period: IDashboardPeriod) => void
 }
 
 export function usePsychologistDashboard(): IUsePsychologistDashboard {
-  const [period, setPeriod] = useState<DashboardPeriod>('30d')
+  const [period, setPeriod] = useState<IDashboardPeriod>('30d')
   const practiceContextId = useActivePracticeContextStore(
     (state) => state.activePracticeContextId,
   )

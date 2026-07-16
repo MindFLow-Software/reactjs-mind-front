@@ -1,6 +1,7 @@
 import z from 'zod'
 
-import { ContextType, SessionFormat } from '@/types/psychologist'
+import { ContextType } from '@/types/psychologist/context-type'
+import { SessionFormat } from '@/types/psychologist/session-format'
 
 export const createPsychologistPracticeContextSchema = z.object({
   nickname: z.string().optional(),

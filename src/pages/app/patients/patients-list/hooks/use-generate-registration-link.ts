@@ -1,6 +1,6 @@
 import { useApiMutation } from '@/hooks/use-api-mutation'
 import { generateRegistrationLink } from '@/api/registration-link/generate-registration-link'
-import type { IMutationResult } from '@/types/api'
+import type { IMutationResult } from '@/types/shared/mutation-result'
 
 type IUseGenerateRegistrationLink = {
   isGenerating: boolean

@@ -1,0 +1,45 @@
+@reference "../../../../../global.css";
+
+@layer components {
+  .pc-cfg-card {
+    @apply mt-[22px] w-full gap-0! overflow-hidden p-0!;
+  }
+
+  .pc-cfg-head {
+    @apply flex! items-center! gap-3! border-b border-border px-6 py-5;
+  }
+
+  .pc-cfg-title {
+    @apply font-title text-[17.5px] font-extrabold text-foreground;
+  }
+
+  .pc-cfg-subtitle {
+    @apply text-[12.5px] text-muted-foreground;
+  }
+
+  .pc-cfg-body {
+    @apply flex flex-col gap-[18px] px-6 py-5;
+  }
+
+  .pc-input {
+    @apply h-[38px];
+  }
+
+  .pc-field-hint {
+    @apply text-[10.5px]! font-medium text-muted-foreground;
+  }
+
+  .pc-row2 {
+    @apply grid grid-cols-2 items-start gap-4;
+  }
+
+  @media (max-width: 560px) {
+    .pc-row2 {
+      @apply grid-cols-1;
+    }
+  }
+
+  .pc-cfg-foot {
+    @apply flex justify-end bg-muted/50 px-6 py-[14px];
+  }
+}

@@ -3,7 +3,7 @@ import { persist, createJSONStorage } from 'zustand/middleware'
 
 export type PatientQueueSource = 'patients-records' | 'patients-list'
 
-interface IPatientQueueState {
+type IPatientQueueState = {
   queue: string[]
   source: PatientQueueSource | null
   setQueue: (queue: string[], source: PatientQueueSource) => void

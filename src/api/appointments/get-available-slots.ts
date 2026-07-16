@@ -1,11 +1,11 @@
 import { api } from '@/lib/axios'
 
-export interface GetAvailableSlotsRequest {
+export type GetAvailableSlotsRequest = {
   psychologistPracticeContextId: string
   date: string
 }
 
-export interface GetAvailableSlotsResponse {
+export type GetAvailableSlotsResponse = {
   slots: string[]
 }
 

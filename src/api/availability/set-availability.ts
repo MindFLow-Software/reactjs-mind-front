@@ -1,6 +1,6 @@
 import { api } from '@/lib/axios'
 
-export interface AvailabilitySlot {
+export type AvailabilitySlot = {
   dayOfWeek: number
   startTime: string
   endTime: string
