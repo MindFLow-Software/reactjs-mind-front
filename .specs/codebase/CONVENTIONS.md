@@ -23,12 +23,13 @@ API:
 
 Types:
 
-- Interfaces must use `I` + PascalCase: `IUser`, `IPatient`, `IAppointmentResponse`.
+- Types use `type` + `I` + PascalCase: `type IUser = {}`, `type IPatient = {}`, `type IAppointmentResponse = {}`. Never use `interface` for first-party types, except where TypeScript module augmentation requires declaration merging (e.g. `declare module 'axios'`). `src/components/ui/*` shadcn primitives and library-derived types (`VariantProps`, `LinkProps`) are exempt.
 - Backend entities/domains must have a single source of truth in `src/types`.
 - API files may define action-specific request/response wrappers only when they are not reusable entities.
 - UI-only types must be explicitly named as view models and must not replace backend entities.
 - Use native TypeScript `enum` for closed domain values. Do not create enum-like `const` objects plus `typeof` type aliases such as `export type Languages = (typeof Languages)[keyof typeof Languages]`; export `enum Languages` instead.
 - Always consume enum values through the enum member, never through raw string literals. Use `Honorific.MASC_DR`, not `'MASC_DR'`; use `AppointmentStatus.SCHEDULED`, not `'SCHEDULED'`.
+- Enum placement follows consumer count: single-domain enums are co-located in that domain's `src/types/{domain}/*.ts` file (companion co-location — the one exception to one-export-per-file); enums consumed across 2+ domains live in `src/types/shared/enums.ts`. Grep importers before placing a new enum — a "single-consumer" enum that turns out to have 2+ domains goes to `shared/enums.ts` instead.
 - Never reexport anything. Every symbol must be exported from exactly one module and imported directly from that source module. No barrel exports, no one-line compatibility wrappers, and no `import type { IExample } from './example'; export { IExample }`.
 - No `any`. Use backend-aligned types, `unknown` plus guards, or generics.
 
@@ -63,7 +64,9 @@ Validators and forms:
 Components and hooks:
 
 - Prefer shadcn/ui primitives before custom components.
+- Every first-party component gets its own folder holding its `.tsx`, its `.css`, and any component-local files (hooks, types, constants, helpers). Applies to `src/components/*` and to feature-local subcomponents alike (a flat `steps/step-basic-data.tsx` becomes `steps/step-basic-data/step-basic-data.tsx` + `.css`). `src/components/ui/*` shadcn primitives are not restructured.
 - Components with more than 3 props must use composition or a grouped typed object.
+- Components sharing loading/error/empty state across children (chart cards, data blocks) use one generic composed component with namespace composition (`ChartCard.Header`/`.Body`/`.Empty`/etc.) and a React context carrying the shared state, instead of threading separate booleans through every child. `state={{ isLoading, isError, isEmpty }}` is the one allowed grouped object for this case.
 - Creation and editing flows must be separate. Never reuse a create modal/form/schema/hook for edit mode.
 - Reusable API/filter logic becomes hooks.
 - Shared hooks live in `src/hooks`; feature-only hooks live next to the feature.
@@ -83,7 +86,7 @@ Legacy conflict notes:
 
 - `useApiMutation` is not canonical while `src/hooks/use-api-mutation.ts` is empty.
 - Stores must not live in `src/utils`.
-- API request/response interfaces should not be duplicated inside API files when they represent backend entities.
+- API request/response types should not be duplicated inside API files when they represent backend entities.
 - Components such as `RegisterPatients` must not accept `isEditing` to turn a creation flow into an editing flow. Split into create and edit components with separate schemas, hooks, and mutation logic.
 
 ---
