@@ -2,6 +2,7 @@ import { Navigate, Outlet, useLocation } from 'react-router-dom'
 
 import { useAuth } from '@/hooks/use-auth'
 import { BrandedLoader } from '@/components/branded-loader/branded-loader'
+import { SessionKeepAlive } from './session-keep-alive/session-keep-alive'
 
 export function ProtectedRoute({ children }: { children?: React.ReactNode }) {
   const { isAuthenticated, isPending } = useAuth()
@@ -15,5 +16,10 @@ export function ProtectedRoute({ children }: { children?: React.ReactNode }) {
     return <Navigate to="/sign-in" state={{ from: location }} replace />
   }
 
-  return <>{children || <Outlet />}</>
+  return (
+    <>
+      {children || <Outlet />}
+      <SessionKeepAlive />
+    </>
+  )
 }

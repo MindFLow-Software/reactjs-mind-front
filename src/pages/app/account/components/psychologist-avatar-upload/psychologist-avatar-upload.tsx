@@ -7,7 +7,6 @@ import { toast } from 'sonner'
 import { uploadAvatar } from '@/api/attachments/upload-avatar'
 import { UserAvatar } from '@/components/user-avatar/user-avatar'
 import type { IgetMeResponse } from '@/api/auth/get-profile'
-import { useSessionStore } from '@/store/use-session-store'
 
 import './psychologist-avatar-upload.css'
 type IPsychologistAvatarUpload = {
@@ -23,8 +22,6 @@ export function PsychologistAvatarUpload({
 
   const fileInputRef = useRef<HTMLInputElement>(null)
   const [previewUrl, setPreviewUrl] = useState<string | null>(null)
-  const user = useSessionStore((state) => state.user)
-  const setSession = useSessionStore((state) => state.setSession)
 
   const { mutateAsync: uploadPhoto, isPending } = useMutation({
     mutationFn: async (file: File) => {
@@ -38,8 +35,6 @@ export function PsychologistAvatarUpload({
         if (!oldData) return oldData
         return { ...oldData, profileImageUrl: newPhotoUrl }
       })
-
-      if (user) setSession({ ...user, profileImageUrl: newPhotoUrl })
 
       await queryClient.invalidateQueries({ queryKey })
 
