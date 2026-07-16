@@ -132,9 +132,10 @@ export function useAnamnesisEditor({
     queryFn: () => getAnamnesis(patientId),
   })
 
-  const { mutate, isPending } = useMutation({
-    mutationFn: (newData: IAnamnesisContent) =>
-      saveAnamnesis(patientId, newData),
+  const { mutate: save, isPending } = useMutation({
+    mutationFn: (newData: IAnamnesisContent) => {
+      return saveAnamnesis(patientId, newData)
+    },
     onSuccess: async (_, vars) => {
       lastPersistedHash.current = JSON.stringify(vars)
       dispatch({ type: 'SET_HAS_LOCAL_DRAFT', value: false })
@@ -150,15 +151,23 @@ export function useAnamnesisEditor({
 
   const normalizedBlocks = useMemo(() => normalizeBlocks(blocks), [blocks])
   const payload = useMemo(() => toApiData(normalizedBlocks), [normalizedBlocks])
+  const payloadHash = JSON.stringify(payload)
+
   const content = useMemo(
     () => buildContentFromBlocks(normalizedBlocks),
     [normalizedBlocks],
   )
-  const payloadHash = JSON.stringify(payload)
 
   // Data load + local draft recovery
   useEffect(() => {
-    if (!data) return
+    if (!data) {
+      dispatch({
+        type: 'HYDRATE',
+        blocks: [],
+        hasLocalDraft: false,
+      })
+      return
+    }
 
     const serverBlocks = normalizeBlocks(buildInitialBlocks(data))
     const serverHash = JSON.stringify(toApiData(serverBlocks))
@@ -193,10 +202,10 @@ export function useAnamnesisEditor({
 
     if (payloadHash !== lastPersistedHash.current) {
       dispatch({ type: 'SET_HAS_LOCAL_DRAFT', value: true })
-      const timer = setTimeout(() => mutate(payload), 1000)
+      const timer = setTimeout(() => save(payload), 1000)
       return () => clearTimeout(timer)
     }
-  }, [payloadHash, hydrated, mutate, payload, normalizedBlocks, patientId])
+  }, [payloadHash, hydrated, save, payload, normalizedBlocks, patientId])
 
   const {
     isExporting,
