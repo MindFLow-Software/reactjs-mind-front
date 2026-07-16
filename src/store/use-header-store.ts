@@ -1,6 +1,6 @@
 import { create } from 'zustand'
 
-interface IHeaderStore {
+type IHeaderStore = {
   title: string
   titleHref?: string
   subtitle?: string

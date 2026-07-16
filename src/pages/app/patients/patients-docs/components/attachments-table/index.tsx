@@ -17,19 +17,19 @@ import { BulkDeleteAction } from '../bulk-delete-action'
 import type { IAttachmentListItem as Attachment } from '@/types/attachment/attachment-list-item'
 import './attachments-table.css'
 
-interface AttachmentsTableData {
+type AttachmentsTableData = {
   attachments: Attachment[]
   isLoading: boolean
   perPage?: number
 }
 
-interface AttachmentsTableSelection {
+type AttachmentsTableSelection = {
   previewDocId?: string
   onPreview: (doc: Attachment) => void
   onDelete: (id: string) => void
 }
 
-interface AttachmentsTableProps {
+type AttachmentsTableProps = {
   data: AttachmentsTableData
   selection: AttachmentsTableSelection
 }

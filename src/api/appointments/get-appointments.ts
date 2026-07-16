@@ -2,7 +2,7 @@ import { api } from '@/lib/axios'
 import type { IAppointment } from '@/types/appointment/appointment'
 import type { AppointmentStatus } from '@/types/appointment/appointment-status'
 
-export interface IAppointmentListItem extends IAppointment {
+export type IAppointmentListItem = {
   patientName: string
   patient: {
     firstName: string
@@ -13,9 +13,9 @@ export interface IAppointmentListItem extends IAppointment {
   start?: Date
   end?: Date
   title?: string
-}
+} & IAppointment
 
-export interface GetAppointmentsRequest {
+export type GetAppointmentsRequest = {
   pageIndex?: number
   perPage?: number
   status?: AppointmentStatus | null
@@ -23,7 +23,7 @@ export interface GetAppointmentsRequest {
   name?: string
 }
 
-export interface GetAppointmentsResponse {
+export type GetAppointmentsResponse = {
   appointments: IAppointmentListItem[]
 }
 

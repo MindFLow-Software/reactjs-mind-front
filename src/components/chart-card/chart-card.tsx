@@ -391,7 +391,9 @@ function ChartCardTimeSeriesBar<T extends { date: string } & object>({
   data,
   series,
 }: IChartCardTimeSeriesBar<T>) {
-  const { state: { isError, isEmpty } } = useContext(ChartCardContext)
+  const {
+    state: { isError, isEmpty },
+  } = useContext(ChartCardContext)
 
   if (isError || isEmpty) return null
 

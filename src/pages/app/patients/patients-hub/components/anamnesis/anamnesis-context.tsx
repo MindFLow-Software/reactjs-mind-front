@@ -3,13 +3,13 @@ import type { IAnamnesisBlock } from './anamnesis-types'
 
 export type SaveStatus = 'synced' | 'pending' | 'draft'
 
-export interface AnamnesisSection {
+export type AnamnesisSection = {
   id: string
   label: string
   wordCount: number
 }
 
-interface AnamnesisEditorContextValue {
+type AnamnesisEditorContextValue = {
   saveStatus: SaveStatus
   canDeleteBlocks: boolean
   activeBlockId: string | null

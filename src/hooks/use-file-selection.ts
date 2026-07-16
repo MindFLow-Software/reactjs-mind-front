@@ -1,12 +1,12 @@
 import { useState, useCallback } from 'react'
 import { toast } from 'sonner'
 
-interface UseFileSelectionOptions {
+type UseFileSelectionOptions = {
   maxFiles: number
   maxSizeBytes: number
 }
 
-interface UseFileSelectionReturn {
+type UseFileSelectionReturn = {
   files: File[]
   addFiles: (incoming: File[]) => void
   removeFile: (index: number) => void

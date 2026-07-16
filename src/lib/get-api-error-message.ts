@@ -1,6 +1,6 @@
 import { AxiosError } from 'axios'
 
-interface IErrorEnvelope {
+type IErrorEnvelope = {
   error?: {
     message: string
   }

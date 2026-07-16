@@ -2,7 +2,7 @@ import { useCallback, useMemo } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { usePatientQueueStore } from '@/store/use-patient-queue-store'
 
-interface UsePatientQueueReturn {
+type UsePatientQueueReturn = {
   queue: string[]
   currentIndex: number
   hasPrev: boolean

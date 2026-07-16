@@ -4,7 +4,7 @@ import { Link } from 'react-router-dom'
 import { BRAND } from '../../constants'
 import './resource-card.css'
 
-export interface ResourceCardData {
+export type ResourceCardData = {
   tag: string
   image: string
   title: string
@@ -12,7 +12,7 @@ export interface ResourceCardData {
   href: string
 }
 
-interface ResourceCardProps {
+type ResourceCardProps = {
   data: ResourceCardData
   delay: number
 }

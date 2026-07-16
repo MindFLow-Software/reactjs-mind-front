@@ -15,7 +15,7 @@ import {
   renderInline,
 } from './anamnesis-pdf-template-helpers'
 
-interface IAnamnesisPDFTemplateProps {
+type IAnamnesisPDFTemplateProps = {
   patientName: string
   content: string
   generatedAt: string

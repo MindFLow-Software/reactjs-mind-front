@@ -20,11 +20,17 @@ import {
 import { cn } from '@/lib/utils'
 import './session-notes-editor.css'
 
-interface SessionNotesEditorProps {
+type SessionNotesEditorProps = {
   content: string
   isSessionActive: boolean
   onContentChange: (value: string) => void
   maxLength?: number
+}
+
+function resolveProgressFill(progress: number) {
+  if (progress < 70) return 'bg-[hsl(var(--editor-active))]'
+  if (progress < 90) return 'bg-[hsl(var(--editor-warning))]'
+  return 'bg-destructive'
 }
 
 export function SessionNotesEditor({
@@ -244,11 +250,7 @@ export function SessionNotesEditor({
               <div
                 className={cn(
                   'vr-notes-char-progress-fill',
-                  progress < 70
-                    ? 'bg-[hsl(var(--editor-active))]'
-                    : progress < 90
-                      ? 'bg-[hsl(var(--editor-warning))]'
-                      : 'bg-destructive',
+                  resolveProgressFill(progress),
                 )}
                 style={{ width: `${Math.min(100, progress)}%` }}
               />

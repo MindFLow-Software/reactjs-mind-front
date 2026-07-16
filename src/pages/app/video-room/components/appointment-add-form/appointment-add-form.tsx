@@ -24,20 +24,20 @@ import { finishAppointmentSession } from '@/api/appointments/finish-appointment-
 import { getActiveAppointmentsGrouped } from '@/api/appointments/get-active-appointments-grouped'
 import './appointment-add-form.css'
 
-export interface AppointmentAddFormSession {
+export type AppointmentAddFormSession = {
   currentAppointmentId: string
   currentSessionId: string | null
   isSessionActive: boolean
   content?: string
 }
 
-export interface AppointmentAddFormHandlers {
+export type AppointmentAddFormHandlers = {
   onSelectPatient: (appointmentId: string) => void
   onSessionStarted: (sessionId: string) => void
   onSessionFinished: () => void
 }
 
-interface AppointmentAddFormProps {
+type AppointmentAddFormProps = {
   session: AppointmentAddFormSession
   handlers: AppointmentAddFormHandlers
 }
@@ -121,6 +121,18 @@ export function AppointmentAddForm({
   }
 
   const isPending = isStarting || isFinishing
+
+  function renderActionLabel() {
+    if (isPending) return <Loader2 className="w-4 h-4 animate-spin" />
+    if (isSessionActive) {
+      return (
+        <>
+          <CheckCircle2 className="w-4 h-4 mr-2" /> Finalizar Atendimento
+        </>
+      )
+    }
+    return 'Iniciar Atendimento'
+  }
 
   return (
     <Card>
@@ -230,15 +242,7 @@ export function AppointmentAddForm({
               : 'shadow-sm'
           }`}
         >
-          {isPending ? (
-            <Loader2 className="w-4 h-4 animate-spin" />
-          ) : isSessionActive ? (
-            <>
-              <CheckCircle2 className="w-4 h-4 mr-2" /> Finalizar Atendimento
-            </>
-          ) : (
-            'Iniciar Atendimento'
-          )}
+          {renderActionLabel()}
         </Button>
       </CardContent>
     </Card>

@@ -11,7 +11,7 @@ import type { CreateSuggestionSchema } from '@/validators/suggestions/form/creat
 
 export type SuggestionCategoryValue = CreateSuggestionSchema['category']
 
-export interface CreateCategoryConfig {
+export type CreateCategoryConfig = {
   value: SuggestionCategoryValue
   label: string
   description: string

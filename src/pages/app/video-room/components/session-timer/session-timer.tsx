@@ -7,7 +7,7 @@ import { Clock, AlertCircle } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import './session-timer.css'
 
-interface SessionTimerProps {
+type SessionTimerProps = {
   isActive: boolean
 }
 
@@ -51,9 +51,7 @@ export function SessionTimer({ isActive }: SessionTimerProps) {
   if (!isActive) return null
 
   return (
-    <Card
-      className={cn('vr-timer-card', isOvertime && 'bg-amber-50/20')}
-    >
+    <Card className={cn('vr-timer-card', isOvertime && 'bg-amber-50/20')}>
       <div className="vr-timer-body">
         <div className="vr-timer-header">
           <div className="flex items-center gap-2">
@@ -85,10 +83,7 @@ export function SessionTimer({ isActive }: SessionTimerProps) {
         </div>
 
         <div className="vr-timer-ring-wrap">
-          <svg
-            className="vr-timer-ring-svg"
-            viewBox="0 0 200 200"
-          >
+          <svg className="vr-timer-ring-svg" viewBox="0 0 200 200">
             <circle
               cx="100"
               cy="100"
@@ -129,12 +124,8 @@ export function SessionTimer({ isActive }: SessionTimerProps) {
               {formatTime(seconds)}
             </span>
             <div className="flex flex-col items-center mt-3 gap-1">
-              <span className="vr-timer-goal-label">
-                Duração Alvo
-              </span>
-              <div className="vr-timer-goal-value">
-                60:00 min
-              </div>
+              <span className="vr-timer-goal-label">Duração Alvo</span>
+              <div className="vr-timer-goal-value">60:00 min</div>
             </div>
           </div>
         </div>

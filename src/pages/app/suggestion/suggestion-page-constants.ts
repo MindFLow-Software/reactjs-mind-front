@@ -8,7 +8,7 @@ import {
 import { SuggestionCategory } from '@/types/suggestion/suggestion-category'
 import { SuggestionStatus } from '@/types/suggestion/suggestion-status'
 
-export interface SuggestionFilterCategory {
+export type SuggestionFilterCategory = {
   value: SuggestionCategory
   label: string
   dot: string
@@ -39,7 +39,7 @@ export const SUGGESTION_FILTER_CATEGORIES: SuggestionFilterCategory[] = [
   { value: SuggestionCategory.OTHERS, label: 'Outros', dot: 'bg-slate-400' },
 ]
 
-export interface SuggestionColumnConfig {
+export type SuggestionColumnConfig = {
   title: string
   icon: LucideIcon
   status: SuggestionStatus

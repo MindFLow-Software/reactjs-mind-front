@@ -4,7 +4,7 @@ import type { ISessionVolume } from '@/types/patient/session-volume'
 import type { Gender } from '@/types/shared/enums'
 import type { IPaginationMeta } from '@/types/shared/pagination-meta'
 
-export interface IgetPatientsQueryParams {
+export type IgetPatientsQueryParams = {
   pageIndex?: number
   perPage?: number
   filter?: string
@@ -15,7 +15,7 @@ export interface IgetPatientsQueryParams {
   sessionVolume?: ISessionVolume | null
 }
 
-export interface IgetPatientProfilesResponse {
+export type IgetPatientProfilesResponse = {
   patients: IPatient[]
   meta: IPaginationMeta
 }

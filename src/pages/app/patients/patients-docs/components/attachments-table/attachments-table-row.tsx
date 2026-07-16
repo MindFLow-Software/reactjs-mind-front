@@ -24,18 +24,18 @@ import { Time } from '@/utils/time'
 import type { IAttachmentListItem as Attachment } from '@/types/attachment/attachment-list-item'
 import './attachments-table-row.css'
 
-interface AttachmentsTableRowSelection {
+type AttachmentsTableRowSelection = {
   isSelected: boolean
   isActivePreview: boolean
   onSelectChange: (checked: boolean) => void
 }
 
-interface AttachmentsTableRowActions {
+type AttachmentsTableRowActions = {
   onDelete: (id: string) => void
   onPreview: (doc: Attachment) => void
 }
 
-interface AttachmentsTableRowProps {
+type AttachmentsTableRowProps = {
   attachment: Attachment
   selection: AttachmentsTableRowSelection
   actions: AttachmentsTableRowActions

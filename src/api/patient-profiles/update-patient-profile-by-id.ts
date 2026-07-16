@@ -3,13 +3,10 @@ import type { IUpdatePatientBody } from '@/types/patient/update-patient-body'
 import type { IPatientProfile } from '@/types/patient-profile/patient-profile'
 import type { IMutationResult } from '@/types/shared/mutation-result'
 
-export interface UpdatePatientData extends Omit<
-  IUpdatePatientBody,
-  'dateOfBirth'
-> {
+export type UpdatePatientData = {
   id: string
   dateOfBirth?: Date | string
-}
+} & Omit<IUpdatePatientBody, 'dateOfBirth'>
 
 export async function updatePatientProfileById({
   id,

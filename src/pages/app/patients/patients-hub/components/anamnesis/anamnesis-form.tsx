@@ -13,6 +13,15 @@ import type { SaveStatus } from './anamnesis-context'
 import { useAnamnesisEditor } from '../../hooks/use-anamnesis-editor'
 import { countWords } from '../../helpers'
 
+function resolveSaveStatus(
+  isPending: boolean,
+  hasLocalDraft: boolean,
+): SaveStatus {
+  if (isPending) return 'pending'
+  if (hasLocalDraft) return 'draft'
+  return 'synced'
+}
+
 export function AnamnesisForm({
   patientId,
   patientName,
@@ -41,11 +50,7 @@ export function AnamnesisForm({
   const textareaRefs = useRef<Record<string, HTMLTextAreaElement | null>>({})
   const prevBlockCount = useRef(blocks.length)
 
-  const saveStatus: SaveStatus = isPending
-    ? 'pending'
-    : hasLocalDraft
-      ? 'draft'
-      : 'synced'
+  const saveStatus = resolveSaveStatus(isPending, hasLocalDraft)
 
   const handleApplyFormat = useCallback(
     (marker: string) => {

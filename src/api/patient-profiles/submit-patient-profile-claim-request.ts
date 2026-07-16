@@ -4,7 +4,7 @@ import type { IPatientProfileClaimRequest } from '@/types/claim/patient-profile-
 
 export type ClaimRequestAction = 'approve' | 'reject'
 
-export interface ISubmitPatientProfileClaimRequestParams {
+export type ISubmitPatientProfileClaimRequestParams = {
   claimRequestId: string | null
   action: ClaimRequestAction
 }

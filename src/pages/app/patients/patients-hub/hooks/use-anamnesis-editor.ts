@@ -31,7 +31,7 @@ import { usePdfExport } from './use-pdf-export'
 import { Clipboard } from '@/utils/clipboard'
 import { Time } from '@/utils/time'
 
-interface EditorState {
+type EditorState = {
   blocks: IAnamnesisBlock[]
   activeBlockId: string | null
   hydrated: boolean
@@ -90,12 +90,12 @@ function editorReducer(state: EditorState, action: EditorAction): EditorState {
   }
 }
 
-interface UseAnamnesisEditorOptions {
+type UseAnamnesisEditorOptions = {
   patientId: string
   patientName?: string
 }
 
-interface UseAnamnesisEditorReturn {
+type UseAnamnesisEditorReturn = {
   blocks: IAnamnesisBlock[]
   activeBlockId: string | null
   hasLocalDraft: boolean

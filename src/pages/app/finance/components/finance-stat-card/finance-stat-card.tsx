@@ -5,7 +5,7 @@ import './finance-stat-card.css'
 
 type FinanceStatAccent = 'indigo' | 'green' | 'amber'
 
-interface FinanceStatCardProps {
+type FinanceStatCardProps = {
   icon: ReactNode
   accent: FinanceStatAccent
   header: { title: string; subtitle: string }

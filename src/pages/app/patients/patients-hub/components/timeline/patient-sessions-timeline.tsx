@@ -15,7 +15,7 @@ import {
 } from './timeline.helpers'
 import './patient-sessions-timeline.css'
 
-interface PatientSessionsTimelinePagination {
+type PatientSessionsTimelinePagination = {
   meta: {
     totalCount: number
     perPage: number
@@ -24,7 +24,7 @@ interface PatientSessionsTimelinePagination {
   onPageChange: (newIndex: number) => void
 }
 
-interface PatientSessionsTimelineProps {
+type PatientSessionsTimelineProps = {
   sessions: ITimelineSessionItem[]
   patientName: string
   pagination: PatientSessionsTimelinePagination

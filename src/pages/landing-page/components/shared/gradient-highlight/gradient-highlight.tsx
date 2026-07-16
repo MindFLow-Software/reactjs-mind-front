@@ -2,7 +2,7 @@ import { motion } from 'framer-motion'
 import type { ReactNode } from 'react'
 import './gradient-highlight.css'
 
-interface GradientHighlightProps {
+type GradientHighlightProps = {
   children: ReactNode
   underlineDelay?: number
 }

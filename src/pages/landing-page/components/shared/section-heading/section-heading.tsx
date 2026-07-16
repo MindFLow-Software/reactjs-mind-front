@@ -4,17 +4,17 @@ import type { LucideIcon } from 'lucide-react'
 
 import { SectionBadge } from '../section-badge/section-badge'
 
-interface SectionHeadingBadge {
+type SectionHeadingBadge = {
   icon: LucideIcon
   label: string
 }
 
-interface SectionHeadingBlock {
+type SectionHeadingBlock = {
   content: ReactNode
   className: string
 }
 
-interface SectionHeadingProps {
+type SectionHeadingProps = {
   badge: SectionHeadingBadge
   heading: SectionHeadingBlock
   subtitle: SectionHeadingBlock

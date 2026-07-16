@@ -4,7 +4,7 @@ import { cn } from '@/lib/utils'
 
 import './anamnesis-header.css'
 
-interface PdfState {
+type PdfState = {
   isExporting: boolean
   exportedSuccessfully: boolean
   isCopyDisabled: boolean
@@ -13,7 +13,7 @@ interface PdfState {
   onCopy: () => void
 }
 
-interface AnamnesisHeaderProps {
+type AnamnesisHeaderProps = {
   pdf: PdfState
 }
 

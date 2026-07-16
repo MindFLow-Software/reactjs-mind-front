@@ -37,7 +37,7 @@ export const MetricCard = Object.assign(MetricCardRoot, {
   Sub: MetricCardSub,
 })
 
-interface MetricsCardsProps {
+type MetricsCardsProps = {
   meta: IAttachmentListMeta
 }
 

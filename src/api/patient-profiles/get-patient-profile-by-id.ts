@@ -1,7 +1,7 @@
 import { api } from '@/lib/axios'
 import type { IPatientProfile } from '@/types/patient-profile/patient-profile'
 
-export interface IgetPatientProfileByIdResponse {
+export type IgetPatientProfileByIdResponse = {
   patient: IPatientProfile | null
 }
 

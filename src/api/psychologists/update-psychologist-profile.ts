@@ -2,7 +2,7 @@ import { api } from '@/lib/axios'
 import type { IMutationResult } from '@/types/shared/mutation-result'
 import type { Expertise, Honorific, Languages } from '@/types/shared/enums'
 
-export interface UpdatePsychologistProfileBody {
+export type UpdatePsychologistProfileBody = {
   crp?: string
   expertise?: Expertise
   honorific?: Honorific

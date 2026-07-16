@@ -24,7 +24,7 @@ import type { Gender } from '@/types/shared/enums'
 import { Clipboard } from '@/utils/clipboard'
 import type { IPatientProfile } from '@/types/patient-profile/patient-profile'
 
-interface PatientInfoProps {
+type PatientInfoProps = {
   patient: Pick<
     IPatientProfile,
     'dateOfBirth' | 'cpf' | 'email' | 'phoneNumber' | 'gender'

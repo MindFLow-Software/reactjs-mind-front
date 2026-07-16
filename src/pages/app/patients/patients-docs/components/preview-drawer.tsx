@@ -35,7 +35,7 @@ import { Time } from '@/utils/time'
 import type { IAttachmentListItem as Attachment } from '@/types/attachment/attachment-list-item'
 import './preview-drawer.css'
 
-interface PreviewDrawerProps {
+type PreviewDrawerProps = {
   doc: Attachment | null
   onClose: () => void
   onDelete: (id: string) => void

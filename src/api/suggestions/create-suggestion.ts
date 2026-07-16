@@ -1,7 +1,7 @@
 import { api } from '@/lib/axios'
 import type { IMutationResult } from '@/types/shared/mutation-result'
 
-interface CreateSuggestionRequest {
+type CreateSuggestionRequest = {
   title: string
   description: string
   category: string

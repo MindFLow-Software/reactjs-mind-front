@@ -4,11 +4,11 @@ import { pdf } from '@react-pdf/renderer'
 import type { DocumentProps } from '@react-pdf/renderer'
 import { toast } from 'sonner'
 
-interface UsePdfExportOptions {
+type UsePdfExportOptions = {
   receivedFilename?: string
 }
 
-interface UsePdfExportReturn {
+type UsePdfExportReturn = {
   isExporting: boolean
   pdfExportedSuccessfully: boolean
   setFilename: Dispatch<SetStateAction<string | undefined>>

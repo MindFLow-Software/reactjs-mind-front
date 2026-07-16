@@ -15,7 +15,7 @@ import {
 import { Time } from '@/utils/time'
 import './date-picker-with-range.css'
 
-interface DatePickerWithRangeProps {
+type DatePickerWithRangeProps = {
   className?: string
   date: DateRange | undefined
   onDateChange: (date: DateRange | undefined) => void

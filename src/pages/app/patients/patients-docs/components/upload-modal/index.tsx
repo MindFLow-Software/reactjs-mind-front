@@ -26,7 +26,7 @@ import { DropZone } from './drop-zone'
 import { FileList } from './file-list'
 import './upload-modal.css'
 
-interface UploadModalProps {
+type UploadModalProps = {
   open: boolean
   onClose: () => void
 }

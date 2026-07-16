@@ -19,7 +19,7 @@ import type { IPatientProfile } from '@/types/patient-profile/patient-profile'
 
 import './patient-profile-card.css'
 
-interface IPatientProfileCard {
+type IPatientProfileCard = {
   profile: IPatientProfile
   onSelect: (profileId: string) => void
 }

@@ -28,7 +28,7 @@ import {
   type ITimelineSessionItem,
 } from './timeline.helpers'
 
-interface SessionRowProps {
+type SessionRowProps = {
   session: ITimelineSessionItem
   patientName: string
 }

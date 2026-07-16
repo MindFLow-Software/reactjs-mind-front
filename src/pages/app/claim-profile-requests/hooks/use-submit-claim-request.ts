@@ -7,7 +7,7 @@ import {
 import type { IMutationResult } from '@/types/shared/mutation-result'
 import type { IPatientProfileClaimRequest } from '@/types/claim/patient-profile-claim-request'
 
-interface UseSubmitClaimRequestOptions {
+type UseSubmitClaimRequestOptions = {
   onReviewed?: () => void
 }
 

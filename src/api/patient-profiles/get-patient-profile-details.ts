@@ -7,7 +7,7 @@ type IextendedPatientProfile = IPatientProfile & {
   sessions: ISessionItem[]
 }
 
-export interface IgetPatientProfileDetailsResponse {
+export type IgetPatientProfileDetailsResponse = {
   patient: IextendedPatientProfile | null
   meta: IPatientDetailsMeta
 }

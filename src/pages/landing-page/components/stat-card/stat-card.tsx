@@ -2,7 +2,7 @@ import { motion } from 'framer-motion'
 import type { LucideIcon } from 'lucide-react'
 import './stat-card.css'
 
-export interface StatCardData {
+export type StatCardData = {
   icon: LucideIcon
   value: string
   label: string
@@ -10,7 +10,7 @@ export interface StatCardData {
   iconBg: string
 }
 
-interface StatCardProps {
+type StatCardProps = {
   data: StatCardData
   delay: number
 }

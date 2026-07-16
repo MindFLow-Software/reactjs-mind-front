@@ -9,10 +9,16 @@ import { SUGGESTION_CATEGORY_DISPLAY } from '@/constants/suggestion-category-dis
 import { Normalizer } from '@/utils/normalizer'
 import './suggestion-card.css'
 
-interface SuggestionCardProps {
+type SuggestionCardProps = {
   item: ISuggestion
   userId?: string
   onLike: (id: string) => void
+}
+
+function resolveCardVariant(isImplemented: boolean, isLiked: boolean) {
+  if (isImplemented) return 'sc-card--implemented'
+  if (isLiked) return 'sc-card--liked'
+  return 'sc-card--default'
 }
 
 export function SuggestionCard({ item, userId, onLike }: SuggestionCardProps) {
@@ -27,11 +33,7 @@ export function SuggestionCard({ item, userId, onLike }: SuggestionCardProps) {
         <article
           className={cn(
             'sc-card group',
-            isImplemented
-              ? 'sc-card--implemented'
-              : isLiked
-                ? 'sc-card--liked'
-                : 'sc-card--default',
+            resolveCardVariant(isImplemented, isLiked),
           )}
         >
           {isImplemented ? (

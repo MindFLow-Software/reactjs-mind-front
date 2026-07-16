@@ -23,7 +23,7 @@ import {
 import { translatedSuggestionCategory } from '@/constants/translated-suggestion-category'
 import './roadmap-card.css'
 
-interface RoadmapCardProps {
+type RoadmapCardProps = {
   item: ISuggestion
   onStatusChange: (id: string, status: string) => void
   isUpdating: boolean

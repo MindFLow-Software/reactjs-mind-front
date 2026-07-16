@@ -1,7 +1,7 @@
 import { api } from '@/lib/axios'
 import type { AppointmentStatus } from '@/types/appointment/appointment-status'
 
-export interface ActiveAppointment {
+export type ActiveAppointment = {
   id: string
   patientProfileId: string
   patientName: string
@@ -11,7 +11,7 @@ export interface ActiveAppointment {
   notes?: string | null
 }
 
-export interface GetActiveAppointmentsGroupedResponse {
+export type GetActiveAppointmentsGroupedResponse = {
   grouped: Record<string, ActiveAppointment[]>
 }
 

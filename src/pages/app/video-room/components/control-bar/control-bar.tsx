@@ -19,21 +19,21 @@ import {
 import { Badge } from '@/components/ui/badge'
 import './control-bar.css'
 
-export interface ControlBarStatus {
+export type ControlBarStatus = {
   isMicMuted: boolean
   isVideoEnabled: boolean
   isScreenSharing: boolean
   participantCount: number
 }
 
-export interface ControlBarActions {
+export type ControlBarActions = {
   onToggleMic: () => void
   onToggleVideo: () => void
   onToggleScreenShare: () => void
   onLeave: () => void
 }
 
-interface ControlBarProps {
+type ControlBarProps = {
   status: ControlBarStatus
   actions: ControlBarActions
 }
@@ -48,9 +48,7 @@ export function ControlBar({ status, actions }: ControlBarProps) {
         <div className="flex items-center gap-3">
           <div className="vr-control-bar-session-label">
             <div className="vr-control-bar-session-dot" />
-            <span className="vr-control-bar-session-name">
-              Sessão #123
-            </span>
+            <span className="vr-control-bar-session-name">Sessão #123</span>
           </div>
           <Badge variant="outline" className="bg-slate-50">
             <Users className="h-3 w-3 mr-1" />

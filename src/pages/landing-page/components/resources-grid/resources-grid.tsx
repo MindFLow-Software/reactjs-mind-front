@@ -2,7 +2,10 @@ import { Layers } from 'lucide-react'
 import { GridBackdrop } from '../shared/grid-backdrop/grid-backdrop'
 import { GradientHighlight } from '../shared/gradient-highlight/gradient-highlight'
 import { SectionHeading } from '../shared/section-heading/section-heading'
-import { ResourceCard, type ResourceCardData } from '../resource-card/resource-card'
+import {
+  ResourceCard,
+  type ResourceCardData,
+} from '../resource-card/resource-card'
 import './resources-grid.css'
 
 const CARDS: ResourceCardData[] = [

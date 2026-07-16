@@ -1,6 +1,6 @@
 import { api } from '@/lib/axios'
 
-interface FinishAppointmentSessionRequest {
+type FinishAppointmentSessionRequest = {
   sessionId: string
   content?: string
 }

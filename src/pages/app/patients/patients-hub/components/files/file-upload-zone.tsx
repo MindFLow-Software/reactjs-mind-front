@@ -16,7 +16,7 @@ const DROPZONE_ACCEPT = {
   'application/pdf': [],
 } satisfies Record<string, string[]>
 
-interface FileUploadZoneProps {
+type FileUploadZoneProps = {
   patientId: string
 }
 

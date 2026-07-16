@@ -37,7 +37,7 @@ import './edit-suggestion-form.css'
 const editSchema = editSuggestionSchema
 type EditSchema = EditSuggestionSchema
 
-interface EditSuggestionFormProps {
+type EditSuggestionFormProps = {
   item: ISuggestion
   onUpdate: (data: UpdateSuggestionParams) => Promise<void>
   isUpdating: boolean

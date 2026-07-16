@@ -3,12 +3,9 @@ import { Normalizer } from '@/utils/normalizer'
 import type { ICreatePatientBody } from '@/types/patient/create-patient-body'
 import type { ICreatePatientResponse } from '@/types/patient/create-patient-response'
 
-export interface IcreatePatientProfileInput extends Omit<
-  ICreatePatientBody,
-  'dateOfBirth'
-> {
+export type IcreatePatientProfileInput = {
   dateOfBirth?: Date | string | null
-}
+} & Omit<ICreatePatientBody, 'dateOfBirth'>
 
 export async function createPatientProfile(
   data: IcreatePatientProfileInput,

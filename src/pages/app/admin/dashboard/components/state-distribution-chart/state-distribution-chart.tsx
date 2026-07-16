@@ -33,7 +33,7 @@ export function StateDistributionChart({
       </ChartCard.Header>
 
       <ChartCard.Body>
-        <ChartCard.Bar<{ region: string, count: number }>
+        <ChartCard.Bar<{ region: string; count: number }>
           data={PLACEHOLDER_STATES}
           keys={{
             name: 'region',

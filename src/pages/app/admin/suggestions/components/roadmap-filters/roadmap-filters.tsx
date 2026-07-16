@@ -27,7 +27,7 @@ import {
 } from '@/components/ui/select'
 import './roadmap-filters.css'
 
-interface RoadmapFiltersProps {
+type RoadmapFiltersProps = {
   search: string
   category: string
   onFiltersChange: (filters: { search?: string; category?: string }) => void

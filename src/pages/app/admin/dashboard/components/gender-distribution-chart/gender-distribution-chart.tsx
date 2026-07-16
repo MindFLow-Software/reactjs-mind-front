@@ -63,10 +63,7 @@ export function GenderDistributionChart({
     <ChartCard
       state={{ isLoading: false, isError: false, isEmpty: total === 0 }}
     >
-      <ChartCard.Header
-        title={copy.title}
-        description={copy.description}
-      >
+      <ChartCard.Header title={copy.title} description={copy.description}>
         <ChartCard.Total label="Total Geral" value={total} />
       </ChartCard.Header>
 

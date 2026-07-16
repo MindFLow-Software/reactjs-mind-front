@@ -7,7 +7,7 @@ import { translatedClaimRequestStatus } from '@/constants/translated-claim-reque
 
 import './claim-request-status-badge.css'
 
-interface ClaimRequestStatusBadgeProps {
+type ClaimRequestStatusBadgeProps = {
   status: ClaimRequestStatus | null
 }
 

@@ -36,7 +36,7 @@ function renderSaveStatus(status: SaveStatus) {
   }
 }
 
-interface EditorBlockProps {
+type EditorBlockProps = {
   block: IAnamnesisBlock
   index: number
   isActive: boolean

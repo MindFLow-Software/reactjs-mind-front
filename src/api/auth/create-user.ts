@@ -1,7 +1,7 @@
 import { api } from '@/lib/axios'
 import type { Gender } from '@/types/shared/enums'
 
-export interface CreateUserBody {
+export type CreateUserBody = {
   firstName: string
   lastName: string
   email: string

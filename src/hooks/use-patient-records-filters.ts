@@ -1,7 +1,7 @@
 import type { ISessionVolume } from '@/types/patient/session-volume'
 import { useState, useEffect } from 'react'
 
-export interface PatientRecordsFilters {
+export type PatientRecordsFilters = {
   search: string
   debouncedSearch: string
   gender: string

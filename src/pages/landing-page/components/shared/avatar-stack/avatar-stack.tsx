@@ -1,7 +1,7 @@
 import { cn } from '@/lib/utils'
 import './avatar-stack.css'
 
-interface AvatarStackProps {
+type AvatarStackProps = {
   urls: readonly string[]
   size: number
   imgClassName?: string

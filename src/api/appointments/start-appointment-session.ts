@@ -1,10 +1,10 @@
 import { api } from '@/lib/axios'
 
-interface StartAppointmentSessionRequest {
+type StartAppointmentSessionRequest = {
   appointmentId: string
 }
 
-interface StartAppointmentSessionResponse {
+type StartAppointmentSessionResponse = {
   message: string
   sessionId: string
 }

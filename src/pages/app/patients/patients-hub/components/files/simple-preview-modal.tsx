@@ -16,7 +16,7 @@ import './simple-preview-modal.css'
 
 const IMAGE_EXTENSIONS = /\.(jpg|jpeg|png|webp|gif)$/i
 
-interface SimplePreviewModalProps {
+type SimplePreviewModalProps = {
   file: IAttachmentPatientItem | null
   onClose: () => void
 }

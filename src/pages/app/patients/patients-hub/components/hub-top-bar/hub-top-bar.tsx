@@ -5,7 +5,7 @@ import { PatientNavigationControls } from '../../../patients-records/components/
 
 import './hub-top-bar.css'
 
-interface HubTopBarProps {
+type HubTopBarProps = {
   queue: {
     prevId: string | null
     nextId: string | null

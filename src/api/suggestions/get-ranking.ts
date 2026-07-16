@@ -1,6 +1,6 @@
 import { api } from '@/lib/axios'
 
-export interface RankingItem {
+export type RankingItem = {
   position: string
   userId: string
   name: string
@@ -9,7 +9,7 @@ export interface RankingItem {
   highlight: string
 }
 
-export interface GetRankingResponse {
+export type GetRankingResponse = {
   ranking: RankingItem[]
 }
 

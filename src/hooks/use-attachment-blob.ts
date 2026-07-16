@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useRef, useState } from 'react'
 import { getAttachmentBlob } from '@/api/attachments/get-attachment-blob'
 
-interface UseAttachmentBlobReturn {
+type UseAttachmentBlobReturn = {
   isLoading: boolean
   fetchBlobUrl: (attachmentId: string) => Promise<string | null>
 }

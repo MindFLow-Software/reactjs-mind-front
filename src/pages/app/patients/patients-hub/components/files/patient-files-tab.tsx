@@ -30,6 +30,41 @@ export function PatientFilesTab({ patientId }: { patientId: string }) {
     handleDelete,
   } = usePatientFiles(patientId)
 
+  function renderFiles() {
+    if (isLoading) {
+      return (
+        <div className="ph-files-tab__loading">
+          <Loader2 className="ph-files-tab__loading-icon" />
+          <p className="ph-files-tab__loading-label">
+            Sincronizando arquivos...
+          </p>
+        </div>
+      )
+    }
+
+    if (filtered.length === 0) {
+      return (
+        <div className="ph-files-tab__empty">
+          <FileSearch className="ph-files-tab__empty-icon" />
+          <p className="ph-files-tab__empty-label">{EMPTY_LABEL[typeFilter]}</p>
+        </div>
+      )
+    }
+
+    return (
+      <div className="ph-files-tab__grid">
+        {filtered.map((file) => (
+          <FileCard
+            key={file.id}
+            file={file}
+            onPreview={openPreview}
+            onDelete={handleDelete}
+          />
+        ))}
+      </div>
+    )
+  }
+
   return (
     <div className="ph-files-tab">
       <FileUploadZone patientId={patientId} />
@@ -40,30 +75,7 @@ export function PatientFilesTab({ patientId }: { patientId: string }) {
         onFilterChange={setTypeFilter}
       />
 
-      {isLoading ? (
-        <div className="ph-files-tab__loading">
-          <Loader2 className="ph-files-tab__loading-icon" />
-          <p className="ph-files-tab__loading-label">
-            Sincronizando arquivos...
-          </p>
-        </div>
-      ) : filtered.length === 0 ? (
-        <div className="ph-files-tab__empty">
-          <FileSearch className="ph-files-tab__empty-icon" />
-          <p className="ph-files-tab__empty-label">{EMPTY_LABEL[typeFilter]}</p>
-        </div>
-      ) : (
-        <div className="ph-files-tab__grid">
-          {filtered.map((file) => (
-            <FileCard
-              key={file.id}
-              file={file}
-              onPreview={openPreview}
-              onDelete={handleDelete}
-            />
-          ))}
-        </div>
-      )}
+      {renderFiles()}
 
       <SimplePreviewModal file={previewFile} onClose={closePreview} />
     </div>

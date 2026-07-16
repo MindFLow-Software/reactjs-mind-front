@@ -1,7 +1,7 @@
 import { cn } from '@/lib/utils'
 import './grid-backdrop.css'
 
-interface GridBackdropProps {
+type GridBackdropProps = {
   className?: string
 }
 

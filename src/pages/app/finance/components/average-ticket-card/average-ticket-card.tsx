@@ -4,7 +4,7 @@ import { BarChartHorizontal } from 'lucide-react'
 import { Currency } from '@/utils/currency'
 import { FinanceStatCard } from '../finance-stat-card/finance-stat-card'
 
-interface AverageTicketCardProps {
+type AverageTicketCardProps = {
   value: number
 }
 

@@ -15,12 +15,12 @@ import {
 } from '@/components/ui/alert-dialog'
 import './bulk-delete-action.css'
 
-interface BulkDeleteActionSelection {
+type BulkDeleteActionSelection = {
   count: number
   isDeleting?: boolean
 }
 
-interface BulkDeleteActionProps {
+type BulkDeleteActionProps = {
   selection: BulkDeleteActionSelection
   onConfirm: () => void
   onClear: () => void

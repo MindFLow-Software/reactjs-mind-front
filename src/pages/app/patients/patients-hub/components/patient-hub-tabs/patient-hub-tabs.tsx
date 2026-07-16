@@ -23,7 +23,7 @@ const HUB_TABS = [
   { value: 'resume', label: 'Resumo' },
 ] as const
 
-interface PatientHubTabsProps {
+type PatientHubTabsProps = {
   patient: PatientDetails
   timeline: {
     meta: DetailsMeta

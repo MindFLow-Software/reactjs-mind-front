@@ -2,7 +2,7 @@ import { cn } from '@/lib/utils'
 import { Files } from '@/utils/files'
 import './file-thumb.css'
 
-interface FileThumbProps {
+type FileThumbProps = {
   type: string
 }
 

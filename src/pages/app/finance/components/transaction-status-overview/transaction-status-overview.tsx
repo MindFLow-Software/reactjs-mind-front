@@ -31,7 +31,7 @@ const MOCK_DATA = {
   refunded: 2,
 }
 
-interface TransactionStatusProps {
+type TransactionStatusProps = {
   data?: {
     pending: number
     expired: number
@@ -41,7 +41,7 @@ interface TransactionStatusProps {
   }
 }
 
-interface TransactionStatusDatum {
+type TransactionStatusDatum = {
   label: string
   value: number
   color: string

@@ -50,11 +50,9 @@ export function NavUser() {
 
   const { signOut, isSigningOut } = useSignOut()
 
-  const name = profile
-    ? `${profile.firstName} ${profile.lastName}`
-    : isError
-      ? 'Erro ao carregar'
-      : 'Carregando...'
+  let name = 'Carregando...'
+  if (profile) name = `${profile.firstName} ${profile.lastName}`
+  else if (isError) name = 'Erro ao carregar'
 
   const profileImage = profile?.profileImageUrl ?? null
 

@@ -1,7 +1,7 @@
 import { useState, useEffect, useRef, useCallback } from 'react'
 import { useAttachmentBlob } from '@/hooks/use-attachment-blob'
 
-interface UseImagePreviewReturn {
+type UseImagePreviewReturn = {
   previewUrl: string | null
   file: File | null
   isLoading: boolean

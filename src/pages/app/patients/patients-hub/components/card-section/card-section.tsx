@@ -10,7 +10,7 @@ export type ICardSectionHeader = {
   action?: React.ReactNode
 }
 
-interface CardSectionProps {
+type CardSectionProps = {
   header: ICardSectionHeader
   children: React.ReactNode
 }

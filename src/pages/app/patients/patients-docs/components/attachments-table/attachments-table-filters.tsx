@@ -24,7 +24,7 @@ const FILE_TYPE_CHIPS = [
   { label: 'DOC', value: 'application/msword', count: null },
 ] as const
 
-interface AttachmentsTableFiltersProps {
+type AttachmentsTableFiltersProps = {
   filters: IUseAttachmentsFiltersReturn
 }
 

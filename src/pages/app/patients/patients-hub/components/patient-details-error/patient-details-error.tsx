@@ -3,7 +3,7 @@ import { Button } from '@/components/ui/button'
 
 import './patient-details-error.css'
 
-interface PatientDetailsErrorProps {
+type PatientDetailsErrorProps = {
   onRetry: () => void
 }
 

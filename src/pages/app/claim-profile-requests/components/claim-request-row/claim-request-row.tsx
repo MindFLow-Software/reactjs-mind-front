@@ -15,7 +15,7 @@ import { ClaimRequestStatusBadge } from '../claim-request-status-badge/claim-req
 
 import './claim-request-row.css'
 
-interface ClaimRequestRowProps {
+type ClaimRequestRowProps = {
   request: IPatientProfileClaimRequest
   psychologistLabel: string
   onReview: (claimRequestId: string) => void

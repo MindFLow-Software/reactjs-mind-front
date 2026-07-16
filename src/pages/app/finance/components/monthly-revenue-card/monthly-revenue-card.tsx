@@ -4,7 +4,7 @@ import { DollarSign } from 'lucide-react'
 import { Currency } from '@/utils/currency'
 import { FinanceStatCard } from '../finance-stat-card/finance-stat-card'
 
-interface MonthlyRevenueCardProps {
+type MonthlyRevenueCardProps = {
   revenue: number
 }
 

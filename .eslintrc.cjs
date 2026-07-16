@@ -10,5 +10,15 @@ module.exports = {
     'no-explicit-any': 'off',
     'react-hooks/rules-of-hooks': 'off',
     'react/display-name': 'off',
+    '@typescript-eslint/consistent-type-definitions': ['error', 'type'],
+    'no-nested-ternary': 'error',
   },
+  overrides: [
+    {
+      files: ['src/components/ui/**', 'src/lib/axios.ts'],
+      rules: {
+        '@typescript-eslint/consistent-type-definitions': 'off',
+      },
+    },
+  ],
 }

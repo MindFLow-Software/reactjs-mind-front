@@ -4,7 +4,7 @@ import { FileStatus, type IFileItem } from '../../hooks/use-upload'
 import { FileThumb } from './file-thumb'
 import './file-list.css'
 
-interface FileListProps {
+type FileListProps = {
   files: IFileItem[]
   onRemove: (id: string) => void
   onClear: () => void

@@ -8,12 +8,12 @@ import './claim-comparison-card.css'
 
 type ClaimComparisonAccent = 'requester' | 'profile'
 
-interface ClaimComparisonField {
+type ClaimComparisonField = {
   label: string
   value: string | null | undefined
 }
 
-interface ClaimComparisonCardProps {
+type ClaimComparisonCardProps = {
   title: string
   accent: ClaimComparisonAccent
   fields: ClaimComparisonField[]

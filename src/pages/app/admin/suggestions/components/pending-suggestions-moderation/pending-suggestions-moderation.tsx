@@ -69,6 +69,40 @@ export function PendingSuggestionsModeration() {
 
   const isEmpty = !suggestions || suggestions.length === 0
 
+  function renderQueue() {
+    if (isLoading) {
+      return (
+        <div className="p-12 flex justify-center">
+          <Loader2 className="animate-spin text-muted-foreground" />
+        </div>
+      )
+    }
+
+    if (isEmpty) {
+      return (
+        <div className="p-12 text-center flex flex-col gap-2">
+          <Check className="size-8 text-emerald-500 mx-auto opacity-20" />
+          <p className="text-sm text-muted-foreground font-medium">
+            Nenhuma sugestão pendente no momento.
+          </p>
+        </div>
+      )
+    }
+
+    return (
+      <div className="divide-y divide-border">
+        {suggestions.map((item) => (
+          <SuggestionModerationItem
+            key={item.id}
+            item={item}
+            onUpdate={handleUpdateStatus}
+            isUpdating={isUpdating}
+          />
+        ))}
+      </div>
+    )
+  }
+
   return (
     <Card className="border-border bg-card shadow-md rounded-2xl overflow-hidden">
       <CardHeader className="bg-muted/30 border-b border-border">
@@ -87,36 +121,12 @@ export function PendingSuggestionsModeration() {
         </div>
       </CardHeader>
 
-      <CardContent className="p-0 cursor-pointer">
-        {isLoading ? (
-          <div className="p-12 flex justify-center">
-            <Loader2 className="animate-spin text-muted-foreground" />
-          </div>
-        ) : isEmpty ? (
-          <div className="p-12 text-center flex flex-col gap-2">
-            <Check className="size-8 text-emerald-500 mx-auto opacity-20" />
-            <p className="text-sm text-muted-foreground font-medium">
-              Nenhuma sugestão pendente no momento.
-            </p>
-          </div>
-        ) : (
-          <div className="divide-y divide-border">
-            {suggestions.map((item) => (
-              <SuggestionModerationItem
-                key={item.id}
-                item={item}
-                onUpdate={handleUpdateStatus}
-                isUpdating={isUpdating}
-              />
-            ))}
-          </div>
-        )}
-      </CardContent>
+      <CardContent className="p-0 cursor-pointer">{renderQueue()}</CardContent>
     </Card>
   )
 }
 
-interface SuggestionModerationItemProps {
+type SuggestionModerationItemProps = {
   item: ISuggestion
   onUpdate: (data: UpdateSuggestionParams) => Promise<unknown>
   isUpdating: boolean

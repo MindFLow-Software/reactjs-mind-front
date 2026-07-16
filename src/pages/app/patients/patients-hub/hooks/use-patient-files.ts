@@ -13,7 +13,7 @@ export function patientAttachmentsQueryKey(patientId: string) {
   return ['patient-hub', patientId, 'attachments'] as const
 }
 
-interface UsePatientFilesReturn {
+type UsePatientFilesReturn = {
   attachments: IAttachmentPatientItem[]
   filtered: IAttachmentPatientItem[]
   counts: Record<FileTypeFilter, number>

@@ -4,6 +4,7 @@ import { useActivePracticeContextStore } from '@/store/use-active-practice-conte
 import type { IApiSuccessEnvelope } from '@/types/shared/api-success-envelope'
 import type { IApiErrorEnvelope } from '@/types/shared/api-error-envelope'
 
+// Declaration merging is the only way to augment axios' AxiosResponse; `type` cannot merge.
 declare module 'axios' {
   interface AxiosResponse {
     apiMessage?: string | null

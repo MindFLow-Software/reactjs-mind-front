@@ -3,7 +3,7 @@ import type { LucideIcon } from 'lucide-react'
 import { BRAND } from '../../../constants'
 import './section-badge.css'
 
-interface SectionBadgeProps {
+type SectionBadgeProps = {
   icon: LucideIcon
   label: string
 }

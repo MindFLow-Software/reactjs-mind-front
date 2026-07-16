@@ -1,6 +1,6 @@
 import { api } from '@/lib/axios'
 
-export interface IgetActivePatientProfilesAmount {
+export type IgetActivePatientProfilesAmount = {
   amount: number
 }
 

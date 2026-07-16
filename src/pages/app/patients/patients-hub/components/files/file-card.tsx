@@ -21,7 +21,7 @@ import type { IAttachmentPatientItem } from '@/types/attachment/attachment-patie
 
 import './file-card.css'
 
-interface FileCardProps {
+type FileCardProps = {
   file: IAttachmentPatientItem
   onPreview: (file: IAttachmentPatientItem) => void
   onDelete: (id: string) => void

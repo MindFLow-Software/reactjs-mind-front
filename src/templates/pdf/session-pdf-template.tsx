@@ -48,19 +48,19 @@ const styles = StyleSheet.create({
   },
 })
 
-export interface ISessionPDFPsychologist {
+export type ISessionPDFPsychologist = {
   name: string
   crp?: string | null
 }
 
-export interface ISessionPDFRecord {
+export type ISessionPDFRecord = {
   patientName: string
   date: string
   content: string
   diagnosis?: string
 }
 
-export interface ISessionPDFTemplateProps {
+export type ISessionPDFTemplateProps = {
   psychologist: ISessionPDFPsychologist
   record: ISessionPDFRecord
 }

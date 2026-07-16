@@ -1,6 +1,6 @@
 import { useState, useCallback } from 'react'
 
-interface IUseFormStepsReturn {
+type IUseFormStepsReturn = {
   step: number
   handleNext: () => Promise<void>
   handleBack: () => void
@@ -9,7 +9,7 @@ interface IUseFormStepsReturn {
   isLastStep: boolean
 }
 
-interface IuseFormSteps {
+type IuseFormSteps = {
   stepsLength: number
 }
 

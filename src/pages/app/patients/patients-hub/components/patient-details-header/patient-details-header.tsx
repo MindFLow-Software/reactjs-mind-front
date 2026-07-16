@@ -20,7 +20,7 @@ import { PatientProfileStatus } from '@/types/patient-profile/patient-profile-st
 import { AccountStatus } from '@/types/auth/account-status'
 import type { IPatientProfile } from '@/types/patient-profile/patient-profile'
 
-interface PatientDetailsHeaderProps {
+type PatientDetailsHeaderProps = {
   patient: Pick<
     IPatientProfile,
     'id' | 'firstName' | 'lastName' | 'status' | 'profileImageUrl'

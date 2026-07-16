@@ -10,13 +10,13 @@ import type { IClaimCandidate } from '@/types/claim/claim-candidate'
 
 import './claim-candidate-card.css'
 
-interface ClaimCandidateCardProps {
+type ClaimCandidateCardProps = {
   candidate: IClaimCandidate
   isDisabled: boolean
   onRequestClaim: (patientProfileId: string) => void
 }
 
-interface CandidateFieldProps {
+type CandidateFieldProps = {
   label: string
   value: string
 }

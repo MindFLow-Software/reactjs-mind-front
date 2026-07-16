@@ -8,12 +8,12 @@ import { toggleSuggestionLike } from '@/api/suggestions/toggle-suggestion-like'
 import { getApiErrorMessage } from '@/lib/get-api-error-message'
 import type { ISuggestion } from '@/types/suggestion/suggestion'
 
-interface UseToggleSuggestionLikeOptions {
+type UseToggleSuggestionLikeOptions = {
   userId?: string
   extraInvalidateKeys?: QueryKey[]
 }
 
-interface ToggleLikeContext {
+type ToggleLikeContext = {
   previousQueries: [QueryKey, ISuggestion[] | undefined][]
 }
 

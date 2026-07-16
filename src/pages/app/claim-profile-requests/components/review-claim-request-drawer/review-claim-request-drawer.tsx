@@ -22,7 +22,7 @@ import { useSubmitClaimRequest } from '../../hooks/use-submit-claim-request'
 
 import './review-claim-request-drawer.css'
 
-interface ReviewClaimRequestDrawerProps {
+type ReviewClaimRequestDrawerProps = {
   isOpen: boolean
   claimRequestId: string | null
   onClose: () => void
