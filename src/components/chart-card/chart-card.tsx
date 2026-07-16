@@ -305,6 +305,12 @@ function ChartCardPie<T extends object>({
   keys,
   children,
 }: IChartCardPie<T>) {
+  const {
+    state: { isError, isLoading, isEmpty },
+  } = useContext(ChartCardContext)
+
+  if (isError || isLoading || isEmpty) return null
+
   const config = useMemo<ChartConfig>(() => {
     const entries = data.map(
       (item, index) =>
@@ -355,6 +361,12 @@ function ChartCardPie<T extends object>({
 }
 
 function ChartCardBar<T extends object>({ data, keys, bar }: IChartCardBar<T>) {
+  const {
+    state: { isError, isLoading, isEmpty },
+  } = useContext(ChartCardContext)
+
+  if (isError || isLoading || isEmpty) return null
+
   const layout = bar?.layout ?? ChartCardBarLayout.VERTICAL
   const isHorizontal = layout === ChartCardBarLayout.HORIZONTAL
 
@@ -392,10 +404,10 @@ function ChartCardTimeSeriesBar<T extends { date: string } & object>({
   series,
 }: IChartCardTimeSeriesBar<T>) {
   const {
-    state: { isError, isEmpty },
+    state: { isError, isLoading, isEmpty },
   } = useContext(ChartCardContext)
 
-  if (isError || isEmpty) return null
+  if (isError || isLoading || isEmpty) return null
 
   const config = useMemo<ChartConfig>(() => {
     const entries = series.map(
