@@ -179,14 +179,14 @@ function PatientFormModalFooter({
       </DialogClose>
       <Button
         type="button"
+        onClick={onClick}
         className="rp-btn-primary"
         disabled={submit.isSubmitting || disabled}
-        onClick={onClick}
       >
         <SubmitLabel
           label={submit.label}
-          isSubmitting={submit.isSubmitting}
           isLastStep={steps.isLastStep}
+          isSubmitting={submit.isSubmitting}
         />
       </Button>
     </DialogFooter>

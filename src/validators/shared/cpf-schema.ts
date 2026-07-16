@@ -3,4 +3,5 @@ import { is } from '@/utils/isness'
 
 export const cpfSchema = z
   .string()
-  .refine((v) => is.cpf(v), { message: 'CPF inválido' })
+  .min(11, { error: 'CPF deve conter 11 caracteres' })
+  .refine((v) => is.cpf(v), { error: 'CPF inválido' })

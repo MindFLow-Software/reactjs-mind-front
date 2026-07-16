@@ -146,7 +146,7 @@ export function useAnamnesisEditor({
         }),
       ])
     },
-    onError: () => toast.error('Erro ao sincronizar com o servidor.'),
+    // onError: () => toast.error('Erro ao sincronizar com o servidor.'),
   })
 
   const normalizedBlocks = useMemo(() => normalizeBlocks(blocks), [blocks])
@@ -161,9 +161,14 @@ export function useAnamnesisEditor({
   // Data load + local draft recovery
   useEffect(() => {
     if (!data) {
+      const block: IAnamnesisBlock = {
+        id: crypto.randomUUID(),
+        title: 'Nova Seção',
+        content: '',
+      }
       dispatch({
         type: 'HYDRATE',
-        blocks: [],
+        blocks: [block],
         hasLocalDraft: false,
       })
       return

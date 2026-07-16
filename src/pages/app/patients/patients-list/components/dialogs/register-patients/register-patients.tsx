@@ -1,5 +1,5 @@
 import '../patient-form-fields.css'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { useForm } from 'react-hook-form'
 import { UserPlus } from 'lucide-react'
 import { zodResolver } from '@hookform/resolvers/zod'
@@ -19,6 +19,7 @@ import { StepContactAddress } from './components/step-contact-address/step-conta
 import { useCreatePatient } from './hooks/use-create-patient'
 import { useStepErrorRedirect } from './hooks/use-step-error-redirect'
 import { STEPS, MAX_DOC_FILES, MAX_DOC_SIZE } from './constants'
+import { buildPatientUpdateDefaults } from '../create-and-edit-patient-modal.helpers'
 
 export function RegisterPatients() {
   const [avatarFile, setAvatarFile] = useState<File | null>(null)
@@ -81,6 +82,10 @@ export function RegisterPatients() {
         return null
     }
   }
+
+  useEffect(() => {
+    reset(buildPatientUpdateDefaults())
+  }, [reset])
 
   return (
     <PatientFormModal>
