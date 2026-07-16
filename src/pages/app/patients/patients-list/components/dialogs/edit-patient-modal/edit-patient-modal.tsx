@@ -25,7 +25,7 @@ import {
   MAX_DOC_SIZE,
   STEPS,
 } from '../register-patients/constants'
-import { buildPatientUpdateDefaults } from './edit-patient-modal.helpers'
+import { buildPatientUpdateDefaults } from '../create-and-edit-patient-modal.helpers'
 
 type IEditPatientModal = {
   patientId: string
@@ -45,6 +45,7 @@ export function EditPatientModal({ patientId }: IEditPatientModal) {
     resolver: zodResolver(
       updatePatientSchema,
     ) as Resolver<UpdatePatientFormData>,
+    defaultValues: buildPatientUpdateDefaults(),
   })
 
   const {
@@ -69,14 +70,6 @@ export function EditPatientModal({ patientId }: IEditPatientModal) {
   })
 
   useStepErrorRedirect({ errors, schema: updatePatientSchema, goToStep })
-
-  useEffect(() => {
-    if (!patient) return
-
-    reset(buildPatientUpdateDefaults(patient))
-  }, [patient, reset])
-
-  const isPatientLoading = !patient
 
   const steps = {
     current: step,
@@ -115,6 +108,14 @@ export function EditPatientModal({ patientId }: IEditPatientModal) {
     }
   }
 
+  useEffect(() => {
+    if (!patient) return
+
+    reset(buildPatientUpdateDefaults(patient))
+  }, [patient, reset])
+
+  const isPatientLoading = !patient
+
   return (
     <PatientFormModal>
       <PatientFormModal.Header
@@ -132,8 +133,8 @@ export function EditPatientModal({ patientId }: IEditPatientModal) {
           steps={steps}
           disabled={isPatientLoading}
           submit={{
-            label: 'Salvar alterações',
             isSubmitting,
+            label: 'Salvar alterações',
             onSubmit: handleSubmit(submit),
           }}
         />

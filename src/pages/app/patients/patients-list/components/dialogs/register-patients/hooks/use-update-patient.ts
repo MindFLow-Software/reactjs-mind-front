@@ -5,7 +5,7 @@ import { toast } from 'sonner'
 import { updatePatientProfileById } from '@/api/patient-profiles/update-patient-profile-by-id'
 import { getApiErrorMessage } from '@/lib/get-api-error-message'
 import type { UpdatePatientFormData } from '@/validators/patients/form/update-patient-schema'
-import { usePatientAttachmentsUpload } from './use-patient-attachments-upload'
+// import { usePatientAttachmentsUpload } from './use-patient-attachments-upload'
 
 type IUseUpdatePatient = {
   patientId: string
@@ -21,7 +21,7 @@ export function useUpdatePatient({
   onSuccess,
 }: IUseUpdatePatient) {
   const queryClient = useQueryClient()
-  const { uploadAll, isUploading } = usePatientAttachmentsUpload()
+  // const { uploadAll, isUploading } = usePatientAttachmentsUpload()
 
   const { mutateAsync, isPending } = useMutation({
     mutationFn: updatePatientProfileById,
@@ -50,11 +50,11 @@ export function useUpdatePatient({
         id: patientId,
       })
 
-      await uploadAll({ targetId: patientId, avatarFile, files })
+      // await uploadAll({ targetId: patientId, avatarFile, files })
       onSuccess?.()
     },
-    [mutateAsync, uploadAll, patientId, avatarFile, files, onSuccess],
+    [mutateAsync, patientId, avatarFile, files, onSuccess],
   )
 
-  return { submit, isSubmitting: isPending || isUploading }
+  return { submit, isSubmitting: isPending/* || isUploading*/ }
 }

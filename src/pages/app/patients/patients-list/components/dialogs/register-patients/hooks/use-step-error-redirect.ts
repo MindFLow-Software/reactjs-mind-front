@@ -28,7 +28,9 @@ export function useStepErrorRedirect({
   const hasRedirected = useRef(false)
 
   useEffect(() => {
-    if (hasRedirected.current) return
+    if (hasRedirected.current) {
+      hasRedirected.current = false
+    }
 
     const firstErrorField = Object.keys(errors)[0]
     if (!firstErrorField) return

@@ -1,3 +1,5 @@
+import { Normalizer } from './normalizer'
+
 class Is {
   static nullish = (value: unknown): value is null | undefined => {
     return value == null
@@ -27,33 +29,25 @@ class Is {
   }
 
   static cpf = (value: string): boolean => {
-    const cleanCPF = value.replace(/\D/g, '')
+    const cpf = Normalizer.digits(value)
 
-    if (cleanCPF.length !== 11) return false
+    if (cpf.length !== 11 || /^(\d)\1{10}$/.test(cpf)) return false
 
-    if (/^(\d)\1{10}$/.test(cleanCPF)) return false
-
-    let sum = 0
-    let remainder
-
-    for (let i = 1; i <= 9; i++) {
-      sum += parseInt(cleanCPF.substring(i - 1, i)) * (11 - i)
+    const checkDigit = (length: number): number => {
+      let sum = 0
+      for (let i = 0; i < length; i++) {
+        sum += parseInt(cpf.charAt(i)) * (length + 1 - i)
+      }
+      const rest = (sum * 10) % 11
+      return rest === 10 || rest === 11 ? 0 : rest
     }
+    console.log('1. ', checkDigit(9) === parseInt(cpf.charAt(9)))
+    console.log('2. ', checkDigit(10) === parseInt(cpf.charAt(10)))
 
-    remainder = (sum * 10) % 11
-    if (remainder === 10 || remainder === 11) remainder = 0
-    if (remainder !== parseInt(cleanCPF.substring(9, 10))) return false
-
-    sum = 0
-    for (let i = 1; i <= 10; i++) {
-      sum += parseInt(cleanCPF.substring(i - 1, i)) * (12 - i)
-    }
-
-    remainder = (sum * 10) % 11
-    if (remainder === 10 || remainder === 11) remainder = 0
-    if (remainder !== parseInt(cleanCPF.substring(10, 11))) return false
-
-    return true
+    return (
+      checkDigit(9) === parseInt(cpf.charAt(9)) &&
+      checkDigit(10) === parseInt(cpf.charAt(10))
+    )
   }
 }
 

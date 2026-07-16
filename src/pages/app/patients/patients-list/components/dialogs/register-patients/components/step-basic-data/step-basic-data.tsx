@@ -35,7 +35,7 @@ const CPF_LENGTH = 11
 export function StepBasicData({ onAvatarSelect, patient }: IStepBasicData) {
   const { watch, control } = useFormContext<CreatePatientFormData>()
 
-  const [birthInput, setBirthInput] = useState<string>()
+  const [birthInput, setBirthInput] = useState<string>('')
 
   const cpfDigits = Normalizer.digits(watch('cpf'))
   const isCpfComplete = cpfDigits.length === CPF_LENGTH
