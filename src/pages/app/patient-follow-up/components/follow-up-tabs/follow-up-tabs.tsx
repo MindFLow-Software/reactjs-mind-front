@@ -10,12 +10,12 @@ import { AnamnesisForm } from '../anamnesis/anamnesis-form'
 import { PatientSessionsTimeline } from '../timeline/patient-sessions-timeline'
 import { PatientFilesTab } from '../files/patient-files-tab'
 import { PatientResumeTab } from '../patient-resume-tab/patient-resume-tab'
-import './patient-hub-tabs.css'
+import './follow-up-tabs.css'
 
 type PatientDetails = NonNullable<IgetPatientProfileDetailsResponse['patient']>
 type DetailsMeta = IgetPatientProfileDetailsResponse['meta']
 
-const HUB_TABS = [
+const FOLLOW_UP_TABS = [
   { value: 'clinical', label: 'Dados Cadastrais' },
   { value: 'anamnesis', label: 'Anamnese' },
   { value: 'timeline', label: 'Historico' },
@@ -23,7 +23,7 @@ const HUB_TABS = [
   { value: 'resume', label: 'Resumo' },
 ] as const
 
-type PatientHubTabsProps = {
+type PatientFollowUpTabsProps = {
   patient: PatientDetails
   timeline: {
     meta: DetailsMeta
@@ -32,14 +32,17 @@ type PatientHubTabsProps = {
   }
 }
 
-export function PatientHubTabs({ patient, timeline }: PatientHubTabsProps) {
+export function PatientFollowUpTabs({
+  patient,
+  timeline,
+}: PatientFollowUpTabsProps) {
   const [currentTab, setCurrentTab] = useState('clinical')
 
   const patientName = `${patient.firstName} ${patient.lastName}`
 
   return (
     <>
-      <div className="phd-header-wrap">
+      <div className="pfu-header-wrap">
         <PatientDetailsHeader
           patient={{
             ...patient,
@@ -51,21 +54,21 @@ export function PatientHubTabs({ patient, timeline }: PatientHubTabsProps) {
       <Tabs
         value={currentTab}
         onValueChange={setCurrentTab}
-        className="phd-tabs"
+        className="pfu-tabs"
       >
-        <TabsList className="phd-tabs-list">
-          {HUB_TABS.map((tab) => (
+        <TabsList className="pfu-tabs-list">
+          {FOLLOW_UP_TABS.map((tab) => (
             <TabsTrigger
               key={tab.value}
               value={tab.value}
-              className="phd-tab-trigger"
+              className="pfu-tab-trigger"
             >
               {tab.label}
             </TabsTrigger>
           ))}
         </TabsList>
 
-        <TabsContent value="clinical" className="phd-tab-content">
+        <TabsContent value="clinical" className="pfu-tab-content">
           <PatientInfo
             patient={{
               dateOfBirth: patient.dateOfBirth,
@@ -77,11 +80,11 @@ export function PatientHubTabs({ patient, timeline }: PatientHubTabsProps) {
           />
         </TabsContent>
 
-        <TabsContent value="anamnesis" className="phd-tab-content">
+        <TabsContent value="anamnesis" className="pfu-tab-content">
           <AnamnesisForm patientId={patient.id} patientName={patientName} />
         </TabsContent>
 
-        <TabsContent value="timeline" className="phd-tab-content">
+        <TabsContent value="timeline" className="pfu-tab-content">
           <PatientSessionsTimeline
             sessions={patient.sessions}
             patientName={patientName}
@@ -93,7 +96,7 @@ export function PatientHubTabs({ patient, timeline }: PatientHubTabsProps) {
           <PatientFilesTab patientId={patient.id} />
         </TabsContent>
 
-        <TabsContent value="resume" className="phd-tab-content">
+        <TabsContent value="resume" className="pfu-tab-content">
           <PatientResumeTab />
         </TabsContent>
       </Tabs>

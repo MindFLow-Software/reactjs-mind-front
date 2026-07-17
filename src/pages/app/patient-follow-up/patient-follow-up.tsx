@@ -12,15 +12,15 @@ import { usePatientQueueStore } from '@/store/use-patient-queue-store'
 import { PatientsDetailsLoading } from './components/loading/loading'
 import { PatientsDataBlock } from '../patients/components/patients-data-block/patients-data-block'
 import { PatientsPageShell } from '../patients/components/patients-page-shell/patients-page-shell'
-import { HubActions } from './components/hub-actions/hub-actions'
-import { HubTopBar } from './components/hub-top-bar/hub-top-bar'
-import { PatientHubTabs } from './components/patient-hub-tabs/patient-hub-tabs'
+import { FollowUpActions } from './components/follow-up-actions/follow-up-actions'
+import { FollowUpTopBar } from './components/follow-up-top-bar/follow-up-top-bar'
+import { PatientFollowUpTabs } from './components/follow-up-tabs/follow-up-tabs'
 import { PatientDetailsError } from './components/patient-details-error/patient-details-error'
 import { usePatientQueue } from './hooks/use-patient-queue'
 import './patient-follow-up.css'
 
 export default function PatientFollowUp() {
-  const { id } = useParams<{ id: string }>()
+  const { patientId } = useParams<{ patientId: string }>()
   const location = useLocation()
   const { setTitle, setSubtitle } = useHeaderStore()
   const queueSource = usePatientQueueStore((state) => state.source)
@@ -33,9 +33,9 @@ export default function PatientFollowUp() {
     isError,
     refetch,
   } = useQuery({
-    queryKey: ['patient-details', id, pageIndex],
-    queryFn: () => getPatientProfileDetails(id, pageIndex),
-    enabled: !!id,
+    queryKey: ['patient-details', patientId, pageIndex],
+    queryFn: () => getPatientProfileDetails(patientId, pageIndex),
+    enabled: !!patientId,
   })
 
   const patientData = result?.patient
@@ -54,7 +54,9 @@ export default function PatientFollowUp() {
     return queueSource === 'patients-records'
   }, [location.state, queueSource])
 
-  const { queue, currentIndex, hasPrev, hasNext } = usePatientQueue(id ?? '')
+  const { queue, currentIndex, hasPrev, hasNext } = usePatientQueue(
+    patientId ?? '',
+  )
 
   useEffect(() => {
     if (cameFromRecords) {
@@ -81,17 +83,17 @@ export default function PatientFollowUp() {
 
   return (
     <div className="phd-page">
-      <HubTopBar
+      <FollowUpTopBar
         queue={{ prevId, nextId, currentIndex, total: queue.length }}
       />
 
       <PatientsPageShell>
         <PatientsPageShell.Header
-          title="Prontuário completo do Paciente"
+          title="Acompanhamento do Paciente"
           description="Acompanhamento clinico, historico de sessoes e documentos em um unico lugar."
           icon={<FileSearch className="size-5 text-blue-600" />}
         >
-          <HubActions />
+          <FollowUpActions />
         </PatientsPageShell.Header>
 
         <PatientsPageShell.Content className="phd-content">
@@ -102,7 +104,7 @@ export default function PatientFollowUp() {
             />
 
             <PatientsDataBlock.Content>
-              <PatientHubTabs
+              <PatientFollowUpTabs
                 patient={patientData}
                 timeline={{ meta, pageIndex, onPageChange: setPageIndex }}
               />

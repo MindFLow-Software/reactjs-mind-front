@@ -27,12 +27,12 @@ export function usePatientQueue(
 
   const navigatePrev = useCallback(() => {
     if (!hasPrev) return
-    navigate(`/patients/${queue[currentIndex - 1]}/details`)
+    navigate(`/patient/${queue[currentIndex - 1]}/follow-up`)
   }, [hasPrev, navigate, queue, currentIndex])
 
   const navigateNext = useCallback(() => {
     if (!hasNext) return
-    navigate(`/patients/${queue[currentIndex + 1]}/details`)
+    navigate(`/patient/${queue[currentIndex + 1]}/follow-up`)
   }, [hasNext, navigate, queue, currentIndex])
 
   return { queue, currentIndex, hasPrev, hasNext, navigatePrev, navigateNext }

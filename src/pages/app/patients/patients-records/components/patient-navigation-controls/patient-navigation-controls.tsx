@@ -27,7 +27,7 @@ export function PatientNavigationControls({
         size="icon"
         className="pr-nav-btn"
         disabled={!prevId}
-        onClick={() => navigate(`/patients/${prevId}/details`)}
+        onClick={() => navigate(`/patient/${prevId}/follow-up`)}
         aria-label="Paciente anterior"
       >
         <ChevronLeft className="size-4.5" />
@@ -42,7 +42,7 @@ export function PatientNavigationControls({
         size="icon"
         className="pr-nav-btn"
         disabled={!nextId}
-        onClick={() => navigate(`/patients/${nextId}/details`)}
+        onClick={() => navigate(`/patient/${nextId}/follow-up`)}
         aria-label="Próximo paciente"
       >
         <ChevronRight className="size-4.5" />
