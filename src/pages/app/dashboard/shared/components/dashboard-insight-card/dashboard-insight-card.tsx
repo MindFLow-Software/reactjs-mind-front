@@ -1,4 +1,9 @@
-import { AlertTriangle, Info, OctagonAlert } from 'lucide-react'
+import {
+  AlertTriangle,
+  Info,
+  OctagonAlert,
+  type LucideIcon,
+} from 'lucide-react'
 
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
@@ -21,24 +26,21 @@ type IDashboardInsightCard = {
 
 const SEVERITY_CONFIG: Record<
   InsightSeverity,
-  { icon: typeof Info; badgeClassName: string; label: string }
+  { icon: LucideIcon; badgeClassName: string; label: string }
 > = {
   [InsightSeverity.INFO]: {
     icon: Info,
-    badgeClassName:
-      'bg-blue-100 text-blue-700 dark:bg-blue-950/30 dark:text-blue-400',
+    badgeClassName: 'bg-primary/10 text-primary',
     label: 'Info',
   },
   [InsightSeverity.WARNING]: {
     icon: AlertTriangle,
-    badgeClassName:
-      'bg-amber-100 text-amber-700 dark:bg-amber-950/30 dark:text-amber-400',
+    badgeClassName: 'bg-warning/10 text-warning',
     label: 'Atenção',
   },
   [InsightSeverity.CRITICAL]: {
     icon: OctagonAlert,
-    badgeClassName:
-      'bg-red-100 text-red-700 dark:bg-red-950/30 dark:text-red-400',
+    badgeClassName: 'bg-destructive/10 text-destructive',
     label: 'Crítico',
   },
 }
@@ -52,7 +54,7 @@ export function DashboardInsightCard({
 
   return (
     <Card className="dsh-insight-card-root">
-      <CardHeader className="flex justify-between">
+      <CardHeader className="dsh-insight-card-header">
         <p className="dsh-insight-card-title">{insight.title}</p>
         <Badge className={config.badgeClassName}>
           <Icon className="size-3" />
