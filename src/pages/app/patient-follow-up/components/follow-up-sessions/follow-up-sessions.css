@@ -1,0 +1,47 @@
+@reference "../../../../../global.css";
+
+@layer components {
+  .pfu-next-session-card {
+    @apply border border-border p-2!;
+  }
+
+  .pfu-next-session-card-header {
+    @apply p-0! gap-1!;
+  }
+
+  .pfu-next-session-card-title {
+    @apply flex! items-center gap-2 text-xs! font-medium uppercase tracking-wider text-muted-foreground;
+  }
+
+  .pfu-next-session-card-date {
+    @apply text-sm font-medium;
+  }
+
+  .pfu-next-session-card-description {
+    @apply text-[11px] text-muted-foreground;
+  }
+
+  .pfu-sessions-container {
+    @apply flex gap-2;
+  }
+
+  .pfu-sessions-card {
+    @apply border border-border p-2! flex-1;
+  }
+
+  .pfu-sessions-card-header {
+    @apply p-0! gap-1!;
+  }
+
+  .pfu-sessions-card-description {
+    @apply text-[11px]!;
+  }
+
+  .pfu-sessions-card-title--primary {
+    @apply text-green-400;
+  }
+
+  .pfu-sessions-card-title--secondary {
+    @apply text-red-400;
+  }
+}

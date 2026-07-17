@@ -5,16 +5,12 @@
     @apply flex items-center gap-2;
   }
 
-  .pfu-action-export {
-    @apply h-8 cursor-pointer gap-1.5 bg-transparent text-muted-foreground;
-  }
-
   .pfu-action-primary {
-    @apply h-8 cursor-pointer gap-1.5 bg-blue-600 text-white hover:bg-blue-700;
+    @apply cursor-pointer gap-2 py-2! w-full justify-start! text-xs! bg-white! text-slate-800;
   }
 
   .pfu-action-more {
-    @apply size-8 cursor-pointer p-0;
+    @apply size-10 shrink-0! cursor-pointer;
   }
 
   .pfu-menu-item {

@@ -1,4 +1,4 @@
-import { Download, MoreVertical, Plus, Printer, Trash2 } from 'lucide-react'
+import { Calendar, MoreVertical, Printer, Trash2 } from 'lucide-react'
 
 import { Button } from '@/components/ui/button'
 import {
@@ -14,24 +14,14 @@ import './follow-up-actions.css'
 export function FollowUpActions() {
   return (
     <div className="pfu-actions">
-      <Button
-        variant="outline"
-        size="sm"
-        className="pfu-action-export"
-        disabled
-      >
-        <Download className="size-3.5" />
-        <span className="hidden md:inline">Exportar</span>
-      </Button>
-
-      <Button size="sm" className="pfu-action-primary" disabled>
-        <Plus className="size-3.5" />
+      <Button variant="outline" size="sm" className="pfu-action-primary">
+        <Calendar className="size-4" />
         <span>Nova Sessao</span>
       </Button>
 
       <DropdownMenu>
         <DropdownMenuTrigger asChild>
-          <Button variant="ghost" size="sm" className="pfu-action-more">
+          <Button variant="ghost" size="icon" className="pfu-action-more">
             <MoreVertical className="size-4" />
           </Button>
         </DropdownMenuTrigger>

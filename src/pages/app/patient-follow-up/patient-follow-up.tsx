@@ -16,6 +16,7 @@ import { PatientFollowUpSidebar } from './components/follow-up-sidebar/follow-up
 import { PatientFollowUpTabs } from './components/follow-up-tabs/follow-up-tabs'
 import { PatientDetailsError } from './components/patient-details-error/patient-details-error'
 import { usePatientQueue } from './hooks/use-patient-queue'
+
 import './patient-follow-up.css'
 
 export default function PatientFollowUp() {

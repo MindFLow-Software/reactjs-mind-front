@@ -22,6 +22,7 @@ import type { IPatientProfile } from '@/types/patient-profile/patient-profile'
 
 import { FollowUpActions } from '../follow-up-actions/follow-up-actions'
 import './follow-up-sidebar.css'
+import { FollowUpSessions } from '../follow-up-sessions/follow-up-sessions'
 
 const DASH = '—'
 
@@ -62,18 +63,20 @@ export function PatientFollowUpSidebar({ patient }: IPatientFollowUpSidebar) {
         <div className="pfu-sidebar-body">
           <div className="pfu-sidebar-identity">
             <UserAvatar
-              identity={{ src: patient.profileImageUrl, name: fullName }}
               className="pfu-sidebar-avatar"
+              identity={{ src: patient.profileImageUrl, name: fullName }}
             />
 
             <StatusBadge
+              size="sm"
+              className="pfu-sidebar-status"
               status={
                 isPatientActive ? AccountStatus.ACTIVE : AccountStatus.BLOCKED
               }
-              size="md"
-              className="pfu-sidebar-status"
             />
+          </div>
 
+          <div className="pfu-sidebar-name-and-meta">
             <h2 className="pfu-sidebar-name">{fullName}</h2>
 
             <div className="pfu-sidebar-meta">
@@ -102,9 +105,13 @@ export function PatientFollowUpSidebar({ patient }: IPatientFollowUpSidebar) {
           <div className="pfu-sidebar-contacts">
             <SidebarContact icon={<Phone className="size-4" />} value={phone} />
             <SidebarContact
-              icon={<Mail className="size-4" />}
               value={patient.email}
+              icon={<Mail className="size-4" />}
             />
+          </div>
+
+          <div className="pfu-sidebar-sessions">
+            <FollowUpSessions />
           </div>
 
           <div className="pfu-sidebar-actions">

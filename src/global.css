@@ -141,7 +141,7 @@
 
   /* Shadcn / Base Variables */
   --radius: 0.75rem;
-  --background: oklch(0.951 0 0);
+  --background: oklch(0.95 0.002 260 / 0.5);
   --foreground: oklch(0.21 0.006 285.885);
   --card: oklch(1 0 0);
   --card-foreground: oklch(0.21 0.006 285.885);
