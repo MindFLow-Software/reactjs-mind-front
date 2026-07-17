@@ -1,0 +1,55 @@
+@reference "../../../../../../global.css";
+
+@layer components {
+  /* Root */
+  .ph-anamnesis-skeleton {
+    @apply w-full flex flex-col gap-4 py-2;
+  }
+
+  /* Header row */
+  .ph-anamnesis-skeleton__header {
+    @apply flex items-center justify-between px-2;
+  }
+
+  .ph-anamnesis-skeleton__header-text {
+    @apply flex flex-col gap-2;
+  }
+
+  .ph-anamnesis-skeleton__header-actions {
+    @apply flex gap-2;
+  }
+
+  /* Content card */
+  .ph-anamnesis-skeleton__card {
+    @apply rounded-2xl border bg-card p-5 flex flex-col gap-6;
+  }
+
+  /* Nav tabs strip */
+  .ph-anamnesis-skeleton__nav {
+    @apply flex gap-2 rounded-xl bg-muted/40 p-2;
+  }
+
+  /* Editor area */
+  .ph-anamnesis-skeleton__editor-section {
+    @apply flex flex-col gap-4;
+  }
+
+  .ph-anamnesis-skeleton__editor-header {
+    @apply flex justify-between;
+  }
+
+  .ph-anamnesis-skeleton__editor-body {
+    @apply rounded-xl border p-4 flex flex-col gap-4;
+  }
+
+  /* Skeleton shapes */
+  .ph-anamnesis-skeleton__sk-title      { @apply h-6 w-32; }
+  .ph-anamnesis-skeleton__sk-subtitle   { @apply h-4 w-64; }
+  .ph-anamnesis-skeleton__sk-action-sm  { @apply h-9 w-24; }
+  .ph-anamnesis-skeleton__sk-action-md  { @apply h-9 w-36; }
+  .ph-anamnesis-skeleton__sk-nav-tab    { @apply h-8 w-20; }
+  .ph-anamnesis-skeleton__sk-label      { @apply h-4 w-28; }
+  .ph-anamnesis-skeleton__sk-btn        { @apply h-8 w-24; }
+  .ph-anamnesis-skeleton__sk-toolbar    { @apply h-8 w-full; }
+  .ph-anamnesis-skeleton__sk-editor     { @apply h-40 w-full; }
+}

@@ -1,0 +1,56 @@
+@reference "../../../../../../global.css";
+
+@layer components {
+  /* Root */
+  .ph-anamnesis-header {
+    @apply flex flex-wrap items-center justify-between gap-3;
+  }
+
+  .ph-anamnesis-header__title-wrap {
+    @apply min-w-0;
+  }
+
+  .ph-anamnesis-header__title {
+    @apply text-xl font-semibold tracking-tight;
+  }
+
+  .ph-anamnesis-header__subtitle {
+    @apply text-muted-foreground text-sm;
+  }
+
+  /* Actions */
+  .ph-anamnesis-header__actions {
+    @apply flex items-center gap-2;
+  }
+
+  /* PDF button — base */
+  .ph-anamnesis-header__pdf-btn {
+    @apply text-white transition-all duration-300 min-w-[110px] cursor-pointer bg-red-500 hover:bg-red-600;
+  }
+
+  .ph-anamnesis-header__pdf-btn--exporting {
+    @apply bg-red-400;
+  }
+
+  .ph-anamnesis-header__pdf-btn--success {
+    @apply bg-emerald-600 hover:bg-emerald-600;
+  }
+
+  /* Copy button — base */
+  .ph-anamnesis-header__copy-btn {
+    @apply transition-all duration-300 min-w-[130px] cursor-pointer bg-blue-500 hover:bg-blue-600 text-white;
+  }
+
+  .ph-anamnesis-header__copy-btn--copied {
+    @apply bg-emerald-600 hover:bg-emerald-600 text-white;
+  }
+
+  /* Button icons */
+  .ph-anamnesis-header__btn-icon {
+    @apply mr-1 size-4;
+  }
+
+  .ph-anamnesis-header__btn-icon--spin {
+    @apply mr-1 size-4 animate-spin;
+  }
+}

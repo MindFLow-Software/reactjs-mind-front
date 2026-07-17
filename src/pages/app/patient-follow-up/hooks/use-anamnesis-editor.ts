@@ -15,30 +15,30 @@ import { saveAnamnesis } from '@/api/patient-profiles/save-anamnesis'
 import type { IAnamnesisContent } from '@/types/clinical/anamnesis-content'
 import { AnamnesisPDFTemplate } from '@/templates/pdf/anamnesis-pdf-template'
 
-import type { IAnamnesisBlock } from '../components/anamnesis/anamnesis-types'
+import type { IAnamnesisBlock } from '../components/tabs/anamnesis/anamnesis-types'
 import {
   buildContentFromBlocks,
   buildInitialBlocks,
   normalizeBlocks,
   toApiData,
-} from '../components/anamnesis/anamnesis-utils'
+} from '../components/tabs/anamnesis/anamnesis-utils'
 import {
   clearAnamnesisDraft,
   readAnamnesisDraft,
   writeAnamnesisDraft,
-} from '../components/anamnesis/anamnesis-draft-storage'
+} from '../components/tabs/anamnesis/anamnesis-draft-storage'
 import { usePdfExport } from './use-pdf-export'
 import { Clipboard } from '@/utils/clipboard'
 import { Time } from '@/utils/time'
 
-type EditorState = {
+type IAnamnesisEditorState = {
   blocks: IAnamnesisBlock[]
   activeBlockId: string | null
   hydrated: boolean
   hasLocalDraft: boolean
 }
 
-type EditorAction =
+type IAnamnesisEditorAction =
   | { type: 'HYDRATE'; blocks: IAnamnesisBlock[]; hasLocalDraft: boolean }
   | { type: 'SET_ACTIVE_BLOCK'; id: string | null }
   | { type: 'UPDATE_BLOCK'; id: string; updates: Partial<IAnamnesisBlock> }
@@ -47,14 +47,17 @@ type EditorAction =
   | { type: 'DISCARD_DRAFT'; blocks: IAnamnesisBlock[] }
   | { type: 'SET_HAS_LOCAL_DRAFT'; value: boolean }
 
-const INITIAL_EDITOR_STATE: EditorState = {
+const INITIAL_EDITOR_STATE: IAnamnesisEditorState = {
   blocks: [],
   activeBlockId: null,
   hydrated: false,
   hasLocalDraft: false,
 }
 
-function editorReducer(state: EditorState, action: EditorAction): EditorState {
+function editorReducer(
+  state: IAnamnesisEditorState,
+  action: IAnamnesisEditorAction,
+): IAnamnesisEditorState {
   switch (action.type) {
     case 'HYDRATE':
       return {
@@ -90,12 +93,12 @@ function editorReducer(state: EditorState, action: EditorAction): EditorState {
   }
 }
 
-type UseAnamnesisEditorOptions = {
+type IUseAnamnesisEditorOptions = {
   patientId: string
   patientName?: string
 }
 
-type UseAnamnesisEditorReturn = {
+type IUseAnamnesisEditorReturn = {
   blocks: IAnamnesisBlock[]
   activeBlockId: string | null
   hasLocalDraft: boolean
@@ -117,7 +120,7 @@ type UseAnamnesisEditorReturn = {
 export function useAnamnesisEditor({
   patientId,
   patientName = '',
-}: UseAnamnesisEditorOptions): UseAnamnesisEditorReturn {
+}: IUseAnamnesisEditorOptions): IUseAnamnesisEditorReturn {
   const queryClient = useQueryClient()
 
   const [{ blocks, activeBlockId, hydrated, hasLocalDraft }, dispatch] =

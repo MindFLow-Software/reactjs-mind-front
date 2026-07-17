@@ -1,0 +1,19 @@
+@reference "../../../../../../../global.css";
+
+@layer components {
+  .fr-row {
+    @apply flex items-center gap-4 py-3;
+  }
+
+  .fr-row--bordered {
+    @apply border-b border-border/40;
+  }
+
+  .fr-row__label {
+    @apply text-[10px] font-bold uppercase tracking-wider text-muted-foreground w-32 shrink-0;
+  }
+
+  .fr-row__value {
+    @apply text-sm text-foreground flex items-center gap-2 min-w-0;
+  }
+}

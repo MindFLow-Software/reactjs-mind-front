@@ -5,31 +5,33 @@ import { toast } from 'sonner'
 import { deleteAttachment } from '@/api/attachments/delete-attachment'
 import { getPatientAttachments } from '@/api/attachments/get-patient-attachments'
 import type { IAttachmentPatientItem } from '@/types/attachment/attachment-patient-item'
-import type { FileTypeFilter } from '../components/files/file-type-filter'
-import { getFileType } from '../components/files/file-type-filter'
+import {
+  FileType,
+  getFileType,
+} from '../components/tabs/documents/file-type-filter'
 import { Time } from '@/utils/time'
 
 export function patientAttachmentsQueryKey(patientId: string) {
   return ['patient-hub', patientId, 'attachments'] as const
 }
 
-type UsePatientFilesReturn = {
+type IUsePatientFilesReturn = {
   attachments: IAttachmentPatientItem[]
   filtered: IAttachmentPatientItem[]
-  counts: Record<FileTypeFilter, number>
-  typeFilter: FileTypeFilter
+  counts: Record<FileType, number>
+  typeFilter: FileType
   previewFile: IAttachmentPatientItem | null
   isLoading: boolean
   isDeleting: boolean
-  setTypeFilter: (f: FileTypeFilter) => void
+  setTypeFilter: (f: FileType) => void
   openPreview: (file: IAttachmentPatientItem) => void
   closePreview: () => void
   handleDelete: (attachmentId: string) => void
 }
 
-export function usePatientFiles(patientId: string): UsePatientFilesReturn {
+export function usePatientFiles(patientId: string): IUsePatientFilesReturn {
   const queryClient = useQueryClient()
-  const [typeFilter, setTypeFilterState] = useState<FileTypeFilter>('all')
+  const [typeFilter, setTypeFilterState] = useState<FileType>(FileType.ALL)
   const [previewFile, setPreviewFile] = useState<IAttachmentPatientItem | null>(
     null,
   )
@@ -48,19 +50,25 @@ export function usePatientFiles(patientId: string): UsePatientFilesReturn {
     [attachments],
   )
 
-  const counts = useMemo<Record<FileTypeFilter, number>>(
+  const counts = useMemo<Record<FileType, number>>(
     () => ({
-      all: sorted.length,
-      pdf: sorted.filter((file) => getFileType(file.type) === 'pdf').length,
-      image: sorted.filter((file) => getFileType(file.type) === 'image').length,
-      audio: sorted.filter((file) => getFileType(file.type) === 'audio').length,
+      [FileType.ALL]: sorted.length,
+      [FileType.PDF]: sorted.filter(
+        (file) => getFileType(file.type) === FileType.PDF,
+      ).length,
+      [FileType.IMAGE]: sorted.filter(
+        (file) => getFileType(file.type) === FileType.IMAGE,
+      ).length,
+      [FileType.AUDIO]: sorted.filter(
+        (file) => getFileType(file.type) === FileType.AUDIO,
+      ).length,
     }),
     [sorted],
   )
 
   const filtered = useMemo(
     () =>
-      typeFilter === 'all'
+      typeFilter === FileType.ALL
         ? sorted
         : sorted.filter((f) => getFileType(f.type) === typeFilter),
     [sorted, typeFilter],
@@ -77,7 +85,7 @@ export function usePatientFiles(patientId: string): UsePatientFilesReturn {
     onError: () => toast.error('Erro ao remover arquivo.'),
   })
 
-  const setTypeFilter = useCallback((f: FileTypeFilter) => {
+  const setTypeFilter = useCallback((f: FileType) => {
     setTypeFilterState(f)
   }, [])
 
