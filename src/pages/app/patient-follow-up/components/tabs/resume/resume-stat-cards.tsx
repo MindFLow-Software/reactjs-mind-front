@@ -25,7 +25,7 @@ function StatCard({ card }: { card: IStatCardData }) {
   const { icon: Icon, iconColor, borderColor, label, value, footer } = card
 
   return (
-    <Card className={cn('border-l-4', borderColor)}>
+    <Card className={cn('border-l-4 py-0!', borderColor)}>
       <CardContent className="prt-stat-body">
         <p className={cn('prt-stat-label', iconColor)}>
           <Icon className="prt-stat-icon" />
