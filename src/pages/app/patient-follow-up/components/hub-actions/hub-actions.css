@@ -1,0 +1,27 @@
+@reference "../../../../../global.css";
+
+@layer components {
+  .phd-actions {
+    @apply flex items-center gap-2;
+  }
+
+  .phd-action-export {
+    @apply h-8 cursor-pointer gap-1.5 bg-transparent text-muted-foreground;
+  }
+
+  .phd-action-primary {
+    @apply h-8 cursor-pointer gap-1.5 bg-blue-600 text-white hover:bg-blue-700;
+  }
+
+  .phd-action-more {
+    @apply size-8 cursor-pointer p-0;
+  }
+
+  .phd-menu-item {
+    @apply cursor-pointer gap-2;
+  }
+
+  .phd-menu-item-danger {
+    @apply cursor-pointer gap-2 text-destructive focus:text-destructive;
+  }
+}

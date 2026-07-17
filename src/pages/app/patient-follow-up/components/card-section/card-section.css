@@ -1,0 +1,27 @@
+@reference "../../../../../global.css";
+
+@layer components {
+  .ph-card-section {
+    @apply rounded-2xl border border-border bg-card p-5;
+  }
+
+  .ph-card-section__head {
+    @apply flex items-center gap-3 mb-1 pb-4 border-b border-border/40;
+  }
+
+  .ph-card-section__icon {
+    @apply flex size-9 shrink-0 items-center justify-center rounded-lg;
+  }
+
+  .ph-card-section__title-wrap {
+    @apply flex-1 min-w-0;
+  }
+
+  .ph-card-section__title {
+    @apply text-sm font-semibold text-foreground leading-tight;
+  }
+
+  .ph-card-section__subtitle {
+    @apply text-xs text-muted-foreground mt-0.5;
+  }
+}

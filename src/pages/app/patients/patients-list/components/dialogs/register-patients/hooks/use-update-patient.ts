@@ -56,5 +56,5 @@ export function useUpdatePatient({
     [mutateAsync, patientId, avatarFile, files, onSuccess],
   )
 
-  return { submit, isSubmitting: isPending/* || isUploading*/ }
+  return { submit, isSubmitting: isPending /* || isUploading */ }
 }

@@ -1,0 +1,89 @@
+@reference "../../../../../global.css";
+
+@layer components {
+  /* Dialog shell */
+  .ph-preview {
+    @apply max-w-4xl h-[88vh] p-0 flex flex-col overflow-hidden rounded-2xl shadow-2xl border-0 gap-0;
+  }
+
+  /* Header bar */
+  .ph-preview__header {
+    @apply flex items-center gap-3 px-5 py-4 bg-zinc-950 shrink-0;
+  }
+
+  .ph-preview__title-wrap {
+    @apply flex-1 min-w-0;
+  }
+
+  .ph-preview__title {
+    @apply text-sm font-semibold text-white truncate leading-tight;
+  }
+
+  .ph-preview__subtitle {
+    @apply text-[10px] text-blue-400/70 uppercase tracking-[0.12em] mt-0.5 font-medium;
+  }
+
+  .ph-preview__close-btn {
+    @apply shrink-0 flex size-8 items-center justify-center rounded-full border border-white/25 text-white/60 hover:text-white hover:border-white/50 transition-colors cursor-pointer;
+  }
+
+  /* Accent line */
+  .ph-preview__accent-bar {
+    @apply h-[3px] bg-blue-600 shrink-0;
+  }
+
+  /* Viewer area */
+  .ph-preview__viewer {
+    @apply flex-1 relative flex items-center justify-center overflow-hidden bg-muted/40;
+  }
+
+  .ph-preview__loader {
+    @apply absolute inset-0 flex items-center justify-center z-0;
+  }
+
+  .ph-preview__loader-icon {
+    @apply size-7 animate-spin text-muted-foreground/20;
+  }
+
+  .ph-preview__img {
+    @apply relative z-10 w-full h-full object-contain p-4;
+  }
+
+  .ph-preview__iframe {
+    @apply relative z-10 w-full h-full border-none;
+  }
+
+  /* Unsupported file state */
+  .ph-preview__unsupported {
+    @apply relative z-10 flex flex-col items-center justify-center gap-3 py-20 text-center;
+  }
+
+  .ph-preview__unsupported-icon-wrap {
+    @apply flex size-14 items-center justify-center rounded-full bg-muted;
+  }
+
+  .ph-preview__unsupported-icon {
+    @apply size-7 text-muted-foreground/40;
+  }
+
+  .ph-preview__unsupported-title {
+    @apply text-sm font-medium text-foreground;
+  }
+
+  .ph-preview__unsupported-desc {
+    @apply text-xs text-muted-foreground max-w-[240px];
+  }
+
+  /* Footer bar */
+  .ph-preview__footer {
+    @apply flex items-center justify-between px-5 py-3 bg-zinc-950 shrink-0 gap-3;
+  }
+
+  .ph-preview__close-action {
+    @apply cursor-pointer text-white/40 hover:text-white hover:bg-white/10 text-[11px] tracking-[0.1em] uppercase font-semibold;
+  }
+
+  .ph-preview__download-btn {
+    @apply cursor-pointer bg-blue-600 hover:bg-blue-700 text-white gap-2 h-8 px-5;
+  }
+}
