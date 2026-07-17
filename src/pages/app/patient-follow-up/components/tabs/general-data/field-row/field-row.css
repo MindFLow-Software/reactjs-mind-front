@@ -10,6 +10,6 @@
   }
 
   .gd-field__box {
-    @apply flex h-[38px] items-center justify-between gap-2 rounded-lg border border-border bg-muted/40 px-3 text-sm text-foreground;
+    @apply flex items-center justify-between gap-2 rounded-lg border border-border bg-muted/40 px-3 py-1.5 text-sm text-foreground;
   }
 }

@@ -17,7 +17,7 @@ import { FREQUENCY_DATA, frequencyConfig } from './resume-data'
 
 export function ResumeFrequencyChart() {
   return (
-    <Card>
+    <Card className="flex-1">
       <CardHeader className="pb-2">
         <div className="flex items-start justify-between">
           <div>

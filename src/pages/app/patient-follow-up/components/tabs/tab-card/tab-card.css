@@ -1,0 +1,27 @@
+@reference "../../../../../../global.css";
+
+@layer components {
+  .ftc-card {
+    @apply rounded-2xl bg-card p-4! gap-4!;
+  }
+
+  .ftc-card__head {
+    @apply flex! items-start justify-between gap-3 pb-4 px-0! border-b border-border/60;
+  }
+
+  .ftc-card__title-wrap {
+    @apply min-w-0;
+  }
+
+  .ftc-card__title {
+    @apply text-base font-semibold text-foreground leading-tight;
+  }
+
+  .ftc-card__subtitle {
+    @apply text-sm text-muted-foreground;
+  }
+
+  .ftc-card__body {
+    @apply flex flex-col gap-4 p-0!;
+  }
+}

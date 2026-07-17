@@ -2,15 +2,15 @@
 
 @layer components {
   .prt-root {
-    @apply mt-4 flex flex-col gap-4;
+    @apply flex flex-col gap-4;
   }
 
   .prt-stats-grid {
     @apply grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-4;
   }
 
-  .prt-charts-grid {
-    @apply grid grid-cols-1 gap-3 lg:grid-cols-2;
+  .prt-charts {
+    @apply flex w-full;
   }
 
   .prt-bottom-grid {

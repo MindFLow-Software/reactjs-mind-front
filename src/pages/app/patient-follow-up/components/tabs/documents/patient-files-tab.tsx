@@ -7,6 +7,7 @@ import { FileTypeFilter, FileType } from './file-type-filter'
 import { FileCard } from './file-card'
 import { SimplePreviewModal } from './simple-preview-modal'
 import { usePatientFiles } from '../../../hooks/use-patient-files'
+import { TabCard } from '../tab-card/tab-card'
 import './patient-files-tab.css'
 
 const EMPTY_LABEL: Record<FileType, string> = {
@@ -68,16 +69,10 @@ export function PatientFilesTab({ patientId }: IPatientFilesTab) {
 
   return (
     <div className="df-tab">
-      <div className="df-tab__card">
-        <div className="df-tab__head">
-          <div>
-            <p className="df-tab__title">Documentos emitidos</p>
-            <p className="df-tab__subtitle">
-              Relatórios, laudos, atestados e anexos do paciente
-            </p>
-          </div>
-        </div>
-
+      <TabCard
+        title="Documentos emitidos"
+        description="Relatórios, laudos, atestados e anexos do paciente"
+      >
         <FileUploadZone patientId={patientId} />
 
         <FileTypeFilter
@@ -87,7 +82,7 @@ export function PatientFilesTab({ patientId }: IPatientFilesTab) {
         />
 
         {renderFiles()}
-      </div>
+      </TabCard>
 
       <SimplePreviewModal file={previewFile} onClose={closePreview} />
     </div>

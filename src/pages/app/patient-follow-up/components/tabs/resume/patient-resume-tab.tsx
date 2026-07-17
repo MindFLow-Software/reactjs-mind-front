@@ -2,7 +2,7 @@
 
 import { ResumeStatCards } from './resume-stat-cards'
 import { ResumeFrequencyChart } from './resume-frequency-chart'
-import { ResumeHumorChart } from './resume-humor-chart'
+// import { ResumeHumorChart } from './resume-humor-chart'
 import { ResumeUpcomingEvents } from './resume-upcoming-events'
 import { ResumeClinicalAlerts } from './resume-clinical-alerts'
 import './patient-resume-tab.css'
@@ -12,9 +12,9 @@ export function PatientResumeTab() {
     <div className="prt-root">
       <ResumeStatCards />
 
-      <div className="prt-charts-grid">
+      <div className="prt-charts">
         <ResumeFrequencyChart />
-        <ResumeHumorChart />
+        {/* <ResumeHumorChart /> */}
       </div>
 
       <div className="prt-bottom-grid">

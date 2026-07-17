@@ -19,7 +19,7 @@ type IFollowUpDetailsMeta = IgetPatientProfileDetailsResponse['meta']
 const FOLLOW_UP_TABS = [
   { value: 'clinical', label: 'Dados Gerais', Icon: User },
   { value: 'anamnesis', label: 'Anamnese', Icon: ClipboardList },
-  { value: 'timeline', label: 'Evolução das Sessões', Icon: Activity },
+  { value: 'timeline', label: 'Sessões', Icon: Activity },
   { value: 'docs', label: 'Documentos', Icon: FileText },
   { value: 'resume', label: 'Resumo Inteligente', Icon: Sparkles },
 ] as const
@@ -76,7 +76,7 @@ export function PatientFollowUpTabs({
         />
       </TabsContent>
 
-      <TabsContent value="docs">
+      <TabsContent value="docs" className="pfu-tab-content">
         <PatientFilesTab patientId={patient.id} />
       </TabsContent>
 

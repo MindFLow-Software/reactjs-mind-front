@@ -1,27 +1,6 @@
 @reference "../../../../../../global.css";
 
 @layer components {
-  /* Root */
-  .df-tab {
-    @apply mt-4;
-  }
-
-  .df-tab__card {
-    @apply flex flex-col gap-4 rounded-2xl border border-border bg-card p-6;
-  }
-
-  .df-tab__head {
-    @apply flex items-start justify-between gap-3 pb-5 border-b border-border/60;
-  }
-
-  .df-tab__title {
-    @apply text-base font-semibold text-foreground leading-tight;
-  }
-
-  .df-tab__subtitle {
-    @apply text-sm text-muted-foreground mt-1;
-  }
-
   /* Loading state */
   .df-tab__loading {
     @apply flex flex-col items-center py-20;

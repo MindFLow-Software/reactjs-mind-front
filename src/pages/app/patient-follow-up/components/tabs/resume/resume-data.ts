@@ -1,12 +1,18 @@
 import type { ChartConfig } from '@/components/ui/chart'
 
 export const FREQUENCY_DATA = [
-  { month: 'NOV', sessions: 1 },
-  { month: 'DEZ', sessions: 3 },
   { month: 'JAN', sessions: 4 },
   { month: 'FEV', sessions: 2 },
   { month: 'MAR', sessions: 1 },
-  { month: 'ABR', sessions: 0 },
+  { month: 'ABR', sessions: 4 },
+  { month: 'MAI', sessions: 7 },
+  { month: 'JUN', sessions: 6 },
+  { month: 'JUL', sessions: 2 },
+  { month: 'AGO', sessions: 3 },
+  { month: 'SET', sessions: 9 },
+  { month: 'OUT', sessions: 5 },
+  { month: 'NOV', sessions: 1 },
+  { month: 'DEZ', sessions: 3 },
 ]
 
 export const HUMOR_DATA = [

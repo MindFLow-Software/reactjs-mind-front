@@ -7,7 +7,7 @@ import { Mask } from '@/utils/mask'
 import { Clipboard } from '@/utils/clipboard'
 import type { IPatientProfile } from '@/types/patient-profile/patient-profile'
 
-import { CardSection } from './card-section/card-section'
+import { TabCard } from '../tab-card/tab-card'
 import { FieldSection } from './field-section/field-section'
 import { GenderBadge } from './gender-badge/gender-badge'
 import { CardActionButton } from './card-action-button/card-action-button'
@@ -25,7 +25,6 @@ type IPatientGeneralData = {
 }
 
 export function PatientGeneralData({ patient }: IPatientGeneralData) {
-  const age = Time.calculateAge(patient?.dateOfBirth)
   const dateOfBirth = patient?.dateOfBirth
     ? Time.toBrazilianFormat(patient.dateOfBirth)
     : null
@@ -35,21 +34,18 @@ export function PatientGeneralData({ patient }: IPatientGeneralData) {
 
   return (
     <div className="gd-general-data">
-      <CardSection
-        header={{
-          title: 'Dados cadastrais',
-          subtitle: 'Informações pessoais, contato e convênio',
-          action: (
-            <CardActionButton
-              variant="edit"
-              label="Editar"
-              icon={<SquarePen className="size-3.5" />}
-            />
-          ),
-        }}
+      <TabCard
+        title="Dados cadastrais"
+        description="Informações pessoais, contato e convênio"
+        action={
+          <CardActionButton
+            variant="edit"
+            label="Editar"
+            icon={<SquarePen className="size-3.5" />}
+          />
+        }
       >
         <FieldSection label="Identificação">
-          <FieldRow label="Idade" value={age ?? DASH} />
           <FieldRow
             label="Nascimento"
             value={
@@ -128,7 +124,7 @@ export function PatientGeneralData({ patient }: IPatientGeneralData) {
             </button>
           </div>
         </FieldSection>
-      </CardSection>
+      </TabCard>
     </div>
   )
 }

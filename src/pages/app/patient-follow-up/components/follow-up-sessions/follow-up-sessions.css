@@ -14,11 +14,11 @@
   }
 
   .pfu-next-session-card-date {
-    @apply text-sm font-medium;
+    @apply text-xs font-medium;
   }
 
   .pfu-next-session-card-description {
-    @apply text-[11px] text-muted-foreground;
+    @apply text-[11px]! text-muted-foreground;
   }
 
   .pfu-sessions-container {

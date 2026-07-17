@@ -2,7 +2,7 @@ import { useCallback, useEffect, useMemo, useRef } from 'react'
 import { Button } from '@/components/ui/button'
 import { Plus } from 'lucide-react'
 
-import { AnamnesisHeader } from './anamnesis-header'
+import { AnamnesisHeaderActions } from './anamnesis-header-actions'
 import { AnamnesisToolbar } from './anamnesis-toolbar'
 import { AnamnesisEditorBlock } from './anamnesis-editor-block'
 import { AnamnesisSkeleton } from './anamnesis-skeleton'
@@ -14,6 +14,7 @@ import {
 
 import { useAnamnesisEditor } from '../../../hooks/use-anamnesis-editor'
 import { countWords } from '../../../helpers'
+import { TabCard } from '../tab-card/tab-card'
 
 function resolveSaveStatus(
   isPending: boolean,
@@ -148,18 +149,22 @@ export function AnamnesisForm({ patientId, patientName }: IAnamnesisForm) {
 
   return (
     <AnamnesisEditorContext.Provider value={contextValue}>
-      <div className="w-full flex flex-col gap-4">
-        <AnamnesisHeader
-          pdf={{
-            isExporting,
-            exportedSuccessfully: pdfExportedSuccessfully,
-            isCopyDisabled: !content.trim(),
-            copied,
-            onGeneratePDF: exportToPdf,
-            onCopy,
-          }}
-        />
-
+      <TabCard
+        title="Anamnese"
+        description="Blocos editáveis com salvamento automático e rascunho local."
+        action={
+          <AnamnesisHeaderActions
+            pdf={{
+              isExporting,
+              exportedSuccessfully: pdfExportedSuccessfully,
+              isCopyDisabled: !content.trim(),
+              copied,
+              onGeneratePDF: exportToPdf,
+              onCopy,
+            }}
+          />
+        }
+      >
         <AnamnesisToolbar />
 
         <div className="flex items-start gap-4">
@@ -185,7 +190,7 @@ export function AnamnesisForm({ patientId, patientName }: IAnamnesisForm) {
             </Button>
           </div>
         </div>
-      </div>
+      </TabCard>
     </AnamnesisEditorContext.Provider>
   )
 }

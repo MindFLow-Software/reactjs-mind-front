@@ -9,7 +9,7 @@ export function FollowUpSessions() {
       <Card className="pfu-next-session-card">
         <CardHeader className="pfu-next-session-card-header">
           <CardTitle className="pfu-next-session-card-title">
-            <Calendar className="size-4" />
+            <Calendar size={14} />
             Próxima Sessão
           </CardTitle>
           <span className="pfu-next-session-card-date">20 jul 2026 às 10:55</span>

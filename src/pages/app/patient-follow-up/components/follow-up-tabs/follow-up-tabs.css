@@ -2,7 +2,7 @@
 
 @layer components {
   .pfu-tabs {
-    @apply w-full min-w-0 gap-0!;
+    @apply w-full min-w-0 gap-4!;
   }
 
   .pfu-tabs-list {
@@ -10,7 +10,7 @@
   }
 
   .pfu-tab-trigger {
-    @apply flex cursor-pointer items-center gap-1.5 rounded-lg px-3 py-1.5 text-xs font-medium text-muted-foreground data-[state=active]:bg-blue-500! data-[state=active]:text-white!;
+    @apply flex cursor-pointer items-center gap-1.5 rounded-lg px-3 py-1.5 text-xs! font-medium text-muted-foreground data-[state=active]:bg-blue-500! data-[state=active]:text-white!;
   }
 
   .pfu-tab-content {

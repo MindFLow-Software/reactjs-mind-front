@@ -4,6 +4,8 @@ import { History } from 'lucide-react'
 
 import { Pagination } from '@/components/pagination/pagination'
 
+import { TabCard } from '../tab-card/tab-card'
+
 import { MonthGroup } from './month-group'
 import { TimelineFilterBar } from './timeline-filter-bar'
 import { useTimelineFilters } from './hooks/use-timeline-filters'
@@ -41,61 +43,72 @@ export function PatientSessionsTimeline({
     setSearchText,
   } = useTimelineFilters({ sessions })
 
-  if (sessions.length === 0) {
+  function renderBody() {
+    if (sessions.length === 0) {
+      return (
+        <div className="pst-empty-state">
+          <History className="pst-empty-state-icon" />
+          <p className="pst-empty-state-title">Sem histórico de sessões</p>
+          <p className="pst-empty-state-subtitle">
+            As sessões realizadas aparecerão aqui.
+          </p>
+        </div>
+      )
+    }
+
     return (
-      <div className="pst-empty-state">
-        <History className="pst-empty-state-icon" />
-        <p className="pst-empty-state-title">Sem histórico de sessões</p>
-        <p className="pst-empty-state-subtitle">
-          As sessões realizadas aparecerão aqui.
-        </p>
+      <div className="flex flex-col gap-5">
+        <TimelineFilterBar
+          search={{ value: searchText, onChange: setSearchText }}
+          status={{
+            value: statusFilter,
+            onChange: setStatusFilter,
+            counts: chipCounts,
+          }}
+        />
+
+        {filtered.length === 0 ? (
+          <div className="pst-no-results">
+            <History className="pst-no-results-icon" />
+            <p className="pst-no-results-title">Nenhuma sessão encontrada</p>
+            <p className="pst-no-results-subtitle">
+              Tente outro filtro ou termo de busca.
+            </p>
+          </div>
+        ) : (
+          <div className="pst-groups-container">
+            {grouped.map(([month, monthSessions]) => (
+              <MonthGroup
+                key={month}
+                month={month}
+                sessions={monthSessions}
+                patientName={patientName}
+              />
+            ))}
+          </div>
+        )}
+
+        <div className="pst-pagination-wrapper">
+          <Pagination
+            pagination={{
+              pageIndex,
+              totalCount: meta.totalCount,
+              perPage: meta.perPage,
+              onPageChange,
+            }}
+            totalLabel="Sessões"
+          />
+        </div>
       </div>
     )
   }
 
   return (
-    <div className="flex flex-col gap-5">
-      <TimelineFilterBar
-        search={{ value: searchText, onChange: setSearchText }}
-        status={{
-          value: statusFilter,
-          onChange: setStatusFilter,
-          counts: chipCounts,
-        }}
-      />
-
-      {filtered.length === 0 ? (
-        <div className="pst-no-results">
-          <History className="pst-no-results-icon" />
-          <p className="pst-no-results-title">Nenhuma sessão encontrada</p>
-          <p className="pst-no-results-subtitle">
-            Tente outro filtro ou termo de busca.
-          </p>
-        </div>
-      ) : (
-        <div className="pst-groups-container">
-          {grouped.map(([month, monthSessions]) => (
-            <MonthGroup
-              key={month}
-              month={month}
-              sessions={monthSessions}
-              patientName={patientName}
-            />
-          ))}
-        </div>
-      )}
-
-      <div className="pst-pagination-wrapper">
-        <Pagination
-          pagination={{
-            pageIndex,
-            totalCount: meta.totalCount,
-            perPage: meta.perPage,
-            onPageChange,
-          }}
-          totalLabel="Sessões"
-        />
-      </div>
-    </div>
+    <TabCard
+      title="Sessões"
+      description="Histórico de atendimentos e evolução do paciente"
+    >
+      {renderBody()}
+    </TabCard>
   )
 }
