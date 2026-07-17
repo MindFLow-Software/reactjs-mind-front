@@ -36,26 +36,24 @@ export function PatientFilesTab({ patientId }: IPatientFilesTab) {
   function renderFiles() {
     if (isLoading) {
       return (
-        <div className="ph-files-tab__loading">
-          <Loader2 className="ph-files-tab__loading-icon" />
-          <p className="ph-files-tab__loading-label">
-            Sincronizando arquivos...
-          </p>
+        <div className="df-tab__loading">
+          <Loader2 className="df-tab__loading-icon" />
+          <p className="df-tab__loading-label">Sincronizando arquivos...</p>
         </div>
       )
     }
 
     if (filtered.length === 0) {
       return (
-        <div className="ph-files-tab__empty">
-          <FileSearch className="ph-files-tab__empty-icon" />
-          <p className="ph-files-tab__empty-label">{EMPTY_LABEL[typeFilter]}</p>
+        <div className="df-tab__empty">
+          <FileSearch className="df-tab__empty-icon" />
+          <p className="df-tab__empty-label">{EMPTY_LABEL[typeFilter]}</p>
         </div>
       )
     }
 
     return (
-      <div className="ph-files-tab__grid">
+      <div className="df-tab__list">
         {filtered.map((file) => (
           <FileCard
             key={file.id}
@@ -69,16 +67,27 @@ export function PatientFilesTab({ patientId }: IPatientFilesTab) {
   }
 
   return (
-    <div className="ph-files-tab">
-      <FileUploadZone patientId={patientId} />
+    <div className="df-tab">
+      <div className="df-tab__card">
+        <div className="df-tab__head">
+          <div>
+            <p className="df-tab__title">Documentos emitidos</p>
+            <p className="df-tab__subtitle">
+              Relatórios, laudos, atestados e anexos do paciente
+            </p>
+          </div>
+        </div>
 
-      <FileTypeFilter
-        filter={typeFilter}
-        counts={counts}
-        onFilterChange={setTypeFilter}
-      />
+        <FileUploadZone patientId={patientId} />
 
-      {renderFiles()}
+        <FileTypeFilter
+          filter={typeFilter}
+          counts={counts}
+          onFilterChange={setTypeFilter}
+        />
+
+        {renderFiles()}
+      </div>
 
       <SimplePreviewModal file={previewFile} onClose={closePreview} />
     </div>

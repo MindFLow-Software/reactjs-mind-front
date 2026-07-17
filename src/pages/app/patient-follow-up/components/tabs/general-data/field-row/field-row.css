@@ -1,19 +1,15 @@
 @reference "../../../../../../../global.css";
 
 @layer components {
-  .fr-row {
-    @apply flex items-center gap-4 py-3;
+  .gd-field {
+    @apply flex flex-col gap-1.5 min-w-0;
   }
 
-  .fr-row--bordered {
-    @apply border-b border-border/40;
+  .gd-field__label {
+    @apply text-xs font-medium text-muted-foreground;
   }
 
-  .fr-row__label {
-    @apply text-[10px] font-bold uppercase tracking-wider text-muted-foreground w-32 shrink-0;
-  }
-
-  .fr-row__value {
-    @apply text-sm text-foreground flex items-center gap-2 min-w-0;
+  .gd-field__box {
+    @apply flex h-[38px] items-center justify-between gap-2 rounded-lg border border-border bg-muted/40 px-3 text-sm text-foreground;
   }
 }

@@ -2,38 +2,54 @@
 
 @layer components {
   /* Root */
-  .ph-files-tab {
-    @apply flex flex-col gap-4 mt-4;
+  .df-tab {
+    @apply mt-4;
+  }
+
+  .df-tab__card {
+    @apply flex flex-col gap-4 rounded-2xl border border-border bg-card p-6;
+  }
+
+  .df-tab__head {
+    @apply flex items-start justify-between gap-3 pb-5 border-b border-border/60;
+  }
+
+  .df-tab__title {
+    @apply text-base font-semibold text-foreground leading-tight;
+  }
+
+  .df-tab__subtitle {
+    @apply text-sm text-muted-foreground mt-1;
   }
 
   /* Loading state */
-  .ph-files-tab__loading {
+  .df-tab__loading {
     @apply flex flex-col items-center py-20;
   }
 
-  .ph-files-tab__loading-icon {
+  .df-tab__loading-icon {
     @apply size-8 animate-spin text-blue-500/40;
   }
 
-  .ph-files-tab__loading-label {
+  .df-tab__loading-label {
     @apply text-xs text-muted-foreground mt-2;
   }
 
   /* Empty state */
-  .ph-files-tab__empty {
+  .df-tab__empty {
     @apply flex flex-col items-center py-16 border-2 border-dashed border-border/40 rounded-2xl bg-muted/10 text-muted-foreground;
   }
 
-  .ph-files-tab__empty-icon {
+  .df-tab__empty-icon {
     @apply size-10 mb-2 opacity-30;
   }
 
-  .ph-files-tab__empty-label {
+  .df-tab__empty-label {
     @apply text-sm font-medium;
   }
 
-  /* Files grid */
-  .ph-files-tab__grid {
-    @apply grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3;
+  /* Files list */
+  .df-tab__list {
+    @apply flex flex-col divide-y divide-border/60;
   }
 }

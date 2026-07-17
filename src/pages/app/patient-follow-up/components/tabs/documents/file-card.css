@@ -1,56 +1,64 @@
 @reference "../../../../../../global.css";
 
 @layer components {
-  /* Card shell */
-  .ph-file-card {
-    @apply flex items-center gap-3 rounded-xl border border-border/50 bg-card px-4 py-3 transition-shadow hover:shadow-sm;
+  /* Row shell */
+  .df-file-row {
+    @apply flex items-center gap-3 py-3;
   }
 
-  /* Type badge */
-  .ph-file-card__badge {
-    @apply size-10 shrink-0 rounded-lg flex items-center justify-center text-[11px] font-bold tracking-wide;
+  /* Icon */
+  .df-file-row__icon {
+    @apply flex size-9 shrink-0 items-center justify-center rounded-lg bg-blue-50 text-blue-600 dark:bg-blue-950/30 dark:text-blue-300;
   }
 
-  /* File info */
-  .ph-file-card__info {
+  /* Body */
+  .df-file-row__body {
     @apply min-w-0 flex-1;
   }
 
-  .ph-file-card__name {
+  .df-file-row__name-line {
+    @apply flex items-center gap-2 min-w-0;
+  }
+
+  .df-file-row__name {
     @apply text-sm font-semibold truncate leading-tight text-foreground;
   }
 
-  .ph-file-card__meta {
-    @apply text-[11px] text-muted-foreground mt-0.5;
+  .df-file-row__badge {
+    @apply shrink-0 rounded-full px-2 py-0.5 text-[11px] font-medium;
+  }
+
+  .df-file-row__meta {
+    @apply text-xs text-muted-foreground mt-0.5;
   }
 
   /* Actions */
-  .ph-file-card__actions {
+  .df-file-row__actions {
     @apply flex shrink-0 items-center gap-1;
   }
 
-  .ph-file-card__action-btn {
-    @apply size-7 cursor-pointer text-muted-foreground hover:text-foreground hover:bg-muted rounded-full;
+  .df-file-row__action-btn {
+    @apply size-8 cursor-pointer text-muted-foreground hover:text-foreground hover:bg-muted rounded-full;
   }
 
-  .ph-file-card__action-btn--danger {
-    @apply size-7 cursor-pointer text-muted-foreground hover:text-destructive hover:bg-destructive/10 rounded-full;
+  .df-file-row__action-btn--danger {
+    @apply size-8 cursor-pointer text-muted-foreground hover:text-destructive hover:bg-destructive/10 rounded-full;
   }
 
-  .ph-file-card__action-icon {
-    @apply size-3.5;
+  .df-file-row__action-icon {
+    @apply size-4;
   }
 
   /* Delete dialog */
-  .ph-file-card__dialog-filename {
+  .df-file-row__dialog-filename {
     @apply font-medium text-foreground;
   }
 
-  .ph-file-card__dialog-cancel {
+  .df-file-row__dialog-cancel {
     @apply cursor-pointer;
   }
 
-  .ph-file-card__dialog-confirm {
+  .df-file-row__dialog-confirm {
     @apply cursor-pointer bg-destructive hover:bg-destructive/90 text-white;
   }
 }

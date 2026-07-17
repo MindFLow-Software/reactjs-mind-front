@@ -1,27 +1,27 @@
 @reference "../../../../../../../global.css";
 
 @layer components {
-  .ph-card-section {
-    @apply rounded-2xl border border-border bg-card p-5;
+  .gd-card {
+    @apply rounded-2xl border border-border bg-card p-6;
   }
 
-  .ph-card-section__head {
-    @apply flex items-center gap-3 mb-1 pb-4 border-b border-border/40;
+  .gd-card__head {
+    @apply flex items-start justify-between gap-3 mb-6 pb-5 border-b border-border/60;
   }
 
-  .ph-card-section__icon {
-    @apply flex size-9 shrink-0 items-center justify-center rounded-lg;
+  .gd-card__title-wrap {
+    @apply min-w-0;
   }
 
-  .ph-card-section__title-wrap {
-    @apply flex-1 min-w-0;
+  .gd-card__title {
+    @apply text-base font-semibold text-foreground leading-tight;
   }
 
-  .ph-card-section__title {
-    @apply text-sm font-semibold text-foreground leading-tight;
+  .gd-card__subtitle {
+    @apply text-sm text-muted-foreground mt-1;
   }
 
-  .ph-card-section__subtitle {
-    @apply text-xs text-muted-foreground mt-0.5;
+  .gd-card__body {
+    @apply flex flex-col gap-7;
   }
 }

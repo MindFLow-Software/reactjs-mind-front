@@ -1,7 +1,7 @@
 'use client'
 
 import { useState, memo } from 'react'
-import { Eye, ArrowDownToLine, Trash2 } from 'lucide-react'
+import { FileText, Eye, ArrowDownToLine, Trash2 } from 'lucide-react'
 
 import { Button } from '@/components/ui/button'
 import {
@@ -29,12 +29,26 @@ type IFileCard = {
 
 function getTypeBadge(mime: string): { label: string; className: string } {
   if (mime.includes('pdf'))
-    return { label: 'PDF', className: 'bg-red-600 text-white' }
+    return {
+      label: 'PDF',
+      className: 'bg-red-50 text-red-700 dark:bg-red-950/30 dark:text-red-300',
+    }
   if (mime.includes('image'))
-    return { label: 'IMG', className: 'bg-teal-600 text-white' }
+    return {
+      label: 'Imagem',
+      className:
+        'bg-teal-50 text-teal-700 dark:bg-teal-950/30 dark:text-teal-300',
+    }
   if (mime.includes('audio'))
-    return { label: 'ÁUD', className: 'bg-violet-600 text-white' }
-  return { label: 'DOC', className: 'bg-gray-500 text-white' }
+    return {
+      label: 'Áudio',
+      className:
+        'bg-violet-50 text-violet-700 dark:bg-violet-950/30 dark:text-violet-300',
+    }
+  return {
+    label: 'Documento',
+    className: 'bg-muted text-muted-foreground',
+  }
 }
 
 export const FileCard = memo(function FileCard({
@@ -51,48 +65,53 @@ export const FileCard = memo(function FileCard({
 
   return (
     <>
-      <div className="ph-file-card">
-        <div className={cn('ph-file-card__badge', badge.className)}>
-          {badge.label}
+      <div className="df-file-row">
+        <div className="df-file-row__icon">
+          <FileText className="size-4" />
         </div>
 
-        <div className="ph-file-card__info">
-          <p className="ph-file-card__name" title={file.filename}>
-            {file.filename}
-          </p>
-          <p className="ph-file-card__meta">
-            {Files.formatSize(file.size)} · {dateLabel}
+        <div className="df-file-row__body">
+          <div className="df-file-row__name-line">
+            <p className="df-file-row__name" title={file.filename}>
+              {file.filename}
+            </p>
+            <span className={cn('df-file-row__badge', badge.className)}>
+              {badge.label}
+            </span>
+          </div>
+          <p className="df-file-row__meta">
+            {dateLabel} · {Files.formatSize(file.size)}
           </p>
         </div>
 
-        <div className="ph-file-card__actions">
+        <div className="df-file-row__actions">
           <Button
             variant="ghost"
             size="icon"
-            className="ph-file-card__action-btn"
+            className="df-file-row__action-btn"
             onClick={() => onPreview(file)}
           >
-            <Eye className="ph-file-card__action-icon" />
+            <Eye className="df-file-row__action-icon" />
           </Button>
           <Button
             variant="ghost"
             size="icon"
-            className="ph-file-card__action-btn"
+            className="df-file-row__action-btn"
             onClick={(e) => {
               e.preventDefault()
               e.stopPropagation()
               Files.download(file.id, file.filename)
             }}
           >
-            <ArrowDownToLine className="ph-file-card__action-icon" />
+            <ArrowDownToLine className="df-file-row__action-icon" />
           </Button>
           <Button
             variant="ghost"
             size="icon"
-            className="ph-file-card__action-btn--danger"
+            className="df-file-row__action-btn--danger"
             onClick={() => setConfirmOpen(true)}
           >
-            <Trash2 className="ph-file-card__action-icon" />
+            <Trash2 className="df-file-row__action-icon" />
           </Button>
         </div>
       </div>
@@ -102,18 +121,18 @@ export const FileCard = memo(function FileCard({
           <AlertDialogHeader>
             <AlertDialogTitle>Remover arquivo?</AlertDialogTitle>
             <AlertDialogDescription>
-              <span className="ph-file-card__dialog-filename">
+              <span className="df-file-row__dialog-filename">
                 {file.filename}
               </span>{' '}
               será removido permanentemente. Esta ação não pode ser desfeita.
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
-            <AlertDialogCancel className="ph-file-card__dialog-cancel">
+            <AlertDialogCancel className="df-file-row__dialog-cancel">
               Cancelar
             </AlertDialogCancel>
             <AlertDialogAction
-              className="ph-file-card__dialog-confirm"
+              className="df-file-row__dialog-confirm"
               onClick={() => onDelete(file.id)}
             >
               Remover

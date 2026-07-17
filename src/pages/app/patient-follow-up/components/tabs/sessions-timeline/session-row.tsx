@@ -24,6 +24,7 @@ import { cn } from '@/lib/utils'
 import { usePdfExport } from '../../../hooks/use-pdf-export'
 import {
   STATUS_DOT,
+  STATUS_BADGE,
   getSessionDate,
   type ITimelineSessionItem,
 } from './timeline.helpers'
@@ -38,6 +39,7 @@ export function SessionRow({ session, patientName }: ISessionRow) {
 
   const date = getSessionDate(session)
   const dotColor = STATUS_DOT[session.status] ?? 'bg-gray-400'
+  const statusBadge = STATUS_BADGE[session.status]
   const isCancelled = session.status === 'CANCELED'
   const isCompleted = session.status === 'FINISHED' || session.status === 'DONE'
   const isMissed = session.status === 'NOT_ATTEND'
@@ -83,11 +85,15 @@ export function SessionRow({ session, patientName }: ISessionRow) {
                 {session.duration}min
               </span>
             )}
-            {isCancelled && (
-              <span className="pst-session-cancelled-badge">× Cancelada</span>
-            )}
-            {isMissed && (
-              <span className="pst-session-missed-badge">Não compareceu</span>
+            {statusBadge && (
+              <span
+                className={cn(
+                  'pst-session-status-badge',
+                  statusBadge.className,
+                )}
+              >
+                {statusBadge.label}
+              </span>
             )}
             {session.theme && (
               <span className="pst-session-theme-badge">{session.theme}</span>

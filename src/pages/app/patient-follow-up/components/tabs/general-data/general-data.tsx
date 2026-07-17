@@ -1,14 +1,6 @@
 'use client'
 
-import {
-  Copy,
-  User,
-  Plus,
-  Video,
-  MapPin,
-  Activity,
-  SquarePen,
-} from 'lucide-react'
+import { Copy, Video, SquarePen } from 'lucide-react'
 
 import { Time } from '@/utils/time'
 import { Mask } from '@/utils/mask'
@@ -16,6 +8,7 @@ import { Clipboard } from '@/utils/clipboard'
 import type { IPatientProfile } from '@/types/patient-profile/patient-profile'
 
 import { CardSection } from './card-section/card-section'
+import { FieldSection } from './field-section/field-section'
 import { GenderBadge } from './gender-badge/gender-badge'
 import { CardActionButton } from './card-action-button/card-action-button'
 import { FieldRow } from './field-row/field-row'
@@ -41,24 +34,21 @@ export function PatientGeneralData({ patient }: IPatientGeneralData) {
   const phone = Mask.phone(patient?.phoneNumber)
 
   return (
-    <div className="ph-patient-info">
-      <div className="ph-patient-info__grid">
-        {/* Identificação */}
-        <CardSection
-          header={{
-            icon: <User className="size-4 text-blue-600" />,
-            iconBg: 'bg-blue-50 dark:bg-blue-950/30',
-            title: 'Identificação',
-            subtitle: 'Dados pessoais e contato',
-            action: (
-              <CardActionButton
-                variant="edit"
-                label="Editar"
-                icon={<SquarePen className="size-3.5" />}
-              />
-            ),
-          }}
-        >
+    <div className="gd-general-data">
+      <CardSection
+        header={{
+          title: 'Dados cadastrais',
+          subtitle: 'Informações pessoais, contato e convênio',
+          action: (
+            <CardActionButton
+              variant="edit"
+              label="Editar"
+              icon={<SquarePen className="size-3.5" />}
+            />
+          ),
+        }}
+      >
+        <FieldSection label="Identificação">
           <FieldRow label="Idade" value={age ?? DASH} />
           <FieldRow
             label="Nascimento"
@@ -69,7 +59,7 @@ export function PatientGeneralData({ patient }: IPatientGeneralData) {
                   <button
                     type="button"
                     onClick={() => Clipboard.copy(dateOfBirth)}
-                    className="ph-copy-btn"
+                    className="gd-copy-btn"
                   >
                     <Copy className="size-3" />
                   </button>
@@ -107,33 +97,17 @@ export function PatientGeneralData({ patient }: IPatientGeneralData) {
           />
           <FieldRow
             label="E-mail"
-            last
             value={
               patient.email ?? <CardActionButton label="Adicionar e-mail" />
             }
           />
-        </CardSection>
+        </FieldSection>
 
-        {/* Atendimento */}
-        <CardSection
-          header={{
-            icon: <Activity className="size-4 text-emerald-600" />,
-            iconBg: 'bg-emerald-50 dark:bg-emerald-950/30',
-            title: 'Atendimento',
-            subtitle: 'Modalidade, frequência e valores',
-            action: (
-              <CardActionButton
-                variant="edit"
-                label="Editar"
-                icon={<SquarePen className="size-3.5" />}
-              />
-            ),
-          }}
-        >
+        <FieldSection label="Atendimento">
           <FieldRow
             label="Modalidade"
             value={
-              <span className="ph-modality-badge">
+              <span className="gd-modality-badge">
                 <Video className="size-3" />
                 Online
               </span>
@@ -141,37 +115,19 @@ export function PatientGeneralData({ patient }: IPatientGeneralData) {
           />
           <FieldRow label="Frequência" value={DASH} />
           <FieldRow label="Valor / Sessão" value={DASH} />
-          <FieldRow
-            label="Indicação"
-            value={<span className="text-muted-foreground">{DASH}</span>}
-          />
+          <FieldRow label="Indicação" value={DASH} />
           <FieldRow label="Terapeuta resp." value={DASH} />
-          <FieldRow label="Início" last value={DASH} />
-        </CardSection>
-      </div>
+          <FieldRow label="Início" value={DASH} />
+        </FieldSection>
 
-      {/* Endereço */}
-      <CardSection
-        header={{
-          icon: <MapPin className="size-4 text-violet-600" />,
-          iconBg: 'bg-violet-50 dark:bg-violet-950/30',
-          title: 'Endereço',
-          subtitle: 'Localização do paciente',
-          action: (
-            <CardActionButton
-              variant="edit"
-              label="Adicionar"
-              icon={<Plus className="size-3.5" />}
-            />
-          ),
-        }}
-      >
-        <div className="ph-address-empty">
-          Endereço não cadastrado.&nbsp;
-          <button type="button" className="ph-address-empty__link" disabled>
-            Adicionar agora
-          </button>
-        </div>
+        <FieldSection label="Endereço">
+          <div className="gd-address-empty">
+            Endereço não cadastrado.&nbsp;
+            <button type="button" className="gd-address-empty__link" disabled>
+              Adicionar agora
+            </button>
+          </div>
+        </FieldSection>
       </CardSection>
     </div>
   )

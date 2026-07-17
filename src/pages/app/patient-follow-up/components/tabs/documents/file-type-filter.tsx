@@ -37,8 +37,8 @@ export function FileTypeFilter({
   onFilterChange,
 }: IFileTypeFilter) {
   return (
-    <div className="ph-file-type-filter">
-      <div className="ph-file-type-filter__chips">
+    <div className="df-file-type-filter">
+      <div className="df-file-type-filter__chips">
         {CHIPS.map((chip) => {
           const active = filter === chip.key
           return (
@@ -47,15 +47,15 @@ export function FileTypeFilter({
               type="button"
               onClick={() => onFilterChange(chip.key)}
               className={cn(
-                'ph-file-type-filter__chip',
-                active && 'ph-file-type-filter__chip--active',
+                'df-file-type-filter__chip',
+                active && 'df-file-type-filter__chip--active',
               )}
             >
               {chip.label}
               <span
                 className={cn(
-                  'ph-file-type-filter__count',
-                  active && 'ph-file-type-filter__count--active',
+                  'df-file-type-filter__count',
+                  active && 'df-file-type-filter__count--active',
                 )}
               >
                 {counts[chip.key]}
@@ -68,10 +68,10 @@ export function FileTypeFilter({
       <Button
         variant="outline"
         size="sm"
-        className="ph-file-type-filter__sort-btn"
+        className="df-file-type-filter__sort-btn"
         tabIndex={-1}
       >
-        <ArrowUpDown className="ph-file-type-filter__sort-icon" />
+        <ArrowUpDown className="df-file-type-filter__sort-icon" />
         Mais recentes
       </Button>
     </div>

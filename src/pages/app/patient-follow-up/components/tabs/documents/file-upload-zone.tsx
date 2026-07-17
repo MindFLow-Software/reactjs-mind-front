@@ -58,28 +58,28 @@ export function FileUploadZone({ patientId }: IFileUploadZone) {
     <div
       {...getRootProps()}
       className={cn(
-        'ph-file-upload-zone',
-        isDragActive && 'ph-file-upload-zone--active',
-        isPending && 'ph-file-upload-zone--pending',
+        'df-file-upload-zone',
+        isDragActive && 'df-file-upload-zone--active',
+        isPending && 'df-file-upload-zone--pending',
       )}
     >
       <input {...getInputProps()} />
 
-      <div className="ph-file-upload-zone__icon">
+      <div className="df-file-upload-zone__icon">
         {isPending ? (
-          <Loader2 className="ph-file-upload-zone__loader" />
+          <Loader2 className="df-file-upload-zone__loader" />
         ) : (
-          <CloudUpload className="ph-file-upload-zone__cloud-icon" />
+          <CloudUpload className="df-file-upload-zone__cloud-icon" />
         )}
       </div>
 
       <div>
-        <p className="ph-file-upload-zone__label">
+        <p className="df-file-upload-zone__label">
           {isPending
             ? 'Enviando arquivo...'
             : 'Arraste arquivos ou clique para anexar'}
         </p>
-        <p className="ph-file-upload-zone__hint">
+        <p className="df-file-upload-zone__hint">
           PDFs, imagens ou áudios · até 5 MB cada · vinculados a este paciente
         </p>
       </div>
