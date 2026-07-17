@@ -1,0 +1,15 @@
+@reference "../../../../global.css";
+
+@layer components {
+  .pb-variant-default {
+    @apply border-transparent bg-secondary text-secondary-foreground;
+  }
+
+  .pb-variant-primary {
+    @apply border-transparent bg-primary/10 text-primary;
+  }
+
+  .pb-variant-muted {
+    @apply border-transparent bg-muted/50 text-muted-foreground;
+  }
+}
