@@ -1,20 +1,16 @@
 @reference "../../../../../global.css";
 
 @layer components {
-  .pfu-header-wrap {
-    @apply pb-5;
-  }
-
   .pfu-tabs {
     @apply w-full min-w-0;
   }
 
   .pfu-tabs-list {
-    @apply flex h-auto w-full flex-wrap gap-1 rounded-xl bg-muted/40 p-1 lg:w-auto;
+    @apply flex h-auto w-full flex-wrap justify-start gap-1 rounded-xl border border-border bg-card p-1;
   }
 
   .pfu-tab-trigger {
-    @apply cursor-pointer rounded-md px-4 py-1.5 text-xs;
+    @apply flex cursor-pointer items-center gap-1.5 rounded-lg px-3 py-1.5 text-xs font-medium text-muted-foreground data-[state=active]:bg-blue-600 data-[state=active]:text-white data-[state=active]:shadow-sm;
   }
 
   .pfu-tab-content {

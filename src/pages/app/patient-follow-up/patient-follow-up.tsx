@@ -10,10 +10,9 @@ import { useHeaderStore } from '@/store/use-header-store'
 import { usePatientQueueStore } from '@/store/use-patient-queue-store'
 
 import { PatientsDetailsLoading } from './components/loading/loading'
-import { PatientsDataBlock } from '../patients/components/patients-data-block/patients-data-block'
-import { PatientsPageShell } from '../patients/components/patients-page-shell/patients-page-shell'
 import { FollowUpActions } from './components/follow-up-actions/follow-up-actions'
 import { FollowUpTopBar } from './components/follow-up-top-bar/follow-up-top-bar'
+import { PatientFollowUpSidebar } from './components/follow-up-sidebar/follow-up-sidebar'
 import { PatientFollowUpTabs } from './components/follow-up-tabs/follow-up-tabs'
 import { PatientDetailsError } from './components/patient-details-error/patient-details-error'
 import { usePatientQueue } from './hooks/use-patient-queue'
@@ -82,36 +81,38 @@ export default function PatientFollowUp() {
   const nextId = hasNext ? queue[currentIndex + 1] : null
 
   return (
-    <div className="phd-page">
+    <div className="pfu-page">
       <FollowUpTopBar
         queue={{ prevId, nextId, currentIndex, total: queue.length }}
       />
 
-      <PatientsPageShell>
-        <PatientsPageShell.Header
-          title="Acompanhamento do Paciente"
-          description="Acompanhamento clinico, historico de sessoes e documentos em um unico lugar."
-          icon={<FileSearch className="size-5 text-blue-600" />}
-        >
-          <FollowUpActions />
-        </PatientsPageShell.Header>
+      <header className="pfu-page-header">
+        <div className="pfu-page-heading">
+          <span className="pfu-page-icon">
+            <FileSearch className="size-5 text-blue-600" />
+          </span>
+          <div className="pfu-page-heading-text">
+            <h1 className="pfu-page-title">Acompanhamento do Paciente</h1>
+            <p className="pfu-page-description">
+              Acompanhamento clinico, historico de sessoes e documentos em um
+              unico lugar.
+            </p>
+          </div>
+        </div>
 
-        <PatientsPageShell.Content className="phd-content">
-          <PatientsDataBlock className="phd-data-block">
-            <PatientsDataBlock.Header
-              title="Prontuario e acompanhamento"
-              description="Navegue entre dados cadastrais, anamnese, historico, arquivos e resumo clinico."
-            />
+        <FollowUpActions />
+      </header>
 
-            <PatientsDataBlock.Content>
-              <PatientFollowUpTabs
-                patient={patientData}
-                timeline={{ meta, pageIndex, onPageChange: setPageIndex }}
-              />
-            </PatientsDataBlock.Content>
-          </PatientsDataBlock>
-        </PatientsPageShell.Content>
-      </PatientsPageShell>
+      <div className="pfu-body">
+        <PatientFollowUpSidebar patient={patientData} />
+
+        <div className="pfu-content">
+          <PatientFollowUpTabs
+            patient={patientData}
+            timeline={{ meta, pageIndex, onPageChange: setPageIndex }}
+          />
+        </div>
+      </div>
     </div>
   )
 }
