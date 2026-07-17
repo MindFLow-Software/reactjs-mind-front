@@ -1,0 +1,43 @@
+@reference "../../global.css";
+
+@layer components {
+  .ib-root {
+    @apply inline-flex shrink-0 items-center justify-center rounded-lg;
+  }
+
+  .ib-variant-default {
+    @apply bg-foreground/10 text-foreground;
+  }
+
+  .ib-variant-primary {
+    @apply bg-primary/10 text-primary;
+  }
+
+  .ib-variant-success {
+    @apply bg-success/10 text-success;
+  }
+
+  .ib-variant-warning {
+    @apply bg-warning/10 text-warning;
+  }
+
+  .ib-variant-destructive {
+    @apply bg-destructive/10 text-destructive;
+  }
+
+  .ib-variant-muted {
+    @apply bg-muted text-muted-foreground;
+  }
+
+  .ib-size-sm {
+    @apply size-8 rounded-md;
+  }
+
+  .ib-size-md {
+    @apply size-10 rounded-lg;
+  }
+
+  .ib-size-lg {
+    @apply size-12 rounded-xl;
+  }
+}
