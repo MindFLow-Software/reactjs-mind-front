@@ -16,8 +16,8 @@ API:
 - Every API file exports one API function.
 - Every API function imports `api` from `@/lib/axios`.
 - No raw `fetch`, no raw `axios`, and no `api.*` calls inside pages/components/hooks.
-- GET requests are consumed through `useQuery`.
-- POST/PUT/PATCH/DELETE requests are consumed through `useMutation`.
+- GET requests are consumed through `useQuery`, always wrapped in a named domain hook (`use<Entidade>.ts`). `useQuery` must never be called directly inside a page/component — the hook returns descriptive data (`{ patientProfile }`), not the raw `{ data }` from React Query.
+- POST/PUT/PATCH/DELETE requests are consumed through `useMutation` via `useApiMutation` from `@/hooks/use-api-mutation`, always wrapped in a named domain hook (`use<Ação><Entidade>.ts`). Neither `useMutation` nor `useApiMutation` may ever be called directly inside a page/component, including for single, "simple" mutations — no exceptions.
 - Mutation success and error handlers must show backend-provided messages/guidance through Sonner.
 - Request and response types must be aligned with backend contracts and must reuse `src/types` entities/domains wherever possible.
 
@@ -84,7 +84,6 @@ CSS:
 
 Legacy conflict notes:
 
-- `useApiMutation` is not canonical while `src/hooks/use-api-mutation.ts` is empty.
 - Stores must not live in `src/utils`.
 - API request/response types should not be duplicated inside API files when they represent backend entities.
 - Components such as `RegisterPatients` must not accept `isEditing` to turn a creation flow into an editing flow. Split into create and edit components with separate schemas, hooks, and mutation logic.
@@ -110,25 +109,51 @@ export async function fetchAppointments(params: FetchAppointmentsParams): Promis
 
 ## Hooks de Data Fetching
 
-- Encapsulam `useQuery` em um hook nomeado `use<Entidade>.ts`.
+- **Toda chamada GET, sem exceção, é encapsulada em um hook nomeado `use<Entidade>.ts`.** `useQuery` nunca é chamado diretamente dentro de página/componente — nem para consultas usadas em um único lugar.
+- O hook expõe dados com nome descritivo, não o retorno cru de `useQuery`: `const { patientProfile } = usePatientProfile()`, nunca `const { data } = useQuery(...)` dentro do componente.
 - `queryKey` com array descritivo; versionar com sufixo `-v2` se necessário para bust de cache.
 - `staleTime` de 10 minutos (600 000ms) para dados de perfil; ajustar por domínio.
 - `queryFn` referenciada diretamente (sem wrapper anônimo).
 
+Errado (chamada direta no componente):
+
+```ts
+function PatientProfile() {
+  const { data } = useQuery({
+    queryKey: ['patient-profile'],
+    queryFn: getPatientProfile,
+  })
+  // ...
+}
+```
+
+Correto (hook nomeado, dado descritivo):
+
 ```ts
 export function usePsychologistProfile() {
-  return useQuery({
+  const { data, ...rest } = useQuery({
     queryKey: ['psychologist-profile-v2'],
     queryFn: getProfile,
     staleTime: 1000 * 60 * 10,
   })
+
+  return { psychologistProfile: data, ...rest }
+}
+```
+
+```ts
+function PsychologistProfile() {
+  const { psychologistProfile } = usePsychologistProfile()
+  // ...
 }
 ```
 
 ## Mutations
 
-- **Mutations simples** (único endpoint, sem efeitos colaterais independentes): usar `useApiMutation` de `@/hooks/use-api-mutation`.
-- **Mutations complexas** (múltiplos endpoints sequenciais, uploads separados, efeitos colaterais não-críticos): usar `useMutation` do TanStack Query diretamente, encapsulado em um hook de domínio próprio.
+- **Toda chamada POST/PUT/PATCH/DELETE, sem exceção, é encapsulada em um hook nomeado `use<Ação><Entidade>.ts`.** Nem `useMutation` nem `useApiMutation` podem ser chamados diretamente dentro de página/componente — nem para mutations "simples" de um único endpoint.
+- **Mutations simples** (único endpoint, sem efeitos colaterais independentes): o hook de domínio usa `useApiMutation` de `@/hooks/use-api-mutation` internamente.
+- **Mutations complexas** (múltiplos endpoints sequenciais, uploads separados, efeitos colaterais não-críticos): o hook de domínio usa `useMutation` do TanStack Query diretamente.
+- Em ambos os casos, o componente consome o hook de domínio (`useUpdatePatientProfile()`), nunca `useApiMutation`/`useMutation` inline.
 - Invalidar query keys relacionadas em paralelo com `Promise.all([queryClient.invalidateQueries(...), ...])` após sucesso.
 - Estado de loading combinado: derivar de múltiplas flags (`isCreating || isUpdating || isUploading`) — não criar estado local para isso.
 - Uploads sequenciais (attachments): usar `for...of` + `await`, não `Promise.all`, para respeitar rate limits do servidor.

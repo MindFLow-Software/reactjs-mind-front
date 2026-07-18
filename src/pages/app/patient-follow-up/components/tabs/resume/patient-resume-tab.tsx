@@ -8,14 +8,16 @@ import { ResumeUpcomingEvents } from './resume-upcoming-events'
 import { ResumeClinicalAlerts } from './resume-clinical-alerts'
 
 import './patient-resume-tab.css'
+import { RecentDocuments } from './recent-documents'
 
 export function PatientResumeTab() {
   return (
     <div className="prt-root">
       <ResumeStatCards />
       
-      <div>
+      <div className="flex gap-4">
         <SmartResume />
+        <RecentDocuments />
       </div>
 
       <div className="prt-charts">

@@ -1,6 +1,7 @@
 import './patient-status-badge.css'
 import { Badge } from '@/components/ui/badge'
 import { translatedPatientProfileStatus } from '@/constants/translated-patient-profile-status'
+import { cn } from '@/lib/utils'
 import { PatientProfileStatus } from '@/types/patient-profile/patient-profile-status'
 import { fn } from '@/utils/fn'
 
@@ -35,5 +36,5 @@ export function PatientStatusBadge({ status }: IPatientStatusBadge) {
     STATUS_BADGE[PatientProfileStatus.ACTIVE],
   )
 
-  return <Badge className={badge.style}>{badge.label}</Badge>
+  return <Badge className={cn('psb-badge', badge.style)}>{badge.label}</Badge>
 }

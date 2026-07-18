@@ -14,11 +14,12 @@ import {
 } from '@/components/ui/chart'
 
 import { FREQUENCY_DATA, frequencyConfig } from './resume-data'
+import { Button } from '@/components/ui/button'
 
 export function ResumeFrequencyChart() {
   return (
-    <Card className="flex-1">
-      <CardHeader className="pb-2">
+    <Card className="flex-1 p-4!">
+      <CardHeader className="pb-2 px-0!">
         <div className="flex items-start justify-between">
           <div>
             <CardTitle className="text-sm font-semibold">
@@ -28,12 +29,12 @@ export function ResumeFrequencyChart() {
               Sessões nos últimos 6 meses
             </CardDescription>
           </div>
-          <button className="shrink-0 text-[11px] font-medium text-blue-600 hover:underline">
+          <Button variant="link" className="text-[11px] font-medium text-blue-600 hover:underline">
             Ver detalhes
-          </button>
+          </Button>
         </div>
       </CardHeader>
-      <CardContent>
+      <CardContent className="px-0!">
         <ChartContainer config={frequencyConfig} className="h-[200px] w-full">
           <BarChart
             data={FREQUENCY_DATA}

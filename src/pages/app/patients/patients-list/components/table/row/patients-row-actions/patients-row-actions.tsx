@@ -80,7 +80,7 @@ export function PatientsRowActions({ patient }: IPatientsRowActions) {
             </Button>
           </TooltipTrigger>
           <TooltipContent className="ptr-tooltip-text">
-            Prontuário
+            Acompanhamento
           </TooltipContent>
         </Tooltip>
 
