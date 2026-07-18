@@ -20,6 +20,8 @@ Before calling a module done, verify:
 - Every mutation shows backend success/error messages.
 - Every GET is consumed through `useQuery`, wrapped in a named domain hook — never called directly in a page/component.
 - Every POST/PUT/PATCH/DELETE is consumed through `useMutation`/`useApiMutation`, wrapped in a named domain hook — never called directly in a page/component, including single, one-off mutations.
+- New/renamed page files use `{feature}-page.tsx` naming and export `{Feature}Page`.
+- New/renamed layout files use `{name}-layout.tsx` (cross-page) or `layout.tsx` (feature-scoped) naming and export `{Name}Layout`/`{Feature}Layout`.
 - Touched `.tsx` pages/components have CSS using `@reference`, `@layer`, and `@apply`.
 - Backend entity/DTO types match `docs/frontend-reference/*.md`.
 - No chained or nested ternaries, especially inside JSX, unless there is no cleaner and more readable alternative.

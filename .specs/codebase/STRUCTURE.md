@@ -16,10 +16,13 @@ src/
   hooks/                       # shared cross-page hooks
   lib/                         # axios, react-query, cn, providers/config
   pages/
+    _layouts/
+      {name}-layout.tsx        # cross-page layout, e.g. app-layout.tsx -> AppLayout
     app|auth|landing-page/
       {page}/
-        {page}.tsx
-        {page}.css
+        {page}-page.tsx        # route file; component exported as {Page}Page
+        {page}-page.css
+        layout.tsx             # optional, only if this feature/its tabs share a layout; exports {Feature}Layout
         components/            # local-only components
         hooks/                 # local-only hooks
         constants.ts           # local-only constants, if needed
@@ -50,6 +53,8 @@ Hard boundaries:
 - Do not create enum-like `const` objects plus `(typeof X)[keyof typeof X]` aliases. For example, `Languages` must be an enum, not a const object plus `export type Languages = ...`.
 - Reexports are forbidden. Each type, enum, helper, constant, component, and hook must be exported from exactly one canonical module; imports must point directly to that module.
 - Every `.tsx` page/component that owns markup must have its CSS counterpart or use an explicitly shared CSS file documented in the feature.
+- Every page file (the top-level `.tsx` rendered directly by a route) is named `{feature}-page.tsx` and exports a component named `{Feature}Page`. Never `{feature}.tsx` / `export function Feature()`.
+- Layouts wrapping one or more pages via `<Outlet />` are named `{name}-layout.tsx` (cross-page, in `src/pages/_layouts/`) or `layout.tsx` (feature-scoped, co-located in that feature's folder), and export a component named `{Name}Layout`.
 - Feature-local `helpers.ts` may contain only helpers used by that feature.
 - Any pure function used by two or more files must move to `src/utils`, `src/shared`, or the established shared module for that domain.
 - Existing equivalent helpers/utilities must be reused instead of duplicated inline.

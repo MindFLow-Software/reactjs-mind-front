@@ -12,7 +12,7 @@ The target architecture is layered and contract-first:
 2. `src/types` backend-aligned entities/domains.
 3. `src/api/{domain}/{action}.ts` typed HTTP functions using `api`.
 4. Named domain hooks (`use<Entity>.ts` wrapping `useQuery`, `use<Action><Entity>.ts` wrapping `useMutation`/`useApiMutation`) for server-state consumption and mutation side effects. `useQuery`, `useMutation`, and `useApiMutation` are never called directly outside these hooks.
-5. Page orchestrators that compose hooks and layout.
+5. Page orchestrators that compose hooks and layout. Every page file/component uses the `{feature}-page.tsx` / `{Feature}Page` naming; shared chrome across pages is a named layout (`{name}-layout.tsx` / `{Name}Layout` for cross-page, `layout.tsx` / `{Feature}Layout` for feature-scoped).
 6. Shared helpers/utilities for any pure function reused in two or more places.
 7. Local/shared components built with shadcn/ui primitives and feature CSS.
 

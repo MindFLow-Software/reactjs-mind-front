@@ -61,6 +61,14 @@ Validators and forms:
 - Every form must use React Hook Form + Zod and be fully typed.
 - Validated fields must use shadcn form/field primitives.
 
+Pages and layouts:
+
+- Every page file — the top-level `.tsx` rendered directly by a route in `routes.tsx` — is named `{feature}-page.tsx`, never `{feature}.tsx`. Example: `patient-follow-up-page.tsx`, not `patient-follow-up.tsx`.
+- Every page component carries the `Page` suffix: `export function PatientFollowUpPage() {}`, never `export function PatientFollowUp() {}`. Applies every time, no exceptions.
+- The page's CSS counterpart follows the same base name: `patient-follow-up-page.css`.
+- Cross-page layouts (shared chrome rendered via `<Outlet />` across virtually all routes in a section, e.g. sidebar + header) are named `{name}-layout.tsx` and live in `src/pages/_layouts/`, exporting `{Name}Layout` (e.g. `app-layout.tsx` → `AppLayout`).
+- Feature-scoped layouts (shared only across one feature's pages/tabs/child routes) are co-located inside that feature's folder as `layout.tsx`, exporting `{Feature}Layout` (e.g. `src/pages/app/patients/patients-hub/layout.tsx` → `PatientsHubLayout`).
+
 Components and hooks:
 
 - Prefer shadcn/ui primitives before custom components.
