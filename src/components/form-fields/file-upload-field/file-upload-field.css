@@ -1,0 +1,55 @@
+@reference "../../../global.css";
+
+@layer components {
+  .fuf-root {
+    @apply flex flex-col gap-3;
+  }
+
+  .fuf-zone {
+    @apply flex cursor-pointer flex-col items-center gap-3 rounded-lg border border-dashed border-border p-6 text-center transition-colors;
+  }
+
+  .fuf-zone--idle {
+    @apply hover:border-primary/50 hover:bg-muted/40;
+  }
+
+  .fuf-zone--drag {
+    @apply border-primary bg-primary/5;
+  }
+
+  .fuf-copy {
+    @apply flex flex-col gap-0.5;
+  }
+
+  .fuf-title {
+    @apply text-sm font-medium text-foreground;
+  }
+
+  .fuf-desc {
+    @apply text-xs text-muted-foreground;
+  }
+
+  .fuf-list {
+    @apply flex flex-col gap-2;
+  }
+
+  .fuf-item {
+    @apply flex items-center gap-2 rounded-md border border-border bg-card px-3 py-2;
+  }
+
+  .fuf-item-icon {
+    @apply size-4 shrink-0 text-primary;
+  }
+
+  .fuf-item-name {
+    @apply flex-1 truncate text-sm text-foreground;
+  }
+
+  .fuf-item-size {
+    @apply shrink-0 text-xs text-muted-foreground;
+  }
+
+  .fuf-item-remove {
+    @apply size-8 shrink-0 text-muted-foreground;
+  }
+}
