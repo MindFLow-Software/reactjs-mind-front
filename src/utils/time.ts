@@ -247,6 +247,14 @@ export class Time {
     return `${digits.slice(0, 2)}/${digits.slice(2, 4)}/${digits.slice(4)}`
   }
 
+  static maskTimeInput(value: string) {
+    const digits = Normalizer.digits(value).slice(0, 4)
+
+    if (digits.length <= 2) return digits
+
+    return `${digits.slice(0, 2)}:${digits.slice(2)}`
+  }
+
   static textToDate(value: string) {
     const digits = Normalizer.digits(value).slice(0, 8)
     let inputValue = digits
