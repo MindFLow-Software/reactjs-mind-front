@@ -1,4 +1,3 @@
-import type { ReactNode } from 'react'
 import {
   CalendarCheck2,
   CheckCircle2,
@@ -8,41 +7,21 @@ import {
 } from 'lucide-react'
 
 import { Badge } from '@/components/ui/badge'
-import { Card, CardContent } from '@/components/ui/card'
-import { cn } from '@/lib/utils'
+import { MetricCard } from '@/components/metric-card/metric-card'
+import type { IAccentColor } from '@/components/metric-card/metric-card'
 
 type StatCardData = {
   icon: LucideIcon
-  iconColor: string
-  borderColor: string
+  accentColor: IAccentColor
   label: string
-  value: ReactNode
-  footer: ReactNode
-  valueClassName?: string
-}
-
-function StatCard({ card }: { card: StatCardData }) {
-  const { icon: Icon, iconColor, borderColor, label, value, footer } = card
-
-  return (
-    <Card className={cn('border-l-4', borderColor)}>
-      <CardContent className="prt-stat-body">
-        <p className={cn('prt-stat-label', iconColor)}>
-          <Icon className="prt-stat-icon" />
-          {label}
-        </p>
-        <div className={cn('prt-stat-value', card.valueClassName)}>{value}</div>
-        <div className="prt-stat-footer">{footer}</div>
-      </CardContent>
-    </Card>
-  )
+  value: React.ReactNode
+  footer: React.ReactNode
 }
 
 const STAT_CARDS: StatCardData[] = [
   {
     icon: CalendarCheck2,
-    iconColor: 'text-blue-600',
-    borderColor: 'border-l-blue-500',
+    accentColor: 'blue',
     label: 'Sessões Realizadas',
     value: '14',
     footer: (
@@ -50,7 +29,7 @@ const STAT_CARDS: StatCardData[] = [
         <span className="text-[11px] text-muted-foreground">
           desde 14/10/2025
         </span>
-        <Badge className="h-4 border-0 bg-green-100 px-1.5 text-[10px] font-semibold text-green-700 dark:bg-green-950/40 dark:text-green-400">
+        <Badge className="h-4 border-0 bg-success/10 px-1.5 text-[10px] font-semibold text-success">
           +3 vs trim. anterior
         </Badge>
       </div>
@@ -58,8 +37,7 @@ const STAT_CARDS: StatCardData[] = [
   },
   {
     icon: CheckCircle2,
-    iconColor: 'text-green-600',
-    borderColor: 'border-l-green-500',
+    accentColor: 'emerald',
     label: 'Presença',
     value: (
       <>
@@ -75,10 +53,8 @@ const STAT_CARDS: StatCardData[] = [
   },
   {
     icon: Timer,
-    iconColor: 'text-amber-600',
-    borderColor: 'border-l-amber-500',
+    accentColor: 'amber',
     label: 'Sem Sessão Há',
-    valueClassName: 'text-amber-500 dark:text-amber-400',
     value: (
       <>
         42<span className="text-xl font-semibold"> dias</span>
@@ -92,8 +68,7 @@ const STAT_CARDS: StatCardData[] = [
   },
   {
     icon: DollarSign,
-    iconColor: 'text-emerald-600',
-    borderColor: 'border-l-emerald-500',
+    accentColor: 'emerald',
     label: 'Receita',
     value: (
       <>
@@ -111,9 +86,21 @@ const STAT_CARDS: StatCardData[] = [
 
 export function ResumeStatCards() {
   return (
-    <div className="prt-stats-grid">
+    <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-4">
       {STAT_CARDS.map((card) => (
-        <StatCard key={card.label} card={card} />
+        <MetricCard
+          key={card.label}
+          variant="stacked"
+          accentColor={card.accentColor}
+        >
+          <MetricCard.Header
+            icon={<card.icon className="size-4" />}
+            label={card.label}
+            accentColor={card.accentColor}
+          />
+          <MetricCard.Value>{card.value}</MetricCard.Value>
+          <div className="mt-2">{card.footer}</div>
+        </MetricCard>
       ))}
     </div>
   )

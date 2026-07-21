@@ -29,7 +29,7 @@ import { Skeleton } from '@/components/ui/skeleton'
 import './metric-card.css'
 
 type IMetricCardVariant = 'grid' | 'stacked'
-type IAccentColor = 'blue' | 'violet' | 'emerald'
+export type IAccentColor = 'blue' | 'violet' | 'emerald' | 'amber' | 'red'
 
 type IMetricCardState = {
   isLoading?: boolean
@@ -70,12 +70,16 @@ const GRADIENT: Record<IAccentColor, string> = {
   blue: 'from-primary to-primary/50',
   violet: 'from-accent-primary-light to-accent-primary-light/50',
   emerald: 'from-success to-success/50',
+  amber: 'from-warning to-warning/50',
+  red: 'from-destructive to-destructive/50',
 }
 
 const ICON_RING: Record<IAccentColor, string> = {
   blue: 'bg-primary/10 ring-primary/20',
   violet: 'bg-accent-primary-light/10 ring-accent-primary-light/20',
   emerald: 'bg-success/10 ring-success/20',
+  amber: 'bg-warning/10 ring-warning/20',
+  red: 'bg-destructive/10 ring-destructive/20',
 }
 
 type IMetricCardRoot = {
@@ -96,6 +100,7 @@ type IMetricCardIcon = {
 type IMetricCardHeader = {
   icon: ReactNode
   label: string
+  subtitle?: string
   accentColor: IAccentColor
 }
 
@@ -182,11 +187,19 @@ function MetricCardIcon({ bg, children }: IMetricCardIcon) {
   return <div className={cn('mc-icon', bg)}>{children}</div>
 }
 
-function MetricCardHeader({ icon, label, accentColor }: IMetricCardHeader) {
+function MetricCardHeader({
+  icon,
+  label,
+  subtitle,
+  accentColor,
+}: IMetricCardHeader) {
   return (
     <CardHeader className="mc-header">
       <div className={cn('mc-header-icon', ICON_RING[accentColor])}>{icon}</div>
-      <p className="mc-header-label">{label}</p>
+      <div className="flex flex-col">
+        <p className="mc-header-label">{label}</p>
+        {subtitle && <p className="mc-header-subtitle">{subtitle}</p>}
+      </div>
     </CardHeader>
   )
 }

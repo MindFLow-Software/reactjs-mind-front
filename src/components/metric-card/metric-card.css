@@ -45,6 +45,10 @@
     @apply text-sm font-semibold leading-tight text-foreground;
   }
 
+  .mc-header-subtitle {
+    @apply text-xs text-muted-foreground;
+  }
+
   .mc-value-skeleton {
     @apply h-8 w-14;
   }
