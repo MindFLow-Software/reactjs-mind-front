@@ -11,7 +11,7 @@ import { usePatientAttachmentsUpload } from './use-patient-attachments-upload'
 type IUseUpdatePatient = {
   patientId: string
   files: File[]
-  onSuccess?: () => void
+  onSuccess: () => void
 }
 
 export function useUpdatePatient({
@@ -50,7 +50,7 @@ export function useUpdatePatient({
       await mutateAsync({ id: patientId, formData })
 
       await uploadAll({ targetId: patientId, files })
-      onSuccess?.()
+      onSuccess()
     },
     [mutateAsync, transform, uploadAll, patientId, files, onSuccess],
   )
