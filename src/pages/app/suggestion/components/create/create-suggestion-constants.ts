@@ -7,6 +7,7 @@ import {
   HelpCircle,
   type LucideIcon,
 } from 'lucide-react'
+import { SuggestionCategory } from '@/types/suggestion/suggestion-category'
 import type { CreateSuggestionSchema } from '@/validators/suggestions/form/create-suggestion-schema'
 
 export type SuggestionCategoryValue = CreateSuggestionSchema['category']
@@ -22,7 +23,7 @@ export type CreateCategoryConfig = {
 
 export const CREATE_SUGGESTION_CATEGORIES: CreateCategoryConfig[] = [
   {
-    value: 'UI_UX',
+    value: SuggestionCategory.UI_UX,
     label: 'Interface e Visual',
     description: 'UI/UX, design, usabilidade',
     icon: Activity,
@@ -30,7 +31,7 @@ export const CREATE_SUGGESTION_CATEGORIES: CreateCategoryConfig[] = [
     iconBg: 'bg-violet-100 dark:bg-violet-950/40',
   },
   {
-    value: 'SCHEDULING',
+    value: SuggestionCategory.SCHEDULING,
     label: 'Agenda e Consultas',
     description: 'Horários, sessões, calendário',
     icon: Heart,
@@ -38,7 +39,7 @@ export const CREATE_SUGGESTION_CATEGORIES: CreateCategoryConfig[] = [
     iconBg: 'bg-blue-100 dark:bg-blue-950/40',
   },
   {
-    value: 'REPORTS',
+    value: SuggestionCategory.REPORTS,
     label: 'Relatórios',
     description: 'Financeiro, gráficos, exports',
     icon: BarChart2,
@@ -46,7 +47,7 @@ export const CREATE_SUGGESTION_CATEGORIES: CreateCategoryConfig[] = [
     iconBg: 'bg-amber-100 dark:bg-amber-950/40',
   },
   {
-    value: 'PRIVACY_LGPD',
+    value: SuggestionCategory.PRIVACY_LGPD,
     label: 'Segurança e LGPD',
     description: 'Privacidade, dados, proteção',
     icon: Shield,
@@ -54,7 +55,7 @@ export const CREATE_SUGGESTION_CATEGORIES: CreateCategoryConfig[] = [
     iconBg: 'bg-emerald-100 dark:bg-emerald-950/40',
   },
   {
-    value: 'INTEGRATIONS',
+    value: SuggestionCategory.INTEGRATIONS,
     label: 'Integrações Externas',
     description: 'WhatsApp, Google, APIs',
     icon: Zap,
@@ -62,7 +63,7 @@ export const CREATE_SUGGESTION_CATEGORIES: CreateCategoryConfig[] = [
     iconBg: 'bg-indigo-100 dark:bg-indigo-950/40',
   },
   {
-    value: 'OTHERS',
+    value: SuggestionCategory.OTHERS,
     label: 'Outros Assuntos',
     description: 'Qualquer outra sugestão',
     icon: HelpCircle,

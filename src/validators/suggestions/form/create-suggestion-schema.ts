@@ -1,5 +1,7 @@
 import { z } from 'zod'
 
+import { SuggestionCategory } from '@/types/suggestion/suggestion-category'
+
 export const createSuggestionSchema = z.object({
   title: z
     .string()
@@ -8,19 +10,9 @@ export const createSuggestionSchema = z.object({
   description: z
     .string()
     .min(200, 'Por favor, detalhe sua sugestão com pelo menos 200 caracteres'),
-  category: z.enum(
-    [
-      'UI_UX',
-      'SCHEDULING',
-      'REPORTS',
-      'PRIVACY_LGPD',
-      'INTEGRATIONS',
-      'OTHERS',
-    ],
-    {
-      message: 'Selecione a categoria da sua sugestão',
-    },
-  ),
+  category: z.enum(SuggestionCategory, {
+    message: 'Selecione a categoria da sua sugestão',
+  }),
 })
 
 export type CreateSuggestionSchema = z.infer<typeof createSuggestionSchema>
