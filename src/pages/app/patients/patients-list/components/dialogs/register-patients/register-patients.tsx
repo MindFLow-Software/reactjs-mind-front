@@ -1,5 +1,5 @@
 import '../patient-form-fields.css'
-import { useEffect, useState } from 'react'
+import { useEffect } from 'react'
 import { useForm } from 'react-hook-form'
 import { UserPlus } from 'lucide-react'
 import { zodResolver } from '@hookform/resolvers/zod'
@@ -16,14 +16,12 @@ import { PatientFormModal } from '../patient-form-modal/patient-form-modal'
 import { UploadZone } from './components/upload-zone/upload-zone'
 import { StepBasicData } from './components/step-basic-data/step-basic-data'
 import { StepContactAddress } from './components/step-contact-address/step-contact-address'
-import { useCreatePatient } from './hooks/use-create-patient'
+import { useCreatePatientProfile } from './hooks/use-create-patient-profile'
 import { useStepErrorRedirect } from './hooks/use-step-error-redirect'
 import { STEPS, MAX_DOC_FILES, MAX_DOC_SIZE } from './constants'
 import { buildPatientUpdateDefaults } from '../create-and-edit-patient-modal.helpers'
 
 export function RegisterPatients() {
-  const [avatarFile, setAvatarFile] = useState<File | null>(null)
-
   const { files, addFiles, removeFile, clearFiles } = useFileSelection({
     maxFiles: MAX_DOC_FILES,
     maxSizeBytes: MAX_DOC_SIZE,
@@ -42,14 +40,12 @@ export function RegisterPatients() {
   const { step, handleNext, handleBack, goToStep, isFirstStep, isLastStep } =
     useFormSteps({ stepsLength: STEPS.length })
 
-  const { submit, isSubmitting } = useCreatePatient({
-    avatarFile,
+  const { submit, isSubmitting } = useCreatePatientProfile({
     files,
     onSuccess: () => {
       reset()
       goToStep(1)
       clearFiles()
-      setAvatarFile(null)
     },
   })
 
@@ -67,7 +63,7 @@ export function RegisterPatients() {
   function renderStepContent() {
     switch (step) {
       case 1:
-        return <StepBasicData onAvatarSelect={setAvatarFile} patient={null} />
+        return <StepBasicData patient={null} />
       case 2:
         return <StepContactAddress />
       case 3:

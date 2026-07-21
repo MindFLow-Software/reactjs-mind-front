@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useRef, useState } from 'react'
+import { useCallback, useState } from 'react'
 import { getAttachmentBlob } from '@/api/attachments/get-attachment-blob'
 
 type UseAttachmentBlobReturn = {
@@ -8,14 +8,6 @@ type UseAttachmentBlobReturn = {
 
 export function useAttachmentBlob(): UseAttachmentBlobReturn {
   const [isLoading, setIsLoading] = useState(false)
-  const createdUrls = useRef<string[]>([])
-
-  useEffect(() => {
-    const urls = createdUrls.current
-    return () => {
-      urls.forEach(URL.revokeObjectURL)
-    }
-  }, [])
 
   const fetchBlobUrl = useCallback(
     async (attachmentId: string): Promise<string | null> => {
@@ -23,7 +15,6 @@ export function useAttachmentBlob(): UseAttachmentBlobReturn {
         setIsLoading(true)
         const blob = await getAttachmentBlob(attachmentId)
         const objectUrl = URL.createObjectURL(blob)
-        createdUrls.current.push(objectUrl)
         return objectUrl
       } catch {
         return null

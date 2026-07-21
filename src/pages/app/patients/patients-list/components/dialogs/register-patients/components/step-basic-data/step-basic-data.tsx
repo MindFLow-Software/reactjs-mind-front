@@ -1,6 +1,6 @@
 import '../../../patient-form-fields.css'
 import './step-basic-data.css'
-import { useEffect, useState, type ChangeEvent } from 'react'
+import { useCallback, useEffect, useState, type ChangeEvent } from 'react'
 import { useFormContext } from 'react-hook-form'
 import { Check, Shield, UserRound } from 'lucide-react'
 
@@ -23,19 +23,25 @@ import type { IPatientProfile } from '@/types/patient-profile/patient-profile'
 
 import { SectionTitle } from '../section-title/section-title'
 import { PillRadio } from '../pill-radio/pill-radio'
-import { PatientAvatarUpload } from '../patient-avatar-upload/patient-avatar-upload'
+import { AvatarUploadField } from '@/components/avatar-upload-field/avatar-upload-field'
 
 type IStepBasicData = {
-  onAvatarSelect: (file: File | null) => void
   patient: IPatientProfile | null
 }
 
 const CPF_LENGTH = 11
 
-export function StepBasicData({ onAvatarSelect, patient }: IStepBasicData) {
-  const { watch, control } = useFormContext<CreatePatientFormData>()
+export function StepBasicData({ patient }: IStepBasicData) {
+  const { watch, control, setValue } = useFormContext<CreatePatientFormData>()
 
   const [birthInput, setBirthInput] = useState<string>('')
+
+  const handleAvatarSelect = useCallback(
+    (file: File | null) => {
+      setValue('profileImage', file ?? undefined, { shouldDirty: true })
+    },
+    [setValue],
+  )
 
   const cpfDigits = Normalizer.digits(watch('cpf'))
   const isCpfComplete = cpfDigits.length === CPF_LENGTH
@@ -64,10 +70,13 @@ export function StepBasicData({ onAvatarSelect, patient }: IStepBasicData) {
 
   return (
     <div className="flex flex-col gap-5">
-      <PatientAvatarUpload
-        fullName={fullName}
-        onFileSelect={onAvatarSelect}
-        defaultUrl={patient?.profileImageUrl}
+      <AvatarUploadField
+        identity={{ name: fullName, defaultUrl: patient?.profileImageUrl }}
+        copy={{
+          label: 'Foto do paciente',
+          description: 'JPG ou PNG · até 2 MB · opcional',
+        }}
+        onFileSelect={handleAvatarSelect}
       />
 
       <div>
