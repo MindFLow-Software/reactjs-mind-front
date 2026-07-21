@@ -12,7 +12,7 @@ export function useSessionRefreshScheduler(): void {
     function schedule() {
       timeoutId = setTimeout(() => {
         ensureFreshSession()
-          .catch(() => { })
+          .catch(() => {})
           .finally(schedule)
       }, ACCESS_TOKEN_TTL_MS - PROACTIVE_REFRESH_MARGIN_MS)
     }
