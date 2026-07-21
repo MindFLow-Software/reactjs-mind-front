@@ -22,7 +22,7 @@ export function useUpdatePatient({
   const queryClient = useQueryClient()
 
   const { transform } = useFormData<UpdatePatientFormData>()
-  const { uploadAll, isUploading } = usePatientAttachmentsUpload()
+  const { uploadAll } = usePatientAttachmentsUpload()
 
   const { mutateAsync, isPending } = useMutation({
     mutationFn: updatePatientProfileById,
