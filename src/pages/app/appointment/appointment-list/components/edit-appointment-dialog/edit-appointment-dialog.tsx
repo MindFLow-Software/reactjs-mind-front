@@ -4,7 +4,6 @@ import {
   CalendarClock,
   Trash2,
   User,
-  FileText,
   Clock,
   AlertCircle,
   Loader2,
@@ -16,17 +15,10 @@ import {
   DialogTitle,
 } from '@/components/ui/dialog'
 import { Button } from '@/components/ui/button'
-import { Input } from '@/components/ui/input'
-import { Textarea } from '@/components/ui/textarea'
-import {
-  Form,
-  FormField,
-  FormItem,
-  FormLabel,
-  FormControl,
-  FormMessage,
-} from '@/components/ui/form'
-import { cn } from '@/lib/utils'
+import { Form } from '@/components/ui/form'
+import { IconBox } from '@/components/icon-box/icon-box'
+import { TextInput } from '@/components/form-fields/text-input/text-input'
+import { TextareaInput } from '@/components/form-fields/textarea-input/textarea-input'
 import { Time } from '@/utils/time'
 import { AppointmentStatus } from '@/types/appointment/appointment-status'
 
@@ -75,7 +67,6 @@ export function EditAppointment({
   })
 
   const {
-    control,
     handleSubmit,
     formState: { isDirty, isValid },
   } = form
@@ -91,9 +82,7 @@ export function EditAppointment({
     <DialogContent className="ea-dialog">
       <div className="ea-header">
         <div className="ea-header-row">
-          <div className="ea-header-icon">
-            <CalendarClock className="size-6" />
-          </div>
+          <IconBox icon={CalendarClock} variant="primary" size="md" />
           <div className="flex flex-col">
             <DialogTitle className="ea-title">
               Detalhes do Agendamento
@@ -122,7 +111,7 @@ export function EditAppointment({
             className="ea-action-btn ea-action-btn--primary"
             onClick={triggers.onReschedule}
           >
-            <Clock className="h-3.5 w-3.5" />
+            <Clock data-icon="inline-start" />
             Remarcar Horário
           </Button>
 
@@ -133,7 +122,7 @@ export function EditAppointment({
             className="ea-action-btn ea-action-btn--destructive"
             onClick={triggers.onCancel}
           >
-            <Trash2 className="h-3.5 w-3.5" />
+            <Trash2 data-icon="inline-start" />
             Cancelar Sessão
           </Button>
         </div>
@@ -143,7 +132,6 @@ export function EditAppointment({
         <form onSubmit={handleSubmit(onSubmit)} className="ea-form">
           <div className="ea-scroll-area">
             <div className="ea-fields">
-              {/* Paciente não é editável — vínculo fixo do agendamento */}
               <div>
                 <span className="ea-field-label">Paciente</span>
                 <div className="ea-readonly-display">
@@ -152,7 +140,6 @@ export function EditAppointment({
                 </div>
               </div>
 
-              {/* DATA E HORÁRIO (editar via Remarcar Horário) */}
               <div>
                 <span className="ea-field-label">Data e Horário</span>
                 <div className="ea-readonly-display">
@@ -161,54 +148,17 @@ export function EditAppointment({
                 </div>
               </div>
 
-              {/* DIAGNÓSTICO */}
-              <FormField
-                control={control}
+              <TextInput<UpdateAppointmentData>
                 name="diagnosis"
-                render={({ field, fieldState }) => (
-                  <FormItem>
-                    <FormLabel className="ea-field-label">
-                      Diagnóstico Identificado
-                    </FormLabel>
-                    <div className="relative">
-                      <FormControl>
-                        <Input
-                          {...field}
-                          placeholder="Nenhum diagnóstico registrado"
-                          className={cn(
-                            'ea-input pl-10',
-                            fieldState.invalid &&
-                              'border-red-600 focus-visible:ring-red-600/20',
-                          )}
-                        />
-                      </FormControl>
-                      <FileText className="ea-input-icon" />
-                    </div>
-                    <FormMessage />
-                  </FormItem>
-                )}
+                label="Diagnóstico Identificado"
+                placeholder="Nenhum diagnóstico registrado"
               />
 
-              {/* NOTAS */}
-              <FormField
-                control={control}
+              <TextareaInput<UpdateAppointmentData>
                 name="content"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel className="ea-field-label">
-                      Notas Internas
-                    </FormLabel>
-                    <FormControl>
-                      <Textarea
-                        {...field}
-                        placeholder="Sem observações para esta sessão."
-                        rows={4}
-                        className="ea-textarea"
-                      />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
+                label="Notas Internas"
+                placeholder="Sem observações para esta sessão."
+                rows={4}
               />
             </div>
           </div>
@@ -229,7 +179,7 @@ export function EditAppointment({
             >
               {isPending ? (
                 <>
-                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                  <Loader2 data-icon="inline-start" className="animate-spin" />
                   Salvando...
                 </>
               ) : (
