@@ -21,7 +21,7 @@ import { getSuggestions } from '@/api/suggestions/get-suggestions'
 import { Input } from '@/components/ui/input'
 import { Button } from '@/components/ui/button'
 import { Dialog, DialogTrigger } from '@/components/ui/dialog'
-import { StatCard } from '@/components/stat-card/stat-card'
+import { MetricCard } from '@/components/metric-card/metric-card'
 import { cn } from '@/lib/utils'
 import type { SuggestionCategory } from '@/types/suggestion/suggestion-category'
 import type { SuggestionStatus } from '@/types/suggestion/suggestion-status'
@@ -111,40 +111,38 @@ export function SuggestionPage() {
         </header>
 
         <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 shrink-0">
-          <StatCard
-            data={{
-              icon: <BadgeCheck className="size-5 text-blue-500" />,
-              iconBg: 'bg-blue-50 dark:bg-blue-950/30',
-              value: '128',
-              label: 'Sugestões totais',
-            }}
-          />
-          <StatCard
-            data={{
-              icon: <ChevronsUp className="size-5 text-violet-500" />,
-              iconBg: 'bg-violet-50 dark:bg-violet-950/30',
-              value: '2.341',
-              label: 'Votos da comunidade',
-              trend: '+84 esta semana',
-            }}
-          />
-          <StatCard
-            data={{
-              icon: <Zap className="size-5 text-red-500" />,
-              iconBg: 'bg-red-50 dark:bg-red-950/30',
-              value: '9',
-              label: 'Em produção agora',
-            }}
-          />
-          <StatCard
-            data={{
-              icon: <Check className="size-5 text-emerald-600" />,
-              iconBg: 'bg-emerald-50 dark:bg-emerald-950/30',
-              value: '42',
-              label: 'Já implementadas',
-              trend: '+6 nos últimos 30d',
-            }}
-          />
+          <MetricCard accentColor="blue">
+            <MetricCard.Icon bg="bg-primary/10">
+              <BadgeCheck className="size-5 text-primary" />
+            </MetricCard.Icon>
+            <MetricCard.Value>128</MetricCard.Value>
+            <MetricCard.Label>Sugestões totais</MetricCard.Label>
+          </MetricCard>
+          <MetricCard accentColor="violet">
+            <MetricCard.Icon bg="bg-accent-primary-light/10">
+              <ChevronsUp className="size-5 text-accent-primary-light" />
+            </MetricCard.Icon>
+            <MetricCard.Value>2.341</MetricCard.Value>
+            <MetricCard.Label>Votos da comunidade</MetricCard.Label>
+            <MetricCard.Trend direction="up">+84 esta semana</MetricCard.Trend>
+          </MetricCard>
+          <MetricCard accentColor="red">
+            <MetricCard.Icon bg="bg-destructive/10">
+              <Zap className="size-5 text-destructive" />
+            </MetricCard.Icon>
+            <MetricCard.Value>9</MetricCard.Value>
+            <MetricCard.Label>Em produção agora</MetricCard.Label>
+          </MetricCard>
+          <MetricCard accentColor="emerald">
+            <MetricCard.Icon bg="bg-success/10">
+              <Check className="size-5 text-success" />
+            </MetricCard.Icon>
+            <MetricCard.Value>42</MetricCard.Value>
+            <MetricCard.Label>Já implementadas</MetricCard.Label>
+            <MetricCard.Trend direction="up">
+              +6 nos últimos 30d
+            </MetricCard.Trend>
+          </MetricCard>
         </div>
 
         <div className="sp-toolbar">
