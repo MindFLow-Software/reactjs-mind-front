@@ -19,7 +19,7 @@ export const createPatientSchema = z.object({
   dateOfBirth: dateOfBirthSchema.nullable().optional().describe('basicData'),
   cpf: cpfSchema.optional().describe('basicData'),
   gender: z.enum(Gender).describe('basicData'),
-  profileImageUrl: z.string().optional().describe('basicData'),
+  profileImage: z.instanceof(File).optional().describe('basicData'),
 })
 
 export type CreatePatientFormData = z.infer<typeof createPatientSchema>

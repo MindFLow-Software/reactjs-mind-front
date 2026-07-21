@@ -6,19 +6,20 @@ import { createPatientProfile } from '@/api/patient-profiles/create-patient-prof
 import { getApiErrorMessage } from '@/lib/get-api-error-message'
 import type { CreatePatientFormData } from '@/validators/patients/form/create-patient-schema'
 import { usePatientAttachmentsUpload } from './use-patient-attachments-upload'
+import { useFormData } from '@/hooks/use-form-data'
 
 type IUseCreatePatient = {
-  avatarFile: File | null
   files: File[]
-  onSuccess?: () => void
+  onSuccess: () => void
 }
 
-export function useCreatePatient({
-  avatarFile,
+export function useCreatePatientProfile({
   files,
   onSuccess,
 }: IUseCreatePatient) {
   const queryClient = useQueryClient()
+
+  const { transform } = useFormData<CreatePatientFormData>()
   const { uploadAll, isUploading } = usePatientAttachmentsUpload()
 
   const { mutateAsync, isPending } = useMutation({
@@ -46,15 +47,14 @@ export function useCreatePatient({
 
   const submit = useCallback(
     async (data: CreatePatientFormData) => {
-      const response = await mutateAsync({
-        ...data,
-        dateOfBirth: data.dateOfBirth ?? undefined,
-      })
+      const formData = transform(data)
 
-      await uploadAll({ targetId: response.patientId, avatarFile, files })
-      onSuccess?.()
+      const response = await mutateAsync(formData)
+
+      await uploadAll({ targetId: response.patientId, files })
+      onSuccess()
     },
-    [mutateAsync, uploadAll, avatarFile, files, onSuccess],
+    [mutateAsync, transform, uploadAll, files, onSuccess],
   )
 
   return { submit, isSubmitting: isPending || isUploading }

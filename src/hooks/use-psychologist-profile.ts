@@ -3,8 +3,9 @@ import { useQuery } from '@tanstack/react-query'
 
 export function usePsychologistProfile(psychologistProfileId: string | null) {
   return useQuery({
-    queryKey: ['psychologist-profile-v2', psychologistProfileId], // Chave única para o psicólogo
+    queryKey: ['psychologist-profile-v2', psychologistProfileId],
     queryFn: () => getPsychologistProfileById(psychologistProfileId),
     staleTime: 1000 * 60 * 10, // 10 minutos de cache
+    enabled: Boolean(psychologistProfileId),
   })
 }

@@ -9,6 +9,7 @@ export type IPsychologistProfile = {
   professionalName: string
   languages: Languages[]
   professionalBio: string | null
+  profileImageUrl: string | null
   status: string
   isActive: boolean
   createdAt: string

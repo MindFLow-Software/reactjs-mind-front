@@ -3,7 +3,7 @@
 import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 
-import { ArrowRight, ShieldCheck, SquarePen, UserRoundPen } from 'lucide-react'
+import { ArrowRight, Plus, ShieldCheck, SquarePen, UserRoundPen } from 'lucide-react'
 
 import { useAuth } from '@/hooks/use-auth'
 import { Mask } from '@/utils/mask'
@@ -16,8 +16,8 @@ import { Button } from '@/components/ui/button'
 import { Dialog, DialogTrigger } from '@/components/ui/dialog'
 import { ProfileCard } from '@/components/profile-card'
 
+import { UserAvatar } from '@/components/user-avatar/user-avatar'
 import { EditPsychologistProfile } from '../edit-psychologist-profile-dialog/edit-psychologist-profile-dialog'
-import { PsychologistAvatarUpload } from '../psychologist-avatar-upload/psychologist-avatar-upload'
 
 import './psychologist-profile-card.css'
 import { Badge } from '@/components/ui/badge'
@@ -43,7 +43,7 @@ export function PsychologistProfileCard() {
         />
         <ProfileCard.Content>
           <div className="acc-identity-row">
-            <Skeleton className="h-16 w-16 shrink-0 rounded-full" />
+            <Skeleton className="size-16 shrink-0 rounded-full" />
             <div className="flex-1 flex flex-col gap-2">
               <Skeleton className="h-6 w-1/2" />
               <Skeleton className="h-4 w-1/3" />
@@ -92,9 +92,9 @@ export function PsychologistProfileCard() {
       />
       <ProfileCard.Content>
         <div className="acc-identity-row">
-          <PsychologistAvatarUpload
-            currentImage={me.profileImageUrl}
-            fullName={professionalName}
+          <UserAvatar
+            identity={{ src: me?.psychologistProfile?.profileImageUrl, name: professionalName }}
+            className="size-16 shrink-0"
           />
 
           <div className="min-w-0 flex-1">
@@ -124,7 +124,7 @@ export function PsychologistProfileCard() {
               <span className="text-sm font-medium text-blue-700 dark:text-blue-400">
                 {expertiseLabel}
               </span>
-              <span className="h-1 w-1 rounded-full bg-muted-foreground" />
+              <span className="size-1 rounded-full bg-muted-foreground" />
               <span className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
                 {translatedRole}
               </span>
@@ -181,13 +181,13 @@ export function PsychologistProfileCard() {
             className="acc-profile-btn acc-profile-btn--primary"
             onClick={handleRedirectToAddPsychologistPracticeContext}
           >
+            <Plus size={16} />
             Adicionar Contexto
-            <ArrowRight size={16} />
           </Button>
         ) : (
           <Button
             type="button"
-            className="pf-cta-btn pf-cta-btn--primary"
+            className="acc-profile-btn acc-profile-btn--primary"
             onClick={handleRedirectToCreatePsychologistProfile}
           >
             Criar perfil de psicólogo
