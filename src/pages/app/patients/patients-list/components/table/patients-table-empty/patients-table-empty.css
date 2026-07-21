@@ -2,7 +2,7 @@
 
 @layer components {
   .ptbe-cell {
-    @apply py-20;
+    @apply py-20!;
   }
 
   .ptbe-body {

@@ -6,18 +6,15 @@
   }
 
   .pc-eyebrow {
-    @apply text-[12.5px] font-semibold text-muted-foreground;
+    @apply text-[12px] font-semibold text-muted-foreground;
   }
 
   .pc-title {
-    @apply mt-[9px] font-title text-[28px] font-extrabold tracking-[-0.01em] text-foreground;
+    @apply font-title text-3xl font-extrabold text-foreground;
   }
 
   .pc-subtitle {
-    @apply max-w-[560px] text-[14px] leading-[1.55] text-muted-foreground;
+    @apply max-w-4xl text-[14px] text-muted-foreground;
   }
 
-  .pc-identity-pill {
-    @apply mt-4;
-  }
 }

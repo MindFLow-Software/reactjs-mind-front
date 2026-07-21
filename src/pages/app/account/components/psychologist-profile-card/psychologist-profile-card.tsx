@@ -103,16 +103,18 @@ export function PsychologistProfileCard() {
                 {professionalName}
               </h2>
               <Dialog open={isEditOpen} onOpenChange={setIsEditOpen}>
-                <DialogTrigger>
-                  <Tooltip>
-                    <TooltipTrigger asChild>
-                      <button className="size-fit">
-                        <SquarePen size={16} />
-                      </button>
-                    </TooltipTrigger>
-                    <TooltipContent>Editar Perfil</TooltipContent>
-                  </Tooltip>
-                </DialogTrigger>
+                {psychologistProfile && (
+                  <DialogTrigger asChild>
+                    <Tooltip>
+                      <TooltipTrigger asChild>
+                        <button className="size-fit">
+                          <SquarePen size={16} />
+                        </button>
+                      </TooltipTrigger>
+                      <TooltipContent>Editar Perfil</TooltipContent>
+                    </Tooltip>
+                  </DialogTrigger>
+                )}
 
                 <EditPsychologistProfile
                   onClose={() => setIsEditOpen(false)}

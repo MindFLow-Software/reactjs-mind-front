@@ -63,7 +63,7 @@ export function PatientsMetrics({ counts, state }: IPatientsMetrics) {
             : state.isLoadingMetrics
 
         return (
-          <MetricCard key={tile.key} isLoading={isLoading}>
+          <MetricCard key={tile.key} isLoading={isLoading} className="max-h-28">
             <MetricCard.Icon bg={tile.iconBg}>
               <Icon className={tile.iconClassName} />
             </MetricCard.Icon>

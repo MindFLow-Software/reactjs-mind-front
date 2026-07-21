@@ -6,7 +6,7 @@
   }
 
   .pc-types {
-    @apply mt-[26px] grid w-full grid-cols-1 gap-4;
+    @apply mt-[24px] grid w-full grid-cols-1 gap-4;
   }
 
   @media (min-width: 660px) {

@@ -36,7 +36,6 @@ import {
   type ICreatePsychologistPracticeContext,
 } from '@/validators/psychologists/form/create-practice-context-schema'
 import { TitleIcon } from '@/components/title-icon/title-icon'
-import { PracticeContextHeader } from '../practice-context-header/practice-context-header'
 import { SessionFormatToggle } from '../session-format-toggle/session-format-toggle'
 
 const SESSION_FORMAT_OPTIONS = [
@@ -80,11 +79,9 @@ export function CreateIndividualContext({
   })
 
   return (
-    <>
-      <PracticeContextHeader />
-
+    <div className="pc-cfg-wrap">
       <button type="button" onClick={onGoBack} className="pc-switch">
-        <Repeat2 size={15} />
+        <Repeat2 size={16} />
         Trocar contexto
       </button>
 
@@ -197,7 +194,7 @@ export function CreateIndividualContext({
               <Button
                 type="submit"
                 disabled={isSubmitting}
-                className="bg-blue-600 text-white hover:bg-blue-700"
+                className="gap-2 bg-blue-600 text-white hover:bg-blue-700"
               >
                 Finalizar
                 <CircleCheck size={16} />
@@ -206,6 +203,6 @@ export function CreateIndividualContext({
           </form>
         </Form>
       </Card>
-    </>
+    </div>
   )
 }
