@@ -25,13 +25,15 @@ export function useCreatePatientProfile({
   const { mutateAsync, isPending } = useMutation({
     mutationFn: createPatientProfile,
     onSuccess: async (response) => {
+      const patientProfile = response.data.patientProfile
+
       await Promise.all([
         queryClient.invalidateQueries({ queryKey: ['patients'] }),
         queryClient.invalidateQueries({
-          queryKey: ['patient', response.patientId],
+          queryKey: ['patient', patientProfile.id],
         }),
         queryClient.invalidateQueries({
-          queryKey: ['attachments', response.patientId],
+          queryKey: ['attachments', patientProfile.id],
         }),
         queryClient.invalidateQueries({ queryKey: ['patients-metrics'] }),
       ])
@@ -50,8 +52,9 @@ export function useCreatePatientProfile({
       const formData = transform(data)
 
       const response = await mutateAsync(formData)
+      const patientProfile = response.data.patientProfile
 
-      await uploadAll({ targetId: response.patientId, files })
+      await uploadAll({ targetId: patientProfile.id, files })
       onSuccess()
     },
     [mutateAsync, transform, uploadAll, files, onSuccess],

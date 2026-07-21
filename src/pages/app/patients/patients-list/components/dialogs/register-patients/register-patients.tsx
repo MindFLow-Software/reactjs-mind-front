@@ -29,6 +29,7 @@ export function RegisterPatients() {
 
   const methods = useForm<CreatePatientFormData>({
     resolver: zodResolver(createPatientSchema),
+    defaultValues: buildPatientUpdateDefaults(),
   })
 
   const {

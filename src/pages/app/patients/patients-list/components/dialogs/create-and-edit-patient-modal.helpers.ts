@@ -12,7 +12,7 @@ export function buildPatientUpdateDefaults(
     lastName: patient?.lastName ?? '',
     phoneNumber: patient?.phoneNumber ? Mask.phone(patient.phoneNumber) : '',
     email: patient?.email ?? undefined,
-    cpf: patient?.cpf ? Mask.cpf(patient.cpf) : '',
+    cpf: patient?.cpf ? Mask.cpf(patient.cpf) : undefined,
     gender: patient?.gender ?? Gender.OTHER,
     dateOfBirth: patient?.dateOfBirth ? Time.parse(patient.dateOfBirth) : null,
     attachmentIds: [],
