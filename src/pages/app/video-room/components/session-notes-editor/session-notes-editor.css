@@ -2,10 +2,10 @@
 
 @layer components {
   .vr-notes-toolbar-btn {
-    @apply relative flex h-8 w-8 items-center justify-center rounded-md transition-all duration-150
-      text-muted-foreground hover:bg-secondary hover:text-foreground
+    @apply h-8! w-8! relative flex items-center justify-center rounded-md transition-all duration-150
+      text-muted-foreground hover:bg-secondary! hover:text-foreground
       disabled:cursor-not-allowed disabled:opacity-40
-      focus:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-1;
+      focus:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-1!;
   }
 
   .vr-notes-shell {
@@ -29,7 +29,7 @@
   }
 
   .vr-notes-font-size-btn {
-    @apply flex h-7 w-7 items-center justify-center text-muted-foreground transition-colors hover:bg-secondary hover:text-foreground disabled:opacity-40;
+    @apply h-7! w-7! flex items-center justify-center rounded-none! text-muted-foreground transition-colors hover:bg-secondary! hover:text-foreground disabled:opacity-40;
   }
 
   .vr-notes-font-size-value {
@@ -65,9 +65,9 @@
   }
 
   .vr-notes-textarea {
-    @apply w-full min-h-[400px] resize-none bg-transparent px-6 py-5 font-serif leading-relaxed text-foreground
+    @apply min-h-[400px]! w-full resize-none rounded-none! border-none! bg-transparent px-6! py-5! font-serif leading-relaxed text-foreground shadow-none!
       placeholder:text-muted-foreground/50
-      outline-none transition-all;
+      outline-none transition-all focus-visible:ring-0!;
   }
 
   .vr-notes-caret {

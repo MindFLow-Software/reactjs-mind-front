@@ -17,6 +17,8 @@ import {
   Clock,
   AlignLeft,
 } from 'lucide-react'
+import { Button } from '@/components/ui/button'
+import { Textarea } from '@/components/ui/textarea'
 import { cn } from '@/lib/utils'
 import './session-notes-editor.css'
 
@@ -112,15 +114,17 @@ export function SessionNotesEditor({
     label: string
     shortcut?: string
   }) => (
-    <button
+    <Button
       type="button"
+      variant="ghost"
+      size="icon"
       onClick={onClick}
       disabled={!isSessionActive}
       title={`${label}${shortcut ? ` (${shortcut})` : ''}`}
       className="vr-notes-toolbar-btn"
     >
       <Icon className="h-4 w-4" />
-    </button>
+    </Button>
   )
 
   return (
@@ -180,28 +184,32 @@ export function SessionNotesEditor({
       >
         {/* Font size control */}
         <div className="vr-notes-font-size-control">
-          <button
+          <Button
             type="button"
+            variant="ghost"
+            size="icon"
             onClick={() => setFontSize((s) => Math.max(12, s - 1))}
             disabled={!isSessionActive}
             className="vr-notes-font-size-btn"
           >
             <Minus className="h-3 w-3" />
-          </button>
+          </Button>
           <div className="vr-notes-font-size-value">
             <Type className="mr-1 h-3 w-3 text-muted-foreground" />
             <span className="font-mono text-xs text-foreground">
               {fontSize}
             </span>
           </div>
-          <button
+          <Button
             type="button"
+            variant="ghost"
+            size="icon"
             onClick={() => setFontSize((s) => Math.min(24, s + 1))}
             disabled={!isSessionActive}
             className="vr-notes-font-size-btn"
           >
             <Plus className="h-3 w-3" />
-          </button>
+          </Button>
         </div>
 
         <div className="vr-notes-divider" />
@@ -264,7 +272,7 @@ export function SessionNotesEditor({
 
       {/* Editor area */}
       <div className="relative">
-        <textarea
+        <Textarea
           ref={textareaRef}
           placeholder={
             isSessionActive
