@@ -12,9 +12,7 @@ export function PracticeContextHeader() {
         todos os seus espaços de trabalho. Escolha como deseja configurá-la —
         você pode adicionar mais informações a qualquer momento.
       </p>
-      <div className="pc-identity-pill">
-        <ActivePsychologistProfileBadge />
-      </div>
+      <ActivePsychologistProfileBadge />
     </header>
   )
 }

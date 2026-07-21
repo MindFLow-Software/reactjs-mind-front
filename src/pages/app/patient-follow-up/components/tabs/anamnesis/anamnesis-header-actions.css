@@ -1,0 +1,38 @@
+@reference "../../../../../../global.css";
+
+@layer components {
+  .ph-anamnesis-header__actions {
+    @apply flex items-center gap-2;
+  }
+
+  /* PDF button — base */
+  .ph-anamnesis-header__pdf-btn {
+    @apply text-white transition-all duration-300 min-w-[110px] cursor-pointer bg-red-500 hover:bg-red-600;
+  }
+
+  .ph-anamnesis-header__pdf-btn--exporting {
+    @apply bg-red-400;
+  }
+
+  .ph-anamnesis-header__pdf-btn--success {
+    @apply bg-success hover:bg-success;
+  }
+
+  /* Copy button — base */
+  .ph-anamnesis-header__copy-btn {
+    @apply transition-all duration-300 min-w-[130px] cursor-pointer bg-blue-500 hover:bg-blue-600 text-white;
+  }
+
+  .ph-anamnesis-header__copy-btn--copied {
+    @apply bg-success hover:bg-success text-white;
+  }
+
+  /* Button icons */
+  .ph-anamnesis-header__btn-icon {
+    @apply mr-1 size-4;
+  }
+
+  .ph-anamnesis-header__btn-icon--spin {
+    @apply mr-1 size-4 animate-spin;
+  }
+}

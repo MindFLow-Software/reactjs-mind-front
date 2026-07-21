@@ -44,6 +44,13 @@ export class Time {
     return format(parsed, 'dd/MM/yyyy', { locale: ptBR })
   }
 
+  static toISODate(date: Date | string | null | undefined) {
+    const parsed = Time.parse(date)
+    if (!parsed) return ''
+
+    return format(parsed, 'yyyy-MM-dd')
+  }
+
   static toAmericanFormat(date: Date | null | undefined) {
     if (!date || !isValid(date)) return
     return format(new Date(), 'yyyy/MM/dd')

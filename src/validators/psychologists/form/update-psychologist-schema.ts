@@ -6,9 +6,10 @@ export const updatePsychologistSchema = z.object({
   expertise: z.enum(Expertise).optional(),
   honorific: z.enum(Honorific).optional(),
   languages: z.array(z.enum(Languages)).default([]).optional(),
-  // profileImageUrl: z.string().optional(),
+  profileImage: z.instanceof(File).optional(),
   professionalBio: z.string().optional(),
   professionalName: z.string().optional(),
+  profileImageUrl: z.string().nullable(),
 })
 
 export type UpdatePsychologistData = z.infer<typeof updatePsychologistSchema>

@@ -21,7 +21,7 @@ import { AdminDashboard } from './pages/app/admin/dashboard/admin-dashboard'
 import { AdminSuggestionsPage } from './pages/app/admin/suggestions/suggestions-page'
 import { SuggestionsManagement } from './pages/app/admin/suggestions/suggestions-management'
 import { PatientDocuments } from './pages/app/patients/patients-docs/patients-docs'
-import PatientDetails from './pages/app/patients/patients-hub/patients-details'
+import PatientFollowUp from './pages/app/patient-follow-up/patient-follow-up'
 import PatientsRecords from './pages/app/patients/patients-records/patients-records'
 
 import { ClaimAccountPage } from './pages/auth/claim-account'
@@ -197,9 +197,9 @@ export const router = createBrowserRouter([
         element: <PatientDocuments />,
       },
       {
-        path: '/patients/:id/details',
+        path: '/patient/:patientId/follow-up',
         loader: practiceContextGuard,
-        element: <PatientDetails />,
+        element: <PatientFollowUp />,
       },
       {
         path: '/video-room',

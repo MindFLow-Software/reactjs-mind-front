@@ -1,0 +1,15 @@
+@reference "../../../../../../../global.css";
+
+@layer components {
+  .cab-btn {
+    @apply font-normal! gap-1.5 text-sm cursor-pointer p-0! h-fit! shrink-0 hover:font-medium!;
+  }
+
+  .cab-edit {
+    @apply text-muted-foreground hover:text-foreground;
+  }
+
+  .cab-add {
+    @apply hover:bg-transparent!;
+  }
+}

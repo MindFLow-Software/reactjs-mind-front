@@ -15,6 +15,7 @@ import { Link } from 'react-router-dom'
 import { useAuth } from '@/hooks/use-auth'
 import { useTheme } from '../theme/theme-provider'
 import { useSignOut } from '@/hooks/use-sign-out'
+import { useActivePracticeContextStore } from '@/store/use-active-practice-context-store'
 
 import {
   DropdownMenu,
@@ -39,8 +40,24 @@ import {
 
 import { Skeleton } from '@/components/ui/skeleton'
 import { UserAvatar } from '@/components/user-avatar/user-avatar'
+import type { IMeResponse } from '@/types/me/me-response'
 
 import './nav-user.css'
+
+// TODO: verify how ADMIN and SUPPORT users going to resolve their profile images
+function resolveAvatarImage(profile: IMeResponse | undefined): string | null {
+  const { activePracticeContextId } = useActivePracticeContextStore()
+
+  const activePracticeContext = profile?.practiceContexts.find(
+    ({ id }) => id === activePracticeContextId,
+  )
+
+  if (activePracticeContext)
+    return profile?.psychologistProfile?.profileImageUrl ?? null
+
+  // TODO: get correct active patient profile
+  return profile?.patientProfiles?.[0]?.profileImageUrl ?? null
+}
 
 export function NavUser() {
   const { isMobile } = useSidebar()
@@ -54,7 +71,7 @@ export function NavUser() {
   if (profile) name = `${profile.firstName} ${profile.lastName}`
   else if (isError) name = 'Erro ao carregar'
 
-  const profileImage = profile?.profileImageUrl ?? null
+  const profileImage = resolveAvatarImage(profile)
 
   return (
     <SidebarMenu>

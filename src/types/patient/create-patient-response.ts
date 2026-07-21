@@ -1,4 +1,6 @@
+import type { IPatientProfile } from '../patient-profile/patient-profile'
+
 export type ICreatePatientResponse = {
-  message: string
-  patientId: string
+  message: string | null
+  patientProfile: IPatientProfile
 }

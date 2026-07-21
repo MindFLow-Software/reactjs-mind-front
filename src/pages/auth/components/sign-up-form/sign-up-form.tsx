@@ -42,7 +42,7 @@ export function SignUpForm() {
       email: '',
       password: '',
       phoneNumber: '',
-      cpf: '',
+      cpf: undefined,
     },
   })
 

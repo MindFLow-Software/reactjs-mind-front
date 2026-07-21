@@ -1,4 +1,4 @@
-import { useEffect } from 'react'
+import { useCallback, useEffect } from 'react'
 import { Controller, useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { Loader2, User, Briefcase } from 'lucide-react'
@@ -37,6 +37,7 @@ import { IconBox } from '@/components/icon-box/icon-box'
 import { TextInput } from '@/components/form-fields/text-input/text-input'
 import { SelectInput } from '@/components/form-fields/select-input/select-input'
 import { TextareaInput } from '@/components/form-fields/textarea-input/textarea-input'
+import { AvatarUploadField } from '@/components/form-fields/avatar-upload-field/avatar-upload-field'
 import { MaskedInput } from '@/components/maked-input/maked-input'
 
 import './edit-psychologist-profile-dialog.css'
@@ -65,6 +66,7 @@ function buildDefaultValues(
     honorific: psychologistProfile?.honorific,
     languages: psychologistProfile?.languages,
     expertise: psychologistProfile?.expertise,
+    profileImageUrl: psychologistProfile?.profileImageUrl ?? null,
     professionalBio: psychologistProfile?.professionalBio ?? '',
     professionalName: psychologistProfile?.professionalName ?? '',
   }
@@ -75,6 +77,8 @@ export function EditPsychologistProfile({
   psychologistProfileId,
 }: IEditPsychologistProfile) {
   const { data } = usePsychologistProfile(psychologistProfileId)
+  const { updateProfileFn, isUpdatingPsychologistProfile } =
+    useUpdatePsychologistProfile()
 
   const psychologistProfile = data?.psychologist
 
@@ -85,13 +89,21 @@ export function EditPsychologistProfile({
 
   const {
     reset,
+    watch,
     control,
+    setValue,
     handleSubmit,
     formState: { isDirty, isValid },
   } = form
 
-  const { mutateAsync: updateProfileFn, isPending } =
-    useUpdatePsychologistProfile()
+  const professionalName = watch('professionalName')
+
+  const handleAvatarSelect = useCallback(
+    (file: File | null) => {
+      setValue('profileImage', file ?? undefined, { shouldDirty: true })
+    },
+    [setValue],
+  )
 
   async function onSubmit(data: UpdatePsychologistData) {
     await updateProfileFn(data)
@@ -125,6 +137,15 @@ export function EditPsychologistProfile({
               <User className="size-4" />
               <h3 className="acc-edit-section-title">Informações Básicas</h3>
             </div>
+            <AvatarUploadField
+              avatar={{
+                name: professionalName || null,
+                defaultUrl: psychologistProfile?.profileImageUrl,
+                onFileSelect: handleAvatarSelect,
+              }}
+              label="Foto de perfil"
+              description="JPG ou PNG · até 2 MB · opcional"
+            />
             <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
               <TextInput<UpdatePsychologistData>
                 name="professionalName"
@@ -215,7 +236,7 @@ export function EditPsychologistProfile({
                 type="button"
                 variant="ghost"
                 onClick={onClose}
-                disabled={isPending}
+                disabled={isUpdatingPsychologistProfile}
               >
                 Cancelar
               </Button>
@@ -223,9 +244,9 @@ export function EditPsychologistProfile({
             <Button
               type="submit"
               className="acc-edit-submit-btn"
-              disabled={isPending || !isDirty || !isValid}
+              disabled={isUpdatingPsychologistProfile || !isDirty || !isValid}
             >
-              {isPending ? (
+              {isUpdatingPsychologistProfile ? (
                 <>
                   <Loader2 data-icon="inline-start" className="animate-spin" />
                   Salvando...

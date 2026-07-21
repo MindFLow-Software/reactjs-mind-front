@@ -1,30 +1,18 @@
 import { api } from '@/lib/axios'
-import { Normalizer } from '@/utils/normalizer'
-import type { ICreatePatientBody } from '@/types/patient/create-patient-body'
+import { normalizeFormDataDigits } from '@/lib/normalize-form-data-digits'
+import type { ITypedFormData } from '@/hooks/use-form-data'
+import type { CreatePatientFormData } from '@/validators/patients/form/create-patient-schema'
 import type { ICreatePatientResponse } from '@/types/patient/create-patient-response'
-
-export type IcreatePatientProfileInput = {
-  dateOfBirth?: Date | string | null
-} & Omit<ICreatePatientBody, 'dateOfBirth'>
+import type { IMutationResult } from '@/types/shared/mutation-result'
 
 export async function createPatientProfile(
-  data: IcreatePatientProfileInput,
-): Promise<ICreatePatientResponse> {
-  const formattedData: ICreatePatientBody = {
-    ...data,
-    cpf: Normalizer.digits(data.cpf),
-    phoneNumber: Normalizer.digits(data.phoneNumber),
-    email: data.email,
-    // cep: Normalizer.digits(data.cep),
-    dateOfBirth:
-      data.dateOfBirth instanceof Date
-        ? data.dateOfBirth.toISOString()
-        : data.dateOfBirth || undefined,
-  }
+  formData: ITypedFormData<CreatePatientFormData>,
+): Promise<IMutationResult<ICreatePatientResponse>> {
+  normalizeFormDataDigits(formData, ['cpf', 'phoneNumber'])
 
   const response = await api.post<ICreatePatientResponse>(
     '/patient-profiles',
-    formattedData,
+    formData,
   )
-  return response.data
+  return { data: response.data, message: response.apiMessage ?? null }
 }

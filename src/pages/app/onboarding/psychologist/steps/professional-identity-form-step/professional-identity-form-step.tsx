@@ -1,4 +1,5 @@
 import './professional-identity-form-step.css'
+import { useCallback } from 'react'
 import { Controller, useFormContext } from 'react-hook-form'
 
 import z from 'zod'
@@ -16,6 +17,7 @@ import { MaskedInput } from '@/components/maked-input/maked-input'
 import { TextInput } from '@/components/form-fields/text-input/text-input'
 import { SelectInput } from '@/components/form-fields/select-input/select-input'
 import { TextareaInput } from '@/components/form-fields/textarea-input/textarea-input'
+import { AvatarUploadField } from '@/components/form-fields/avatar-upload-field/avatar-upload-field'
 
 import { Expertise, Honorific, Languages } from '@/types/shared/enums'
 import { translatedExpertise } from '@/constants/translated-expertise'
@@ -38,10 +40,29 @@ const EXPERTISE_OPTIONS = (
 ).map(([value, label]) => ({ value, label }))
 
 export function ProfessionalIdentityFormStep() {
-  const { control } = useFormContext<ICreatePsychologistProfile>()
+  const { watch, control, setValue } =
+    useFormContext<ICreatePsychologistProfile>()
+
+  const professionalName = watch('professionalName')
+
+  const handleAvatarSelect = useCallback(
+    (file: File | null) => {
+      setValue('profileImage', file ?? undefined, { shouldDirty: true })
+    },
+    [setValue],
+  )
 
   return (
     <div className="flex flex-col gap-4">
+      <AvatarUploadField
+        avatar={{
+          name: professionalName || null,
+          onFileSelect: handleAvatarSelect,
+        }}
+        label="Foto de perfil"
+        description="JPG ou PNG · até 2 MB · opcional"
+      />
+
       <div className="flex flex-row items-start gap-2">
         <div className="flex-1">
           <TextInput<ICreatePsychologistProfile>

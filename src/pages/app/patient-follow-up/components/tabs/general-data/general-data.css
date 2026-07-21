@@ -1,0 +1,21 @@
+@reference "../../../../../../global.css";
+
+@layer components {
+  .gd-general-data {}
+
+  .gd-modality-badge {
+    @apply inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-xs font-semibold bg-blue-50 text-blue-700 dark:bg-blue-950/40 dark:text-blue-300;
+  }
+
+  .gd-copy-btn {
+    @apply text-muted-foreground hover:text-foreground cursor-pointer transition-colors;
+  }
+
+  .gd-address-empty {
+    @apply col-span-full flex items-center justify-center py-6 text-sm text-muted-foreground;
+  }
+
+  .gd-address-empty__link {
+    @apply text-blue-600 dark:text-blue-400 font-medium hover:underline cursor-pointer;
+  }
+}

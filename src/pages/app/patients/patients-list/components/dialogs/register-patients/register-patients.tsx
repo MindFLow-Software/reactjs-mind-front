@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useEffect } from 'react'
 import { useForm } from 'react-hook-form'
 import { UserPlus } from 'lucide-react'
 import { zodResolver } from '@hookform/resolvers/zod'
@@ -18,7 +18,7 @@ import {
 import { FileUploadField } from '@/components/form-fields/file-upload-field/file-upload-field'
 import { StepBasicData } from './components/step-basic-data/step-basic-data'
 import { StepContactAddress } from './components/step-contact-address/step-contact-address'
-import { useCreatePatient } from './hooks/use-create-patient'
+import { useCreatePatientProfile } from './hooks/use-create-patient-profile'
 import { useStepErrorRedirect } from './hooks/use-step-error-redirect'
 import { STEPS, MAX_DOC_FILES, MAX_DOC_SIZE } from './constants'
 import { buildPatientUpdateDefaults } from '../create-and-edit-patient-modal.helpers'
@@ -31,8 +31,6 @@ type IRegisterPatients = {
 }
 
 export function RegisterPatients({ open, onOpenChange }: IRegisterPatients) {
-  const [avatarFile, setAvatarFile] = useState<File | null>(null)
-
   const { files, addFiles, removeFile, clearFiles } = useFileSelection({
     maxFiles: MAX_DOC_FILES,
     maxSizeBytes: MAX_DOC_SIZE,
@@ -40,6 +38,7 @@ export function RegisterPatients({ open, onOpenChange }: IRegisterPatients) {
 
   const methods = useForm<CreatePatientFormData>({
     resolver: zodResolver(createPatientSchema),
+    defaultValues: buildPatientUpdateDefaults(),
   })
 
   const {
@@ -52,14 +51,12 @@ export function RegisterPatients({ open, onOpenChange }: IRegisterPatients) {
     stepsLength: STEPS.length,
   })
 
-  const { submit, isSubmitting } = useCreatePatient({
-    avatarFile,
+  const { submit, isSubmitting } = useCreatePatientProfile({
     files,
     onSuccess: () => {
       reset()
       goToStep(1)
       clearFiles()
-      setAvatarFile(null)
     },
   })
 
@@ -76,7 +73,7 @@ export function RegisterPatients({ open, onOpenChange }: IRegisterPatients) {
   function renderStepContent() {
     switch (step) {
       case 1:
-        return <StepBasicData onAvatarSelect={setAvatarFile} patient={null} />
+        return <StepBasicData patient={null} />
       case 2:
         return <StepContactAddress />
       case 3:

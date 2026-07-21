@@ -4,24 +4,25 @@ import { toast } from 'sonner'
 
 import { updatePatientProfileById } from '@/api/patient-profiles/update-patient-profile-by-id'
 import { getApiErrorMessage } from '@/lib/get-api-error-message'
+import { useFormData } from '@/hooks/use-form-data'
 import type { UpdatePatientFormData } from '@/validators/patients/form/update-patient-schema'
-// import { usePatientAttachmentsUpload } from './use-patient-attachments-upload'
+import { usePatientAttachmentsUpload } from './use-patient-attachments-upload'
 
 type IUseUpdatePatient = {
   patientId: string
-  avatarFile: File | null
   files: File[]
-  onSuccess?: () => void
+  onSuccess: () => void
 }
 
 export function useUpdatePatient({
   patientId,
-  avatarFile,
   files,
   onSuccess,
 }: IUseUpdatePatient) {
   const queryClient = useQueryClient()
-  // const { uploadAll, isUploading } = usePatientAttachmentsUpload()
+
+  const { transform } = useFormData<UpdatePatientFormData>()
+  const { uploadAll } = usePatientAttachmentsUpload()
 
   const { mutateAsync, isPending } = useMutation({
     mutationFn: updatePatientProfileById,
@@ -44,16 +45,14 @@ export function useUpdatePatient({
 
   const submit = useCallback(
     async (data: UpdatePatientFormData) => {
-      await mutateAsync({
-        ...data,
-        dateOfBirth: data.dateOfBirth ?? undefined,
-        id: patientId,
-      })
+      const formData = transform(data)
 
-      // await uploadAll({ targetId: patientId, avatarFile, files })
-      onSuccess?.()
+      await mutateAsync({ id: patientId, formData })
+
+      await uploadAll({ targetId: patientId, files })
+      onSuccess()
     },
-    [mutateAsync, patientId, avatarFile, files, onSuccess],
+    [mutateAsync, transform, uploadAll, patientId, files, onSuccess],
   )
 
   return { submit, isSubmitting: isPending /* || isUploading */ }

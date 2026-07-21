@@ -1,0 +1,78 @@
+@reference "../../../../../global.css";
+
+@layer components {
+  .pfu-sidebar {
+    @apply flex w-full min-w-0 flex-col overflow-hidden rounded-xl bg-card shadow-sm;
+  }
+
+  .pfu-sidebar-banner {
+    @apply h-22 bg-linear-to-r from-blue-100 to-violet-100 dark:from-blue-950/40 dark:to-violet-950/40;
+  }
+
+  .pfu-sidebar-body {
+    @apply flex flex-col gap-2 px-4 pb-4 pt-1;
+  }
+
+  /* Identity */
+  .pfu-sidebar-identity {
+    @apply flex items-start justify-between gap-2 text-center;
+  }
+
+  .pfu-sidebar-avatar {
+    @apply -mt-9 size-20! border-4 border-card shadow-md ring-1 ring-border;
+  }
+
+  .pfu-sidebar-status {
+    @apply mt-0.5;
+  }
+
+  .pfu-sidebar-name-and-meta {
+    @apply flex flex-col items-start gap-1 py-2;
+  }
+
+  .pfu-sidebar-name {
+    @apply text-lg font-bold leading-tight tracking-tight text-foreground;
+  }
+
+  .pfu-sidebar-meta {
+    @apply flex flex-wrap items-center justify-start gap-x-2 text-xs text-muted-foreground;
+  }
+
+  .pfu-sidebar-meta-dot {
+    @apply size-1 rounded-full bg-muted-foreground/40;
+  }
+
+  .pfu-sidebar-id {
+    @apply inline-flex cursor-pointer items-center gap-1 rounded-sm bg-muted/60 px-1.5 py-0.5 font-mono text-[11px] tracking-wide transition-colors hover:text-primary;
+  }
+
+  .pfu-sidebar-id-icon {
+    @apply size-3 opacity-50 group-hover:opacity-100;
+  }
+
+  /* Contacts */
+  .pfu-sidebar-contacts {
+    @apply flex flex-col gap-2 border-t border-border pb-2 pt-4;
+  }
+
+  .pfu-sidebar-contact {
+    @apply flex items-center gap-2 text-xs;
+  }
+
+  .pfu-sidebar-sessions {
+    @apply flex flex-col gap-2 border-t border-border pb-2 pt-4;
+  }
+
+  .pfu-sidebar-contact-icon {
+    @apply size-4 shrink-0 text-muted-foreground;
+  }
+
+  .pfu-sidebar-contact-value {
+    @apply min-w-0 truncate text-foreground;
+  }
+
+  /* Actions */
+  .pfu-sidebar-actions {
+    @apply flex flex-col gap-2 border-t border-border pt-4;
+  }
+}

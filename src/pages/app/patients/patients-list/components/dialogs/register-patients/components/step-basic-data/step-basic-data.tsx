@@ -1,3 +1,4 @@
+import { useCallback } from 'react'
 import { useFormContext, useWatch } from 'react-hook-form'
 import { Shield, UserRound } from 'lucide-react'
 
@@ -16,13 +17,20 @@ import { SectionTitle } from '../section-title/section-title'
 import '../../../patient-form-fields.css'
 
 type IStepBasicData = {
-  onAvatarSelect: (file: File | null) => void
   patient: IPatientProfile | null
 }
 
-export function StepBasicData({ onAvatarSelect, patient }: IStepBasicData) {
-  const { control } = useFormContext<CreatePatientFormData>()
+export function StepBasicData({ patient }: IStepBasicData) {
+  const { control, setValue } = useFormContext<CreatePatientFormData>()
   const dateOfBirth = useWatch({ control, name: 'dateOfBirth' })
+
+  const handleAvatarSelect = useCallback(
+    (file: File | null) => {
+      setValue('profileImage', file ?? undefined, { shouldDirty: true })
+    },
+    [setValue],
+  )
+
   const age = Time.calculateAge(dateOfBirth)
 
   const fullName = patient ? `${patient.firstName} ${patient.lastName}` : null
@@ -32,7 +40,7 @@ export function StepBasicData({ onAvatarSelect, patient }: IStepBasicData) {
       <AvatarUploadField
         avatar={{
           name: fullName,
-          onFileSelect: onAvatarSelect,
+          onFileSelect: handleAvatarSelect,
           defaultUrl: patient?.profileImageUrl,
         }}
         label="Foto do paciente"

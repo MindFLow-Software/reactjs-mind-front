@@ -2,7 +2,7 @@
 
 @layer components {
   .pc-tcard {
-    @apply relative flex h-full flex-col overflow-hidden rounded-[14px] border border-border bg-card text-left shadow-sm transition-all duration-150;
+    @apply relative flex h-full flex-col gap-2! overflow-hidden rounded-md border border-border text-left shadow-sm transition-all duration-150 p-4!;
   }
 
   .pc-tcard:hover {
@@ -10,7 +10,7 @@
   }
 
   .pc-tcard::before {
-    @apply absolute inset-x-0 top-0 h-[3px] content-[''];
+    @apply absolute inset-x-0 top-0 h-1 content-[''];
   }
 
   .pc-tcard--individual::before {
@@ -21,8 +21,12 @@
     @apply bg-linear-to-r from-blue-500 to-blue-400;
   }
 
+  .pc-tcard-header {
+    @apply flex! items-center! gap-4 px-0!;
+  }
+
   .pc-tcard-body {
-    @apply flex flex-1 flex-col gap-4 p-[22px] pb-5;
+    @apply flex flex-1 flex-col gap-4 px-0! py-2;
   }
 
   .pc-tcard-title {
@@ -45,11 +49,11 @@
     @apply text-muted-foreground/60;
   }
 
-  .pc-tcard-foot {
-    @apply flex items-center justify-between border-t border-border px-[22px] py-4;
+  .pc-tcard-footer {
+    @apply flex items-center justify-between border-t border-border p-0! pt-4!;
   }
 
-  .pc-tcard-foot-label {
+  .pc-tcard-footer-label {
     @apply text-[14px] font-semibold text-foreground/80;
   }
 

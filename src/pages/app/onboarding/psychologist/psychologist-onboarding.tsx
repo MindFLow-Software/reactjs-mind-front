@@ -89,13 +89,13 @@ export function PsychologistOnboardingPage() {
     }
   }
 
-  const { isPending: isCreatingPsychologistProfile, mutateAsync } =
+  const { isCreatingPsychologistProfile, createPsychologistProfileFn } =
     useCreatePsychologistProfile()
 
   const handleCreatePsychologistProfile = async (
     data: ICreatePsychologistProfile,
   ) => {
-    await mutateAsync(data)
+    await createPsychologistProfileFn(data)
   }
 
   const alreadyHasPsychologistProfile = useMemo(

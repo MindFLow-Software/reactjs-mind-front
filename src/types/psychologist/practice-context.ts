@@ -11,5 +11,6 @@ export type IPsychologistPracticeContext = {
   nickname: string | null
   sessionFormat: SessionFormat
   isActive: boolean
+  activePatientsCount: number | null
   createdAt: string
 }

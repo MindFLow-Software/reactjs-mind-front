@@ -1,0 +1,41 @@
+@reference "../../../global.css";
+
+@layer components {
+  .pfu-page {
+    @apply flex min-w-0 flex-col gap-4 overflow-x-hidden;
+  }
+
+  /* Header */
+  .pfu-page-header {
+    @apply flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between;
+  }
+
+  .pfu-page-heading {
+    @apply flex min-w-0 items-center gap-3;
+  }
+
+  .pfu-page-icon {
+    @apply flex size-10 shrink-0 items-center justify-center rounded-xl bg-blue-50 dark:bg-blue-950/30;
+  }
+
+  .pfu-page-heading-text {
+    @apply flex min-w-0 flex-col;
+  }
+
+  .pfu-page-title {
+    @apply truncate text-lg font-bold tracking-tight text-foreground sm:text-xl;
+  }
+
+  .pfu-page-description {
+    @apply text-sm text-muted-foreground;
+  }
+
+  /* Two-column body */
+  .pfu-body {
+    @apply grid min-w-0 grid-cols-1 items-start gap-5 lg:grid-cols-[320px_minmax(0,1fr)];
+  }
+
+  .pfu-content {
+    @apply min-w-0 overflow-hidden;
+  }
+}
