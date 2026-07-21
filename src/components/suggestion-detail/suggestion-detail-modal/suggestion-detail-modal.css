@@ -25,7 +25,7 @@
   }
 
   .sdm-footer-action-danger {
-    @apply text-red-500/70 hover:text-red-600;
+    @apply text-destructive/70 hover:text-destructive;
   }
 
   .sdm-footer-spacer {

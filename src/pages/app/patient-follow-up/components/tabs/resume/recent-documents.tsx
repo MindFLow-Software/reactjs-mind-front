@@ -1,6 +1,12 @@
 import { TitleIcon } from '@/components/title-icon/title-icon'
 import { Button } from '@/components/ui/button'
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from '@/components/ui/card'
 import { Download, FileCheck, FileText } from 'lucide-react'
 
 import { RECENT_DOCUMENTS } from './resume-data'
@@ -25,7 +31,9 @@ export function RecentDocuments() {
                 </div>
                 <div className="rd-item-text">
                   <CardTitle className="text-xs">{document.title}</CardTitle>
-                  <CardDescription className="text-[11px]">{document.type} · {document.date}</CardDescription>
+                  <CardDescription className="text-[11px]">
+                    {document.type} · {document.date}
+                  </CardDescription>
                 </div>
               </div>
               <Button size="icon" variant="ghost">

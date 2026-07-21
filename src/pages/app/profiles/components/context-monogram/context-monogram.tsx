@@ -30,8 +30,8 @@ export function ContextMonogram({ context, size, showPip }: IContextMonogram) {
       {showPip && (
         <span
           className={cn('ca-mono-pip', {
-            'bg-green-600': context.isActive,
-            'bg-amber-500': !context.isActive,
+            'bg-success': context.isActive,
+            'bg-warning': !context.isActive,
           })}
         />
       )}

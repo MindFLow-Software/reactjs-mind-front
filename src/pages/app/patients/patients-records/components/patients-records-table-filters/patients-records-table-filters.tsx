@@ -18,8 +18,8 @@ import {
   SelectValue,
   SelectGroup,
 } from '@/components/ui/select'
+import { SearchInput } from '@/components/form-fields/search-input/search-input'
 import type { ISessionVolume } from '@/types/patient/session-volume'
-import { PatientsSearchInput } from '../../../components/patients-search-input/patients-search-input'
 import './patients-records-table-filters.css'
 
 type IFilterControl<T> = {
@@ -52,11 +52,11 @@ export function PatientsRecordsTableFilters({
   return (
     <div className="pr-flt-root">
       <div className="pr-flt-group">
-        <PatientsSearchInput
+        <SearchInput
           placeholder="Buscar por Nome"
           value={search.value}
-          onChange={(e) => search.onChange(e.target.value)}
-          wrapperClassName="w-full lg:w-[300px]"
+          onChange={search.onChange}
+          className="w-full lg:w-[300px]"
         />
 
         <div className="pr-flt-selects">
@@ -111,7 +111,7 @@ export function PatientsRecordsTableFilters({
                 </SelectItem>
                 <SelectItem value="high" className="cursor-pointer py-2.5">
                   <div className="pr-flt-option">
-                    <ClockArrowUp className="h-4 w-4 text-emerald-500" />
+                    <ClockArrowUp className="h-4 w-4 text-success" />
                     <span>Mais Sessões</span>
                   </div>
                 </SelectItem>
@@ -135,7 +135,7 @@ export function PatientsRecordsTableFilters({
             onClick={onClearFilters}
             className="pr-flt-clear"
           >
-            <XCircle className="h-4 w-4" />
+            <XCircle data-icon="inline-start" />
             Limpar
           </Button>
         )}

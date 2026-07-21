@@ -21,9 +21,9 @@ export function MonthlyGoalsSection({ goals }: IMonthlyGoalsSection) {
   const [sessionsGoal, hoursGoal, activePatientsGoal] = goals
 
   const translatedGoalLabel: Record<IDashboardGoal['label'], string> = {
-    ['sessions']: 'Sessões',
-    ['hours']: 'Horas',
-    ['active-patients']: 'Pacientes Ativos',
+    sessions: 'Sessões',
+    hours: 'Horas',
+    'active-patients': 'Pacientes Ativos',
   }
 
   return (

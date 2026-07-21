@@ -48,10 +48,12 @@ import './nav-user.css'
 function resolveAvatarImage(profile: IMeResponse | undefined): string | null {
   const { activePracticeContextId } = useActivePracticeContextStore()
 
-  const activePracticeContext =
-    profile?.practiceContexts.find(({ id }) => id === activePracticeContextId)
+  const activePracticeContext = profile?.practiceContexts.find(
+    ({ id }) => id === activePracticeContextId,
+  )
 
-  if (activePracticeContext) return profile?.psychologistProfile?.profileImageUrl ?? null
+  if (activePracticeContext)
+    return profile?.psychologistProfile?.profileImageUrl ?? null
 
   // TODO: get correct active patient profile
   return profile?.patientProfiles?.[0]?.profileImageUrl ?? null

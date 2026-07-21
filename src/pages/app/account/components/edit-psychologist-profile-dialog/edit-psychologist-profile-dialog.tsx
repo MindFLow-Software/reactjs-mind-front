@@ -1,17 +1,14 @@
-'use client'
-
 import { useCallback, useEffect } from 'react'
 import { Controller, useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { Loader2, User, Briefcase } from 'lucide-react'
 
-import { cn } from '@/lib/utils'
-
 import { translatedLanguages } from '@/constants/translated-languages'
 import type { IPsychologistProfile } from '@/types/psychologist/psychologist-profile'
-import { Honorific, Languages } from '@/types/shared/enums'
+import { Expertise, Honorific, Languages } from '@/types/shared/enums'
 import { useUpdatePsychologistProfile } from '../../hooks/use-update-psychologist-profile'
 import { translatedExpertise } from '@/constants/translated-expertise'
+import { usePsychologistProfile } from '@/hooks/use-psychologist-profile'
 
 import {
   updatePsychologistSchema,
@@ -25,39 +22,41 @@ import {
   DialogDescription,
   DialogClose,
 } from '@/components/ui/dialog'
-
 import {
-  Select,
-  SelectItem,
-  SelectGroup,
-  SelectValue,
-  SelectLabel,
-  SelectTrigger,
-  SelectContent,
-} from '@/components/ui/select'
-
-import {
-  Field,
-  FieldLabel,
-  FieldError,
-  FieldDescription,
-} from '@/components/ui/field'
-
-import { Form } from '@/components/ui/form'
-import { Badge } from '@/components/ui/badge'
-import { Input } from '@/components/ui/input'
+  Form,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormControl,
+  FormMessage,
+} from '@/components/ui/form'
+import { Field, FieldLabel } from '@/components/ui/field'
+import { ToggleGroup, ToggleGroupItem } from '@/components/ui/toggle-group'
 import { Button } from '@/components/ui/button'
-import { Textarea } from '@/components/ui/textarea'
+import { IconBox } from '@/components/icon-box/icon-box'
+import { TextInput } from '@/components/form-fields/text-input/text-input'
+import { SelectInput } from '@/components/form-fields/select-input/select-input'
+import { TextareaInput } from '@/components/form-fields/textarea-input/textarea-input'
+import { AvatarUploadField } from '@/components/form-fields/avatar-upload-field/avatar-upload-field'
 import { MaskedInput } from '@/components/maked-input/maked-input'
-import { AvatarUploadField } from '@/components/avatar-upload-field/avatar-upload-field'
 
 import './edit-psychologist-profile-dialog.css'
-import { usePsychologistProfile } from '@/hooks/use-psychologist-profile'
 
 type IEditPsychologistProfile = {
   onClose: () => void
   psychologistProfileId: string | null
 }
+
+const HONORIFIC_OPTIONS = [
+  { value: Honorific.MASC_DR, label: 'Dr.' },
+  { value: Honorific.FEMININE_DR, label: 'Dra.' },
+  { value: Honorific.MSC, label: 'MSc.' },
+  { value: Honorific.PHD, label: 'PhD' },
+]
+
+const EXPERTISE_OPTIONS = (
+  Object.entries(translatedExpertise) as [Expertise, string][]
+).map(([value, label]) => ({ value, label }))
 
 function buildDefaultValues(
   psychologistProfile?: IPsychologistProfile,
@@ -67,7 +66,7 @@ function buildDefaultValues(
     honorific: psychologistProfile?.honorific,
     languages: psychologistProfile?.languages,
     expertise: psychologistProfile?.expertise,
-    profileImageUrl: psychologistProfile?.profileImageUrl ?? '',
+    profileImageUrl: psychologistProfile?.profileImageUrl ?? null,
     professionalBio: psychologistProfile?.professionalBio ?? '',
     professionalName: psychologistProfile?.professionalName ?? '',
   }
@@ -97,7 +96,6 @@ export function EditPsychologistProfile({
     formState: { isDirty, isValid },
   } = form
 
-  const selectedLanguages = watch('languages') ?? []
   const professionalName = watch('professionalName')
 
   const handleAvatarSelect = useCallback(
@@ -106,20 +104,6 @@ export function EditPsychologistProfile({
     },
     [setValue],
   )
-
-  const handleToggleLanguage = (language: Languages) => {
-    const alreadyAdded = selectedLanguages?.includes(language)
-
-    if (!alreadyAdded) {
-      setValue('languages', [...selectedLanguages, language])
-      return
-    }
-
-    setValue(
-      'languages',
-      selectedLanguages.filter((lang) => lang !== language),
-    )
-  }
 
   async function onSubmit(data: UpdatePsychologistData) {
     await updateProfileFn(data)
@@ -135,9 +119,7 @@ export function EditPsychologistProfile({
   return (
     <DialogContent className="acc-edit-content">
       <DialogHeader className="acc-edit-header">
-        <div className="acc-edit-icon-box">
-          <User className="size-5 text-blue-600" />
-        </div>
+        <IconBox icon={User} variant="primary" size="md" />
         <div className="flex flex-col">
           <DialogTitle className="acc-edit-title">
             Editar Meu Perfil
@@ -156,61 +138,25 @@ export function EditPsychologistProfile({
               <h3 className="acc-edit-section-title">Informações Básicas</h3>
             </div>
             <AvatarUploadField
-              identity={{
+              avatar={{
                 name: professionalName || null,
                 defaultUrl: psychologistProfile?.profileImageUrl,
+                onFileSelect: handleAvatarSelect,
               }}
-              copy={{
-                label: 'Foto de perfil',
-                description: 'JPG ou PNG · até 2 MB · opcional',
-              }}
-              onFileSelect={handleAvatarSelect}
+              label="Foto de perfil"
+              description="JPG ou PNG · até 2 MB · opcional"
             />
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-              <Controller
+            <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+              <TextInput<UpdatePsychologistData>
                 name="professionalName"
-                control={control}
-                render={({ field }) => (
-                  <Field className="gap-1 flex-1">
-                    <FieldLabel htmlFor="professionalName">
-                      Nome Profissional
-                    </FieldLabel>
-                    <Input
-                      {...field}
-                      id="professionalName"
-                      className="acc-edit-input"
-                      placeholder="Seu nome profissional"
-                    />
-                  </Field>
-                )}
+                label="Nome Profissional"
+                placeholder="Seu nome profissional"
               />
-              <Controller
+              <SelectInput<UpdatePsychologistData, Honorific>
                 name="honorific"
-                control={control}
-                render={({ field }) => (
-                  <Field className="gap-1 w-full">
-                    <FieldLabel htmlFor="honorific">Honorífico(a)</FieldLabel>
-                    <Select value={field.value} onValueChange={field.onChange}>
-                      <SelectTrigger>
-                        <SelectValue
-                          id="honorific"
-                          placeholder="Honorífico(a)"
-                        />
-                      </SelectTrigger>
-                      <SelectContent>
-                        <SelectGroup>
-                          <SelectLabel>Selecione seu título</SelectLabel>
-                          <SelectItem value={Honorific.MASC_DR}>Dr.</SelectItem>
-                          <SelectItem value={Honorific.FEMININE_DR}>
-                            Dra.
-                          </SelectItem>
-                          <SelectItem value={Honorific.MSC}>MSc.</SelectItem>
-                          <SelectItem value={Honorific.PHD}>PhD</SelectItem>
-                        </SelectGroup>
-                      </SelectContent>
-                    </Select>
-                  </Field>
-                )}
+                label="Honorífico(a)"
+                placeholder="Honorífico(a)"
+                options={HONORIFIC_OPTIONS}
               />
             </div>
           </div>
@@ -220,32 +166,12 @@ export function EditPsychologistProfile({
               <Briefcase className="size-4" />
               <h3 className="acc-edit-section-title">Atuação Profissional</h3>
             </div>
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-              <Controller
-                control={control}
+            <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+              <SelectInput<UpdatePsychologistData, Expertise>
                 name="expertise"
-                render={({ field }) => (
-                  <Field className="gap-1">
-                    <FieldLabel>Especialidade Principal</FieldLabel>
-                    <Select value={field.value} onValueChange={field.onChange}>
-                      <SelectTrigger className="acc-edit-input">
-                        <SelectValue placeholder="Selecione sua área" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        <SelectGroup>
-                          {Object.entries(translatedExpertise).map(
-                            ([key, label]) => (
-                              <SelectItem key={key} value={key}>
-                                {label}
-                              </SelectItem>
-                            ),
-                          )}
-                        </SelectGroup>
-                      </SelectContent>
-                    </Select>
-                    <FieldError />
-                  </Field>
-                )}
+                label="Especialidade Principal"
+                placeholder="Selecione sua área"
+                options={EXPERTISE_OPTIONS}
               />
               <Controller
                 name="crp"
@@ -266,64 +192,47 @@ export function EditPsychologistProfile({
             </div>
           </div>
 
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-            <Controller
-              name="languages"
+          <div className="grid grid-cols-1 gap-4">
+            <FormField
               control={control}
-              render={() => (
-                <Field className="gap-1">
-                  <FieldLabel>Línguas</FieldLabel>
-                  <div className="flex gap-2">
-                    {Object.values(Languages).map((language) => {
-                      return (
-                        <Badge
-                          key={language}
-                          variant="outline"
-                          onClick={() => handleToggleLanguage(language)}
-                          className={cn(
-                            'acc-edit-badge',
-                            selectedLanguages.includes(language) &&
-                              'acc-edit-badge-selected',
-                          )}
-                        >
+              name="languages"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Línguas</FormLabel>
+                  <FormControl>
+                    <ToggleGroup
+                      type="multiple"
+                      variant="outline"
+                      value={field.value ?? []}
+                      onValueChange={(value) =>
+                        field.onChange(value as Languages[])
+                      }
+                      className="justify-start"
+                    >
+                      {Object.values(Languages).map((language) => (
+                        <ToggleGroupItem key={language} value={language}>
                           {translatedLanguages[language]}
-                        </Badge>
-                      )
-                    })}
-                  </div>
-                </Field>
+                        </ToggleGroupItem>
+                      ))}
+                    </ToggleGroup>
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
               )}
             />
           </div>
 
-          <div className="grid grid-cols-1 gap-4">
-            <Controller
-              name="professionalBio"
-              control={control}
-              render={({ field }) => (
-                <Field className="gap-1">
-                  <FieldLabel htmlFor="professionalBio">
-                    Biografia profissional
-                  </FieldLabel>
-                  <Textarea
-                    {...field}
-                    maxLength={200}
-                    id="professionalBio"
-                    className="h-40 min-h-40 max-h-80"
-                    placeholder="Digite sua biografia profissional (MÁX. 200 CARACTERES)"
-                  />
-                  <FieldDescription className="text-xs">
-                    Os pacientes lerão isso no seu perfil.
-                  </FieldDescription>
-                </Field>
-              )}
-            />
-          </div>
+          <TextareaInput<UpdatePsychologistData>
+            name="professionalBio"
+            label="Biografia profissional"
+            placeholder="Digite sua biografia profissional (MÁX. 200 CARACTERES)"
+            description="Os pacientes lerão isso no seu perfil."
+            rows={6}
+          />
 
           <div className="acc-edit-footer">
-            <DialogClose>
+            <DialogClose asChild>
               <Button
-                className="cursor-pointer"
                 type="button"
                 variant="ghost"
                 onClick={onClose}
@@ -339,7 +248,7 @@ export function EditPsychologistProfile({
             >
               {isUpdatingPsychologistProfile ? (
                 <>
-                  <Loader2 className="mr-2 size-4 animate-spin" />
+                  <Loader2 data-icon="inline-start" className="animate-spin" />
                   Salvando...
                 </>
               ) : (

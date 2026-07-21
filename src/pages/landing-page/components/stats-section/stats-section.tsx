@@ -1,6 +1,7 @@
 import { motion } from 'framer-motion'
 import { ArrowUpRight, TrendingUp, Clock, Users, CalendarX } from 'lucide-react'
 import { Link } from 'react-router-dom'
+import { Card } from '@/components/ui/card'
 import { GridBackdrop } from '../shared/grid-backdrop/grid-backdrop'
 import { GradientHighlight } from '../shared/gradient-highlight/gradient-highlight'
 import { AvatarStack } from '../shared/avatar-stack/avatar-stack'
@@ -97,23 +98,25 @@ export function StatsSection() {
                 duration: 0.7,
                 ease: [0.16, 1, 0.3, 1],
               }}
-              className="lp-stats-featured col-span-1 sm:col-span-2"
+              className="col-span-1 sm:col-span-2"
             >
-              <div className="lp-stats-featured-glow" />
-              <div
-                className="lp-stats-featured-icon"
-                style={{ background: BRAND_MUTED }}
-              >
-                <CalendarX
-                  className="h-4 w-4"
-                  style={{ color: BRAND }}
-                  strokeWidth={2}
-                />
-              </div>
-              <p className="lp-stats-featured-value lp-serif">89%</p>
-              <p className="lp-stats-featured-label">
-                Redução de faltas com lembretes automáticos via WhatsApp
-              </p>
+              <Card className="lp-stats-featured">
+                <div className="lp-stats-featured-glow" />
+                <div
+                  className="lp-stats-featured-icon"
+                  style={{ background: BRAND_MUTED }}
+                >
+                  <CalendarX
+                    className="h-4 w-4"
+                    style={{ color: BRAND }}
+                    strokeWidth={2}
+                  />
+                </div>
+                <p className="lp-stats-featured-value lp-serif">89%</p>
+                <p className="lp-stats-featured-label">
+                  Redução de faltas com lembretes automáticos via WhatsApp
+                </p>
+              </Card>
             </motion.div>
 
             {STAT_CARDS.map((card, i) => (

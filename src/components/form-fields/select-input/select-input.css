@@ -1,0 +1,8 @@
+@reference "../../../global.css";
+
+@layer components {
+  .sli-trigger {
+    @apply h-[38px]! w-full;
+    @apply focus-visible:border-blue-600! focus-visible:ring-[3px]! focus-visible:ring-blue-600/18!;
+  }
+}

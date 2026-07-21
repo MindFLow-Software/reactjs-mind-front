@@ -1,22 +1,15 @@
 import { motion } from 'framer-motion'
 import { Link } from 'react-router-dom'
+import { ArrowRight, Shield, Clock, Brain } from 'lucide-react'
+import { Button } from '@/components/ui/button'
 import {
-  Brain,
-  InstagramLogo,
-  LinkedinLogo,
-  YoutubeLogo,
-} from '@phosphor-icons/react'
-import { ArrowRight, Shield, Clock } from 'lucide-react'
+  XIcon,
+  LinkedinIcon,
+  InstagramIcon,
+  YoutubeIcon,
+} from '@/components/brand-icon/brand-icon'
 import { BRAND } from '../../constants'
 import './footer.css'
-
-function XIcon({ size = 18 }: { size?: number }) {
-  return (
-    <svg width={size} height={size} viewBox="0 0 24 24" fill="currentColor">
-      <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-4.714-6.231-5.401 6.231H2.744l7.73-8.835L1.254 2.25H8.08l4.253 5.622L18.244 2.25zM17.083 20.026h1.833L7.084 4.126H5.117z" />
-    </svg>
-  )
-}
 
 const LINK_GROUPS = [
   {
@@ -59,9 +52,9 @@ const LINK_GROUPS = [
 ]
 
 const SOCIALS = [
-  { icon: LinkedinLogo, href: '#', label: 'LinkedIn', hoverColor: '#0A66C2' },
-  { icon: InstagramLogo, href: '#', label: 'Instagram', hoverColor: '#E1306C' },
-  { icon: YoutubeLogo, href: '#', label: 'YouTube', hoverColor: '#FF0000' },
+  { icon: LinkedinIcon, href: '#', label: 'LinkedIn', hoverColor: '#0A66C2' },
+  { icon: InstagramIcon, href: '#', label: 'Instagram', hoverColor: '#E1306C' },
+  { icon: YoutubeIcon, href: '#', label: 'YouTube', hoverColor: '#FF0000' },
 ]
 
 function LinkItem({
@@ -118,14 +111,20 @@ export function Footer() {
                   LGPD compliant
                 </span>
               </div>
-              <Link
-                to="/sign-up"
+              <Button
+                asChild
+                variant="ghost"
                 className="lp-ftr-cta-btn group"
                 style={{ color: BRAND }}
               >
-                Começar grátis
-                <ArrowRight className="h-4 w-4 transition-transform duration-200 group-hover:translate-x-1" />
-              </Link>
+                <Link to="/sign-up">
+                  Começar grátis
+                  <ArrowRight
+                    className="h-4 w-4 transition-transform duration-200 group-hover:translate-x-1"
+                    data-icon="inline-end"
+                  />
+                </Link>
+              </Button>
             </div>
           </div>
         </div>
@@ -139,7 +138,7 @@ export function Footer() {
               className="group mb-4 flex w-fit items-center gap-2 transition-opacity hover:opacity-80"
             >
               <div className="lp-ftr-logo-box">
-                <Brain size={16} weight="bold" className="text-white" />
+                <Brain size={16} strokeWidth={2.5} className="text-white" />
               </div>
               <span className="lp-ftr-logo-text lp-serif">MindFlush</span>
             </Link>

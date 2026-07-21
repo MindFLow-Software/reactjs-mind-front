@@ -46,7 +46,9 @@ function FeatStats({ context }: { context: IPsychologistPracticeContext }) {
       </div>
       <div className="ca-feat-stat">
         <span className="ca-feat-stat-label">PACIENTES ATIVOS</span>
-        <span className="ca-feat-stat-value">{context.activePatientsCount ?? '—'}</span>
+        <span className="ca-feat-stat-value">
+          {context.activePatientsCount ?? '—'}
+        </span>
       </div>
       <div className="ca-feat-stat">
         <span className="ca-feat-stat-label">SESSÕES NA SEMANA</span>
@@ -74,7 +76,7 @@ export function PracticeContextFeaturedCard({
         </span>
       </CardHeader>
 
-      <CardContent className="space-y-3 flex-1">
+      <CardContent className="flex flex-1 flex-col gap-3">
         <div>
           <div className="flex items-center gap-2 mb-1">
             <ContextStatusPill isActive={context.isActive} />

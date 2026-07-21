@@ -1,13 +1,10 @@
-'use client'
-
 import { useState } from 'react'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { Send, Loader2, Lightbulb, FileText, Paperclip } from 'lucide-react'
 
 import { Button } from '@/components/ui/button'
-import { Input } from '@/components/ui/input'
-import { Textarea } from '@/components/ui/textarea'
+import { Form } from '@/components/ui/form'
 import { Label } from '@/components/ui/label'
 import {
   DialogContent,
@@ -15,6 +12,9 @@ import {
   DialogTitle,
   DialogDescription,
 } from '@/components/ui/dialog'
+import { IconBox } from '@/components/icon-box/icon-box'
+import { TextInput } from '@/components/form-fields/text-input/text-input'
+import { TextareaInput } from '@/components/form-fields/textarea-input/textarea-input'
 import { cn } from '@/lib/utils'
 import {
   createSuggestionSchema,
@@ -35,17 +35,18 @@ export function CreateSuggestion({ onSuccess }: ICreateSuggestion) {
   const [files, setFiles] = useState<File[]>([])
   const [isSubmitted, setIsSubmitted] = useState(false)
 
+  const methods = useForm<CreateSuggestionSchema>({
+    resolver: zodResolver(createSuggestionSchema),
+    defaultValues: { description: '' },
+  })
+
   const {
-    register,
     handleSubmit,
     setValue,
     watch,
     reset,
     formState: { errors },
-  } = useForm<CreateSuggestionSchema>({
-    resolver: zodResolver(createSuggestionSchema),
-    defaultValues: { description: '' },
-  })
+  } = methods
 
   const { submitSuggestion, isSubmitting } = useCreateSuggestion({
     onSuccess: () => setIsSubmitted(true),
@@ -72,17 +73,15 @@ export function CreateSuggestion({ onSuccess }: ICreateSuggestion) {
   }
 
   return (
-    <DialogContent className="max-w-2xl p-0 gap-0 flex flex-col max-h-[90vh] sm:rounded-2xl overflow-hidden">
-      <DialogHeader className="px-6 pt-5 pb-4 border-b shrink-0">
+    <DialogContent className="flex max-h-[90vh] max-w-2xl flex-col gap-0 overflow-hidden p-0 sm:rounded-2xl">
+      <DialogHeader className="shrink-0 border-b px-6 pt-5 pb-4">
         <div className="flex items-center gap-3">
-          <div className="cs-header-icon">
-            <Lightbulb className="size-5 text-blue-600" />
-          </div>
+          <IconBox icon={Lightbulb} variant="primary" size="md" />
           <div>
-            <DialogTitle className="text-lg font-bold text-left">
+            <DialogTitle className="text-left text-lg font-bold">
               Nova sugestão
             </DialogTitle>
-            <DialogDescription className="text-sm text-left">
+            <DialogDescription className="text-left text-sm">
               Descreva sua ideia em detalhes — quanto mais clara, mais rápido a
               comunidade entende e vota.
             </DialogDescription>
@@ -90,143 +89,110 @@ export function CreateSuggestion({ onSuccess }: ICreateSuggestion) {
         </div>
       </DialogHeader>
 
-      <div className="flex-1 overflow-y-auto px-6 py-5 flex flex-col gap-6 min-h-0">
+      <div className="flex min-h-0 flex-1 flex-col gap-6 overflow-y-auto px-6 py-5">
         <div className="cs-hint">
           <div className="cs-hint-badge">
-            <span className="text-blue-600 dark:text-blue-400 text-[10px] font-extrabold">
-              i
-            </span>
+            <span className="text-[10px] font-extrabold text-primary">i</span>
           </div>
-          <div className="flex flex-col gap-2 min-w-0">
-            <p className="text-sm font-semibold text-blue-900 dark:text-blue-100">
+          <div className="flex min-w-0 flex-col gap-2">
+            <p className="text-sm font-semibold text-foreground">
               Antes de enviar, dê uma olhada no board
             </p>
-            <p className="text-sm text-blue-800 dark:text-blue-200 leading-relaxed">
+            <p className="text-sm leading-relaxed text-muted-foreground">
               Sua ideia pode já existir. Se encontrar algo parecido, prefira{' '}
               <strong>dar um voto</strong> na sugestão existente — assim ela
               ganha mais força.
             </p>
             <div className="cs-hint-pill">
-              <span className="text-blue-500 dark:text-blue-400 font-bold">
-                ✓
-              </span>
+              <span className="font-bold text-primary">✓</span>
               Mínimo de {SUGGESTION_DESCRIPTION_MIN} caracteres no detalhamento
             </div>
           </div>
         </div>
 
-        <form
-          id="create-suggestion-form"
-          onSubmit={handleSubmit(onSubmit)}
-          className="flex flex-col gap-6"
-        >
-          <div className="flex flex-col gap-4">
-            <div className="flex items-center gap-2">
-              <Lightbulb className="size-3.5 text-muted-foreground" />
-              <span className="cs-section-label">Classificação</span>
-            </div>
-
-            <div className="flex flex-col gap-1.5">
-              <Label
-                htmlFor="title"
-                className={cn(
-                  'text-sm font-medium',
-                  errors.title && 'text-red-500',
-                )}
-              >
-                Título <span className="text-red-500">*</span>
-              </Label>
-              <Input
-                id="title"
-                {...register('title')}
-                placeholder="Resuma sua ideia em uma frase curta"
-                maxLength={80}
-                className={cn(
-                  errors.title && 'border-red-500 focus-visible:ring-red-500',
-                )}
-              />
-              {errors.title && (
-                <p className="cs-error">{errors.title.message}</p>
-              )}
-            </div>
-
-            <div className="flex flex-col gap-2">
-              <Label
-                className={cn(
-                  'text-sm font-medium',
-                  errors.category && 'text-red-500',
-                )}
-              >
-                Categoria <span className="text-red-500">*</span>
-              </Label>
-              <SuggestionCategoryPicker
-                value={selectedCategory}
-                onChange={(value) =>
-                  setValue('category', value, { shouldValidate: true })
-                }
-              />
-              {errors.category && (
-                <p className="cs-error">{errors.category.message}</p>
-              )}
-            </div>
-          </div>
-
-          <div className="flex flex-col gap-3 pt-4 border-t">
-            <div className="flex items-center justify-between">
+        <Form {...methods}>
+          <form
+            id="create-suggestion-form"
+            onSubmit={handleSubmit(onSubmit)}
+            className="flex flex-col gap-6"
+          >
+            <div className="flex flex-col gap-4">
               <div className="flex items-center gap-2">
-                <FileText className="size-3.5 text-muted-foreground" />
-                <span className="cs-section-label">Detalhamento</span>
+                <Lightbulb className="size-3.5 text-muted-foreground" />
+                <span className="cs-section-label">Classificação</span>
               </div>
-              <span
-                className={cn(
-                  'cs-counter',
-                  descriptionValue.length < SUGGESTION_DESCRIPTION_MIN
-                    ? 'bg-red-50 dark:bg-red-950/30 text-red-600 dark:text-red-400'
-                    : 'bg-emerald-50 dark:bg-emerald-950/30 text-emerald-600 dark:text-emerald-400',
-                )}
-              >
-                {descriptionValue.length} / {SUGGESTION_DESCRIPTION_MIN}
-              </span>
-            </div>
-            <Textarea
-              {...register('description')}
-              className={cn(
-                'min-h-[120px] resize-none',
-                errors.description &&
-                  'border-red-500 focus-visible:ring-red-500',
-              )}
-              placeholder="Descreva detalhadamente o que você imaginou..."
-            />
-            {errors.description && (
-              <p className="cs-error">{errors.description.message}</p>
-            )}
-          </div>
 
-          <div className="flex flex-col gap-3 pt-4 border-t">
-            <div className="flex items-center gap-2">
-              <Paperclip className="size-3.5 text-muted-foreground" />
-              <span className="cs-section-label">Anexos</span>
+              <TextInput<CreateSuggestionSchema>
+                name="title"
+                label="Título"
+                placeholder="Resuma sua ideia em uma frase curta"
+              />
+
+              <div className="flex flex-col gap-2">
+                <Label
+                  className={cn(
+                    'text-sm font-medium',
+                    errors.category && 'text-destructive',
+                  )}
+                >
+                  Categoria <span className="text-destructive">*</span>
+                </Label>
+                <SuggestionCategoryPicker
+                  value={selectedCategory}
+                  onChange={(value) =>
+                    setValue('category', value, { shouldValidate: true })
+                  }
+                />
+                {errors.category && (
+                  <p className="cs-error">{errors.category.message}</p>
+                )}
+              </div>
             </div>
-            <SuggestionAttachments files={files} onFileChange={setFiles} />
-          </div>
-        </form>
+
+            <div className="flex flex-col gap-3 border-t pt-4">
+              <div className="flex items-center justify-between">
+                <div className="flex items-center gap-2">
+                  <FileText className="size-3.5 text-muted-foreground" />
+                  <span className="cs-section-label">Detalhamento</span>
+                </div>
+                <span
+                  className={cn(
+                    'cs-counter',
+                    descriptionValue.length < SUGGESTION_DESCRIPTION_MIN
+                      ? 'bg-destructive/10 text-destructive'
+                      : 'bg-success/10 text-success',
+                  )}
+                >
+                  {descriptionValue.length} / {SUGGESTION_DESCRIPTION_MIN}
+                </span>
+              </div>
+              <TextareaInput<CreateSuggestionSchema>
+                name="description"
+                placeholder="Descreva detalhadamente o que você imaginou..."
+                rows={5}
+              />
+            </div>
+
+            <div className="flex flex-col gap-3 border-t pt-4">
+              <div className="flex items-center gap-2">
+                <Paperclip className="size-3.5 text-muted-foreground" />
+                <span className="cs-section-label">Anexos</span>
+              </div>
+              <SuggestionAttachments files={files} onFileChange={setFiles} />
+            </div>
+          </form>
+        </Form>
       </div>
 
       <div className="cs-footer">
-        <div className="flex items-center gap-2 min-w-0">
-          <div className="size-2 rounded-full bg-emerald-500 shrink-0" />
-          <p className="text-xs text-muted-foreground truncate">
+        <div className="flex min-w-0 items-center gap-2">
+          <div className="size-2 shrink-0 rounded-full bg-success" />
+          <p className="truncate text-xs text-muted-foreground">
             Será analisada pela moderação antes de ir à votação
           </p>
         </div>
-        <div className="flex items-center gap-2 shrink-0">
-          <Button
-            type="button"
-            variant="ghost"
-            size="sm"
-            onClick={onSuccess}
-            className="cursor-pointer"
-          >
+        <div className="flex shrink-0 items-center gap-2">
+          <Button type="button" variant="ghost" size="sm" onClick={onSuccess}>
             Cancelar
           </Button>
           <Button
@@ -234,13 +200,13 @@ export function CreateSuggestion({ onSuccess }: ICreateSuggestion) {
             form="create-suggestion-form"
             disabled={isSubmitting}
             size="sm"
-            className="cursor-pointer gap-2 bg-blue-600 hover:bg-blue-700 rounded-lg font-semibold min-w-[160px]"
+            className="min-w-[160px]"
           >
             {isSubmitting ? (
-              <Loader2 className="h-4 w-4 animate-spin" />
+              <Loader2 data-icon="inline-start" className="animate-spin" />
             ) : (
               <>
-                <Send className="h-4 w-4" />
+                <Send data-icon="inline-start" />
                 Enviar sugestão
               </>
             )}

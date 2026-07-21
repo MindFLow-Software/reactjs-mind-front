@@ -1,47 +1,47 @@
-import { CircleCheck, CircleX, Clock } from 'lucide-react'
+import { CircleCheck, CircleX, Clock, type LucideIcon } from 'lucide-react'
 
+import { StatusBadge } from '@/components/badges/status-badge/status-badge'
+import type { IStatusBadgeTone } from '@/components/badges/status-badge/status-badge'
 import { fn } from '@/utils/fn'
-import { Badge } from '@/components/ui/badge'
 import { ClaimRequestStatus } from '@/types/claim/claim-request-status'
 import { translatedClaimRequestStatus } from '@/constants/translated-claim-request-status'
-
-import './claim-request-status-badge.css'
 
 type ClaimRequestStatusBadgeProps = {
   status: ClaimRequestStatus | null
 }
 
-const PENDING_CONFIG = {
+type IConfig = {
+  label: string
+  icon: LucideIcon
+  tone: IStatusBadgeTone
+}
+
+const PENDING_CONFIG: IConfig = {
   label: translatedClaimRequestStatus.PENDING,
-  icon: <Clock />,
-  className: 'cpr-status-pending',
+  icon: Clock,
+  tone: 'warning',
+}
+
+const CONFIG: Record<ClaimRequestStatus, IConfig> = {
+  [ClaimRequestStatus.APPROVED]: {
+    label: translatedClaimRequestStatus.APPROVED,
+    icon: CircleCheck,
+    tone: 'success',
+  },
+  [ClaimRequestStatus.PENDING]: PENDING_CONFIG,
+  [ClaimRequestStatus.REJECTED]: {
+    label: translatedClaimRequestStatus.REJECTED,
+    icon: CircleX,
+    tone: 'destructive',
+  },
 }
 
 export function ClaimRequestStatusBadge({
   status,
 }: ClaimRequestStatusBadgeProps) {
-  const config = fn.one(
-    status,
-    {
-      [ClaimRequestStatus.APPROVED]: {
-        label: translatedClaimRequestStatus.APPROVED,
-        icon: <CircleCheck />,
-        className: 'cpr-status-approved',
-      },
-      [ClaimRequestStatus.PENDING]: PENDING_CONFIG,
-      [ClaimRequestStatus.REJECTED]: {
-        label: translatedClaimRequestStatus.REJECTED,
-        icon: <CircleX />,
-        className: 'cpr-status-rejected',
-      },
-    },
-    PENDING_CONFIG,
-  )
+  const config = fn.one(status, CONFIG, PENDING_CONFIG)
 
   return (
-    <Badge variant="outline" className={config.className}>
-      {config.icon}
-      {config.label}
-    </Badge>
+    <StatusBadge tone={config.tone} icon={config.icon} label={config.label} />
   )
 }

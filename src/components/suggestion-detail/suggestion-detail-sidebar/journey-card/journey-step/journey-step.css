@@ -10,7 +10,7 @@
   }
 
   .sdm-timeline-node-done {
-    @apply border-emerald-500 bg-emerald-500 text-white;
+    @apply border-success bg-success text-white;
   }
 
   .sdm-timeline-node-current {

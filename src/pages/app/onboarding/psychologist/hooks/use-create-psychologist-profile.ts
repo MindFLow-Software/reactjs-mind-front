@@ -6,7 +6,9 @@ import type { CreatePsychologistProfileData } from '@/validators/psychologists/f
 import { useFormData } from '@/hooks/use-form-data'
 
 type IUseCreatePsychologistProfileReturn = {
-  createPsychologistProfileFn: (data: CreatePsychologistProfileData) => Promise<void>
+  createPsychologistProfileFn: (
+    data: CreatePsychologistProfileData,
+  ) => Promise<void>
   isCreatingPsychologistProfile: boolean
 }
 
@@ -14,17 +16,20 @@ export function useCreatePsychologistProfile(): IUseCreatePsychologistProfileRet
   const navigate = useNavigate()
   const { transform } = useFormData<CreatePsychologistProfileData>()
 
-  const { mutateAsync, isPending: isCreatingPsychologistProfile } = useApiMutation({
-    mutationFn: createPsychologistProfile,
-    successFallback: 'Perfil profissional criado.',
-    errorFallback: 'Não foi possível criar o perfil profissional.',
-    invalidateKeys: [queryKeys.me],
-    onSuccess: () => {
-      navigate('/profiles/context')
-    },
-  })
+  const { mutateAsync, isPending: isCreatingPsychologistProfile } =
+    useApiMutation({
+      mutationFn: createPsychologistProfile,
+      successFallback: 'Perfil profissional criado.',
+      errorFallback: 'Não foi possível criar o perfil profissional.',
+      invalidateKeys: [queryKeys.me],
+      onSuccess: () => {
+        navigate('/profiles/context')
+      },
+    })
 
-  async function createPsychologistProfileFn(data: CreatePsychologistProfileData) {
+  async function createPsychologistProfileFn(
+    data: CreatePsychologistProfileData,
+  ) {
     await mutateAsync(transform(data))
   }
 

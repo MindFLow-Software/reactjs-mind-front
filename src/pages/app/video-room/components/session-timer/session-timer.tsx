@@ -51,7 +51,7 @@ export function SessionTimer({ isActive }: SessionTimerProps) {
   if (!isActive) return null
 
   return (
-    <Card className={cn('vr-timer-card', isOvertime && 'bg-amber-50/20')}>
+    <Card className={cn('vr-timer-card', isOvertime && 'bg-warning/10')}>
       <div className="vr-timer-body">
         <div className="vr-timer-header">
           <div className="flex items-center gap-2">
@@ -59,7 +59,7 @@ export function SessionTimer({ isActive }: SessionTimerProps) {
               className={cn(
                 'vr-timer-status-icon',
                 isOvertime
-                  ? 'bg-amber-100 text-amber-600'
+                  ? 'bg-warning/15 text-warning'
                   : 'bg-primary/10 text-primary',
               )}
             >
@@ -73,7 +73,7 @@ export function SessionTimer({ isActive }: SessionTimerProps) {
             <div
               className={cn(
                 'w-1.5 h-1.5 rounded-full animate-pulse',
-                isOvertime ? 'bg-amber-500' : 'bg-emerald-500',
+                isOvertime ? 'bg-warning' : 'bg-success',
               )}
             />
             <span className="vr-timer-clock-time">
@@ -109,7 +109,7 @@ export function SessionTimer({ isActive }: SessionTimerProps) {
               strokeLinecap="round"
               className={cn(
                 'vr-timer-ring-progress',
-                isOvertime ? 'text-amber-500' : 'text-primary',
+                isOvertime ? 'text-warning' : 'text-primary',
               )}
             />
           </svg>
@@ -118,7 +118,7 @@ export function SessionTimer({ isActive }: SessionTimerProps) {
             <span
               className={cn(
                 'vr-timer-readout-value',
-                isOvertime ? 'text-amber-600' : 'text-foreground',
+                isOvertime ? 'text-warning' : 'text-foreground',
               )}
             >
               {formatTime(seconds)}
@@ -134,7 +134,7 @@ export function SessionTimer({ isActive }: SessionTimerProps) {
           <div className="vr-timer-progress-meta">
             <span className="flex items-center gap-1.5">
               <span
-                className={cn(isOvertime ? 'text-amber-600' : 'text-primary')}
+                className={cn(isOvertime ? 'text-warning' : 'text-primary')}
               >
                 {isOvertime ? '100%' : `${Math.floor(progress * 100)}%`}
               </span>
@@ -151,7 +151,7 @@ export function SessionTimer({ isActive }: SessionTimerProps) {
               className={cn(
                 'vr-timer-progress-fill',
                 isOvertime
-                  ? 'bg-amber-500'
+                  ? 'bg-warning'
                   : 'bg-primary shadow-[0_0_15px_rgba(var(--primary),0.3)]',
               )}
               style={{ width: `${progress * 100}%` }}

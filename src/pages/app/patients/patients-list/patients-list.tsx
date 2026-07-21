@@ -130,9 +130,10 @@ export function PatientsList() {
         </PatientsPageShell.Content>
       </PatientsPageShell>
 
-      <Dialog open={isRegisterOpen} onOpenChange={setIsRegisterOpen}>
-        <RegisterPatients />
-      </Dialog>
+      <RegisterPatients
+        open={isRegisterOpen}
+        onOpenChange={setIsRegisterOpen}
+      />
 
       <Dialog open={isInviteOpen} onOpenChange={setIsInviteOpen}>
         <GenerateInviteModal />

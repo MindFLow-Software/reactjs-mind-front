@@ -13,6 +13,8 @@
 - **D9 (2026-05-06):** Tabela de pacientes reduzida de 9 para 6 colunas (CPF/Gênero/Idade movidos para modal de detalhes) — densidade visual excessiva e scroll horizontal em viewports < 1280px
 - **D10 (2026-05-06):** Ações da tabela de pacientes agrupadas em DropdownMenu (3 pontos) em vez de 3 botões soltos — padrão mais limpo, escalável e consistente com padrões modernos de tabela
 - **D11 (2026-05-06):** Virtualização condicional ativada apenas quando `meta.total > 50` — evita overhead de `@tanstack/react-virtual` para listas pequenas sem perder o benefício para listas grandes
+- **D12 (2026-07-16):** UI Standardization Refactor — envelope de resposta da API (`success`/`data`/`error.code`) FORA de escopo desta feature; vira spec separada futura. Esta refatoração é somente camada de apresentação (shadcn + RHF + tokens), sem mudar payloads/schemas/rotas
+- **D13 (2026-07-16):** Landing-page e video-room INCLUÍDOS no escopo da UI Standardization Refactor — padroniza botões/cards/tipografia/ícones/dialogs, preservando layout de marketing e comportamento dos controles LiveKit
 
 ## Blockers
 
@@ -27,6 +29,7 @@
 - [ ] F10 Auth Redesign: implementar T1–T8 (spec em .specs/features/auth-redesign/)
 - [ ] F13 Patients List Redesign: implementar T1–T10 (spec em .specs/features/patients-list-redesign/)
 - [ ] Patients List Refactor (PLR-01–PLR-09): fix backend contract + clean orchestrator (spec em .specs/features/patients-list-refactor/)
+- [ ] **NOVO (2026-07-16):** UI Standardization Refactor (UISR-01–UISR-40): spec + **design.md** prontos em `.specs/features/ui-standardization-refactor/`. 28 stories de UI + 12 cross-cutting (UISR-29–40) encodam CLAUDE.md e `.specs/codebase/*` à risca; spec tem Compliance Matrix. Design define 4 camadas: L0 tokens (add `--success`/`--warning` + registrar `--color-gender-*` no global.css), L1 fundação (form-fields, IconBox, typography, ConfirmDialog, ModalShell/StepperDialog, badges, MetricCard, Button+data-icon, shadcn primitives), L2 migrações, L3 varreduras. Decisões-chave: field anatomy = FormField+Form (não Field/FieldError); currency via react-number-format; add `Normalizer.maskCpf/maskPhone`; date via `Time` (já existe). **spec + design + tasks TODOS prontos.** `tasks.md` = 35 tasks (TSK-01→35) com model+effort cada, Global DoD encodando UISR-29–40, traceability 40 reqs, validation tables. Sem framework de teste (TESTING.md) → Tests=none(manual), Gate=`pnpm.cmd exec tsc -b --noEmit`+eslint. Ordem: L0(TSK-01)→L1 fundação(TSK-02–18)→L2 migrações(TSK-19–31)→L3 sweeps(TSK-32–35). **Próximo passo: Execute (implement)** — começar por TSK-01
 
 ## Deferred Ideas
 

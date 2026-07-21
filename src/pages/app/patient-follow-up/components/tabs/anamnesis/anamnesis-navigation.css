@@ -30,7 +30,7 @@
   }
 
   .ph-anamnesis-navigation__item--active {
-    @apply border-l-emerald-500 bg-emerald-50/60 dark:bg-emerald-950/20 text-foreground;
+    @apply border-l-success bg-success/10 dark:bg-success/20 text-foreground;
   }
 
   /* Section label text */
@@ -48,7 +48,7 @@
   }
 
   .ph-anamnesis-navigation__item-count--filled {
-    @apply text-emerald-600 font-medium;
+    @apply text-success font-medium;
   }
 
   /* Footer progress */
@@ -65,7 +65,7 @@
   }
 
   .ph-anamnesis-navigation__progress-count {
-    @apply text-[10px] font-semibold text-emerald-600;
+    @apply text-[10px] font-semibold text-success;
   }
 
   .ph-anamnesis-navigation__progress-track {
@@ -73,6 +73,6 @@
   }
 
   .ph-anamnesis-navigation__progress-fill {
-    @apply h-full rounded-full bg-emerald-500 transition-all duration-300;
+    @apply h-full rounded-full bg-success transition-all duration-300;
   }
 }

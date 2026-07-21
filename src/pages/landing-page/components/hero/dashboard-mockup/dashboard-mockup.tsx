@@ -1,5 +1,6 @@
 import { motion } from 'framer-motion'
 import {
+  Brain,
   Calendar,
   CheckCircle,
   DollarSign,
@@ -8,7 +9,6 @@ import {
   Users,
   Video,
 } from 'lucide-react'
-import { Brain } from '@phosphor-icons/react'
 import { AvatarStack } from '../../shared/avatar-stack/avatar-stack'
 import { AVATARS, BRAND, BRAND_LIGHT, BRAND_MUTED } from '../../../constants'
 import './dashboard-mockup.css'
@@ -74,7 +74,7 @@ function MockupSidebar() {
               background: `linear-gradient(135deg, ${BRAND}, ${BRAND_LIGHT})`,
             }}
           >
-            <Brain size={16} weight="bold" className="text-white" />
+            <Brain size={16} strokeWidth={2.5} className="text-white" />
           </div>
           <div>
             <span className="text-[12px] font-bold text-slate-800 block leading-none">
@@ -215,7 +215,7 @@ function MockupChrome() {
           className="w-6 h-6 rounded-lg flex items-center justify-center"
           style={{ background: BRAND }}
         >
-          <Brain size={12} weight="bold" className="text-white" />
+          <Brain size={12} strokeWidth={2.5} className="text-white" />
         </div>
         <span className="text-[11px] font-semibold text-slate-600 hidden sm:inline">
           MindFlush

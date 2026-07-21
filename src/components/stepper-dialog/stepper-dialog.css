@@ -1,0 +1,67 @@
+@reference "../../global.css";
+
+@layer components {
+  .sd-content {
+    @apply flex max-h-[90vh] max-w-2xl flex-col gap-4 p-0;
+  }
+
+  .sd-header {
+    @apply flex items-center gap-3 border-b border-border p-6 pb-4;
+  }
+
+  .sd-heading {
+    @apply flex flex-col gap-0.5 text-left;
+  }
+
+  .sd-title {
+    @apply text-lg font-semibold text-foreground;
+  }
+
+  .sd-subtitle {
+    @apply text-sm text-muted-foreground;
+  }
+
+  .sd-steps {
+    @apply flex flex-wrap items-center gap-1 px-6;
+  }
+
+  .sd-tab {
+    @apply gap-2 text-muted-foreground;
+  }
+
+  .sd-tab-badge {
+    @apply inline-flex size-5 items-center justify-center rounded-full text-xs font-semibold;
+  }
+
+  .sd-tab-badge--active {
+    @apply bg-primary text-primary-foreground;
+  }
+
+  .sd-tab-badge--done {
+    @apply bg-success/15 text-success;
+  }
+
+  .sd-tab-badge--pending {
+    @apply bg-muted text-muted-foreground;
+  }
+
+  .sd-tab-required {
+    @apply text-destructive;
+  }
+
+  .sd-progress-track {
+    @apply mx-6 h-1 overflow-hidden rounded-full bg-muted;
+  }
+
+  .sd-progress-fill {
+    @apply h-full rounded-full bg-primary transition-all;
+  }
+
+  .sd-body {
+    @apply min-h-0 flex-1 overflow-y-auto px-6;
+  }
+
+  .sd-footer {
+    @apply border-t border-border p-6 pt-4;
+  }
+}

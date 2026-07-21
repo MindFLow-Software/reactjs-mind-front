@@ -1,10 +1,8 @@
-import { useEffect, useRef } from 'react'
-import { Filter, Plus, Search, Users, XCircle } from 'lucide-react'
-import { useForm } from 'react-hook-form'
+import { useState } from 'react'
+import { Filter, Plus, Users, XCircle } from 'lucide-react'
 import { useSearchParams } from 'react-router-dom'
 
 import { Button } from '@/components/ui/button'
-import { Input } from '@/components/ui/input'
 import {
   Select,
   SelectContent,
@@ -13,13 +11,12 @@ import {
   SelectValue,
   SelectGroup,
 } from '@/components/ui/select'
+import { SearchInput } from '@/components/form-fields/search-input/search-input'
 import { cn } from '@/lib/utils'
 
 import { ALL_STATUS_FILTER, APPOINTMENT_STATUS_FILTERS } from '../../constants'
 
 import './appointments-table-filters.css'
-
-const SEARCH_DEBOUNCE_MS = 400
 
 type IAppointmentsTableFilters = {
   onNewAppointment: () => void
@@ -29,34 +26,20 @@ export function AppointmentsTableFilters({
   onNewAppointment,
 }: IAppointmentsTableFilters) {
   const [searchParams, setSearchParams] = useSearchParams()
-  const isFirstRender = useRef(true)
 
   const name = searchParams.get('name') ?? ''
   const status = searchParams.get('status') ?? ALL_STATUS_FILTER
 
-  const { register, watch, setValue } = useForm({ values: { name } })
+  const [searchValue, setSearchValue] = useState(name)
 
-  const watchedName = watch('name')
-
-  useEffect(() => {
-    if (isFirstRender.current) {
-      isFirstRender.current = false
-      return
-    }
-
-    if (watchedName === name) return
-
-    const timeout = setTimeout(() => {
-      setSearchParams((state) => {
-        if (watchedName) state.set('name', watchedName)
-        else state.delete('name')
-        state.set('pageIndex', '1')
-        return state
-      })
-    }, SEARCH_DEBOUNCE_MS)
-
-    return () => clearTimeout(timeout)
-  }, [watchedName, name, setSearchParams])
+  function applySearch(value: string) {
+    setSearchParams((state) => {
+      if (value) state.set('name', value)
+      else state.delete('name')
+      state.set('pageIndex', '1')
+      return state
+    })
+  }
 
   function handleStatusChange(value: string) {
     setSearchParams((state) => {
@@ -68,7 +51,7 @@ export function AppointmentsTableFilters({
   }
 
   function handleClearFilters() {
-    setValue('name', '')
+    setSearchValue('')
     setSearchParams((state) => {
       state.delete('name')
       state.delete('status')
@@ -82,14 +65,13 @@ export function AppointmentsTableFilters({
   return (
     <div className="atf-root">
       <div className="atf-filters">
-        <div className="atf-search">
-          <Search className="atf-search-icon" />
-          <Input
-            {...register('name')}
-            placeholder="Buscar por paciente..."
-            className="atf-search-input"
-          />
-        </div>
+        <SearchInput
+          value={searchValue}
+          onChange={setSearchValue}
+          onDebouncedChange={applySearch}
+          placeholder="Buscar por paciente..."
+          className="atf-search-input"
+        />
 
         <Select value={status} onValueChange={handleStatusChange}>
           <SelectTrigger className="atf-status-trigger">
@@ -103,7 +85,7 @@ export function AppointmentsTableFilters({
             <SelectGroup>
               <SelectItem value={ALL_STATUS_FILTER} className="atf-status-item">
                 <div className="atf-status-option">
-                  <Users className="size-4 text-slate-500" />
+                  <Users className="size-4 text-muted-foreground" />
                   <span className="atf-status-label">Todos os status</span>
                 </div>
               </SelectItem>
@@ -134,7 +116,7 @@ export function AppointmentsTableFilters({
             onClick={handleClearFilters}
             className="atf-clear-btn"
           >
-            <XCircle className="size-4" />
+            <XCircle data-icon="inline-start" />
             Limpar filtros
           </Button>
         )}
@@ -142,7 +124,7 @@ export function AppointmentsTableFilters({
 
       <div className="flex items-center">
         <Button onClick={onNewAppointment} className="atf-new-btn">
-          <Plus className="size-4" />
+          <Plus data-icon="inline-start" />
           Nova Consulta
         </Button>
       </div>

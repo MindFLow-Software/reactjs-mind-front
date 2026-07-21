@@ -14,7 +14,6 @@ import type { ICreatePracticeContextBody } from '@/types/psychologist/create-pra
 import {
   Form,
   FormControl,
-  FormDescription,
   FormField,
   FormItem,
   FormLabel,
@@ -27,15 +26,17 @@ import {
   InputGroupInput,
 } from '@/components/ui/input-group'
 
-import { Input } from '@/components/ui/input'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardFooter, CardHeader } from '@/components/ui/card'
+import { TextInput } from '@/components/form-fields/text-input/text-input'
+import { TimeInput } from '@/components/form-fields/time-input/time-input'
 
 import {
   createPsychologistPracticeContextSchema,
   type ICreatePsychologistPracticeContext,
 } from '@/validators/psychologists/form/create-practice-context-schema'
 import { TitleIcon } from '@/components/title-icon/title-icon'
+import { PracticeContextHeader } from '../practice-context-header/practice-context-header'
 import { SessionFormatToggle } from '../session-format-toggle/session-format-toggle'
 
 const SESSION_FORMAT_OPTIONS = [
@@ -79,11 +80,19 @@ export function CreateIndividualContext({
   })
 
   return (
-    <div className="pc-cfg-wrap">
-      <button type="button" onClick={onGoBack} className="pc-switch">
-        <Repeat2 size={16} />
+    <>
+      <PracticeContextHeader />
+
+      <Button
+        type="button"
+        variant="ghost"
+        size="sm"
+        onClick={onGoBack}
+        className="pc-switch"
+      >
+        <Repeat2 data-icon="inline-start" />
         Trocar contexto
-      </button>
+      </Button>
 
       <Card className="pc-cfg-card">
         <Form {...form}>
@@ -102,25 +111,11 @@ export function CreateIndividualContext({
 
             <CardContent className="pc-cfg-body">
               <div className="pc-row2">
-                <FormField
-                  control={form.control}
+                <TextInput<ICreatePsychologistPracticeContext>
                   name="nickname"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Apelido</FormLabel>
-                      <FormControl>
-                        <Input
-                          {...field}
-                          placeholder="Digite seu apelido"
-                          className="pc-input"
-                        />
-                      </FormControl>
-                      <FormDescription className="pc-field-hint">
-                        Apresentado aos seus pacientes.
-                      </FormDescription>
-                      <FormMessage />
-                    </FormItem>
-                  )}
+                  label="Apelido"
+                  placeholder="Digite seu apelido"
+                  description="Apresentado aos seus pacientes."
                 />
 
                 <FormField
@@ -160,49 +155,26 @@ export function CreateIndividualContext({
               />
 
               <div className="pc-row2">
-                <FormField
-                  control={form.control}
+                <TimeInput<ICreatePsychologistPracticeContext>
                   name="openFrom"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Horário de abertura</FormLabel>
-                      <FormControl>
-                        <Input {...field} type="time" className="pc-input" />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
+                  label="Horário de abertura"
                 />
-
-                <FormField
-                  control={form.control}
+                <TimeInput<ICreatePsychologistPracticeContext>
                   name="closeAt"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Horário de fechamento</FormLabel>
-                      <FormControl>
-                        <Input {...field} type="time" className="pc-input" />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
+                  label="Horário de fechamento"
                 />
               </div>
             </CardContent>
 
             <CardFooter className="pc-cfg-foot">
-              <Button
-                type="submit"
-                disabled={isSubmitting}
-                className="gap-2 bg-blue-600 text-white hover:bg-blue-700"
-              >
+              <Button type="submit" disabled={isSubmitting}>
                 Finalizar
-                <CircleCheck size={16} />
+                <CircleCheck data-icon="inline-end" />
               </Button>
             </CardFooter>
           </form>
         </Form>
       </Card>
-    </div>
+    </>
   )
 }

@@ -14,8 +14,7 @@ import {
   TooltipTrigger,
 } from '@/components/ui/tooltip'
 import { UserAvatar } from '@/components/user-avatar/user-avatar'
-import { StatusBadge } from '@/components/ui/status-badge'
-import { AccountStatus } from '@/types/auth/account-status'
+import { StatusBadge } from '@/components/badges/status-badge/status-badge'
 import { PatientProfileStatus } from '@/types/patient-profile/patient-profile-status'
 import { GENDER_CONFIG } from '@/constants/gender-config'
 import type { IPatientProfile } from '@/types/patient-profile/patient-profile'
@@ -68,11 +67,9 @@ export function PatientFollowUpSidebar({ patient }: IPatientFollowUpSidebar) {
             />
 
             <StatusBadge
-              size="sm"
               className="pfu-sidebar-status"
-              status={
-                isPatientActive ? AccountStatus.ACTIVE : AccountStatus.BLOCKED
-              }
+              tone={isPatientActive ? 'success' : 'destructive'}
+              label={isPatientActive ? 'Ativo' : 'Inativo'}
             />
           </div>
 

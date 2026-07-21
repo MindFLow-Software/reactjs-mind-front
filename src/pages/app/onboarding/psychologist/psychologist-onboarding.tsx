@@ -1,7 +1,6 @@
 import './psychologist-onboarding.css'
 import { useEffect, useMemo, useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
-import { useQuery } from '@tanstack/react-query'
 import { FormProvider, useForm, type Resolver } from 'react-hook-form'
 import { ArrowLeft, ArrowRight, Brain, Sparkles } from 'lucide-react'
 
@@ -18,10 +17,10 @@ import {
   CardDescription,
 } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
+import { IconBox } from '@/components/icon-box/icon-box'
 
 import { Expertise, Honorific } from '@/types/shared/enums'
-import { queryKeys } from '@/constants/query-keys'
-import { getProfile } from '@/api/auth/get-profile'
+import { useAuth } from '@/hooks/use-auth'
 import { ProfessionalIdentityFormStep } from './steps/professional-identity-form-step/professional-identity-form-step'
 import { createPsychologistProfileSchema } from '@/validators/psychologists/form/create-psychologist-profile-schema'
 import { useCreatePsychologistProfile } from './hooks/use-create-psychologist-profile'
@@ -40,10 +39,7 @@ const STEPS = [
 export function PsychologistOnboardingPage() {
   const navigate = useNavigate()
 
-  const { data: me } = useQuery({
-    queryKey: queryKeys.me,
-    queryFn: getProfile,
-  })
+  const { profile: me } = useAuth()
 
   const methods = useForm<ICreatePsychologistProfile>({
     resolver: zodResolver(
@@ -167,10 +163,8 @@ export function PsychologistOnboardingPage() {
               Passo {formattedCurrentStep} de{' '}
               {String(stepsLength).padStart(2, '0')}
             </CardAction>
-            <CardTitle className="flex items-center gap-2 text-2xl mb-0">
-              <div className="psob-icon-badge">
-                <Brain size={24} />
-              </div>
+            <CardTitle className="mb-0 flex items-center gap-2 text-2xl">
+              <IconBox icon={Brain} variant="primary" size="lg" />
               Sua identidade profissional
             </CardTitle>
             <CardDescription className="mt-0">
@@ -187,19 +181,14 @@ export function PsychologistOnboardingPage() {
                 atuação.
               </p>
               {isLastStep ? (
-                <Button disabled={isDisabled} type="submit" className="gap-2">
+                <Button disabled={isDisabled} type="submit">
                   Finalizar
-                  <ArrowRight size={14} />
+                  <ArrowRight data-icon="inline-end" />
                 </Button>
               ) : (
-                <Button
-                  disabled={isDisabled}
-                  type="button"
-                  onClick={nextStep}
-                  className="gap-2"
-                >
+                <Button disabled={isDisabled} type="button" onClick={nextStep}>
                   Continuar
-                  <ArrowRight size={14} />
+                  <ArrowRight data-icon="inline-end" />
                 </Button>
               )}
             </CardFooter>

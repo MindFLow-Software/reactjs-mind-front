@@ -1,0 +1,7 @@
+@reference "../../../../global.css";
+
+@layer components {
+  .fc-root {
+    @apply rounded-full px-3;
+  }
+}

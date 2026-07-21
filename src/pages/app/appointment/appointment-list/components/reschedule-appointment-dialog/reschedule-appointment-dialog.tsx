@@ -1,5 +1,4 @@
 import { useState } from 'react'
-import { ptBR } from 'date-fns/locale'
 import { CalendarClock, Loader2 } from 'lucide-react'
 
 import { Button } from '@/components/ui/button'
@@ -59,7 +58,7 @@ export function RescheduleAppointmentDialog({
             mode="single"
             selected={selectedDate}
             onSelect={setSelectedDate}
-            locale={ptBR}
+            locale={Time.locale}
             disabled={{ before: Time.now() }}
           />
         </div>

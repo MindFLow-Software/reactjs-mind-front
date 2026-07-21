@@ -29,7 +29,10 @@ export function ResumeFrequencyChart() {
               Sessões nos últimos 6 meses
             </CardDescription>
           </div>
-          <Button variant="link" className="text-[11px] font-medium text-blue-600 hover:underline">
+          <Button
+            variant="link"
+            className="text-[11px] font-medium text-blue-600 hover:underline"
+          >
             Ver detalhes
           </Button>
         </div>

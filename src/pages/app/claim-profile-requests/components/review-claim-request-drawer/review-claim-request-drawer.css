@@ -2,11 +2,11 @@
 
 @layer components {
   .cpr-reject-button {
-    @apply text-red-500 hover:text-red-500;
-    @apply dark:hover:bg-red-950/30;
+    @apply text-destructive hover:text-destructive;
+    @apply dark:hover:bg-destructive/20;
   }
 
   .cpr-approve-button {
-    @apply bg-green-700 text-white hover:bg-green-800 hover:text-white;
+    @apply bg-success text-white hover:bg-success/90 hover:text-white;
   }
 }

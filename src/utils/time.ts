@@ -17,6 +17,8 @@ import {
 import { Normalizer } from './normalizer'
 
 export class Time {
+  static locale = ptBR
+
   static now() {
     return startOfDay(new Date())
   }
@@ -190,6 +192,13 @@ export class Time {
     return format(parsed, "d 'de' MMM 'às' HH:mm", { locale: ptBR })
   }
 
+  static toDayLongMonthAtTime(date: Date | string | null | undefined) {
+    const parsed = Time.parse(date)
+    if (!parsed) return ''
+
+    return format(parsed, "dd 'de' MMMM 'às' HH:mm", { locale: ptBR })
+  }
+
   static toDayMonthAbbrev(date: Date | string | null | undefined) {
     const parsed = Time.parse(date)
     if (!parsed) return ''
@@ -252,6 +261,14 @@ export class Time {
     if (digits.length <= 4) return `${digits.slice(0, 2)}/${digits.slice(2)}`
 
     return `${digits.slice(0, 2)}/${digits.slice(2, 4)}/${digits.slice(4)}`
+  }
+
+  static maskTimeInput(value: string) {
+    const digits = Normalizer.digits(value).slice(0, 4)
+
+    if (digits.length <= 2) return digits
+
+    return `${digits.slice(0, 2)}:${digits.slice(2)}`
   }
 
   static textToDate(value: string) {

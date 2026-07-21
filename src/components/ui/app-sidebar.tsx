@@ -3,6 +3,7 @@
 import * as React from 'react'
 
 import { useAuth } from '@/hooks/use-auth'
+import { PlatformRole } from '@/types/shared/enums'
 
 import {
   Home,
@@ -33,7 +34,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
   const { activePracticeContextId } = useActivePracticeContextStore()
 
   const filteredNavMain = React.useMemo(() => {
-    const isAdmin = profile?.platformRole === 'ADMIN'
+    const isAdmin = profile?.platformRole === PlatformRole.ADMIN
     const isLoggedAsPsychologist = Boolean(activePracticeContextId)
 
     // 1. Itens que AMBOS veem (mas com URLs diferentes no dashboard)
@@ -154,7 +155,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
       email: '...',
     }
 
-    const isRoot = profile?.platformRole === 'ADMIN'
+    const isRoot = profile?.platformRole === PlatformRole.ADMIN
 
     return [
       {

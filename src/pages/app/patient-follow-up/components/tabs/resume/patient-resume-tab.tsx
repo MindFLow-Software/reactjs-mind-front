@@ -14,7 +14,7 @@ export function PatientResumeTab() {
   return (
     <div className="prt-root">
       <ResumeStatCards />
-      
+
       <div className="flex gap-4">
         <SmartResume />
         <RecentDocuments />

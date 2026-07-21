@@ -1,6 +1,6 @@
 'use client'
 
-import { useMemo } from 'react'
+import { useMemo, useState } from 'react'
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import { format, parseISO, isToday, differenceInMinutes } from 'date-fns'
 import { ptBR } from 'date-fns/locale'
@@ -18,6 +18,7 @@ import {
   SelectGroup,
   SelectLabel,
 } from '@/components/ui/select'
+import { ConfirmDialog } from '@/components/confirm-dialog/confirm-dialog'
 
 import { startAppointmentSession } from '@/api/appointments/start-appointment-session'
 import { finishAppointmentSession } from '@/api/appointments/finish-appointment-session'
@@ -49,6 +50,8 @@ export function AppointmentAddForm({
   const { currentAppointmentId, currentSessionId, isSessionActive, content } =
     session
   const { onSelectPatient, onSessionStarted, onSessionFinished } = handlers
+
+  const [isFinishConfirmOpen, setIsFinishConfirmOpen] = useState(false)
 
   const queryClient = useQueryClient()
 
@@ -108,15 +111,25 @@ export function AppointmentAddForm({
     onError: () => toast.error('Erro ao finalizar atendimento'),
   })
 
-  const handleAction = async () => {
+  const handleFinish = async () => {
+    if (!currentSessionId) {
+      setIsFinishConfirmOpen(false)
+      return toast.error('ID da sessão não encontrado')
+    }
     try {
-      if (isSessionActive) {
-        if (!currentSessionId) return toast.error('ID da sessão não encontrado')
-        await finishSessionFn({ sessionId: currentSessionId, content }) // ✅ Enviando 'content'
-      } else {
-        if (!currentAppointmentId) return toast.error('Selecione um paciente')
-        await startSessionFn({ appointmentId: currentAppointmentId })
-      }
+      await finishSessionFn({ sessionId: currentSessionId, content })
+      setIsFinishConfirmOpen(false)
+    } catch {}
+  }
+
+  const handleAction = async () => {
+    if (isSessionActive) {
+      setIsFinishConfirmOpen(true)
+      return
+    }
+    if (!currentAppointmentId) return toast.error('Selecione um paciente')
+    try {
+      await startSessionFn({ appointmentId: currentAppointmentId })
     } catch {}
   }
 
@@ -217,12 +230,10 @@ export function AppointmentAddForm({
 
         {!isSessionActive && currentAppointmentId && !startStatus.canStart && (
           <div className="vr-add-form-warning">
-            <Clock className="w-4 h-4 text-amber-600 shrink-0" />
+            <Clock className="w-4 h-4 text-warning shrink-0" />
             <div className="text-sm">
-              <p className="font-medium text-amber-900">
-                {startStatus.message}
-              </p>
-              <p className="text-xs text-amber-700/80">
+              <p className="font-medium text-warning">{startStatus.message}</p>
+              <p className="text-xs text-warning/80">
                 Liberação 10 minutos antes do horário
               </p>
             </div>
@@ -238,13 +249,24 @@ export function AppointmentAddForm({
           }
           className={`cursor-pointer w-full h-11 font-medium transition-all ${
             isSessionActive
-              ? 'bg-green-600 hover:bg-green-700 text-white'
+              ? 'bg-success hover:bg-success/90 text-white'
               : 'shadow-sm'
           }`}
         >
           {renderActionLabel()}
         </Button>
       </CardContent>
+
+      <ConfirmDialog
+        open={isFinishConfirmOpen}
+        onOpenChange={setIsFinishConfirmOpen}
+        variant="warning"
+        title="Finalizar atendimento?"
+        description="A sessão será encerrada e o prontuário será salvo com as anotações atuais."
+        confirmLabel="Finalizar"
+        pending={isFinishing}
+        onConfirm={handleFinish}
+      />
     </Card>
   )
 }

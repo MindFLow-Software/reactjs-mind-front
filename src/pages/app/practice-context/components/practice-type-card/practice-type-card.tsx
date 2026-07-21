@@ -39,10 +39,7 @@ export function PracticeTypeCard({ option }: IPracticeTypeCard) {
   } = option
 
   return (
-    <button
-      type="button"
-      onClick={onContinue}
-    >
+    <button type="button" onClick={onContinue}>
       <Card className={cn('pc-tcard', `pc-tcard--${variant}`)}>
         <CardHeader className="pc-tcard-header">
           <TitleIcon variant={VARIANT_ICON[variant]}>

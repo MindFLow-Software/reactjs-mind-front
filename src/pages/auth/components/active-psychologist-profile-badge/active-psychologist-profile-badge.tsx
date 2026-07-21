@@ -23,7 +23,7 @@ export function ActivePsychologistProfileBadge() {
 
   return (
     <div className="flex items-center gap-2 my-4 w-fit rounded-lg border border-border bg-card px-12 py-1 shadow-sm">
-      <ShieldCheck size={14} className="text-green-600 dark:text-green-400" />
+      <ShieldCheck size={14} className="text-success" />
       <p className="text-xs">
         <span className="text-muted-foreground">Utilizando Perfil</span> ·{' '}
         <span className="font-medium">

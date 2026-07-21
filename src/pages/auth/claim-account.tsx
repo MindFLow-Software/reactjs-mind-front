@@ -1,5 +1,5 @@
 import { useMutation } from '@tanstack/react-query'
-import { Controller, useForm } from 'react-hook-form'
+import { useForm } from 'react-hook-form'
 import { Lock } from 'lucide-react'
 
 import { zodResolver } from '@hookform/resolvers/zod'
@@ -14,9 +14,8 @@ import {
 } from '@/components/ui/card'
 
 import { Form } from '@/components/ui/form'
-import { Input } from '@/components/ui/input'
 import { Button } from '@/components/ui/button'
-import { Field, FieldGroup, FieldLabel, FieldSet } from '@/components/ui/field'
+import { EmailInput } from '@/components/form-fields/email-input/email-input'
 import {
   claimAccountSchema,
   type ClaimAccountData,
@@ -31,7 +30,7 @@ export function ClaimAccountPage() {
     },
   })
 
-  const { control, handleSubmit } = methods
+  const { handleSubmit } = methods
 
   const { mutateAsync, isPending: isSendingEmail } = useMutation<
     void,
@@ -55,7 +54,7 @@ export function ClaimAccountPage() {
           <div className="claim-icon-badge bg-linear-to-br from-(--auth-navy-800) to-(--auth-navy-600)">
             <Lock size={24} className="text-white" />
           </div>
-          <CardTitle className="text-xl m-0">Finalizar Cadastro</CardTitle>
+          <CardTitle className="m-0 text-xl">Finalizar Cadastro</CardTitle>
         </div>
         <CardDescription className="text-sm">
           Se você já foi cadastrado por um psicólogo anteriormente, podemos
@@ -68,27 +67,14 @@ export function ClaimAccountPage() {
           onSubmit={handleSubmit(handleSendClaimAccountEmail)}
         >
           <CardContent>
-            <FieldSet>
-              <FieldGroup>
-                <Controller
-                  name="email"
-                  control={control}
-                  render={({ field }) => (
-                    <Field className="gap-1 ">
-                      <FieldLabel>Email</FieldLabel>
-                      <Input
-                        {...field}
-                        disabled={isDisabled}
-                        placeholder="ex: seuEmail@mindflush.com"
-                      />
-                    </Field>
-                  )}
-                />
-              </FieldGroup>
-            </FieldSet>
+            <EmailInput<ClaimAccountData>
+              name="email"
+              label="Email"
+              placeholder="ex: seuEmail@mindflush.com"
+              disabled={isDisabled}
+            />
           </CardContent>
           <CardFooter className="justify-end">
-            <CardDescription></CardDescription>
             <Button type="submit" disabled={isDisabled}>
               Enviar Email
             </Button>

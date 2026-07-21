@@ -11,15 +11,13 @@ type IUseUpdatePsychologistProfileReturn = {
 export function useUpdatePsychologistProfile(): IUseUpdatePsychologistProfileReturn {
   const { transform } = useFormData<UpdatePsychologistData>()
 
-  const {
-    mutateAsync,
-    isPending: isUpdatingPsychologistProfile,
-  } = useApiMutation({
-    mutationFn: updatePsychologistProfile,
-    successFallback: 'Perfil atualizado!',
-    errorFallback: 'Erro ao atualizar perfil.',
-    invalidateKeys: [['profile', 'psychologist-profile']],
-  })
+  const { mutateAsync, isPending: isUpdatingPsychologistProfile } =
+    useApiMutation({
+      mutationFn: updatePsychologistProfile,
+      successFallback: 'Perfil atualizado!',
+      errorFallback: 'Erro ao atualizar perfil.',
+      invalidateKeys: [['profile', 'psychologist-profile']],
+    })
 
   async function updateProfileFn(data: UpdatePsychologistData) {
     await mutateAsync(transform(data))
@@ -27,6 +25,6 @@ export function useUpdatePsychologistProfile(): IUseUpdatePsychologistProfileRet
 
   return {
     updateProfileFn,
-    isUpdatingPsychologistProfile
+    isUpdatingPsychologistProfile,
   }
 }

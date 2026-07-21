@@ -11,6 +11,7 @@ import {
 } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { FieldSet } from '@/components/ui/field'
+import { IconBox } from '@/components/icon-box/icon-box'
 import './suggestion-attachments.css'
 
 type ISuggestionAttachments = {
@@ -72,9 +73,7 @@ export const SuggestionAttachments = memo(
         <FieldSet className="border-none p-0 shadow-none">
           {files.length === 0 ? (
             <div className="cs-dropzone" onClick={triggerFileInput}>
-              <div className="cs-dropzone-icon">
-                <CloudUpload className="size-6" />
-              </div>
+              <IconBox icon={CloudUpload} variant="primary" size="md" />
               <div>
                 <p className="text-[13.5px] font-semibold text-foreground">
                   Arraste arquivos ou clique para anexar

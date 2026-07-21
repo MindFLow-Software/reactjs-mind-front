@@ -1,8 +1,8 @@
 import { useState, useEffect } from 'react'
 import { Link } from 'react-router-dom'
-import { Brain } from '@phosphor-icons/react'
-import { List, X, ArrowRight } from 'lucide-react'
+import { List, X, ArrowRight, Brain } from 'lucide-react'
 import { motion, AnimatePresence } from 'framer-motion'
+import { Button } from '@/components/ui/button'
 import { cn } from '@/lib/utils'
 import './header.css'
 
@@ -41,7 +41,7 @@ export function Header() {
 
           <div className="relative z-10">
             <Link to="/" className="flex items-center gap-2 px-3.5 py-1.5">
-              <Brain size={18} weight="bold" className="text-blue-700" />
+              <Brain size={18} strokeWidth={2.5} className="text-primary" />
               <span className="text-[15px] font-semibold tracking-wide text-blue-700">
                 MindFlush
               </span>
@@ -62,19 +62,25 @@ export function Header() {
           </nav>
 
           <div className="relative z-10 ml-2 flex items-center gap-2">
-            <Link to="/sign-in" className="hidden sm:inline-flex">
-              <button className="lp-hdr-btn-outline">Entrar</button>
-            </Link>
+            <Button
+              asChild
+              variant="ghost"
+              className="lp-hdr-btn-outline hidden sm:inline-flex"
+            >
+              <Link to="/sign-in">Entrar</Link>
+            </Button>
 
-            <Link to="/sign-up">
-              <button className="lp-hdr-btn-primary">
+            <Button asChild variant="ghost" className="lp-hdr-btn-primary">
+              <Link to="/sign-up">
                 Começar Grátis
-                <ArrowRight className="h-3 w-3" />
-              </button>
-            </Link>
+                <ArrowRight className="size-3" data-icon="inline-end" />
+              </Link>
+            </Button>
 
-            <button
+            <Button
               type="button"
+              variant="ghost"
+              size="icon"
               aria-label={isMenuOpen ? 'Fechar menu' : 'Abrir menu'}
               aria-expanded={isMenuOpen}
               onClick={() => setIsMenuOpen((prev) => !prev)}
@@ -85,7 +91,7 @@ export function Header() {
               ) : (
                 <List className="h-4 w-4" />
               )}
-            </button>
+            </Button>
           </div>
         </div>
 
@@ -115,15 +121,25 @@ export function Header() {
               </nav>
 
               <div className="mt-3 flex flex-col gap-2 border-t border-blue-100 pt-3">
-                <Link to="/sign-in" onClick={() => setIsMenuOpen(false)}>
-                  <button className="lp-hdr-btn-outline-mobile">Entrar</button>
-                </Link>
-                <Link to="/sign-up" onClick={() => setIsMenuOpen(false)}>
-                  <button className="lp-hdr-btn-primary-mobile">
+                <Button
+                  asChild
+                  variant="ghost"
+                  className="lp-hdr-btn-outline-mobile"
+                >
+                  <Link to="/sign-in" onClick={() => setIsMenuOpen(false)}>
+                    Entrar
+                  </Link>
+                </Button>
+                <Button
+                  asChild
+                  variant="ghost"
+                  className="lp-hdr-btn-primary-mobile"
+                >
+                  <Link to="/sign-up" onClick={() => setIsMenuOpen(false)}>
                     Começar Grátis
-                    <ArrowRight className="h-4 w-4" />
-                  </button>
-                </Link>
+                    <ArrowRight className="h-4 w-4" data-icon="inline-end" />
+                  </Link>
+                </Button>
               </div>
             </motion.div>
           )}

@@ -1,15 +1,7 @@
 import { useState } from 'react'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
-import { ptBR } from 'date-fns/locale'
-import {
-  CalendarIcon,
-  Clock,
-  FileText,
-  Loader2,
-  Stethoscope,
-  User,
-} from 'lucide-react'
+import { CalendarIcon, Clock, Loader2, User } from 'lucide-react'
 
 import {
   DialogContent,
@@ -19,7 +11,6 @@ import {
 } from '@/components/ui/dialog'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
-import { Textarea } from '@/components/ui/textarea'
 import {
   Select,
   SelectContent,
@@ -42,7 +33,8 @@ import {
   FormControl,
   FormMessage,
 } from '@/components/ui/form'
-import { cn } from '@/lib/utils'
+import { TextInput } from '@/components/form-fields/text-input/text-input'
+import { TextareaInput } from '@/components/form-fields/textarea-input/textarea-input'
 import { Time } from '@/utils/time'
 import { AppointmentStatus } from '@/types/appointment/appointment-status'
 
@@ -54,9 +46,6 @@ import { usePatientLookup } from '../../hooks/use-patient-lookup'
 import { useRegisterAppointment } from '../../hooks/use-register-appointment'
 
 import './register-appointment.css'
-
-const MAX_CONTENT_LENGTH = 200
-const MAX_DIAGNOSIS_LENGTH = 90
 
 type IRegisterAppointment = {
   initialDate?: Date
@@ -100,14 +89,11 @@ export function RegisterAppointment({
     control,
     handleSubmit,
     setValue,
-    watch,
     formState: { isValid, errors },
   } = form
 
   const { mutateAsync: registerAppointmentFn, isPending } =
     useRegisterAppointment({ onSuccess })
-
-  const contentLength = watch('content')?.length ?? 0
 
   function renderPatientOptions() {
     if (isLoadingPatients) {
@@ -179,11 +165,8 @@ export function RegisterAppointment({
                   <Select value={field.value} onValueChange={field.onChange}>
                     <SelectTrigger
                       id="patientProfileId"
-                      className={cn(
-                        'ra-input w-full',
-                        fieldState.invalid &&
-                          'border-red-600 focus-visible:ring-red-600/20',
-                      )}
+                      aria-invalid={fieldState.invalid}
+                      className="ra-input w-full"
                     >
                       <SelectValue
                         placeholder={
@@ -203,31 +186,10 @@ export function RegisterAppointment({
             )}
           />
 
-          <FormField
-            control={control}
+          <TextInput<CreateAppointmentData>
             name="diagnosis"
-            render={({ field, fieldState }) => (
-              <FormItem>
-                <FormLabel className="ra-field-label">
-                  <Stethoscope className="h-4 w-4 text-muted-foreground" />
-                  Tema da Sessão
-                </FormLabel>
-                <FormControl>
-                  <Input
-                    {...field}
-                    id="diagnosis"
-                    placeholder="ex: Ansiedade generalizada"
-                    maxLength={MAX_DIAGNOSIS_LENGTH}
-                    className={cn(
-                      'ra-input',
-                      fieldState.invalid &&
-                        'border-red-600 focus-visible:ring-red-600/20',
-                    )}
-                  />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
+            label="Tema da Sessão"
+            placeholder="ex: Ansiedade generalizada"
           />
 
           <div className="ra-grid-2">
@@ -241,7 +203,7 @@ export function RegisterAppointment({
                   <Button
                     type="button"
                     variant="outline"
-                    className="ra-input w-full justify-start font-normal bg-transparent cursor-pointer"
+                    className="ra-input w-full cursor-pointer justify-start bg-transparent font-normal"
                   >
                     {pickerDate ? (
                       Time.toDayLongMonthYear(pickerDate)
@@ -256,7 +218,7 @@ export function RegisterAppointment({
                     selected={pickerDate}
                     onSelect={handleDateSelect}
                     disabled={(day) => day < Time.now()}
-                    locale={ptBR}
+                    locale={Time.locale}
                     initialFocus
                   />
                 </PopoverContent>
@@ -283,35 +245,11 @@ export function RegisterAppointment({
             )}
           </div>
 
-          <FormField
-            control={control}
+          <TextareaInput<CreateAppointmentData>
             name="content"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel className="ra-field-label">
-                  <FileText className="h-4 w-4 text-muted-foreground" />
-                  Notas{' '}
-                  <span className="text-muted-foreground font-normal">
-                    (opcional)
-                  </span>
-                </FormLabel>
-                <FormControl>
-                  <Textarea
-                    {...field}
-                    id="content"
-                    placeholder="Adicione observações relevantes..."
-                    maxLength={MAX_CONTENT_LENGTH}
-                    rows={3}
-                    className="resize-none"
-                  />
-                </FormControl>
-                <div className="ra-counter">
-                  <span>
-                    {contentLength}/{MAX_CONTENT_LENGTH}
-                  </span>
-                </div>
-              </FormItem>
-            )}
+            label="Notas (opcional)"
+            placeholder="Adicione observações relevantes..."
+            rows={3}
           />
 
           <div className="pt-3">
@@ -322,7 +260,7 @@ export function RegisterAppointment({
             >
               {isPending ? (
                 <>
-                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                  <Loader2 data-icon="inline-start" className="animate-spin" />
                   Criando agendamento...
                 </>
               ) : (

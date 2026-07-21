@@ -1,0 +1,11 @@
+@reference "../../global.css";
+
+@layer components {
+  .ms-content {
+    @apply flex flex-col gap-4;
+  }
+
+  .ms-body {
+    @apply max-h-[70vh] min-h-0 flex-1 overflow-y-auto;
+  }
+}

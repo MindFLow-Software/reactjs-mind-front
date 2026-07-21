@@ -1,4 +1,4 @@
-import { cn } from '@/lib/utils'
+import { ToggleGroup, ToggleGroupItem } from '@/components/ui/toggle-group'
 import { PERIODS } from '@/pages/app/dashboard/shared/constants'
 import type {
   IDashboardPeriod,
@@ -18,21 +18,30 @@ export function DashboardPeriodSelector({
   onChange,
   options = PERIODS,
 }: IDashboardPeriodSelector) {
+  function handleValueChange(next: string) {
+    if (next) {
+      onChange(next as IDashboardPeriod)
+    }
+  }
+
   return (
-    <div className="dsh-period-selector-root">
+    <ToggleGroup
+      type="single"
+      value={value}
+      onValueChange={handleValueChange}
+      variant="outline"
+      size="sm"
+      className="dsh-period-selector-root"
+    >
       {options.map((option) => (
-        <button
+        <ToggleGroupItem
           key={option.value}
-          type="button"
-          onClick={() => onChange(option.value)}
-          className={cn(
-            'dsh-period-selector-btn',
-            value === option.value && 'dsh-period-selector-btn--active',
-          )}
+          value={option.value}
+          className="dsh-period-selector-item"
         >
           {option.label}
-        </button>
+        </ToggleGroupItem>
       ))}
-    </div>
+    </ToggleGroup>
   )
 }

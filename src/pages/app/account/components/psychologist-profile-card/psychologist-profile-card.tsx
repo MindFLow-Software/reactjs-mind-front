@@ -3,7 +3,13 @@
 import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 
-import { ArrowRight, Plus, ShieldCheck, SquarePen, UserRoundPen } from 'lucide-react'
+import {
+  ArrowRight,
+  Plus,
+  ShieldCheck,
+  SquarePen,
+  UserRoundPen,
+} from 'lucide-react'
 
 import { useAuth } from '@/hooks/use-auth'
 import { Mask } from '@/utils/mask'
@@ -93,7 +99,10 @@ export function PsychologistProfileCard() {
       <ProfileCard.Content>
         <div className="acc-identity-row">
           <UserAvatar
-            identity={{ src: me?.psychologistProfile?.profileImageUrl, name: professionalName }}
+            identity={{
+              src: me?.psychologistProfile?.profileImageUrl,
+              name: professionalName,
+            }}
             className="size-16 shrink-0"
           />
 

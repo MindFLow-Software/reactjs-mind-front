@@ -1,5 +1,6 @@
 import { useRef } from 'react'
 import { CloudUpload } from 'lucide-react'
+import { IconBox } from '@/components/icon-box/icon-box'
 import { cn } from '@/lib/utils'
 import './drop-zone.css'
 
@@ -36,9 +37,7 @@ export function DropZone({
           isDragging ? 'pd-up-dropzone-active' : 'pd-up-dropzone-idle',
         )}
       >
-        <div className="pd-up-dropzone-icon">
-          <CloudUpload className="size-5 text-primary" />
-        </div>
+        <IconBox icon={CloudUpload} variant="primary" size="md" />
         <div>
           <p className="pd-up-dropzone-title">
             {isDragging

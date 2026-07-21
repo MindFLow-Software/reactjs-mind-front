@@ -4,6 +4,7 @@ import { Loader2, LogOut } from 'lucide-react'
 
 import { useAuth } from '@/hooks/use-auth'
 import { useSignOut } from '@/hooks/use-sign-out'
+import { PlatformRole } from '@/types/shared/enums'
 
 import { Button } from '@/components/ui/button'
 
@@ -71,7 +72,7 @@ function ProfilesShell({ children }: { children: ReactNode }) {
     )
   }
 
-  if (me.platformRole === 'ADMIN') {
+  if (me.platformRole === PlatformRole.ADMIN) {
     return <Navigate to="/admin-dashboard" replace />
   }
 

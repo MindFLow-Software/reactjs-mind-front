@@ -17,9 +17,9 @@ type IDashboardProgressBar = {
 }
 
 const TONE_FILL: Record<IDashboardProgressBarTone, string> = {
-  emerald: 'bg-emerald-500',
-  blue: 'bg-blue-600',
-  violet: 'bg-violet-500',
+  emerald: 'bg-success',
+  blue: 'bg-accent-blue',
+  violet: 'bg-accent-primary-light',
 }
 
 export function DashboardProgressBar({
@@ -43,7 +43,7 @@ export function DashboardProgressBar({
         <div
           className={cn(
             'dsh-progress-bar-fill',
-            atGoal ? 'bg-emerald-500' : TONE_FILL[tone],
+            atGoal ? 'bg-success' : TONE_FILL[tone],
           )}
           style={{ width: `${pct}%` }}
         />

@@ -1,5 +1,6 @@
 import { motion } from 'framer-motion'
 import { Star, MessageSquare } from 'lucide-react'
+import { Card } from '@/components/ui/card'
 import { GridBackdrop } from '../shared/grid-backdrop/grid-backdrop'
 import { GradientHighlight } from '../shared/gradient-highlight/gradient-highlight'
 import { SectionHeading } from '../shared/section-heading/section-heading'
@@ -74,7 +75,7 @@ function StarRating() {
 
 function TestimonialCard({ data }: { data: (typeof TESTIMONIALS)[number] }) {
   return (
-    <div className="lp-tst-card">
+    <Card className="lp-tst-card">
       <div className="mb-3">
         <StarRating />
       </div>
@@ -88,7 +89,7 @@ function TestimonialCard({ data }: { data: (typeof TESTIMONIALS)[number] }) {
           <p className="lp-tst-role">{data.role}</p>
         </div>
       </div>
-    </div>
+    </Card>
   )
 }
 

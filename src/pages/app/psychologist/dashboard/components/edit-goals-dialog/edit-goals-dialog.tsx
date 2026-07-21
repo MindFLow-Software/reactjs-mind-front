@@ -125,7 +125,7 @@ export function EditGoalsDialog({ current }: IEditGoalsDialog) {
                       className={cn(
                         'eg-input',
                         fieldState.invalid &&
-                          'border-red-600 focus-visible:ring-red-600/20',
+                          'border-destructive focus-visible:ring-destructive/20',
                       )}
                     />
                   </FormControl>
@@ -149,7 +149,7 @@ export function EditGoalsDialog({ current }: IEditGoalsDialog) {
                       className={cn(
                         'eg-input',
                         fieldState.invalid &&
-                          'border-red-600 focus-visible:ring-red-600/20',
+                          'border-destructive focus-visible:ring-destructive/20',
                       )}
                     />
                   </FormControl>
@@ -173,7 +173,7 @@ export function EditGoalsDialog({ current }: IEditGoalsDialog) {
                       className={cn(
                         'eg-input',
                         fieldState.invalid &&
-                          'border-red-600 focus-visible:ring-red-600/20',
+                          'border-destructive focus-visible:ring-destructive/20',
                       )}
                     />
                   </FormControl>

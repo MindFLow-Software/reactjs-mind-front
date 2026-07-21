@@ -46,10 +46,10 @@
   }
 
   .ads-mod-approve-btn {
-    @apply size-9 cursor-pointer rounded-xl text-emerald-600 transition-all hover:bg-emerald-500/10 dark:hover:bg-emerald-950/30;
+    @apply size-9 cursor-pointer rounded-xl text-success transition-all hover:bg-success/10 dark:hover:bg-success/20;
   }
 
   .ads-mod-reject-btn {
-    @apply size-9 cursor-pointer rounded-xl text-red-500 transition-all hover:bg-red-500/10 dark:hover:bg-red-950/30;
+    @apply size-9 cursor-pointer rounded-xl text-destructive transition-all hover:bg-destructive/10 dark:hover:bg-destructive/20;
   }
 }

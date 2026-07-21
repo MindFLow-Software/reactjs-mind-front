@@ -1,0 +1,27 @@
+@reference "../../global.css";
+
+@layer components {
+  .typ-page-title {
+    @apply font-title text-title text-foreground leading-[var(--text-title-line-height)] font-[var(--text-title-weight)];
+  }
+
+  .typ-section-header {
+    @apply font-title text-label-large text-foreground leading-[var(--text-label-large-line-height)] font-[var(--text-label-large-weight)];
+  }
+
+  .typ-section-eyebrow {
+    @apply text-label-small text-muted-foreground uppercase tracking-wide leading-[var(--text-label-small-line-height)] font-[var(--text-label-small-weight)];
+  }
+
+  .typ-muted-text {
+    @apply text-paragraph-medium text-muted-foreground leading-[var(--text-paragraph-medium-line-height)] font-[var(--text-paragraph-medium-weight)];
+  }
+
+  .typ-field-hint {
+    @apply text-paragraph-small text-muted-foreground leading-[var(--text-paragraph-small-line-height)] font-[var(--text-paragraph-small-weight)];
+  }
+
+  .typ-empty-state-text {
+    @apply text-paragraph-medium text-muted-foreground leading-[var(--text-paragraph-medium-line-height)] font-[var(--text-paragraph-medium-weight)];
+  }
+}

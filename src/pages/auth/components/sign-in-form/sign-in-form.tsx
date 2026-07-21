@@ -1,16 +1,17 @@
-import { memo, useState, useCallback } from 'react'
+import { memo, useCallback } from 'react'
 import { useForm } from 'react-hook-form'
 import { toast } from 'sonner'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { Link, useSearchParams, useNavigate } from 'react-router-dom'
 import { useMutation } from '@tanstack/react-query'
-import { Eye, EyeOff, Loader2, Mail, Lock } from 'lucide-react'
+import { Loader2 } from 'lucide-react'
 import { motion, useReducedMotion, type Variants } from 'framer-motion'
 
 import { cn } from '@/lib/utils'
 import { Button } from '@/components/ui/button'
-import { Input } from '@/components/ui/input'
-import { Field, FieldError, FieldLabel } from '@/components/ui/field'
+import { Form } from '@/components/ui/form'
+import { EmailInput } from '@/components/form-fields/email-input/email-input'
+import { PasswordInput } from '@/components/form-fields/password-input/password-input'
 
 import { signIn } from '@/api/auth/sign-in'
 import { getApiErrorMessage } from '@/lib/get-api-error-message'
@@ -43,19 +44,19 @@ export const SignInForm = memo(function SignInForm({
   const [searchParams] = useSearchParams()
 
   const prefersReduced = useReducedMotion()
-  const [showPassword, setShowPassword] = useState(false)
 
-  const {
-    register,
-    handleSubmit,
-    formState: { isSubmitting, errors },
-  } = useForm<SignInFormData>({
+  const methods = useForm<SignInFormData>({
     resolver: zodResolver(signInSchema),
     defaultValues: {
       email: searchParams.get('email') ?? '',
       password: '',
     },
   })
+
+  const {
+    handleSubmit,
+    formState: { isSubmitting },
+  } = methods
 
   const { mutateAsync: authenticate } = useMutation({
     mutationFn: signIn,
@@ -76,141 +77,73 @@ export const SignInForm = memo(function SignInForm({
     [authenticate, navigate],
   )
 
-  const togglePasswordVisibility = useCallback(
-    () => setShowPassword((p) => !p),
-    [],
-  )
-
   const animItem = prefersReduced ? {} : { variants: itemVariants }
 
   return (
-    <motion.form
-      onSubmit={handleSubmit(handleSignIn)}
-      className={cn('flex flex-col gap-4', className)}
-      variants={prefersReduced ? undefined : containerVariants}
-      initial={prefersReduced ? undefined : 'hidden'}
-      animate={prefersReduced ? undefined : 'visible'}
-    >
-      {/* Google */}
-      <motion.div {...animItem}>
-        <GoogleAuthButton />
-      </motion.div>
+    <Form {...methods}>
+      <motion.form
+        onSubmit={handleSubmit(handleSignIn)}
+        className={cn('flex flex-col gap-4', className)}
+        variants={prefersReduced ? undefined : containerVariants}
+        initial={prefersReduced ? undefined : 'hidden'}
+        animate={prefersReduced ? undefined : 'visible'}
+      >
+        <motion.div {...animItem}>
+          <GoogleAuthButton />
+        </motion.div>
 
-      {/* Divider */}
-      <motion.div {...animItem} className="relative">
-        <div className="absolute inset-0 flex items-center">
-          <span className="w-full border-t" />
-        </div>
-        <div className="relative flex justify-center text-xs uppercase">
-          <span className="bg-gray-50 px-2 text-muted-foreground">Ou</span>
-        </div>
-      </motion.div>
-
-      {/* Email */}
-      <motion.div {...animItem}>
-        <Field>
-          <FieldLabel htmlFor="email">E-mail profissional</FieldLabel>
-          <div className="relative">
-            <Mail
-              className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground pointer-events-none"
-              size={16}
-              aria-hidden="true"
-            />
-            <Input
-              id="email"
-              type="email"
-              placeholder="exemplo@mindflush.com"
-              autoComplete="email"
-              aria-invalid={!!errors.email}
-              className={cn(
-                'pl-9 h-11',
-                errors.email && 'border-red-500 focus-visible:ring-red-500/20',
-              )}
-              {...register('email')}
-            />
+        <motion.div {...animItem} className="relative">
+          <div className="absolute inset-0 flex items-center">
+            <span className="w-full border-t" />
           </div>
-          {errors.email && <FieldError>{errors.email.message}</FieldError>}
-        </Field>
-      </motion.div>
-
-      {/* Password */}
-      <motion.div {...animItem}>
-        <Field>
-          <div className="flex items-center justify-between">
-            <FieldLabel htmlFor="password">Senha</FieldLabel>
-            <Link
-              to="/forgot-password"
-              className="text-xs text-muted-foreground hover:text-blue-600 transition-colors underline-offset-4 hover:underline"
-            >
-              Esqueceu a senha?
-            </Link>
+          <div className="relative flex justify-center text-xs uppercase">
+            <span className="bg-background px-2 text-muted-foreground">Ou</span>
           </div>
-          <div className="relative">
-            <Lock
-              className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground pointer-events-none"
-              size={16}
-              aria-hidden="true"
-            />
-            <Input
-              id="password"
-              type={showPassword ? 'text' : 'password'}
-              placeholder="••••••••"
-              autoComplete="current-password"
-              aria-invalid={!!errors.password}
-              className={cn(
-                'pl-9 pr-10 h-11',
-                errors.password &&
-                  'border-red-500 focus-visible:ring-red-500/20',
-              )}
-              {...register('password')}
-            />
-            <button
-              type="button"
-              onClick={togglePasswordVisibility}
-              className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground transition-colors"
-              aria-label={showPassword ? 'Ocultar senha' : 'Mostrar senha'}
-            >
-              {showPassword ? <EyeOff size={16} /> : <Eye size={16} />}
-            </button>
-          </div>
-          {errors.password && (
-            <FieldError>{errors.password.message}</FieldError>
-          )}
-        </Field>
-      </motion.div>
+        </motion.div>
 
-      {/* Submit */}
-      <motion.div {...animItem}>
-        <Button
-          disabled={isSubmitting}
-          type="submit"
-          className="cursor-pointer w-full h-11 bg-blue-600 hover:bg-blue-700 active:scale-[0.98] transition-all duration-200 font-medium text-white"
-        >
-          {isSubmitting ? (
-            <span className="flex items-center gap-2">
-              <Loader2 className="animate-spin" size={16} />
-              Entrando...
-            </span>
-          ) : (
-            'Entrar'
-          )}
-        </Button>
-      </motion.div>
+        <motion.div {...animItem}>
+          <EmailInput<SignInFormData>
+            name="email"
+            label="E-mail profissional"
+            placeholder="exemplo@mindflush.com"
+          />
+        </motion.div>
 
-      {/* Sign-up link */}
-      <div className="flex flex-col gap-2">
+        <motion.div {...animItem} className="flex flex-col gap-1">
+          <PasswordInput<SignInFormData> name="password" label="Senha" />
+          <Link
+            to="/forgot-password"
+            className="self-end text-xs text-muted-foreground underline-offset-4 transition-colors hover:text-primary hover:underline"
+          >
+            Esqueceu a senha?
+          </Link>
+        </motion.div>
+
+        <motion.div {...animItem}>
+          <Button disabled={isSubmitting} type="submit" className="w-full">
+            {isSubmitting ? (
+              <>
+                <Loader2 data-icon="inline-start" className="animate-spin" />
+                Entrando...
+              </>
+            ) : (
+              'Entrar'
+            )}
+          </Button>
+        </motion.div>
+
         <motion.div {...animItem}>
           <p className="text-center text-sm text-muted-foreground">
             Não tem uma conta?{' '}
             <Link
               to="/sign-up"
-              className="font-semibold text-blue-600 hover:text-blue-700 underline-offset-4 hover:underline transition-colors"
+              className="font-semibold text-primary underline-offset-4 transition-colors hover:underline"
             >
               Criar conta
             </Link>
           </p>
         </motion.div>
-      </div>
-    </motion.form>
+      </motion.form>
+    </Form>
   )
 })

@@ -47,7 +47,7 @@ export function ValidatePatientInvitePage() {
       <Card className="inv-card">
         <CardHeader>
           <CardTitle className="inv-card-title">
-            <CheckCircle size={20} className="text-green-500" />
+            <CheckCircle size={20} className="text-success" />
             <p>Convite encontrado</p>
           </CardTitle>
           <CardDescription>

@@ -1,4 +1,5 @@
 import { Trash2, CheckCircle2, AlertCircle, Loader2 } from 'lucide-react'
+import { Button } from '@/components/ui/button'
 import { Files } from '@/utils/files'
 import { FileStatus, type IFileItem } from '../../hooks/use-upload'
 import { FileThumb } from './file-thumb'
@@ -21,18 +22,21 @@ function FileItemStatusIcon({
     case FileStatus.UPLOADING:
       return <Loader2 className="size-4 animate-spin text-primary" />
     case FileStatus.DONE:
-      return <CheckCircle2 className="size-4 text-green-600" />
+      return <CheckCircle2 className="size-4 text-success" />
     case FileStatus.ERROR:
       return <AlertCircle className="size-4 text-destructive" />
     case FileStatus.PENDING:
       return (
-        <button
+        <Button
           type="button"
+          variant="ghost"
+          size="icon"
+          aria-label="Remover arquivo"
           onClick={() => onRemove(item.id)}
           className="pd-up-item-remove"
         >
           <Trash2 className="size-3.5" />
-        </button>
+        </Button>
       )
   }
 }
@@ -74,9 +78,15 @@ export function FileList({ files, onRemove, onClear }: FileListProps) {
         <p className="pd-up-list-count">
           {files.length} {files.length === 1 ? 'arquivo' : 'arquivos'}
         </p>
-        <button type="button" onClick={onClear} className="pd-up-list-clear">
+        <Button
+          type="button"
+          variant="link"
+          size="sm"
+          className="pd-up-list-clear h-auto p-0"
+          onClick={onClear}
+        >
           Limpar tudo
-        </button>
+        </Button>
       </div>
 
       {files.map((item) => (

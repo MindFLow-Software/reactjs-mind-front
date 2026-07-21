@@ -2,7 +2,7 @@
 
 @layer components {
   .lp-stat-card {
-    @apply flex flex-col rounded-2xl border border-slate-100 bg-white p-6 shadow-sm transition-shadow duration-300 hover:shadow-md;
+    @apply gap-0! flex flex-col rounded-2xl! border border-slate-100 bg-white! p-6! shadow-sm transition-shadow duration-300 hover:shadow-md;
   }
 
   .lp-stat-icon {

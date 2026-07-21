@@ -1,5 +1,6 @@
 import { motion } from 'framer-motion'
 import type { LucideIcon } from 'lucide-react'
+import { Card } from '@/components/ui/card'
 import './stat-card.css'
 
 export type StatCardData = {
@@ -24,17 +25,18 @@ export function StatCard({ data, delay }: StatCardProps) {
       whileInView={{ opacity: 1, y: 0 }}
       viewport={{ once: true }}
       transition={{ delay, duration: 0.65, ease: [0.16, 1, 0.3, 1] }}
-      className="lp-stat-card"
     >
-      <div className="lp-stat-icon" style={{ background: iconBg }}>
-        <Icon
-          className="h-4 w-4"
-          style={{ color: iconColor }}
-          strokeWidth={2}
-        />
-      </div>
-      <p className="lp-stat-value lp-serif">{value}</p>
-      <p className="lp-stat-label">{label}</p>
+      <Card className="lp-stat-card">
+        <div className="lp-stat-icon" style={{ background: iconBg }}>
+          <Icon
+            className="h-4 w-4"
+            style={{ color: iconColor }}
+            strokeWidth={2}
+          />
+        </div>
+        <p className="lp-stat-value lp-serif">{value}</p>
+        <p className="lp-stat-label">{label}</p>
+      </Card>
     </motion.div>
   )
 }

@@ -1,0 +1,17 @@
+@reference "../../global.css";
+
+/* Single source for the shared form-fields input contract — reused by every
+   field in this layer (h-[38px] + focus ring per .specs/project/design-system.md). */
+@layer components {
+  .ff-input {
+    @apply h-[38px] border-border text-foreground;
+    @apply placeholder:text-muted-foreground;
+    @apply focus-visible:border-blue-600 focus-visible:ring-[3px] focus-visible:ring-blue-600/18;
+  }
+
+  .ff-textarea {
+    @apply border-border text-foreground;
+    @apply placeholder:text-muted-foreground;
+    @apply focus-visible:border-blue-600 focus-visible:ring-[3px] focus-visible:ring-blue-600/18;
+  }
+}

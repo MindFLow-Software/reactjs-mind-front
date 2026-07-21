@@ -36,7 +36,7 @@ export function useImagePreview(): UseImagePreviewReturn {
 
       setPreviewUrl(url)
     },
-    []
+    [],
   )
 
   const loadFromAttachmentId = useCallback(
@@ -51,5 +51,13 @@ export function useImagePreview(): UseImagePreviewReturn {
     [fetchBlobUrl],
   )
 
-  return { previewUrl, file, isLoading, onSetPreview, clear, loadFromUrl, loadFromAttachmentId }
+  return {
+    previewUrl,
+    file,
+    isLoading,
+    onSetPreview,
+    clear,
+    loadFromUrl,
+    loadFromAttachmentId,
+  }
 }

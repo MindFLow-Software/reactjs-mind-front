@@ -1,10 +1,10 @@
 import { Dialog, DialogContent } from '@/components/ui/dialog'
+import { ConfirmDialog } from '@/components/confirm-dialog/confirm-dialog'
 
 import type { RescheduleAppointmentRequest } from '@/api/appointments/reschedule-appointment'
 
 import { EditAppointment } from '../edit-appointment-dialog/edit-appointment-dialog'
 import { RegisterAppointment } from '../register-appointment/register-appointment'
-import { CancelAppointmentDialog } from '../cancel-appointment-dialog/cancel-appointment-dialog'
 import { RescheduleAppointmentDialog } from '../reschedule-appointment-dialog/reschedule-appointment-dialog'
 import type { IUseAppointmentDialogs } from '../../hooks/use-appointment-dialogs'
 
@@ -75,21 +75,23 @@ export function AppointmentDialogManager({
         )}
       </Dialog>
 
-      <Dialog
+      <ConfirmDialog
         open={dialogs.cancel.isOpen}
         onOpenChange={dialogs.cancel.onOpenChange}
-      >
-        <DialogContent className="adm-dialog adm-dialog--sm">
-          {selectedAppointment && (
-            <CancelAppointmentDialog
-              patientName={selectedAppointment.patientName}
-              isCancelling={actions.isCancelling}
-              onClose={dialogs.cancel.close}
-              onCancel={handleCancel}
-            />
-          )}
-        </DialogContent>
-      </Dialog>
+        variant="destructive"
+        title="Cancelar Sessão"
+        description={
+          <>
+            Você tem certeza que deseja cancelar o agendamento de{' '}
+            <strong>{selectedAppointment?.patientName}</strong>? O horário será
+            liberado imediatamente no calendário.
+          </>
+        }
+        confirmLabel="Confirmar Cancelamento"
+        cancelLabel="Voltar"
+        pending={actions.isCancelling}
+        onConfirm={handleCancel}
+      />
 
       <Dialog
         open={dialogs.reschedule.isOpen}

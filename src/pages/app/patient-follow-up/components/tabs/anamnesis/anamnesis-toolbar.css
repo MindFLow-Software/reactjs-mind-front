@@ -32,11 +32,11 @@
   }
 
   .ph-anamnesis-toolbar__status-dot--synced {
-    @apply bg-emerald-500;
+    @apply bg-success;
   }
 
   .ph-anamnesis-toolbar__status-dot--pending {
-    @apply bg-amber-400;
+    @apply bg-warning;
   }
 
   .ph-anamnesis-toolbar__status-label {

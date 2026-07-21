@@ -4,31 +4,20 @@ import { Controller, useFormContext } from 'react-hook-form'
 
 import z from 'zod'
 
-import { cn } from '@/lib/utils'
-
 import {
-  Field,
-  FieldSet,
-  FieldLabel,
-  FieldGroup,
-  FieldDescription,
-} from '@/components/ui/field'
-
-import {
-  Select,
-  SelectItem,
-  SelectValue,
-  SelectGroup,
-  SelectLabel,
-  SelectTrigger,
-  SelectContent,
-} from '@/components/ui/select'
-
-import { Input } from '@/components/ui/input'
-import { Badge } from '@/components/ui/badge'
-import { Textarea } from '@/components/ui/textarea'
+  FormField,
+  FormItem,
+  FormLabel,
+  FormControl,
+  FormMessage,
+} from '@/components/ui/form'
+import { Field, FieldLabel } from '@/components/ui/field'
+import { ToggleGroup, ToggleGroupItem } from '@/components/ui/toggle-group'
 import { MaskedInput } from '@/components/maked-input/maked-input'
-import { AvatarUploadField } from '@/components/avatar-upload-field/avatar-upload-field'
+import { TextInput } from '@/components/form-fields/text-input/text-input'
+import { SelectInput } from '@/components/form-fields/select-input/select-input'
+import { TextareaInput } from '@/components/form-fields/textarea-input/textarea-input'
+import { AvatarUploadField } from '@/components/form-fields/avatar-upload-field/avatar-upload-field'
 
 import { Expertise, Honorific, Languages } from '@/types/shared/enums'
 import { translatedExpertise } from '@/constants/translated-expertise'
@@ -39,12 +28,21 @@ type ICreatePsychologistProfile = z.infer<
   typeof createPsychologistProfileSchema
 >
 
+const HONORIFIC_OPTIONS = [
+  { value: Honorific.MASC_DR, label: 'Dr.' },
+  { value: Honorific.FEMININE_DR, label: 'Dra.' },
+  { value: Honorific.MSC, label: 'MSc.' },
+  { value: Honorific.PHD, label: 'PhD' },
+]
+
+const EXPERTISE_OPTIONS = (
+  Object.entries(translatedExpertise) as [Expertise, string][]
+).map(([value, label]) => ({ value, label }))
+
 export function ProfessionalIdentityFormStep() {
   const { watch, control, setValue } =
     useFormContext<ICreatePsychologistProfile>()
 
-  const selectedExpertise = watch('expertise')
-  const selectedLanguages = watch('languages')
   const professionalName = watch('professionalName')
 
   const handleAvatarSelect = useCallback(
@@ -54,176 +52,90 @@ export function ProfessionalIdentityFormStep() {
     [setValue],
   )
 
-  const handleToggleLanguage = (language: Languages) => {
-    const alreadyAdded = selectedLanguages.includes(language)
-
-    if (!alreadyAdded) {
-      setValue('languages', [...selectedLanguages, language])
-      return
-    }
-
-    setValue(
-      'languages',
-      selectedLanguages.filter((lang) => lang !== language),
-    )
-  }
-
   return (
-    <div>
-      <FieldSet className="flex flex-col gap-4">
-        <AvatarUploadField
-          identity={{ name: professionalName || null }}
-          copy={{
-            label: 'Foto de perfil',
-            description: 'JPG ou PNG · até 2 MB · opcional',
-          }}
-          onFileSelect={handleAvatarSelect}
-        />
-        <FieldGroup className="flex flex-row items-start gap-2">
-          <Controller
+    <div className="flex flex-col gap-4">
+      <AvatarUploadField
+        avatar={{
+          name: professionalName || null,
+          onFileSelect: handleAvatarSelect,
+        }}
+        label="Foto de perfil"
+        description="JPG ou PNG · até 2 MB · opcional"
+      />
+
+      <div className="flex flex-row items-start gap-2">
+        <div className="flex-1">
+          <TextInput<ICreatePsychologistProfile>
             name="professionalName"
-            control={control}
-            render={({ field }) => (
-              <Field className="gap-1 flex-1">
-                <FieldLabel htmlFor="professionalName">
-                  Nome Profissional
-                </FieldLabel>
-                <Input
-                  {...field}
-                  id="professionalName"
-                  placeholder="Seu nome profissional"
-                />
-              </Field>
-            )}
+            label="Nome Profissional"
+            placeholder="Seu nome profissional"
           />
-          <Controller
+        </div>
+        <div className="w-48">
+          <SelectInput<ICreatePsychologistProfile, Honorific>
             name="honorific"
-            control={control}
-            render={({ field }) => (
-              <Field className="gap-1 w-48 max-w-48">
-                <FieldLabel htmlFor="honorific">Honorífico(a)</FieldLabel>
-                <Select onValueChange={field.onChange}>
-                  <SelectTrigger>
-                    <SelectValue id="honorific" placeholder="Honorífico(a)" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectGroup>
-                      <SelectLabel>Selecione seu título</SelectLabel>
-                      <SelectItem value={Honorific.MASC_DR}>Dr.</SelectItem>
-                      <SelectItem value={Honorific.FEMININE_DR}>
-                        Dra.
-                      </SelectItem>
-                      <SelectItem value={Honorific.MSC}>MSc.</SelectItem>
-                      <SelectItem value={Honorific.PHD}>PhD</SelectItem>
-                    </SelectGroup>
-                  </SelectContent>
-                </Select>
-              </Field>
-            )}
+            label="Honorífico(a)"
+            placeholder="Honorífico(a)"
+            options={HONORIFIC_OPTIONS}
           />
-          <Controller
-            name="crp"
-            control={control}
-            render={({ field }) => (
-              <Field className="max-w-32 gap-1">
-                <FieldLabel htmlFor="crp">CRP</FieldLabel>
-                <MaskedInput
-                  {...field}
-                  id="crp"
-                  placeholder="00/000000"
-                  mask="00/000000"
-                />
-              </Field>
-            )}
-          />
-        </FieldGroup>
+        </div>
+        <Controller
+          name="crp"
+          control={control}
+          render={({ field }) => (
+            <Field className="max-w-32 gap-1">
+              <FieldLabel htmlFor="crp">CRP</FieldLabel>
+              <MaskedInput
+                {...field}
+                id="crp"
+                placeholder="00/000000"
+                mask="00/000000"
+              />
+            </Field>
+          )}
+        />
+      </div>
 
-        <FieldGroup>
-          <Controller
-            name="languages"
-            control={control}
-            render={() => (
-              <Field className="max-w-32 gap-1">
-                <FieldLabel>Línguas</FieldLabel>
-                <div className="flex gap-2">
-                  {Object.values(Languages).map((language) => {
-                    return (
-                      <Badge
-                        key={language}
-                        variant="outline"
-                        onClick={() => handleToggleLanguage(language)}
-                        className={cn(
-                          'psob-badge',
-                          selectedLanguages.includes(language) &&
-                            'psob-badge-selected',
-                        )}
-                      >
-                        {translatedLanguages[language]}
-                      </Badge>
-                    )
-                  })}
-                </div>
-              </Field>
-            )}
-          />
-        </FieldGroup>
+      <FormField
+        control={control}
+        name="languages"
+        render={({ field }) => (
+          <FormItem>
+            <FormLabel>Línguas</FormLabel>
+            <FormControl>
+              <ToggleGroup
+                type="multiple"
+                variant="outline"
+                value={field.value ?? []}
+                onValueChange={(value) => field.onChange(value as Languages[])}
+                className="justify-start"
+              >
+                {Object.values(Languages).map((language) => (
+                  <ToggleGroupItem key={language} value={language}>
+                    {translatedLanguages[language]}
+                  </ToggleGroupItem>
+                ))}
+              </ToggleGroup>
+            </FormControl>
+            <FormMessage />
+          </FormItem>
+        )}
+      />
 
-        <FieldGroup>
-          <Controller
-            name="expertise"
-            control={control}
-            render={({ field }) => (
-              <Field className="max-w-32 gap-1">
-                <FieldLabel>Especialidades</FieldLabel>
-                <div className="flex gap-2">
-                  {Object.values(Expertise).map((expertise) => {
-                    return (
-                      <Badge
-                        key={expertise}
-                        variant="outline"
-                        onClick={() => {
-                          field.onChange(expertise)
-                        }}
-                        className={cn(
-                          'psob-badge',
-                          selectedExpertise === expertise &&
-                            'psob-badge-selected',
-                        )}
-                      >
-                        {translatedExpertise[expertise]}
-                      </Badge>
-                    )
-                  })}
-                </div>
-              </Field>
-            )}
-          />
-        </FieldGroup>
+      <SelectInput<ICreatePsychologistProfile, Expertise>
+        name="expertise"
+        label="Especialidade"
+        placeholder="Selecione sua área"
+        options={EXPERTISE_OPTIONS}
+      />
 
-        <FieldGroup>
-          <Controller
-            name="professionalBio"
-            control={control}
-            render={({ field }) => (
-              <Field className="gap-1">
-                <FieldLabel htmlFor="professionalBio">
-                  Biografia profissional
-                </FieldLabel>
-                <Textarea
-                  {...field}
-                  maxLength={200}
-                  id="professionalBio"
-                  className="h-40 min-h-40 max-h-80"
-                  placeholder="Digite sua biografia profissional (MÁX. 200 CARACTERES)"
-                />
-                <FieldDescription className="text-xs">
-                  Os pacientes lerão isso no seu perfil.
-                </FieldDescription>
-              </Field>
-            )}
-          />
-        </FieldGroup>
-      </FieldSet>
+      <TextareaInput<ICreatePsychologistProfile>
+        name="professionalBio"
+        label="Biografia profissional"
+        placeholder="Digite sua biografia profissional (MÁX. 200 CARACTERES)"
+        description="Os pacientes lerão isso no seu perfil."
+        rows={6}
+      />
     </div>
   )
 }

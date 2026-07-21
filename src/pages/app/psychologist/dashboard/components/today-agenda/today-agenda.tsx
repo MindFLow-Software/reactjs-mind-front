@@ -22,8 +22,7 @@ const STATUS_CONFIG: Record<string, IAgendaStatusConfig> = {
   },
   [AppointmentStatus.SCHEDULED]: {
     label: 'Confirmada',
-    className:
-      'bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-400',
+    className: 'bg-success/10 text-success dark:bg-success/20',
   },
   [AppointmentStatus.ATTENDING]: {
     label: 'Em andamento',
@@ -32,16 +31,15 @@ const STATUS_CONFIG: Record<string, IAgendaStatusConfig> = {
   },
   [AppointmentStatus.RESCHEDULED]: {
     label: 'Remarcada',
-    className:
-      'bg-amber-100 text-amber-700 dark:bg-amber-900/30 dark:text-amber-400',
+    className: 'bg-warning/10 text-warning dark:bg-warning/20',
   },
   [AppointmentStatus.CANCELED]: {
     label: 'Cancelada',
-    className: 'bg-red-100 text-red-700 dark:bg-red-900/30 dark:text-red-400',
+    className: 'bg-destructive/10 text-destructive dark:bg-destructive/20',
   },
   [AppointmentStatus.NOT_ATTEND]: {
     label: 'Não compareceu',
-    className: 'bg-red-100 text-red-700 dark:bg-red-900/30 dark:text-red-400',
+    className: 'bg-destructive/10 text-destructive dark:bg-destructive/20',
   },
 }
 
@@ -55,8 +53,7 @@ function AgendaRow({ appt }: IAgendaRow) {
     appt.durationInMin != null ? formatTime(appt.durationInMin) : '—'
   const status = STATUS_CONFIG[appt.status] ?? {
     label: 'Aguardando',
-    className:
-      'bg-amber-100 text-amber-700 dark:bg-amber-900/30 dark:text-amber-400',
+    className: 'bg-warning/10 text-warning dark:bg-warning/20',
   }
 
   return (

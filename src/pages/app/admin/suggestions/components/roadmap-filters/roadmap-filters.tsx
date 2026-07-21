@@ -1,9 +1,6 @@
-'use client'
-
-import { useEffect, useRef } from 'react'
+import { useState } from 'react'
 import {
   Filter,
-  Search,
   XCircle,
   LayoutGrid,
   Palette,
@@ -13,10 +10,8 @@ import {
   Share2,
   HelpCircle,
 } from 'lucide-react'
-import { useForm } from 'react-hook-form'
 
 import { Button } from '@/components/ui/button'
-import { Input } from '@/components/ui/input'
 import {
   Select,
   SelectContent,
@@ -25,6 +20,8 @@ import {
   SelectValue,
   SelectGroup,
 } from '@/components/ui/select'
+import { SearchInput } from '@/components/form-fields/search-input/search-input'
+import { SuggestionCategory } from '@/types/suggestion/suggestion-category'
 import './roadmap-filters.css'
 
 type RoadmapFiltersProps = {
@@ -34,49 +31,48 @@ type RoadmapFiltersProps = {
   onClearFilters: () => void
 }
 
-// Mapeamento de Ícones e Labels para Categorias
 const CATEGORIES = [
   {
     value: 'all',
     label: 'Todas Categorias',
     icon: LayoutGrid,
-    color: 'text-slate-500',
+    color: 'text-muted-foreground',
   },
   {
-    value: 'UI_UX',
+    value: SuggestionCategory.UI_UX,
     label: 'Interface / UX',
     icon: Palette,
     color: 'text-pink-500',
   },
   {
-    value: 'SCHEDULING',
+    value: SuggestionCategory.SCHEDULING,
     label: 'Agendamentos',
     icon: CalendarDays,
     color: 'text-blue-500',
   },
   {
-    value: 'REPORTS',
+    value: SuggestionCategory.REPORTS,
     label: 'Relatórios',
     icon: BarChart3,
     color: 'text-amber-500',
   },
   {
-    value: 'PRIVACY_LGPD',
+    value: SuggestionCategory.PRIVACY_LGPD,
     label: 'Privacidade',
     icon: ShieldCheck,
     color: 'text-emerald-500',
   },
   {
-    value: 'INTEGRATIONS',
+    value: SuggestionCategory.INTEGRATIONS,
     label: 'Integrações',
     icon: Share2,
     color: 'text-indigo-500',
   },
   {
-    value: 'OTHERS',
+    value: SuggestionCategory.OTHERS,
     label: 'Outros',
     icon: HelpCircle,
-    color: 'text-slate-400',
+    color: 'text-muted-foreground',
   },
 ]
 
@@ -86,47 +82,23 @@ export function RoadmapFilters({
   onFiltersChange,
   onClearFilters,
 }: RoadmapFiltersProps) {
-  const isFirstRender = useRef(true)
-
-  const { register, watch, setValue } = useForm({
-    values: {
-      search,
-    },
-  })
-
-  const watchedSearch = watch('search')
-
-  useEffect(() => {
-    if (isFirstRender.current) {
-      isFirstRender.current = false
-      return
-    }
-
-    if (watchedSearch === search) return
-
-    const timeout = setTimeout(() => {
-      onFiltersChange({ search: watchedSearch })
-    }, 400)
-
-    return () => clearTimeout(timeout)
-  }, [watchedSearch, search, onFiltersChange])
+  const [searchValue, setSearchValue] = useState(search)
 
   function handleClearFilters() {
     onClearFilters()
-    setValue('search', '')
+    setSearchValue('')
   }
 
   return (
     <div className="ads-filters-root">
       <div className="ads-filters-group">
-        <div className="ads-filters-search">
-          <Search className="ads-filters-search-icon" />
-          <Input
-            {...register('search')}
-            placeholder="Buscar sugestão..."
-            className="ads-filters-search-input"
-          />
-        </div>
+        <SearchInput
+          value={searchValue}
+          onChange={setSearchValue}
+          onDebouncedChange={(value) => onFiltersChange({ search: value })}
+          placeholder="Buscar sugestão..."
+          className="ads-filters-search-input"
+        />
 
         <Select
           value={category}
@@ -168,7 +140,7 @@ export function RoadmapFilters({
             onClick={handleClearFilters}
             className="ads-filters-clear-btn"
           >
-            <XCircle className="h-4 w-4" />
+            <XCircle data-icon="inline-start" />
             Limpar filtros
           </Button>
         )}
