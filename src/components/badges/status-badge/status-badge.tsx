@@ -1,3 +1,5 @@
+import type { LucideIcon } from 'lucide-react'
+
 import { Badge } from '@/components/ui/badge'
 import { cn } from '@/lib/utils'
 
@@ -16,6 +18,7 @@ export type IStatusBadgeTone =
 type IStatusBadgeProps = {
   tone: IStatusBadgeTone
   label: string
+  icon?: LucideIcon
   className?: string
 }
 
@@ -30,9 +33,15 @@ const TONE_CLASS: Record<IStatusBadgeTone, string> = {
   'gender-other': 'sb-tone-gender-other',
 }
 
-export function StatusBadge({ tone, label, className }: IStatusBadgeProps) {
+export function StatusBadge({
+  tone,
+  label,
+  icon: Icon,
+  className,
+}: IStatusBadgeProps) {
   return (
     <Badge variant="outline" className={cn(TONE_CLASS[tone], className)}>
+      {Icon && <Icon />}
       {label}
     </Badge>
   )

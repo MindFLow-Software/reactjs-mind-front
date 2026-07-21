@@ -1,6 +1,6 @@
-'use client'
-
 import { cn } from '@/lib/utils'
+import { FilterChip } from '@/components/badges/filter-chip/filter-chip'
+
 import './suggestion-filter-chip.css'
 
 type ISuggestionFilterChipData = {
@@ -21,16 +21,9 @@ export function SuggestionFilterChip({
   onClick,
 }: ISuggestionFilterChip) {
   return (
-    <button
-      type="button"
-      onClick={onClick}
-      className={cn(
-        'sfc-chip',
-        isActive ? 'sfc-chip--active' : 'sfc-chip--default',
-      )}
-    >
+    <FilterChip active={isActive} onToggle={onClick} className="sfc-chip">
       {data.dot && (
-        <span className={cn('size-2 rounded-full shrink-0', data.dot)} />
+        <span className={cn('size-2 shrink-0 rounded-full', data.dot)} />
       )}
       {data.label}
       <span
@@ -41,6 +34,6 @@ export function SuggestionFilterChip({
       >
         {data.count}
       </span>
-    </button>
+    </FilterChip>
   )
 }

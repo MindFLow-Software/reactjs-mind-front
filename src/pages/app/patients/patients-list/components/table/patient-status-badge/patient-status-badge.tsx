@@ -1,5 +1,5 @@
-import './patient-status-badge.css'
-import { Badge } from '@/components/ui/badge'
+import { StatusBadge } from '@/components/badges/status-badge/status-badge'
+import type { IStatusBadgeTone } from '@/components/badges/status-badge/status-badge'
 import { translatedPatientProfileStatus } from '@/constants/translated-patient-profile-status'
 import { PatientProfileStatus } from '@/types/patient-profile/patient-profile-status'
 import { fn } from '@/utils/fn'
@@ -8,32 +8,20 @@ type IPatientStatusBadge = {
   status: PatientProfileStatus
 }
 
-type IStatusBadgeStyle = {
-  label: string
-  style: string
-}
-
-const STATUS_BADGE: Record<PatientProfileStatus, IStatusBadgeStyle> = {
-  [PatientProfileStatus.ACTIVE]: {
-    label: translatedPatientProfileStatus.ACTIVE,
-    style: 'psb-badge--active',
-  },
-  [PatientProfileStatus.INACTIVE]: {
-    label: translatedPatientProfileStatus.INACTIVE,
-    style: 'psb-badge--inactive',
-  },
-  [PatientProfileStatus.ARCHIVED]: {
-    label: translatedPatientProfileStatus.ARCHIVED,
-    style: 'psb-badge--archived',
-  },
+const STATUS_TONE: Record<PatientProfileStatus, IStatusBadgeTone> = {
+  [PatientProfileStatus.ACTIVE]: 'success',
+  [PatientProfileStatus.INACTIVE]: 'muted',
+  [PatientProfileStatus.ARCHIVED]: 'destructive',
 }
 
 export function PatientStatusBadge({ status }: IPatientStatusBadge) {
-  const badge = fn.one(
+  const tone = fn.one(
     status,
-    STATUS_BADGE,
-    STATUS_BADGE[PatientProfileStatus.ACTIVE],
+    STATUS_TONE,
+    STATUS_TONE[PatientProfileStatus.ACTIVE],
   )
 
-  return <Badge className={badge.style}>{badge.label}</Badge>
+  return (
+    <StatusBadge tone={tone} label={translatedPatientProfileStatus[status]} />
+  )
 }
