@@ -9,7 +9,7 @@ export const updatePatientSchema = z.object({
   email: z.email('E-mail inválido').optional().describe('contact'),
   phoneNumber: z.string().optional().describe('contact'),
   dateOfBirth: z.date().nullable().optional().describe('basicData'),
-  cpf: cpfSchema.describe('basicData'),
+  cpf: cpfSchema.optional().describe('basicData'),
   gender: z.enum(Gender).optional().describe('basicData'),
   profileImage: z.instanceof(File).optional().describe('basicData'),
   attachmentIds: z.array(z.string()).optional(),
