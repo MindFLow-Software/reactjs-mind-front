@@ -39,7 +39,7 @@ export function AttachmentsList({ patientId }: IAttachmentsList) {
     if (isLoading) {
       return (
         <div className="rp-att-loading">
-          <Loader2 className="size-5 animate-spin text-blue-500/50" />
+          <Loader2 className="size-5 animate-spin text-primary/50" />
         </div>
       )
     }

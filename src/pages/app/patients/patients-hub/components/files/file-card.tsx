@@ -4,16 +4,7 @@ import { useState, memo } from 'react'
 import { Eye, ArrowDownToLine, Trash2 } from 'lucide-react'
 
 import { Button } from '@/components/ui/button'
-import {
-  AlertDialog,
-  AlertDialogAction,
-  AlertDialogCancel,
-  AlertDialogContent,
-  AlertDialogDescription,
-  AlertDialogFooter,
-  AlertDialogHeader,
-  AlertDialogTitle,
-} from '@/components/ui/alert-dialog'
+import { ConfirmDialog } from '@/components/confirm-dialog/confirm-dialog'
 import { Files } from '@/utils/files'
 import { Time } from '@/utils/time'
 import { cn } from '@/lib/utils'
@@ -97,30 +88,25 @@ export const FileCard = memo(function FileCard({
         </div>
       </div>
 
-      <AlertDialog open={confirmOpen} onOpenChange={setConfirmOpen}>
-        <AlertDialogContent>
-          <AlertDialogHeader>
-            <AlertDialogTitle>Remover arquivo?</AlertDialogTitle>
-            <AlertDialogDescription>
-              <span className="ph-file-card__dialog-filename">
-                {file.filename}
-              </span>{' '}
-              será removido permanentemente. Esta ação não pode ser desfeita.
-            </AlertDialogDescription>
-          </AlertDialogHeader>
-          <AlertDialogFooter>
-            <AlertDialogCancel className="ph-file-card__dialog-cancel">
-              Cancelar
-            </AlertDialogCancel>
-            <AlertDialogAction
-              className="ph-file-card__dialog-confirm"
-              onClick={() => onDelete(file.id)}
-            >
-              Remover
-            </AlertDialogAction>
-          </AlertDialogFooter>
-        </AlertDialogContent>
-      </AlertDialog>
+      <ConfirmDialog
+        open={confirmOpen}
+        onOpenChange={setConfirmOpen}
+        variant="destructive"
+        title="Remover arquivo?"
+        description={
+          <>
+            <span className="ph-file-card__dialog-filename">
+              {file.filename}
+            </span>{' '}
+            será removido permanentemente. Esta ação não pode ser desfeita.
+          </>
+        }
+        confirmLabel="Remover"
+        onConfirm={() => {
+          onDelete(file.id)
+          setConfirmOpen(false)
+        }}
+      />
     </>
   )
 })

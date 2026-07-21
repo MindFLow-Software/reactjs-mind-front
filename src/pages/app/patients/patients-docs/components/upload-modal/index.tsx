@@ -6,11 +6,13 @@ import { toast } from 'sonner'
 
 import {
   Dialog,
+  DialogClose,
   DialogContent,
   DialogTitle,
   DialogDescription,
 } from '@/components/ui/dialog'
 import { Button } from '@/components/ui/button'
+import { IconBox } from '@/components/icon-box/icon-box'
 import {
   Select,
   SelectContent,
@@ -86,22 +88,23 @@ export function UploadModal({ open, onClose }: UploadModalProps) {
       <DialogContent className="pd-up-dialog">
         {/* Head */}
         <div className="pd-up-head">
-          <div className="pd-up-head-icon">
-            <CloudUpload className="size-5 text-primary" />
-          </div>
+          <IconBox icon={CloudUpload} variant="primary" size="md" />
           <div className="min-w-0 flex-1">
             <DialogTitle className="pd-up-title">Enviar documento</DialogTitle>
             <DialogDescription className="pd-up-desc">
               Adicione anexos clínicos vinculados a um paciente.
             </DialogDescription>
           </div>
-          <button
-            onClick={handleClose}
-            className="pd-up-close"
-            aria-label="Fechar"
-          >
-            <X className="size-4" />
-          </button>
+          <DialogClose asChild>
+            <Button
+              variant="ghost"
+              size="icon"
+              aria-label="Fechar"
+              className="pd-up-close"
+            >
+              <X className="size-4" />
+            </Button>
+          </DialogClose>
         </div>
 
         <div className="pd-up-body">
@@ -147,7 +150,7 @@ export function UploadModal({ open, onClose }: UploadModalProps) {
                       className="cursor-pointer py-2.5"
                     >
                       <div className="pd-up-option">
-                        <User className="size-3.5 shrink-0 text-blue-500" />
+                        <User className="size-3.5 shrink-0 text-primary" />
                         <span className="text-sm font-medium">
                           {p.firstName} {p.lastName}
                         </span>

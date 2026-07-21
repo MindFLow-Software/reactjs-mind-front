@@ -10,9 +10,10 @@ import {
   SelectValue,
   SelectGroup,
 } from '@/components/ui/select'
+import { SearchInput } from '@/components/form-fields/search-input/search-input'
+import { FilterChip } from '@/components/badges/filter-chip/filter-chip'
 import { usePatientsWithAttachments } from '../../hooks/use-patients-with-attachments'
 import { DatePickerWithRange } from '../date-picker-with-range'
-import { PatientsSearchInput } from '../../../components/patients-search-input/patients-search-input'
 import { cn } from '@/lib/utils'
 import type { IUseAttachmentsFiltersReturn } from '../../hooks/use-attachments-filters'
 import './attachments-table-filters.css'
@@ -50,32 +51,23 @@ export function AttachmentsTableFilters({
 
   return (
     <div className="pd-flt-root">
-      {/* File type chips */}
       <div className="pd-flt-chips">
-        {FILE_TYPE_CHIPS.map((chip) => {
-          const isActive = contentType === chip.value
-          return (
-            <button
-              key={chip.label}
-              type="button"
-              onClick={() => setContentType(chip.value)}
-              className={cn(
-                'pd-flt-chip',
-                isActive ? 'pd-flt-chip-active' : 'pd-flt-chip-idle',
-              )}
-            >
-              {chip.label}
-            </button>
-          )
-        })}
+        {FILE_TYPE_CHIPS.map((chip) => (
+          <FilterChip
+            key={chip.label}
+            active={contentType === chip.value}
+            onToggle={() => setContentType(chip.value)}
+          >
+            {chip.label}
+          </FilterChip>
+        ))}
       </div>
 
-      {/* Search + dropdowns */}
       <div className="pd-flt-controls">
-        <PatientsSearchInput
+        <SearchInput
           placeholder="Buscar por nome, arquivo..."
           value={search}
-          onChange={(e) => setSearch(e.target.value)}
+          onChange={setSearch}
         />
 
         <Select value={patientId} onValueChange={setPatientId}>
@@ -138,7 +130,7 @@ export function AttachmentsTableFilters({
             onClick={clearFilters}
             className="pd-flt-clear"
           >
-            <XCircle className="size-4" />
+            <XCircle data-icon="inline-start" />
             <span className="text-sm">Limpar</span>
           </Button>
         )}

@@ -3,6 +3,7 @@ import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { useDropzone } from 'react-dropzone'
 import { toast } from 'sonner'
 
+import { IconBox } from '@/components/icon-box/icon-box'
 import { uploadAttachment } from '@/api/attachments/upload-attachment'
 import { uploadFileSchema } from '@/validators/attachments/form/upload-attachment-schema'
 import { cn } from '@/lib/utils'
@@ -65,13 +66,13 @@ export function FileUploadZone({ patientId }: FileUploadZoneProps) {
     >
       <input {...getInputProps()} />
 
-      <div className="ph-file-upload-zone__icon">
-        {isPending ? (
+      {isPending ? (
+        <div className="ph-file-upload-zone__icon">
           <Loader2 className="ph-file-upload-zone__loader" />
-        ) : (
-          <CloudUpload className="ph-file-upload-zone__cloud-icon" />
-        )}
-      </div>
+        </div>
+      ) : (
+        <IconBox icon={CloudUpload} variant="primary" size="md" />
+      )}
 
       <div>
         <p className="ph-file-upload-zone__label">

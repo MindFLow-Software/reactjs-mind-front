@@ -1,6 +1,6 @@
 import { ArrowUpDown } from 'lucide-react'
 import { Button } from '@/components/ui/button'
-import { cn } from '@/lib/utils'
+import { FilterChip } from '@/components/badges/filter-chip/filter-chip'
 
 import './file-type-filter.css'
 
@@ -34,30 +34,18 @@ export function FileTypeFilter({
   return (
     <div className="ph-file-type-filter">
       <div className="ph-file-type-filter__chips">
-        {CHIPS.map((chip) => {
-          const active = filter === chip.key
-          return (
-            <button
-              key={chip.key}
-              type="button"
-              onClick={() => onFilterChange(chip.key)}
-              className={cn(
-                'ph-file-type-filter__chip',
-                active && 'ph-file-type-filter__chip--active',
-              )}
-            >
-              {chip.label}
-              <span
-                className={cn(
-                  'ph-file-type-filter__count',
-                  active && 'ph-file-type-filter__count--active',
-                )}
-              >
-                {counts[chip.key]}
-              </span>
-            </button>
-          )
-        })}
+        {CHIPS.map((chip) => (
+          <FilterChip
+            key={chip.key}
+            active={filter === chip.key}
+            onToggle={() => onFilterChange(chip.key)}
+          >
+            {chip.label}
+            <span className="ph-file-type-filter__count">
+              {counts[chip.key]}
+            </span>
+          </FilterChip>
+        ))}
       </div>
 
       <Button
@@ -66,7 +54,7 @@ export function FileTypeFilter({
         className="ph-file-type-filter__sort-btn"
         tabIndex={-1}
       >
-        <ArrowUpDown className="ph-file-type-filter__sort-icon" />
+        <ArrowUpDown data-icon="inline-start" />
         Mais recentes
       </Button>
     </div>
