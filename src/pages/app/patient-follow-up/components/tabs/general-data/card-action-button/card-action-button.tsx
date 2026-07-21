@@ -20,12 +20,11 @@ export function CardActionButton({
   if (variant === 'edit') {
     return (
       <Button
+        size="sm"
         type="button"
         variant="ghost"
-        size="sm"
         onClick={onClick}
-        disabled={!onClick}
-        className="cab-edit"
+        className="cab-btn cab-edit"
       >
         {icon}
         {label}
@@ -35,10 +34,11 @@ export function CardActionButton({
 
   return (
     <Button
+      size="sm"
       type="button"
+      variant="ghost"
       onClick={onClick}
-      disabled={!onClick}
-      className="cab-add"
+      className="cab-btn cab-add"
     >
       <Plus className="size-3.5" />
       {label}
