@@ -2,7 +2,7 @@
 
 @layer components {
   .adb-revenue-chart-card {
-    @apply flex-1 px-3;
+    @apply flex-1 p-2! pt-4!;
   }
 
   .adb-revenue-chart {

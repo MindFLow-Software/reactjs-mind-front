@@ -22,6 +22,6 @@
   }
 
   .psob-footer {
-    @apply flex justify-between px-0 py-5 border-t-[0.5px] border-t-black/25 mt-auto;
+    @apply flex justify-between px-0! py-4! border-t-[0.5px] border-t-black/25 mt-auto;
   }
 }

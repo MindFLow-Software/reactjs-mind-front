@@ -19,7 +19,7 @@ export function useFormData<T extends object = Record<string, never>>() {
       } else if (Array.isArray(value)) {
         for (const item of value) formData.append(key, String(item))
       } else {
-        formData.append(key, value?.toString())
+        formData.append(key, String(value))
       }
     }
 

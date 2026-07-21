@@ -10,7 +10,7 @@ type ICreateClinicContext = {
 
 export function CreateClinicContext({ onGoBack }: ICreateClinicContext) {
   return (
-    <div className="flex flex-col items-center justify-center bg-muted/30 px-4 text-center">
+    <div className="flex flex-col items-center justify-center px-4 text-center">
       <button type="button" onClick={onGoBack} className="pc-switch">
         <Repeat2 size={15} />
         Trocar contexto

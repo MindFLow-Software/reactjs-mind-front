@@ -46,7 +46,7 @@ function FeatStats({ context }: { context: IPsychologistPracticeContext }) {
       </div>
       <div className="ca-feat-stat">
         <span className="ca-feat-stat-label">PACIENTES ATIVOS</span>
-        <span className="ca-feat-stat-value">—</span>
+        <span className="ca-feat-stat-value">{context.activePatientsCount ?? '—'}</span>
       </div>
       <div className="ca-feat-stat">
         <span className="ca-feat-stat-label">SESSÕES NA SEMANA</span>
