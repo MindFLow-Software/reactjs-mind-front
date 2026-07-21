@@ -20,6 +20,12 @@ type IMonthlyGoalsSection = {
 export function MonthlyGoalsSection({ goals }: IMonthlyGoalsSection) {
   const [sessionsGoal, hoursGoal, activePatientsGoal] = goals
 
+  const translatedGoalLabel: Record<IDashboardGoal['label'], string> = {
+    ['sessions']: 'Sessões',
+    ['hours']: 'Horas',
+    ['active-patients']: 'Pacientes Ativos',
+  }
+
   return (
     <Card className="dsh-goals-card">
       <CardHeader className="dsh-goals-header">
@@ -44,7 +50,7 @@ export function MonthlyGoalsSection({ goals }: IMonthlyGoalsSection) {
         {goals.map((goal) => (
           <DashboardProgressBar
             key={goal.label}
-            label={goal.label}
+            label={translatedGoalLabel[goal.label]}
             metric={{ value: goal.current, target: goal.target }}
           />
         ))}

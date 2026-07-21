@@ -1,5 +1,5 @@
 export type IDashboardGoal = {
-  label: string
+  label: 'sessions' | 'hours' | 'active-patients'
   current: number
   target: number
   percent: number
