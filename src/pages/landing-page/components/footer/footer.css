@@ -21,7 +21,7 @@
   }
 
   .lp-ftr-cta-btn {
-    @apply inline-flex items-center gap-2 rounded-xl bg-white px-6 py-3 text-[14px] font-semibold transition-all duration-200 hover:-translate-y-0.5 hover:shadow-lg;
+    @apply h-auto! inline-flex items-center gap-2 rounded-xl! bg-white px-6! py-3! text-[14px]! font-semibold transition-all duration-200 hover:-translate-y-0.5 hover:bg-white! hover:shadow-lg;
   }
 
   .lp-ftr-logo-box {

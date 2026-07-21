@@ -1,7 +1,7 @@
 import { motion } from 'framer-motion'
-import { ArrowRight, Check, Play, Zap } from 'lucide-react'
-import { Brain } from '@phosphor-icons/react'
+import { ArrowRight, Brain, Check, Play, Zap } from 'lucide-react'
 import { Link } from 'react-router-dom'
+import { Button } from '@/components/ui/button'
 import { AvatarStack } from '../../shared/avatar-stack/avatar-stack'
 import { AVATARS, BRAND, BRAND_MUTED } from '../../../constants'
 import './hero-copy.css'
@@ -45,7 +45,7 @@ export function HeroCopy() {
         >
           Foque no paciente{' '}
           <span className="inline-block align-middle mb-1">
-            <Brain size="0.8em" weight="bold" style={{ color: BRAND }} />
+            <Brain size="0.8em" strokeWidth={2.5} style={{ color: BRAND }} />
           </span>
           <br />A gestão{' '}
           <span className="relative inline-block">
@@ -100,20 +100,29 @@ export function HeroCopy() {
         transition={{ delay: 0.34, duration: 0.7 }}
         className="flex items-center justify-center gap-3 mb-5"
       >
-        <Link to="/sign-up" className="lp-hero-cta-primary group">
-          Começar Grátis
-          <ArrowRight className="h-4 w-4 transition-transform duration-200 group-hover:translate-x-1" />
-        </Link>
+        <Button asChild variant="ghost" className="lp-hero-cta-primary group">
+          <Link to="/sign-up">
+            Começar Grátis
+            <ArrowRight
+              className="h-4 w-4 transition-transform duration-200 group-hover:translate-x-1"
+              data-icon="inline-end"
+            />
+          </Link>
+        </Button>
 
-        <button className="lp-hero-cta-secondary group">
+        <Button
+          type="button"
+          variant="ghost"
+          className="lp-hero-cta-secondary group"
+        >
           <span
             className="lp-hero-cta-play"
             style={{ background: BRAND_MUTED }}
           >
-            <Play className="w-2.5 h-2.5 ml-0.5" style={{ color: BRAND }} />
+            <Play className="size-2.5 ml-0.5" style={{ color: BRAND }} />
           </span>
           Ver demonstração
-        </button>
+        </Button>
       </motion.div>
 
       <motion.div

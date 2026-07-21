@@ -1,6 +1,7 @@
 import { motion } from 'framer-motion'
 import { Plug, ArrowRight } from 'lucide-react'
 import { Link } from 'react-router-dom'
+import { Button } from '@/components/ui/button'
 import { GridBackdrop } from '../shared/grid-backdrop/grid-backdrop'
 import { GradientHighlight } from '../shared/gradient-highlight/gradient-highlight'
 import { SectionHeading } from '../shared/section-heading/section-heading'
@@ -135,10 +136,15 @@ export function IntegrationsSection() {
             viewport={{ once: true }}
             transition={{ delay: 0.26, duration: 0.55 }}
           >
-            <Link to="/sign-up" className="lp-int-cta group">
-              Explorar integrações
-              <ArrowRight className="h-4 w-4 transition-transform duration-200 group-hover:translate-x-1" />
-            </Link>
+            <Button asChild variant="ghost" className="lp-int-cta group">
+              <Link to="/sign-up">
+                Explorar integrações
+                <ArrowRight
+                  className="h-4 w-4 transition-transform duration-200 group-hover:translate-x-1"
+                  data-icon="inline-end"
+                />
+              </Link>
+            </Button>
           </motion.div>
 
           <div className="mt-12 grid w-full max-w-[420px] grid-cols-1 gap-3 lg:hidden">
