@@ -1,27 +1,16 @@
 import { api } from '@/lib/axios'
+import type { ITypedFormData } from '@/hooks/use-form-data'
+import type { UpdatePsychologistData } from '@/validators/psychologists/form/update-psychologist-schema'
 import type { IMutationResult } from '@/types/shared/mutation-result'
-import type { Expertise, Honorific, Languages } from '@/types/shared/enums'
-
-export type UpdatePsychologistProfileBody = {
-  crp?: string
-  expertise?: Expertise
-  honorific?: Honorific
-  languages?: Languages[]
-  professionalBio?: string
-  professionalName?: string
-  // profileImageUrl?: string
-}
 
 /**
  * Atualiza os dados do perfil do psicólogo logado.
- * * @param body - Dados parciais para atualização
+ * Usa PATCH multipart pois a imagem de perfil vai junto com os demais campos.
  */
 export async function updatePsychologistProfile(
-  body: UpdatePsychologistProfileBody,
+  formData: ITypedFormData<UpdatePsychologistData>,
 ): Promise<IMutationResult<void>> {
-  // Utilizamos PATCH pois o backend está configurado com @Patch('/profile')
-  // e queremos uma atualização parcial (apenas o que foi enviado).
-  const response = await api.patch('/psychologist/profile', body)
+  const response = await api.patch('/psychologist/profile', formData)
 
   return { data: response.data, message: response.apiMessage ?? null }
 }

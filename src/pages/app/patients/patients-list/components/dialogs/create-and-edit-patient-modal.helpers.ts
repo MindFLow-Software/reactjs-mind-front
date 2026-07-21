@@ -15,7 +15,6 @@ export function buildPatientUpdateDefaults(
     cpf: patient?.cpf ? Mask.cpf(patient.cpf) : '',
     gender: patient?.gender ?? Gender.OTHER,
     dateOfBirth: patient?.dateOfBirth ? Time.parse(patient.dateOfBirth) : null,
-    profileImageUrl: patient?.profileImageUrl ?? '',
     attachmentIds: [],
   }
 }

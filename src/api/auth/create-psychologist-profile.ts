@@ -1,14 +1,15 @@
 import { api } from '@/lib/axios'
-import type { ICreatePsychologistProfileBody } from '@/types/psychologist/create-psychologist-profile-body'
+import type { ITypedFormData } from '@/hooks/use-form-data'
+import type { CreatePsychologistProfileData } from '@/validators/psychologists/form/create-psychologist-profile-schema'
 import type { IPsychologistProfile } from '@/types/psychologist/psychologist-profile'
 import type { IMutationResult } from '@/types/shared/mutation-result'
 
 export async function createPsychologistProfile(
-  body: ICreatePsychologistProfileBody,
+  formData: ITypedFormData<CreatePsychologistProfileData>,
 ): Promise<IMutationResult<IPsychologistProfile>> {
   const response = await api.post<IPsychologistProfile>(
     '/psychologist/profile',
-    body,
+    formData,
   )
   return { data: response.data, message: response.apiMessage ?? null }
 }

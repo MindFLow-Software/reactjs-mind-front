@@ -1,5 +1,6 @@
 'use client'
 
+import { useCallback, useEffect } from 'react'
 import { Controller, useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { Loader2, User, Briefcase } from 'lucide-react'
@@ -16,7 +17,6 @@ import {
   updatePsychologistSchema,
   type UpdatePsychologistData,
 } from '@/validators/psychologists/form/update-psychologist-schema'
-// import type { UpdatePsychologistBody } from '@/api/psychologists/update-psychologist'
 
 import {
   DialogTitle,
@@ -49,10 +49,10 @@ import { Input } from '@/components/ui/input'
 import { Button } from '@/components/ui/button'
 import { Textarea } from '@/components/ui/textarea'
 import { MaskedInput } from '@/components/maked-input/maked-input'
+import { AvatarUploadField } from '@/components/avatar-upload-field/avatar-upload-field'
 
 import './edit-psychologist-profile-dialog.css'
 import { usePsychologistProfile } from '@/hooks/use-psychologist-profile'
-import { useEffect } from 'react'
 
 type IEditPsychologistProfile = {
   onClose: () => void
@@ -67,7 +67,7 @@ function buildDefaultValues(
     honorific: psychologistProfile?.honorific,
     languages: psychologistProfile?.languages,
     expertise: psychologistProfile?.expertise,
-    // profileImageUrl: psychologistProfile.profileImageUrl ?? '',
+    profileImageUrl: psychologistProfile?.profileImageUrl ?? '',
     professionalBio: psychologistProfile?.professionalBio ?? '',
     professionalName: psychologistProfile?.professionalName ?? '',
   }
@@ -78,6 +78,8 @@ export function EditPsychologistProfile({
   psychologistProfileId,
 }: IEditPsychologistProfile) {
   const { data } = usePsychologistProfile(psychologistProfileId)
+  const { updateProfileFn, isUpdatingPsychologistProfile } =
+    useUpdatePsychologistProfile()
 
   const psychologistProfile = data?.psychologist
 
@@ -96,6 +98,14 @@ export function EditPsychologistProfile({
   } = form
 
   const selectedLanguages = watch('languages') ?? []
+  const professionalName = watch('professionalName')
+
+  const handleAvatarSelect = useCallback(
+    (file: File | null) => {
+      setValue('profileImage', file ?? undefined, { shouldDirty: true })
+    },
+    [setValue],
+  )
 
   const handleToggleLanguage = (language: Languages) => {
     const alreadyAdded = selectedLanguages?.includes(language)
@@ -111,9 +121,6 @@ export function EditPsychologistProfile({
     )
   }
 
-  const { mutateAsync: updateProfileFn, isPending } =
-    useUpdatePsychologistProfile()
-
   async function onSubmit(data: UpdatePsychologistData) {
     await updateProfileFn(data)
     onClose()
@@ -123,7 +130,7 @@ export function EditPsychologistProfile({
     if (!psychologistProfile) return
 
     reset(buildDefaultValues(psychologistProfile))
-  }, [psychologistProfile])
+  }, [psychologistProfile, reset])
 
   return (
     <DialogContent className="acc-edit-content">
@@ -148,6 +155,17 @@ export function EditPsychologistProfile({
               <User className="size-4" />
               <h3 className="acc-edit-section-title">Informações Básicas</h3>
             </div>
+            <AvatarUploadField
+              identity={{
+                name: professionalName || null,
+                defaultUrl: psychologistProfile?.profileImageUrl,
+              }}
+              copy={{
+                label: 'Foto de perfil',
+                description: 'JPG ou PNG · até 2 MB · opcional',
+              }}
+              onFileSelect={handleAvatarSelect}
+            />
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <Controller
                 name="professionalName"
@@ -309,7 +327,7 @@ export function EditPsychologistProfile({
                 type="button"
                 variant="ghost"
                 onClick={onClose}
-                disabled={isPending}
+                disabled={isUpdatingPsychologistProfile}
               >
                 Cancelar
               </Button>
@@ -317,9 +335,9 @@ export function EditPsychologistProfile({
             <Button
               type="submit"
               className="acc-edit-submit-btn"
-              disabled={isPending || !isDirty || !isValid}
+              disabled={isUpdatingPsychologistProfile || !isDirty || !isValid}
             >
-              {isPending ? (
+              {isUpdatingPsychologistProfile ? (
                 <>
                   <Loader2 className="mr-2 size-4 animate-spin" />
                   Salvando...

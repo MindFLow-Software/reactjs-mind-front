@@ -8,7 +8,7 @@
   }
 
   .pf-candidates-header {
-    @apply flex items-start gap-3;
+    @apply flex! items-start gap-3;
   }
 
   .pf-candidates-icon {
@@ -27,6 +27,6 @@
 
   .pf-candidate-footer-details {
     @apply flex items-center gap-2;
-    @apply text-sm text-muted-foreground;
+    @apply text-xs! text-muted-foreground;
   }
 }

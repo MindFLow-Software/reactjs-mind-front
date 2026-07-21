@@ -1,5 +1,5 @@
 import '../patient-form-fields.css'
-import { useEffect, useState } from 'react'
+import { useEffect } from 'react'
 import { useForm, type Resolver } from 'react-hook-form'
 import { UserPen } from 'lucide-react'
 import { zodResolver } from '@hookform/resolvers/zod'
@@ -34,8 +34,6 @@ type IEditPatientModal = {
 export function EditPatientModal({ patientId }: IEditPatientModal) {
   const { patient } = usePatient(patientId)
 
-  const [avatarFile, setAvatarFile] = useState<File | null>(null)
-
   const { files, addFiles, removeFile, clearFiles } = useFileSelection({
     maxFiles: MAX_DOC_FILES,
     maxSizeBytes: MAX_DOC_SIZE,
@@ -59,13 +57,11 @@ export function EditPatientModal({ patientId }: IEditPatientModal) {
 
   const { submit, isSubmitting } = useUpdatePatient({
     patientId,
-    avatarFile,
     files,
     onSuccess: () => {
       reset()
       goToStep(1)
       clearFiles()
-      setAvatarFile(null)
     },
   })
 
@@ -87,9 +83,7 @@ export function EditPatientModal({ patientId }: IEditPatientModal) {
   function renderStepContent() {
     switch (step) {
       case 1:
-        return (
-          <StepBasicData onAvatarSelect={setAvatarFile} patient={patient} />
-        )
+        return <StepBasicData patient={patient} />
       case 2:
         return <StepContactAddress />
       case 3:

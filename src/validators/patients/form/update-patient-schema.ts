@@ -11,7 +11,7 @@ export const updatePatientSchema = z.object({
   dateOfBirth: z.date().nullable().optional().describe('basicData'),
   cpf: cpfSchema.describe('basicData'),
   gender: z.enum(Gender).optional().describe('basicData'),
-  profileImageUrl: z.string().optional().describe('basicData'),
+  profileImage: z.instanceof(File).optional().describe('basicData'),
   attachmentIds: z.array(z.string()).optional(),
 })
 

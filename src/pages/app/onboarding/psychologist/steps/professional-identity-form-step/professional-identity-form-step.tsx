@@ -1,4 +1,5 @@
 import './professional-identity-form-step.css'
+import { useCallback } from 'react'
 import { Controller, useFormContext } from 'react-hook-form'
 
 import z from 'zod'
@@ -27,6 +28,7 @@ import { Input } from '@/components/ui/input'
 import { Badge } from '@/components/ui/badge'
 import { Textarea } from '@/components/ui/textarea'
 import { MaskedInput } from '@/components/maked-input/maked-input'
+import { AvatarUploadField } from '@/components/avatar-upload-field/avatar-upload-field'
 
 import { Expertise, Honorific, Languages } from '@/types/shared/enums'
 import { translatedExpertise } from '@/constants/translated-expertise'
@@ -43,6 +45,14 @@ export function ProfessionalIdentityFormStep() {
 
   const selectedExpertise = watch('expertise')
   const selectedLanguages = watch('languages')
+  const professionalName = watch('professionalName')
+
+  const handleAvatarSelect = useCallback(
+    (file: File | null) => {
+      setValue('profileImage', file ?? undefined, { shouldDirty: true })
+    },
+    [setValue],
+  )
 
   const handleToggleLanguage = (language: Languages) => {
     const alreadyAdded = selectedLanguages.includes(language)
@@ -61,6 +71,14 @@ export function ProfessionalIdentityFormStep() {
   return (
     <div>
       <FieldSet className="flex flex-col gap-4">
+        <AvatarUploadField
+          identity={{ name: professionalName || null }}
+          copy={{
+            label: 'Foto de perfil',
+            description: 'JPG ou PNG · até 2 MB · opcional',
+          }}
+          onFileSelect={handleAvatarSelect}
+        />
         <FieldGroup className="flex flex-row items-start gap-2">
           <Controller
             name="professionalName"

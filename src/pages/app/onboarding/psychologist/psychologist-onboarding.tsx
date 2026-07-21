@@ -22,6 +22,7 @@ import { Button } from '@/components/ui/button'
 import { Expertise, Honorific } from '@/types/shared/enums'
 import { queryKeys } from '@/constants/query-keys'
 import { getProfile } from '@/api/auth/get-profile'
+import { useFormData } from '@/hooks/use-form-data'
 import { ProfessionalIdentityFormStep } from './steps/professional-identity-form-step/professional-identity-form-step'
 import { createPsychologistProfileSchema } from '@/validators/psychologists/form/create-psychologist-profile-schema'
 import { useCreatePsychologistProfile } from './hooks/use-create-psychologist-profile'
@@ -93,13 +94,15 @@ export function PsychologistOnboardingPage() {
     }
   }
 
+  const { transform } = useFormData<ICreatePsychologistProfile>()
+
   const { isPending: isCreatingPsychologistProfile, mutateAsync } =
     useCreatePsychologistProfile()
 
   const handleCreatePsychologistProfile = async (
     data: ICreatePsychologistProfile,
   ) => {
-    await mutateAsync(data)
+    await mutateAsync(transform(data))
   }
 
   const alreadyHasPsychologistProfile = useMemo(
