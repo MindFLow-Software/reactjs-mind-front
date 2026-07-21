@@ -162,9 +162,13 @@ export function PatientsRowActions({ patient }: IPatientsRowActions) {
         {isDetailsOpen && <PatientDetailsDialog patientId={id} />}
       </Dialog>
 
-      <Dialog open={isEditOpen} onOpenChange={setIsEditOpen}>
-        {isEditOpen && <EditPatientModal patientId={id} />}
-      </Dialog>
+      {isEditOpen && (
+        <EditPatientModal
+          patientId={id}
+          open={isEditOpen}
+          onOpenChange={setIsEditOpen}
+        />
+      )}
     </TableCell>
   )
 }

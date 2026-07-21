@@ -1,10 +1,13 @@
-import '../patient-form-fields.css'
 import { useEffect, useState } from 'react'
 import { useForm, type Resolver } from 'react-hook-form'
 import { UserPen } from 'lucide-react'
 import { zodResolver } from '@hookform/resolvers/zod'
 
 import { Form } from '@/components/ui/form'
+import {
+  StepperDialog,
+  type IStepperNav,
+} from '@/components/stepper-dialog/stepper-dialog'
 import { usePatient } from '@/hooks/use-patient'
 import { useFormSteps } from '@/hooks/use-form-steps'
 import { useFileSelection } from '@/hooks/use-file-selection'
@@ -13,8 +16,7 @@ import {
   type UpdatePatientFormData,
 } from '@/validators/patients/form/update-patient-schema'
 
-import { PatientFormModal } from '../patient-form-modal/patient-form-modal'
-import { UploadZone } from '../register-patients/components/upload-zone/upload-zone'
+import { FileUploadField } from '@/components/form-fields/file-upload-field/file-upload-field'
 import { StepBasicData } from '../register-patients/components/step-basic-data/step-basic-data'
 import { AttachmentsList } from '../register-patients/components/attachments-list/attachments-list'
 import { StepContactAddress } from '../register-patients/components/step-contact-address/step-contact-address'
@@ -27,11 +29,19 @@ import {
 } from '../register-patients/constants'
 import { buildPatientUpdateDefaults } from '../create-and-edit-patient-modal.helpers'
 
+import '../patient-form-fields.css'
+
 type IEditPatientModal = {
   patientId: string
+  open: boolean
+  onOpenChange: (open: boolean) => void
 }
 
-export function EditPatientModal({ patientId }: IEditPatientModal) {
+export function EditPatientModal({
+  patientId,
+  open,
+  onOpenChange,
+}: IEditPatientModal) {
   const { patient } = usePatient(patientId)
 
   const [avatarFile, setAvatarFile] = useState<File | null>(null)
@@ -54,8 +64,9 @@ export function EditPatientModal({ patientId }: IEditPatientModal) {
     formState: { errors },
   } = methods
 
-  const { step, handleNext, handleBack, goToStep, isFirstStep, isLastStep } =
-    useFormSteps({ stepsLength: STEPS.length })
+  const { step, handleNext, handleBack, goToStep } = useFormSteps({
+    stepsLength: STEPS.length,
+  })
 
   const { submit, isSubmitting } = useUpdatePatient({
     patientId,
@@ -71,13 +82,12 @@ export function EditPatientModal({ patientId }: IEditPatientModal) {
 
   useStepErrorRedirect({ errors, schema: updatePatientSchema, goToStep })
 
-  const steps = {
+  const nav: IStepperNav = {
     current: step,
-    isFirstStep,
-    isLastStep,
-    handleNext,
-    handleBack,
-    goToStep,
+    total: STEPS.length,
+    onNext: handleNext,
+    onBack: handleBack,
+    onGoTo: goToStep,
   }
 
   const subtitle = patient
@@ -96,10 +106,10 @@ export function EditPatientModal({ patientId }: IEditPatientModal) {
         return (
           <div className="flex flex-col gap-5">
             <AttachmentsList patientId={patient?.id ?? null} />
-            <UploadZone
-              selectedFiles={files}
-              onFilesChange={addFiles}
-              onRemoveFile={removeFile}
+            <FileUploadField
+              upload={{ files, onAddFiles: addFiles, onRemoveFile: removeFile }}
+              accept={{ 'application/pdf': [], 'image/*': [] }}
+              description={`PDFs ou imagens · máximo ${MAX_DOC_FILES} arquivos · até 3 MB cada`}
             />
           </div>
         )
@@ -117,20 +127,20 @@ export function EditPatientModal({ patientId }: IEditPatientModal) {
   const isPatientLoading = !patient
 
   return (
-    <PatientFormModal>
-      <PatientFormModal.Header
+    <StepperDialog open={open} onOpenChange={onOpenChange}>
+      <StepperDialog.Header
         icon={UserPen}
         title="Editar paciente"
         subtitle={subtitle}
       />
 
-      <PatientFormModal.Stepper steps={steps} />
+      <StepperDialog.Steps steps={nav} definitions={STEPS} />
 
       <Form {...methods}>
-        <PatientFormModal.Body>{renderStepContent()}</PatientFormModal.Body>
+        <StepperDialog.Body>{renderStepContent()}</StepperDialog.Body>
 
-        <PatientFormModal.Footer
-          steps={steps}
+        <StepperDialog.Footer
+          steps={nav}
           disabled={isPatientLoading}
           submit={{
             isSubmitting,
@@ -139,6 +149,6 @@ export function EditPatientModal({ patientId }: IEditPatientModal) {
           }}
         />
       </Form>
-    </PatientFormModal>
+    </StepperDialog>
   )
 }

@@ -1,7 +1,7 @@
 'use client'
 
 import { cn } from '@/lib/utils'
-import { Copy } from 'lucide-react'
+import { Check, Copy, PauseCircle } from 'lucide-react'
 import { useMemo } from 'react'
 
 import {
@@ -12,12 +12,11 @@ import {
 } from '@/components/ui/tooltip'
 import { Button } from '@/components/ui/button'
 import { UserAvatar } from '@/components/user-avatar/user-avatar'
-import { StatusBadge } from '@/components/ui/status-badge'
+import { StatusBadge } from '@/components/badges/status-badge/status-badge'
 
 import './patient-details-header.css'
 import { Clipboard } from '@/utils/clipboard'
 import { PatientProfileStatus } from '@/types/patient-profile/patient-profile-status'
-import { AccountStatus } from '@/types/auth/account-status'
 import type { IPatientProfile } from '@/types/patient-profile/patient-profile'
 
 type PatientDetailsHeaderProps = {
@@ -65,10 +64,9 @@ export function PatientDetailsHeader({ patient }: PatientDetailsHeaderProps) {
               <h1 className="ph-patient-details-header__name">{fullName}</h1>
 
               <StatusBadge
-                status={
-                  isPatientActive ? AccountStatus.ACTIVE : AccountStatus.BLOCKED
-                }
-                size="md"
+                tone={isPatientActive ? 'success' : 'muted'}
+                icon={isPatientActive ? Check : PauseCircle}
+                label={isPatientActive ? 'Ativo' : 'Inativo'}
               />
             </div>
 
