@@ -1,8 +1,8 @@
-import { CalendarDays, ListFilter, Search } from 'lucide-react'
+import { CalendarDays, ListFilter } from 'lucide-react'
 
 import { Button } from '@/components/ui/button'
-import { Input } from '@/components/ui/input'
-import { cn } from '@/lib/utils'
+import { SearchInput } from '@/components/form-fields/search-input/search-input'
+import { FilterChip } from '@/components/badges/filter-chip/filter-chip'
 
 import { CHIPS, type StatusFilter } from './timeline.helpers'
 
@@ -21,52 +21,33 @@ type TimelineFilterBarProps = {
 export function TimelineFilterBar({ search, status }: TimelineFilterBarProps) {
   return (
     <div className="pst-filter-bar">
-      <div className="pst-search-wrapper">
-        <Search className="pst-search-icon" />
-        <Input
-          placeholder="Buscar nas anotações..."
-          value={search.value}
-          onChange={(e) => search.onChange(e.target.value)}
-          className="pst-search-input"
-        />
-      </div>
+      <SearchInput
+        placeholder="Buscar nas anotações..."
+        value={search.value}
+        onChange={search.onChange}
+        className="pst-search-input"
+      />
 
       <div className="pst-chips-row">
-        {CHIPS.map((chip) => {
-          const active = status.value === chip.key
-          return (
-            <button
-              key={chip.key}
-              type="button"
-              onClick={() => status.onChange(chip.key)}
-              className={cn(
-                'pst-chip',
-                active ? 'pst-chip--active' : 'pst-chip--inactive',
-              )}
-            >
-              {chip.label}
-              <span
-                className={cn(
-                  'pst-chip-count',
-                  active
-                    ? 'pst-chip-count--active'
-                    : 'pst-chip-count--inactive',
-                )}
-              >
-                {status.counts[chip.key]}
-              </span>
-            </button>
-          )
-        })}
+        {CHIPS.map((chip) => (
+          <FilterChip
+            key={chip.key}
+            active={status.value === chip.key}
+            onToggle={() => status.onChange(chip.key)}
+          >
+            {chip.label}
+            <span className="pst-chip-count">{status.counts[chip.key]}</span>
+          </FilterChip>
+        ))}
       </div>
 
       <div className="pst-filter-actions">
         <Button variant="outline" size="sm" className="pst-filter-btn">
-          <CalendarDays className="pst-filter-btn-icon" />
+          <CalendarDays data-icon="inline-start" />
           Período: 6 meses
         </Button>
         <Button variant="outline" size="sm" className="pst-filter-btn">
-          <ListFilter className="pst-filter-btn-icon" />
+          <ListFilter data-icon="inline-start" />
           Ordenar
         </Button>
       </div>

@@ -1,15 +1,13 @@
 import './patients-table-filters.css'
-import { Loader2, Search, SlidersHorizontal, X } from 'lucide-react'
-import { useEffect, useRef } from 'react'
-import { useForm } from 'react-hook-form'
+import { useState } from 'react'
+import { SlidersHorizontal, X } from 'lucide-react'
 
 import { Button } from '@/components/ui/button'
-import { Input } from '@/components/ui/input'
+import { SearchInput } from '@/components/form-fields/search-input/search-input'
+import { FilterChip } from '@/components/badges/filter-chip/filter-chip'
 import { cn } from '@/lib/utils'
 import { STATUS_PILLS } from '../../../constants'
 import { usePatientFilters } from '../../../hooks/use-patient-filters'
-
-const SEARCH_DEBOUNCE_MS = 400
 
 type IPatientsTableFilters = {
   isFetching?: boolean
@@ -17,87 +15,40 @@ type IPatientsTableFilters = {
 
 export function PatientsTableFilters({ isFetching }: IPatientsTableFilters) {
   const { filters, setFilters, clearFilters } = usePatientFilters()
-  const isFirstRender = useRef(true)
-  const setFiltersRef = useRef(setFilters)
-  setFiltersRef.current = setFilters
 
-  const { register, watch, setValue } = useForm({
-    values: { filter: filters.filter },
-  })
-
-  const watchedFilter = watch('filter')
-
-  useEffect(() => {
-    if (isFirstRender.current) {
-      isFirstRender.current = false
-      return
-    }
-    if (watchedFilter === filters.filter) return
-
-    const timeout = setTimeout(() => {
-      setFiltersRef.current({ filter: watchedFilter })
-    }, SEARCH_DEBOUNCE_MS)
-
-    return () => clearTimeout(timeout)
-  }, [watchedFilter, filters.filter])
-
-  function handleClearSearch() {
-    setValue('filter', '')
-    setFilters({ filter: '' })
-  }
+  const [searchValue, setSearchValue] = useState(filters.filter)
 
   function handleClearAll() {
     clearFilters()
-    setValue('filter', '')
+    setSearchValue('')
   }
 
   const hasFilters = !!filters.filter || filters.status !== null
 
   return (
     <div className="ptf-root">
-      <div className="ptf-search-wrapper">
-        <span className="ptf-search-icon">
-          {isFetching ? (
-            <Loader2 className="h-4 w-4 animate-spin" />
-          ) : (
-            <Search className="h-4 w-4" />
-          )}
-        </span>
-        <Input
-          {...register('filter')}
-          placeholder="Buscar por nome, CPF, e-mail ou telefone"
-          autoComplete="off"
-          className="ptf-search-input"
-        />
-        {watchedFilter && (
-          <button
-            type="button"
-            onClick={handleClearSearch}
-            className="ptf-search-clear"
-            aria-label="Limpar busca"
-          >
-            <X className="size-3.5" />
-          </button>
-        )}
-      </div>
-
+      <SearchInput
+        value={searchValue}
+        onChange={setSearchValue}
+        onDebouncedChange={(value) => setFilters({ filter: value })}
+        isLoading={isFetching}
+        placeholder="Buscar por nome, CPF, e-mail ou telefone"
+        className="ptf-search-input"
+      />
       <div className="ptf-status-pills">
         {STATUS_PILLS.map((pill) => {
           const isActive = filters.status === pill.value
 
           return (
-            <button
+            <FilterChip
               key={pill.value ?? 'all'}
-              type="button"
-              onClick={() => setFilters({ status: pill.value })}
-              className={cn(
-                'ptf-pill',
-                isActive ? pill.activeCls : 'ptf-pill--inactive',
-              )}
+              active={isActive}
+              onToggle={() => setFilters({ status: pill.value })}
+              className={cn(isActive && pill.activeCls)}
             >
               {pill.dot && <span className={cn('ptf-pill-dot', pill.dot)} />}
               {pill.label}
-            </button>
+            </FilterChip>
           )
         })}
       </div>
@@ -110,7 +61,7 @@ export function PatientsTableFilters({ isFetching }: IPatientsTableFilters) {
             onClick={handleClearAll}
             className="ptf-clear-btn"
           >
-            <X className="h-3.5 w-3.5" />
+            <X data-icon="inline-start" />
             Limpar filtros
           </Button>
         )}
@@ -120,7 +71,7 @@ export function PatientsTableFilters({ isFetching }: IPatientsTableFilters) {
           disabled
           className="ptf-advanced-btn"
         >
-          <SlidersHorizontal className="h-3.5 w-3.5" />
+          <SlidersHorizontal data-icon="inline-start" />
           Filtros avançados
         </Button>
       </div>
