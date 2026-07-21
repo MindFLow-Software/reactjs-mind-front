@@ -1,0 +1,11 @@
+@reference "../../../../../../../global.css";
+
+@layer components {
+  .cab-edit {
+    @apply h-7 gap-1.5 text-xs text-muted-foreground hover:text-foreground cursor-pointer shrink-0;
+  }
+
+  .cab-add {
+    @apply text-sm text-blue-600 dark:text-blue-400 font-medium hover:underline cursor-pointer;
+  }
+}

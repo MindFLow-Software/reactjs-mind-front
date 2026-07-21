@@ -22,7 +22,7 @@ export function useUpdatePatient({
   const queryClient = useQueryClient()
 
   const { transform } = useFormData<UpdatePatientFormData>()
-  const { uploadAll, isUploading } = usePatientAttachmentsUpload()
+  const { uploadAll } = usePatientAttachmentsUpload()
 
   const { mutateAsync, isPending } = useMutation({
     mutationFn: updatePatientProfileById,
@@ -55,5 +55,5 @@ export function useUpdatePatient({
     [mutateAsync, transform, uploadAll, patientId, files, onSuccess],
   )
 
-  return { submit, isSubmitting: isPending || isUploading }
+  return { submit, isSubmitting: isPending /* || isUploading */ }
 }

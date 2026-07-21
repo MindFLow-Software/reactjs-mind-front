@@ -1,0 +1,15 @@
+@reference "../../../../../../../global.css";
+
+@layer components {
+  .gd-field {
+    @apply flex flex-col gap-1.5 min-w-0;
+  }
+
+  .gd-field__label {
+    @apply text-xs font-medium text-muted-foreground;
+  }
+
+  .gd-field__box {
+    @apply flex items-center justify-between gap-2 rounded-lg border border-border bg-muted/40 px-3 py-1.5 text-sm text-foreground;
+  }
+}

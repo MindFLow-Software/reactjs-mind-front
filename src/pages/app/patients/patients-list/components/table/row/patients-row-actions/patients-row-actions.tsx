@@ -57,7 +57,7 @@ export function PatientsRowActions({ patient }: IPatientsRowActions) {
 
   const handleNavigate = useCallback(() => {
     clearQueue()
-    navigate(`/patients/${id}/details`, { state: { from: 'patients-list' } })
+    navigate(`/patient/${id}/follow-up`, { state: { from: 'patients-list' } })
   }, [clearQueue, navigate, id])
 
   const handleScheduleSession = useCallback(() => {
@@ -80,7 +80,7 @@ export function PatientsRowActions({ patient }: IPatientsRowActions) {
             </Button>
           </TooltipTrigger>
           <TooltipContent className="ptr-tooltip-text">
-            Prontuário
+            Acompanhamento
           </TooltipContent>
         </Tooltip>
 

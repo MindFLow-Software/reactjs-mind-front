@@ -1,0 +1,75 @@
+@reference "../../../../../../global.css";
+
+@layer components {
+  .sr-card {
+    @apply p-4! max-w-3/5;
+  }
+
+  .sr-header {
+    @apply flex! justify-between px-0! gap-1!;
+  }
+
+  .sr-header-title-row {
+    @apply flex items-center gap-2;
+  }
+
+  .sr-badge {
+    @apply bg-violet-100! text-violet-500! border border-violet-200!;
+  }
+
+  .sr-content {
+    @apply flex flex-col gap-2 px-0!;
+  }
+
+  .sr-grid {
+    @apply grid grid-cols-2 gap-4;
+  }
+
+  .sr-sub-card {
+    @apply p-4! border border-border w-full gap-2!;
+  }
+
+  .sr-sub-card-header {
+    @apply px-0!;
+  }
+
+  .sr-sub-card-header-row {
+    @apply flex! items-center gap-2 px-0!;
+  }
+
+  .sr-sub-card-content {
+    @apply px-0!;
+  }
+
+  .sr-sub-card-icon-wrap {
+    @apply flex items-center justify-center p-1 rounded-full w-fit;
+  }
+
+  .sr-icon-wrap-blue {
+    @apply bg-blue-100;
+  }
+
+  .sr-icon-wrap-green {
+    @apply bg-green-100;
+  }
+
+  .sr-icon-wrap-orange {
+    @apply bg-orange-100;
+  }
+
+  .sr-icon-wrap-red {
+    @apply bg-red-100;
+  }
+
+  .sr-sub-card-title {
+    @apply text-xs! uppercase tracking-wider text-muted-foreground;
+  }
+
+  .sr-sub-card-list {
+    @apply ml-4 list-disc;
+  }
+
+  .sr-sub-card-list-item {
+    @apply text-sm;
+  }
+}

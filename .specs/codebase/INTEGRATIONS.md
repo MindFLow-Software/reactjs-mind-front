@@ -15,8 +15,8 @@ HTTP:
 
 React Query:
 
-- GET => `useQuery`.
-- POST/PUT/PATCH/DELETE => `useMutation`.
+- GET => `useQuery`, always wrapped in a named domain hook (`use<Entity>.ts`). Never call `useQuery` directly in a page/component.
+- POST/PUT/PATCH/DELETE => `useMutation` via `useApiMutation` from `@/hooks/use-api-mutation`, always wrapped in a named domain hook (`use<Action><Entity>.ts`). Never call `useMutation`/`useApiMutation` directly in a page/component, including for single, one-off mutations.
 - Query keys must be stable and typed.
 - Mutations must invalidate affected queries and display backend messages.
 

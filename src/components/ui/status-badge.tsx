@@ -72,10 +72,10 @@ export function StatusBadge({
         className={cn(
           'sb-icon-wrap',
           cfg.ico,
-          isMd ? 'w-4 h-4' : 'w-3.5 h-3.5',
+          isMd ? 'size-4' : 'size-3.5',
         )}
       >
-        <Icon className={isMd ? 'w-3 h-3' : 'w-2.5 h-2.5'} strokeWidth={3.2} />
+        <Icon className={isMd ? 'size-3' : 'size-2.5'} strokeWidth={3.2} />
       </span>
       {cfg.label}
     </span>

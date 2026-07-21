@@ -68,7 +68,7 @@ export default function PatientsRecords() {
       patients.map((p) => p.id),
       'patients-records',
     )
-    navigate(`/patients/${patientId}/details`, {
+    navigate(`/patient/${patientId}/follow-up`, {
       state: { from: 'patients-records' },
     })
   }

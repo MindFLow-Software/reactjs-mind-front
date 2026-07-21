@@ -1,0 +1,23 @@
+@reference "../../../../../global.css";
+
+@layer components {
+  .pfu-actions {
+    @apply flex items-center gap-2;
+  }
+
+  .pfu-action-primary {
+    @apply cursor-pointer gap-2 py-2! w-full justify-start! text-xs! bg-white! text-slate-800;
+  }
+
+  .pfu-action-more {
+    @apply size-10 shrink-0! cursor-pointer;
+  }
+
+  .pfu-menu-item {
+    @apply cursor-pointer gap-2;
+  }
+
+  .pfu-menu-item-danger {
+    @apply cursor-pointer gap-2 text-destructive focus:text-destructive;
+  }
+}

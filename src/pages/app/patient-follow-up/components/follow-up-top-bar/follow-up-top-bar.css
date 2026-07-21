@@ -1,0 +1,19 @@
+@reference "../../../../../global.css";
+
+@layer components {
+  .pfu-top-bar {
+    @apply ml-1 flex flex-wrap items-center justify-between gap-3;
+  }
+
+  .pfu-back-btn {
+    @apply inline-flex w-fit cursor-pointer items-center gap-2 text-muted-foreground transition-colors hover:text-foreground;
+  }
+
+  .pfu-back-icon {
+    @apply size-4 transition-transform group-hover:-translate-x-1;
+  }
+
+  .pfu-back-label {
+    @apply text-[10px] font-bold uppercase tracking-widest;
+  }
+}

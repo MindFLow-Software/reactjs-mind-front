@@ -1,0 +1,64 @@
+@reference "../../../../../../global.css";
+
+@layer components {
+  /* Row shell */
+  .df-file-row {
+    @apply flex items-center gap-3 py-3;
+  }
+
+  /* Icon */
+  .df-file-row__icon {
+    @apply flex size-9 shrink-0 items-center justify-center rounded-lg bg-blue-50 text-blue-600 dark:bg-blue-950/30 dark:text-blue-300;
+  }
+
+  /* Body */
+  .df-file-row__body {
+    @apply min-w-0 flex-1;
+  }
+
+  .df-file-row__name-line {
+    @apply flex items-center gap-2 min-w-0;
+  }
+
+  .df-file-row__name {
+    @apply text-sm font-semibold truncate leading-tight text-foreground;
+  }
+
+  .df-file-row__badge {
+    @apply shrink-0 rounded-full px-2 py-0.5 text-[11px] font-medium;
+  }
+
+  .df-file-row__meta {
+    @apply text-xs text-muted-foreground mt-0.5;
+  }
+
+  /* Actions */
+  .df-file-row__actions {
+    @apply flex shrink-0 items-center gap-1;
+  }
+
+  .df-file-row__action-btn {
+    @apply size-8 cursor-pointer text-muted-foreground hover:text-foreground hover:bg-muted rounded-full;
+  }
+
+  .df-file-row__action-btn--danger {
+    @apply size-8 cursor-pointer text-muted-foreground hover:text-destructive hover:bg-destructive/10 rounded-full;
+  }
+
+  .df-file-row__action-icon {
+    @apply size-4;
+  }
+
+  /* Delete dialog */
+  .df-file-row__dialog-filename {
+    @apply font-medium text-foreground;
+  }
+
+  .df-file-row__dialog-cancel {
+    @apply cursor-pointer;
+  }
+
+  .df-file-row__dialog-confirm {
+    @apply cursor-pointer bg-destructive hover:bg-destructive/90 text-white;
+  }
+}

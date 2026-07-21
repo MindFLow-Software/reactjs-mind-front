@@ -27,9 +27,13 @@ Required standards:
 - Every API request/response is fully typed and aligned with backend entities. Reuse domain/entity types whenever possible.
 - Frontend entity/domain types must match backend entities exactly, except for explicitly documented UI-only view models.
 - Types use `type` + `I` + PascalCase, for example `type IUser = {}`, `type IPatient = {}`, `type IAppointmentResponse = {}`. Never use `interface` for first-party types, except where TypeScript module augmentation requires declaration merging (e.g. `declare module 'axios'`). `src/components/ui/*` shadcn primitives are exempt and may keep `interface`.
+- Component prop types are named `I` + the component's own PascalCase name — nothing appended, nothing omitted. A component `FileCard` takes props typed `IFileCard`. **Never** suffix with `Props` (`IFileCardProps` is wrong) and never drop the `I` (`FileCardProps` or `FileCard` as the type name is wrong). This is non-negotiable — applies to every component prop type, every time, no exceptions.
 - Every first-party component gets its own folder holding its `.tsx`, its `.css`, and any component-local files (hooks, types, constants, helpers). Applies to `src/components/*` and to feature-local subcomponents alike (a flat `steps/step-basic-data.tsx` becomes `steps/step-basic-data/step-basic-data.tsx` + `.css`). `src/components/ui/*` shadcn primitives are not restructured.
-- GET requests are consumed through `useQuery`.
-- POST, PUT, PATCH, and DELETE requests are consumed through `useMutation`.
+- Every page file — the top-level `.tsx` rendered directly by a route in `routes.tsx` — is named `{feature}-page.tsx`, never `{feature}.tsx`. Example: `patient-follow-up-page.tsx`, not `patient-follow-up.tsx`. Its CSS counterpart follows the same base name: `patient-follow-up-page.css`.
+- Every page component carries the `Page` suffix: `export function PatientFollowUpPage() {}`, never `export function PatientFollowUp() {}`. This is non-negotiable — applies to every page, every time, no exceptions.
+- Shared chrome that wraps one or more pages (sidebar, header, tab shell, etc.) rendered via `<Outlet />` is a layout, named `{name}-layout.tsx`, exporting `{Name}Layout`. An app-wide layout shared by virtually all authenticated routes (sidebar + header) lives at `src/pages/_layouts/app-layout.tsx` exporting `AppLayout`. A layout scoped to a single feature and its child routes/tabs lives co-located inside that feature's folder as `layout.tsx`, exporting `{Feature}Layout` (e.g. `src/pages/app/patients/patients-hub/layout.tsx` exporting `PatientsHubLayout`).
+- GET requests are consumed through `useQuery`, and `useQuery` is **never** called directly in a page/component. Every GET always gets a named domain hook (`use<Entity>.ts`) that wraps `useQuery` and returns descriptive data (`{ patientProfile }`, not `{ data }`). Components call `usePatientProfile()`, not `useQuery({ queryKey: ['patient-profile'], queryFn: getPatientProfile })` inline.
+- POST, PUT, PATCH, and DELETE requests are consumed through `useMutation` via `useApiMutation` from `@/hooks/use-api-mutation`, and neither `useMutation` nor `useApiMutation` is **ever** called directly in a page/component. Every mutation always gets a named domain hook (`use<Action><Entity>.ts`, e.g. `useUpdatePatientProfile`) that wraps it. This is non-negotiable — applies every time, no exceptions, including "simple" one-off mutations.
 - Every mutation success and error path displays backend-provided guidance/message through Sonner.
 - Zod schemas live in `src/validators/{domain}/{layer}/{action}-schema.ts`; each file exports exactly one schema.
 - Forms always use React Hook Form + Zod and are fully typed. No manual `FormData` or untyped form state for validated fields.
@@ -191,14 +195,17 @@ src/
   hooks/         # Custom hooks (use-*.ts)
   lib/           # Utilities and config (utils.ts, react-query.ts)
   pages/
-    app/         # Authenticated routes
-    auth/        # Public/auth routes
+    _layouts/    # Cross-page layouts (app-layout.tsx, auth-layout.tsx)
+    app/         # Authenticated routes — every route file is {feature}-page.tsx
+    auth/        # Public/auth routes — every route file is {feature}-page.tsx
   types/         # Shared TypeScript types
   utils/         # Utility classes for formatting, normalization, dates, guards
 ```
 
 ### Naming
 - Components: PascalCase (`PatientsList.tsx`)
+- Pages: kebab-case with `-page` suffix, component with `Page` suffix (`patient-follow-up-page.tsx` → `PatientFollowUpPage`)
+- Layouts: kebab-case with `-layout` suffix (app-wide) or `layout.tsx` (feature-scoped), component with `Layout` suffix (`app-layout.tsx` → `AppLayout`, feature `layout.tsx` → `PatientsHubLayout`)
 - Hooks: camelCase with `use` prefix (`use-patient-achievements.ts`)
 - API files: kebab-case verb-noun (`get-patients.ts`, `create-patient.ts`)
 - Utils: PascalCase classes with static methods (`Sanitizer`, `Normalizer`, `Time`)

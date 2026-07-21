@@ -1,0 +1,11 @@
+@reference "../../../../../../../global.css";
+
+@layer components {
+  .gd-section__label {
+    @apply text-[11px] font-bold uppercase tracking-wider text-muted-foreground mb-3;
+  }
+
+  .gd-section__grid {
+    @apply grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-x-6 gap-y-4;
+  }
+}
