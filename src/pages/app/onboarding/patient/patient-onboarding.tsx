@@ -1,5 +1,5 @@
 import './patient-onboarding.css'
-import { Controller, useForm } from 'react-hook-form'
+import { useForm } from 'react-hook-form'
 import { ArrowLeft, ArrowRight, Brain, Sparkles } from 'lucide-react'
 import { Link } from 'react-router-dom'
 
@@ -17,26 +17,26 @@ import {
   CardContent,
   CardDescription,
 } from '@/components/ui/card'
-import { Input } from '@/components/ui/input'
 import { Button } from '@/components/ui/button'
-import { Field, FieldGroup, FieldLabel } from '@/components/ui/field'
+import { Form } from '@/components/ui/form'
+import { IconBox } from '@/components/icon-box/icon-box'
+import { TextInput } from '@/components/form-fields/text-input/text-input'
 
 import { usePatientOnboardingSubmit } from './hooks/use-patient-onboarding-submit'
 
 export function PatientOnboardingPage() {
-  const { control, handleSubmit } =
-    useForm<CreatePatientProfileByAccessCodeData>({
-      resolver: zodResolver(createPatientProfileByAccessCodeSchema),
-      defaultValues: {
-        accessCode: '',
-      },
-    })
+  const methods = useForm<CreatePatientProfileByAccessCodeData>({
+    resolver: zodResolver(createPatientProfileByAccessCodeSchema),
+    defaultValues: {
+      accessCode: '',
+    },
+  })
 
   const { submit, isSubmitting } = usePatientOnboardingSubmit()
 
   return (
-    <main className="flex gap-8 mx-auto max-w-7xl mt-4">
-      <aside className="flex flex-col gap-6 max-w-72">
+    <main className="mx-auto mt-4 flex max-w-7xl gap-8">
+      <aside className="flex max-w-72 flex-col gap-6">
         <Link to="/profiles" className="pob-back-link">
           <ArrowLeft size={14} />
           Voltar aos espaços de trabalho
@@ -47,7 +47,7 @@ export function PatientOnboardingPage() {
             Um processo de integração tranquilo e cuidadoso.
           </p>
         </header>
-        <Card className="p-4 gap-2">
+        <Card className="gap-2 p-4">
           <CardTitle className="flex items-center gap-2 text-sm">
             <Sparkles size={14} />
             Crie quantos perfis de paciente desejar
@@ -61,47 +61,40 @@ export function PatientOnboardingPage() {
           </CardContent>
         </Card>
       </aside>
-      <form className="flex flex-1" onSubmit={handleSubmit(submit)}>
-        <Card className="p-6 gap-2">
-          <CardTitle className="flex items-center gap-2 text-2xl mb-0">
-            <div className="pob-icon-badge">
-              <Brain size={24} />
-            </div>
-            Seu perfil de paciente
-          </CardTitle>
-          <CardDescription className="mt-0">
-            Seu psicólogo pode ter enviado um código para vincular seu perfil ao
-            atendimento. Caso tenha recebido esse código, informe-o abaixo. Caso
-            contrário, você pode finalizar o cadastro normalmente.
-          </CardDescription>
+      <Form {...methods}>
+        <form className="flex flex-1" onSubmit={methods.handleSubmit(submit)}>
+          <Card className="gap-2 p-6">
+            <CardTitle className="mb-0 flex items-center gap-2 text-2xl">
+              <IconBox icon={Brain} variant="primary" size="lg" />
+              Seu perfil de paciente
+            </CardTitle>
+            <CardDescription className="mt-0">
+              Seu psicólogo pode ter enviado um código para vincular seu perfil
+              ao atendimento. Caso tenha recebido esse código, informe-o abaixo.
+              Caso contrário, você pode finalizar o cadastro normalmente.
+            </CardDescription>
 
-          <CardContent className="p-0 flex-1 mb-8">
-            <FieldGroup>
-              <Controller
+            <CardContent className="mb-8 flex-1 p-0">
+              <TextInput<CreatePatientProfileByAccessCodeData>
                 name="accessCode"
-                control={control}
-                render={({ field }) => (
-                  <Field className="gap-1">
-                    <FieldLabel>Código de acesso</FieldLabel>
-                    <Input {...field} placeholder="XXXX-XXXX-XXXX-XXXX" />
-                  </Field>
-                )}
+                label="Código de acesso"
+                placeholder="XXXX-XXXX-XXXX-XXXX"
               />
-            </FieldGroup>
-          </CardContent>
+            </CardContent>
 
-          <CardFooter className="pob-footer">
-            <p className="text-sm">
-              Essas informações ajudam a identificar o paciente e vincular seus
-              atendimentos.
-            </p>
-            <Button disabled={isSubmitting} type="submit" className="gap-2">
-              Finalizar
-              <ArrowRight size={14} />
-            </Button>
-          </CardFooter>
-        </Card>
-      </form>
+            <CardFooter className="pob-footer">
+              <p className="text-sm">
+                Essas informações ajudam a identificar o paciente e vincular
+                seus atendimentos.
+              </p>
+              <Button disabled={isSubmitting} type="submit">
+                Finalizar
+                <ArrowRight data-icon="inline-end" />
+              </Button>
+            </CardFooter>
+          </Card>
+        </form>
+      </Form>
     </main>
   )
 }

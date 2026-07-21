@@ -14,7 +14,6 @@ import type { ICreatePracticeContextBody } from '@/types/psychologist/create-pra
 import {
   Form,
   FormControl,
-  FormDescription,
   FormField,
   FormItem,
   FormLabel,
@@ -27,9 +26,10 @@ import {
   InputGroupInput,
 } from '@/components/ui/input-group'
 
-import { Input } from '@/components/ui/input'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardFooter, CardHeader } from '@/components/ui/card'
+import { TextInput } from '@/components/form-fields/text-input/text-input'
+import { TimeInput } from '@/components/form-fields/time-input/time-input'
 
 import {
   createPsychologistPracticeContextSchema,
@@ -83,10 +83,16 @@ export function CreateIndividualContext({
     <>
       <PracticeContextHeader />
 
-      <button type="button" onClick={onGoBack} className="pc-switch">
-        <Repeat2 size={15} />
+      <Button
+        type="button"
+        variant="ghost"
+        size="sm"
+        onClick={onGoBack}
+        className="pc-switch"
+      >
+        <Repeat2 data-icon="inline-start" />
         Trocar contexto
-      </button>
+      </Button>
 
       <Card className="pc-cfg-card">
         <Form {...form}>
@@ -105,25 +111,11 @@ export function CreateIndividualContext({
 
             <CardContent className="pc-cfg-body">
               <div className="pc-row2">
-                <FormField
-                  control={form.control}
+                <TextInput<ICreatePsychologistPracticeContext>
                   name="nickname"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Apelido</FormLabel>
-                      <FormControl>
-                        <Input
-                          {...field}
-                          placeholder="Digite seu apelido"
-                          className="pc-input"
-                        />
-                      </FormControl>
-                      <FormDescription className="pc-field-hint">
-                        Apresentado aos seus pacientes.
-                      </FormDescription>
-                      <FormMessage />
-                    </FormItem>
-                  )}
+                  label="Apelido"
+                  placeholder="Digite seu apelido"
+                  description="Apresentado aos seus pacientes."
                 />
 
                 <FormField
@@ -163,44 +155,21 @@ export function CreateIndividualContext({
               />
 
               <div className="pc-row2">
-                <FormField
-                  control={form.control}
+                <TimeInput<ICreatePsychologistPracticeContext>
                   name="openFrom"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Horário de abertura</FormLabel>
-                      <FormControl>
-                        <Input {...field} type="time" className="pc-input" />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
+                  label="Horário de abertura"
                 />
-
-                <FormField
-                  control={form.control}
+                <TimeInput<ICreatePsychologistPracticeContext>
                   name="closeAt"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Horário de fechamento</FormLabel>
-                      <FormControl>
-                        <Input {...field} type="time" className="pc-input" />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
+                  label="Horário de fechamento"
                 />
               </div>
             </CardContent>
 
             <CardFooter className="pc-cfg-foot">
-              <Button
-                type="submit"
-                disabled={isSubmitting}
-                className="bg-blue-600 text-white hover:bg-blue-700"
-              >
+              <Button type="submit" disabled={isSubmitting}>
                 Finalizar
-                <CircleCheck size={16} />
+                <CircleCheck data-icon="inline-end" />
               </Button>
             </CardFooter>
           </form>

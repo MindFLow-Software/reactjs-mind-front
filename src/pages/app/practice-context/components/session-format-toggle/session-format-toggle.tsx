@@ -1,6 +1,6 @@
-import './session-format-toggle.css'
+import { ToggleGroup, ToggleGroupItem } from '@/components/ui/toggle-group'
 
-import { cn } from '@/lib/utils'
+import './session-format-toggle.css'
 
 type ISessionFormatToggleOption<T extends string> = {
   value: T
@@ -18,23 +18,25 @@ export function SessionFormatToggle<T extends string>({
   value,
   onChange,
 }: ISessionFormatToggle<T>) {
-  return (
-    <div className="pc-segm" role="group">
-      {options.map((option) => {
-        const active = option.value === value
+  function handleValueChange(next: string) {
+    if (next) {
+      onChange(next as T)
+    }
+  }
 
-        return (
-          <button
-            key={option.value}
-            type="button"
-            aria-pressed={active}
-            onClick={() => onChange(option.value)}
-            className={cn('pc-segm-btn', active && 'pc-segm-btn--active')}
-          >
-            {option.label}
-          </button>
-        )
-      })}
-    </div>
+  return (
+    <ToggleGroup
+      type="single"
+      variant="outline"
+      value={value}
+      onValueChange={handleValueChange}
+      className="pc-segm"
+    >
+      {options.map((option) => (
+        <ToggleGroupItem key={option.value} value={option.value}>
+          {option.label}
+        </ToggleGroupItem>
+      ))}
+    </ToggleGroup>
   )
 }

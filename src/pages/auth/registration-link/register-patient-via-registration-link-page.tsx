@@ -1,21 +1,9 @@
-import { useCallback, useState } from 'react'
 import { useNavigate, useParams } from 'react-router-dom'
-import { Controller, useForm, type Resolver } from 'react-hook-form'
-import {
-  Eye,
-  Mars,
-  Venus,
-  Users,
-  EyeOff,
-  UserCheck,
-  ShieldCheck,
-  CalendarIcon,
-} from 'lucide-react'
+import { useForm, type Resolver } from 'react-hook-form'
+import { UserCheck, ShieldCheck } from 'lucide-react'
 
-import { cn } from '@/lib/utils'
 import { zodResolver } from '@hookform/resolvers/zod'
 
-import { Time } from '@/utils/time'
 import { useRegistrationLink } from '@/hooks/use-registration-link'
 import { translatedHonorific } from '@/constants/translated-honorific'
 import { useRegisterPatientViaRegistrationLink } from './hooks/use-register-patient-via-registration-link'
@@ -33,46 +21,26 @@ import {
   CardContent,
   CardDescription,
 } from '@/components/ui/card'
-
-import {
-  Field,
-  FieldSet,
-  FieldError,
-  FieldLabel,
-  FieldGroup,
-} from '@/components/ui/field'
-
-import {
-  Select,
-  SelectItem,
-  SelectValue,
-  SelectGroup,
-  SelectTrigger,
-  SelectContent,
-} from '@/components/ui/select'
-
 import { Form } from '@/components/ui/form'
-import { Input } from '@/components/ui/input'
+import { FieldSeparator } from '@/components/ui/field'
 import { Button } from '@/components/ui/button'
-import { Calendar } from '@/components/ui/calendar'
-import { Separator } from '@/components/ui/separator'
-import { MaskedInput } from '@/components/maked-input/maked-input'
-import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from '@/components/ui/popover'
+import { TextInput } from '@/components/form-fields/text-input/text-input'
+import { EmailInput } from '@/components/form-fields/email-input/email-input'
+import { PasswordInput } from '@/components/form-fields/password-input/password-input'
+import { PhoneInput } from '@/components/form-fields/phone-input/phone-input'
+import { CpfInput } from '@/components/form-fields/cpf-input/cpf-input'
+import { DateInput } from '@/components/form-fields/date-input/date-input'
+import { GenderSelectInput } from '@/components/form-fields/gender-select-input/gender-select-input'
 
 type IParams = {
   hash: string
 }
 
+type IFormData = RegisterPatientViaRegistrationLinkData
+
 export function RegisterPatientViaRegistrationLinkPage() {
   const navigate = useNavigate()
   const { hash } = useParams<IParams>()
-
-  const [dobInputValue, setDobInputValue] = useState('')
-  const [showPassword, setShowPassword] = useState(false)
 
   const { data: registrationLinkInfo, isError } = useRegistrationLink(hash)
   const { registerPatientViaRegistrationLink, isRegisteringPatient } =
@@ -80,10 +48,10 @@ export function RegisterPatientViaRegistrationLinkPage() {
 
   if (isError) navigate('/sign-in')
 
-  const form = useForm<RegisterPatientViaRegistrationLinkData>({
+  const form = useForm<IFormData>({
     resolver: zodResolver(
       registerPatientViaRegistrationLinkSchema,
-    ) as Resolver<RegisterPatientViaRegistrationLinkData>,
+    ) as Resolver<IFormData>,
     defaultValues: {
       firstName: '',
       lastName: '',
@@ -91,15 +59,9 @@ export function RegisterPatientViaRegistrationLinkPage() {
   })
 
   const {
-    control,
     handleSubmit,
-    formState: { errors, isDirty, isValid },
+    formState: { isDirty, isValid },
   } = form
-
-  const togglePasswordVisibility = useCallback(
-    () => setShowPassword((p) => !p),
-    [],
-  )
 
   const handleRedirectToSignIn = () => {
     navigate('/sign-in')
@@ -114,7 +76,7 @@ export function RegisterPatientViaRegistrationLinkPage() {
     <Card className="w-xl px-6">
       <CardHeader className="border-b px-0">
         <div className="mb-4">
-          <CardTitle className="text-2xl text-center">
+          <CardTitle className="text-center text-2xl">
             Crie sua conta para iniciar seu acompanhamento
           </CardTitle>
           <CardDescription className="text-center">
@@ -123,9 +85,9 @@ export function RegisterPatientViaRegistrationLinkPage() {
             convite.
           </CardDescription>
         </div>
-        <div className="flex items-center gap-2 border rounded-md py-2 px-4">
-          <div className="flex items-center justify-center p-2 bg-green-200 w-fit rounded-md">
-            <UserCheck size={20} className="text-green-500 shrink-0" />
+        <div className="flex items-center gap-2 rounded-md border px-4 py-2">
+          <div className="flex w-fit items-center justify-center rounded-md bg-success/15 p-2">
+            <UserCheck size={20} className="shrink-0 text-success" />
           </div>
           <div className="flex flex-col gap-1">
             <p className="text-sm font-medium">{`${honorifc} ${registrationLinkInfo?.professionalName}`}</p>
@@ -146,275 +108,47 @@ export function RegisterPatientViaRegistrationLinkPage() {
             onSubmit={handleSubmit(registerPatientViaRegistrationLink)}
             className="flex flex-col gap-4"
           >
-            <FieldSet>
-              <FieldGroup className="flex flex-row items-start gap-4">
-                <Controller
-                  name="firstName"
-                  control={control}
-                  render={({ field }) => (
-                    <Field className="gap-1">
-                      <FieldLabel className="text-xs font-medium text-foreground/70">
-                        Nome
-                      </FieldLabel>
-                      <Input
-                        {...field}
-                        type="text"
-                        placeholder="Jon"
-                        className={cn(errors.firstName && 'border-red-500')}
-                      />
-                      <FieldError>{errors.firstName?.message}</FieldError>
-                    </Field>
-                  )}
-                />
-                <Controller
-                  name="lastName"
-                  control={control}
-                  render={({ field }) => (
-                    <Field className="gap-1">
-                      <FieldLabel className="text-xs font-medium text-foreground/70">
-                        Sobrenome
-                      </FieldLabel>
-                      <Input
-                        {...field}
-                        type="text"
-                        placeholder="Doe"
-                        className={cn(errors.lastName && 'border-red-500')}
-                      />
-                      <FieldError>{errors.lastName?.message}</FieldError>
-                    </Field>
-                  )}
-                />
-              </FieldGroup>
+            <div className="grid grid-cols-2 gap-4">
+              <TextInput<IFormData>
+                name="firstName"
+                label="Nome"
+                placeholder="Jon"
+              />
+              <TextInput<IFormData>
+                name="lastName"
+                label="Sobrenome"
+                placeholder="Doe"
+              />
+            </div>
 
-              <FieldGroup className="gap-4">
-                <Controller
-                  name="email"
-                  control={control}
-                  render={({ field }) => (
-                    <Field className="gap-1">
-                      <FieldLabel className="text-xs font-medium text-foreground/70">
-                        Email
-                      </FieldLabel>
-                      <Input
-                        {...field}
-                        type="email"
-                        placeholder="ex: exemplo@mindflush.com"
-                        className={cn(errors.email && 'border-red-500')}
-                      />
-                      <FieldError>{errors.email?.message}</FieldError>
-                    </Field>
-                  )}
-                />
-                <Controller
-                  name="password"
-                  control={control}
-                  render={({ field }) => (
-                    <Field className="gap-1">
-                      <FieldLabel className="text-xs font-medium text-foreground/70">
-                        Senha
-                      </FieldLabel>
-                      <div className="relative">
-                        <Input
-                          {...field}
-                          type={showPassword ? 'text' : 'password'}
-                          placeholder="Crie uma senha segura"
-                          className={cn(errors.password && 'border-red-500')}
-                        />
-                        <button
-                          type="button"
-                          onClick={togglePasswordVisibility}
-                          className="
-                            absolute right-2.5 top-1/2 -translate-y-1/2 text-muted-foreground
-                            hover:text-foreground cursor-pointer transition-colors outline-none rounded-sm
-                          "
-                          aria-label={
-                            showPassword ? 'Ocultar senha' : 'Mostrar senha'
-                          }
-                        >
-                          {showPassword ? (
-                            <EyeOff size={15} />
-                          ) : (
-                            <Eye size={15} />
-                          )}
-                        </button>
-                      </div>
-                      <FieldError>{errors.password?.message}</FieldError>
-                    </Field>
-                  )}
-                />
-              </FieldGroup>
+            <EmailInput<IFormData>
+              name="email"
+              label="Email"
+              placeholder="ex: exemplo@mindflush.com"
+            />
 
-              <FieldGroup>
-                <Controller
-                  name="gender"
-                  control={control}
-                  render={({ field }) => (
-                    <Field className="gap-1">
-                      <FieldLabel className="text-xs font-medium text-foreground/70">
-                        Gênero
-                      </FieldLabel>
-                      <Select
-                        value={field.value}
-                        onValueChange={field.onChange}
-                      >
-                        <SelectTrigger className="w-full cursor-pointer">
-                          <SelectValue placeholder="Selecione uma opção" />
-                        </SelectTrigger>
-                        <SelectContent>
-                          <SelectGroup>
-                            <SelectItem
-                              value="FEMININE"
-                              className="cursor-pointer"
-                            >
-                              <div className="flex items-center gap-2">
-                                <Venus className="size-3.5 text-rose-500" />{' '}
-                                Feminino
-                              </div>
-                            </SelectItem>
-                            <SelectItem
-                              value="MASCULINE"
-                              className="cursor-pointer"
-                            >
-                              <div className="flex items-center gap-2">
-                                <Mars className="size-3.5 text-blue-500" />{' '}
-                                Masculino
-                              </div>
-                            </SelectItem>
-                            <SelectItem
-                              value="OTHER"
-                              className="cursor-pointer"
-                            >
-                              <div className="flex items-center gap-2">
-                                <Users className="size-3.5 text-violet-500" />{' '}
-                                Outro
-                              </div>
-                            </SelectItem>
-                          </SelectGroup>
-                        </SelectContent>
-                      </Select>
-                    </Field>
-                  )}
-                />
-              </FieldGroup>
+            <PasswordInput<IFormData>
+              name="password"
+              label="Senha"
+              placeholder="Crie uma senha segura"
+              autoComplete="new-password"
+            />
 
-              <div className="relative mt-1">
-                <p className="absolute left-1/2 -translate-x-1/2 -top-1.5 bg-white text-[10px] font-bold uppercase tracking-widest text-blue-600 px-1">
-                  Opcional
-                </p>
-                <Separator />
-              </div>
+            <GenderSelectInput<IFormData> name="gender" label="Gênero" />
 
-              <FieldGroup className="flex flex-row items-start gap-4">
-                <Controller
-                  name="phoneNumber"
-                  control={control}
-                  render={({ field }) => (
-                    <Field className="gap-1">
-                      <FieldLabel className="text-xs font-medium text-foreground/70">
-                        Telefone
-                      </FieldLabel>
-                      <MaskedInput
-                        {...field}
-                        type="text"
-                        value={field.value}
-                        inputRef={field.ref}
-                        mask="(00) 00000-0000"
-                        placeholder="(00) 00000-0000"
-                        onAccept={(value: string) => field.onChange(value)}
-                        className={cn(errors.phoneNumber && 'border-red-500')}
-                      />
-                      <FieldError>{errors.phoneNumber?.message}</FieldError>
-                    </Field>
-                  )}
-                />
-                <Controller
-                  name="dateOfBirth"
-                  control={control}
-                  render={({ field }) => (
-                    <Popover>
-                      <Field className="gap-1">
-                        <FieldLabel className="text-xs font-medium text-foreground/70">
-                          Data de nascimento
-                        </FieldLabel>
-                        <div className="relative">
-                          <Input
-                            placeholder="DD/MM/AAAA"
-                            value={dobInputValue}
-                            onChange={(e) => {
-                              const { date, inputValue } = Time.textToDate(
-                                e.target.value,
-                              )
-                              setDobInputValue(inputValue)
-                              field.onChange(date)
-                            }}
-                            maxLength={10}
-                            autoComplete="bday"
-                            aria-invalid={!!errors.dateOfBirth}
-                            className={cn(
-                              'pr-9 tabular-nums',
-                              errors.dateOfBirth && 'border-red-500',
-                            )}
-                          />
-                          <PopoverTrigger asChild>
-                            <button
-                              type="button"
-                              className="
-                          absolute right-0 top-0 h-full px-2.5
-                          text-muted-foreground hover:text-blue-600 cursor-pointer flex
-                          items-center outline-none rounded-r-md transition-colors
-                        "
-                            >
-                              <CalendarIcon className="size-3.5" />
-                            </button>
-                          </PopoverTrigger>
-                        </div>
-                      </Field>
-                      <PopoverContent
-                        className="w-auto overflow-hidden p-0"
-                        align="start"
-                        sideOffset={6}
-                      >
-                        <Calendar
-                          mode="single"
-                          selected={field.value}
-                          captionLayout="dropdown"
-                          startMonth={Time.minDate}
-                          onSelect={(date) => {
-                            field.onChange(date)
-                            setDobInputValue(Time.dateToText(date))
-                          }}
-                        />
-                      </PopoverContent>
-                    </Popover>
-                  )}
-                />
-              </FieldGroup>
+            <FieldSeparator>Opcional</FieldSeparator>
 
-              <FieldGroup>
-                <Controller
-                  name="cpf"
-                  control={control}
-                  render={({ field }) => (
-                    <Field className="gap-1">
-                      <FieldLabel className="text-xs font-medium text-foreground/70">
-                        CPF
-                      </FieldLabel>
-                      <MaskedInput
-                        value={field.value}
-                        inputRef={field.ref}
-                        autoComplete="off"
-                        mask="000.000.000-00"
-                        placeholder="123.456.789-00"
-                        onAccept={(value: string) => field.onChange(value)}
-                        className={cn(errors.cpf && 'border-red-500')}
-                      />
-                    </Field>
-                  )}
-                />
-              </FieldGroup>
-            </FieldSet>
+            <div className="grid grid-cols-2 gap-4">
+              <PhoneInput<IFormData> name="phoneNumber" label="Telefone" />
+              <DateInput<IFormData>
+                name="dateOfBirth"
+                label="Data de nascimento"
+              />
+            </div>
 
-            <div className="flex gap-2 justify-end px-0">
+            <CpfInput<IFormData> name="cpf" label="CPF" />
+
+            <div className="flex justify-end gap-2 px-0">
               <Button
                 type="button"
                 variant="outline"
@@ -429,7 +163,7 @@ export function RegisterPatientViaRegistrationLinkPage() {
         </Form>
       </CardContent>
       <CardFooter className="items-start gap-1 p-0">
-        <ShieldCheck size={16} className="text-green-500" />
+        <ShieldCheck size={16} className="text-success" />
         <p className="text-[11px] text-muted-foreground">
           Seus dados serão utilizados apenas para criar sua conta e organizar
           seu acompanhamento profissional.
