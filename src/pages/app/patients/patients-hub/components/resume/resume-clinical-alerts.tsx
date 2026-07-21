@@ -22,16 +22,16 @@ type AlertData = {
 
 const ALERT_STYLES: Record<AlertType, { row: string; tag: string }> = {
   warning: {
-    row: 'bg-amber-50 dark:bg-amber-950/20 border-amber-200/60 dark:border-amber-800/30',
-    tag: 'bg-amber-100 text-amber-800 dark:bg-amber-900/40 dark:text-amber-400 border-0',
+    row: 'bg-warning/10 dark:bg-warning/20 border-warning/30 dark:border-warning/30',
+    tag: 'bg-warning/15 text-warning dark:bg-warning/25 dark:text-warning border-0',
   },
   neutral: {
     row: 'bg-muted/40 border-border/50',
     tag: 'bg-muted text-muted-foreground border-0',
   },
   ok: {
-    row: 'bg-green-50 dark:bg-green-950/20 border-green-200/60 dark:border-green-800/30',
-    tag: 'bg-green-100 text-green-800 dark:bg-green-900/40 dark:text-green-400 border-0',
+    row: 'bg-success/10 dark:bg-success/20 border-success/30 dark:border-success/30',
+    tag: 'bg-success/15 text-success dark:bg-success/25 dark:text-success border-0',
   },
 }
 
@@ -89,8 +89,8 @@ export function ResumeClinicalAlerts() {
     <Card>
       <CardHeader className="pb-3">
         <div className="flex items-center gap-2.5">
-          <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-amber-50 dark:bg-amber-950/30">
-            <AlertTriangle className="h-4 w-4 text-amber-600" />
+          <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-warning/10 dark:bg-warning/20">
+            <AlertTriangle className="h-4 w-4 text-warning" />
           </div>
           <div>
             <CardTitle className="text-sm font-semibold">

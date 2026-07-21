@@ -15,8 +15,7 @@ import {
   FileText,
   AlignLeft,
 } from 'lucide-react'
-import { format } from 'date-fns'
-import { ptBR } from 'date-fns/locale'
+import { Time } from '@/utils/time'
 
 import {
   Card,
@@ -48,6 +47,7 @@ import {
 import { getSuggestions } from '@/api/suggestions/get-suggestions'
 import type { UpdateSuggestionParams } from '@/api/suggestions/update-suggestion-status'
 import type { ISuggestion } from '@/types/suggestion/suggestion'
+import { SuggestionStatus } from '@/types/suggestion/suggestion-status'
 import {
   Tooltip,
   TooltipContent,
@@ -61,7 +61,7 @@ import './pending-suggestions-moderation.css'
 export function PendingSuggestionsModeration() {
   const { data: suggestions, isLoading } = useQuery({
     queryKey: ['admin', 'suggestions', 'pending'],
-    queryFn: () => getSuggestions({ status: 'PENDING' }),
+    queryFn: () => getSuggestions({ status: SuggestionStatus.PENDING }),
   })
 
   const { mutateAsync: handleUpdateStatus, isPending: isUpdating } =
@@ -81,7 +81,7 @@ export function PendingSuggestionsModeration() {
     if (isEmpty) {
       return (
         <div className="p-12 text-center flex flex-col gap-2">
-          <Check className="size-8 text-emerald-500 mx-auto opacity-20" />
+          <Check className="size-8 text-success mx-auto opacity-20" />
           <p className="text-sm text-muted-foreground font-medium">
             Nenhuma sugestão pendente no momento.
           </p>
@@ -166,7 +166,7 @@ function SuggestionModerationItem({
           </span>
           <span className="text-[10px] text-muted-foreground flex items-center gap-1 font-medium">
             <Calendar className="size-3" />{' '}
-            {format(new Date(item.createdAt), 'dd/MM/yyyy', { locale: ptBR })}
+            {Time.toBrazilianFormat(item.createdAt)}
           </span>
         </div>
         <h4 className="font-bold text-foreground text-sm break-all leading-tight">
@@ -263,11 +263,7 @@ function SuggestionModerationItem({
                   <div className="flex flex-col min-w-0 overflow-hidden">
                     <span className="ads-mod-footer-label">Enviado em</span>
                     <span className="font-bold text-foreground truncate">
-                      {format(
-                        new Date(item.createdAt),
-                        "dd 'de' MMMM 'às' HH:mm",
-                        { locale: ptBR },
-                      )}
+                      {Time.toDayLongMonthAtTime(item.createdAt)}
                     </span>
                   </div>
                 </div>
@@ -292,7 +288,7 @@ function SuggestionModerationItem({
             <Tooltip>
               <TooltipTrigger asChild>
                 <Button
-                  onClick={() => handleAction('OPEN')}
+                  onClick={() => handleAction(SuggestionStatus.OPEN)}
                   disabled={isUpdating}
                   variant="ghost"
                   size="icon"
@@ -313,7 +309,7 @@ function SuggestionModerationItem({
             <Tooltip>
               <TooltipTrigger asChild>
                 <Button
-                  onClick={() => handleAction('REJECTED')}
+                  onClick={() => handleAction(SuggestionStatus.REJECTED)}
                   disabled={isUpdating}
                   variant="ghost"
                   size="icon"

@@ -158,11 +158,11 @@
   }
 
   .pst-session-cancelled-badge {
-    @apply text-xs font-medium text-red-600 dark:text-red-400;
+    @apply text-xs font-medium text-destructive;
   }
 
   .pst-session-missed-badge {
-    @apply text-xs font-medium text-amber-600 dark:text-amber-400;
+    @apply text-xs font-medium text-warning;
   }
 
   .pst-session-theme-badge {

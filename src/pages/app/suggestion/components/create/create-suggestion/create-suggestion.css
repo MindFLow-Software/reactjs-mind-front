@@ -22,7 +22,7 @@
   }
 
   .cs-error {
-    @apply text-[11px] text-red-500 font-medium;
+    @apply text-[11px] text-destructive font-medium;
   }
 
   .cs-counter {

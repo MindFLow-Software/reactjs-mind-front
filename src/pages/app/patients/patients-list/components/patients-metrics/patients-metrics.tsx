@@ -30,16 +30,16 @@ const METRIC_TILES: readonly IMetricTile[] = [
   {
     key: 'activeCount',
     icon: Activity,
-    iconBg: 'bg-emerald-500/10',
-    iconClassName: 'size-6 text-emerald-600',
+    iconBg: 'bg-success/10',
+    iconClassName: 'size-6 text-success',
     label: 'Ativos',
     trend: '24%',
   },
   {
     key: 'archivedCount',
     icon: Clock,
-    iconBg: 'bg-red-500/10',
-    iconClassName: 'size-6 text-red-500',
+    iconBg: 'bg-destructive/10',
+    iconClassName: 'size-6 text-destructive',
     label: 'Arquivados',
   },
   {

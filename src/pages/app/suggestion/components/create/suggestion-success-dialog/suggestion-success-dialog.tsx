@@ -23,7 +23,7 @@ export function SuggestionSuccessDialog({ onClose }: ISuggestionSuccessDialog) {
 
         <DialogHeader className="relative flex flex-col items-center justify-center text-center gap-y-4">
           <div className="relative">
-            <div className="absolute inset-0 bg-emerald-500/20 rounded-full blur-xl animate-pulse" />
+            <div className="absolute inset-0 bg-success/20 rounded-full blur-xl animate-pulse" />
             <div className="css-success-icon">
               <CheckCircle2 className="size-11 text-white" strokeWidth={2.5} />
             </div>

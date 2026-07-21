@@ -6,7 +6,7 @@
   }
 
   .sc-card--implemented {
-    @apply bg-card border-border hover:-translate-y-px hover:border-emerald-300 hover:shadow-sm;
+    @apply bg-card border-border hover:-translate-y-px hover:border-success/60 hover:shadow-sm;
   }
 
   .sc-card--liked {
@@ -22,7 +22,7 @@
   }
 
   .sc-badge--implemented {
-    @apply gap-1.5 bg-emerald-100 dark:bg-emerald-950/30;
+    @apply gap-1.5 bg-success/10 dark:bg-success/20;
   }
 
   .sc-vote {

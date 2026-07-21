@@ -6,7 +6,7 @@
   }
 
   .dsh-page-error-icon {
-    @apply size-6 text-red-500;
+    @apply size-6 text-destructive;
   }
 
   .dsh-page-error-message {

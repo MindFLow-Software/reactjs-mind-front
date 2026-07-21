@@ -26,11 +26,11 @@
   }
 
   .dsh-sessions-growth-up {
-    @apply text-emerald-600 dark:text-emerald-400;
+    @apply text-success;
   }
 
   .dsh-sessions-growth-down {
-    @apply text-red-600 dark:text-red-400;
+    @apply text-destructive;
   }
 
   .dsh-sessions-growth-flat {

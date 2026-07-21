@@ -13,6 +13,7 @@ import { format } from 'date-fns'
 import { ptBR } from 'date-fns/locale'
 import { cn } from '@/lib/utils'
 import type { ISuggestion } from '@/types/suggestion/suggestion'
+import { SuggestionStatus } from '@/types/suggestion/suggestion-status'
 import {
   Dialog,
   DialogContent,
@@ -31,32 +32,32 @@ type RoadmapCardProps = {
 
 const STEPS = [
   {
-    id: 'OPEN',
+    id: SuggestionStatus.OPEN,
     label: 'Votação',
     icon: Search,
     color: 'text-blue-500',
     bg: 'bg-blue-500/10',
   },
   {
-    id: 'UNDER_REVIEW',
+    id: SuggestionStatus.UNDER_REVIEW,
     label: 'Em Estudo',
     icon: Clock,
-    color: 'text-amber-500',
-    bg: 'bg-amber-500/10',
+    color: 'text-warning',
+    bg: 'bg-warning/10',
   },
   {
-    id: 'PLANNED',
+    id: SuggestionStatus.PLANNED,
     label: 'Implementando',
     icon: Calendar,
     color: 'text-purple-500',
     bg: 'bg-purple-500/10',
   },
   {
-    id: 'IMPLEMENTED',
+    id: SuggestionStatus.IMPLEMENTED,
     label: 'Concluído',
     icon: Rocket,
-    color: 'text-emerald-500',
-    bg: 'bg-emerald-500/10',
+    color: 'text-success',
+    bg: 'bg-success/10',
   },
 ]
 
@@ -134,7 +135,9 @@ export function RoadmapCard({
 
               <div className="ml-1 pl-1 border-l border-border">
                 <button
-                  onClick={() => onStatusChange(item.id, 'REJECTED')}
+                  onClick={() =>
+                    onStatusChange(item.id, SuggestionStatus.REJECTED)
+                  }
                   className="ads-roadmap-reject-btn"
                 >
                   <XCircle className="size-4" />

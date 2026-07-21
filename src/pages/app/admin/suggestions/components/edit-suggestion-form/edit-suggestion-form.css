@@ -10,7 +10,7 @@
   }
 
   .ads-edit-error {
-    @apply text-[10px] text-red-500;
+    @apply text-[10px] text-destructive;
   }
 
   .ads-edit-textarea {
@@ -22,6 +22,6 @@
   }
 
   .ads-edit-approve-btn {
-    @apply flex-1 rounded-xl bg-emerald-600 font-bold text-white hover:bg-emerald-700 dark:hover:bg-emerald-700;
+    @apply flex-1 rounded-xl bg-success font-bold text-white hover:bg-success/90 dark:hover:bg-success/90;
   }
 }

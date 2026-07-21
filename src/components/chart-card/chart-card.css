@@ -82,7 +82,7 @@
   }
 
   .cc-state-icon-error {
-    @apply bg-red-500/10 text-red-500;
+    @apply bg-destructive/10 text-destructive;
   }
 
   .cc-state-title {

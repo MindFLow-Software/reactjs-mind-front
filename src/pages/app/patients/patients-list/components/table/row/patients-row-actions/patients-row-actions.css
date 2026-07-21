@@ -22,6 +22,6 @@
   }
 
   .ptr-menu-item-reactivate {
-    @apply cursor-pointer text-emerald-700 focus:text-emerald-700 dark:text-emerald-400 dark:focus:text-emerald-400;
+    @apply cursor-pointer text-success focus:text-success;
   }
 }

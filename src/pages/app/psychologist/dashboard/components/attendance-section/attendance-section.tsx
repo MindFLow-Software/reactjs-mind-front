@@ -31,22 +31,19 @@ const METRICS: IAttendanceMetric[] = [
     key: 'attendedCount',
     label: 'Atendidas',
     icon: CalendarCheck,
-    badgeClassName:
-      'bg-emerald-100 text-emerald-700 dark:bg-emerald-950/30 dark:text-emerald-400',
+    badgeClassName: 'bg-success/10 text-success dark:bg-success/20',
   },
   {
     key: 'cancelledCount',
     label: 'Canceladas',
     icon: CalendarX,
-    badgeClassName:
-      'bg-red-100 text-red-700 dark:bg-red-950/30 dark:text-red-400',
+    badgeClassName: 'bg-destructive/10 text-destructive dark:bg-destructive/20',
   },
   {
     key: 'rescheduledCount',
     label: 'Remarcadas',
     icon: RotateCcw,
-    badgeClassName:
-      'bg-amber-100 text-amber-700 dark:bg-amber-950/30 dark:text-amber-400',
+    badgeClassName: 'bg-warning/10 text-warning dark:bg-warning/20',
   },
 ]
 

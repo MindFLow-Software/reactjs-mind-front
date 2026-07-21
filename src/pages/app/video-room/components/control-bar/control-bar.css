@@ -10,7 +10,7 @@
   }
 
   .vr-control-bar-session-dot {
-    @apply flex h-2 w-2 rounded-full bg-green-500 animate-pulse;
+    @apply flex h-2 w-2 rounded-full bg-success animate-pulse;
   }
 
   .vr-control-bar-session-name {

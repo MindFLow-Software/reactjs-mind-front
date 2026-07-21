@@ -47,7 +47,7 @@
 
   /* Save status */
   .ph-anamnesis-editor-block__status-check {
-    @apply h-3 w-3 text-emerald-500;
+    @apply h-3 w-3 text-success;
   }
 
   .ph-anamnesis-editor-block__status-synced {
@@ -55,7 +55,7 @@
   }
 
   .ph-anamnesis-editor-block__status-pending {
-    @apply text-[11px] text-amber-500;
+    @apply text-[11px] text-warning;
   }
 
   /* Word count */

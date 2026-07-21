@@ -50,11 +50,11 @@
   }
 
   .pd-up-progress-done {
-    @apply h-1 w-full rounded-full bg-green-500/30;
+    @apply h-1 w-full rounded-full bg-success/30;
   }
 
   .pd-up-progress-done-bar {
-    @apply h-full w-full rounded-full bg-green-500;
+    @apply h-full w-full rounded-full bg-success;
   }
 
   .pd-up-progress-error {

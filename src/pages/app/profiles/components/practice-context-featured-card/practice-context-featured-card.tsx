@@ -74,7 +74,7 @@ export function PracticeContextFeaturedCard({
         </span>
       </CardHeader>
 
-      <CardContent className="space-y-3 flex-1">
+      <CardContent className="flex flex-1 flex-col gap-3">
         <div>
           <div className="flex items-center gap-2 mb-1">
             <ContextStatusPill isActive={context.isActive} />

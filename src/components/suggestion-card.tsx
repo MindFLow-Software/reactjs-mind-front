@@ -3,6 +3,7 @@
 import { ChevronUp, Check } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import type { ISuggestion } from '@/types/suggestion/suggestion'
+import { SuggestionStatus } from '@/types/suggestion/suggestion-status'
 import { Dialog, DialogTrigger } from '@/components/ui/dialog'
 import { SuggestionDetailModalContent } from '@/components/suggestion-detail/suggestion-detail-modal/suggestion-detail-modal'
 import { SUGGESTION_CATEGORY_DISPLAY } from '@/constants/suggestion-category-display'
@@ -23,7 +24,7 @@ function resolveCardVariant(isImplemented: boolean, isLiked: boolean) {
 
 export function SuggestionCard({ item, userId, onLike }: SuggestionCardProps) {
   const isLiked = userId ? item.likes?.includes(userId) : false
-  const isImplemented = item.status === 'IMPLEMENTED'
+  const isImplemented = item.status === SuggestionStatus.IMPLEMENTED
   const cat = SUGGESTION_CATEGORY_DISPLAY[item.category]
   const initials = Normalizer.initials(item.psychologistName)
 
@@ -38,7 +39,7 @@ export function SuggestionCard({ item, userId, onLike }: SuggestionCardProps) {
         >
           {isImplemented ? (
             <div className="sc-badge sc-badge--implemented">
-              <div className="size-7 rounded-full bg-emerald-500 flex items-center justify-center">
+              <div className="size-7 rounded-full bg-success flex items-center justify-center">
                 <Check className="size-3.5 text-white" strokeWidth={3} />
               </div>
             </div>

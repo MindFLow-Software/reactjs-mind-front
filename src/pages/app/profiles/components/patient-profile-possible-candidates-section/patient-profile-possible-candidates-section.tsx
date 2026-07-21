@@ -58,10 +58,7 @@ export function PatientProfilePossibleCandidatesSection() {
             <ArrowRight size={16} />
           </Button>
           <p className="pf-candidate-footer-details">
-            <ShieldCheck
-              size={16}
-              className="text-green-600 dark:text-green-400"
-            />
+            <ShieldCheck size={16} className="text-success" />
             Identificação por CPF, sem ações automáticas.
           </p>
         </CardFooter>

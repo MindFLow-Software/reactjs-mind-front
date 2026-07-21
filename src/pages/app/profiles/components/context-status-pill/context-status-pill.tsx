@@ -12,15 +12,12 @@ export function ContextStatusPill({ isActive }: IContextStatusPill) {
       className={cn(
         'ca-status-pill',
         isActive
-          ? 'bg-green-100 text-green-700 dark:bg-green-950/30 dark:text-green-400'
-          : 'bg-amber-100 text-amber-700 dark:bg-amber-950/30 dark:text-amber-500',
+          ? 'bg-success/10 text-success dark:bg-success/20 dark:text-success'
+          : 'bg-warning/10 text-warning dark:bg-warning/20 dark:text-warning',
       )}
     >
       <span
-        className={cn(
-          'ca-status-dot',
-          isActive ? 'bg-green-600' : 'bg-amber-500',
-        )}
+        className={cn('ca-status-dot', isActive ? 'bg-success' : 'bg-warning')}
       />
       {isActive ? 'Ativo' : 'Pausado'}
     </span>

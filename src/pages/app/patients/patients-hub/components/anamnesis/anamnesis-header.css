@@ -33,7 +33,7 @@
   }
 
   .ph-anamnesis-header__pdf-btn--success {
-    @apply bg-emerald-600 hover:bg-emerald-600;
+    @apply bg-success hover:bg-success;
   }
 
   /* Copy button — base */
@@ -42,7 +42,7 @@
   }
 
   .ph-anamnesis-header__copy-btn--copied {
-    @apply bg-emerald-600 hover:bg-emerald-600 text-white;
+    @apply bg-success hover:bg-success text-white;
   }
 
   /* Button icons */

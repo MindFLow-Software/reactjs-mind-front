@@ -43,7 +43,7 @@ export function PatientProfileCard({ profile, onSelect }: IPatientProfileCard) {
             </CardTitle>
             <CardDescription className="flex items-center gap-1 text-sm text-muted-foreground">
               {subtitle}
-              {isLinked && <BadgeCheck size={16} className="text-green-500" />}
+              {isLinked && <BadgeCheck size={16} className="text-success" />}
             </CardDescription>
           </div>
         </div>

@@ -89,10 +89,7 @@ function AddRow({ onAdd }: { onAdd: () => void }) {
 function LgpdFooter() {
   return (
     <div className="ca-foot ca-gutter">
-      <ShieldCheck
-        size={14}
-        className="text-green-600 dark:text-green-400 shrink-0"
-      />
+      <ShieldCheck size={14} className="text-success shrink-0" />
       <span>Dados de cada contexto ficam isolados conforme a LGPD.</span>
     </div>
   )
