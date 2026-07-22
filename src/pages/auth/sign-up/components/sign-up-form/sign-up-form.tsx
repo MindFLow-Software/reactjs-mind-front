@@ -25,6 +25,7 @@ import {
 } from '@/validators/user/form/create-user-schema'
 
 import './sign-up-form.css'
+import { Gender } from '@/types/shared/enums'
 
 function SectionHeading({ children }: { children: React.ReactNode }) {
   return (
@@ -49,6 +50,7 @@ export function SignUpForm() {
       password: '',
       phoneNumber: '',
       cpf: undefined,
+      gender: Gender.OTHER,
     },
   })
 
