@@ -1,0 +1,39 @@
+@reference "../../../../../../global.css";
+
+@layer components {
+  .suh-root {
+    @apply flex flex-1 flex-col justify-center gap-8;
+  }
+
+  .suh-intro {
+    @apply flex flex-col gap-3;
+  }
+
+  .suh-title {
+    @apply text-3xl font-bold leading-snug text-white;
+  }
+
+  .suh-subtitle {
+    @apply max-w-xs text-sm leading-relaxed text-white/60;
+  }
+
+  .suh-steps {
+    @apply flex flex-col gap-3;
+  }
+
+  .suh-step {
+    @apply flex items-center gap-4 rounded-2xl border border-white/10 bg-white/10 px-4 py-3.5 backdrop-blur-sm;
+  }
+
+  .suh-step-order {
+    @apply flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-blue-500/25 text-sm font-bold text-blue-300;
+  }
+
+  .suh-step-title {
+    @apply text-sm font-semibold text-white;
+  }
+
+  .suh-step-description {
+    @apply text-xs text-white/50;
+  }
+}

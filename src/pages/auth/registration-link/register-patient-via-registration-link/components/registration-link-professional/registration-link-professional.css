@@ -1,0 +1,23 @@
+@reference "../../../../../../global.css";
+
+@layer components {
+  .rlp-root {
+    @apply flex items-center gap-2 rounded-md border px-4 py-2;
+  }
+
+  .rlp-icon {
+    @apply flex w-fit items-center justify-center rounded-md bg-success/15 p-2;
+  }
+
+  .rlp-details {
+    @apply flex flex-col gap-1;
+  }
+
+  .rlp-name {
+    @apply text-sm font-medium;
+  }
+
+  .rlp-meta {
+    @apply text-xs text-muted-foreground;
+  }
+}

@@ -10,7 +10,7 @@
   }
 
   .pdb-heading {
-    @apply flex min-w-0 flex-col gap-1;
+    @apply flex min-w-0 flex-col gap-0;
   }
 
   .pdb-title {

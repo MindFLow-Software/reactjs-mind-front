@@ -1,6 +1,6 @@
 import './practice-context-header.css'
 
-import { ActivePsychologistProfileBadge } from '@/pages/auth/components/active-psychologist-profile-badge/active-psychologist-profile-badge'
+import { ActivePsychologistProfileBadge } from '@/components/active-psychologist-profile-badge/active-psychologist-profile-badge'
 
 export function PracticeContextHeader() {
   return (

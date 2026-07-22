@@ -1,0 +1,35 @@
+@reference "../../../../../global.css";
+
+@layer components {
+  .suf-root {
+    @apply flex flex-col gap-3;
+  }
+
+  .suf-divider {
+    @apply mt-2 mb-4;
+  }
+
+  .suf-row {
+    @apply grid grid-cols-2 gap-3;
+  }
+
+  .suf-password-field {
+    @apply flex flex-col gap-1;
+  }
+
+  .suf-submit {
+    @apply mt-1 w-full;
+  }
+
+  .suf-legal {
+    @apply text-center text-xs leading-relaxed text-muted-foreground;
+  }
+
+  .suf-legal-link {
+    @apply underline underline-offset-4 hover:text-foreground;
+  }
+
+  .suf-signin-link {
+    @apply font-semibold text-primary underline-offset-4 hover:underline;
+  }
+}

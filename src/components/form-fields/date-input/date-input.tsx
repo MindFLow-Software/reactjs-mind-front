@@ -111,8 +111,8 @@ export function DateInput<TFieldValues extends FieldValues>({
       control={control}
       name={name}
       render={({ field }) => (
-        <FormItem>
-          {label && <FormLabel>{label}</FormLabel>}
+        <FormItem className="gap-1">
+          {label && <FormLabel className="di-input-label">{label}</FormLabel>}
           <FormControl>
             <InputGroup className={cn('di-root', className)}>
               <InputGroupInput

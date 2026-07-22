@@ -1,7 +1,0 @@
-@reference "../../../global.css";
-
-@layer components {
-  .inv-expiry-footer {
-    @apply w-full border-t pt-3;
-  }
-}

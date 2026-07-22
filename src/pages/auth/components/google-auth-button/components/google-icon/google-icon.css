@@ -1,0 +1,7 @@
+@reference "../../../../../../global.css";
+
+@layer components {
+  .gi-root {
+    @apply h-4 w-4 shrink-0;
+  }
+}

@@ -1,14 +1,14 @@
 import { createBrowserRouter, Outlet, redirect } from 'react-router-dom'
 import { lazy, Suspense } from 'react'
 import { AppLayout } from './pages/_layouts/app'
-import { AuthLayout } from './pages/_layouts/auth'
+import { AuthLayout } from './pages/auth/layout'
 import { PatientsList } from './pages/app/patients/patients-list/patients-list'
 import { PsychologistDashboard } from './pages/app/psychologist/dashboard/psychologist-dashboard'
 import { DashboardRedirect } from './pages/app/dashboard/dashboard'
 import { NotFound } from './pages/404'
-import { SignIn } from './pages/auth/sign-in'
-import { SignUp } from './pages/auth/sign-up'
-import { GoogleOAuthSuccess } from './pages/auth/google-oauth-success'
+import { SignInPage } from './pages/auth/sign-in/sign-in-page'
+import { SignUpPage } from './pages/auth/sign-up/sign-up-page'
+import { GoogleOAuthSuccessPage } from './pages/auth/google-oauth-success/google-oauth-success-page'
 import { ProfilesPage } from './pages/app/profiles/profiles-page'
 import { PatientDashboard } from './pages/app/patient/dashboard/patient-dashboard'
 import { AppointmentsList } from './pages/app/appointment/appointment-list/appointment-list'
@@ -24,22 +24,21 @@ import { PatientDocuments } from './pages/app/patients/patients-docs/patients-do
 import PatientFollowUp from './pages/app/patient-follow-up/patient-follow-up'
 import PatientsRecords from './pages/app/patients/patients-records/patients-records'
 
-import { ClaimAccountPage } from './pages/auth/claim-account'
 import { PracticeContextPage } from './pages/app/practice-context/practice-context-page'
 import { PsychologistOnboardingPage } from './pages/app/onboarding/psychologist/psychologist-onboarding'
 import { useActivePracticeContextStore } from './store/use-active-practice-context-store'
 
 import { AdminRoute } from './components/auth/admin-route'
 import { ProtectedRoute } from './components/auth/protected-route'
-import { ValidatePatientInvitePage } from './pages/auth/invite/validate-patient-invite-page'
-import { RegisterViaPatientInvitePage } from './pages/auth/invite/register-via-patient-invite-page'
-import { PatientInviteReviewPage } from './pages/auth/invite/patient-invite-review-page'
+import { ValidatePatientInvitePage } from './pages/auth/invite/validate-patient-invite/validate-patient-invite-page'
+import { RegisterViaPatientInvitePage } from './pages/auth/invite/register-via-patient-invite/register-via-patient-invite-page'
+import { PatientInviteReviewPage } from './pages/auth/invite/patient-invite-review/patient-invite-review-page'
 import { ContextSelectionPage } from './pages/app/profiles/context-selection-page'
 import { ClaimCandidatesPage } from './pages/app/claim-candidates/claim-candidates-page'
 import { ClaimProfileRequestsPage } from './pages/app/claim-profile-requests/claim-profile-requests-page'
 import { PatientOnboardingPage } from './pages/app/onboarding/patient/patient-onboarding'
 import { Loader2 } from 'lucide-react'
-import { RegisterPatientViaRegistrationLinkPage } from './pages/auth/registration-link/register-patient-via-registration-link-page'
+import { RegisterPatientViaRegistrationLinkPage } from './pages/auth/registration-link/register-patient-via-registration-link/register-patient-via-registration-link-page'
 
 const AppointmentsRoom = lazy(() =>
   import('./pages/app/video-room/appoinmets-room').then((module) => ({
@@ -94,12 +93,11 @@ export const router = createBrowserRouter([
   {
     element: <AuthLayout />,
     children: [
-      { path: '/sign-in', element: <SignIn /> },
-      { path: '/sign-up', element: <SignUp /> },
+      { path: '/sign-in', element: <SignInPage /> },
+      { path: '/sign-up', element: <SignUpPage /> },
       // TODO: ajustar dois paths diferentes levam para mesma página
-      { path: '/auth/google/success', element: <GoogleOAuthSuccess /> },
-      { path: '/google-oauth-success', element: <GoogleOAuthSuccess /> },
-      { path: '/claim-account', element: <ClaimAccountPage /> },
+      { path: '/auth/google/success', element: <GoogleOAuthSuccessPage /> },
+      { path: '/google-oauth-success', element: <GoogleOAuthSuccessPage /> },
       {
         path: '/patient/invite/:token',
         element: <ValidatePatientInvitePage />,

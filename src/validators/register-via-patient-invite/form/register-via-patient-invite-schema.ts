@@ -20,6 +20,6 @@ export const registerViaPatientInviteSchema = z.object({
     ),
 })
 
-export type RegisterViaPatientInviteData = z.infer<
+export type IRegisterViaPatientInviteData = z.infer<
   typeof registerViaPatientInviteSchema
 >

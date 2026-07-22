@@ -1,0 +1,19 @@
+@reference "../../../../../../global.css";
+
+@layer components {
+  .rvpi-content {
+    @apply flex flex-col gap-4;
+  }
+
+  .rvpi-row {
+    @apply grid grid-cols-2 gap-4;
+  }
+
+  .rvpi-password-field {
+    @apply flex flex-col gap-1;
+  }
+
+  .rvpi-footer {
+    @apply mt-4 flex justify-end;
+  }
+}

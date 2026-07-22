@@ -1,0 +1,23 @@
+@reference "../../../../global.css";
+
+@layer components {
+  .vpi-details {
+    @apply flex flex-col gap-1;
+  }
+
+  .vpi-detail {
+    @apply text-sm;
+  }
+
+  .vpi-footer {
+    @apply flex-col gap-4;
+  }
+
+  .vpi-expiry {
+    @apply w-full border-t pt-3;
+  }
+
+  .vpi-expiry-text {
+    @apply text-center text-xs text-muted-foreground;
+  }
+}

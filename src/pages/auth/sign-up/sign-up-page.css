@@ -1,0 +1,7 @@
+@reference "../../../global.css";
+
+@layer components {
+  .sup-shell {
+    @apply w-full max-w-[520px];
+  }
+}

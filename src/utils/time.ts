@@ -5,6 +5,7 @@ import {
   format,
   formatDistanceToNow,
   getHours,
+  getYear,
   isAfter,
   isFuture,
   isValid,
@@ -197,6 +198,17 @@ export class Time {
     if (!parsed) return ''
 
     return format(parsed, "dd 'de' MMMM 'às' HH:mm", { locale: ptBR })
+  }
+
+  static toDayLongMonthYearAtTime(date: Date | string | null | undefined) {
+    const parsed = Time.parse(date)
+    if (!parsed) return ''
+
+    return format(parsed, "dd 'de' MMMM 'de' yyyy 'às' HH:mm", { locale: ptBR })
+  }
+
+  static currentYear() {
+    return getYear(new Date())
   }
 
   static toDayMonthAbbrev(date: Date | string | null | undefined) {

@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react'
 import { Link } from 'react-router-dom'
-import { List, X, ArrowRight, Brain } from 'lucide-react'
+import { ArrowRight, Brain } from 'lucide-react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { Button } from '@/components/ui/button'
 import { cn } from '@/lib/utils'
@@ -40,7 +40,7 @@ export function Header() {
           <div className="lp-hdr-shimmer" />
 
           <div className="relative z-10">
-            <Link to="/" className="flex items-center gap-2 px-3.5 py-1.5">
+            <Link to="/" className="flex items-center gap-2">
               <Brain size={18} strokeWidth={2.5} className="text-primary" />
               <span className="text-[15px] font-semibold tracking-wide text-blue-700">
                 MindFlush
@@ -77,7 +77,7 @@ export function Header() {
               </Link>
             </Button>
 
-            <Button
+            {/* <Button
               type="button"
               variant="ghost"
               size="icon"
@@ -91,7 +91,7 @@ export function Header() {
               ) : (
                 <List className="h-4 w-4" />
               )}
-            </Button>
+            </Button> */}
           </div>
         </div>
 

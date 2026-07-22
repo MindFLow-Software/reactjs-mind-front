@@ -38,8 +38,8 @@ export function EmailInput<TFieldValues extends FieldValues>({
       control={control}
       name={name}
       render={({ field }) => (
-        <FormItem>
-          {label && <FormLabel>{label}</FormLabel>}
+        <FormItem className="gap-1">
+          {label && <FormLabel className="ff-input-label">{label}</FormLabel>}
           <FormControl>
             <Input
               type="email"

@@ -24,6 +24,6 @@ export const registerPatientViaRegistrationLinkSchema = z.object({
   dateOfBirth: z.coerce.date().optional(),
 })
 
-export type RegisterPatientViaRegistrationLinkData = z.infer<
+export type IRegisterPatientViaRegistrationLinkData = z.infer<
   typeof registerPatientViaRegistrationLinkSchema
 >

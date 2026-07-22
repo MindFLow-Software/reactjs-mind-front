@@ -1,0 +1,15 @@
+@reference "../../../../../../global.css";
+
+@layer components {
+  .rprl-root {
+    @apply flex flex-col gap-4;
+  }
+
+  .rprl-row {
+    @apply grid grid-cols-2 gap-4;
+  }
+
+  .rprl-actions {
+    @apply flex justify-end gap-2 px-0;
+  }
+}

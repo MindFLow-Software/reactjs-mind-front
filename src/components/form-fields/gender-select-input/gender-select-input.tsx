@@ -66,8 +66,8 @@ export function GenderSelectInput<TFieldValues extends FieldValues>({
       control={control}
       name={name}
       render={({ field }) => (
-        <FormItem>
-          {label && <FormLabel>{label}</FormLabel>}
+        <FormItem className="gap-1">
+          {label && <FormLabel className="gsi-input-label">{label}</FormLabel>}
           <FormControl>
             <RadioGroup
               value={field.value}

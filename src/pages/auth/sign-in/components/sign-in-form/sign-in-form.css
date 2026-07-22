@@ -1,0 +1,27 @@
+@reference "../../../../../global.css";
+
+@layer components {
+  .sif-root {
+    @apply flex flex-col gap-6;
+  }
+
+  .sif-password-field {
+    @apply flex flex-col gap-1;
+  }
+
+  .sif-footer {
+    @apply flex flex-col gap-2!;
+  }
+
+  .sif-forgot-link {
+    @apply self-end text-xs text-muted-foreground underline-offset-4 transition-colors hover:text-primary hover:underline;
+  }
+
+  .sif-signup-hint {
+    @apply text-center text-xs leading-relaxed text-muted-foreground;
+  }
+
+  .sif-signup-link {
+    @apply font-semibold text-primary underline-offset-4 transition-colors hover:underline;
+  }
+}

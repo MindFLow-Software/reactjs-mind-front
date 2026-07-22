@@ -1,5 +1,5 @@
 import { cn } from '@/lib/utils'
-import { PASSWORD_STRENGTH_LEVELS } from '@/pages/auth/constants'
+import { PASSWORD_STRENGTH_LEVELS } from '@/constants/password-strength-levels'
 
 import './password-strength.css'
 

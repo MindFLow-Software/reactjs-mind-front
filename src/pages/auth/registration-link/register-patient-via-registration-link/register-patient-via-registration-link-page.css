@@ -1,0 +1,35 @@
+@reference "../../../../global.css";
+
+@layer components {
+  .rprlp-card {
+    @apply w-xl px-6;
+  }
+
+  .rprlp-header {
+    @apply border-b px-0;
+  }
+
+  .rprlp-intro {
+    @apply mb-4;
+  }
+
+  .rprlp-title {
+    @apply text-center text-2xl;
+  }
+
+  .rprlp-description {
+    @apply text-center;
+  }
+
+  .rprlp-content {
+    @apply px-0;
+  }
+
+  .rprlp-footer {
+    @apply items-start gap-1 p-0;
+  }
+
+  .rprlp-notice {
+    @apply text-[11px] text-muted-foreground;
+  }
+}

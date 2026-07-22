@@ -1,0 +1,11 @@
+@reference "../../global.css";
+
+@layer components {
+  .apb-root {
+    @apply my-4 flex w-fit items-center gap-2 rounded-lg border border-border bg-card px-12 py-1 shadow-sm;
+  }
+
+  .apb-text {
+    @apply text-xs;
+  }
+}

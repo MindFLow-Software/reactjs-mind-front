@@ -73,7 +73,7 @@ export function RegisterPatients({ open, onOpenChange }: IRegisterPatients) {
   function renderStepContent() {
     switch (step) {
       case 1:
-        return <StepBasicData patient={null} />
+        return <StepBasicData />
       case 2:
         return <StepContactAddress />
       case 3:
@@ -95,13 +95,15 @@ export function RegisterPatients({ open, onOpenChange }: IRegisterPatients) {
 
   return (
     <StepperDialog open={open} onOpenChange={onOpenChange}>
-      <StepperDialog.Header
-        icon={UserPlus}
-        title="Cadastrar paciente"
-        subtitle="Comece apenas com nome e contato — o resto pode ser preenchido posteriormente."
-      />
+      <div className="flex flex-col gap-2">
+        <StepperDialog.Header
+          icon={UserPlus}
+          title="Cadastrar paciente"
+          subtitle="Comece apenas com nome e contato — o resto pode ser preenchido posteriormente."
+        />
 
-      <StepperDialog.Steps steps={nav} definitions={STEPS} />
+        <StepperDialog.Steps steps={nav} definitions={STEPS} />
+      </div>
 
       <Form {...methods}>
         <StepperDialog.Body>{renderStepContent()}</StepperDialog.Body>

@@ -2,7 +2,7 @@
 
 @layer components {
   .si-root {
-    @apply h-[38px];
+    @apply h-10 pl-0!;
     @apply has-[[data-slot=input-group-control]:focus-visible]:border-blue-600;
     @apply has-[[data-slot=input-group-control]:focus-visible]:ring-[3px];
     @apply has-[[data-slot=input-group-control]:focus-visible]:ring-blue-600/18;

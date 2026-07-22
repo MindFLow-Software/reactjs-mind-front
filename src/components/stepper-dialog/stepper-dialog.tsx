@@ -65,10 +65,16 @@ type IStepperDialogFooter = {
   disabled?: boolean
 }
 
-function stepBadgeClass(active: boolean, done: boolean): string {
+function stepBadgeClass(active: boolean, done: boolean, error: boolean = false): string {
   if (active) return 'sd-tab-badge--active'
+  if (error) return 'sd-tab-badge--error'
   return done ? 'sd-tab-badge--done' : 'sd-tab-badge--pending'
 }
+
+// function stepBadgeIcon(id: number, done: boolean, error: boolean = false) {
+//   if (error) return <X className="size-3.5" />
+//   return done ? <Check className="size-3.5" /> : <>{id}</>
+// }
 
 function StepperDialogRoot({
   open,
@@ -109,7 +115,7 @@ function StepperDialogHeader({ icon, title, subtitle }: IStepperDialogHeader) {
 
 function StepperDialogSteps({ steps, definitions }: IStepperDialogSteps) {
   return (
-    <>
+    <div className="sd-steps-container">
       <div className="sd-steps">
         {definitions.map((definition) => {
           const active = steps.current === definition.id
@@ -144,7 +150,7 @@ function StepperDialogSteps({ steps, definitions }: IStepperDialogSteps) {
           style={{ width: `${(steps.current / steps.total) * 100}%` }}
         />
       </div>
-    </>
+    </div>
   )
 }
 
