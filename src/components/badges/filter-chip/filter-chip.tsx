@@ -5,7 +5,7 @@ import { cn } from '@/lib/utils'
 
 import './filter-chip.css'
 
-type IFilterChipProps = {
+type IFilterChip = {
   active: boolean
   onToggle: () => void
   children: ReactNode
@@ -17,7 +17,7 @@ export function FilterChip({
   onToggle,
   children,
   className,
-}: IFilterChipProps) {
+}: IFilterChip) {
   return (
     <Toggle
       pressed={active}

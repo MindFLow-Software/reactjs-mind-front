@@ -1,4 +1,4 @@
-import { useEffect } from 'react'
+import { useEffect, useRef } from 'react'
 import { Loader2, Search, X } from 'lucide-react'
 
 import {
@@ -7,11 +7,12 @@ import {
   InputGroupAddon,
   InputGroupButton,
 } from '@/components/ui/input-group'
+import { useDebounce } from '@/hooks/use-debounce'
 import { cn } from '@/lib/utils'
 
 import './search-input.css'
 
-type ISearchInputProps = {
+type ISearchInput = {
   value: string
   onChange: (value: string) => void
   onDebouncedChange?: (value: string) => void
@@ -29,18 +30,19 @@ export function SearchInput({
   placeholder,
   isLoading = false,
   className,
-}: ISearchInputProps) {
+}: ISearchInput) {
+  const debouncedValue = useDebounce(value, debounceMs)
+  const lastEmittedRef = useRef(value)
+
   useEffect(() => {
-    if (!onDebouncedChange) return
+    if (!onDebouncedChange || lastEmittedRef.current === debouncedValue) return
 
-    const timeout = setTimeout(() => {
-      onDebouncedChange(value)
-    }, debounceMs)
-
-    return () => clearTimeout(timeout)
-  }, [value, debounceMs, onDebouncedChange])
+    lastEmittedRef.current = debouncedValue
+    onDebouncedChange(debouncedValue)
+  }, [debouncedValue, onDebouncedChange])
 
   function handleClear() {
+    lastEmittedRef.current = ''
     onChange('')
     onDebouncedChange?.('')
   }

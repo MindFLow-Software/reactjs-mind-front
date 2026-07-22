@@ -1,13 +1,7 @@
 import type { IPaginationMeta } from '@/types/shared/pagination-meta'
 import type { IPatient } from '@/types/patient/patient'
+import type { PatientProfileStatus } from '@/types/patient-profile/patient-profile-status'
 import type { Gender } from '@/types/shared/enums'
-
-export enum PatientStatusFilter {
-  ACTIVE = 'ACTIVE',
-  REJECTED = 'REJECTED',
-  PENDING = 'PENDING',
-  BLOCKED = 'BLOCKED',
-}
 
 export enum PatientSortBy {
   NAME = 'name',
@@ -23,7 +17,7 @@ export enum PatientSortOrder {
 }
 
 export type IStatusPillOption = {
-  value: PatientStatusFilter | null
+  value: PatientProfileStatus | null
   label: string
   dot: string | null
   activeCls: string
@@ -33,7 +27,7 @@ export type IPatientsFilters = {
   pageIndex: number
   perPage: number
   filter: string
-  status: PatientStatusFilter | null
+  status: PatientProfileStatus | null
   gender: Gender | null
   sortBy?: PatientSortBy
   order: PatientSortOrder
@@ -41,9 +35,8 @@ export type IPatientsFilters = {
 
 export type IPatientsFiltersInput = {
   filter?: string
-  status?: PatientStatusFilter | null
+  status?: PatientProfileStatus | null
   gender?: Gender | null
-  sessionVolume?: string | null
 }
 
 export type IUsePatientFilters = {
@@ -59,7 +52,7 @@ export type IPatientsQueryParams = {
   pageIndex: number
   perPage: number
   filter?: string
-  isActive?: boolean
+  status?: PatientProfileStatus | null
   gender?: Gender | null
   orderBy?: PatientSortBy
   order: PatientSortOrder
