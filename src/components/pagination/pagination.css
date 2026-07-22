@@ -10,7 +10,7 @@
   }
 
   .pgn-pages {
-    @apply flex items-center gap-6 lg:gap-8;
+    @apply flex items-center gap-4;
   }
 
   .pgn-indicator {

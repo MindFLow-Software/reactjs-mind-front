@@ -1,20 +1,21 @@
 import { z } from 'zod'
-import { useCallback } from 'react'
+import { useCallback, useMemo } from 'react'
 import { useSearchParams } from 'react-router-dom'
 
+import { PatientProfileStatus } from '@/types/patient-profile/patient-profile-status'
 import { Gender } from '@/types/shared/enums'
 import {
   PatientSortBy,
   PatientSortOrder,
-  PatientStatusFilter,
   type IPatientsFilters,
   type IPatientsFiltersInput,
   type IUsePatientFilters,
 } from '../patients-list.types'
 
 const PER_PAGE = 10
+const FIRST_PAGE = '1'
 
-const VALID_STATUSES: readonly string[] = Object.values(PatientStatusFilter)
+const VALID_STATUSES: readonly string[] = Object.values(PatientProfileStatus)
 const VALID_GENDERS: readonly string[] = Object.values(Gender)
 const VALID_SORT_COLUMNS: readonly string[] = Object.values(PatientSortBy)
 
@@ -28,8 +29,8 @@ function parsePageIndex(page: string): number {
   return Math.max(0, pageIndex)
 }
 
-function parseStatus(raw: string): PatientStatusFilter | null {
-  return VALID_STATUSES.includes(raw) ? (raw as PatientStatusFilter) : null
+function parseStatus(raw: string): PatientProfileStatus | null {
+  return VALID_STATUSES.includes(raw) ? (raw as PatientProfileStatus) : null
 }
 
 function parseGender(raw: string): Gender | null {
@@ -47,41 +48,60 @@ function parseOrder(raw: string | null): PatientSortOrder {
     : PatientSortOrder.ASC
 }
 
+/** Only `undefined` leaves the param untouched — `null` and `''` clear it. */
+function applyParam(
+  state: URLSearchParams,
+  key: string,
+  value: string | null | undefined,
+): void {
+  if (value === undefined) return
+
+  if (!value) {
+    state.delete(key)
+    return
+  }
+
+  state.set(key, value)
+}
+
 export function usePatientFilters(): IUsePatientFilters {
   const [searchParams, setSearchParams] = useSearchParams()
 
-  const filters: IPatientsFilters = {
-    pageIndex: parsePageIndex(searchParams.get('page') ?? '1'),
-    perPage: PER_PAGE,
-    filter: searchParams.get('filter') ?? '',
-    status: parseStatus(searchParams.get('status') ?? ''),
-    gender: parseGender(searchParams.get('gender') ?? ''),
-    sortBy: parseSortBy(searchParams.get('sortBy')),
-    order: parseOrder(searchParams.get('order')),
-  }
+  const filters = useMemo<IPatientsFilters>(
+    () => ({
+      pageIndex: parsePageIndex(searchParams.get('page') ?? FIRST_PAGE),
+      perPage: PER_PAGE,
+      filter: searchParams.get('filter') ?? '',
+      status: parseStatus(searchParams.get('status') ?? ''),
+      gender: parseGender(searchParams.get('gender') ?? ''),
+      sortBy: parseSortBy(searchParams.get('sortBy')),
+      order: parseOrder(searchParams.get('order')),
+    }),
+    [searchParams],
+  )
 
   const setPage = useCallback(
     (pageIndex: number) => {
       setSearchParams((state) => {
-        state.set('page', (pageIndex + 1).toString())
-        return state
+        const next = new URLSearchParams(state)
+        next.set('page', (pageIndex + 1).toString())
+        return next
       })
     },
     [setSearchParams],
   )
 
   const setFilters = useCallback(
-    ({ filter, status, gender, sessionVolume }: IPatientsFiltersInput) => {
+    ({ filter, status, gender }: IPatientsFiltersInput) => {
       setSearchParams((state) => {
-        filter ? state.set('filter', filter.trim()) : state.delete('filter')
-        status ? state.set('status', status) : state.delete('status')
-        gender ? state.set('gender', gender) : state.delete('gender')
-        sessionVolume
-          ? state.set('sessionVolume', sessionVolume)
-          : state.delete('sessionVolume')
+        const next = new URLSearchParams(state)
 
-        state.set('page', '1')
-        return state
+        applyParam(next, 'filter', filter?.trim())
+        applyParam(next, 'status', status)
+        applyParam(next, 'gender', gender)
+        next.set('page', FIRST_PAGE)
+
+        return next
       })
     },
     [setSearchParams],
@@ -90,35 +110,36 @@ export function usePatientFilters(): IUsePatientFilters {
   const setSort = useCallback(
     (column: PatientSortBy) => {
       setSearchParams((state) => {
-        const currentColumn =
-          parseSortBy(state.get('sortBy')) ?? PatientSortBy.NAME
-        const currentOrder = parseOrder(state.get('order'))
+        const next = new URLSearchParams(state)
+        const currentColumn = parseSortBy(next.get('sortBy'))
+        const currentOrder = parseOrder(next.get('order'))
 
         if (column === currentColumn) {
-          state.set(
+          next.set(
             'order',
             currentOrder === PatientSortOrder.ASC
               ? PatientSortOrder.DESC
               : PatientSortOrder.ASC,
           )
         } else {
-          state.set('sortBy', column)
-          state.set('order', PatientSortOrder.ASC)
+          next.set('sortBy', column)
+          next.set('order', PatientSortOrder.ASC)
         }
 
-        state.set('page', '1')
-        return state
+        next.set('page', FIRST_PAGE)
+        return next
       })
     },
     [setSearchParams],
   )
 
   const setOrder = useCallback(
-    (next: PatientSortOrder) => {
+    (order: PatientSortOrder) => {
       setSearchParams((state) => {
-        state.set('order', next)
-        state.set('page', '1')
-        return state
+        const next = new URLSearchParams(state)
+        next.set('order', order)
+        next.set('page', FIRST_PAGE)
+        return next
       })
     },
     [setSearchParams],
@@ -126,12 +147,14 @@ export function usePatientFilters(): IUsePatientFilters {
 
   const clearFilters = useCallback(() => {
     setSearchParams((state) => {
-      state.delete('filter')
-      state.delete('status')
-      state.delete('gender')
-      state.delete('sessionVolume')
-      state.set('page', '1')
-      return state
+      const next = new URLSearchParams(state)
+
+      next.delete('filter')
+      next.delete('status')
+      next.delete('gender')
+      next.set('page', FIRST_PAGE)
+
+      return next
     })
   }, [setSearchParams])
 

@@ -7,6 +7,7 @@ import { SearchInput } from '@/components/form-fields/search-input/search-input'
 import { FilterChip } from '@/components/badges/filter-chip/filter-chip'
 import { cn } from '@/lib/utils'
 import { STATUS_PILLS } from '../../../constants'
+import { hasActiveFilters } from '../../../patients-list.helpers'
 import { usePatientFilters } from '../../../hooks/use-patient-filters'
 
 type IPatientsTableFilters = {
@@ -23,7 +24,7 @@ export function PatientsTableFilters({ isFetching }: IPatientsTableFilters) {
     setSearchValue('')
   }
 
-  const hasFilters = !!filters.filter || filters.status !== null
+  const hasFilters = hasActiveFilters(filters.filter, filters.status)
 
   return (
     <div className="ptf-root">
