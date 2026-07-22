@@ -6,9 +6,9 @@ type IAuthDivider = {
 
 export function AuthDivider({ label }: IAuthDivider) {
   return (
-    <div className="ad-root">
-      <span className="ad-line" />
-      <span className="ad-label">{label}</span>
+    <div className="auth-divider-root">
+      <span className="auth-divider-line" />
+      <span className="auth-divider-label">{label}</span>
     </div>
   )
 }

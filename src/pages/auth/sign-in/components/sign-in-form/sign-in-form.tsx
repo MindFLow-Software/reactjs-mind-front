@@ -73,7 +73,7 @@ export const SignInForm = memo(function SignInForm() {
         </motion.div>
 
         <motion.div {...animItem}>
-          <AuthDivider label="Ou" />
+          <AuthDivider label="ou" />
         </motion.div>
 
         <motion.div {...animItem}>
@@ -85,7 +85,11 @@ export const SignInForm = memo(function SignInForm() {
         </motion.div>
 
         <motion.div {...animItem} className="sif-password-field">
-          <PasswordInput<ISignInFormData> name="password" label="Senha" />
+          <PasswordInput<ISignInFormData>
+            name="password"
+            label="Senha"
+            placeholder="••••••••"
+          />
           <Link to="/forgot-password" className="sif-forgot-link">
             Esqueceu a senha?
           </Link>
