@@ -7,4 +7,8 @@
     @apply has-[[data-slot=input-group-control]:focus-visible]:ring-[3px];
     @apply has-[[data-slot=input-group-control]:focus-visible]:ring-blue-600/18;
   }
+
+  .di-input-label {
+    @apply text-xs! font-medium text-foreground/70;
+  }
 }

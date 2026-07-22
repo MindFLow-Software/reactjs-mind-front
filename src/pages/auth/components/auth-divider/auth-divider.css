@@ -1,0 +1,15 @@
+@reference "../../../../global.css";
+
+@layer components {
+  .ad-root {
+    @apply relative flex items-center;
+  }
+
+  .ad-line {
+    @apply w-full border-t;
+  }
+
+  .ad-label {
+    @apply absolute left-1/2 -translate-x-1/2 bg-gray-50 px-2 text-xs uppercase text-muted-foreground;
+  }
+}

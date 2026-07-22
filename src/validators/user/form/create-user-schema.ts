@@ -27,4 +27,4 @@ export const createUserSchema = z.object({
   phoneNumber: z.string().optional(),
 })
 
-export type CreateUserData = z.infer<typeof createUserSchema>
+export type ICreateUserData = z.infer<typeof createUserSchema>

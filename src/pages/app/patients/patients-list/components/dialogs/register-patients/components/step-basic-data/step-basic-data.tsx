@@ -17,7 +17,7 @@ import { SectionTitle } from '../section-title/section-title'
 import '../../../patient-form-fields.css'
 
 type IStepBasicData = {
-  patient: IPatientProfile | null
+  patient?: IPatientProfile | null
 }
 
 export function StepBasicData({ patient }: IStepBasicData) {

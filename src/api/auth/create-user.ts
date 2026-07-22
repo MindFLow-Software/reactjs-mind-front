@@ -1,7 +1,8 @@
 import { api } from '@/lib/axios'
 import type { Gender } from '@/types/shared/enums'
+import type { IMutationResult } from '@/types/shared/mutation-result'
 
-export type CreateUserBody = {
+export type ICreateUserBody = {
   firstName: string
   lastName: string
   email: string
@@ -12,6 +13,9 @@ export type CreateUserBody = {
   dateOfBirth?: string
 }
 
-export async function createUser(body: CreateUserBody): Promise<void> {
-  await api.post('/user', body)
+export async function createUser(
+  body: ICreateUserBody,
+): Promise<IMutationResult<void>> {
+  const response = await api.post('/user', body)
+  return { data: undefined, message: response.apiMessage ?? null }
 }

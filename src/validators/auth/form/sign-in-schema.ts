@@ -5,4 +5,4 @@ export const signInSchema = z.object({
   password: z.string().min(1, { message: 'A senha é obrigatória' }),
 })
 
-export type SignInFormData = z.infer<typeof signInSchema>
+export type ISignInFormData = z.infer<typeof signInSchema>

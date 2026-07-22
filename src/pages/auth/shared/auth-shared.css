@@ -1,0 +1,15 @@
+@reference "../../../global.css";
+
+@layer components {
+  .auth-card-shell {
+    @apply flex items-center justify-center;
+  }
+
+  .auth-card {
+    @apply w-lg gap-2;
+  }
+
+  .auth-card-title {
+    @apply flex items-center gap-2;
+  }
+}

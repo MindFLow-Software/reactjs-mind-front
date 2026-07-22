@@ -122,13 +122,14 @@ export function EditPatientModal({
 
   return (
     <StepperDialog open={open} onOpenChange={onOpenChange}>
-      <StepperDialog.Header
-        icon={UserPen}
-        title="Editar paciente"
-        subtitle={subtitle}
-      />
-
-      <StepperDialog.Steps steps={nav} definitions={STEPS} />
+      <div className="flex flex-col gap-2">
+        <StepperDialog.Header
+          icon={UserPen}
+          title="Editar paciente"
+          subtitle={subtitle}
+        />
+        <StepperDialog.Steps steps={nav} definitions={STEPS} />
+      </div>
 
       <Form {...methods}>
         <StepperDialog.Body>{renderStepContent()}</StepperDialog.Body>

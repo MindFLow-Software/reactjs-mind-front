@@ -1,7 +1,7 @@
 import { api } from '@/lib/axios'
 import type { ISessionRawResponse } from '@/types/shared/session-raw-response'
 
-export type SignInBody = {
+export type ISignInBody = {
   email: string
   password: string
 }
@@ -9,7 +9,7 @@ export type SignInBody = {
 export async function signIn({
   email,
   password,
-}: SignInBody): Promise<ISessionRawResponse> {
+}: ISignInBody): Promise<ISessionRawResponse> {
   const response = await api.post<ISessionRawResponse>('/session', {
     email,
     password,

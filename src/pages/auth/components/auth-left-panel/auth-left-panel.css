@@ -1,0 +1,23 @@
+@reference "../../../../global.css";
+
+@layer components {
+  .alp-root {
+    @apply hidden h-full min-h-screen flex-col bg-gradient-to-br from-(--auth-navy-950) via-(--auth-navy-800) to-(--auth-navy-700) p-10 md:flex;
+  }
+
+  .alp-brand {
+    @apply flex items-center gap-3;
+  }
+
+  .alp-brand-icon {
+    @apply h-8 w-8 text-blue-400;
+  }
+
+  .alp-brand-name {
+    @apply text-lg font-semibold text-white;
+  }
+
+  .alp-footer {
+    @apply text-center text-xs text-white/30;
+  }
+}

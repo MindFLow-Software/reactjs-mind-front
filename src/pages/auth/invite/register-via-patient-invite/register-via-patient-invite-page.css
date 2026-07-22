@@ -1,0 +1,7 @@
+@reference "../../../../global.css";
+
+@layer components {
+  .rvpip-card {
+    @apply w-xl gap-2;
+  }
+}

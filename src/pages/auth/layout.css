@@ -1,0 +1,11 @@
+@reference "../../global.css";
+
+@layer components {
+  .auth-layout {
+    @apply grid min-h-screen grid-cols-1 md:grid-cols-[45%_55%];
+  }
+
+  .auth-layout__content {
+    @apply flex flex-col items-center justify-center overflow-y-auto bg-gray-50 px-6 py-10;
+  }
+}

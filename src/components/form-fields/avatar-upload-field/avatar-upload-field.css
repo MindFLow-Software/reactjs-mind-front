@@ -6,11 +6,11 @@
   }
 
   .auf-avatar {
-    @apply relative size-20 shrink-0 overflow-hidden rounded-full p-0 hover:bg-transparent;
+    @apply relative size-16! shrink-0! overflow-hidden rounded-full! p-0 hover:bg-transparent;
   }
 
   .auf-overlay {
-    @apply absolute inset-0 flex items-center justify-center bg-black/40 text-white opacity-0 transition-opacity group-hover:opacity-100;
+    @apply absolute inset-0 flex items-center justify-center bg-black/40 text-white opacity-0 transition-opacity group-hover:opacity-100 rounded-full;
   }
 
   .auf-info {

@@ -1,0 +1,7 @@
+@reference "../../../../global.css";
+
+@layer components {
+  .gab-root {
+    @apply w-full cursor-pointer gap-2 font-medium;
+  }
+}

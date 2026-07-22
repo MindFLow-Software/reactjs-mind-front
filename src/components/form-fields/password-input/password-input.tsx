@@ -46,8 +46,8 @@ export function PasswordInput<TFieldValues extends FieldValues>({
       control={control}
       name={name}
       render={({ field }) => (
-        <FormItem>
-          {label && <FormLabel>{label}</FormLabel>}
+        <FormItem className="gap-1">
+          {label && <FormLabel className="pi-input-label">{label}</FormLabel>}
           <FormControl>
             <InputGroup className={cn('pi-root', className)}>
               <InputGroupInput

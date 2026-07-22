@@ -1,7 +1,0 @@
-@reference "../../global.css";
-
-@layer components {
-  .claim-icon-badge {
-    @apply flex w-fit items-center justify-center rounded-md p-2;
-  }
-}

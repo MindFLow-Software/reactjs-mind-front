@@ -65,8 +65,8 @@ export function AvatarUploadField({
         aria-label="Selecionar foto"
       >
         <UserAvatar
+          className="size-16 shrink-0"
           identity={{ src: previewUrl, name: avatar.name, colorSeed: seedId }}
-          className="size-full"
         />
         <span className="auf-overlay">
           <Camera className="size-5" />

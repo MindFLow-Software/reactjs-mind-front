@@ -43,8 +43,8 @@ export function CpfInput<TFieldValues extends FieldValues>({
         }
 
         return (
-          <FormItem>
-            {label && <FormLabel>{label}</FormLabel>}
+          <FormItem className="gap-1">
+            {label && <FormLabel className="ff-input-label">{label}</FormLabel>}
             <FormControl>
               <Input
                 value={Normalizer.maskCpf(field.value ?? '')}

@@ -2,11 +2,11 @@
 
 @layer components {
   .sd-content {
-    @apply flex max-h-[90vh] max-w-2xl flex-col gap-4 p-0;
+    @apply flex max-h-[90vh] max-w-2xl! flex-col gap-4 p-0!;
   }
 
   .sd-header {
-    @apply flex items-center gap-3 border-b border-border p-6 pb-4;
+    @apply flex items-center gap-3 border-b border-border p-4! pb-4;
   }
 
   .sd-heading {
@@ -14,19 +14,23 @@
   }
 
   .sd-title {
-    @apply text-lg font-semibold text-foreground;
+    @apply text-base! font-semibold text-foreground;
   }
 
   .sd-subtitle {
     @apply text-sm text-muted-foreground;
   }
 
+  .sd-steps-container {
+    @apply flex flex-col;
+  }
+
   .sd-steps {
-    @apply flex flex-wrap items-center gap-1 px-6;
+    @apply flex flex-wrap items-center gap-1;
   }
 
   .sd-tab {
-    @apply gap-2 text-muted-foreground;
+    @apply gap-2 text-muted-foreground flex-1;
   }
 
   .sd-tab-badge {
@@ -50,7 +54,7 @@
   }
 
   .sd-progress-track {
-    @apply mx-6 h-1 overflow-hidden rounded-full bg-muted;
+    @apply h-1 overflow-hidden rounded-full bg-muted mx-3;
   }
 
   .sd-progress-fill {
@@ -58,10 +62,10 @@
   }
 
   .sd-body {
-    @apply min-h-0 flex-1 overflow-y-auto px-6;
+    @apply min-h-0 flex-1 overflow-y-auto px-4!;
   }
 
   .sd-footer {
-    @apply border-t border-border p-6 pt-4;
+    @apply border-t border-border p-4!;
   }
 }

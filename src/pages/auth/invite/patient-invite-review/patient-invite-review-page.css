@@ -1,0 +1,23 @@
+@reference "../../../../global.css";
+
+@layer components {
+  .pir-details {
+    @apply flex flex-col gap-1;
+  }
+
+  .pir-detail {
+    @apply text-sm;
+  }
+
+  .pir-professional {
+    @apply flex items-center gap-2;
+  }
+
+  .pir-expiry {
+    @apply text-xs text-muted-foreground;
+  }
+
+  .pir-footer {
+    @apply justify-end gap-4;
+  }
+}
