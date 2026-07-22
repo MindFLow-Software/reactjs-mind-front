@@ -6,7 +6,6 @@ import { toast } from 'sonner'
 import { zodResolver } from '@hookform/resolvers/zod'
 
 import { Form } from '@/components/ui/form'
-import { FieldSeparator } from '@/components/ui/field'
 import { Button } from '@/components/ui/button'
 import { TextInput } from '@/components/form-fields/text-input/text-input'
 import { EmailInput } from '@/components/form-fields/email-input/email-input'

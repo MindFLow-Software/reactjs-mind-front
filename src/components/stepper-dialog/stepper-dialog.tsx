@@ -1,6 +1,6 @@
 import type { LucideIcon } from 'lucide-react'
 import type { ReactNode } from 'react'
-import { Check, ChevronLeft, ChevronRight, Loader2, X } from 'lucide-react'
+import { Check, ChevronLeft, ChevronRight, Loader2 } from 'lucide-react'
 
 import { cn } from '@/lib/utils'
 import {
@@ -71,10 +71,10 @@ function stepBadgeClass(active: boolean, done: boolean, error: boolean = false):
   return done ? 'sd-tab-badge--done' : 'sd-tab-badge--pending'
 }
 
-function stepBadgeIcon(id: number, done: boolean, error: boolean = false) {
-  if (error) return <X className="size-3.5" />
-  return done ? <Check className="size-3.5" /> : <>{id}</>
-}
+// function stepBadgeIcon(id: number, done: boolean, error: boolean = false) {
+//   if (error) return <X className="size-3.5" />
+//   return done ? <Check className="size-3.5" /> : <>{id}</>
+// }
 
 function StepperDialogRoot({
   open,
