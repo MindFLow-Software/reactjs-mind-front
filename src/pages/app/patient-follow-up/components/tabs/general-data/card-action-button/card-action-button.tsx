@@ -21,6 +21,7 @@ export function CardActionButton({
     return (
       <Button
         size="sm"
+        disabled
         type="button"
         variant="ghost"
         onClick={onClick}
@@ -35,6 +36,7 @@ export function CardActionButton({
   return (
     <Button
       size="sm"
+      disabled
       type="button"
       variant="ghost"
       onClick={onClick}

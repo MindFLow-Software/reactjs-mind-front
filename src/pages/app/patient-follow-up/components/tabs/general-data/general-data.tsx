@@ -71,7 +71,7 @@ export function PatientGeneralData({ patient }: IPatientGeneralData) {
               cpf ? (
                 <span className="font-mono tabular-nums">{cpf}</span>
               ) : (
-                <CardActionButton label="Adicionar CPF" />
+                <CardActionButton label="Adicione um CPF" />
               )
             }
           />
@@ -87,14 +87,14 @@ export function PatientGeneralData({ patient }: IPatientGeneralData) {
               phone ? (
                 <span className="font-mono tabular-nums">{phone}</span>
               ) : (
-                <CardActionButton label="Adicionar telefone" />
+                <CardActionButton label="Adicione um telefone" />
               )
             }
           />
           <FieldRow
             label="E-mail"
             value={
-              patient.email ?? <CardActionButton label="Adicionar e-mail" />
+              patient.email ?? <CardActionButton label="Adicione um e-mail" />
             }
           />
         </FieldSection>
@@ -118,10 +118,10 @@ export function PatientGeneralData({ patient }: IPatientGeneralData) {
 
         <FieldSection label="Endereço">
           <div className="gd-address-empty">
-            Endereço não cadastrado.&nbsp;
-            <button type="button" className="gd-address-empty__link" disabled>
+            Nenhum Endereço cadastrado até o momento.
+            {/* <button type="button" className="gd-address-empty__link" disabled>
               Adicionar agora
-            </button>
+            </button> */}
           </div>
         </FieldSection>
       </TabCard>

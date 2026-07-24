@@ -7,12 +7,8 @@ import {
   useRef,
   useState,
 } from 'react'
-import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { toast } from 'sonner'
 
-import { getAnamnesis } from '@/api/patient-profiles/get-anamnesis'
-import { saveAnamnesis } from '@/api/patient-profiles/save-anamnesis'
-import type { IAnamnesisContent } from '@/types/clinical/anamnesis-content'
 import { AnamnesisPDFTemplate } from '@/templates/pdf/anamnesis-pdf-template'
 
 import type { IAnamnesisBlock } from '../components/tabs/anamnesis/anamnesis-types'
@@ -22,14 +18,14 @@ import {
   normalizeBlocks,
   toApiData,
 } from '../components/tabs/anamnesis/anamnesis-utils'
-import {
-  clearAnamnesisDraft,
-  readAnamnesisDraft,
-  writeAnamnesisDraft,
-} from '../components/tabs/anamnesis/anamnesis-draft-storage'
 import { usePdfExport } from './use-pdf-export'
+import { useAnamnesisDraft } from './use-anamnesis-draft'
+import { useAnamnesis } from './use-anamnesis'
+import { useSaveAnamnesis } from './use-save-anamnesis'
+import { useDebounce } from '@/hooks/use-debounce'
 import { Clipboard } from '@/utils/clipboard'
 import { Time } from '@/utils/time'
+import { Normalizer } from '@/utils/normalizer'
 
 type IAnamnesisEditorState = {
   blocks: IAnamnesisBlock[]
@@ -121,35 +117,33 @@ export function useAnamnesisEditor({
   patientId,
   patientName = '',
 }: IUseAnamnesisEditorOptions): IUseAnamnesisEditorReturn {
-  const queryClient = useQueryClient()
+  const { debounce } = useDebounce()
+  const { read, write, clear } = useAnamnesisDraft()
 
+  const [copied, setCopied] = useState(false)
   const [{ blocks, activeBlockId, hydrated, hasLocalDraft }, dispatch] =
     useReducer(editorReducer, INITIAL_EDITOR_STATE)
-  const [copied, setCopied] = useState(false)
+
+  const {
+    isExporting,
+    pdfExportedSuccessfully,
+    exportToPdf: exportPdfDoc,
+  } = usePdfExport({
+    receivedFilename: `Anamnese-${Normalizer.toKebabCase(patientName) ?? patientId}.pdf`,
+  })
 
   const lastPersistedHash = useRef('')
   const serverBlocksRef = useRef<IAnamnesisBlock[]>([])
 
-  const { data } = useQuery({
-    queryKey: ['patient-hub', patientId, 'anamnesis'],
-    queryFn: () => getAnamnesis(patientId),
-  })
+  const { anamnesis } = useAnamnesis(patientId)
 
-  const { mutate: save, isPending } = useMutation({
-    mutationFn: (newData: IAnamnesisContent) => {
-      return saveAnamnesis(patientId, newData)
-    },
-    onSuccess: async (_, vars) => {
+  const { mutate: save, isPending } = useSaveAnamnesis({
+    patientId,
+    onSaved: (vars) => {
       lastPersistedHash.current = JSON.stringify(vars)
       dispatch({ type: 'SET_HAS_LOCAL_DRAFT', value: false })
-      clearAnamnesisDraft(patientId)
-      await Promise.all([
-        queryClient.invalidateQueries({
-          queryKey: ['patient-hub', patientId, 'anamnesis'],
-        }),
-      ])
+      clear(patientId)
     },
-    // onError: () => toast.error('Erro ao sincronizar com o servidor.'),
   })
 
   const normalizedBlocks = useMemo(() => normalizeBlocks(blocks), [blocks])
@@ -163,7 +157,7 @@ export function useAnamnesisEditor({
 
   // Data load + local draft recovery
   useEffect(() => {
-    if (!data) {
+    if (!anamnesis) {
       const block: IAnamnesisBlock = {
         id: crypto.randomUUID(),
         title: 'Nova Seção',
@@ -177,17 +171,20 @@ export function useAnamnesisEditor({
       return
     }
 
-    const serverBlocks = normalizeBlocks(buildInitialBlocks(data))
+    const serverBlocks = normalizeBlocks(buildInitialBlocks(anamnesis))
     const serverHash = JSON.stringify(toApiData(serverBlocks))
+
     lastPersistedHash.current = serverHash
     serverBlocksRef.current = serverBlocks
 
     let initial = serverBlocks
     let hasLocalDraftValue = false
 
-    const draftBlocks = readAnamnesisDraft(patientId)
+    const draftBlocks = read(patientId)
+
     if (draftBlocks.length > 0) {
       const draftHash = JSON.stringify(toApiData(draftBlocks))
+
       if (draftHash !== serverHash) {
         initial = normalizeBlocks(draftBlocks)
         hasLocalDraftValue = true
@@ -200,28 +197,28 @@ export function useAnamnesisEditor({
       blocks: initial,
       hasLocalDraft: hasLocalDraftValue,
     })
-  }, [data, patientId])
+  }, [anamnesis, patientId, read])
 
   // Auto-save debounce + local draft write
   useEffect(() => {
     if (!hydrated) return
 
-    writeAnamnesisDraft(patientId, normalizedBlocks)
+    write(patientId, normalizedBlocks)
 
     if (payloadHash !== lastPersistedHash.current) {
       dispatch({ type: 'SET_HAS_LOCAL_DRAFT', value: true })
-      const timer = setTimeout(() => save(payload), 1000)
-      return () => clearTimeout(timer)
+      debounce(() => save(payload), 1000)
     }
-  }, [payloadHash, hydrated, save, payload, normalizedBlocks, patientId])
-
-  const {
-    isExporting,
-    pdfExportedSuccessfully,
-    exportToPdf: exportPdfDoc,
-  } = usePdfExport({
-    receivedFilename: `Anamnese-${patientName?.replace(/\s+/g, '-') ?? patientId}.pdf`,
-  })
+  }, [
+    payloadHash,
+    hydrated,
+    save,
+    payload,
+    normalizedBlocks,
+    patientId,
+    debounce,
+    write,
+  ])
 
   const setActiveBlockId = useCallback((id: string | null) => {
     dispatch({ type: 'SET_ACTIVE_BLOCK', id })
@@ -248,9 +245,9 @@ export function useAnamnesisEditor({
   }, [])
 
   const discardDraft = useCallback(() => {
-    clearAnamnesisDraft(patientId)
+    clear(patientId)
     dispatch({ type: 'DISCARD_DRAFT', blocks: serverBlocksRef.current })
-  }, [patientId])
+  }, [patientId, clear])
 
   const onCopy = useCallback(async () => {
     Clipboard.copy(content)

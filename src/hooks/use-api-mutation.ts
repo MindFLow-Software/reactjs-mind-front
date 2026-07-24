@@ -15,6 +15,7 @@ type UseApiMutationOptions<
   successFallback?: string
   errorFallback?: string
   invalidateKeys?: QueryKey[]
+  showSuccessToast?: boolean
 } & UseMutationOptions<TResult, unknown, TVars>
 
 export function useApiMutation<
@@ -24,6 +25,7 @@ export function useApiMutation<
   successFallback,
   errorFallback = 'Ocorreu um erro. Tente novamente.',
   invalidateKeys,
+  showSuccessToast = true,
   onSuccess,
   onError,
   ...options
@@ -37,7 +39,7 @@ export function useApiMutation<
   return useMutation<TResult, unknown, TVars>({
     ...options,
     onSuccess: async (result, variables, onMutateResult, context) => {
-      toast.success(result.message ?? successFallback)
+      if (showSuccessToast) toast.success(result.message ?? successFallback)
       if (invalidateKeys) {
         await Promise.all(
           invalidateKeys.map((queryKey) =>

@@ -7,7 +7,7 @@ import { cn } from '@/lib/utils'
 import './header.css'
 
 const navLinks = [
-  { href: '#funcionalidades', label: 'Por que MindFlush' },
+  { href: '#funcionalidades', label: 'Por que MindFlush ?' },
   { href: '#integracoes', label: 'Funcionalidades' },
   { href: '#depoimentos', label: 'Depoimentos' },
   { href: '#precos', label: 'Preços' },

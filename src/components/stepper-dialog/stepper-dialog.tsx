@@ -65,7 +65,11 @@ type IStepperDialogFooter = {
   disabled?: boolean
 }
 
-function stepBadgeClass(active: boolean, done: boolean, error: boolean = false): string {
+function stepBadgeClass(
+  active: boolean,
+  done: boolean,
+  error: boolean = false,
+): string {
   if (active) return 'sd-tab-badge--active'
   if (error) return 'sd-tab-badge--error'
   return done ? 'sd-tab-badge--done' : 'sd-tab-badge--pending'

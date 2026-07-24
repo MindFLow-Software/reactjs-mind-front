@@ -4,6 +4,10 @@ import type { IAnamnesisContent } from '@/types/clinical/anamnesis-content'
 export async function saveAnamnesis(
   patientProfileId: string,
   data: IAnamnesisContent,
-): Promise<void> {
-  await api.put(`/patients/${patientProfileId}/anamnesis`, data)
+): Promise<{ message: string | null }> {
+  const response = await api.put(
+    `/patient-profiles/${patientProfileId}/anamnesis`,
+    data,
+  )
+  return { message: response.apiMessage ?? null }
 }

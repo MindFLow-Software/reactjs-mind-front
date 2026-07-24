@@ -36,7 +36,6 @@ import {
   type ICreatePsychologistPracticeContext,
 } from '@/validators/psychologists/form/create-practice-context-schema'
 import { TitleIcon } from '@/components/title-icon/title-icon'
-import { PracticeContextHeader } from '../practice-context-header/practice-context-header'
 import { SessionFormatToggle } from '../session-format-toggle/session-format-toggle'
 
 const SESSION_FORMAT_OPTIONS = [
@@ -81,8 +80,6 @@ export function CreateIndividualContext({
 
   return (
     <>
-      <PracticeContextHeader />
-
       <Button
         type="button"
         variant="ghost"

@@ -13,10 +13,10 @@ export type IgetPatientProfileDetailsResponse = {
 }
 
 export async function getPatientProfileDetails(
-  patientId: string | undefined,
+  patientProfileId: string | undefined,
   pageIndex: number,
 ): Promise<IgetPatientProfileDetailsResponse> {
-  if (!patientId) {
+  if (!patientProfileId) {
     return {
       patient: null,
       meta: {
@@ -29,7 +29,7 @@ export async function getPatientProfileDetails(
   }
 
   const response = await api.get<IgetPatientProfileDetailsResponse>(
-    `/patient-profiles/${patientId}/details`,
+    `/patient-profiles/${patientProfileId}/details`,
     {
       params: { pageIndex },
     },

@@ -23,6 +23,14 @@
     @apply flex-1 bg-transparent text-base font-semibold text-foreground outline-none placeholder:text-muted-foreground/50 focus:outline-none;
   }
 
+  .ph-anamnesis-editor-block__copy-btn {
+    @apply h-7 w-7 shrink-0 text-muted-foreground/50 hover:text-foreground hover:bg-muted disabled:opacity-40 cursor-pointer;
+  }
+
+  .ph-anamnesis-editor-block__copy-icon {
+    @apply h-3.5 w-3.5;
+  }
+
   .ph-anamnesis-editor-block__delete-btn {
     @apply h-7 w-7 shrink-0 text-muted-foreground/50 hover:text-destructive hover:bg-destructive/10 cursor-pointer;
   }

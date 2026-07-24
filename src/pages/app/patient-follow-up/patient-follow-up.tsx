@@ -2,10 +2,8 @@
 
 import { useEffect, useMemo, useState } from 'react'
 import { useLocation, useParams } from 'react-router-dom'
-import { useQuery } from '@tanstack/react-query'
 import { FileSearch } from 'lucide-react'
 
-import { getPatientProfileDetails } from '@/api/patient-profiles/get-patient-profile-details'
 import { useHeaderStore } from '@/store/use-header-store'
 import { usePatientQueueStore } from '@/store/use-patient-queue-store'
 
@@ -18,9 +16,12 @@ import { PatientDetailsError } from './components/patient-details-error/patient-
 import { usePatientQueue } from './hooks/use-patient-queue'
 
 import './patient-follow-up.css'
+import { usePatientProfileDetails } from '@/hooks/use-patient-profile-details'
+
+type IPatientFollowUpParams = { patientProfileId: string }
 
 export default function PatientFollowUp() {
-  const { patientId } = useParams<{ patientId: string }>()
+  const { patientProfileId } = useParams<IPatientFollowUpParams>()
   const location = useLocation()
   const { setTitle, setSubtitle } = useHeaderStore()
   const queueSource = usePatientQueueStore((state) => state.source)
@@ -28,23 +29,19 @@ export default function PatientFollowUp() {
   const [pageIndex, setPageIndex] = useState(0)
 
   const {
-    data: result,
-    isLoading,
+    meta,
     isError,
     refetch,
-  } = useQuery({
-    queryKey: ['patient-details', patientId, pageIndex],
-    queryFn: () => getPatientProfileDetails(patientId, pageIndex),
-    enabled: !!patientId,
-  })
-
-  const patientData = result?.patient
-  const meta = result?.meta
+    patientProfileDetails,
+    isPatientProfileDetailsLoading,
+  } = usePatientProfileDetails(patientProfileId, pageIndex)
 
   const patientFullName = useMemo(
     () =>
-      patientData ? `${patientData.firstName} ${patientData.lastName}` : '',
-    [patientData],
+      patientProfileDetails
+        ? `${patientProfileDetails.firstName} ${patientProfileDetails.lastName}`
+        : '',
+    [patientProfileDetails],
   )
 
   const cameFromRecords = useMemo(() => {
@@ -55,18 +52,12 @@ export default function PatientFollowUp() {
   }, [location.state, queueSource])
 
   const { queue, currentIndex, hasPrev, hasNext } = usePatientQueue(
-    patientId ?? '',
+    patientProfileId ?? '',
   )
 
   useEffect(() => {
-    if (cameFromRecords) {
-      setTitle('Prontuarios de Pacientes', '/patients-records')
-    } else {
-      setTitle('Cadastro de Pacientes', '/patients-list')
-    }
-
+    setTitle('Cadastro de Pacientes', '/patients-list')
     if (patientFullName) setSubtitle(patientFullName)
-
     return () => setSubtitle(undefined)
   }, [cameFromRecords, patientFullName, setTitle, setSubtitle])
 
@@ -74,7 +65,7 @@ export default function PatientFollowUp() {
     return <PatientDetailsError onRetry={() => refetch()} />
   }
 
-  if (isLoading || !patientData || !meta) {
+  if (isPatientProfileDetailsLoading || !patientProfileDetails || !meta) {
     return <PatientsDetailsLoading />
   }
 
@@ -105,11 +96,11 @@ export default function PatientFollowUp() {
       </header>
 
       <div className="pfu-body">
-        <PatientFollowUpSidebar patient={patientData} />
+        <PatientFollowUpSidebar patient={patientProfileDetails} />
 
         <div className="pfu-content">
           <PatientFollowUpTabs
-            patient={patientData}
+            patient={patientProfileDetails}
             timeline={{ meta, pageIndex, onPageChange: setPageIndex }}
           />
         </div>

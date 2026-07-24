@@ -8,7 +8,7 @@ import {
   StepperDialog,
   type IStepperNav,
 } from '@/components/stepper-dialog/stepper-dialog'
-import { usePatient } from '@/hooks/use-patient'
+import { usePatientProfile } from '@/hooks/use-patient-profile'
 import { useFormSteps } from '@/hooks/use-form-steps'
 import { useFileSelection } from '@/hooks/use-file-selection'
 import {
@@ -42,7 +42,7 @@ export function EditPatientModal({
   open,
   onOpenChange,
 }: IEditPatientModal) {
-  const { patient } = usePatient(patientId)
+  const { patient } = usePatientProfile(patientId)
 
   const { files, addFiles, removeFile, clearFiles } = useFileSelection({
     maxFiles: MAX_DOC_FILES,

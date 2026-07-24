@@ -2,7 +2,7 @@ import { useCallback, useEffect, useMemo, useRef } from 'react'
 import { Button } from '@/components/ui/button'
 import { Plus } from 'lucide-react'
 
-import { AnamnesisHeaderActions } from './anamnesis-header-actions'
+// import { AnamnesisHeaderActions } from './anamnesis-header-actions'
 import { AnamnesisToolbar } from './anamnesis-toolbar'
 import { AnamnesisEditorBlock } from './anamnesis-editor-block'
 import { AnamnesisSkeleton } from './anamnesis-skeleton'
@@ -37,15 +37,10 @@ export function AnamnesisForm({ patientId, patientName }: IAnamnesisForm) {
     hasLocalDraft,
     hydrated,
     isPending,
-    isExporting,
-    pdfExportedSuccessfully,
-    copied,
-    content,
     setActiveBlockId,
     updateBlock,
     addBlock,
     deleteBlock,
-    exportToPdf,
     onCopy,
   } = useAnamnesisEditor({ patientId, patientName })
 
@@ -152,18 +147,18 @@ export function AnamnesisForm({ patientId, patientName }: IAnamnesisForm) {
       <TabCard
         title="Anamnese"
         description="Blocos editáveis com salvamento automático e rascunho local."
-        action={
-          <AnamnesisHeaderActions
-            pdf={{
-              isExporting,
-              exportedSuccessfully: pdfExportedSuccessfully,
-              isCopyDisabled: !content.trim(),
-              copied,
-              onGeneratePDF: exportToPdf,
-              onCopy,
-            }}
-          />
-        }
+        // action={
+        //   <AnamnesisHeaderActions
+        //     pdf={{
+        //       isExporting,
+        //       exportedSuccessfully: pdfExportedSuccessfully,
+        //       isCopyDisabled: !content.trim(),
+        //       copied,
+        //       onGeneratePDF: exportToPdf,
+        //       onCopy,
+        //     }}
+        //   />
+        // }
       >
         <AnamnesisToolbar />
 

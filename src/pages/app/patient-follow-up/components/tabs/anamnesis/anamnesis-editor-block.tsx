@@ -1,8 +1,9 @@
 import { useRef, useEffect, memo, useCallback } from 'react'
 import { Textarea } from '@/components/ui/textarea'
 import { Button } from '@/components/ui/button'
-import { Trash2, Check } from 'lucide-react'
+import { Trash2, Check, Copy } from 'lucide-react'
 import { cn } from '@/lib/utils'
+import { Clipboard } from '@/utils/clipboard'
 import type { IAnamnesisBlock } from './anamnesis-types'
 import { AnamnesisSaveStatus, useAnamnesisContext } from './anamnesis-context'
 
@@ -58,6 +59,10 @@ export const AnamnesisEditorBlock = memo(function AnamnesisEditorBlock({
   const internalRef = useRef<HTMLTextAreaElement | null>(null)
   const words = countWords(block.content)
 
+  const handleCopy = useCallback(() => {
+    Clipboard.copy(block.content)
+  }, [block.content])
+
   const handleAutoResize = useCallback(() => {
     if (internalRef.current) {
       internalRef.current.style.height = 'auto'
@@ -89,9 +94,20 @@ export const AnamnesisEditorBlock = memo(function AnamnesisEditorBlock({
         <Button
           size="icon"
           variant="ghost"
+          className="ph-anamnesis-editor-block__copy-btn"
+          onClick={handleCopy}
+          disabled={!block.content.trim()}
+          aria-label="Copiar conteúdo do bloco"
+        >
+          <Copy className="ph-anamnesis-editor-block__copy-icon" />
+        </Button>
+        <Button
+          size="icon"
+          variant="ghost"
           className="ph-anamnesis-editor-block__delete-btn"
           onClick={() => deleteBlock(block.id)}
           disabled={!canDeleteBlocks}
+          aria-label="Excluir bloco"
         >
           <Trash2 className="ph-anamnesis-editor-block__delete-icon" />
         </Button>
