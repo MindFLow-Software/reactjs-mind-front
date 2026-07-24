@@ -7,49 +7,56 @@ import {
   useRef,
   useState,
 } from 'react'
-import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { toast } from 'sonner'
 
-import { getAnamnesis } from '@/api/patient-profiles/get-anamnesis'
-import { saveAnamnesis } from '@/api/patient-profiles/save-anamnesis'
-import type { IAnamnesisContent } from '@/types/clinical/anamnesis-content'
 import { AnamnesisPDFTemplate } from '@/templates/pdf/anamnesis-pdf-template'
+import type { IAnamnesisSection } from '@/types/clinical/anamnesis-section'
+import { saveAnamnesisSchema } from '@/validators/clinical/http/save-anamnesis-schema'
 
-import type { IAnamnesisBlock } from '../components/tabs/anamnesis/anamnesis-types'
 import {
-  buildContentFromBlocks,
-  buildInitialBlocks,
-  normalizeBlocks,
-  toApiData,
+  buildSectionsFromAnamnesis,
+  emptySection,
+  fingerprintSections,
+  toSaveBody,
 } from '../components/tabs/anamnesis/anamnesis-utils'
-import {
-  clearAnamnesisDraft,
-  readAnamnesisDraft,
-  writeAnamnesisDraft,
-} from '../components/tabs/anamnesis/anamnesis-draft-storage'
 import { usePdfExport } from './use-pdf-export'
+import { useAnamnesisDraft } from './use-anamnesis-draft'
+import { useAnamnesis } from './use-anamnesis'
+import { useSaveAnamnesis } from './use-save-anamnesis'
+import { useDebounce } from '@/hooks/use-debounce'
 import { Clipboard } from '@/utils/clipboard'
 import { Time } from '@/utils/time'
+import { Normalizer } from '@/utils/normalizer'
 
 type IAnamnesisEditorState = {
-  blocks: IAnamnesisBlock[]
-  activeBlockId: string | null
+  sections: IAnamnesisSection[]
+  activeSectionId: string | null
+  isDraft: boolean
   hydrated: boolean
   hasLocalDraft: boolean
 }
 
 type IAnamnesisEditorAction =
-  | { type: 'HYDRATE'; blocks: IAnamnesisBlock[]; hasLocalDraft: boolean }
-  | { type: 'SET_ACTIVE_BLOCK'; id: string | null }
-  | { type: 'UPDATE_BLOCK'; id: string; updates: Partial<IAnamnesisBlock> }
-  | { type: 'ADD_BLOCK'; block: IAnamnesisBlock }
-  | { type: 'DELETE_BLOCK'; id: string }
-  | { type: 'DISCARD_DRAFT'; blocks: IAnamnesisBlock[] }
+  | {
+      type: 'HYDRATE'
+      sections: IAnamnesisSection[]
+      isDraft: boolean
+      hasLocalDraft: boolean
+    }
+  | { type: 'SET_ACTIVE_SECTION'; id: string | null }
+  | { type: 'UPDATE_SECTION'; id: string; updates: Partial<IAnamnesisSection> }
+  | { type: 'ADD_SECTION'; section: IAnamnesisSection }
+  | { type: 'DELETE_SECTION'; id: string }
+  | { type: 'REORDER_SECTIONS'; ids: string[] }
+  | { type: 'RECONCILE_IDS'; serverSections: IAnamnesisSection[] }
+  | { type: 'SET_IS_DRAFT'; value: boolean }
+  | { type: 'DISCARD_DRAFT'; sections: IAnamnesisSection[] }
   | { type: 'SET_HAS_LOCAL_DRAFT'; value: boolean }
 
 const INITIAL_EDITOR_STATE: IAnamnesisEditorState = {
-  blocks: [],
-  activeBlockId: null,
+  sections: [],
+  activeSectionId: null,
+  isDraft: true,
   hydrated: false,
   hasLocalDraft: false,
 }
@@ -61,135 +68,204 @@ function editorReducer(
   switch (action.type) {
     case 'HYDRATE':
       return {
-        blocks: action.blocks,
-        activeBlockId: action.blocks[0]?.id ?? null,
+        sections: action.sections,
+        activeSectionId: action.sections[0]?.id ?? null,
+        isDraft: action.isDraft,
         hydrated: true,
         hasLocalDraft: action.hasLocalDraft,
       }
-    case 'SET_ACTIVE_BLOCK':
-      return { ...state, activeBlockId: action.id }
-    case 'UPDATE_BLOCK':
+    case 'SET_ACTIVE_SECTION':
+      if (state.activeSectionId === action.id) return state
+      return { ...state, activeSectionId: action.id }
+    case 'UPDATE_SECTION':
       return {
         ...state,
-        blocks: state.blocks.map((b) =>
-          b.id === action.id ? { ...b, ...action.updates } : b,
+        sections: state.sections.map((section) =>
+          section.id === action.id
+            ? { ...section, ...action.updates }
+            : section,
         ),
       }
-    case 'ADD_BLOCK':
+    case 'ADD_SECTION':
       return {
         ...state,
-        blocks: [...state.blocks, action.block],
-        activeBlockId: action.block.id,
+        sections: [...state.sections, action.section],
+        activeSectionId: action.section.id,
       }
-    case 'DELETE_BLOCK':
+    case 'DELETE_SECTION':
+      if (state.sections.length <= 1) return state
       return {
         ...state,
-        blocks: state.blocks.filter((b) => b.id !== action.id),
+        sections: state.sections.filter((section) => section.id !== action.id),
       }
+    case 'REORDER_SECTIONS': {
+      const byId = new Map(
+        state.sections.map((section) => [section.id, section]),
+      )
+      const sections = action.ids
+        .map((id) => byId.get(id))
+        .filter((section): section is IAnamnesisSection => Boolean(section))
+      if (sections.length !== state.sections.length) return state
+      return { ...state, sections }
+    }
+    case 'RECONCILE_IDS': {
+      const idMap = new Map<string, string>()
+      let changed = false
+      const sections = state.sections.map((section, index) => {
+        const serverId = action.serverSections[index]?.id
+        if (serverId && serverId !== section.id) {
+          idMap.set(section.id, serverId)
+          changed = true
+          return { ...section, id: serverId }
+        }
+        return section
+      })
+      if (!changed) return state
+      const activeSectionId =
+        state.activeSectionId && idMap.has(state.activeSectionId)
+          ? idMap.get(state.activeSectionId)!
+          : state.activeSectionId
+      return { ...state, sections, activeSectionId }
+    }
+    case 'SET_IS_DRAFT':
+      if (state.isDraft === action.value) return state
+      return { ...state, isDraft: action.value }
     case 'DISCARD_DRAFT':
-      return { ...state, blocks: action.blocks, hasLocalDraft: false }
+      return { ...state, sections: action.sections, hasLocalDraft: false }
     case 'SET_HAS_LOCAL_DRAFT':
+      if (state.hasLocalDraft === action.value) return state
       return { ...state, hasLocalDraft: action.value }
   }
 }
 
 type IUseAnamnesisEditorOptions = {
-  patientId: string
+  patientProfileId: string
   patientName?: string
 }
 
 type IUseAnamnesisEditorReturn = {
-  blocks: IAnamnesisBlock[]
-  activeBlockId: string | null
+  sections: IAnamnesisSection[]
+  activeSectionId: string | null
   hasLocalDraft: boolean
   hydrated: boolean
   isPending: boolean
+  isDraft: boolean
+  canPublish: boolean
   copied: boolean
   isExporting: boolean
   pdfExportedSuccessfully: boolean
   content: string
-  setActiveBlockId: (id: string | null) => void
-  updateBlock: (id: string, updates: Partial<IAnamnesisBlock>) => void
-  addBlock: () => void
-  deleteBlock: (id: string) => void
+  setActiveSectionId: (id: string | null) => void
+  updateSection: (id: string, updates: Partial<IAnamnesisSection>) => void
+  addSection: () => void
+  deleteSection: (id: string) => void
+  reorderSections: (ids: string[]) => void
   discardDraft: () => void
+  onPublish: () => void
   onCopy: () => Promise<void>
   exportToPdf: () => Promise<void>
 }
 
 export function useAnamnesisEditor({
-  patientId,
+  patientProfileId,
   patientName = '',
 }: IUseAnamnesisEditorOptions): IUseAnamnesisEditorReturn {
-  const queryClient = useQueryClient()
+  const { debounce, cancel } = useDebounce()
+  const { read, write, clear } = useAnamnesisDraft()
 
-  const [{ blocks, activeBlockId, hydrated, hasLocalDraft }, dispatch] =
-    useReducer(editorReducer, INITIAL_EDITOR_STATE)
   const [copied, setCopied] = useState(false)
+  const [
+    { sections, activeSectionId, isDraft, hydrated, hasLocalDraft },
+    dispatch,
+  ] = useReducer(editorReducer, INITIAL_EDITOR_STATE)
 
-  const lastPersistedHash = useRef('')
-  const serverBlocksRef = useRef<IAnamnesisBlock[]>([])
-
-  const { data } = useQuery({
-    queryKey: ['patient-hub', patientId, 'anamnesis'],
-    queryFn: () => getAnamnesis(patientId),
+  const {
+    isExporting,
+    pdfExportedSuccessfully,
+    exportToPdf: exportPdfDoc,
+  } = usePdfExport({
+    receivedFilename: `Anamnese-${Normalizer.toKebabCase(patientName) ?? patientProfileId}.pdf`,
   })
 
-  const { mutate: save, isPending } = useMutation({
-    mutationFn: (newData: IAnamnesisContent) => {
-      return saveAnamnesis(patientId, newData)
-    },
-    onSuccess: async (_, vars) => {
-      lastPersistedHash.current = JSON.stringify(vars)
+  const lastPersistedFingerprint = useRef('')
+  const serverIdsRef = useRef<Set<string>>(new Set())
+  const serverSectionsRef = useRef<IAnamnesisSection[]>([])
+  const hydratedForRef = useRef<string | null>(null)
+
+  const { anamnesis } = useAnamnesis(patientProfileId)
+
+  const { mutate: save, isPending } = useSaveAnamnesis({
+    patientProfileId,
+    onSaved: (saved) => {
+      const savedSections = buildSectionsFromAnamnesis(saved)
+      serverIdsRef.current = new Set(savedSections.map((section) => section.id))
+      serverSectionsRef.current = savedSections
+      lastPersistedFingerprint.current = fingerprintSections(savedSections)
+      dispatch({ type: 'RECONCILE_IDS', serverSections: savedSections })
+      dispatch({ type: 'SET_IS_DRAFT', value: saved.isDraft })
       dispatch({ type: 'SET_HAS_LOCAL_DRAFT', value: false })
-      clearAnamnesisDraft(patientId)
-      await Promise.all([
-        queryClient.invalidateQueries({
-          queryKey: ['patient-hub', patientId, 'anamnesis'],
-        }),
-      ])
+      clear(patientProfileId)
     },
-    // onError: () => toast.error('Erro ao sincronizar com o servidor.'),
   })
 
-  const normalizedBlocks = useMemo(() => normalizeBlocks(blocks), [blocks])
-  const payload = useMemo(() => toApiData(normalizedBlocks), [normalizedBlocks])
-  const payloadHash = JSON.stringify(payload)
+  const fingerprint = useMemo(() => fingerprintSections(sections), [sections])
 
   const content = useMemo(
-    () => buildContentFromBlocks(normalizedBlocks),
-    [normalizedBlocks],
+    () =>
+      sections
+        .map((section) => {
+          const title = section.title.trim()
+          const body = section.content.trim()
+          return body ? `## ${title}\n${body}` : `## ${title}`
+        })
+        .join('\n\n')
+        .trim(),
+    [sections],
   )
 
-  // Data load + local draft recovery
+  const canPublish = useMemo(
+    () =>
+      sections.length > 0 &&
+      sections.every((section) => section.title.trim().length > 0),
+    [sections],
+  )
+
+  // Server load + local draft recovery (once per patient profile)
   useEffect(() => {
-    if (!data) {
-      const block: IAnamnesisBlock = {
-        id: crypto.randomUUID(),
-        title: 'Nova Seção',
-        content: '',
-      }
+    if (anamnesis === undefined) return
+    if (hydratedForRef.current === patientProfileId) return
+    hydratedForRef.current = patientProfileId
+
+    if (anamnesis === null) {
+      const base = [emptySection(0)]
+      serverIdsRef.current = new Set()
+      serverSectionsRef.current = base
+      lastPersistedFingerprint.current = fingerprintSections(base)
       dispatch({
         type: 'HYDRATE',
-        blocks: [block],
+        sections: base,
+        isDraft: true,
         hasLocalDraft: false,
       })
       return
     }
 
-    const serverBlocks = normalizeBlocks(buildInitialBlocks(data))
-    const serverHash = JSON.stringify(toApiData(serverBlocks))
-    lastPersistedHash.current = serverHash
-    serverBlocksRef.current = serverBlocks
+    const serverSections = buildSectionsFromAnamnesis(anamnesis)
+    const base = serverSections.length > 0 ? serverSections : [emptySection(0)]
+    const serverFingerprint = fingerprintSections(base)
 
-    let initial = serverBlocks
+    serverIdsRef.current = new Set(serverSections.map((section) => section.id))
+    serverSectionsRef.current = base
+    lastPersistedFingerprint.current = serverFingerprint
+
+    let initial = base
     let hasLocalDraftValue = false
 
-    const draftBlocks = readAnamnesisDraft(patientId)
-    if (draftBlocks.length > 0) {
-      const draftHash = JSON.stringify(toApiData(draftBlocks))
-      if (draftHash !== serverHash) {
-        initial = normalizeBlocks(draftBlocks)
+    const draftSections = read(patientProfileId)
+    if (draftSections.length > 0) {
+      const draftFingerprint = fingerprintSections(draftSections)
+      if (draftFingerprint !== serverFingerprint) {
+        initial = draftSections
         hasLocalDraftValue = true
         toast.info('Rascunho local recuperado.')
       }
@@ -197,60 +273,65 @@ export function useAnamnesisEditor({
 
     dispatch({
       type: 'HYDRATE',
-      blocks: initial,
+      sections: initial,
+      isDraft: anamnesis.isDraft,
       hasLocalDraft: hasLocalDraftValue,
     })
-  }, [data, patientId])
+  }, [anamnesis, patientProfileId, read])
 
   // Auto-save debounce + local draft write
   useEffect(() => {
     if (!hydrated) return
 
-    writeAnamnesisDraft(patientId, normalizedBlocks)
+    write(patientProfileId, sections)
 
-    if (payloadHash !== lastPersistedHash.current) {
+    if (fingerprint !== lastPersistedFingerprint.current) {
       dispatch({ type: 'SET_HAS_LOCAL_DRAFT', value: true })
-      const timer = setTimeout(() => save(payload), 1000)
-      return () => clearTimeout(timer)
+      dispatch({ type: 'SET_IS_DRAFT', value: true })
+
+      const body = toSaveBody(sections, serverIdsRef.current, true)
+      const parsed = saveAnamnesisSchema.safeParse(body)
+      if (parsed.success) {
+        debounce(() => save(parsed.data), 1000)
+      }
     }
-  }, [payloadHash, hydrated, save, payload, normalizedBlocks, patientId])
+  }, [fingerprint, hydrated, sections, patientProfileId, write, debounce, save])
 
-  const {
-    isExporting,
-    pdfExportedSuccessfully,
-    exportToPdf: exportPdfDoc,
-  } = usePdfExport({
-    receivedFilename: `Anamnese-${patientName?.replace(/\s+/g, '-') ?? patientId}.pdf`,
-  })
-
-  const setActiveBlockId = useCallback((id: string | null) => {
-    dispatch({ type: 'SET_ACTIVE_BLOCK', id })
+  const setActiveSectionId = useCallback((id: string | null) => {
+    dispatch({ type: 'SET_ACTIVE_SECTION', id })
   }, [])
 
-  const updateBlock = useCallback(
-    (id: string, updates: Partial<IAnamnesisBlock>) => {
-      dispatch({ type: 'UPDATE_BLOCK', id, updates })
+  const updateSection = useCallback(
+    (id: string, updates: Partial<IAnamnesisSection>) => {
+      dispatch({ type: 'UPDATE_SECTION', id, updates })
     },
     [],
   )
 
-  const addBlock = useCallback(() => {
-    const block: IAnamnesisBlock = {
-      id: crypto.randomUUID(),
-      title: 'Nova Seção',
-      content: '',
-    }
-    dispatch({ type: 'ADD_BLOCK', block })
+  const addSection = useCallback(() => {
+    dispatch({ type: 'ADD_SECTION', section: emptySection() })
   }, [])
 
-  const deleteBlock = useCallback((id: string) => {
-    dispatch({ type: 'DELETE_BLOCK', id })
+  const deleteSection = useCallback((id: string) => {
+    dispatch({ type: 'DELETE_SECTION', id })
+  }, [])
+
+  const reorderSections = useCallback((ids: string[]) => {
+    dispatch({ type: 'REORDER_SECTIONS', ids })
   }, [])
 
   const discardDraft = useCallback(() => {
-    clearAnamnesisDraft(patientId)
-    dispatch({ type: 'DISCARD_DRAFT', blocks: serverBlocksRef.current })
-  }, [patientId])
+    clear(patientProfileId)
+    dispatch({ type: 'DISCARD_DRAFT', sections: serverSectionsRef.current })
+  }, [patientProfileId, clear])
+
+  const onPublish = useCallback(() => {
+    const body = toSaveBody(sections, serverIdsRef.current, false)
+    const parsed = saveAnamnesisSchema.safeParse(body)
+    if (!parsed.success) return
+    cancel()
+    save(parsed.data)
+  }, [sections, cancel, save])
 
   const onCopy = useCallback(async () => {
     Clipboard.copy(content)
@@ -270,20 +351,24 @@ export function useAnamnesisEditor({
   }, [content, exportPdfDoc, patientName])
 
   return {
-    blocks: normalizedBlocks,
-    activeBlockId,
+    sections,
+    activeSectionId,
     hasLocalDraft,
     hydrated,
     isPending,
+    isDraft,
+    canPublish,
     copied,
     isExporting,
     pdfExportedSuccessfully,
     content,
-    setActiveBlockId,
-    updateBlock,
-    addBlock,
-    deleteBlock,
+    setActiveSectionId,
+    updateSection,
+    addSection,
+    deleteSection,
+    reorderSections,
     discardDraft,
+    onPublish,
     onCopy,
     exportToPdf,
   }

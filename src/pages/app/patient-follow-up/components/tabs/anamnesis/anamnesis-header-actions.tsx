@@ -56,7 +56,7 @@ export function AnamnesisHeaderActions({ pdf }: IAnamnesisHeaderActions) {
         type="button"
         size="sm"
         onClick={pdf.onGeneratePDF}
-        disabled={isExporting || isCopyDisabled}
+        disabled
         className={cn(
           'ph-anamnesis-header__pdf-btn',
           isExporting && 'ph-anamnesis-header__pdf-btn--exporting',

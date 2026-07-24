@@ -42,7 +42,12 @@ export function SuggestionPage() {
   const [selectedCategory, setSelectedCategory] =
     useState<SuggestionCategory | null>(null)
   const searchInputRef = useRef<HTMLInputElement>(null)
-  const debouncedSearch = useDebounce(search, 400)
+  const [debouncedSearch, setDebouncedSearch] = useState('')
+  const { debounce } = useDebounce()
+
+  useEffect(() => {
+    debounce(() => setDebouncedSearch(search), 400)
+  }, [search, debounce])
 
   useEffect(() => {
     setTitle('Envios da Comunidade')

@@ -5,7 +5,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import type { IgetPatientProfileDetailsResponse } from '@/api/patient-profiles/get-patient-profile-details'
 
 import { PatientGeneralData } from '../tabs/general-data/general-data'
-import { AnamnesisForm } from '../tabs/anamnesis/anamnesis-form'
+import { AnamnesisForm } from '../tabs/anamnesis/anamnesis-form/anamnesis-form'
 import { PatientSessionsTimeline } from '../tabs/sessions-timeline/patient-sessions-timeline'
 import { PatientFilesTab } from '../tabs/documents/patient-files-tab'
 import { PatientResumeTab } from '../tabs/resume/patient-resume-tab'
@@ -65,7 +65,10 @@ export function PatientFollowUpTabs({
       </TabsContent>
 
       <TabsContent value="anamnesis" className="pfu-tab-content">
-        <AnamnesisForm patientId={patient.id} patientName={patientName} />
+        <AnamnesisForm
+          patientProfileId={patient.id}
+          patientName={patientName}
+        />
       </TabsContent>
 
       <TabsContent value="timeline" className="pfu-tab-content">

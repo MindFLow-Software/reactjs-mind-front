@@ -1,6 +1,8 @@
 import type { ISessionVolume } from '@/types/patient/session-volume'
 import { useState, useEffect } from 'react'
 
+import { useDebounce } from '@/hooks/use-debounce'
+
 export type PatientRecordsFilters = {
   search: string
   debouncedSearch: string
@@ -17,13 +19,11 @@ export function usePatientRecordsFilters(): PatientRecordsFilters {
   const [debouncedSearch, setDebouncedSearch] = useState('')
   const [gender, setGender] = useState('all')
   const [sessionOrder, setSessionOrder] = useState<ISessionVolume>('all')
+  const { debounce } = useDebounce()
 
   useEffect(() => {
-    const handler = setTimeout(() => {
-      setDebouncedSearch(search)
-    }, 400)
-    return () => clearTimeout(handler)
-  }, [search])
+    debounce(() => setDebouncedSearch(search), 400)
+  }, [search, debounce])
 
   function clearFilters() {
     setSearch('')

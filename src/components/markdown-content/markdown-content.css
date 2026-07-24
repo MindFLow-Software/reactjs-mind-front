@@ -1,0 +1,79 @@
+@reference "../../global.css";
+
+@layer components {
+  .mdc-root {
+    @apply text-sm text-foreground/80;
+  }
+
+  .mdc-root :is(h1, h2, h3, h4, h5, h6) {
+    @apply mt-4 mb-2 font-semibold text-foreground first:mt-0;
+  }
+
+  .mdc-root h1 {
+    @apply text-xl;
+  }
+
+  .mdc-root h2 {
+    @apply text-lg;
+  }
+
+  .mdc-root h3 {
+    @apply text-base;
+  }
+
+  .mdc-root p {
+    @apply mb-3 leading-relaxed last:mb-0;
+  }
+
+  .mdc-root :is(ul, ol) {
+    @apply mb-3 ml-5 space-y-1 last:mb-0;
+  }
+
+  .mdc-root ul {
+    @apply list-disc;
+  }
+
+  .mdc-root ol {
+    @apply list-decimal;
+  }
+
+  .mdc-root a {
+    @apply text-primary underline underline-offset-2;
+  }
+
+  .mdc-root strong {
+    @apply font-semibold text-foreground;
+  }
+
+  .mdc-root blockquote {
+    @apply mb-3 border-l-2 border-border pl-3 text-foreground/70 italic last:mb-0;
+  }
+
+  .mdc-root code {
+    @apply rounded bg-muted px-1 py-0.5 font-mono text-xs;
+  }
+
+  .mdc-root pre {
+    @apply mb-3 overflow-x-auto rounded-md bg-muted p-3 last:mb-0;
+  }
+
+  .mdc-root pre code {
+    @apply bg-transparent p-0;
+  }
+
+  .mdc-root table {
+    @apply mb-3 w-full border-collapse text-left last:mb-0;
+  }
+
+  .mdc-root :is(th, td) {
+    @apply border border-border px-2 py-1;
+  }
+
+  .mdc-root th {
+    @apply bg-muted/50 font-semibold text-foreground;
+  }
+
+  .mdc-root hr {
+    @apply my-4 border-border;
+  }
+}

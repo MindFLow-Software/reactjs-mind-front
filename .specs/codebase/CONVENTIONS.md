@@ -234,3 +234,15 @@ Em `src/utils/`:
 
 - Acessar via `env` de `@/env` (não `import.meta.env` diretamente).
 - Novas env vars: adicionar ao schema Zod em `src/env.ts`.
+
+## Formatting & Tooling
+
+- **Never run `prettier --write` or `eslint --fix` against the whole project** (`src`, `.`, or any directory-wide glob). Format/lint **only the files you actually touched**, passed explicitly by path: `pnpm.cmd exec eslint --fix path/to/file.ts`, `pnpm.cmd exec prettier --write path/to/file.ts`. A project-wide run rewrites unrelated files still mid-edit as uncommitted WIP and produces noise unrelated to the task at hand.
+- Gate check commands (`tsc -b --noEmit`, `eslint src --ext ts,tsx`) may be run project-wide to *verify* — verification is read-only. Only `--fix`/`--write` (mutating) must stay file-scoped.
+- Quote convention (enforced by `eslint-plugin-prettier`'s embedded options in `.eslintrc.cjs`, mirrored in `prettier.config.cjs`):
+  - JS/TS code — function bodies, object literals, type literals, import/export paths — uses **single quotes** (`singleQuote: true`).
+  - JSX attribute values use **double quotes** (`jsxSingleQuote: false`, ESLint/Prettier default): `<Input placeholder="Nome" />`.
+  - Any string literal inside a JSX expression container (`{}`) — inline function bodies (`.map((x) => ...)`), objects, ternaries — is still JS, so it uses **single quotes**, even though it sits inside JSX: `{items.map((item) => <li key={item.id}>{item.label}</li>)}`, `className={cn('base-class', isActive && 'active-class')}`.
+  - **No semicolons anywhere** — JS, TS, JSX, TSX (`semi: false`). ASI handles statement termination; do not add `;` at end of statements/declarations.
+- `prettier.config.cjs` must always mirror the `prettier/prettier` rule options embedded in `.eslintrc.cjs` (`singleQuote`, `semi`, `printWidth`, `trailingComma`, `arrowParens`, `endOfLine`). If they drift, running the standalone Prettier CLI on a single file produces different output than `eslint --fix`, which is exactly the class of bug this section exists to prevent.
+- CSS files are not covered by `eslint --fix` (ESLint only lints `ts`/`tsx`). Do not run a bare `prettier --write` on `.css` files project-wide — the repo's CSS is not Prettier-clean today, and a mass reformat produces a large, unrelated diff. Only reformat the specific CSS file(s) you are already editing for the task at hand.

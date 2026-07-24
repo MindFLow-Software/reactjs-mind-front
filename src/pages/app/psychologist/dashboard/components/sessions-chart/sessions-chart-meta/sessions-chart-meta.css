@@ -18,11 +18,11 @@
   }
 
   .dsh-sessions-stat-value {
-    @apply text-sm font-semibold text-foreground;
+    @apply text-xs! font-semibold text-foreground;
   }
 
   .dsh-sessions-growth {
-    @apply inline-flex items-center gap-0.5 text-sm font-semibold;
+    @apply inline-flex items-center gap-0.5 text-xs! font-semibold;
   }
 
   .dsh-sessions-growth-up {

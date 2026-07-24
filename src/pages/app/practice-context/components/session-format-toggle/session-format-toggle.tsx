@@ -33,7 +33,11 @@ export function SessionFormatToggle<T extends string>({
       className="pc-segm"
     >
       {options.map((option) => (
-        <ToggleGroupItem key={option.value} value={option.value}>
+        <ToggleGroupItem
+          key={option.value}
+          value={option.value}
+          className="pc-segm-btn"
+        >
           {option.label}
         </ToggleGroupItem>
       ))}

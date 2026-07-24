@@ -2,19 +2,21 @@ import { useQuery } from '@tanstack/react-query'
 import { getPatientProfileById } from '@/api/patient-profiles/get-patient-profile-by-id'
 import type { IPatientProfile } from '@/types/patient-profile/patient-profile'
 
-type IusePatient = {
+type IusePatientProfile = {
   patient: IPatientProfile | null
 }
 
-export const usePatient = (patientId: string | undefined): IusePatient => {
-  if (!patientId) {
+export const usePatientProfile = (
+  patientProfileId: string | undefined,
+): IusePatientProfile => {
+  if (!patientProfileId) {
     return { patient: null }
   }
 
   const { data } = useQuery({
-    queryKey: ['patient', patientId],
-    queryFn: () => getPatientProfileById(patientId),
-    enabled: Boolean(patientId),
+    queryKey: ['patient-profile', patientProfileId],
+    queryFn: () => getPatientProfileById(patientProfileId),
+    enabled: Boolean(patientProfileId),
   })
 
   return {

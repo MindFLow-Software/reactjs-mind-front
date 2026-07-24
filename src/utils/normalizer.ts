@@ -31,6 +31,11 @@ export class Normalizer {
     return value.replace(/\s/g, '_')
   }
 
+  static toKebabCase = (value: string | null | undefined): string => {
+    if (!value || typeof value !== 'string') return ''
+    return value.replace(/\s+/g, '-')
+  }
+
   static initials = (name: string | null | undefined): string => {
     if (!name || typeof name !== 'string') return ''
     return name

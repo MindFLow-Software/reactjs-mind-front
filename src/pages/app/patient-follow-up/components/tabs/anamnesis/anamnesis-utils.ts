@@ -1,147 +1,57 @@
-import type { IAnamnesisContent } from '@/types/clinical/anamnesis-content'
-import type { IAnamnesisBlock, ISerializedBlock } from './anamnesis-types'
+import type { IAnamnesis } from '@/types/clinical/anamnesis'
+import type { IAnamnesisSection } from '@/types/clinical/anamnesis-section'
+import type { ISaveAnamnesisBody } from '@/types/clinical/save-anamnesis-body'
 
-export const DYNAMIC_TEMPLATE_PREFIX = '__ANAMNESIS_BLOCKS_V1__:'
-export const SINGLE_BLOCK_TITLE = 'Anamnese'
-
-export const ANAMNESIS_PLACEHOLDER = `Exemplos de estrutura:
-
-- Queixa principal:
-- História do problema atual:
-- Contexto familiar e social:
-- Antecedentes relevantes:
-- Hipóteses clínicas:
-- Plano terapêutico inicial:`
-
-export function normalizeSingleEditorContent(
-  content: string | undefined,
-): string {
-  if (!content) return ''
-  return content.replace(/^(?:##\s*Anamnese\s*\n+)+/i, '').trim()
+export function emptySection(order = 0): IAnamnesisSection {
+  return { id: crypto.randomUUID(), title: 'Nova Seção', content: '', order }
 }
 
-export function removeLeadingHeading(content: string | undefined): string {
-  if (!content) return ''
-  return content.replace(/^##\s*.+\n+/i, '').trim()
+export function buildSectionsFromAnamnesis(
+  anamnesis: IAnamnesis,
+): IAnamnesisSection[] {
+  return [...anamnesis.sections]
+    .sort((a, b) => a.order - b.order)
+    .map((section, index) => ({
+      id: section.id,
+      title: section.title,
+      content: section.content,
+      order: index,
+    }))
 }
 
-export function createBlock(
-  raw: ISerializedBlock,
-  index: number,
-): IAnamnesisBlock {
-  const cleanTitle = raw.title?.trim() || `Seção ${index + 1}`
-  const normalizedContent = removeLeadingHeading(raw.content)
-  return {
-    id: raw.id?.trim() || crypto.randomUUID(),
-    title: cleanTitle,
-    content: normalizedContent,
-  }
-}
-
-export function parseMarkdownBlocks(content: string): IAnamnesisBlock[] {
-  if (!content.trim()) {
-    return [{ id: crypto.randomUUID(), title: SINGLE_BLOCK_TITLE, content: '' }]
-  }
-
-  const matches = Array.from(content.matchAll(/^##\s+(.+)$/gm))
-
-  if (matches.length === 0) {
-    return [
-      {
-        id: crypto.randomUUID(),
-        title: SINGLE_BLOCK_TITLE,
-        content: normalizeSingleEditorContent(content),
-      },
-    ]
-  }
-
-  const blocks: IAnamnesisBlock[] = []
-  matches.forEach((match, index) => {
-    const headingStart = match.index ?? 0
-    const heading = match[0]
-    const title = match[1]?.trim() || `Seção ${index + 1}`
-    const bodyStart = headingStart + heading.length
-    const nextHeadingStart = matches[index + 1]?.index ?? content.length
-    const body = content
-      .slice(bodyStart, nextHeadingStart)
-      .replace(/^\n+/, '')
-      .trim()
-
-    blocks.push({
-      id: crypto.randomUUID(),
-      title,
-      content: body,
-    })
-  })
-
-  return blocks
-}
-
-export function buildInitialBlocks(data: IAnamnesisContent): IAnamnesisBlock[] {
-  const raw = data.medicalHistory ?? ''
-
-  if (raw.startsWith(DYNAMIC_TEMPLATE_PREFIX)) {
-    try {
-      const parsed = JSON.parse(
-        raw.slice(DYNAMIC_TEMPLATE_PREFIX.length),
-      ) as ISerializedBlock[]
-      if (Array.isArray(parsed) && parsed.length > 0) {
-        return parsed.map((block, index) => createBlock(block, index))
-      }
-    } catch (e) {
-      console.error('Erro ao fazer parse dos blocos dinâmicos:', e)
-    }
-  }
-
-  const legacySections = [
-    data.chiefComplaint ? `## Queixa Principal\n${data.chiefComplaint}` : '',
-    data.familyHistory ? `## Histórico Familiar\n${data.familyHistory}` : '',
-    data.personalHistory ? `## Histórico Pessoal\n${data.personalHistory}` : '',
-    raw && !raw.startsWith(DYNAMIC_TEMPLATE_PREFIX)
-      ? `## Histórico Médico\n${raw}`
-      : '',
-  ].filter(Boolean)
-
-  return parseMarkdownBlocks(legacySections.join('\n\n'))
-}
-
-export function normalizeBlocks(blocks: IAnamnesisBlock[]): IAnamnesisBlock[] {
-  if (blocks.length === 0) {
-    return [{ id: crypto.randomUUID(), title: SINGLE_BLOCK_TITLE, content: '' }]
-  }
-
-  return blocks.map((block, index) => ({
-    id: block.id || crypto.randomUUID(),
-    title: block.title.trim() || `Seção ${index + 1}`,
-    content: block.content,
+export function normalizeSections(
+  sections: IAnamnesisSection[],
+): IAnamnesisSection[] {
+  return sections.map((section, index) => ({
+    id: section.id?.trim() || crypto.randomUUID(),
+    title: section.title ?? '',
+    content: section.content ?? '',
+    order: index,
   }))
 }
 
-export function buildContentFromBlocks(blocks: IAnamnesisBlock[]): string {
-  return blocks
-    .map((block, index) => {
-      const title = block.title.trim() || `Seção ${index + 1}`
-      const body = block.content.trim()
-      return body ? `## ${title}\n${body}` : `## ${title}`
-    })
-    .join('\n\n')
-    .trim()
+export function fingerprintSections(sections: IAnamnesisSection[]): string {
+  return JSON.stringify(
+    sections.map((section, index) => ({
+      title: section.title.trim(),
+      content: section.content,
+      order: index,
+    })),
+  )
 }
 
-export function toApiData(blocks: IAnamnesisBlock[]): IAnamnesisContent {
-  const normalized = normalizeBlocks(blocks)
-  const serialized = `${DYNAMIC_TEMPLATE_PREFIX}${JSON.stringify(
-    normalized.map((block, index) => ({
-      id: block.id,
-      title: block.title.trim() || `Seção ${index + 1}`,
-      content: block.content,
-    })),
-  )}`
-
+export function toSaveBody(
+  sections: IAnamnesisSection[],
+  serverIds: Set<string>,
+  isDraft: boolean,
+): ISaveAnamnesisBody {
   return {
-    chiefComplaint: buildContentFromBlocks(normalized),
-    familyHistory: '',
-    personalHistory: '',
-    medicalHistory: serialized,
+    isDraft,
+    sections: sections.map((section, index) => ({
+      id: serverIds.has(section.id) ? section.id : null,
+      title: section.title.trim(),
+      content: section.content,
+      order: index,
+    })),
   }
 }

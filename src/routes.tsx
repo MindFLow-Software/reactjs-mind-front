@@ -195,7 +195,7 @@ export const router = createBrowserRouter([
         element: <PatientDocuments />,
       },
       {
-        path: '/patient/:patientId/follow-up',
+        path: '/patient/:patientProfileId/follow-up',
         loader: practiceContextGuard,
         element: <PatientFollowUp />,
       },

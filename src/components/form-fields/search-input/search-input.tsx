@@ -31,18 +31,21 @@ export function SearchInput({
   isLoading = false,
   className,
 }: ISearchInput) {
-  const debouncedValue = useDebounce(value, debounceMs)
-  const lastEmittedRef = useRef(value)
+  const { debounce } = useDebounce()
+  const isFirstRunRef = useRef(true)
 
   useEffect(() => {
-    if (!onDebouncedChange || lastEmittedRef.current === debouncedValue) return
+    if (isFirstRunRef.current) {
+      isFirstRunRef.current = false
+      return
+    }
+    if (!onDebouncedChange) return
 
-    lastEmittedRef.current = debouncedValue
-    onDebouncedChange(debouncedValue)
-  }, [debouncedValue, onDebouncedChange])
+    debounce(() => onDebouncedChange(value), debounceMs)
+  }, [value, debounceMs, onDebouncedChange, debounce])
 
   function handleClear() {
-    lastEmittedRef.current = ''
+    isFirstRunRef.current = true
     onChange('')
     onDebouncedChange?.('')
   }

@@ -22,6 +22,8 @@ Source priority for contracts:
 
 Required standards:
 
+- **Never run `prettier --write` or `eslint --fix` project-wide** (`src`, `.`, or any directory glob). Format/lint **only the exact file(s) you edited**, passed by explicit path. Gate-check commands (`tsc -b --noEmit`, `eslint src --ext ts,tsx` with no `--fix`) are read-only verification and may run project-wide. Full rationale: `.specs/codebase/CONVENTIONS.md` → "Formatting & Tooling".
+- Quote convention: single quotes in JS/TS (code, objects, types, imports) and inside any JSX expression container (`{}`, including inline functions like `.map()`); double quotes only for literal JSX attribute values. No semicolons anywhere (JS/TS/JSX/TSX) — ASI only. This is already enforced by `.eslintrc.cjs`'s `prettier/prettier` rule and mirrored in `prettier.config.cjs`; do not fight it with local overrides.
 - API calls live only in `src/api/{domain}/`, separated by domain and action.
 - Every API function imports and uses `api` from `@/lib/axios`. No raw `fetch`, no raw `axios`, no `api.*` calls inside pages/components/hooks.
 - Every API request/response is fully typed and aligned with backend entities. Reuse domain/entity types whenever possible.

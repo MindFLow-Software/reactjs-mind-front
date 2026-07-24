@@ -1,6 +1,8 @@
 import { useEffect, useState } from 'react'
 import type { DateRange } from 'react-day-picker'
 
+import { useDebounce } from '@/hooks/use-debounce'
+
 export type IUseAttachmentsFiltersReturn = {
   pageIndex: number
   setPageIndex: (val: number) => void
@@ -24,14 +26,14 @@ export function useAttachmentsFilters(): IUseAttachmentsFiltersReturn {
   const [patientId, setPatientIdState] = useState('all')
   const [date, setDateState] = useState<DateRange | undefined>()
   const [contentType, setContentTypeState] = useState<string | undefined>()
+  const { debounce } = useDebounce()
 
   useEffect(() => {
-    const handler = setTimeout(() => {
+    debounce(() => {
       setDebouncedSearch(search)
       setPageIndexState(0)
     }, 220)
-    return () => clearTimeout(handler)
-  }, [search])
+  }, [search, debounce])
 
   const setPageIndex = (val: number) => setPageIndexState(val)
 
