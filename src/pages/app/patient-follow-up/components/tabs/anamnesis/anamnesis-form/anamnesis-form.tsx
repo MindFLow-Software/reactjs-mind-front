@@ -198,18 +198,6 @@ export function AnamnesisForm({
       <TabCard
         title="Anamnese"
         description="Seções editáveis com salvamento automático e rascunho local."
-        // action={
-        //   <AnamnesisHeaderActions
-        //     pdf={{
-        //       isExporting,
-        //       exportedSuccessfully: pdfExportedSuccessfully,
-        //       isCopyDisabled: !content.trim(),
-        //       copied,
-        //       onGeneratePDF: exportToPdf,
-        //       onCopy,
-        //     }}
-        //   />
-        // }
       >
         <AnamnesisToolbar />
 
