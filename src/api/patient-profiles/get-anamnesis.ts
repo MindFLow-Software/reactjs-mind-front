@@ -1,11 +1,11 @@
 import { api } from '@/lib/axios'
-import type { IAnamnesisContent } from '@/types/clinical/anamnesis-content'
+import type { IAnamnesis } from '@/types/clinical/anamnesis'
 
 export async function getAnamnesis(
   patientProfileId: string,
-): Promise<IAnamnesisContent> {
+): Promise<IAnamnesis | null> {
   const response = await api.get(
     `/patient-profiles/${patientProfileId}/anamnesis`,
   )
-  return response.data.anamnesis
+  return response.data.anamnesis ?? null
 }

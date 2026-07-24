@@ -1,47 +1,50 @@
 import { useCallback } from 'react'
 
-import type {
-  IAnamnesisBlock,
-  IAnamnesisDraft,
-} from '../components/tabs/anamnesis/anamnesis-types'
-import { createBlock } from '../components/tabs/anamnesis/anamnesis-utils'
+import type { IAnamnesisSection } from '@/types/clinical/anamnesis-section'
+import type { IAnamnesisDraft } from '../components/tabs/anamnesis/anamnesis-types'
+import { normalizeSections } from '../components/tabs/anamnesis/anamnesis-utils'
 
 const DRAFT_KEY_PREFIX = 'anamnesis-draft:'
 
-const draftKey = (patientId: string): string =>
-  `${DRAFT_KEY_PREFIX}${patientId}`
+const draftKey = (patientProfileId: string): string =>
+  `${DRAFT_KEY_PREFIX}${patientProfileId}`
 
 type IUseAnamnesisDraftReturn = {
-  read: (patientId: string) => IAnamnesisBlock[]
-  write: (patientId: string, blocks: IAnamnesisBlock[]) => void
-  clear: (patientId: string) => void
+  read: (patientProfileId: string) => IAnamnesisSection[]
+  write: (patientProfileId: string, sections: IAnamnesisSection[]) => void
+  clear: (patientProfileId: string) => void
 }
 
 export function useAnamnesisDraft(): IUseAnamnesisDraftReturn {
-  const clear = useCallback((patientId: string) => {
-    localStorage.removeItem(draftKey(patientId))
+  const clear = useCallback((patientProfileId: string) => {
+    localStorage.removeItem(draftKey(patientProfileId))
   }, [])
 
   const read = useCallback(
-    (patientId: string): IAnamnesisBlock[] => {
+    (patientProfileId: string): IAnamnesisSection[] => {
       try {
-        const raw = localStorage.getItem(draftKey(patientId))
+        const raw = localStorage.getItem(draftKey(patientProfileId))
         if (!raw) return []
         const parsed = JSON.parse(raw) as IAnamnesisDraft
-        if (!Array.isArray(parsed?.blocks)) return []
-        return parsed.blocks.map((block, index) => createBlock(block, index))
+        if (!Array.isArray(parsed?.sections) || parsed.sections.length === 0) {
+          return []
+        }
+        return normalizeSections(parsed.sections)
       } catch {
-        clear(patientId)
+        clear(patientProfileId)
         return []
       }
     },
     [clear],
   )
 
-  const write = useCallback((patientId: string, blocks: IAnamnesisBlock[]) => {
-    const draft: IAnamnesisDraft = { blocks, updatedAt: Date.now() }
-    localStorage.setItem(draftKey(patientId), JSON.stringify(draft))
-  }, [])
+  const write = useCallback(
+    (patientProfileId: string, sections: IAnamnesisSection[]) => {
+      const draft: IAnamnesisDraft = { sections, updatedAt: Date.now() }
+      localStorage.setItem(draftKey(patientProfileId), JSON.stringify(draft))
+    },
+    [],
+  )
 
   return { read, write, clear }
 }

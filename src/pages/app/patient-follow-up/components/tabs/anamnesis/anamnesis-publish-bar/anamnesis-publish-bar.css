@@ -1,0 +1,19 @@
+@reference "../../../../../../../global.css";
+
+@layer components {
+  .ph-anamnesis-publish-bar {
+    @apply flex items-center justify-between gap-3 rounded-lg border border-border/50 bg-muted/50 px-4 py-2.5;
+  }
+
+  .ph-anamnesis-publish-bar__badge {
+    @apply gap-1.5;
+  }
+
+  .ph-anamnesis-publish-bar__badge-icon {
+    @apply h-3.5 w-3.5;
+  }
+
+  .ph-anamnesis-publish-bar__publish-btn {
+    @apply cursor-pointer;
+  }
+}

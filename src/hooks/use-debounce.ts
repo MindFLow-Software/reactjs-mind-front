@@ -6,6 +6,7 @@ type IDebounceCallback = () => void
 
 type IUseDebounceReturn = {
   debounce: (callback: IDebounceCallback, ms: number) => void
+  cancel: () => void
 }
 
 export function useDebounce(): IUseDebounceReturn {
@@ -23,7 +24,11 @@ export function useDebounce(): IUseDebounceReturn {
     debouncedRef.current?.(callback)
   }, [])
 
+  const cancel = useCallback(() => {
+    debouncedRef.current?.cancel()
+  }, [])
+
   useEffect(() => () => debouncedRef.current?.cancel(), [])
 
-  return { debounce }
+  return { debounce, cancel }
 }

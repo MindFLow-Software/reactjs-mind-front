@@ -1,5 +1,6 @@
 import { createContext, useContext } from 'react'
-import type { IAnamnesisBlock } from './anamnesis-types'
+
+import type { IAnamnesisSection } from '@/types/clinical/anamnesis-section'
 
 export enum AnamnesisSaveStatus {
   SYNCED = 'synced',
@@ -7,7 +8,7 @@ export enum AnamnesisSaveStatus {
   DRAFT = 'draft',
 }
 
-export type IAnamnesisSection = {
+export type IAnamnesisNavSection = {
   id: string
   label: string
   wordCount: number
@@ -15,13 +16,17 @@ export type IAnamnesisSection = {
 
 type IAnamnesisEditorContextValue = {
   saveStatus: AnamnesisSaveStatus
-  canDeleteBlocks: boolean
-  activeBlockId: string | null
-  sections: IAnamnesisSection[]
-  updateBlock: (id: string, updates: Partial<IAnamnesisBlock>) => void
-  deleteBlock: (id: string) => void
-  setActiveBlockId: (id: string | null) => void
-  jumpToBlock: (id: string) => void
+  canDeleteSections: boolean
+  activeSectionId: string | null
+  sections: IAnamnesisNavSection[]
+  isDraft: boolean
+  canPublish: boolean
+  updateSection: (id: string, updates: Partial<IAnamnesisSection>) => void
+  deleteSection: (id: string) => void
+  setActiveSectionId: (id: string | null) => void
+  jumpToSection: (id: string) => void
+  reorderSections: (ids: string[]) => void
+  onPublish: () => void
   registerRef: (id: string, el: HTMLTextAreaElement | null) => void
   onFormat: (marker: string) => void
 }

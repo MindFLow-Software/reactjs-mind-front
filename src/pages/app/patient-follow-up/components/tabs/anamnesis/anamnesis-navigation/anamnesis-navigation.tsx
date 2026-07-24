@@ -1,12 +1,12 @@
 import { memo } from 'react'
 import { cn } from '@/lib/utils'
 import { List } from 'lucide-react'
-import { useAnamnesisContext } from './anamnesis-context'
+import { useAnamnesisContext } from '../anamnesis-context'
 
 import './anamnesis-navigation.css'
 
 export const AnamnesisNavigation = memo(function AnamnesisNavigation() {
-  const { sections, activeBlockId, jumpToBlock } = useAnamnesisContext()
+  const { sections, activeSectionId, jumpToSection } = useAnamnesisContext()
 
   if (sections.length === 0) return null
 
@@ -23,12 +23,12 @@ export const AnamnesisNavigation = memo(function AnamnesisNavigation() {
 
       <div className="ph-anamnesis-navigation__list">
         {sections.map((section) => {
-          const isActive = activeBlockId === section.id
+          const isActive = activeSectionId === section.id
           return (
             <button
               key={section.id}
               type="button"
-              onClick={() => jumpToBlock(section.id)}
+              onClick={() => jumpToSection(section.id)}
               className={cn(
                 'ph-anamnesis-navigation__item',
                 isActive && 'ph-anamnesis-navigation__item--active',

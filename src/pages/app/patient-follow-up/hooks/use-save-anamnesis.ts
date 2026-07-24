@@ -1,20 +1,23 @@
 import { useApiMutation } from '@/hooks/use-api-mutation'
 import { saveAnamnesis } from '@/api/patient-profiles/save-anamnesis'
-import type { IAnamnesisContent } from '@/types/clinical/anamnesis-content'
+import type { IAnamnesis } from '@/types/clinical/anamnesis'
+import type { ISaveAnamnesisBody } from '@/types/clinical/save-anamnesis-body'
+
+type ISaveAnamnesisResult = { anamnesis: IAnamnesis; message: string | null }
 
 type IUseSaveAnamnesisOptions = {
-  patientId: string
-  onSaved?: (data: IAnamnesisContent) => void
+  patientProfileId: string
+  onSaved?: (anamnesis: IAnamnesis) => void
 }
 
 export function useSaveAnamnesis({
-  patientId,
+  patientProfileId,
   onSaved,
 }: IUseSaveAnamnesisOptions) {
-  return useApiMutation<{ message: string | null }, IAnamnesisContent>({
-    mutationFn: (data) => saveAnamnesis(patientId, data),
+  return useApiMutation<ISaveAnamnesisResult, ISaveAnamnesisBody>({
+    mutationFn: (data) => saveAnamnesis(patientProfileId, data),
     showSuccessToast: false,
-    invalidateKeys: [['patient-hub', patientId, 'anamnesis']],
-    onSuccess: (_result, variables) => onSaved?.(variables),
+    invalidateKeys: [['patient-follow-up', patientProfileId, 'anamnesis']],
+    onSuccess: (result) => onSaved?.(result.anamnesis),
   })
 }

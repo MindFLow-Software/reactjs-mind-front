@@ -1,16 +1,6 @@
-export type ISerializedBlock = {
-  id?: string
-  title?: string
-  content?: string
-}
-
-export type IAnamnesisBlock = {
-  id: string
-  title: string
-  content: string
-}
+import type { IAnamnesisSection } from '@/types/clinical/anamnesis-section'
 
 export type IAnamnesisDraft = {
-  blocks: ISerializedBlock[]
+  sections: IAnamnesisSection[]
   updatedAt: number
 }

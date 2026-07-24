@@ -1,0 +1,15 @@
+@reference "../../../../../../../global.css";
+
+@layer components {
+  .af-layout {
+    @apply flex items-start gap-4;
+  }
+
+  .af-content {
+    @apply flex-1 min-w-0 flex flex-col gap-3;
+  }
+
+  .af-add-btn {
+    @apply w-full cursor-pointer border-dashed text-muted-foreground hover:text-foreground hover:border-border;
+  }
+}
